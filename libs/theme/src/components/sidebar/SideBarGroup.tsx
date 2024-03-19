@@ -18,6 +18,27 @@ import {
 
 import { cn, useLink } from '@storeo/core';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '../ui/dropdown-menu';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '../ui/hover-card';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from '../ui/navigation-menu';
 import { useSideBar } from './SideBar';
 
 export type SideBarGroupProps<
@@ -56,19 +77,12 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
     [children]
   );
 
-  return (
-    <div
-      className={cn(
-        `relative`,
-        isActive &&
-          `before:bg-appGray before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5`
-      )}
-      {...props}
-    >
+  const link = useMemo(
+    () => (
       <Link
         to={to}
         className={cn(
-          `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap text-sm`,
+          `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
           isActive && `bg-appGrayLight font-bold`
         )}
       >
@@ -86,6 +100,20 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
           {title}
         </div>
       </Link>
+    ),
+    [icon, to, title, isActive, collapsed]
+  );
+
+  return (
+    <div
+      className={cn(
+        `relative`,
+        isActive &&
+          `before:bg-appGray before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5`
+      )}
+      {...props}
+    >
+      {link}
       {isActive && (
         <div className={cn(isActive && `bg-appGrayLight`)}>
           {childrenWithProps}

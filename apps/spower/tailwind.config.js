@@ -89,6 +89,14 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
+      },
+      transitionProperty: {
+        width: 'width',
+        dropdown: 'padding, opacity',
+        visible: 'visibility'
+      },
+      transitionDuration: {
+        default: '300ms'
       }
     }
   },

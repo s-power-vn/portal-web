@@ -71,6 +71,7 @@ export const SideBar: FC<SideBarProps> = ({ children, ...props }) => {
         {children}
         <Button
           className={`absolute bottom-1 right-1`}
+          variant={'outline'}
           size={'icon'}
           onClick={() => setCollapsed(!collapsed)}
         >
