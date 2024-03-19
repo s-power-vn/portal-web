@@ -113,6 +113,6 @@ const Employee = () => {
 
 export const Route = createFileRoute('/_authenticated/general/employee')({
   component: Employee,
-  loader: ({context: {pb, queryClient}}) =>
+  loader: ({ context: { pb, queryClient } }) =>
     queryClient?.ensureQueryData(employeesOptions(pb))
 });
