@@ -1,13 +1,27 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
-import App from './app/app';
+import { PbProvider } from '@storeo/core';
+import { TooltipProvider } from '@storeo/theme';
+
+import { App } from './App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const queryClient = new QueryClient();
+
 root.render(
   <StrictMode>
-    <App />
+    <TooltipProvider>
+      <PbProvider endpoint={'http://localhost:8090'}>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </PbProvider>
+    </TooltipProvider>
   </StrictMode>
 );

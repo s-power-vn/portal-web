@@ -1,3 +1,25 @@
 {
-  "singleQuote": true
+  "singleQuote": true,
+  "trailingComma": "none",
+  "arrowParens": "avoid",
+  "jsxSingleQuote": false,
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "importOrder": [
+    "^react",
+    "^@react",
+    "^@storeo/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "tailwindFunctions": [
+    "tw"
+  ],
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ]
 }
