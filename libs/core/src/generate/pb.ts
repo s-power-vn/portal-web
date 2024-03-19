@@ -3,7 +3,8 @@
 */
 
 export enum Collections {
-	Users = "users",
+  Departments = 'departments',
+  Users = 'users'
 }
 
 // Alias types for improved usability
@@ -30,20 +31,30 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export type DepartmentsRecord = {
+  code?: string;
+  description?: string;
+  name: string;
+};
+
 export type UsersRecord = {
-	avatar?: string
-	name?: string
-}
+  avatar?: string;
+  department?: RecordIdString;
+  name?: string;
+};
 
 // Response types include system fields and match responses from the PocketBase API
+export type DepartmentsResponse<Texpand = unknown> = Required<DepartmentsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
-	users: UsersRecord
-}
+  departments: DepartmentsRecord;
+  users: UsersRecord;
+};
 
 export type CollectionResponses = {
-	users: UsersResponse
-}
+  departments: DepartmentsResponse;
+  users: UsersResponse;
+};

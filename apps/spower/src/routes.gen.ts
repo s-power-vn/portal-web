@@ -20,6 +20,8 @@ import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticate
 import { Route as AuthenticatedGeneralEmployeeImport } from './routes/_authenticated/general/employee'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedGeneralEmployeeNewImport } from './routes/_authenticated/general/employee/new'
+import { Route as AuthenticatedGeneralEmployeeEmployeeIdImport } from './routes/_authenticated/general/employee/$employeeId'
+import { Route as AuthenticatedGeneralEmployeeEmployeeIdEditImport } from './routes/_authenticated/general/employee/$employeeId/edit'
 
 // Create/Update Routes
 
@@ -71,6 +73,18 @@ const AuthenticatedGeneralEmployeeNewRoute =
     getParentRoute: () => AuthenticatedGeneralEmployeeRoute,
   } as any)
 
+const AuthenticatedGeneralEmployeeEmployeeIdRoute =
+  AuthenticatedGeneralEmployeeEmployeeIdImport.update({
+    path: '/$employeeId',
+    getParentRoute: () => AuthenticatedGeneralEmployeeRoute,
+  } as any)
+
+const AuthenticatedGeneralEmployeeEmployeeIdEditRoute =
+  AuthenticatedGeneralEmployeeEmployeeIdEditImport.update({
+    path: '/edit',
+    getParentRoute: () => AuthenticatedGeneralEmployeeEmployeeIdRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -107,9 +121,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralIndexImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
+    '/_authenticated/general/employee/$employeeId': {
+      preLoaderRoute: typeof AuthenticatedGeneralEmployeeEmployeeIdImport
+      parentRoute: typeof AuthenticatedGeneralEmployeeImport
+    }
     '/_authenticated/general/employee/new': {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeeNewImport
       parentRoute: typeof AuthenticatedGeneralEmployeeImport
+    }
+    '/_authenticated/general/employee/$employeeId/edit': {
+      preLoaderRoute: typeof AuthenticatedGeneralEmployeeEmployeeIdEditImport
+      parentRoute: typeof AuthenticatedGeneralEmployeeEmployeeIdImport
     }
   }
 }
@@ -122,6 +144,9 @@ export const routeTree = rootRoute.addChildren([
     AuthenticatedGeneralRoute.addChildren([
       AuthenticatedGeneralCustomersRoute,
       AuthenticatedGeneralEmployeeRoute.addChildren([
+        AuthenticatedGeneralEmployeeEmployeeIdRoute.addChildren([
+          AuthenticatedGeneralEmployeeEmployeeIdEditRoute,
+        ]),
         AuthenticatedGeneralEmployeeNewRoute,
       ]),
       AuthenticatedGeneralIndexRoute,
