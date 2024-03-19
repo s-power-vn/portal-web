@@ -68,7 +68,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             ></SideBarItem>
           </SideBarGroup>
         </SideBar>
-        <div className={'h-full w-full'}>{children}</div>
+        <div className={'h-full w-full p-2'}>{children}</div>
       </div>
     </div>
   );

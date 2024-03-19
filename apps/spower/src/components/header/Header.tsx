@@ -11,7 +11,9 @@ const Logo = () => (
 export const Header = () => {
   return (
     <div className={'flex w-full justify-between px-2 py-1 shadow'}>
-      <Logo />
+      <div className={'flex items-center justify-center gap-40'}>
+        <Logo/>
+      </div>
       <HeaderMenu />
     </div>
   );

@@ -18,28 +18,8 @@ import {
 
 import { cn, useLink } from '@storeo/core';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '../ui/dropdown-menu';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger
-} from '../ui/hover-card';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger
-} from '../ui/navigation-menu';
 import { useSideBar } from './SideBar';
+
 
 export type SideBarGroupProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
@@ -80,11 +60,11 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
   const link = useMemo(
     () => (
       <Link
-        to={to}
         className={cn(
           `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
           isActive && `bg-appGrayLight font-semibold`
         )}
+        to={to}
       >
         {icon && (
           <div className={cn(`flex h-10 w-10 items-center justify-center p-2`)}>
