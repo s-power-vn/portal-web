@@ -14,7 +14,7 @@ import {
 import { useLogin } from '../api';
 import { CommonLayout } from '../layouts';
 
-export const Logo = () => (
+const Logo = () => (
   <img
     src={'http://s-power.vn/wp-content/uploads/2021/04/spower-non-bg-1.png'}
     className={`w-64 pb-4`}

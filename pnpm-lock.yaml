@@ -11,6 +11,9 @@ dependencies:
   '@preact/signals-react':
     specifier: ^2.0.0
     version: 2.0.0(react@18.2.0)
+  '@radix-ui/react-avatar':
+    specifier: ^1.0.4
+    version: 1.0.4(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-dropdown-menu':
     specifier: ^2.0.6
     version: 2.0.6(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)
@@ -181,6 +184,12 @@ devDependencies:
   prettier-plugin-tailwindcss:
     specifier: ^0.5.12
     version: 0.5.12(@trivago/prettier-plugin-sort-imports@4.3.0)(prettier@3.2.5)
+  tailwind-extended-shadows:
+    specifier: ^0.4.0
+    version: 0.4.0(tailwindcss@3.4.1)
+  tailwind-extended-shadows-merge:
+    specifier: ^0.2.1
+    version: 0.2.1(tailwind-extended-shadows@0.4.0)(tailwind-merge@2.2.2)(tailwindcss@3.4.1)
   tailwind-merge:
     specifier: ^2.2.2
     version: 2.2.2
@@ -2600,6 +2609,30 @@ packages:
     dependencies:
       '@babel/runtime': 7.24.0
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)
+      '@types/react': 18.2.33
+      '@types/react-dom': 18.2.14
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@radix-ui/react-avatar@1.0.4(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-kVK2K7ZD3wwj3qhle0ElXhOjbezIgyl2hVvgwfIdexL3rN6zJmy5AqqIf+D31lxVppdzV8CjAfZ6PklkmInZLw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.24.0
+      '@radix-ui/react-context': 1.0.1(@types/react@18.2.33)(react@18.2.0)
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)
+      '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.33)(react@18.2.0)
+      '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.2.33)(react@18.2.0)
       '@types/react': 18.2.33
       '@types/react-dom': 18.2.14
       react: 18.2.0
@@ -9307,6 +9340,26 @@ packages:
 
   /symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
+    dev: true
+
+  /tailwind-extended-shadows-merge@0.2.1(tailwind-extended-shadows@0.4.0)(tailwind-merge@2.2.2)(tailwindcss@3.4.1):
+    resolution: {integrity: sha512-g4hAQtUljN8DW5H4Ns4pwJZUubH+aMCVlw5nRkLoHGPuTyqJIKjGm16ADofOF4z+06QrFF5WAUZXlTc38AcsZA==}
+    peerDependencies:
+      tailwind-extended-shadows: '>=0.4.0'
+      tailwind-merge: '>=2.2.0'
+      tailwindcss: '>=3.0.0'
+    dependencies:
+      tailwind-extended-shadows: 0.4.0(tailwindcss@3.4.1)
+      tailwind-merge: 2.2.2
+      tailwindcss: 3.4.1
+    dev: true
+
+  /tailwind-extended-shadows@0.4.0(tailwindcss@3.4.1):
+    resolution: {integrity: sha512-v8YSvNLVMVHRTCoq9SgE4bNWedBcrsxKy7z8DEj2Z+HoFkjMX2POBLuND6JS3pnJoWcRhvxYVGa9C/3tOfa8EQ==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0'
+    dependencies:
+      tailwindcss: 3.4.1
     dev: true
 
   /tailwind-merge@2.2.2:
