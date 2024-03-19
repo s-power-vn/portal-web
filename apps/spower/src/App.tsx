@@ -18,5 +18,5 @@ declare module '@tanstack/react-router' {
 export const App = () => {
   const pb = usePb();
   const queryClient = useQueryClient();
-  return <RouterProvider router={router} context={{pb, queryClient}}/>;
+  return <RouterProvider router={router} context={{ pb, queryClient }} />;
 };
