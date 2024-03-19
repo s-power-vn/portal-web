@@ -83,7 +83,7 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
         to={to}
         className={cn(
           `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
-          isActive && `bg-appGrayLight font-bold`
+          isActive && `bg-appGrayLight font-semibold`
         )}
       >
         {icon && (

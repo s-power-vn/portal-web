@@ -15,9 +15,13 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home/route'
-import { Route as AuthenticatedTicketsIndexImport } from './routes/_authenticated/tickets/index'
-import { Route as AuthenticatedTicketsType2RouteImport } from './routes/_authenticated/tickets/type2/route'
-import { Route as AuthenticatedTicketsType1RouteImport } from './routes/_authenticated/tickets/type1/route'
+import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
+import { Route as AuthenticatedDocumentsIndexImport } from './routes/_authenticated/documents/index'
+import { Route as AuthenticatedGeneralEmployeeRouteImport } from './routes/_authenticated/general/employee/route'
+import { Route as AuthenticatedGeneralCustomersRouteImport } from './routes/_authenticated/general/customers/route'
+import { Route as AuthenticatedDocumentsWaitingRouteImport } from './routes/_authenticated/documents/waiting/route'
+import { Route as AuthenticatedDocumentsCreatedRouteImport } from './routes/_authenticated/documents/created/route'
+import { Route as AuthenticatedDocumentsAllRouteImport } from './routes/_authenticated/documents/all/route'
 
 // Create/Update Routes
 
@@ -43,20 +47,44 @@ const AuthenticatedHomeRouteRoute = AuthenticatedHomeRouteImport.update({
   import('./routes/_authenticated/home/route.lazy').then((d) => d.Route),
 )
 
-const AuthenticatedTicketsIndexRoute = AuthenticatedTicketsIndexImport.update({
-  path: '/tickets/',
+const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
+  path: '/general/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedTicketsType2RouteRoute =
-  AuthenticatedTicketsType2RouteImport.update({
-    path: '/tickets/type2',
+const AuthenticatedDocumentsIndexRoute =
+  AuthenticatedDocumentsIndexImport.update({
+    path: '/documents/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedTicketsType1RouteRoute =
-  AuthenticatedTicketsType1RouteImport.update({
-    path: '/tickets/type1',
+const AuthenticatedGeneralEmployeeRouteRoute =
+  AuthenticatedGeneralEmployeeRouteImport.update({
+    path: '/general/employee',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedGeneralCustomersRouteRoute =
+  AuthenticatedGeneralCustomersRouteImport.update({
+    path: '/general/customers',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedDocumentsWaitingRouteRoute =
+  AuthenticatedDocumentsWaitingRouteImport.update({
+    path: '/documents/waiting',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedDocumentsCreatedRouteRoute =
+  AuthenticatedDocumentsCreatedRouteImport.update({
+    path: '/documents/created',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedDocumentsAllRouteRoute =
+  AuthenticatedDocumentsAllRouteImport.update({
+    path: '/documents/all',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -80,16 +108,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/tickets/type1': {
-      preLoaderRoute: typeof AuthenticatedTicketsType1RouteImport
+    '/_authenticated/documents/all': {
+      preLoaderRoute: typeof AuthenticatedDocumentsAllRouteImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/tickets/type2': {
-      preLoaderRoute: typeof AuthenticatedTicketsType2RouteImport
+    '/_authenticated/documents/created': {
+      preLoaderRoute: typeof AuthenticatedDocumentsCreatedRouteImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/tickets/': {
-      preLoaderRoute: typeof AuthenticatedTicketsIndexImport
+    '/_authenticated/documents/waiting': {
+      preLoaderRoute: typeof AuthenticatedDocumentsWaitingRouteImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/general/customers': {
+      preLoaderRoute: typeof AuthenticatedGeneralCustomersRouteImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/general/employee': {
+      preLoaderRoute: typeof AuthenticatedGeneralEmployeeRouteImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/documents/': {
+      preLoaderRoute: typeof AuthenticatedDocumentsIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/general/': {
+      preLoaderRoute: typeof AuthenticatedGeneralIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -101,9 +145,13 @@ export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AuthenticatedRoute.addChildren([
     AuthenticatedHomeRouteRoute,
-    AuthenticatedTicketsType1RouteRoute,
-    AuthenticatedTicketsType2RouteRoute,
-    AuthenticatedTicketsIndexRoute,
+    AuthenticatedDocumentsAllRouteRoute,
+    AuthenticatedDocumentsCreatedRouteRoute,
+    AuthenticatedDocumentsWaitingRouteRoute,
+    AuthenticatedGeneralCustomersRouteRoute,
+    AuthenticatedGeneralEmployeeRouteRoute,
+    AuthenticatedDocumentsIndexRoute,
+    AuthenticatedGeneralIndexRoute,
   ]),
   LoginRoute,
 ])

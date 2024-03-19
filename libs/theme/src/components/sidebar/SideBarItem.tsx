@@ -60,7 +60,7 @@ export const SideBarItem: FC<SideBarItemProps> = ({
       <Link
         className={cn(
           `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
-          isActive && `bg-appGray font-bold`
+          isActive && `bg-appGray font-semibold`
         )}
         to={to}
       >
