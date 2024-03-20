@@ -50,9 +50,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
 
         return (
           <div className={'flex flex-col gap-1'}>
-            <Label htmlFor={''} className={cn(invalid && `text-appError`)}>
-              {title}
-            </Label>
+            <Label htmlFor={''}>{title}</Label>
             {childrenWithProps}
             {invalid && (
               <span className={cn(`text-appError text-xs`)}>

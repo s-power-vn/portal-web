@@ -1,4 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { object, string } from 'yup';
 
 import { useState } from 'react';
 
@@ -10,9 +11,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label
+  Form,
+  TextField
 } from '@storeo/theme';
+
+const schema = object().shape({
+  name: string().required('Hãy nhập họ tên'),
+  email: string().email('Sai định dạng email').required('Hãy nhập email'),
+  department: string().required('Hãy chọn phòng ban')
+});
 
 const NewEmployee = () => {
   const [open, setOpen] = useState(true);
@@ -26,30 +33,31 @@ const NewEmployee = () => {
         history.back();
       }}
     >
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Thêm nhân viên</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Cho phép tạo nhân viên mới cho hệ thống.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input id="username" className="col-span-3" />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
+        <Form
+          schema={schema}
+          // onSubmit={({ email, password }) => login.mutate({ email, password })}
+          defaultValues={{
+            name: '',
+            email: '',
+            department: ''
+          }}
+          // loading={login.isPending}
+          className={'flex flex-col gap-4'}
+        >
+          <TextField schema={schema} name={'name'} title={'Họ tên'} />
+          <TextField schema={schema} name={'email'} title={'Email'} />
+          <TextField schema={schema} name={'department'} title={'Phòng ban'} />
+          <DialogFooter>
+            <Button type="submit">Chấp nhận</Button>
+          </DialogFooter>
+        </Form>
       </DialogContent>
     </Dialog>
   );

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { FC } from 'react';
 
 import { cn } from '@storeo/core';
+import { Button } from '@storeo/theme/components/ui/button';
 
 import {
   Select,
@@ -93,123 +94,72 @@ export const usePagination = ({
 
 export type PaginationProps = {
   totalItems?: number;
-  currentPage?: number;
+  totalPages?: number;
+  pageIndex?: number;
   pageSize?: number;
   showLabel?: boolean;
   showSelect?: boolean;
-  onPageChange?: (page: number) => void;
+  onPageNext?: () => void;
+  onPagePrev?: () => void;
   onPageSizeChange?: (pageSize: number) => void;
-  labelText?: string;
 };
 
 export const Pagination: FC<PaginationProps> = ({
   totalItems = 0,
-  currentPage = 1,
+  totalPages = 0,
+  pageIndex = 1,
   pageSize = DEFAULT_PAGE_SIZE,
-  showLabel,
-  showSelect,
-  onPageChange,
-  onPageSizeChange,
-  labelText = 'Đang hiển thị từ {0} đến {1} trên tổng số {2}',
-  ...props
+  showLabel = true,
+  showSelect = true,
+  onPageNext,
+  onPagePrev,
+  onPageSizeChange
 }) => {
-  const pagination = usePagination({
-    totalItems,
-    currentPage,
-    pageSize
-  });
-
-  if (currentPage > 1 && (currentPage - 1) * pageSize === totalItems) {
-    onPageChange?.(currentPage - 1);
-  }
-
   return (
-    <div className={`flex w-full items-center justify-center p-2 text-sm`}>
-      {showLabel && totalItems > 0 && (
-        <div className={`text-appBlack px-2`}>
-          {formatStr(
-            labelText,
-            (currentPage - 1) * pageSize + 1,
-            currentPage * pageSize < totalItems
-              ? currentPage * pageSize
-              : totalItems,
-            totalItems
-          )}
+    <div className={`flex items-center gap-2 p-2 text-sm`}>
+      {showLabel ? (
+        <div
+          className={`text-appBlack`}
+        >{`Trang ${pageIndex} / ${Math.ceil(totalItems / pageSize)}`}</div>
+      ) : null}
+
+      <Button
+        variant={'outline'}
+        className={'h-8 w-8 p-0'}
+        onClick={onPagePrev}
+        disabled={pageIndex === 1}
+      >
+        <ChevronLeftIcon />
+      </Button>
+      {showSelect && (
+        <div className={`w-20`}>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={value => {
+              onPageSizeChange?.(parseInt(value));
+            }}
+          >
+            <SelectTrigger className={'h-8'}>
+              <SelectValue placeholder="" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
+              <SelectItem value="40">40</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       )}
-      <div className={`flex items-center gap-2`}>
-        <ul className={`box-border flex w-max rounded-md border`} {...props}>
-          <li
-            className={`flex cursor-pointer select-none items-center justify-center border-r px-3 py-1.5
-              last:border-r-0 hover:bg-gray-50 last:hover:rounded-r-md first-of-type:hover:rounded-l-md`}
-            onClick={() => {
-              if (currentPage > 1) {
-                onPageChange?.(currentPage - 1);
-              }
-            }}
-          >
-            <ChevronLeftIcon className="h-4 w-4" />
-          </li>
-          {pagination &&
-            pagination.map((value, i) => {
-              return (
-                <li
-                  key={i}
-                  className={cn(
-                    `flex cursor-pointer select-none items-center justify-center border-r px-3 py-1.5
-                    last:border-r-0 hover:bg-gray-50 last:hover:rounded-r-md first-of-type:hover:rounded-l-md`,
-                    currentPage === value
-                      ? `text-appBlack bg-appGrayLight font-semibold`
-                      : `text-appBlack`
-                  )}
-                  onClick={() => {
-                    if (typeof value === 'number') {
-                      onPageChange?.(value);
-                    }
-                  }}
-                >
-                  {value}
-                </li>
-              );
-            })}
-          <li
-            className={`flex cursor-pointer select-none items-center justify-center border-r px-3 py-1.5
-              last:border-r-0 hover:bg-gray-50 last:hover:rounded-r-md first-of-type:hover:rounded-l-md`}
-            onClick={() => {
-              const totalPageCount = Math.ceil(totalItems / pageSize);
-              if (currentPage < totalPageCount) {
-                onPageChange?.(currentPage + 1);
-              }
-            }}
-          >
-            <ChevronRightIcon className="h-4 w-4" />
-          </li>
-        </ul>
-        {showSelect && (
-          <div className={`w-24`}>
-            <Select
-              value={pageSize.toString()}
-              onValueChange={value => {
-                onPageSizeChange?.(parseInt(value));
-              }}
-            >
-              <SelectTrigger className={'h-8'}>
-                <SelectValue placeholder="" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Hiển thị</SelectLabel>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="30">30</SelectItem>
-                  <SelectItem value="40">40</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-      </div>
+      <Button
+        variant={'outline'}
+        className={'h-8 w-8 p-0'}
+        onClick={onPageNext}
+        disabled={pageIndex === totalPages}
+      >
+        <ChevronRightIcon className={'h-4 w-4'} />
+      </Button>
     </div>
   );
 };

@@ -83,7 +83,7 @@ const Employee = () => {
         </div>
         <DebouncedInput
           value={search.filter}
-          className={'w-56'}
+          className={'h-8 w-56'}
           placeholder={'Tìm kiếm...'}
           onChange={value => {
             navigate({
@@ -131,33 +131,41 @@ const Employee = () => {
               ))}
             </TableBody>
           </Table>
-          <Pagination
-            totalItems={employeesQuery.data?.totalItems}
-            currentPage={search.pageIndex}
-            pageSize={search.pageSize}
-            showSelect={true}
-            onPageChange={page =>
-              navigate({
-                to: './',
-                replace: false,
-                search: {
-                  ...search,
-                  pageIndex: page
-                }
-              })
-            }
-            onPageSizeChange={pageSize =>
-              navigate({
-                to: './',
-                replace: false,
-                search: {
-                  ...search,
-                  pageSize
-                }
-              })
-            }
-          ></Pagination>
         </div>
+        <Pagination
+          totalItems={employeesQuery.data?.totalItems}
+          totalPages={employeesQuery.data?.totalPages}
+          pageIndex={search.pageIndex}
+          pageSize={search.pageSize}
+          onPageNext={() =>
+            navigate({
+              to: './',
+              replace: false,
+              search: prev => {
+                return { ...prev, pageIndex: prev.pageIndex + 1 };
+              }
+            })
+          }
+          onPagePrev={() =>
+            navigate({
+              to: './',
+              replace: false,
+              search: prev => {
+                return { ...prev, pageIndex: prev.pageIndex - 1 };
+              }
+            })
+          }
+          onPageSizeChange={pageSize =>
+            navigate({
+              to: './',
+              replace: false,
+              search: {
+                ...search,
+                pageSize
+              }
+            })
+          }
+        ></Pagination>
       </div>
     </>
   );
