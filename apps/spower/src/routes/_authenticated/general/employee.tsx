@@ -11,6 +11,7 @@ import {
 import { UsersResponse, usePb } from '@storeo/core';
 import {
   Button,
+  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -21,12 +22,16 @@ import {
 
 import { employeesOptions } from '../../../api';
 
+type EmployeeSearch = {
+  pageIndex: number;
+  pageSize: number;
+};
 
 const Employee = () => {
   const pb = usePb();
-  const employeesQuery = useSuspenseQuery(employeesOptions(pb));
-  const employees = employeesQuery.data;
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const pagination = Route.useSearch();
+  const employeesQuery = useSuspenseQuery(employeesOptions(pb, pagination));
 
   const columnHelper = createColumnHelper<UsersResponse>();
 
@@ -49,8 +54,9 @@ const Employee = () => {
   ];
 
   const table = useReactTable({
-    data: employees ?? [],
+    data: employeesQuery.data?.items ?? [],
     columns,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel()
   });
 
@@ -63,8 +69,9 @@ const Employee = () => {
             className={'flex gap-1'}
             onClick={() =>
               navigate({
-                to: '/general/employee/new',
-                replace: false
+                to: './new',
+                replace: false,
+                search: pagination
               })
             }
           >
@@ -105,6 +112,20 @@ const Employee = () => {
               ))}
             </TableBody>
           </Table>
+          <Pagination
+            totalItems={employeesQuery.data?.totalItems}
+            currentPage={pagination.pageIndex + 1}
+            onPageChange={page =>
+              navigate({
+                to: './',
+                replace: false,
+                search: {
+                  ...pagination,
+                  pageIndex: page - 1
+                }
+              })
+            }
+          ></Pagination>
         </div>
       </div>
     </>
@@ -113,6 +134,16 @@ const Employee = () => {
 
 export const Route = createFileRoute('/_authenticated/general/employee')({
   component: Employee,
-  loader: ({ context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(employeesOptions(pb))
+  validateSearch: (search?: Record<string, unknown>): EmployeeSearch => {
+    return {
+      pageIndex: Number(search?.pageIndex ?? 0),
+      pageSize: Number(search?.pageSize ?? 10)
+    };
+  },
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { pb, queryClient } }) => {
+    return queryClient?.ensureQueryData(employeesOptions(pb, deps.search));
+  }
 });

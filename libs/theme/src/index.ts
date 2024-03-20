@@ -1,4 +1,5 @@
 export * from './components/form';
+export * from './components/pagination';
 export * from './components/sidebar';
 export * from './components/ui/avatar';
 export * from './components/ui/breadcrumb';

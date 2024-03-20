@@ -13,7 +13,6 @@ import { cn, useLink } from '@storeo/core';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSideBar } from './SideBar';
 
-
 export type SideBarItemProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,
@@ -64,9 +63,6 @@ export const SideBarItem: FC<SideBarItemProps> = ({
           isActive && `bg-appGray font-semibold`
         )}
         to={to}
-        params={{
-          xxx: 'xxx'
-        }}
       >
         {icon &&
           (collapsed ? (
