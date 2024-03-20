@@ -1,4 +1,5 @@
 export * from './components/form';
+export * from './components/input';
 export * from './components/pagination';
 export * from './components/sidebar';
 export * from './components/ui/avatar';
@@ -11,5 +12,6 @@ export * from './components/ui/hover-card';
 export * from './components/ui/input';
 export * from './components/ui/label';
 export * from './components/ui/navigation-menu';
+export * from './components/ui/select';
 export * from './components/ui/table';
 export * from './components/ui/tooltip';

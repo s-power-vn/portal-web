@@ -1,29 +1,23 @@
 import { queryOptions } from '@tanstack/react-query';
-import { PaginationState } from '@tanstack/react-table';
 import PocketBase from 'pocketbase';
 
 import { UsersResponse } from '@storeo/core';
 
-function getEmployees(pb?: PocketBase, pagination?: PaginationState) {
+import { EmployeeSearch } from '../../routes/_authenticated/general/employee';
+
+
+function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
+  const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
   return pb
     ?.collection('test')
-    .getList<UsersResponse>(
-      (pagination?.pageIndex ?? 0) + 1,
-      pagination?.pageSize
-    );
+    .getList<UsersResponse>(search.pageIndex, search.pageSize, {
+      filter
+    });
 }
 
-export function employeesOptions(
-  pb?: PocketBase,
-  pagination?: PaginationState
-) {
-  const page = pagination ?? {
-    pageIndex: 0,
-    pageSize: 10
-  };
-
+export function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['employees', page],
-    queryFn: () => getEmployees(pb, page)
+    queryKey: ['employees', search],
+    queryFn: () => getEmployees(search, pb)
   });
 }

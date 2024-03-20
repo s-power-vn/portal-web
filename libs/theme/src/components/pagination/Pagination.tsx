@@ -1,25 +1,22 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 
-import { FC } from 'react';
 import * as React from 'react';
+import { FC } from 'react';
 
 import { cn } from '@storeo/core';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '../ui/select';
+
+
 export const DEFAULT_PAGE_SIZE = 10;
-export const DEFAULT_PAGE_SIZE_OPTIONS = [
-  {
-    id: 1,
-    value: 10
-  },
-  {
-    id: 2,
-    value: 20
-  },
-  {
-    id: 3,
-    value: 30
-  }
-];
 
 export const DOTS = '...';
 
@@ -99,7 +96,6 @@ export type PaginationProps = {
   totalItems?: number;
   currentPage?: number;
   pageSize?: number;
-  pageSizeOptions?: { id: number; value: number }[];
   showLabel?: boolean;
   showSelect?: boolean;
   onPageChange?: (page: number) => void;
@@ -111,12 +107,11 @@ export const Pagination: FC<PaginationProps> = ({
   totalItems = 0,
   currentPage = 1,
   pageSize = DEFAULT_PAGE_SIZE,
-  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   showLabel,
   showSelect,
   onPageChange,
   onPageSizeChange,
-  labelText = 'Showing {0}-{1} of {2} items',
+  labelText = 'Đang hiển thị từ {0} đến {1} trên tổng số {2}',
   ...props
 }) => {
   const pagination = usePagination({
@@ -131,20 +126,18 @@ export const Pagination: FC<PaginationProps> = ({
 
   return (
     <div className={`flex w-full items-center justify-center p-2 text-sm`}>
-      <div>
-        {showLabel && totalItems > 0 && (
-          <div className={`text-primary`}>
-            {formatStr(
-              labelText,
-              (currentPage - 1) * pageSize + 1,
-              currentPage * pageSize < totalItems
-                ? currentPage * pageSize
-                : totalItems,
-              totalItems
-            )}
-          </div>
-        )}
-      </div>
+      {showLabel && totalItems > 0 && (
+        <div className={`text-appBlack px-2`}>
+          {formatStr(
+            labelText,
+            (currentPage - 1) * pageSize + 1,
+            currentPage * pageSize < totalItems
+              ? currentPage * pageSize
+              : totalItems,
+            totalItems
+          )}
+        </div>
+      )}
       <div className={`flex items-center gap-2`}>
         <ul className={`box-border flex w-max rounded-md border`} {...props}>
           <li
@@ -193,7 +186,30 @@ export const Pagination: FC<PaginationProps> = ({
             <ChevronRightIcon className="h-4 w-4" />
           </li>
         </ul>
-        {showSelect && <div className={`w-24`}></div>}
+        {showSelect && (
+          <div className={`w-24`}>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={value => {
+                onPageSizeChange?.(parseInt(value));
+              }}
+            >
+              <SelectTrigger className={'h-8'}>
+                <SelectValue placeholder="" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Hiển thị</SelectLabel>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                  <SelectItem value="40">40</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
     </div>
   );

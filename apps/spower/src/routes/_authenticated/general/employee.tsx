@@ -11,6 +11,7 @@ import {
 import { UsersResponse, usePb } from '@storeo/core';
 import {
   Button,
+  DebouncedInput,
   Pagination,
   Table,
   TableBody,
@@ -22,16 +23,17 @@ import {
 
 import { employeesOptions } from '../../../api';
 
-type EmployeeSearch = {
+export type EmployeeSearch = {
   pageIndex: number;
   pageSize: number;
+  filter?: string | number;
 };
 
 const Employee = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
-  const pagination = Route.useSearch();
-  const employeesQuery = useSuspenseQuery(employeesOptions(pb, pagination));
+  const search = Route.useSearch();
+  const employeesQuery = useSuspenseQuery(employeesOptions(search, pb));
 
   const columnHelper = createColumnHelper<UsersResponse>();
 
@@ -71,7 +73,7 @@ const Employee = () => {
               navigate({
                 to: './new',
                 replace: false,
-                search: pagination
+                search: search
               })
             }
           >
@@ -79,6 +81,21 @@ const Employee = () => {
             Thêm nhân viên
           </Button>
         </div>
+        <DebouncedInput
+          value={search.filter}
+          className={'w-56'}
+          placeholder={'Tìm kiếm...'}
+          onChange={value => {
+            navigate({
+              to: './',
+              replace: false,
+              search: {
+                ...search,
+                filter: value
+              }
+            });
+          }}
+        />
         <div className={'rounded-md border'}>
           <Table>
             <TableHeader>
@@ -86,12 +103,14 @@ const Employee = () => {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                        </>
+                      )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -114,14 +133,26 @@ const Employee = () => {
           </Table>
           <Pagination
             totalItems={employeesQuery.data?.totalItems}
-            currentPage={pagination.pageIndex + 1}
+            currentPage={search.pageIndex}
+            pageSize={search.pageSize}
+            showSelect={true}
             onPageChange={page =>
               navigate({
                 to: './',
                 replace: false,
                 search: {
-                  ...pagination,
-                  pageIndex: page - 1
+                  ...search,
+                  pageIndex: page
+                }
+              })
+            }
+            onPageSizeChange={pageSize =>
+              navigate({
+                to: './',
+                replace: false,
+                search: {
+                  ...search,
+                  pageSize
                 }
               })
             }
@@ -136,14 +167,15 @@ export const Route = createFileRoute('/_authenticated/general/employee')({
   component: Employee,
   validateSearch: (search?: Record<string, unknown>): EmployeeSearch => {
     return {
-      pageIndex: Number(search?.pageIndex ?? 0),
-      pageSize: Number(search?.pageSize ?? 10)
+      pageIndex: Number(search?.pageIndex ?? 1),
+      pageSize: Number(search?.pageSize ?? 10),
+      filter: search?.filter as string
     };
   },
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { pb, queryClient } }) => {
-    return queryClient?.ensureQueryData(employeesOptions(pb, deps.search));
+    return queryClient?.ensureQueryData(employeesOptions(deps.search, pb));
   }
 });
