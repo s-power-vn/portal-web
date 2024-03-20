@@ -5,7 +5,6 @@ import { UsersResponse } from '@storeo/core';
 
 import { EmployeeSearch } from '../../routes/_authenticated/general/employee';
 
-
 function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
   const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
   return pb

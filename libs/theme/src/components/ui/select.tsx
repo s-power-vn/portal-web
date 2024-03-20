@@ -10,7 +10,6 @@ import * as React from 'react';
 
 import { cn } from '@storeo/core';
 
-
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;

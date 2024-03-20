@@ -2,7 +2,6 @@ import { FC, InputHTMLAttributes, useEffect, useState } from 'react';
 
 import { Input } from '../ui/input';
 
-
 export type DebouncedInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange'

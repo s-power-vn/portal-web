@@ -15,7 +15,6 @@ import {
   SelectValue
 } from '../ui/select';
 
-
 export const DEFAULT_PAGE_SIZE = 10;
 
 export const DOTS = '...';
