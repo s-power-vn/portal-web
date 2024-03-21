@@ -77,6 +77,9 @@ dependencies:
   yup:
     specifier: ^1.4.0
     version: 1.4.0
+  zipson:
+    specifier: ^0.2.12
+    version: 0.2.12
 
 devDependencies:
   '@nx/eslint':
@@ -10431,6 +10434,10 @@ packages:
     optionalDependencies:
       commander: 9.5.0
     dev: true
+
+  /zipson@0.2.12:
+    resolution: {integrity: sha512-+u+fyZQXJUJDTf4NGCChW+LoWGqCrhwHAfvtCtcmE0e40KmQt4YSP4l3TOay1WjRNv+VfODgBD/vNwaSSGnDwA==}
+    dev: false
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
