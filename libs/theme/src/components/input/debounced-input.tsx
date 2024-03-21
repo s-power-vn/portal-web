@@ -15,7 +15,7 @@ export type DebouncedInputProps = Omit<
 };
 
 export const DebouncedInput: FC<DebouncedInputProps> = ({
-  value: initialValue,
+  value: initialValue = '',
   onChange,
   debounce = 500,
   ...props

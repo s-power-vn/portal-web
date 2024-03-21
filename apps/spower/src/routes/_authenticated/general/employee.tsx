@@ -72,8 +72,7 @@ const Employee = () => {
             onClick={() =>
               navigate({
                 to: './new',
-                replace: false,
-                search: search
+                search
               })
             }
           >
@@ -85,7 +84,7 @@ const Employee = () => {
           value={search.filter}
           className={'h-8 w-56'}
           placeholder={'Tìm kiếm...'}
-          onChange={value => {
+          onChange={value =>
             navigate({
               to: './',
               replace: false,
@@ -93,8 +92,8 @@ const Employee = () => {
                 ...search,
                 filter: value
               }
-            });
-          }}
+            })
+          }
         />
         <div className={'rounded-md border'}>
           <Table>

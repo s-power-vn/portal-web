@@ -15,6 +15,8 @@ import {
   TextField
 } from '@storeo/theme';
 
+import { DepartmentDropdownField } from '../../../../components';
+
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
@@ -49,11 +51,28 @@ const NewEmployee = () => {
             department: ''
           }}
           // loading={login.isPending}
-          className={'flex flex-col gap-4'}
+          className={'flex flex-col gap-2'}
         >
-          <TextField schema={schema} name={'name'} title={'Họ tên'} />
-          <TextField schema={schema} name={'email'} title={'Email'} />
-          <TextField schema={schema} name={'department'} title={'Phòng ban'} />
+          <TextField
+            schema={schema}
+            name={'name'}
+            title={'Họ tên'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
+            name={'email'}
+            title={'Email'}
+            options={{}}
+          />
+          <DepartmentDropdownField
+            schema={schema}
+            name={'department'}
+            title={'Phòng ban'}
+            options={{
+              placeholder: 'Hãy chọn phòng ban'
+            }}
+          />
           <DialogFooter>
             <Button type="submit">Chấp nhận</Button>
           </DialogFooter>

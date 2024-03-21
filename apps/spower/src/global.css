@@ -81,3 +81,8 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+.popover-content {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
+}

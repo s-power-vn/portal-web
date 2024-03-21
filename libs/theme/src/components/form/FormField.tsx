@@ -32,7 +32,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
       render={({ field, fieldState: { invalid, error } }) => {
         const childrenWithProps = Children.map(children, child => {
           if (isValidElement(child)) {
-            const { onChange, ...fieldProps } = field;
+            const { onChange, ref, ...fieldProps } = field;
             return cloneElement(child, {
               onChange: v => {
                 onChange(v);
