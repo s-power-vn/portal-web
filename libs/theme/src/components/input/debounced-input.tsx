@@ -17,7 +17,7 @@ export type DebouncedInputProps = Omit<
 export const DebouncedInput: FC<DebouncedInputProps> = ({
   value: initialValue = '',
   onChange,
-  debounce = 500,
+  debounce = 300,
   ...props
 }) => {
   const [value, setValue] = useState(initialValue);
