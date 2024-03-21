@@ -60,17 +60,16 @@ const Employee = () => {
 
   const columns = [
     columnHelper.accessor('avatar', {
-      cell: ({ row }) => {
-        const url = `http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`;
-        return (
-          <Avatar>
-            <AvatarImage src={url} />
-            <AvatarFallback className={'text-sm'}>
-              <UserIcon />
-            </AvatarFallback>
-          </Avatar>
-        );
-      },
+      cell: ({ row }) => (
+        <Avatar>
+          <AvatarImage
+            src={`http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`}
+          />
+          <AvatarFallback className={'text-sm'}>
+            <UserIcon />
+          </AvatarFallback>
+        </Avatar>
+      ),
       header: () => 'Ảnh',
       footer: info => info.column.id
     }),
