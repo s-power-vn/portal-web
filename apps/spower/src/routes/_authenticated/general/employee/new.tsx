@@ -1,8 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
+import { usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -26,6 +28,31 @@ const schema = object().shape({
 const NewEmployee = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
+  const pb = usePb();
+  const queryClient = useQueryClient();
+
+  const createEmployee = useMutation({
+    mutationKey: ['createEmployee'],
+    mutationFn: async ({
+      name,
+      email,
+      department
+    }: {
+      name: string;
+      email: string;
+      department: string;
+    }) =>
+      pb.collection('users').create({
+        name,
+        email,
+        department
+      }),
+    onSuccess: () => {
+      setOpen(false);
+      history.back();
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    }
+  });
 
   return (
     <Dialog
@@ -44,14 +71,20 @@ const NewEmployee = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          // onSubmit={({ email, password }) => login.mutate({ email, password })}
+          onSubmit={({ name, email, department }) => {
+            createEmployee.mutate({
+              name,
+              email,
+              department
+            });
+          }}
           defaultValues={{
             name: '',
             email: '',
             department: ''
           }}
-          // loading={login.isPending}
-          className={'flex flex-col gap-2'}
+          loading={createEmployee.isPending}
+          className={'mt-4 flex flex-col gap-2'}
         >
           <TextField
             schema={schema}
@@ -73,7 +106,7 @@ const NewEmployee = () => {
               placeholder: 'Hãy chọn phòng ban'
             }}
           />
-          <DialogFooter>
+          <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>
           </DialogFooter>
         </Form>

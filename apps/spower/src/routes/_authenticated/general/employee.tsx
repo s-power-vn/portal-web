@@ -1,5 +1,5 @@
 import { PlusIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -7,9 +7,14 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { UserIcon } from 'lucide-react';
+import PocketBase from 'pocketbase';
 
-import { UsersResponse, usePb } from '@storeo/core';
+import { DepartmentsResponse, UsersResponse, usePb } from '@storeo/core';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   DebouncedInput,
   Pagination,
@@ -21,13 +26,29 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { employeesOptions } from '../../../api';
-
-export type EmployeeSearch = {
+type EmployeeSearch = {
   pageIndex: number;
   pageSize: number;
   filter?: string | number;
 };
+
+function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
+  const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+  return pb
+    ?.collection('users')
+    .getList<UsersResponse>(search.pageIndex, search.pageSize, {
+      filter,
+      sort: '-created',
+      expand: 'department'
+    });
+}
+
+export function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
+  return queryOptions({
+    queryKey: ['employees', search],
+    queryFn: () => getEmployees(search, pb)
+  });
+}
 
 const Employee = () => {
   const pb = usePb();
@@ -38,6 +59,21 @@ const Employee = () => {
   const columnHelper = createColumnHelper<UsersResponse>();
 
   const columns = [
+    columnHelper.accessor('avatar', {
+      cell: ({ row }) => {
+        const url = `http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`;
+        return (
+          <Avatar>
+            <AvatarImage src={url} />
+            <AvatarFallback className={'text-sm'}>
+              <UserIcon />
+            </AvatarFallback>
+          </Avatar>
+        );
+      },
+      header: () => 'Ảnh',
+      footer: info => info.column.id
+    }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
       header: () => 'Họ tên',
@@ -49,7 +85,13 @@ const Employee = () => {
       footer: info => info.column.id
     }),
     columnHelper.accessor('department', {
-      cell: info => info.getValue(),
+      cell: ({ row }) => {
+        return (
+          row.original.expand as {
+            department: DepartmentsResponse;
+          }
+        ).department.name;
+      },
       header: () => 'Phòng ban',
       footer: info => info.column.id
     })
