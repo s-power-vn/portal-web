@@ -3,6 +3,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -21,17 +22,22 @@ export const HeaderMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage
-            src={`http://localhost:8090/api/files/users/${pb.authStore.model?.id}/${pb.authStore.model?.avatar}`}
-          />
-          <AvatarFallback className={'text-sm'}>
-            {pb.authStore.model?.name
-              .split(' ')
-              .map((n: string) => n[0])
-              .join('')}
-          </AvatarFallback>
-        </Avatar>
+        <Button
+          variant="ghost"
+          className="flex h-8 w-8 items-center justify-center rounded-full"
+        >
+          <Avatar className="h-8 w-8">
+            <AvatarImage
+              src={`http://localhost:8090/api/files/users/${pb.authStore.model?.id}/${pb.authStore.model?.avatar}`}
+            />
+            <AvatarFallback className={'text-sm'}>
+              {pb.authStore.model?.name
+                .split(' ')
+                .map((n: string) => n[0])
+                .join('')}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={'w-56'}>
         <DropdownMenuLabel>
