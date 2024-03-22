@@ -47,10 +47,10 @@ const NewEmployee = () => {
         email,
         department
       }),
-    onSuccess: () => {
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
+    onSettled: () => {
       setOpen(false);
       history.back();
-      queryClient.invalidateQueries({ queryKey: ['employees'] });
     }
   });
 

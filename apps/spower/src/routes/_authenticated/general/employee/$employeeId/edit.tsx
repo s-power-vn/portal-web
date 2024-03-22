@@ -67,7 +67,11 @@ const EditEmployee = () => {
         email,
         department
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['employees'] }),
+        queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+      ]),
     onSettled: () => {
       setOpen(false);
       history.back();
