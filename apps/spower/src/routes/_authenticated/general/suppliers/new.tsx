@@ -25,7 +25,7 @@ const schema = object().shape({
   note: string()
 });
 
-const NewSupplier = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -108,5 +108,5 @@ const NewSupplier = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/general/suppliers/new')({
-  component: NewSupplier
+  component: Component
 });

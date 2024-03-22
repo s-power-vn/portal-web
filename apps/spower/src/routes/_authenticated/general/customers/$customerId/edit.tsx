@@ -42,7 +42,7 @@ function customerOptions(id: string, pb?: PocketBase) {
   });
 }
 
-const EditCustomer = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -130,7 +130,7 @@ const EditCustomer = () => {
 export const Route = createFileRoute(
   '/_authenticated/general/customers/$customerId/edit'
 )({
-  component: EditCustomer,
+  component: Component,
   loader: ({ context: { pb, queryClient }, params: { customerId } }) =>
     queryClient?.ensureQueryData(customerOptions(customerId, pb))
 });

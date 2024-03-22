@@ -56,7 +56,7 @@ export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   });
 }
 
-const Mine = () => {
+const Component = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -260,7 +260,7 @@ const Mine = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/document/mine/')({
-  component: Mine,
+  component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

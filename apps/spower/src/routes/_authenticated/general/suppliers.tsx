@@ -42,14 +42,14 @@ function getSuppliers(search: SuppliersSearch, pb?: PocketBase) {
     });
 }
 
-export function suppliersOptions(search: SuppliersSearch, pb?: PocketBase) {
+function suppliersOptions(search: SuppliersSearch, pb?: PocketBase) {
   return queryOptions({
     queryKey: ['suppliers', search],
     queryFn: () => getSuppliers(search, pb)
   });
 }
 
-const Employee = () => {
+const Component = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -252,7 +252,7 @@ const Employee = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/general/suppliers')({
-  component: Employee,
+  component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
     suppliersSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

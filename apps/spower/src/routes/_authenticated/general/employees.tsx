@@ -46,14 +46,14 @@ function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
     });
 }
 
-export function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
+function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
   return queryOptions({
     queryKey: ['employees', search],
     queryFn: () => getEmployees(search, pb)
   });
 }
 
-const Employees = () => {
+const Component = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -259,7 +259,7 @@ const Employees = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/general/employees')({
-  component: Employees,
+  component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
     employeeSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

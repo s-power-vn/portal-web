@@ -25,7 +25,7 @@ const schema = object().shape({
   note: string()
 });
 
-const NewCustomer = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -108,5 +108,5 @@ const NewCustomer = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/general/customers/new')({
-  component: NewCustomer
+  component: Component
 });

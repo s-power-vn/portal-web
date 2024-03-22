@@ -25,7 +25,7 @@ const schema = object().shape({
   department: string().required('Hãy chọn phòng ban')
 });
 
-const NewEmployee = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -98,5 +98,5 @@ const NewEmployee = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/general/employees/new')({
-  component: NewEmployee
+  component: Component
 });

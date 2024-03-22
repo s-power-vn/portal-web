@@ -42,7 +42,7 @@ function employeeOptions(id: string, pb?: PocketBase) {
   });
 }
 
-const EditEmployee = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -120,7 +120,7 @@ const EditEmployee = () => {
 export const Route = createFileRoute(
   '/_authenticated/general/employees/$employeeId/edit'
 )({
-  component: EditEmployee,
+  component: Component,
   loader: ({ context: { pb, queryClient }, params: { employeeId } }) =>
     queryClient?.ensureQueryData(employeeOptions(employeeId, pb))
 });

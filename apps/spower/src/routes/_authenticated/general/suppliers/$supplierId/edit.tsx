@@ -42,7 +42,7 @@ function supplierOptions(id: string, pb?: PocketBase) {
   });
 }
 
-const EditSupplier = () => {
+const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
@@ -130,7 +130,7 @@ const EditSupplier = () => {
 export const Route = createFileRoute(
   '/_authenticated/general/suppliers/$supplierId/edit'
 )({
-  component: EditSupplier,
+  component: Component,
   loader: ({ context: { pb, queryClient }, params: { supplierId } }) =>
     queryClient?.ensureQueryData(supplierOptions(supplierId, pb))
 });
