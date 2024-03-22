@@ -5,6 +5,7 @@
 export enum Collections {
 	Customer = "customer",
 	Department = "department",
+	Document = "document",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -48,6 +49,19 @@ export type DepartmentRecord = {
 	name: string
 }
 
+export enum DocumentStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
+export type DocumentRecord = {
+	assignee?: RecordIdString
+	bidding?: string
+	createdBy?: RecordIdString
+	customer?: RecordIdString
+	name?: string
+	status?: DocumentStatusOptions
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -66,6 +80,7 @@ export type UserRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
+export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -74,6 +89,7 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
+	document: DocumentRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -81,6 +97,7 @@ export type CollectionRecords = {
 export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
+	document: DocumentResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }

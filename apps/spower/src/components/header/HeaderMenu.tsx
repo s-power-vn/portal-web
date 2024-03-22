@@ -27,10 +27,7 @@ export const HeaderMenu = () => {
             src={`http://localhost:8090/api/files/users/${pb.authStore.model?.id}/${pb.authStore.model?.avatar}`}
           />
           <AvatarFallback className={'text-sm'}>
-            {pb.authStore.model?.name
-              .split(' ')
-              .map((n: string) => n[0])
-              .join('')}
+            {pb.authStore.model?.name.split(' ')[0][0]}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

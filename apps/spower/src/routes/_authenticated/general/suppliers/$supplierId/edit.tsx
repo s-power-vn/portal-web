@@ -86,7 +86,7 @@ const EditSupplier = () => {
           onSubmit={values => updateSupplier.mutate(values)}
           defaultValues={supplierQuery.data}
           loading={updateSupplier.isPending}
-          className={'mt-4 flex flex-col gap-2'}
+          className={'mt-4 flex flex-col gap-3'}
         >
           <TextField
             schema={schema}

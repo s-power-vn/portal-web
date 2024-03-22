@@ -15,7 +15,6 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
 import { Route as AuthenticatedDocumentWatingImport } from './routes/_authenticated/document-wating'
 import { Route as AuthenticatedDocumentMineImport } from './routes/_authenticated/document-mine'
 import { Route as AuthenticatedDocumentAllImport } from './routes/_authenticated/document-all'
@@ -23,6 +22,7 @@ import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticate
 import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenticated/general/suppliers'
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
+import { Route as AuthenticatedDocumentNewImport } from './routes/_authenticated/document/new'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
 import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authenticated/general/employees/new'
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
@@ -52,11 +52,6 @@ const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedGeneralRoute = AuthenticatedGeneralImport.update({
-  path: '/general',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
 const AuthenticatedDocumentWatingRoute =
   AuthenticatedDocumentWatingImport.update({
     path: '/document-wating',
@@ -74,27 +69,32 @@ const AuthenticatedDocumentAllRoute = AuthenticatedDocumentAllImport.update({
 } as any)
 
 const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
-  path: '/',
-  getParentRoute: () => AuthenticatedGeneralRoute,
+  path: '/general/',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedGeneralSuppliersRoute =
   AuthenticatedGeneralSuppliersImport.update({
-    path: '/suppliers',
-    getParentRoute: () => AuthenticatedGeneralRoute,
+    path: '/general/suppliers',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesRoute =
   AuthenticatedGeneralEmployeesImport.update({
-    path: '/employees',
-    getParentRoute: () => AuthenticatedGeneralRoute,
+    path: '/general/employees',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 const AuthenticatedGeneralCustomersRoute =
   AuthenticatedGeneralCustomersImport.update({
-    path: '/customers',
-    getParentRoute: () => AuthenticatedGeneralRoute,
+    path: '/general/customers',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
+
+const AuthenticatedDocumentNewRoute = AuthenticatedDocumentNewImport.update({
+  path: '/document/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 const AuthenticatedGeneralSuppliersNewRoute =
   AuthenticatedGeneralSuppliersNewImport.update({
@@ -160,29 +160,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentWatingImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/general': {
-      preLoaderRoute: typeof AuthenticatedGeneralImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/home': {
       preLoaderRoute: typeof AuthenticatedHomeImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/document/new': {
+      preLoaderRoute: typeof AuthenticatedDocumentNewImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/general/customers': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersImport
-      parentRoute: typeof AuthenticatedGeneralImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/employees': {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesImport
-      parentRoute: typeof AuthenticatedGeneralImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/suppliers': {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersImport
-      parentRoute: typeof AuthenticatedGeneralImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/': {
       preLoaderRoute: typeof AuthenticatedGeneralIndexImport
-      parentRoute: typeof AuthenticatedGeneralImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/customers/new': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersNewImport
@@ -219,22 +219,21 @@ export const routeTree = rootRoute.addChildren([
     AuthenticatedDocumentAllRoute,
     AuthenticatedDocumentMineRoute,
     AuthenticatedDocumentWatingRoute,
-    AuthenticatedGeneralRoute.addChildren([
-      AuthenticatedGeneralCustomersRoute.addChildren([
-        AuthenticatedGeneralCustomersNewRoute,
-        AuthenticatedGeneralCustomersCustomerIdEditRoute,
-      ]),
-      AuthenticatedGeneralEmployeesRoute.addChildren([
-        AuthenticatedGeneralEmployeesNewRoute,
-        AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
-      ]),
-      AuthenticatedGeneralSuppliersRoute.addChildren([
-        AuthenticatedGeneralSuppliersNewRoute,
-        AuthenticatedGeneralSuppliersSupplierIdEditRoute,
-      ]),
-      AuthenticatedGeneralIndexRoute,
-    ]),
     AuthenticatedHomeRoute,
+    AuthenticatedDocumentNewRoute,
+    AuthenticatedGeneralCustomersRoute.addChildren([
+      AuthenticatedGeneralCustomersNewRoute,
+      AuthenticatedGeneralCustomersCustomerIdEditRoute,
+    ]),
+    AuthenticatedGeneralEmployeesRoute.addChildren([
+      AuthenticatedGeneralEmployeesNewRoute,
+      AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
+    ]),
+    AuthenticatedGeneralSuppliersRoute.addChildren([
+      AuthenticatedGeneralSuppliersNewRoute,
+      AuthenticatedGeneralSuppliersSupplierIdEditRoute,
+    ]),
+    AuthenticatedGeneralIndexRoute,
   ]),
   LoginRoute,
 ])

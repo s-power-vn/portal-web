@@ -1,12 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
+import PocketBase from 'pocketbase';
 
 import { FC } from 'react';
 
-import { usePb } from '@storeo/core';
+import { DepartmentResponse, usePb } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-import { departmentsOptions } from '../../../api';
+function getDepartments(pb?: PocketBase) {
+  return pb?.collection('department').getFullList<DepartmentResponse>();
+}
+
+function departmentsOptions(pb?: PocketBase) {
+  return queryOptions({
+    queryKey: ['departments'],
+    queryFn: () => getDepartments(pb)
+  });
+}
 
 export type DepartmentDropdownProps = Omit<SelectInputProps, 'items'>;
 

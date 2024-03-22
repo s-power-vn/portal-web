@@ -20,7 +20,6 @@ import { cn, useLink } from '@storeo/core';
 
 import { useSideBar } from './SideBar';
 
-
 export type SideBarGroupProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,
@@ -61,7 +60,7 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
     () => (
       <Link
         className={cn(
-          `hover:bg-appGray flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
+          `hover:bg-appGrayLight flex w-full items-center justify-start truncate whitespace-nowrap border-b pl-[3px] text-sm`,
           isActive && `bg-appGrayLight font-semibold`
         )}
         to={to}

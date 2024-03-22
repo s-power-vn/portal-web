@@ -17,7 +17,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { DepartmentDropdownField } from '../../../../components';
+import { DepartmentDropdownField } from '../../../components';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
@@ -33,8 +33,7 @@ const NewEmployee = () => {
 
   const createEmployee = useMutation({
     mutationKey: ['createEmployee'],
-    mutationFn: (params: UserRecord) =>
-      pb.collection<UserRecord>('user').create(params),
+    mutationFn: (params: UserRecord) => pb.collection('user').create(params),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
     onSettled: () => {
       setOpen(false);
@@ -97,6 +96,6 @@ const NewEmployee = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/employees/new')({
+export const Route = createFileRoute('/_authenticated/document/new')({
   component: NewEmployee
 });
