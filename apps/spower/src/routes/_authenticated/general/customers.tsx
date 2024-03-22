@@ -11,7 +11,7 @@ import { EditIcon, SheetIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { CustomersResponse, usePb } from '@storeo/core';
+import { CustomerResponse, usePb } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -35,11 +35,10 @@ type CustomersSearch = InferType<typeof customersSearchSchema>;
 function getCustomers(search: CustomersSearch, pb?: PocketBase) {
   const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
   return pb
-    ?.collection<CustomersResponse>('customers')
+    ?.collection<CustomerResponse>('customer')
     .getList(search.pageIndex, search.pageSize, {
       filter,
-      sort: '-created',
-      expand: 'department'
+      sort: '-created'
     });
 }
 
@@ -56,7 +55,7 @@ const Employee = () => {
   const search = Route.useSearch();
   const customersQuery = useSuspenseQuery(customersOptions(search, pb));
 
-  const columnHelper = createColumnHelper<CustomersResponse>();
+  const columnHelper = createColumnHelper<CustomerResponse>();
 
   const columns = [
     columnHelper.display({

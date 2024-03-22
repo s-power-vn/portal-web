@@ -3,9 +3,10 @@
 */
 
 export enum Collections {
-	Customers = "customers",
-	Departments = "departments",
-	Users = "users",
+	Customer = "customer",
+	Department = "department",
+	Supplier = "supplier",
+	User = "user",
 }
 
 // Alias types for improved usability
@@ -32,7 +33,7 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type CustomersRecord = {
+export type CustomerRecord = {
 	address?: string
 	code?: string
 	email?: string
@@ -41,33 +42,45 @@ export type CustomersRecord = {
 	phone?: string
 }
 
-export type DepartmentsRecord = {
+export type DepartmentRecord = {
 	code?: string
 	description?: string
 	name: string
 }
 
-export type UsersRecord = {
+export type SupplierRecord = {
+	address?: string
+	code?: string
+	email?: string
+	name: string
+	note?: string
+	phone?: string
+}
+
+export type UserRecord = {
 	avatar?: string
 	department: RecordIdString
 	name: string
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type CustomersResponse<Texpand = unknown> = Required<CustomersRecord> & BaseSystemFields<Texpand>
-export type DepartmentsResponse<Texpand = unknown> = Required<DepartmentsRecord> & BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
+export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
+export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
+export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
-	customers: CustomersRecord
-	departments: DepartmentsRecord
-	users: UsersRecord
+	customer: CustomerRecord
+	department: DepartmentRecord
+	supplier: SupplierRecord
+	user: UserRecord
 }
 
 export type CollectionResponses = {
-	customers: CustomersResponse
-	departments: DepartmentsResponse
-	users: UsersResponse
+	customer: CustomerResponse
+	department: DepartmentResponse
+	supplier: SupplierResponse
+	user: UserResponse
 }

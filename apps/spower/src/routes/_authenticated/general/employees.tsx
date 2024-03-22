@@ -11,7 +11,7 @@ import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { DepartmentsResponse, UsersResponse, usePb } from '@storeo/core';
+import { DepartmentResponse, UserResponse, usePb } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -38,8 +38,8 @@ type EmployeeSearch = InferType<typeof employeeSearchSchema>;
 function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
   const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
   return pb
-    ?.collection('users')
-    .getList<UsersResponse>(search.pageIndex, search.pageSize, {
+    ?.collection<UserResponse>('user')
+    .getList(search.pageIndex, search.pageSize, {
       filter,
       sort: '-created',
       expand: 'department'
@@ -59,7 +59,7 @@ const Employees = () => {
   const search = Route.useSearch();
   const employeesQuery = useSuspenseQuery(employeesOptions(search, pb));
 
-  const columnHelper = createColumnHelper<UsersResponse>();
+  const columnHelper = createColumnHelper<UserResponse>();
 
   const columns = [
     columnHelper.accessor('avatar', {
@@ -92,7 +92,7 @@ const Employees = () => {
       cell: ({ row }) => {
         return (
           row.original.expand as {
-            department: DepartmentsResponse;
+            department: DepartmentResponse;
           }
         ).department.name;
       },

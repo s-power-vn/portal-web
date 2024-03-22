@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { CustomersRecord, CustomersResponse, usePb } from '@storeo/core';
+import { CustomerRecord, CustomerResponse, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -33,8 +33,8 @@ const NewCustomer = () => {
 
   const createCustomer = useMutation({
     mutationKey: ['createCustomer'],
-    mutationFn: (params: CustomersRecord) =>
-      pb.collection('customers').create<CustomersResponse>(params),
+    mutationFn: (params: CustomerRecord) =>
+      pb.collection('customer').create<CustomerResponse>(params),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
     onSettled: () => {
       setOpen(false);

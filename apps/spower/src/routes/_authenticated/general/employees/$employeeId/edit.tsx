@@ -10,7 +10,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UsersRecord, UsersResponse, usePb } from '@storeo/core';
+import { UserRecord, UserResponse, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -32,7 +32,7 @@ const schema = object().shape({
 });
 
 function getEmployee(id: string, pb?: PocketBase) {
-  return pb?.collection('users').getOne<UsersResponse>(id);
+  return pb?.collection('user').getOne<UserResponse>(id);
 }
 
 function employeeOptions(id: string, pb?: PocketBase) {
@@ -53,7 +53,7 @@ const EditEmployee = () => {
 
   const updateEmployee = useMutation({
     mutationKey: ['updateEmployee'],
-    mutationFn: (params: UsersRecord) =>
+    mutationFn: (params: UserRecord) =>
       pb.collection('users').update(employeeId, params),
     onSuccess: () =>
       Promise.all([
