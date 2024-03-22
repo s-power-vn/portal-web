@@ -12,7 +12,7 @@ import { object, string } from 'yup';
 
 import { FC, ReactNode, useState } from 'react';
 
-import { DocumentRecord, usePb } from '@storeo/core';
+import { DocumentRecord, DocumentStatusOptions, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -56,7 +56,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
         navigate({
-          to: '/document-mine',
+          to: '/document/mine',
           search: {
             pageIndex: 1,
             pageSize: 10,
@@ -77,7 +77,13 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           </DialogHeader>
           <Form
             schema={schema}
-            onSubmit={values => createDocument.mutate(values)}
+            onSubmit={values =>
+              createDocument.mutate({
+                ...values,
+                status: DocumentStatusOptions.ToDo,
+                createdBy: pb.authStore.model?.id
+              })
+            }
             defaultValues={{
               name: '',
               bidding: '',
@@ -153,17 +159,17 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             ></SideBarItem>
           </SideBarGroup>
           <SideBarItem
-            to={'/document-waiting'}
+            to={'/document/waiting'}
             title={'Đang chờ xử lý'}
             icon={<FileTextIcon width={22} height={22} />}
           ></SideBarItem>
           <SideBarItem
-            to={'/document-mine'}
+            to={'/document/mine'}
             title={'Tài liệu của tôi'}
             icon={<FilePlusIcon width={22} height={22} />}
           ></SideBarItem>
           <SideBarItem
-            to={'/document-all'}
+            to={'/document/all'}
             title={'Tất cả tài liệu'}
             icon={<FileMinusIcon width={22} height={22} />}
           ></SideBarItem>

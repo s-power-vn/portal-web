@@ -28,8 +28,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentStatus } from '../../components';
-import { EmployeeItem } from '../../components/models/employee/EmployeeItem';
+import { DocumentStatus, EmployeeItem } from '../../../../components';
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -57,7 +56,7 @@ export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   });
 }
 
-const DocumentMine = () => {
+const Mine = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -196,7 +195,18 @@ const DocumentMine = () => {
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  className={'cursor-pointer'}
+                  onClick={() =>
+                    navigate({
+                      to: './$documentId/edit',
+                      params: {
+                        documentId: row.original.id
+                      }
+                    })
+                  }
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
@@ -249,8 +259,8 @@ const DocumentMine = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/document-mine')({
-  component: DocumentMine,
+export const Route = createFileRoute('/_authenticated/document/mine/')({
+  component: Mine,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

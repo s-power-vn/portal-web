@@ -15,20 +15,24 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedDocumentWaitingImport } from './routes/_authenticated/document-waiting'
-import { Route as AuthenticatedDocumentMineImport } from './routes/_authenticated/document-mine'
-import { Route as AuthenticatedDocumentAllImport } from './routes/_authenticated/document-all'
+import { Route as AuthenticatedDocumentImport } from './routes/_authenticated/document'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
 import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenticated/general/suppliers'
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedDocumentNewImport } from './routes/_authenticated/document/new'
+import { Route as AuthenticatedDocumentWaitingIndexImport } from './routes/_authenticated/document/waiting/index'
+import { Route as AuthenticatedDocumentMineIndexImport } from './routes/_authenticated/document/mine/index'
+import { Route as AuthenticatedDocumentAllIndexImport } from './routes/_authenticated/document/all/index'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
 import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authenticated/general/employees/new'
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
 import { Route as AuthenticatedGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/general/suppliers/$supplierId/edit'
 import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/general/employees/$employeeId/edit'
 import { Route as AuthenticatedGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/general/customers/$customerId/edit'
+import { Route as AuthenticatedDocumentWaitingDocumentIdEditImport } from './routes/_authenticated/document/waiting/$documentId/edit'
+import { Route as AuthenticatedDocumentMineDocumentIdEditImport } from './routes/_authenticated/document/mine/$documentId/edit'
+import { Route as AuthenticatedDocumentAllDocumentIdEditImport } from './routes/_authenticated/document/all/$documentId/edit'
 
 // Create/Update Routes
 
@@ -52,19 +56,8 @@ const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedDocumentWaitingRoute =
-  AuthenticatedDocumentWaitingImport.update({
-    path: '/document-waiting',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
-const AuthenticatedDocumentMineRoute = AuthenticatedDocumentMineImport.update({
-  path: '/document-mine',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedDocumentAllRoute = AuthenticatedDocumentAllImport.update({
-  path: '/document-all',
+const AuthenticatedDocumentRoute = AuthenticatedDocumentImport.update({
+  path: '/document',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -92,9 +85,27 @@ const AuthenticatedGeneralCustomersRoute =
   } as any)
 
 const AuthenticatedDocumentNewRoute = AuthenticatedDocumentNewImport.update({
-  path: '/document/new',
-  getParentRoute: () => AuthenticatedRoute,
+  path: '/new',
+  getParentRoute: () => AuthenticatedDocumentRoute,
 } as any)
+
+const AuthenticatedDocumentWaitingIndexRoute =
+  AuthenticatedDocumentWaitingIndexImport.update({
+    path: '/waiting/',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
+
+const AuthenticatedDocumentMineIndexRoute =
+  AuthenticatedDocumentMineIndexImport.update({
+    path: '/mine/',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
+
+const AuthenticatedDocumentAllIndexRoute =
+  AuthenticatedDocumentAllIndexImport.update({
+    path: '/all/',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
 
 const AuthenticatedGeneralSuppliersNewRoute =
   AuthenticatedGeneralSuppliersNewImport.update({
@@ -132,6 +143,24 @@ const AuthenticatedGeneralCustomersCustomerIdEditRoute =
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
+const AuthenticatedDocumentWaitingDocumentIdEditRoute =
+  AuthenticatedDocumentWaitingDocumentIdEditImport.update({
+    path: '/waiting/$documentId/edit',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
+
+const AuthenticatedDocumentMineDocumentIdEditRoute =
+  AuthenticatedDocumentMineDocumentIdEditImport.update({
+    path: '/mine/$documentId/edit',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
+
+const AuthenticatedDocumentAllDocumentIdEditRoute =
+  AuthenticatedDocumentAllDocumentIdEditImport.update({
+    path: '/all/$documentId/edit',
+    getParentRoute: () => AuthenticatedDocumentRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -148,16 +177,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated/document-all': {
-      preLoaderRoute: typeof AuthenticatedDocumentAllImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/document-mine': {
-      preLoaderRoute: typeof AuthenticatedDocumentMineImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/document-waiting': {
-      preLoaderRoute: typeof AuthenticatedDocumentWaitingImport
+    '/_authenticated/document': {
+      preLoaderRoute: typeof AuthenticatedDocumentImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/home': {
@@ -166,7 +187,7 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/document/new': {
       preLoaderRoute: typeof AuthenticatedDocumentNewImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedDocumentImport
     }
     '/_authenticated/general/customers': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersImport
@@ -196,6 +217,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersNewImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
+    '/_authenticated/document/all/': {
+      preLoaderRoute: typeof AuthenticatedDocumentAllIndexImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
+    '/_authenticated/document/mine/': {
+      preLoaderRoute: typeof AuthenticatedDocumentMineIndexImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
+    '/_authenticated/document/waiting/': {
+      preLoaderRoute: typeof AuthenticatedDocumentWaitingIndexImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
+    '/_authenticated/document/all/$documentId/edit': {
+      preLoaderRoute: typeof AuthenticatedDocumentAllDocumentIdEditImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
+    '/_authenticated/document/mine/$documentId/edit': {
+      preLoaderRoute: typeof AuthenticatedDocumentMineDocumentIdEditImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
+    '/_authenticated/document/waiting/$documentId/edit': {
+      preLoaderRoute: typeof AuthenticatedDocumentWaitingDocumentIdEditImport
+      parentRoute: typeof AuthenticatedDocumentImport
+    }
     '/_authenticated/general/customers/$customerId/edit': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersCustomerIdEditImport
       parentRoute: typeof AuthenticatedGeneralCustomersImport
@@ -216,11 +261,16 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AuthenticatedRoute.addChildren([
-    AuthenticatedDocumentAllRoute,
-    AuthenticatedDocumentMineRoute,
-    AuthenticatedDocumentWaitingRoute,
+    AuthenticatedDocumentRoute.addChildren([
+      AuthenticatedDocumentNewRoute,
+      AuthenticatedDocumentAllIndexRoute,
+      AuthenticatedDocumentMineIndexRoute,
+      AuthenticatedDocumentWaitingIndexRoute,
+      AuthenticatedDocumentAllDocumentIdEditRoute,
+      AuthenticatedDocumentMineDocumentIdEditRoute,
+      AuthenticatedDocumentWaitingDocumentIdEditRoute,
+    ]),
     AuthenticatedHomeRoute,
-    AuthenticatedDocumentNewRoute,
     AuthenticatedGeneralCustomersRoute.addChildren([
       AuthenticatedGeneralCustomersNewRoute,
       AuthenticatedGeneralCustomersCustomerIdEditRoute,

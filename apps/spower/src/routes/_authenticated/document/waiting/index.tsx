@@ -28,8 +28,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentStatus } from '../../components';
-import { EmployeeItem } from '../../components/models/employee/EmployeeItem';
+import { DocumentStatus, EmployeeItem } from '../../../../components';
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -44,7 +43,9 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
   return pb
     ?.collection<DocumentResponse>('document')
     .getList(search.pageIndex, search.pageSize, {
-      filter,
+      filter:
+        filter +
+        `&& (assignee = "${pb?.authStore.model?.id}") && (status = "ToDo")`,
       sort: '-created',
       expand: 'customer,assignee,createdBy'
     });
@@ -52,12 +53,12 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
 
 export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['documents', 'all', search],
+    queryKey: ['documents', 'waiting', search],
     queryFn: () => getDocuments(search, pb)
   });
 }
 
-const DocumentAll = () => {
+const Waiting = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -196,7 +197,18 @@ const DocumentAll = () => {
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  className={'cursor-pointer'}
+                  onClick={() =>
+                    navigate({
+                      to: './$documentId/edit',
+                      params: {
+                        documentId: row.original.id
+                      }
+                    })
+                  }
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
@@ -249,8 +261,8 @@ const DocumentAll = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/document-all')({
-  component: DocumentAll,
+export const Route = createFileRoute('/_authenticated/document/waiting/')({
+  component: Waiting,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

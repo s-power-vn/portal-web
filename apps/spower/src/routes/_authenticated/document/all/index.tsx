@@ -1,6 +1,6 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
@@ -28,8 +28,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentStatus } from '../../components';
-import { EmployeeItem } from '../../components/models/employee/EmployeeItem';
+import { DocumentStatus, EmployeeItem } from '../../../../components';
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -44,9 +43,7 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
   return pb
     ?.collection<DocumentResponse>('document')
     .getList(search.pageIndex, search.pageSize, {
-      filter:
-        filter +
-        `&& (assignee = "${pb?.authStore.model?.id}") && (status = "ToDo")`,
+      filter,
       sort: '-created',
       expand: 'customer,assignee,createdBy'
     });
@@ -54,12 +51,12 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
 
 export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['documents', 'waiting', search],
+    queryKey: ['documents', 'all', search],
     queryFn: () => getDocuments(search, pb)
   });
 }
 
-const DocumentWaiting = () => {
+const All = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -156,103 +153,108 @@ const DocumentWaiting = () => {
   });
 
   return (
-    <>
-      <Outlet />
-      <div className={'flex flex-col gap-2'}>
-        <DebouncedInput
-          value={search.filter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                filter: value ?? ''
-              }
-            })
-          }
-        />
-        <div className={'rounded-md border'}>
-          <Table>
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={'border-r last:border-r-0'}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className={'border-r p-0 px-2 last:border-r-0'}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination
-          totalItems={documentsQuery.data?.totalItems}
-          totalPages={documentsQuery.data?.totalPages}
-          pageIndex={search.pageIndex}
-          pageSize={search.pageSize}
-          onPageNext={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex + 1 };
-              }
-            })
-          }
-          onPagePrev={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex - 1 };
-              }
-            })
-          }
-          onPageSizeChange={pageSize =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                pageSize
-              }
-            })
-          }
-        ></Pagination>
+    <div className={'flex flex-col gap-2'}>
+      <DebouncedInput
+        value={search.filter}
+        className={'h-8 w-56'}
+        placeholder={'Tìm kiếm...'}
+        onChange={value =>
+          navigate({
+            to: './',
+            search: {
+              ...search,
+              filter: value ?? ''
+            }
+          })
+        }
+      />
+      <div className={'rounded-md border'}>
+        <Table>
+          <TableHeader className={'bg-appGrayLight'}>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    className={'border-r last:border-r-0'}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </>
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map(row => (
+              <TableRow
+                key={row.id}
+                className={'cursor-pointer'}
+                onClick={() =>
+                  navigate({
+                    to: './$documentId/edit',
+                    params: {
+                      documentId: row.original.id
+                    }
+                  })
+                }
+              >
+                {row.getVisibleCells().map(cell => (
+                  <TableCell
+                    key={cell.id}
+                    className={'border-r p-0 px-2 last:border-r-0'}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    </>
+      <Pagination
+        totalItems={documentsQuery.data?.totalItems}
+        totalPages={documentsQuery.data?.totalPages}
+        pageIndex={search.pageIndex}
+        pageSize={search.pageSize}
+        onPageNext={() =>
+          navigate({
+            to: './',
+            search: prev => {
+              return { ...prev, pageIndex: prev.pageIndex + 1 };
+            }
+          })
+        }
+        onPagePrev={() =>
+          navigate({
+            to: './',
+            search: prev => {
+              return { ...prev, pageIndex: prev.pageIndex - 1 };
+            }
+          })
+        }
+        onPageSizeChange={pageSize =>
+          navigate({
+            to: './',
+            search: {
+              ...search,
+              pageSize
+            }
+          })
+        }
+      ></Pagination>
+    </div>
   );
 };
 
-export const Route = createFileRoute('/_authenticated/document-waiting')({
-  component: DocumentWaiting,
+export const Route = createFileRoute('/_authenticated/document/all/')({
+  component: All,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
