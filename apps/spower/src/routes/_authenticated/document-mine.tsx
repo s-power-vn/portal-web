@@ -33,6 +33,8 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DocumentStatus } from '../../components';
+
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
   pageSize: number().optional().default(10),
@@ -121,7 +123,7 @@ const Documents = () => {
       footer: info => info.column.id
     }),
     columnHelper.accessor('status', {
-      cell: info => info.getValue(),
+      cell: info => <DocumentStatus value={info.getValue()} />,
       header: () => 'Trạng thái',
       footer: info => info.column.id
     }),
