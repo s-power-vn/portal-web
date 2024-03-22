@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UsersRecord, usePb } from '@storeo/core';
+import { CustomersRecord, CustomersResponse, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -17,24 +17,25 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { DepartmentDropdownField } from '../../../../components';
-
 const schema = object().shape({
-  name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email'),
-  department: string().required('Hãy chọn phòng ban')
+  name: string().required('Hãy nhập tên chủ đầu tư'),
+  email: string().email('Sai định dạng email'),
+  phone: string(),
+  address: string(),
+  note: string()
 });
 
-const NewEmployee = () => {
+const NewCustomer = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
   const queryClient = useQueryClient();
 
-  const createEmployee = useMutation({
-    mutationKey: ['createEmployee'],
-    mutationFn: (params: UsersRecord) => pb.collection('users').create(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
+  const createCustomer = useMutation({
+    mutationKey: ['createCustomer'],
+    mutationFn: (params: CustomersRecord) =>
+      pb.collection('customers').create<CustomersResponse>(params),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
     onSettled: () => {
       setOpen(false);
       history.back();
@@ -51,20 +52,20 @@ const NewEmployee = () => {
     >
       <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Thêm nhân viên</DialogTitle>
-          <DialogDescription>
-            Cho phép tạo nhân viên mới cho hệ thống.
-          </DialogDescription>
+          <DialogTitle>Thêm chủ đầu tư</DialogTitle>
+          <DialogDescription>Cho phép tạo chủ đầu tư mới.</DialogDescription>
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => createEmployee.mutate(values)}
+          onSubmit={values => createCustomer.mutate(values)}
           defaultValues={{
             name: '',
             email: '',
-            department: ''
+            phone: '',
+            address: '',
+            note: ''
           }}
-          loading={createEmployee.isPending}
+          loading={createCustomer.isPending}
           className={'mt-4 flex flex-col gap-2'}
         >
           <TextField
@@ -79,13 +80,23 @@ const NewEmployee = () => {
             title={'Email'}
             options={{}}
           />
-          <DepartmentDropdownField
+          <TextField
             schema={schema}
-            name={'department'}
-            title={'Phòng ban'}
-            options={{
-              placeholder: 'Hãy chọn phòng ban'
-            }}
+            name={'phone'}
+            title={'Số điện thoại'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
+            name={'address'}
+            title={'Địa chỉ'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
+            name={'note'}
+            title={'Ghi chú'}
+            options={{}}
           />
           <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>
@@ -96,6 +107,6 @@ const NewEmployee = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/employee/new')({
-  component: NewEmployee
+export const Route = createFileRoute('/_authenticated/general/customers/new')({
+  component: NewCustomer
 });

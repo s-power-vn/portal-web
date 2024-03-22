@@ -10,7 +10,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UsersRecord, UsersResponse, usePb } from '@storeo/core';
+import { CustomersRecord, CustomersResponse, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -23,42 +23,42 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { DepartmentDropdownField } from '../../../../../components';
-
 const schema = object().shape({
-  name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email'),
-  department: string().required('Hãy chọn phòng ban')
+  name: string().required('Hãy nhập tên chủ đầu tư'),
+  email: string().email('Sai định dạng email'),
+  phone: string(),
+  address: string(),
+  note: string()
 });
 
-function getEmployee(id: string, pb?: PocketBase) {
-  return pb?.collection('users').getOne<UsersResponse>(id);
+function getCustomer(id: string, pb?: PocketBase) {
+  return pb?.collection<CustomersResponse>('customers').getOne(id);
 }
 
-function employeeOptions(id: string, pb?: PocketBase) {
+function customerOptions(id: string, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['employee', id],
-    queryFn: () => getEmployee(id, pb)
+    queryKey: ['customer', id],
+    queryFn: () => getCustomer(id, pb)
   });
 }
 
-const EditEmployee = () => {
+const EditCustomer = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
   const queryClient = useQueryClient();
-  const { employeeId } = Route.useParams();
+  const { customerId } = Route.useParams();
 
-  const employeeQuery = useSuspenseQuery(employeeOptions(employeeId, pb));
+  const customerQuery = useSuspenseQuery(customerOptions(customerId, pb));
 
-  const updateEmployee = useMutation({
-    mutationKey: ['updateEmployee'],
-    mutationFn: (params: UsersRecord) =>
-      pb.collection('users').update(employeeId, params),
+  const updateCustomer = useMutation({
+    mutationKey: ['updateCustomer'],
+    mutationFn: (params: CustomersRecord) =>
+      pb.collection('customers').update(customerId, params),
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['employees'] }),
-        queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+        queryClient.invalidateQueries({ queryKey: ['customers'] }),
+        queryClient.invalidateQueries({ queryKey: ['customer', customerId] })
       ]),
     onSettled: () => {
       setOpen(false);
@@ -83,9 +83,9 @@ const EditEmployee = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => updateEmployee.mutate(values)}
-          defaultValues={employeeQuery.data}
-          loading={updateEmployee.isPending}
+          onSubmit={values => updateCustomer.mutate(values)}
+          defaultValues={customerQuery.data}
+          loading={updateCustomer.isPending}
           className={'mt-4 flex flex-col gap-2'}
         >
           <TextField
@@ -100,13 +100,23 @@ const EditEmployee = () => {
             title={'Email'}
             options={{}}
           />
-          <DepartmentDropdownField
+          <TextField
             schema={schema}
-            name={'department'}
-            title={'Phòng ban'}
-            options={{
-              placeholder: 'Hãy chọn phòng ban'
-            }}
+            name={'phone'}
+            title={'Số điện thoại'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
+            name={'address'}
+            title={'Địa chỉ'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
+            name={'note'}
+            title={'Ghi chú'}
+            options={{}}
           />
           <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>
@@ -118,9 +128,9 @@ const EditEmployee = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/general/employee/$employeeId/edit'
+  '/_authenticated/general/customers/$customerId/edit'
 )({
-  component: EditEmployee,
-  loader: ({ context: { pb, queryClient }, params: { employeeId } }) =>
-    queryClient?.ensureQueryData(employeeOptions(employeeId, pb))
+  component: EditCustomer,
+  loader: ({ context: { pb, queryClient }, params: { customerId } }) =>
+    queryClient?.ensureQueryData(customerOptions(customerId, pb))
 });
