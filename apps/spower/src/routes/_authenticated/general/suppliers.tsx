@@ -202,7 +202,7 @@ const Employee = () => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={'border-r p-1 px-2 last:border-r-0'}
+                      className={'border-r p-0 px-2 last:border-r-0'}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

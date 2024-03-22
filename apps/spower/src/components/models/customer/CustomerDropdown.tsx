@@ -29,5 +29,5 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = ({ ...props }) => {
     label: name
   }));
 
-  return <SelectInput items={items} {...props} />;
+  return <SelectInput items={items} showSearch={true} {...props} />;
 };

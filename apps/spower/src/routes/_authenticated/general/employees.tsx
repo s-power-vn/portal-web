@@ -65,9 +65,9 @@ const Employees = () => {
     columnHelper.accessor('avatar', {
       cell: ({ row }) => (
         <div className={'flex justify-center'}>
-          <Avatar className={'h-8 w-8 '}>
+          <Avatar className={'h-6 w-6 '}>
             <AvatarImage
-              src={`http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`}
+              src={`http://localhost:8090/api/files/user/${row.original.id}/${row.original.avatar}`}
             />
             <AvatarFallback className={'text-sm'}>
               <UserIcon />
@@ -209,7 +209,7 @@ const Employees = () => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={'border-r p-1 px-2 last:border-r-0'}
+                      className={'border-r p-0 px-2 last:border-r-0'}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

@@ -92,16 +92,15 @@ export const SelectInput: FC<SelectInputProps> = ({
             {_.keys(normalizedItems).map(key => (
               <Fragment key={key}>
                 <CommandGroup heading={showGroups ? key : undefined}>
-                  {normalizedItems[key].map((it, i) => (
+                  {normalizedItems[key].map(it => (
                     <CommandItem
                       key={it.value}
-                      value={it.value}
-                      onSelect={currentValue => {
-                        setValue(currentValue === value ? '' : currentValue);
+                      onSelect={() => {
+                        setValue(it.value);
                         setOpen(false);
                       }}
                     >
-                      {children ? (children as any)(it) : it.label}
+                      {children ? children(it) : it.label}
                       <CheckIcon
                         className={cn(
                           'ml-auto h-4 w-4',

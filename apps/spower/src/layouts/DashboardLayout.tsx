@@ -6,7 +6,7 @@ import {
   HomeIcon
 } from '@radix-ui/react-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { PackagePlusIcon } from 'lucide-react';
 import { object, string } from 'yup';
 
@@ -43,8 +43,8 @@ export type DashboardLayoutProps = {
 };
 
 export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
-  const [open, setOpen] = useState(true);
-  const { history } = useRouter();
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const pb = usePb();
   const queryClient = useQueryClient();
 
@@ -52,22 +52,19 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     mutationKey: ['createDocument'],
     mutationFn: (params: DocumentRecord) =>
       pb.collection<DocumentRecord>('document').create(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['documents'] }),
+        navigate({
+          to: '/document-mine'
+        })
+      ]),
+    onSettled: () => setOpen(false)
   });
 
   return (
     <div className={'flex h-screen w-full flex-col'}>
-      <Dialog
-        open={open}
-        onOpenChange={open => {
-          setOpen(open);
-          history.back();
-        }}
-      >
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-1/4">
           <DialogHeader>
             <DialogTitle>Tạo tài liệu</DialogTitle>
