@@ -34,8 +34,9 @@ export type AuthSystemFields<T = never> = {
 
 export type CustomersRecord = {
 	address?: string
+	code?: string
 	email?: string
-	name?: string
+	name: string
 	note?: string
 	phone?: string
 }

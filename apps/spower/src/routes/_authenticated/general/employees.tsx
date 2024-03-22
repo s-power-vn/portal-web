@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, UserIcon } from 'lucide-react';
+import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
@@ -53,7 +53,7 @@ export function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
   });
 }
 
-const Employee = () => {
+const Employees = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -139,7 +139,7 @@ const Employee = () => {
     <>
       <Outlet />
       <div className={'flex flex-col gap-2'}>
-        <div className={'flex'}>
+        <div className={'flex gap-2'}>
           <Button
             className={'flex gap-1'}
             onClick={() =>
@@ -151,6 +151,19 @@ const Employee = () => {
           >
             <PlusIcon />
             Thêm nhân viên
+          </Button>
+          <Button
+            variant={'outline'}
+            className={'flex gap-1'}
+            onClick={() =>
+              navigate({
+                to: './new',
+                search
+              })
+            }
+          >
+            <SheetIcon />
+            Nhập từ Excel
           </Button>
         </div>
         <DebouncedInput
@@ -245,8 +258,8 @@ const Employee = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/employee')({
-  component: Employee,
+export const Route = createFileRoute('/_authenticated/general/employees')({
+  component: Employees,
   validateSearch: (search?: Record<string, unknown>) =>
     employeeSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

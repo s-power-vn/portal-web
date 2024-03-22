@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon } from 'lucide-react';
+import { EditIcon, SheetIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
@@ -133,7 +133,7 @@ const Employee = () => {
     <>
       <Outlet />
       <div className={'flex flex-col gap-2'}>
-        <div className={'flex'}>
+        <div className={'flex gap-2'}>
           <Button
             className={'flex gap-1'}
             onClick={() =>
@@ -145,6 +145,19 @@ const Employee = () => {
           >
             <PlusIcon />
             Thêm chủ đầu tư
+          </Button>
+          <Button
+            variant={'outline'}
+            className={'flex gap-1'}
+            onClick={() =>
+              navigate({
+                to: './new',
+                search
+              })
+            }
+          >
+            <SheetIcon />
+            Nhập từ Excel
           </Button>
         </div>
         <DebouncedInput

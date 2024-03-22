@@ -118,7 +118,7 @@ const EditEmployee = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/general/employee/$employeeId/edit'
+  '/_authenticated/general/employees/$employeeId/edit'
 )({
   component: EditEmployee,
   loader: ({ context: { pb, queryClient }, params: { employeeId } }) =>
