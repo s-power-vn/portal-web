@@ -16,6 +16,9 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
+import { Route as AuthenticatedDocumentWatingImport } from './routes/_authenticated/document-wating'
+import { Route as AuthenticatedDocumentMineImport } from './routes/_authenticated/document-mine'
+import { Route as AuthenticatedDocumentAllImport } from './routes/_authenticated/document-all'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
@@ -48,6 +51,22 @@ const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
 
 const AuthenticatedGeneralRoute = AuthenticatedGeneralImport.update({
   path: '/general',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedDocumentWatingRoute =
+  AuthenticatedDocumentWatingImport.update({
+    path: '/document-wating',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedDocumentMineRoute = AuthenticatedDocumentMineImport.update({
+  path: '/document-mine',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedDocumentAllRoute = AuthenticatedDocumentAllImport.update({
+  path: '/document-all',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -108,6 +127,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/document-all': {
+      preLoaderRoute: typeof AuthenticatedDocumentAllImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/document-mine': {
+      preLoaderRoute: typeof AuthenticatedDocumentMineImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/document-wating': {
+      preLoaderRoute: typeof AuthenticatedDocumentWatingImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/general': {
       preLoaderRoute: typeof AuthenticatedGeneralImport
       parentRoute: typeof AuthenticatedImport
@@ -152,6 +183,9 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AuthenticatedRoute.addChildren([
+    AuthenticatedDocumentAllRoute,
+    AuthenticatedDocumentMineRoute,
+    AuthenticatedDocumentWatingRoute,
     AuthenticatedGeneralRoute.addChildren([
       AuthenticatedGeneralCustomersRoute.addChildren([
         AuthenticatedGeneralCustomersNewRoute,

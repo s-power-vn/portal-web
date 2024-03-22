@@ -13,7 +13,7 @@ import { FC, ReactNode } from 'react';
 
 import { SideBar, SideBarGroup, SideBarItem } from '@storeo/theme';
 
-import { Header } from '../components/header';
+import { Header } from '../components';
 
 export type DashboardLayoutProps = {
   children: ReactNode;
@@ -36,7 +36,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<GearIcon width={22} height={22} />}
           >
             <SideBarItem
-              to={'/general/employee'}
+              to={'/general/employees'}
               title={'Quản lý nhân viên'}
               icon={<PersonIcon width={23} height={23} />}
             ></SideBarItem>
@@ -46,27 +46,21 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
               icon={<BackpackIcon width={22} height={22} />}
             ></SideBarItem>
           </SideBarGroup>
-          <SideBarGroup
-            to={'/documents'}
-            title={'Quản lý tài liệu'}
-            icon={<FileIcon width={22} height={22} />}
-          >
-            <SideBarItem
-              to={'/documents/waiting'}
-              title={'Đang chờ xử lý'}
-              icon={<FileTextIcon width={22} height={22} />}
-            ></SideBarItem>
-            <SideBarItem
-              to={'/documents/created'}
-              title={'Tài liệu của tôi'}
-              icon={<FilePlusIcon width={22} height={22} />}
-            ></SideBarItem>
-            <SideBarItem
-              to={'/documents/all'}
-              title={'Tất cả tài liệu'}
-              icon={<FileMinusIcon width={22} height={22} />}
-            ></SideBarItem>
-          </SideBarGroup>
+          <SideBarItem
+            to={'/document-wating'}
+            title={'Đang chờ xử lý'}
+            icon={<FileTextIcon width={22} height={22} />}
+          ></SideBarItem>
+          <SideBarItem
+            to={'/document-mine'}
+            title={'Tài liệu của tôi'}
+            icon={<FilePlusIcon width={22} height={22} />}
+          ></SideBarItem>
+          <SideBarItem
+            to={'/document-all'}
+            title={'Tất cả tài liệu'}
+            icon={<FileMinusIcon width={22} height={22} />}
+          ></SideBarItem>
         </SideBar>
         <div className={'h-full w-full p-2'}>{children}</div>
       </div>
