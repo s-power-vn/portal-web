@@ -1,4 +1,4 @@
-import { PlusIcon } from '@radix-ui/react-icons';
+import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -7,8 +7,9 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { UserIcon } from 'lucide-react';
+import { EditIcon, UserIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
+import { InferType, number, object, string } from 'yup';
 
 import { DepartmentsResponse, UsersResponse, usePb } from '@storeo/core';
 import {
@@ -26,11 +27,13 @@ import {
   TableRow
 } from '@storeo/theme';
 
-type EmployeeSearch = {
-  pageIndex: number;
-  pageSize: number;
-  filter?: string | number;
-};
+const employeeSearchSchema = object().shape({
+  pageIndex: number().optional().default(1),
+  pageSize: number().optional().default(10),
+  filter: string().optional().default('')
+});
+
+type EmployeeSearch = InferType<typeof employeeSearchSchema>;
 
 function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
   const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
@@ -61,16 +64,18 @@ const Employee = () => {
   const columns = [
     columnHelper.accessor('avatar', {
       cell: ({ row }) => (
-        <Avatar>
-          <AvatarImage
-            src={`http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`}
-          />
-          <AvatarFallback className={'text-sm'}>
-            <UserIcon />
-          </AvatarFallback>
-        </Avatar>
+        <div className={'flex justify-center'}>
+          <Avatar className={'h-8 w-8 '}>
+            <AvatarImage
+              src={`http://localhost:8090/api/files/users/${row.original.id}/${row.original.avatar}`}
+            />
+            <AvatarFallback className={'text-sm'}>
+              <UserIcon />
+            </AvatarFallback>
+          </Avatar>
+        </div>
       ),
-      header: () => 'Ảnh',
+      header: () => <div className={'flex justify-center'}>Ảnh</div>,
       footer: info => info.column.id
     }),
     columnHelper.accessor('name', {
@@ -93,6 +98,33 @@ const Employee = () => {
       },
       header: () => 'Phòng ban',
       footer: info => info.column.id
+    }),
+    columnHelper.display({
+      id: 'actions',
+      cell: ({ row }) => {
+        return (
+          <div className={'flex gap-1'}>
+            <Button
+              className={'h-8 px-3'}
+              onClick={() =>
+                navigate({
+                  to: './$employeeId/edit',
+                  params: {
+                    employeeId: row.original.id
+                  },
+                  search
+                })
+              }
+            >
+              <EditIcon className={'h-3 w-3'} />
+            </Button>
+            <Button variant={'destructive'} className={'h-8 px-3'}>
+              <Cross2Icon className={'h-3 w-3'} />
+            </Button>
+          </div>
+        );
+      },
+      header: () => 'Thao tác'
     })
   ];
 
@@ -128,21 +160,23 @@ const Employee = () => {
           onChange={value =>
             navigate({
               to: './',
-              replace: false,
               search: {
                 ...search,
-                filter: value
+                filter: value ?? ''
               }
             })
           }
         />
         <div className={'rounded-md border'}>
           <Table>
-            <TableHeader>
+            <TableHeader className={'bg-appGrayLight'}>
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={'border-r last:border-r-0'}
+                    >
                       {header.isPlaceholder ? null : (
                         <>
                           {flexRender(
@@ -160,7 +194,10 @@ const Employee = () => {
               {table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={'border-r p-1 px-2 last:border-r-0'}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -180,7 +217,6 @@ const Employee = () => {
           onPageNext={() =>
             navigate({
               to: './',
-              replace: false,
               search: prev => {
                 return { ...prev, pageIndex: prev.pageIndex + 1 };
               }
@@ -189,7 +225,6 @@ const Employee = () => {
           onPagePrev={() =>
             navigate({
               to: './',
-              replace: false,
               search: prev => {
                 return { ...prev, pageIndex: prev.pageIndex - 1 };
               }
@@ -198,7 +233,6 @@ const Employee = () => {
           onPageSizeChange={pageSize =>
             navigate({
               to: './',
-              replace: false,
               search: {
                 ...search,
                 pageSize
@@ -213,17 +247,11 @@ const Employee = () => {
 
 export const Route = createFileRoute('/_authenticated/general/employee')({
   component: Employee,
-  validateSearch: (search?: Record<string, unknown>): EmployeeSearch => {
-    return {
-      pageIndex: Number(search?.pageIndex ?? 1),
-      pageSize: Number(search?.pageSize ?? 10),
-      filter: search?.filter as string
-    };
-  },
+  validateSearch: (search?: Record<string, unknown>) =>
+    employeeSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) => {
-    return queryClient?.ensureQueryData(employeesOptions(deps.search, pb));
-  }
+  loader: ({ deps, context: { pb, queryClient } }) =>
+    queryClient?.ensureQueryData(employeesOptions(deps.search, pb))
 });

@@ -10,8 +10,8 @@ export type DebouncedInputProps = Omit<
   'onChange'
 > & {
   debounce?: number;
-  value: string | number | undefined;
-  onChange: (value: string | number | undefined) => void;
+  value: string | undefined;
+  onChange: (value: string | undefined) => void;
 };
 
 export const DebouncedInput: FC<DebouncedInputProps> = ({

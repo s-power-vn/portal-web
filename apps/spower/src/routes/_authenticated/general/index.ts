@@ -1,9 +1,14 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_authenticated/general/')({
-  loader: () => {
+  beforeLoad: () => {
     throw redirect({
-      to: '/general/employee'
+      to: '/general/employee',
+      search: {
+        pageIndex: 1,
+        pageSize: 10,
+        filter: ''
+      }
     });
   }
 });
