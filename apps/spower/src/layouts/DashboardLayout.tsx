@@ -56,7 +56,12 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
         navigate({
-          to: '/document-mine'
+          to: '/document-mine',
+          search: {
+            pageIndex: 1,
+            pageSize: 10,
+            filter: ''
+          }
         })
       ]),
     onSettled: () => setOpen(false)
@@ -148,7 +153,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             ></SideBarItem>
           </SideBarGroup>
           <SideBarItem
-            to={'/document-wating'}
+            to={'/document-waiting'}
             title={'Đang chờ xử lý'}
             icon={<FileTextIcon width={22} height={22} />}
           ></SideBarItem>

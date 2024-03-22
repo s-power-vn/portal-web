@@ -7,21 +7,16 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, UserIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
 import {
   CustomerResponse,
-  DepartmentResponse,
   DocumentResponse,
   UserResponse,
   usePb
 } from '@storeo/core';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   DebouncedInput,
   Pagination,
@@ -34,6 +29,7 @@ import {
 } from '@storeo/theme';
 
 import { DocumentStatus } from '../../components';
+import { EmployeeItem } from '../../components/models/employee/EmployeeItem';
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -56,12 +52,12 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
 
 export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['documents', search],
+    queryKey: ['documents', 'mine', search],
     queryFn: () => getDocuments(search, pb)
   });
 }
 
-const Documents = () => {
+const DocumentMine = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -101,24 +97,32 @@ const Documents = () => {
       footer: info => info.column.id
     }),
     columnHelper.accessor('assignee', {
-      cell: ({ row }) => {
-        return (
-          row.original.expand as {
-            assignee: UserResponse;
+      cell: ({ row }) => (
+        <EmployeeItem
+          data={
+            (
+              row.original.expand as {
+                assignee: UserResponse;
+              }
+            ).assignee
           }
-        ).assignee?.name;
-      },
+        />
+      ),
       header: () => 'Người đang xử lý',
       footer: info => info.column.id
     }),
     columnHelper.accessor('createdBy', {
-      cell: ({ row }) => {
-        return (
-          row.original.expand as {
-            createdBy: UserResponse;
+      cell: ({ row }) => (
+        <EmployeeItem
+          data={
+            (
+              row.original.expand as {
+                createdBy: UserResponse;
+              }
+            ).createdBy
           }
-        ).createdBy.name;
-      },
+        />
+      ),
       header: () => 'Người tạo',
       footer: info => info.column.id
     }),
@@ -246,7 +250,7 @@ const Documents = () => {
 };
 
 export const Route = createFileRoute('/_authenticated/document-mine')({
-  component: Documents,
+  component: DocumentMine,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

@@ -44,7 +44,9 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
   return pb
     ?.collection<DocumentResponse>('document')
     .getList(search.pageIndex, search.pageSize, {
-      filter,
+      filter:
+        filter +
+        `&& (assignee = "${pb?.authStore.model?.id}") && (status = "ToDo")`,
       sort: '-created',
       expand: 'customer,assignee,createdBy'
     });
@@ -52,12 +54,12 @@ function getDocuments(search: DocumentSearch, pb?: PocketBase) {
 
 export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['documents', 'all', search],
+    queryKey: ['documents', 'waiting', search],
     queryFn: () => getDocuments(search, pb)
   });
 }
 
-const DocumentAll = () => {
+const DocumentWaiting = () => {
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -249,8 +251,8 @@ const DocumentAll = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/document-all')({
-  component: DocumentAll,
+export const Route = createFileRoute('/_authenticated/document-waiting')({
+  component: DocumentWaiting,
   validateSearch: (search?: Record<string, unknown>) =>
     documentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {

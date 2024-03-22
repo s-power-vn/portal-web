@@ -15,7 +15,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedDocumentWatingImport } from './routes/_authenticated/document-wating'
+import { Route as AuthenticatedDocumentWaitingImport } from './routes/_authenticated/document-waiting'
 import { Route as AuthenticatedDocumentMineImport } from './routes/_authenticated/document-mine'
 import { Route as AuthenticatedDocumentAllImport } from './routes/_authenticated/document-all'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
@@ -52,9 +52,9 @@ const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedDocumentWatingRoute =
-  AuthenticatedDocumentWatingImport.update({
-    path: '/document-wating',
+const AuthenticatedDocumentWaitingRoute =
+  AuthenticatedDocumentWaitingImport.update({
+    path: '/document-waiting',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -156,8 +156,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentMineImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/document-wating': {
-      preLoaderRoute: typeof AuthenticatedDocumentWatingImport
+    '/_authenticated/document-waiting': {
+      preLoaderRoute: typeof AuthenticatedDocumentWaitingImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/home': {
@@ -218,7 +218,7 @@ export const routeTree = rootRoute.addChildren([
   AuthenticatedRoute.addChildren([
     AuthenticatedDocumentAllRoute,
     AuthenticatedDocumentMineRoute,
-    AuthenticatedDocumentWatingRoute,
+    AuthenticatedDocumentWaitingRoute,
     AuthenticatedHomeRoute,
     AuthenticatedDocumentNewRoute,
     AuthenticatedGeneralCustomersRoute.addChildren([
