@@ -51,8 +51,6 @@ const EditEmployee = () => {
 
   const employeeQuery = useSuspenseQuery(employeeOptions(employeeId, pb));
 
-  console.log(employeeQuery.data);
-
   const updateEmployee = useMutation({
     mutationKey: ['updateEmployee'],
     mutationFn: async ({
@@ -64,15 +62,15 @@ const EditEmployee = () => {
       email: string;
       department: string;
     }) =>
-      pb.collection('users').create({
+      pb.collection('users').update(employeeId, {
         name,
         email,
         department
       }),
-    onSuccess: () => {
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
+    onSettled: () => {
       setOpen(false);
       history.back();
-      queryClient.invalidateQueries({ queryKey: ['employees'] });
     }
   });
 
