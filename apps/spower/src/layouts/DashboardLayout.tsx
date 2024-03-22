@@ -8,6 +8,7 @@ import {
   HomeIcon,
   PersonIcon
 } from '@radix-ui/react-icons';
+import { StoreIcon } from 'lucide-react';
 
 import { FC, ReactNode } from 'react';
 
@@ -38,12 +39,17 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             <SideBarItem
               to={'/general/employees'}
               title={'Quản lý nhân viên'}
-              icon={<PersonIcon width={23} height={23} />}
+              icon={<></>}
             ></SideBarItem>
             <SideBarItem
               to={'/general/customers'}
               title={'Quản lý chủ đầu tư'}
-              icon={<BackpackIcon width={22} height={22} />}
+              icon={<></>}
+            ></SideBarItem>
+            <SideBarItem
+              to={'/general/suppliers'}
+              title={'Quản lý nhà cung cấp'}
+              icon={<></>}
             ></SideBarItem>
           </SideBarGroup>
           <SideBarItem

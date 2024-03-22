@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import PocketBase from 'pocketbase';
 
-import { DepartmentsResponse } from '@storeo/core';
+import { DepartmentResponse } from '@storeo/core';
 
 function getDepartments(pb?: PocketBase) {
-  return pb?.collection('departments').getFullList<DepartmentsResponse>();
+  return pb?.collection('department').getFullList<DepartmentResponse>();
 }
 
 export function departmentsOptions(pb?: PocketBase) {

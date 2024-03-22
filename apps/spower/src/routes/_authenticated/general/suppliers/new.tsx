@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { CustomerRecord, CustomerResponse, usePb } from '@storeo/core';
+import { SupplierRecord, SupplierResponse, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -25,17 +25,17 @@ const schema = object().shape({
   note: string()
 });
 
-const NewCustomer = () => {
+const NewSupplier = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const pb = usePb();
   const queryClient = useQueryClient();
 
-  const createCustomer = useMutation({
-    mutationKey: ['createCustomer'],
-    mutationFn: (params: CustomerRecord) =>
-      pb.collection('customer').create<CustomerResponse>(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
+  const createSupplier = useMutation({
+    mutationKey: ['createSupplier'],
+    mutationFn: (params: SupplierRecord) =>
+      pb.collection('supplier').create<SupplierResponse>(params),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
     onSettled: () => {
       setOpen(false);
       history.back();
@@ -52,12 +52,12 @@ const NewCustomer = () => {
     >
       <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Thêm chủ đầu tư</DialogTitle>
-          <DialogDescription>Cho phép tạo chủ đầu tư mới.</DialogDescription>
+          <DialogTitle>Thêm nhà cung cấp</DialogTitle>
+          <DialogDescription>Cho phép tạo nhà cung cấp mới.</DialogDescription>
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => createCustomer.mutate(values)}
+          onSubmit={values => createSupplier.mutate(values)}
           defaultValues={{
             name: '',
             email: '',
@@ -65,13 +65,13 @@ const NewCustomer = () => {
             address: '',
             note: ''
           }}
-          loading={createCustomer.isPending}
+          loading={createSupplier.isPending}
           className={'mt-4 flex flex-col gap-2'}
         >
           <TextField
             schema={schema}
             name={'name'}
-            title={'Tên chủ đầu tư'}
+            title={'Tên nhà cung cấp'}
             options={{}}
           />
           <TextField
@@ -107,6 +107,6 @@ const NewCustomer = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/customers/new')({
-  component: NewCustomer
+export const Route = createFileRoute('/_authenticated/general/suppliers/new')({
+  component: NewSupplier
 });

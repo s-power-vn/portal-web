@@ -54,7 +54,7 @@ const EditEmployee = () => {
   const updateEmployee = useMutation({
     mutationKey: ['updateEmployee'],
     mutationFn: (params: UserRecord) =>
-      pb.collection('users').update(employeeId, params),
+      pb.collection('user').update(employeeId, params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['employees'] }),

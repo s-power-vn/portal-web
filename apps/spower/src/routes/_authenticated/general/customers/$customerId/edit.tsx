@@ -54,7 +54,7 @@ const EditCustomer = () => {
   const updateCustomer = useMutation({
     mutationKey: ['updateCustomer'],
     mutationFn: (params: CustomerRecord) =>
-      pb.collection('customers').update(customerId, params),
+      pb.collection('customer').update(customerId, params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['customers'] }),
@@ -76,9 +76,9 @@ const EditCustomer = () => {
     >
       <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Chỉnh sửa nhân viên</DialogTitle>
+          <DialogTitle>Chỉnh sửa chủ đầu tư</DialogTitle>
           <DialogDescription>
-            Cho phép chỉnh sửa thông tin nhân viên hiện tại.
+            Cho phép chỉnh sửa thông tin chủ đầu tư hiện tại.
           </DialogDescription>
         </DialogHeader>
         <Form
@@ -91,7 +91,7 @@ const EditCustomer = () => {
           <TextField
             schema={schema}
             name={'name'}
-            title={'Họ tên'}
+            title={'Tên chủ đầu tư'}
             options={{}}
           />
           <TextField
