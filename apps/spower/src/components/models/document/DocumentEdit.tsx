@@ -5,7 +5,6 @@ import { FC } from 'react';
 
 import { DocumentResponse, usePb } from '@storeo/core';
 
-
 function getDocument(id: string, pb?: PocketBase) {
   return pb?.collection<DocumentResponse>('document').getOne(id);
 }
