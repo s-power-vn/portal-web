@@ -269,5 +269,6 @@ export const Route = createFileRoute('/_authenticated/document/waiting/')({
     return { search };
   },
   loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(documentsOptions(deps.search, pb))
+    queryClient?.ensureQueryData(documentsOptions(deps.search, pb)),
+  beforeLoad: () => ({ title: 'Đang chờ xử lý' })
 });

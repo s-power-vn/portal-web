@@ -7,7 +7,7 @@ import {
 } from '@radix-ui/react-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { PackagePlusIcon } from 'lucide-react';
+import { LucideHome, PackagePlusIcon } from 'lucide-react';
 import { object, string } from 'yup';
 
 import { FC, ReactNode, useState } from 'react';
@@ -134,7 +134,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           </div>
           <SideBarItem
             to={'/home'}
-            icon={<HomeIcon width={22} height={22} />}
+            icon={<LucideHome width={22} height={22} />}
           ></SideBarItem>
           <SideBarGroup
             to={'/general'}

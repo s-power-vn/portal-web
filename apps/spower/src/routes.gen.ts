@@ -15,6 +15,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
 import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenticated/general/suppliers'
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
@@ -58,27 +59,32 @@ const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
-  path: '/general/',
+const AuthenticatedGeneralRoute = AuthenticatedGeneralImport.update({
+  path: '/general',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
+  path: '/',
+  getParentRoute: () => AuthenticatedGeneralRoute,
 } as any)
 
 const AuthenticatedGeneralSuppliersRoute =
   AuthenticatedGeneralSuppliersImport.update({
-    path: '/general/suppliers',
-    getParentRoute: () => AuthenticatedRoute,
+    path: '/suppliers',
+    getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesRoute =
   AuthenticatedGeneralEmployeesImport.update({
-    path: '/general/employees',
-    getParentRoute: () => AuthenticatedRoute,
+    path: '/employees',
+    getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedGeneralCustomersRoute =
   AuthenticatedGeneralCustomersImport.update({
-    path: '/general/customers',
-    getParentRoute: () => AuthenticatedRoute,
+    path: '/customers',
+    getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedDocumentWaitingRoute =
@@ -190,6 +196,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/general': {
+      preLoaderRoute: typeof AuthenticatedGeneralImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/home': {
       preLoaderRoute: typeof AuthenticatedHomeImport
       parentRoute: typeof AuthenticatedImport
@@ -212,19 +222,19 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/general/customers': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/employees': {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/suppliers': {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/': {
       preLoaderRoute: typeof AuthenticatedGeneralIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/customers/new': {
       preLoaderRoute: typeof AuthenticatedGeneralCustomersNewImport
@@ -282,6 +292,21 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AuthenticatedRoute.addChildren([
+    AuthenticatedGeneralRoute.addChildren([
+      AuthenticatedGeneralCustomersRoute.addChildren([
+        AuthenticatedGeneralCustomersNewRoute,
+        AuthenticatedGeneralCustomersCustomerIdEditRoute,
+      ]),
+      AuthenticatedGeneralEmployeesRoute.addChildren([
+        AuthenticatedGeneralEmployeesNewRoute,
+        AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
+      ]),
+      AuthenticatedGeneralSuppliersRoute.addChildren([
+        AuthenticatedGeneralSuppliersNewRoute,
+        AuthenticatedGeneralSuppliersSupplierIdEditRoute,
+      ]),
+      AuthenticatedGeneralIndexRoute,
+    ]),
     AuthenticatedHomeRoute,
     AuthenticatedDocumentAllRoute.addChildren([
       AuthenticatedDocumentAllIndexRoute,
@@ -296,19 +321,6 @@ export const routeTree = rootRoute.addChildren([
       AuthenticatedDocumentWaitingIndexRoute,
       AuthenticatedDocumentWaitingDocumentIdEditRoute,
     ]),
-    AuthenticatedGeneralCustomersRoute.addChildren([
-      AuthenticatedGeneralCustomersNewRoute,
-      AuthenticatedGeneralCustomersCustomerIdEditRoute,
-    ]),
-    AuthenticatedGeneralEmployeesRoute.addChildren([
-      AuthenticatedGeneralEmployeesNewRoute,
-      AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
-    ]),
-    AuthenticatedGeneralSuppliersRoute.addChildren([
-      AuthenticatedGeneralSuppliersNewRoute,
-      AuthenticatedGeneralSuppliersSupplierIdEditRoute,
-    ]),
-    AuthenticatedGeneralIndexRoute,
   ]),
   LoginRoute,
 ])
