@@ -98,7 +98,7 @@ const Component = () => {
         return (
           <div className={'flex gap-1'}>
             <Button
-              className={'h-8 px-3'}
+              className={'h-6 px-3'}
               onClick={() =>
                 navigate({
                   to: './$customerId/edit',
@@ -111,7 +111,7 @@ const Component = () => {
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
-            <Button variant={'destructive'} className={'h-8 px-3'}>
+            <Button variant={'destructive'} className={'h-6 px-3'}>
               <Cross2Icon className={'h-3 w-3'} />
             </Button>
           </div>
@@ -202,7 +202,7 @@ const Component = () => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={'border-r p-0 px-2 last:border-r-0'}
+                      className={'border-r px-2 py-1 last:border-r-0'}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

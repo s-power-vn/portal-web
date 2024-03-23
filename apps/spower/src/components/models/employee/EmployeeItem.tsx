@@ -11,7 +11,7 @@ export type EmployeeItemProps = {
 
 export const EmployeeItem: FC<EmployeeItemProps> = ({ data }) => {
   return data ? (
-    <div className={'flex items-center justify-center gap-2'}>
+    <div className={'flex items-center justify-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
         <AvatarImage
           src={`http://localhost:8090/api/files/user/${data.id}/${data.avatar}`}

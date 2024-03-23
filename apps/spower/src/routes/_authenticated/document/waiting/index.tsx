@@ -86,11 +86,11 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-function getDocument(id: string, pb?: PocketBase) {
-  return pb?.collection<DocumentResponse>('document').getOne(id);
+function getDocument(id?: string, pb?: PocketBase) {
+  return id ? pb?.collection<DocumentResponse>('document').getOne(id) : null;
 }
 
-function documentOptions(id: string, pb?: PocketBase) {
+function documentOptions(id?: string, pb?: PocketBase) {
   return queryOptions({
     queryKey: ['document', id],
     queryFn: () => getDocument(id, pb),
@@ -103,7 +103,7 @@ const GeneralDocumentEdit = ({
   open,
   setOpen
 }: {
-  documentId: string;
+  documentId?: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -115,7 +115,7 @@ const GeneralDocumentEdit = ({
   const updateDocument = useMutation({
     mutationKey: ['updateDocument'],
     mutationFn: (params: DocumentRecord) =>
-      pb.collection('document').update(documentId, params),
+      pb.collection('document').update(documentId ?? '', params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -144,7 +144,7 @@ const GeneralDocumentEdit = ({
               createdBy: pb.authStore.model?.id
             })
           }
-          defaultValues={documentQuery.data}
+          defaultValues={documentQuery.data ?? undefined}
           loading={updateDocument.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
@@ -179,7 +179,7 @@ const GeneralDocumentEdit = ({
 
 const Component = () => {
   const [open, setOpen] = useState(false);
-  const [documentId, setDocumentId] = useState('');
+  const [documentId, setDocumentId] = useState<string>();
   const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -259,7 +259,7 @@ const Component = () => {
         return (
           <div className={'flex gap-1'}>
             <Button
-              className={'h-8 px-3'}
+              className={'h-6 px-3'}
               onClick={e => {
                 e.stopPropagation();
                 setDocumentId(row.original.id);
@@ -268,7 +268,7 @@ const Component = () => {
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
-            <Button variant={'destructive'} className={'h-8 px-3'}>
+            <Button variant={'destructive'} className={'h-6 px-3'}>
               <Cross2Icon className={'h-3 w-3'} />
             </Button>
           </div>
@@ -282,7 +282,12 @@ const Component = () => {
     data: documentsQuery.data?.items ?? [],
     columns,
     manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      enableResizing: true,
+      size: 100,
+      maxSize: 150
+    }
   });
 
   return (
@@ -349,7 +354,7 @@ const Component = () => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={'border-r p-0 px-2 last:border-r-0'}
+                      className={'border-r px-2 py-1 last:border-r-0'}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

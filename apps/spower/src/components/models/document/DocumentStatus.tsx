@@ -9,7 +9,7 @@ export const DocumentStatus: FC<DocumentStatusProps> = ({ value }) => {
     return (
       <div
         className={`text-appBlack flex h-0 select-none items-center
-          justify-center rounded-full bg-orange-300 px-2 py-3 text-xs`}
+          justify-center whitespace-nowrap rounded-full bg-orange-300 px-2 py-3 text-xs`}
       >
         Đang triển khai
       </div>
