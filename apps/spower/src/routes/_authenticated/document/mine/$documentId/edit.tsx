@@ -12,5 +12,8 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { pb, queryClient }, params: { documentId } }) =>
-    queryClient?.ensureQueryData(documentOptions(documentId, pb))
+    queryClient?.ensureQueryData(documentOptions(documentId, pb)),
+  beforeLoad: () => ({
+    title: 'Cập nhật'
+  })
 });
