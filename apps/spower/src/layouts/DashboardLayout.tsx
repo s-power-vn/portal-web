@@ -2,8 +2,7 @@ import {
   FileMinusIcon,
   FilePlusIcon,
   FileTextIcon,
-  GearIcon,
-  HomeIcon
+  GearIcon
 } from '@radix-ui/react-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';

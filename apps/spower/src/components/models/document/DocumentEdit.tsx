@@ -23,6 +23,9 @@ export type DocumentEditProps = {
 export const DocumentEdit: FC<DocumentEditProps> = ({ documentId }) => {
   const pb = usePb();
   const documentQuery = useSuspenseQuery(documentOptions(documentId, pb));
-  console.log(documentQuery.data);
-  return <h1>Document Edit</h1>;
+  return (
+    <div className={'flex flex-col'}>
+      <span>{documentQuery.data?.bidding}</span>
+    </div>
+  );
 };

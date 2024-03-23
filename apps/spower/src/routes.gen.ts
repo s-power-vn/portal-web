@@ -21,7 +21,6 @@ import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedDocumentWaitingImport } from './routes/_authenticated/document/waiting'
-import { Route as AuthenticatedDocumentNewImport } from './routes/_authenticated/document/new'
 import { Route as AuthenticatedDocumentMineImport } from './routes/_authenticated/document/mine'
 import { Route as AuthenticatedDocumentAllImport } from './routes/_authenticated/document/all'
 import { Route as AuthenticatedDocumentWaitingIndexImport } from './routes/_authenticated/document/waiting/index'
@@ -92,11 +91,6 @@ const AuthenticatedDocumentWaitingRoute =
     path: '/document/waiting',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-
-const AuthenticatedDocumentNewRoute = AuthenticatedDocumentNewImport.update({
-  path: '/document/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 const AuthenticatedDocumentMineRoute = AuthenticatedDocumentMineImport.update({
   path: '/document/mine',
@@ -212,10 +206,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentMineImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/document/new': {
-      preLoaderRoute: typeof AuthenticatedDocumentNewImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/document/waiting': {
       preLoaderRoute: typeof AuthenticatedDocumentWaitingImport
       parentRoute: typeof AuthenticatedImport
@@ -316,7 +306,6 @@ export const routeTree = rootRoute.addChildren([
       AuthenticatedDocumentMineIndexRoute,
       AuthenticatedDocumentMineDocumentIdEditRoute,
     ]),
-    AuthenticatedDocumentNewRoute,
     AuthenticatedDocumentWaitingRoute.addChildren([
       AuthenticatedDocumentWaitingIndexRoute,
       AuthenticatedDocumentWaitingDocumentIdEditRoute,

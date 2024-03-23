@@ -45,8 +45,6 @@ export const Header = () => {
     })
     .value();
 
-  console.log(breadcrumbs);
-
   return (
     <div className={'flex w-full justify-between px-2 py-1 shadow'}>
       <div className={'flex items-center justify-center gap-36'}>
