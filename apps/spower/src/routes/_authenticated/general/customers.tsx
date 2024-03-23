@@ -259,5 +259,10 @@ export const Route = createFileRoute('/_authenticated/general/customers')({
     return { search };
   },
   loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(customersOptions(deps.search, pb))
+    queryClient?.ensureQueryData(customersOptions(deps.search, pb)),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý chủ đầu tư'
+    };
+  }
 });

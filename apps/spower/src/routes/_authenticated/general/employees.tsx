@@ -266,5 +266,10 @@ export const Route = createFileRoute('/_authenticated/general/employees')({
     return { search };
   },
   loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(employeesOptions(deps.search, pb))
+    queryClient?.ensureQueryData(employeesOptions(deps.search, pb)),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý nhân viên'
+    };
+  }
 });

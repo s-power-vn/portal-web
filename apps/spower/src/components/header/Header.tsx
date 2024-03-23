@@ -12,7 +12,7 @@ export const Header = () => {
   return (
     <div className={'flex w-full justify-between px-2 py-1 shadow'}>
       <div className={'flex items-center justify-center gap-40'}>
-        <Logo/>
+        <Logo />
       </div>
       <HeaderMenu />
     </div>

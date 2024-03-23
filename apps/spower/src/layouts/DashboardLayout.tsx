@@ -134,7 +134,6 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           </div>
           <SideBarItem
             to={'/home'}
-            title={'Trang chủ'}
             icon={<HomeIcon width={22} height={22} />}
           ></SideBarItem>
           <SideBarGroup
@@ -144,33 +143,27 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           >
             <SideBarItem
               to={'/general/employees'}
-              title={'Quản lý nhân viên'}
               icon={<EmptyIcon />}
             ></SideBarItem>
             <SideBarItem
               to={'/general/customers'}
-              title={'Quản lý chủ đầu tư'}
               icon={<EmptyIcon />}
             ></SideBarItem>
             <SideBarItem
               to={'/general/suppliers'}
-              title={'Quản lý nhà cung cấp'}
               icon={<EmptyIcon />}
             ></SideBarItem>
           </SideBarGroup>
           <SideBarItem
             to={'/document/waiting'}
-            title={'Đang chờ xử lý'}
             icon={<FileTextIcon width={22} height={22} />}
           ></SideBarItem>
           <SideBarItem
             to={'/document/mine'}
-            title={'Tài liệu của tôi'}
             icon={<FilePlusIcon width={22} height={22} />}
           ></SideBarItem>
           <SideBarItem
             to={'/document/all'}
-            title={'Tất cả tài liệu'}
             icon={<FileMinusIcon width={22} height={22} />}
           ></SideBarItem>
         </SideBar>

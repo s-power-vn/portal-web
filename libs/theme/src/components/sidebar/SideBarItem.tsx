@@ -3,7 +3,8 @@ import {
   Link,
   RegisteredRouter,
   RoutePaths,
-  ToPathOption
+  ToPathOption,
+  useRouter
 } from '@tanstack/react-router';
 
 import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
@@ -13,24 +14,29 @@ import { cn, useLink } from '@storeo/core';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSideBar } from './SideBar';
 
+
 export type SideBarItemProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,
   TTo extends string = ''
 > = {
   to?: ToPathOption<TRouteTree, TFrom, TTo>;
-  title?: string;
   icon?: ReactNode;
   isChild?: boolean;
-} & Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
+} & Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'title'>;
 
 export const SideBarItem: FC<SideBarItemProps> = ({
   to,
-  title,
   icon,
   isChild,
   ...props
 }) => {
+  const { flatRoutes } = useRouter();
+  const foundedRoute = flatRoutes.find(it => it.fullPath === to);
+  const routeContext = foundedRoute?.options.beforeLoad?.({} as never) as {
+    title?: string;
+  };
+
   const { isActive } = useLink({ to });
   const { collapsed } = useSideBar();
 
@@ -69,7 +75,7 @@ export const SideBarItem: FC<SideBarItemProps> = ({
                 arrowPadding={5}
                 className={'font-normal'}
               >
-                {title}
+                {routeContext?.title}
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -81,7 +87,7 @@ export const SideBarItem: FC<SideBarItemProps> = ({
             collapsed && `w-0 opacity-0`
           )}
         >
-          {title}
+          {routeContext?.title}
         </div>
       </Link>
     </div>

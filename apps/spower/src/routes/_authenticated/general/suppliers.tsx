@@ -259,5 +259,10 @@ export const Route = createFileRoute('/_authenticated/general/suppliers')({
     return { search };
   },
   loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(suppliersOptions(deps.search, pb))
+    queryClient?.ensureQueryData(suppliersOptions(deps.search, pb)),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý nhà cung cấp'
+    };
+  }
 });

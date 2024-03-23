@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { DocumentEdit } from '../../../../../components';
+import { DocumentEdit, documentOptions } from '../../../../../components';
+
 
 const Component = () => {
   const { documentId } = Route.useParams();
@@ -10,5 +11,7 @@ const Component = () => {
 export const Route = createFileRoute(
   '/_authenticated/document/mine/$documentId/edit'
 )({
-  component: Component
+  component: Component,
+  loader: ({ context: { pb, queryClient }, params: { documentId } }) =>
+    queryClient?.ensureQueryData(documentOptions(documentId, pb))
 });
