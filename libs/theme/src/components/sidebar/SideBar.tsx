@@ -63,8 +63,8 @@ export const SideBar: FC<SideBarProps> = ({ children, ...props }) => {
     <SideBarContext.Provider value={{ collapsed }}>
       <div
         className={cn(
-          `transition-width duration-default shadow-x-0.5 relative h-full border-r shadow-lg`,
-          collapsed ? `w-12` : `w-72`
+          `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
+          collapsed ? `w-12` : `w-60`
         )}
         {...props}
       >

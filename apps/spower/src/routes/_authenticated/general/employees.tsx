@@ -132,7 +132,9 @@ const Component = () => {
     data: employeesQuery.data?.items ?? [],
     columns,
     manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    rowCount: employeesQuery.data?.totalItems,
+    pageCount: employeesQuery.data?.totalPages
   });
 
   return (

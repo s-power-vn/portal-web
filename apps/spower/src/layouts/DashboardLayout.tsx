@@ -67,7 +67,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   });
 
   return (
-    <div className={'flex h-screen w-full flex-col'}>
+    <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-1/4">
           <DialogHeader>
@@ -117,57 +117,59 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           </Form>
         </DialogContent>
       </Dialog>
-      <Header />
-      <div className={'flex h-full w-full'}>
-        <SideBar>
-          <div className={'w-full border-b p-2'}>
-            <Button
-              className={
-                'flex w-full gap-2 bg-green-600 uppercase hover:bg-green-500'
-              }
-              onClick={() => setOpen(true)}
+      <div className={'flex h-screen w-full flex-col'}>
+        <Header />
+        <div className={'flex h-full w-full grow'}>
+          <SideBar>
+            <div className={'w-full border-b p-2'}>
+              <Button
+                className={
+                  'flex w-full gap-2 bg-green-600 uppercase hover:bg-green-500'
+                }
+                onClick={() => setOpen(true)}
+              >
+                <PackagePlusIcon />
+                Tạo tài liệu
+              </Button>
+            </div>
+            <SideBarItem
+              to={'/home'}
+              icon={<LucideHome width={22} height={22} />}
+            ></SideBarItem>
+            <SideBarGroup
+              to={'/general'}
+              title={'Quản lý chung'}
+              icon={<GearIcon width={22} height={22} />}
             >
-              <PackagePlusIcon />
-              Tạo tài liệu
-            </Button>
-          </div>
-          <SideBarItem
-            to={'/home'}
-            icon={<LucideHome width={22} height={22} />}
-          ></SideBarItem>
-          <SideBarGroup
-            to={'/general'}
-            title={'Quản lý chung'}
-            icon={<GearIcon width={22} height={22} />}
-          >
+              <SideBarItem
+                to={'/general/employees'}
+                icon={<EmptyIcon />}
+              ></SideBarItem>
+              <SideBarItem
+                to={'/general/customers'}
+                icon={<EmptyIcon />}
+              ></SideBarItem>
+              <SideBarItem
+                to={'/general/suppliers'}
+                icon={<EmptyIcon />}
+              ></SideBarItem>
+            </SideBarGroup>
             <SideBarItem
-              to={'/general/employees'}
-              icon={<EmptyIcon />}
+              to={'/document/waiting'}
+              icon={<FileTextIcon width={22} height={22} />}
             ></SideBarItem>
             <SideBarItem
-              to={'/general/customers'}
-              icon={<EmptyIcon />}
+              to={'/document/mine'}
+              icon={<FilePlusIcon width={22} height={22} />}
             ></SideBarItem>
             <SideBarItem
-              to={'/general/suppliers'}
-              icon={<EmptyIcon />}
+              to={'/document/all'}
+              icon={<FileMinusIcon width={22} height={22} />}
             ></SideBarItem>
-          </SideBarGroup>
-          <SideBarItem
-            to={'/document/waiting'}
-            icon={<FileTextIcon width={22} height={22} />}
-          ></SideBarItem>
-          <SideBarItem
-            to={'/document/mine'}
-            icon={<FilePlusIcon width={22} height={22} />}
-          ></SideBarItem>
-          <SideBarItem
-            to={'/document/all'}
-            icon={<FileMinusIcon width={22} height={22} />}
-          ></SideBarItem>
-        </SideBar>
-        <div className={'h-full w-full p-2'}>{children}</div>
+          </SideBar>
+          <div className={'h-full grow overflow-hidden p-2'}>{children}</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

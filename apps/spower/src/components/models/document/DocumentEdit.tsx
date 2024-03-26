@@ -1,7 +1,7 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import PocketBase from 'pocketbase';
 
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 
 import { DocumentResponse, usePb } from '@storeo/core';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
@@ -50,14 +50,16 @@ export const DocumentEdit: FC<DocumentEditProps> = ({
         </span>
       </div>
       <Tabs defaultValue={defaultTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full flex-none grid-cols-4">
           <TabsTrigger value="overview">Tổng quan</TabsTrigger>
           <TabsTrigger value="request">Yêu cầu mua hàng</TabsTrigger>
           <TabsTrigger value="contract">Hợp đồng NCC</TabsTrigger>
           <TabsTrigger value="delivery">Tài liệu bàn giao</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <DocumentOverview documentId={documentId} />
+          <Suspense fallback={'Đang tải...'}>
+            <DocumentOverview documentId={documentId} />
+          </Suspense>
         </TabsContent>
         <TabsContent value="request">
           <DocumentRequest documentId={documentId} />

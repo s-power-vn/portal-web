@@ -9,7 +9,7 @@ export function useLogin(redirect?: string) {
 
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
-      pb.collection('users').authWithPassword(email, password),
+      pb.collection('user').authWithPassword(email, password),
     onSuccess: () => router.history.push(redirect ?? '/'),
     onError: () => {}
   });

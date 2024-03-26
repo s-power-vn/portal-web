@@ -6,6 +6,7 @@ export enum Collections {
 	Customer = "customer",
 	Department = "department",
 	Document = "document",
+	DocumentDetail = "documentDetail",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -62,6 +63,17 @@ export type DocumentRecord = {
 	status?: DocumentStatusOptions
 }
 
+export type DocumentDetailRecord = {
+	document: RecordIdString
+	note?: string
+	parent?: string
+	price?: number
+	title: string
+	unit?: string
+	unitPrice?: number
+	volume?: number
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -81,6 +93,7 @@ export type UserRecord = {
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & BaseSystemFields<Texpand>
+export type DocumentDetailResponse<Texpand = unknown> = Required<DocumentDetailRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -90,6 +103,7 @@ export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
 	document: DocumentRecord
+	documentDetail: DocumentDetailRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -98,6 +112,7 @@ export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
 	document: DocumentResponse
+	documentDetail: DocumentDetailResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }
