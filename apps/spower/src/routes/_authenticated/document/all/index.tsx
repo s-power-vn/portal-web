@@ -192,29 +192,43 @@ const Component = () => {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.map(row => (
-              <TableRow
-                key={row.id}
-                className={'cursor-pointer'}
-                onClick={() =>
-                  navigate({
-                    to: './$documentId/edit',
-                    params: {
-                      documentId: row.original.id
-                    }
-                  })
-                }
-              >
-                {row.getVisibleCells().map(cell => (
-                  <TableCell
-                    key={cell.id}
-                    className={'border-r px-2 py-1 last:border-r-0'}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  className={'cursor-pointer'}
+                  onClick={() =>
+                    navigate({
+                      to: './$documentId/edit',
+                      params: {
+                        documentId: row.original.id
+                      }
+                    })
+                  }
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell
+                      key={cell.id}
+                      className={'border-r px-2 py-1 last:border-r-0'}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-16 text-center"
+                >
+                  Không có dữ liệu.
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
