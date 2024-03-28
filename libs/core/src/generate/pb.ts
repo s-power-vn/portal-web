@@ -65,9 +65,9 @@ export type DocumentRecord = {
 
 export type DocumentDetailRecord = {
 	document: RecordIdString
+	index?: number
 	note?: string
 	parent?: string
-	price?: number
 	title: string
 	unit?: string
 	unitPrice?: number
