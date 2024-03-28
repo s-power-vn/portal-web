@@ -1,5 +1,7 @@
+import { InputHTMLAttributes } from 'react';
+
 import { MaskedInput } from './masked-input';
 
-export const NumericInput = () => {
-  return <MaskedInput mask={Number} />;
-};
+export const NumericInput = (props: InputHTMLAttributes<HTMLInputElement>) => (
+  <MaskedInput mask={Number} {...props} />
+);

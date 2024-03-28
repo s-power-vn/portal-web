@@ -49,7 +49,6 @@ import {
 } from '@storeo/core';
 import {
   Button,
-  NumericInput,
   Table,
   TableBody,
   TableCell,
