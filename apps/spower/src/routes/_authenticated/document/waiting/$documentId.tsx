@@ -1,9 +1,21 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
+import PocketBase from 'pocketbase';
 
-import { usePb } from '@storeo/core';
+import { DocumentResponse, usePb } from '@storeo/core';
 
-import { documentOptions } from '../../../../components';
+function getDocument(id: string, pb?: PocketBase) {
+  return pb?.collection<DocumentResponse>('document').getOne(id, {
+    expand: 'customer'
+  });
+}
+
+export function documentOptions(id: string, pb?: PocketBase) {
+  return queryOptions({
+    queryKey: ['document', id],
+    queryFn: () => getDocument(id, pb)
+  });
+}
 
 const Component = () => {
   const { documentId } = Route.useParams();

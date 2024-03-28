@@ -2,7 +2,6 @@ export * from './department/department-dropdown';
 export * from './department/department-dropdown-field';
 export * from './customer/customer-dropdown';
 export * from './customer/customer-dropdown-field';
-export * from './document/document-edit';
 export * from './document/document-new';
 export * from './document/document-detail-edit';
 export * from './document/document-detail-new';
