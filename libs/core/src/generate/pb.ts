@@ -7,6 +7,9 @@ export enum Collections {
 	Department = "department",
 	Document = "document",
 	DocumentDetail = "documentDetail",
+	DocumentDetailMax = "documentDetailMax",
+	DocumentRequest = "documentRequest",
+	DocumentRequestDetail = "documentRequestDetail",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -74,6 +77,22 @@ export type DocumentDetailRecord = {
 	volume?: number
 }
 
+export type DocumentDetailMaxRecord<TmaxIndex = unknown> = {
+	maxIndex?: null | TmaxIndex
+}
+
+export type DocumentRequestRecord = {
+	document?: RecordIdString
+	name?: string
+	status?: string
+}
+
+export type DocumentRequestDetailRecord = {
+	documentDetail?: RecordIdString
+	documentRequest?: RecordIdString
+	volume?: number
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -94,6 +113,9 @@ export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & Bas
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & BaseSystemFields<Texpand>
 export type DocumentDetailResponse<Texpand = unknown> = Required<DocumentDetailRecord> & BaseSystemFields<Texpand>
+export type DocumentDetailMaxResponse<TmaxIndex = unknown, Texpand = unknown> = Required<DocumentDetailMaxRecord<TmaxIndex>> & BaseSystemFields<Texpand>
+export type DocumentRequestResponse<Texpand = unknown> = Required<DocumentRequestRecord> & BaseSystemFields<Texpand>
+export type DocumentRequestDetailResponse<Texpand = unknown> = Required<DocumentRequestDetailRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -104,6 +126,9 @@ export type CollectionRecords = {
 	department: DepartmentRecord
 	document: DocumentRecord
 	documentDetail: DocumentDetailRecord
+	documentDetailMax: DocumentDetailMaxRecord
+	documentRequest: DocumentRequestRecord
+	documentRequestDetail: DocumentRequestDetailRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -113,6 +138,9 @@ export type CollectionResponses = {
 	department: DepartmentResponse
 	document: DocumentResponse
 	documentDetail: DocumentDetailResponse
+	documentDetailMax: DocumentDetailMaxResponse
+	documentRequest: DocumentRequestResponse
+	documentRequestDetail: DocumentRequestDetailResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }

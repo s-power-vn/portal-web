@@ -108,20 +108,27 @@ function IndeterminateCheckbox({
 }
 
 export type DocumentDetailData = DocumentDetailResponse & {
-  hasChild?: boolean;
   children?: DocumentDetailData[];
+  level?: string;
 };
 
-function makeCatTree(data: DocumentDetailData[]) {
-  const groupedByParents = _.groupBy(data, 'parent');
-  const catsById = _.keyBy(data, 'id');
-  _.each(_.omit(groupedByParents, ''), function (children, parentId) {
-    catsById[parentId].children = children;
-  });
-  _.each(catsById, function (cat) {
-    cat.hasChild = !_.isEmpty(cat.children);
-  });
-  return groupedByParents[''];
+function arrayToTree(
+  arr: DocumentDetailData[],
+  parent = 'root',
+  parentLevel?: string
+): DocumentDetailData[] {
+  return _.chain(arr)
+    .filter(item => item.parent === parent)
+    .map(child => {
+      const level = `${parentLevel ? parentLevel + '.' : ''}${child.index + 1}`;
+      return {
+        ...child,
+        level,
+        children: arrayToTree(arr, child.id, level)
+      };
+    })
+    .sortBy('index')
+    .value();
 }
 
 export type DocumentOverviewProps = {
@@ -156,9 +163,10 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const data = useMemo(
-    () => makeCatTree(documentDetailsQuery.data ?? []),
+    () => arrayToTree(documentDetailsQuery.data ?? []),
     [documentDetailsQuery.data]
   );
+
   const columnHelper = createColumnHelper<DocumentDetailData>();
 
   const columns = useMemo(
@@ -166,12 +174,7 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
-            <div
-              className={'flex items-center gap-1 '}
-              style={{
-                paddingLeft: `${row.depth}rem`
-              }}
-            >
+            <div className={'flex w-full items-center '}>
               {row.getCanExpand() ? (
                 <button
                   className={'cursor-pointer'}
@@ -191,16 +194,15 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
           );
         },
         header: () => (
-          <div className={'flex items-center justify-center'}>#</div>
+          <div className={'flex w-full items-center justify-center'}>#</div>
         ),
         footer: info => info.column.id,
-        size: 50
+        size: 30
       }),
-      columnHelper.display({
-        id: 'level',
-        cell: ({ row }) => row.id,
+      columnHelper.accessor('level', {
+        cell: info => info.getValue(),
         header: () => (
-          <div className={'flex items-center justify-center'}>ID</div>
+          <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
         size: 50

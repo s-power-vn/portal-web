@@ -4,7 +4,11 @@ import { number, object, string } from 'yup';
 
 import React, { Dispatch, FC, SetStateAction } from 'react';
 
-import { DocumentDetailRecord, usePb } from '@storeo/core';
+import {
+  DocumentDetailMaxResponse,
+  DocumentDetailRecord,
+  usePb
+} from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -46,8 +50,17 @@ export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
 
   const createDocumentDetail = useMutation({
     mutationKey: ['createDocumentDetail'],
-    mutationFn: (params: DocumentDetailRecord) =>
-      pb.collection<DocumentDetailRecord>('documentDetail').create(params),
+    mutationFn: async (params: DocumentDetailRecord) => {
+      const maxInfo = await pb
+        .collection<DocumentDetailMaxResponse>('documentDetailMax')
+        .getOne(parent ? parent.original.id : 'root');
+      return await pb
+        .collection<DocumentDetailRecord>('documentDetail')
+        .create({
+          ...params,
+          index: (maxInfo.maxIndex as number) + 1
+        });
+    },
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
@@ -80,7 +93,7 @@ export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
           onSubmit={values =>
             createDocumentDetail.mutate({
               document: documentId,
-              parent: parent?.original.id,
+              parent: parent ? parent.original.id : 'root',
               ...values
             })
           }
