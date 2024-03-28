@@ -11,7 +11,6 @@ import { DocumentDelivery } from './document-delivery';
 import { DocumentOverview } from './document-overview';
 import { DocumentRequest } from './document-request';
 
-
 function getDocument(id: string, pb?: PocketBase) {
   return pb?.collection<DocumentResponse>('document').getOne(id, {
     expand: 'customer'

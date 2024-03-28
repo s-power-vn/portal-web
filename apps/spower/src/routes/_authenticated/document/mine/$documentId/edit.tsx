@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { documentOptions } from '../../../../../components';
 
-
 const Component = () => {
   return <></>;
 };

@@ -11,7 +11,6 @@ import { FC } from 'react';
 import { DocumentRequestResponse, usePb } from '@storeo/core';
 import { Button } from '@storeo/theme';
 
-
 function getDocumentRequests(documentId: string, pb?: PocketBase) {
   return pb
     ?.collection<DocumentRequestResponse>('documentRequest')
