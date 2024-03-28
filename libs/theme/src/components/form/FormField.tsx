@@ -4,7 +4,7 @@ import { AnyObject, InferType, ObjectSchema } from 'yup';
 import { Children, ReactNode, cloneElement, isValidElement } from 'react';
 import { Controller, Path, useFormContext } from 'react-hook-form';
 
-import { cn } from '@storeo/core';
+import { cn, formatNumber } from '@storeo/core';
 
 import { Label } from '../ui/label';
 
@@ -32,18 +32,31 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
       render={({ field, fieldState: { invalid, error } }) => {
         const childrenWithProps = Children.map(children, child => {
           if (isValidElement(child)) {
-            const { onChange, ref, ...fieldProps } = field;
-            return cloneElement(child, {
-              onChange: v => {
-                onChange(v);
-                if (child.props.onChange) {
-                  child.props.onChange(v);
-                }
-              },
+            const { onChange, ref, value, ...fieldProps } = field;
+            const handleChange = (v: string) => {
+              onChange(v);
+              child.props.onChange?.(v);
+            };
+
+            const defaultProps: {
+              onChange?: (v: string) => void;
+              onAccept?: (v: string) => void;
+              value: string;
+            } = {
+              onChange: handleChange,
+              value: typeof value === 'number' ? formatNumber(value) : value,
               ...fieldProps
-            } as {
-              onChange: (v: any) => void;
-            });
+            };
+
+            return cloneElement(
+              child,
+              typeof value === 'number'
+                ? {
+                    ...defaultProps,
+                    onAccept: handleChange
+                  }
+                : defaultProps
+            );
           }
           return child;
         });

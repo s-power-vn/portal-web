@@ -22,12 +22,14 @@ export type SideBarItemProps<
   to?: ToPathOption<TRouteTree, TFrom, TTo>;
   icon?: ReactNode;
   isChild?: boolean;
+  badge?: ReactNode;
 } & Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'title'>;
 
 export const SideBarItem: FC<SideBarItemProps> = ({
   to,
   icon,
   isChild,
+  badge,
   ...props
 }) => {
   const { flatRoutes } = useRouter();
@@ -82,11 +84,12 @@ export const SideBarItem: FC<SideBarItemProps> = ({
           ))}
         <div
           className={cn(
-            `duration-default transition-opacity`,
+            `duration-default flex w-full justify-between pr-2 transition-opacity`,
             collapsed && `w-0 opacity-0`
           )}
         >
           {routeContext?.title}
+          {badge}
         </div>
       </Link>
     </div>

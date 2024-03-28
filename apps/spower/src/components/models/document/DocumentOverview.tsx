@@ -34,6 +34,7 @@ import {
   CSSProperties,
   FC,
   HTMLProps,
+  Suspense,
   useEffect,
   useMemo,
   useRef,
@@ -268,7 +269,7 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
         size: 150
       }),
       columnHelper.display({
-        id: 'x',
+        id: 'biddingTotal',
         cell: ({ row }) =>
           formatCurrency(row.original.unitPrice * row.original.volume),
         header: () => 'Thành tiền',
@@ -276,49 +277,49 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
         size: 150
       }),
       columnHelper.display({
-        id: '1',
+        id: 'requestVolume',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
         size: 100
       }),
       columnHelper.display({
-        id: '2',
+        id: 'exceedVolume',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'KL phát sinh',
         footer: info => info.column.id,
         size: 100
       }),
       columnHelper.display({
-        id: '3',
+        id: 'supplierUnitPrice',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
       }),
       columnHelper.display({
-        id: '3',
+        id: 'exceedUnitPrice',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Đơn giá phát sinh',
         footer: info => info.column.id,
         size: 150
       }),
       columnHelper.display({
-        id: '4',
+        id: 'supplier',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'NCC',
         footer: info => info.column.id,
         size: 100
       }),
       columnHelper.display({
-        id: '5',
+        id: 'supplierStatus',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Trạng thái NCC',
         footer: info => info.column.id,
         size: 150
       }),
       columnHelper.display({
-        id: '6',
+        id: 'contractStatus',
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Trạng thái HĐ',
         footer: info => info.column.id,
@@ -410,12 +411,14 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
         setOpen={setOpenDocumentDetailNew}
         parent={selectedRow}
       />
-      <DocumentDetailEdit
-        documentId={documentId}
-        open={openDocumentDetailEdit}
-        setOpen={setOpenDocumentDetailEdit}
-        parent={selectedRow}
-      />
+      <Suspense>
+        <DocumentDetailEdit
+          documentId={documentId}
+          documentDetailId={selectedRow?.original.id}
+          open={openDocumentDetailEdit}
+          setOpen={setOpenDocumentDetailEdit}
+        />
+      </Suspense>
       <div className={'flex flex-col gap-2'}>
         <div className={'flex gap-2'}>
           <Button variant={'outline'} className={'flex gap-1'}>

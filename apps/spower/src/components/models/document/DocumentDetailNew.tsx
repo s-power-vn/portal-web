@@ -15,7 +15,8 @@ import {
   DialogTitle,
   Form,
   NumericField,
-  TextField
+  TextField,
+  TextareaField
 } from '@storeo/theme';
 
 import { DocumentDetailData } from './DocumentOverview';
@@ -58,7 +59,7 @@ export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-1/4">
+      <DialogContent className="w-96">
         <DialogHeader>
           <DialogTitle>Tạo mô tả công việc</DialogTitle>
           <DialogDescription className={'italic'}>
@@ -92,7 +93,7 @@ export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
           loading={createDocumentDetail.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
-          <TextField
+          <TextareaField
             schema={schema}
             name={'title'}
             title={'Mô tả công việc'}
