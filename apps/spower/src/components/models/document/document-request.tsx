@@ -1,12 +1,12 @@
 import { PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useQueryClient,
+  useSuspenseQuery
+} from '@tanstack/react-query';
 import PocketBase from 'pocketbase';
 
-
-
 import { FC } from 'react';
-
-
 
 import { DocumentRequestResponse, usePb } from '@storeo/core';
 import { Button } from '@storeo/theme';
