@@ -4,7 +4,6 @@ import { FC } from 'react';
 
 import { Button } from '@storeo/theme';
 
-
 export type DocumentRequestProps = {
   documentId: string;
 };
