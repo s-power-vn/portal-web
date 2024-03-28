@@ -19,7 +19,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DocumentDetailData } from './DocumentOverview';
+import { DocumentDetailData } from './document-overview';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),

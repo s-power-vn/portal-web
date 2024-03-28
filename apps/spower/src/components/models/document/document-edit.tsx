@@ -6,10 +6,10 @@ import { FC, Suspense } from 'react';
 import { DocumentResponse, usePb } from '@storeo/core';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
-import { DocumentContract } from './DocumentContract';
-import { DocumentDelivery } from './DocumentDelivery';
-import { DocumentOverview } from './DocumentOverview';
-import { DocumentRequest } from './DocumentRequest';
+import { DocumentContract } from './document-contract';
+import { DocumentDelivery } from './document-delivery';
+import { DocumentOverview } from './document-overview';
+import { DocumentRequest } from './document-request';
 
 function getDocument(id: string, pb?: PocketBase) {
   return pb?.collection<DocumentResponse>('document').getOne(id, {

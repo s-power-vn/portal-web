@@ -48,29 +48,29 @@ const ExpandIcon = () => {
   );
 };
 
-const SideBarContext = createContext<{
+const SidebarContext = createContext<{
   collapsed: boolean;
 }>({
   collapsed: false
 });
 
-export type SideBarProps = HTMLAttributes<HTMLDivElement>;
+export type SidebarProps = HTMLAttributes<HTMLDivElement>;
 
-export const SideBar: FC<SideBarProps> = ({ children, ...props }) => {
+export const Sidebar: FC<SidebarProps> = ({ children, ...props }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <SideBarContext.Provider value={{ collapsed }}>
+    <SidebarContext.Provider value={{ collapsed }}>
       <div
         className={cn(
           `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
-          collapsed ? `w-12` : `w-60`
+          collapsed ? `w-12` : `w-64`
         )}
         {...props}
       >
         {children}
         <Button
-          className={`absolute bottom-1 right-1`}
+          className={`absolute bottom-1 right-[0.38rem]`}
           variant={'outline'}
           size={'icon'}
           onClick={() => setCollapsed(!collapsed)}
@@ -81,12 +81,12 @@ export const SideBar: FC<SideBarProps> = ({ children, ...props }) => {
           </div>
         </Button>
       </div>
-    </SideBarContext.Provider>
+    </SidebarContext.Provider>
   );
 };
 
-export function useSideBar() {
-  const ctx = useContext(SideBarContext);
+export function useSidebar() {
+  const ctx = useContext(SidebarContext);
 
   if (!ctx) {
     throw new Error('useToast must be used within a ToastProvider');

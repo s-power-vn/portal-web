@@ -12,9 +12,9 @@ import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
 import { cn, useLink } from '@storeo/core';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { useSideBar } from './SideBar';
+import { useSidebar } from './sidebar';
 
-export type SideBarItemProps<
+export type SidebarItemProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,
   TTo extends string = ''
@@ -25,7 +25,7 @@ export type SideBarItemProps<
   badge?: ReactNode;
 } & Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'title'>;
 
-export const SideBarItem: FC<SideBarItemProps> = ({
+export const SidebarItem: FC<SidebarItemProps> = ({
   to,
   icon,
   isChild,
@@ -39,7 +39,7 @@ export const SideBarItem: FC<SideBarItemProps> = ({
   };
 
   const { isActive } = useLink({ to });
-  const { collapsed } = useSideBar();
+  const { collapsed } = useSidebar();
 
   const iconElement = useMemo(
     () => (

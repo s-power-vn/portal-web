@@ -5,7 +5,7 @@ import { FormField, FormFieldProps } from '@storeo/theme';
 import {
   DepartmentDropdown,
   DepartmentDropdownProps
-} from './DepartmentDropdown';
+} from './department-dropdown';
 
 export type DepartmentDropdownFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<DepartmentDropdownProps, S>;

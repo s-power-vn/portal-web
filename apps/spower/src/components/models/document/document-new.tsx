@@ -17,7 +17,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { CustomerDropdownField } from '../customer/CustomerDropdownField';
+import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên công trình'),

@@ -18,9 +18,9 @@ import {
 
 import { cn, useLink } from '@storeo/core';
 
-import { useSideBar } from './SideBar';
+import { useSidebar } from './sidebar';
 
-export type SideBarGroupProps<
+export type SidebarGroupProps<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,
   TTo extends string = ''
@@ -31,7 +31,7 @@ export type SideBarGroupProps<
   children: ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const SideBarGroup: FC<SideBarGroupProps> = ({
+export const SidebarGroup: FC<SidebarGroupProps> = ({
   to,
   title,
   icon,
@@ -39,7 +39,7 @@ export const SideBarGroup: FC<SideBarGroupProps> = ({
   ...props
 }) => {
   const { isActive } = useLink({ to });
-  const { collapsed } = useSideBar();
+  const { collapsed } = useSidebar();
 
   const childrenWithProps = useMemo(
     () =>

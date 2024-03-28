@@ -1,3 +1,3 @@
-export * from './SideBar';
-export * from './SideBarGroup';
-export * from './SideBarItem';
+export * from './sidebar';
+export * from './sidebar-group';
+export * from './sidebar-item';

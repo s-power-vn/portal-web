@@ -14,7 +14,7 @@ import {
   BreadcrumbSeparator
 } from '@storeo/theme';
 
-import { HeaderMenu } from './HeaderMenu';
+import { HeaderMenu } from './header-menu';
 
 const Logo = () => (
   <img

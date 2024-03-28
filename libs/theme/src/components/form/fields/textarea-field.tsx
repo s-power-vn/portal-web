@@ -3,7 +3,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { TextareaHTMLAttributes } from 'react';
 
 import { Textarea } from '../../ui/textarea';
-import { FormField, FormFieldProps } from '../FormField';
+import { FormField, FormFieldProps } from '../form-field';
 
 export type TextareaFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<TextareaHTMLAttributes<HTMLTextAreaElement>, S>;

@@ -3,7 +3,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { InputHTMLAttributes } from 'react';
 
 import { Input } from '../../ui/input';
-import { FormField, FormFieldProps } from '../FormField';
+import { FormField, FormFieldProps } from '../form-field';
 
 export type PasswordFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>, S>;

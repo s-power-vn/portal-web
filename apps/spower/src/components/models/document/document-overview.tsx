@@ -58,8 +58,8 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentDetailEdit } from './DocumentDetailEdit';
-import { DocumentDetailNew } from './DocumentDetailNew';
+import { DocumentDetailEdit } from './document-detail-edit';
+import { DocumentDetailNew } from './document-detail-new';
 
 function getDocumentDetails(documentId: string, pb?: PocketBase) {
   return pb?.collection<DocumentDetailResponse>('documentDetail').getFullList({

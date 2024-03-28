@@ -2,7 +2,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 
 import { FormField, FormFieldProps } from '@storeo/theme';
 
-import { CustomerDropdown, CustomerDropdownProps } from './CustomerDropdown';
+import { CustomerDropdown, CustomerDropdownProps } from './customer-dropdown';
 
 export type CustomerDropdownFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<CustomerDropdownProps, S>;

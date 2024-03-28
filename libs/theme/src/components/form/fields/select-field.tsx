@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../ui/select';
-import { FormField, FormFieldProps } from '../FormField';
+import { FormField, FormFieldProps } from '../form-field';
 
 export type SelectData = {
   label: string;
