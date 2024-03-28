@@ -322,7 +322,9 @@ const Component = () => {
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
-                      className={'border-r last:border-r-0'}
+                      className={
+                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                      }
                     >
                       {header.isPlaceholder ? null : (
                         <>
@@ -342,7 +344,7 @@ const Component = () => {
                 table.getRowModel().rows.map(row => (
                   <TableRow
                     key={row.id}
-                    className={'cursor-pointer'}
+                    className={'cursor-pointer last:border-b-0'}
                     onClick={() =>
                       navigate({
                         to: './$documentId',

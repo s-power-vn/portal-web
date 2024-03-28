@@ -190,7 +190,9 @@ const Component = () => {
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
-                      className={'border-r last:border-r-0'}
+                      className={
+                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                      }
                     >
                       {header.isPlaceholder ? null : (
                         <>
@@ -208,7 +210,7 @@ const Component = () => {
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className={'last:border-b-0'}>
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}

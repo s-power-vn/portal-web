@@ -350,7 +350,6 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    debugTable: true,
     manualPagination: true,
     getRowId: (_, index, parent) => {
       return `${parent?.id ? parent?.id + '.' : ''}${index + 1}`;
@@ -549,7 +548,9 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
                       data-index={virtualRow.index} //needed for dynamic row height measurement
                       ref={node => rowVirtualizer.measureElement(node)} //measure dynamic row height
                       key={row.id}
-                      className={'group absolute flex w-full cursor-pointer'}
+                      className={
+                        'group absolute flex w-full cursor-pointer last:border-b-0'
+                      }
                       style={{
                         transform: `translateY(${virtualRow.start}px)` //this should always be a `style` as it changes on scroll
                       }}
