@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
+  NumericField,
   TextField
 } from '@storeo/theme';
 
@@ -85,7 +86,7 @@ export const DocumentDetailEdit: FC<DocumentDetailEditProps> = ({
             title={'Mô tả công việc'}
             options={{}}
           />
-          <TextField
+          <NumericField
             schema={schema}
             name={'volume'}
             title={'Khối lượng thầu'}
@@ -97,7 +98,7 @@ export const DocumentDetailEdit: FC<DocumentDetailEditProps> = ({
             title={'Đơn vị'}
             options={{}}
           />
-          <TextField
+          <NumericField
             schema={schema}
             name={'unitPrice'}
             title={'Đơn giá thầu'}
