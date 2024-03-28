@@ -25,7 +25,7 @@ const EmptyIcon = () => <span></span>;
 const SidebarHeader = () => {
   const [openDocumentNew, setOpenDocumentNew] = useState(false);
   const { collapsed } = useSidebar();
-  console.log(collapsed);
+
   return (
     <div className={'flex w-full items-center justify-center border-b p-1'}>
       <DocumentNew open={openDocumentNew} setOpen={setOpenDocumentNew} />
