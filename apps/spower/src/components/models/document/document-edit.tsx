@@ -62,7 +62,9 @@ export const DocumentEdit: FC<DocumentEditProps> = ({
           </Suspense>
         </TabsContent>
         <TabsContent value="request">
-          <DocumentRequest documentId={documentId} />
+          <Suspense fallback={'Đang tải...'}>
+            <DocumentRequest documentId={documentId}/>
+          </Suspense>
         </TabsContent>
         <TabsContent value="contract">
           <DocumentContract documentId={documentId} />

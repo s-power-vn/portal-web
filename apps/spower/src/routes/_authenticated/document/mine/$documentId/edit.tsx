@@ -1,10 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { DocumentEdit, documentOptions } from '../../../../../components';
+
+
+import { documentOptions } from '../../../../../components';
+
 
 const Component = () => {
-  const { documentId } = Route.useParams();
-  return <DocumentEdit documentId={documentId} />;
+  return <></>;
 };
 
 export const Route = createFileRoute(

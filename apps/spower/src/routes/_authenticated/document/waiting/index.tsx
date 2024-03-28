@@ -345,7 +345,7 @@ const Component = () => {
                     className={'cursor-pointer'}
                     onClick={() =>
                       navigate({
-                        to: './$documentId/edit',
+                        to: './$documentId',
                         params: {
                           documentId: row.original.id
                         }
