@@ -1,6 +1,7 @@
 import { Column } from '@tanstack/react-table';
 import { type ClassValue, clsx } from 'clsx';
 import _ from 'lodash';
+import { DateTime } from 'luxon';
 import { withExtendedShadows } from 'tailwind-extended-shadows-merge';
 import { extendTailwindMerge } from 'tailwind-merge';
 
@@ -63,4 +64,10 @@ export function formatCurrency(value: number) {
 
 export function formatNumber(value: number) {
   return value ? new Intl.NumberFormat('vi-VN', {}).format(value) : '';
+}
+
+export function formatDate(value: string) {
+  return DateTime.fromJSDate(new Date(Date.parse(value))).toFormat(
+    'HH:mm dd/MM/yyyy'
+  );
 }

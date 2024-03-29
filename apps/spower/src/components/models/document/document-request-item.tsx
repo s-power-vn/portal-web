@@ -1,4 +1,4 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
@@ -11,7 +11,13 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { EditIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import {
+  Edit2Icon,
+  Edit3,
+  EditIcon,
+  SquareMinusIcon,
+  SquarePlusIcon
+} from 'lucide-react';
 import PocketBase from 'pocketbase';
 
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -230,8 +236,18 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
       }
     >
       <div className={'flex justify-between border-b p-4'}>
-        <div className={'flex-1'}>{documentRequestQuery.data?.name}</div>
+        <div className={'flex-1 text-lg font-bold'}>
+          {documentRequestQuery.data?.name}
+        </div>
         <div className={'flex gap-2'}>
+          <Button className={'flex gap-1'}>
+            <PlusIcon />
+            Thêm nhà cung cấp
+          </Button>
+          <Button disabled={true} className={'flex gap-1'}>
+            <Edit3 width={14} height={14} />
+            Thay đổi nhà cung cấp
+          </Button>
           <Button className={'text-appWhite'} size="icon">
             <EditIcon className={'h-5 w-5'} />
           </Button>

@@ -10,7 +10,7 @@ import PocketBase from 'pocketbase';
 
 import { FC, useMemo } from 'react';
 
-import { DocumentRequestResponse, usePb } from '@storeo/core';
+import { DocumentRequestResponse, formatDate, usePb } from '@storeo/core';
 import {
   Button,
   Table,
@@ -61,15 +61,21 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Yêu cầu mua hàng',
+        header: () => 'Nội dung',
         footer: info => info.column.id,
-        size: 300
+        size: 400
       }),
-      columnHelper.accessor('created', {
+      columnHelper.accessor('status', {
         cell: info => info.getValue(),
-        header: () => 'Ngày',
+        header: () => 'Trạng thái',
         footer: info => info.column.id,
         size: 200
+      }),
+      columnHelper.accessor('created', {
+        cell: info => formatDate(info.getValue()),
+        header: () => 'Ngày tạo',
+        footer: info => info.column.id,
+        size: 150
       })
     ],
     [columnHelper]
@@ -85,80 +91,78 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
 
   return (
     <div className={'flex flex-col gap-2'}>
-      <div className={'flex gap-2'}>
-        <Button className={'flex gap-1'}>
-          <PlusIcon />
-          Thêm yêu cầu mua hàng
-        </Button>
-        <Button disabled={true} className={'flex gap-1'}>
-          <PlusIcon />
-          Thêm nhà cung cấp
-        </Button>
-      </div>
-      <div className={'w-1/2 rounded-md border'}>
-        <Table>
-          <TableHeader className={'bg-appGrayLight'}>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                    }
-                    style={{
-                      width: header.column.getSize()
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className={'last:border-b-0'}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
+      <div className={'flex justify-between gap-2'}>
+        <div>
+          <Button className={'flex gap-1'}>
+            <PlusIcon />
+            Thêm yêu cầu mua hàng
+          </Button>
+        </div>
+        <div className={'rounded-md border'}>
+          <Table>
+            <TableHeader className={'bg-appGrayLight'}>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className={
+                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                      }
                       style={{
-                        width: cell.column.getSize()
+                        width: header.column.getSize()
                       }}
-                      className={'border-r px-2 py-1 last:border-r-0'}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
                       )}
-                    </TableCell>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 text-center"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id} className={'last:border-b-0'}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
+                        className={'border-r px-2 py-1 last:border-r-0'}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <div
         className={
-          'bg-appGrayLight h-[500px] overflow-auto rounded-md border p-4'
+          'bg-appGrayLight h-[calc(100vh-270px)]  overflow-auto rounded-md border p-4'
         }
       >
         {documentRequestsQuery.data
