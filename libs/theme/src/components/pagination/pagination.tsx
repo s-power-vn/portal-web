@@ -3,15 +3,12 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
 import { FC } from 'react';
 
-import { cn } from '@storeo/core';
 import { Button } from '@storeo/theme/components/ui/button';
 
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue
 } from '../ui/select';

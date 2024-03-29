@@ -6,12 +6,16 @@
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/theme",
         "main": "libs/theme/src/index.ts",
         "tsConfig": "libs/theme/tsconfig.lib.json",
-        "assets": ["libs/theme/*.md"]
+        "assets": [
+          "libs/theme/*.md"
+        ]
       }
     }
   },
