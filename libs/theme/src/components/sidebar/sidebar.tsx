@@ -1,6 +1,6 @@
-import { FC, HTMLAttributes, createContext, useContext, useState } from 'react';
+import { FC, HTMLAttributes, createContext, useContext } from 'react';
 
-import { cn } from '@storeo/core';
+import { cn, usePersistedState } from '@storeo/core';
 
 import { Button } from '../ui/button';
 
@@ -57,7 +57,10 @@ const SidebarContext = createContext<{
 export type SidebarProps = HTMLAttributes<HTMLDivElement>;
 
 export const Sidebar: FC<SidebarProps> = ({ children, ...props }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = usePersistedState(
+    false,
+    'sidebar.collapsed'
+  );
 
   return (
     <SidebarContext.Provider value={{ collapsed }}>

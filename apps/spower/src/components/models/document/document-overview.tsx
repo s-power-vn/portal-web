@@ -6,7 +6,6 @@ import {
   useSuspenseQuery
 } from '@tanstack/react-query';
 import {
-  Column,
   ExpandedState,
   Row,
   RowSelectionState,
@@ -30,22 +29,16 @@ import {
 } from 'lucide-react';
 import PocketBase from 'pocketbase';
 
-import {
-  CSSProperties,
-  FC,
-  HTMLProps,
-  Suspense,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+  DocumentDetailData,
   DocumentDetailResponse,
+  arrayToTree,
   cn,
   formatCurrency,
   formatNumber,
+  getCommonPinningStyles,
   usePb
 } from '@storeo/core';
 import {
@@ -58,6 +51,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { DocumentDetailEdit } from './document-detail-edit';
 import { DocumentDetailNew } from './document-detail-new';
 
@@ -82,53 +76,6 @@ export function documentDetailsOptions(documentId: string, pb?: PocketBase) {
     queryKey: ['documentDetails', documentId],
     queryFn: () => getDocumentDetails(documentId, pb)
   });
-}
-
-function IndeterminateCheckbox({
-  indeterminate,
-  ...rest
-}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (typeof indeterminate === 'boolean' && ref.current) {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate, rest.checked]);
-
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={`bg-appWhite border-appGrayDark focus:ring-appBlue cursor-pointer rounded text-blue-600 focus:ring-2`}
-      onClick={e => e.stopPropagation()}
-      {...rest}
-    />
-  );
-}
-
-export type DocumentDetailData = DocumentDetailResponse & {
-  children?: DocumentDetailData[];
-  level?: string;
-};
-
-function arrayToTree(
-  arr: DocumentDetailData[],
-  parent = 'root',
-  parentLevel?: string
-): DocumentDetailData[] {
-  return _.chain(arr)
-    .filter(item => item.parent === parent)
-    .map(child => {
-      const level = `${parentLevel ? parentLevel + '.' : ''}${child.index + 1}`;
-      return {
-        ...child,
-        level,
-        children: arrayToTree(arr, child.id, level)
-      };
-    })
-    .sortBy('index')
-    .value();
 }
 
 export type DocumentOverviewProps = {
@@ -350,10 +297,7 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true,
-    getRowId: (_, index, parent) => {
-      return `${parent?.id ? parent?.id + '.' : ''}${index + 1}`;
-    }
+    manualPagination: true
   });
 
   const { rows } = table.getRowModel();
@@ -363,20 +307,6 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
   useEffect(() => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
-
-  const getCommonPinningStyles = (
-    column: Column<DocumentDetailData>
-  ): CSSProperties => {
-    const isPinned = column.getIsPinned();
-
-    return {
-      left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-      right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
-      position: isPinned ? 'sticky' : 'relative',
-      width: column.getSize(),
-      zIndex: isPinned ? 90 : 0
-    };
-  };
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -455,8 +385,6 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
           </Button>
           <Button
             disabled={!selectedRow}
-            variant="outline"
-            className={'text-appBlack'}
             size="icon"
             onClick={() => {
               setOpenDocumentDetailEdit(true);
@@ -491,7 +419,6 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
         >
           <Table
             style={{
-              display: 'grid',
               width: table.getTotalSize()
             }}
           >
