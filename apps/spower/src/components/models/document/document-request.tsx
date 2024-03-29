@@ -13,7 +13,6 @@ import { FC, useMemo } from 'react';
 import { DocumentRequestResponse, usePb } from '@storeo/core';
 import {
   Button,
-  ScrollArea,
   Table,
   TableBody,
   TableCell,

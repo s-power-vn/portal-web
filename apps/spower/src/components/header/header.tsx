@@ -1,4 +1,3 @@
-import { HomeIcon } from '@radix-ui/react-icons';
 import { useRouterState } from '@tanstack/react-router';
 import _ from 'lodash';
 import { LucideHome } from 'lucide-react';
