@@ -9,7 +9,6 @@ import { parse, stringify } from 'zipson';
 
 import { usePb } from '@storeo/core';
 
-import './global.css';
 import { routeTree } from './routes.gen';
 
 export function decodeFromBinary(str: string): string {

@@ -1,10 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -16,41 +11,32 @@ import { EditIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { Dispatch, SetStateAction, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
 
 import {
   CustomerResponse,
-  DocumentRecord,
   DocumentResponse,
-  DocumentStatusOptions,
   UserResponse,
   usePb
 } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Form,
   Pagination,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-  TextField
+  TableRow
 } from '@storeo/theme';
 
 import {
-  CustomerDropdownField,
+  DocumentEdit,
   DocumentStatus,
   EmployeeItem
 } from '../../../../components';
+
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -79,103 +65,6 @@ export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
     queryFn: () => getDocuments(search, pb)
   });
 }
-
-const schema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
-});
-
-function getDocument(id?: string, pb?: PocketBase) {
-  return id ? pb?.collection<DocumentResponse>('document').getOne(id) : null;
-}
-
-function documentOptions(id?: string, pb?: PocketBase) {
-  return queryOptions({
-    queryKey: ['document', id],
-    queryFn: () => getDocument(id, pb),
-    enabled: !!id
-  });
-}
-
-const GeneralDocumentEdit = ({
-  documentId,
-  open,
-  setOpen
-}: {
-  documentId?: string;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const pb = usePb();
-  const queryClient = useQueryClient();
-
-  const documentQuery = useSuspenseQuery(documentOptions(documentId, pb));
-
-  const updateDocument = useMutation({
-    mutationKey: ['updateDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      pb.collection('document').update(documentId ?? '', params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['documents'] }),
-        queryClient.invalidateQueries({ queryKey: ['document', documentId] })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-    }
-  });
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-1/4">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
-          <DialogDescription>
-            Cho phép chỉnh sửa thông tin chung của tài liệu.
-          </DialogDescription>
-        </DialogHeader>
-        <Form
-          schema={schema}
-          onSubmit={values =>
-            updateDocument.mutate({
-              ...values,
-              status: DocumentStatusOptions.ToDo,
-              createdBy: pb.authStore.model?.id
-            })
-          }
-          defaultValues={documentQuery.data ?? undefined}
-          loading={updateDocument.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'bidding'}
-            title={'Tên gói thầu'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Tên công trình'}
-            options={{}}
-          />
-          <CustomerDropdownField
-            schema={schema}
-            name={'customer'}
-            title={'Chủ đầu tư'}
-            options={{
-              placeholder: 'Hãy chọn chủ đầu tư'
-            }}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 const Component = () => {
   const [open, setOpen] = useState(false);
@@ -293,11 +182,7 @@ const Component = () => {
   return (
     <>
       <Suspense>
-        <GeneralDocumentEdit
-          documentId={documentId}
-          open={open}
-          setOpen={setOpen}
-        />
+        <DocumentEdit documentId={documentId} open={open} setOpen={setOpen} />
       </Suspense>
       <div className={'flex flex-col gap-2'}>
         <DebouncedInput
@@ -323,7 +208,7 @@ const Component = () => {
                     <TableHead
                       key={header.id}
                       className={
-                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                        'whitespace-nowrap border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
                       }
                     >
                       {header.isPlaceholder ? null : (

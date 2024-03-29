@@ -39,10 +39,12 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
             };
 
             const defaultProps: {
+              id: string;
               onChange?: (v: string) => void;
               onAccept?: (v: string) => void;
               value: string;
             } = {
+              id: name,
               onChange: handleChange,
               value: typeof value === 'number' ? formatNumber(value) : value,
               ...fieldProps
@@ -63,7 +65,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
 
         return (
           <div className={'flex flex-col gap-1'}>
-            <Label htmlFor={''}>{title}</Label>
+            <Label htmlFor={name}>{title}</Label>
             {childrenWithProps}
             {invalid && (
               <span className={cn(`text-appError text-xs`)}>

@@ -7,6 +7,7 @@ import { PbProvider } from '@storeo/core';
 import { TooltipProvider } from '@storeo/theme';
 
 import { App } from './app';
+import './global.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
