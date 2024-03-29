@@ -46,7 +46,7 @@ export const Header = () => {
 
   return (
     <div className={'flex w-full justify-between px-2 py-1 shadow'}>
-      <div className={'flex items-center justify-center gap-36'}>
+      <div className={'flex items-center justify-center gap-4'}>
         <Logo />
         <Breadcrumb>
           <BreadcrumbList>
