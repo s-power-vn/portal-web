@@ -5,7 +5,6 @@ import * as React from 'react';
 
 import { cn } from '@storeo/core';
 
-
 const Breadcrumb = React.forwardRef<
   HTMLElement,
   React.ComponentPropsWithoutRef<'nav'> & {
