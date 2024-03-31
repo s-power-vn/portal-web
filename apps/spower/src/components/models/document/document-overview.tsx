@@ -327,8 +327,10 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
       if (row.subRows.length > 0) {
         if (row.getIsAllSubRowsSelected()) {
           row.toggleSelected(true);
-        } else if (!row.getIsSomeSelected()) {
-          row.toggleSelected(false);
+        } else {
+          row.toggleSelected(false, {
+            selectChildren: false
+          });
         }
       }
     });

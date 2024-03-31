@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-  TextareaField
+  TextField
 } from '@storeo/theme';
 
 import { DocumentPick } from './document-pick';
@@ -22,11 +22,13 @@ const schema = object().shape({
 });
 
 export type DocumentRequestNewProps = {
+  documentId: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
+  documentId,
   open,
   setOpen
 }) => {
@@ -34,7 +36,7 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="min-w-[800px]">
+      <DialogContent className="flex h-[500px] min-w-[800px] flex-col">
         <DialogHeader>
           <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
           <DialogDescription>Tạo yêu cầu mua hàng mới.</DialogDescription>
@@ -46,13 +48,13 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
           }}
           className={'mt-4 flex flex-col gap-3'}
         >
-          <TextareaField
-            schema={schema}
-            name={'name'}
-            title={'Nội dung'}
-            options={{}}
+          <TextField schema={schema} name={'name'} title={'Nội dung'} />
+          <DocumentPick
+            documentId={documentId}
+            onChange={value => {
+              console.log(value);
+            }}
           />
-          <DocumentPick />
           <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>
           </DialogFooter>

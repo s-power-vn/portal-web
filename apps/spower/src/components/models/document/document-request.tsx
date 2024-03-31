@@ -94,6 +94,7 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
   return (
     <>
       <DocumentRequestNew
+        documentId={documentId}
         open={openDocumentRequestNew}
         setOpen={setOpenDocumentRequestNew}
       />
