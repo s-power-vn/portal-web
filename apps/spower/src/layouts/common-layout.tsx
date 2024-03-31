@@ -6,7 +6,11 @@ export type CommonLayoutProps = {
 
 export const CommonLayout: FC<CommonLayoutProps> = ({ children }) => {
   return (
-    <div className={'flex h-screen w-screen items-center justify-center'}>
+    <div
+      className={
+        'bg-appGrayLight flex h-screen w-screen items-center justify-center'
+      }
+    >
       {children}
     </div>
   );

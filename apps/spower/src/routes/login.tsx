@@ -35,7 +35,7 @@ const Login = () => {
     <CommonLayout>
       <Card>
         <CardHeader></CardHeader>
-        <CardContent>
+        <CardContent className={'w-[330px]'}>
           <Form
             schema={schema}
             onSubmit={({ email, password }) =>

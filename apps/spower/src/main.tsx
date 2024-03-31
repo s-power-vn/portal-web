@@ -4,7 +4,7 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
 import { PbProvider } from '@storeo/core';
-import { TooltipProvider } from '@storeo/theme';
+import { Toaster, TooltipProvider } from '@storeo/theme';
 
 import { App } from './app';
 import './global.css';
@@ -23,6 +23,7 @@ root.render(
           <App />
         </QueryClientProvider>
       </PbProvider>
+      <Toaster />
     </TooltipProvider>
   </StrictMode>
 );
