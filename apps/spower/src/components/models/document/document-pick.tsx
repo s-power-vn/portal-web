@@ -328,15 +328,20 @@ export const DocumentPick: FC<DocumentPickProps> = ({
           <Button
             type="submit"
             onClick={() => {
-              onChange?.([
-                ...table
-                  .getRowModel()
-                  .flatRows.filter(row => row.getIsSomeSelected())
-                  .map(it => it.original),
-                ...table
-                  .getSelectedRowModel()
-                  .flatRows.map(item => item.original)
-              ]);
+              onChange?.(
+                _.uniqBy(
+                  [
+                    ...table
+                      .getRowModel()
+                      .flatRows.filter(row => row.getIsSomeSelected())
+                      .map(it => it.original),
+                    ...table
+                      .getSelectedRowModel()
+                      .flatRows.map(item => item.original)
+                  ],
+                  'id'
+                )
+              );
               setOpen(false);
             }}
           >

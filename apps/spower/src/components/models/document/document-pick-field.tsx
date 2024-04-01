@@ -1,24 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  ExpandedState,
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFacetedMinMaxValues,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import _ from 'lodash';
 import { AnyObject, ObjectSchema } from 'yup';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { DocumentDetailData, arrayToTree, cn } from '@storeo/core';
+import { DocumentDetailData } from '@storeo/core';
 import {
   FormField,
   FormFieldProps,
@@ -31,7 +18,6 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { DocumentPick } from './document-pick';
 
 export type DocumentPickArrayProps = {
@@ -45,148 +31,24 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
 }) => {
   const [openPick, setOpenPick] = useState(false);
 
-  const [expanded, setExpanded] = useState<ExpandedState>({});
   const { control, setValue } = useFormContext();
 
-  const { fields } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
     name: 'documents',
     keyName: 'uid'
   });
 
-  const data = useMemo(() => arrayToTree((fields as any[]) ?? []), [fields]);
-
-  const columnHelper = createColumnHelper<
-    DocumentDetailData & {
-      requestVolume?: number;
-    }
-  >();
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('id', {
-        cell: ({ row }) => {
-          return (
-            <div className={'flex w-full items-center '}>
-              {row.getCanExpand() ? (
-                <button
-                  className={'cursor-pointer'}
-                  onClick={e => {
-                    e.stopPropagation();
-                    row.toggleExpanded();
-                  }}
-                >
-                  {row.getIsExpanded() ? (
-                    <SquareMinusIcon width={18} height={18} />
-                  ) : (
-                    <SquarePlusIcon width={18} height={18} />
-                  )}
-                </button>
-              ) : null}
-            </div>
-          );
-        },
-        header: () => (
-          <div className={'flex w-full items-center justify-center'}>#</div>
-        ),
-        footer: info => info.column.id,
-        size: 30
-      }),
-      columnHelper.accessor('level', {
-        cell: info => info.getValue(),
-        header: () => (
-          <div className={'flex w-full items-center justify-center'}>ID</div>
-        ),
-        footer: info => info.column.id,
-        size: 50
-      }),
-      columnHelper.display({
-        id: 'select',
-        cell: ({ row }) => (
-          <div className={'flex h-full w-full items-center justify-center'}>
-            {row.subRows.length > 0 ? (
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsAllSubRowsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler()
-                }}
-              />
-            ) : (
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler()
-                }}
-              />
-            )}
-          </div>
-        ),
-        header: () => (
-          <div className={'flex h-full w-full items-center justify-center'}>
-            <IndeterminateCheckbox
-              {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler()
-              }}
-            />
-          </div>
-        ),
-        footer: info => info.column.id,
-        size: 30
-      }),
-      columnHelper.accessor('title', {
-        cell: info => info.getValue(),
-        header: () => 'Mô tả công việc',
-        footer: info => info.column.id,
-        size: 470
-      }),
-      columnHelper.accessor('requestVolume', {
-        cell: ({ row }) =>
-          row.subRows.length === 0 ? (
-            <NumericField
-              name={`documents[${row.index}].requestVolume`}
-              schema={schema}
-            ></NumericField>
-          ) : null,
-        header: () => 'Khối lượng yêu cầu',
-        footer: info => info.column.id,
-        size: 150
-      })
-    ],
-    [columnHelper]
-  );
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      expanded
-    },
-    enableRowSelection: true,
-    enableMultiRowSelection: true,
-    enableFilters: true,
-    enableGlobalFilter: true,
-    filterFromLeafRows: true,
-    onExpandedChange: setExpanded,
-    getSubRows: row => row.children,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    manualPagination: true
-  });
-
   useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
+    _.chain(fields)
+      .sortBy('level')
+      .value()
+      .forEach((it, index) => {
+        if ((it as any).children?.length) {
+          setValue(`documents[${index}].requestVolume`, 0);
+        }
+      });
+  }, [fields, setValue]);
 
   return (
     <div className={'flex flex-col gap-2'}>
@@ -195,85 +57,78 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
           documentId={documentId}
           open={openPick}
           setOpen={setOpenPick}
-          onChange={value => setValue('documents', value)}
+          onChange={value => {
+            setValue('documents', []);
+            setTimeout(() => {
+              const items = _.sortBy(value, 'level');
+              append(items);
+              items.forEach((it, index) => {
+                setValue(`documents[${index}].requestVolume`, null);
+              });
+            }, 100);
+          }}
         ></DocumentPick>
       ) : null}
       <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
-        <Table
-          style={{
-            width: table.getTotalSize() + 10
-          }}
-        >
+        <Table>
           <TableHeader
             className={
               'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
             }
           >
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
-                    }
-                    style={{
-                      width: header.column.getSize()
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableHead
+                className={
+                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                }
+              >
+                ID
+              </TableHead>
+              <TableHead
+                className={
+                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                }
+              >
+                Mô tả công việc
+              </TableHead>
+              <TableHead
+                className={
+                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                }
+              >
+                Khối lượng yêu cầu
+              </TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className={cn(
-                    'cursor-pointer',
-                    row.getIsSelected() ||
-                      row.getIsSomeSelected() ||
-                      row.getIsAllSubRowsSelected()
-                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight'
-                      : null
-                  )}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        width: cell.column.getSize()
-                      }}
-                      className={'border-r px-2 py-1'}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+            {_.chain(fields)
+              .sortBy('level')
+              .map(
+                (
+                  it: DocumentDetailData & {
+                    uid?: string;
+                  },
+                  index
+                ) => (
+                  <TableRow key={it.id}>
+                    <TableCell className={'border-r px-2 py-1'}>
+                      {it.level}
                     </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 border-r text-center"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
+                    <TableCell className={'border-r px-2 py-1'}>
+                      {it.title}
+                    </TableCell>
+                    <TableCell className={'border-r px-2 py-1'}>
+                      {it.children?.length === 0 ? (
+                        <NumericField
+                          schema={schema}
+                          name={`documents[${index}].requestVolume`}
+                        ></NumericField>
+                      ) : null}
+                    </TableCell>
+                  </TableRow>
+                )
+              )
+              .value()}
           </TableBody>
         </Table>
       </div>
