@@ -191,7 +191,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'NCC',
         footer: info => info.column.id,
-        size: 200
+        size: 300
       })
     ],
     [columnHelper]
@@ -250,7 +250,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         </div>
       </div>
       <div className={'flex flex-col p-2'}>
-        <div className={'rounded-md border pb-2'}>
+        <div className={'overflow-x-auto rounded-md border pb-2'}>
           <Table
             style={{
               width: table.getTotalSize() + 10
