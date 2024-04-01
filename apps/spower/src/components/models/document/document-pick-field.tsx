@@ -69,15 +69,11 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
       ) : null}
       <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
-          <TableHeader
-            className={
-              'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
-            }
-          >
+          <TableHeader>
             <TableRow>
               <TableHead
                 className={
-                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                  'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
                 }
               >
                 ID
@@ -90,43 +86,49 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
                 Mô tả công việc
               </TableHead>
               <TableHead
-                className={
-                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
-                }
+                className={'bg-appGrayLight items-center whitespace-nowrap p-1'}
               >
                 Khối lượng yêu cầu
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {_.chain(fields)
-              .sortBy('level')
-              .map(
-                (
-                  it: DocumentDetailData & {
-                    uid?: string;
-                  },
-                  index
-                ) => (
-                  <TableRow key={it.id}>
-                    <TableCell className={'border-r px-2 py-1'}>
-                      {it.level}
-                    </TableCell>
-                    <TableCell className={'border-r px-2 py-1'}>
-                      {it.title}
-                    </TableCell>
-                    <TableCell className={'border-r px-2 py-1'}>
-                      {it.children?.length === 0 ? (
-                        <NumericField
-                          schema={schema}
-                          name={`documents[${index}].requestVolume`}
-                        ></NumericField>
-                      ) : null}
-                    </TableCell>
-                  </TableRow>
+            {fields.length ? (
+              _.chain(fields)
+                .sortBy('level')
+                .map(
+                  (
+                    it: DocumentDetailData & {
+                      uid?: string;
+                    },
+                    index
+                  ) => (
+                    <TableRow key={it.id}>
+                      <TableCell className={'border-r px-2 py-1'}>
+                        {it.level}
+                      </TableCell>
+                      <TableCell className={'border-r px-2 py-1'}>
+                        {it.title}
+                      </TableCell>
+                      <TableCell className={'px-2 py-1'}>
+                        {it.children?.length === 0 ? (
+                          <NumericField
+                            schema={schema}
+                            name={`documents[${index}].requestVolume`}
+                          ></NumericField>
+                        ) : null}
+                      </TableCell>
+                    </TableRow>
+                  )
                 )
-              )
-              .value()}
+                .value()
+            ) : (
+              <TableRow>
+                <TableCell className="h-16 text-center" colSpan={3}>
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

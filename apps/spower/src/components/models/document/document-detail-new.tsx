@@ -79,11 +79,11 @@ export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
               <>
                 <span
                   className={'inline font-bold'}
-                >{`Mục cha: ${parent.id} `}</span>
+                >{`Mục cha: ${parent.original.level} `}</span>
                 {` (${parent.original.title})`}
               </>
             ) : (
-              'Tạo đầu mục mô tả công việc'
+              'Tạo đầu mục mô tả công việc chính'
             )}
           </DialogDescription>
         </DialogHeader>

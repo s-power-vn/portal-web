@@ -77,8 +77,8 @@ const Component = () => {
       <DialogContent className="w-1/4">
         <DialogHeader>
           <DialogTitle>Chỉnh sửa nhà cung cấp</DialogTitle>
-          <DialogDescription>
-            Cho phép chỉnh sửa thông tin nhà cung cấp hiện tại.
+          <DialogDescription className={'italic'}>
+            Chỉnh sửa thông tin nhà cung cấp đang được lựa chọn.
           </DialogDescription>
         </DialogHeader>
         <Form

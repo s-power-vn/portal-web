@@ -82,8 +82,8 @@ export const DocumentEdit: FC<DocumentEditProps> = ({
       <DialogContent className="w-96">
         <DialogHeader>
           <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
-          <DialogDescription>
-            Cho phép chỉnh sửa thông tin chung của tài liệu.
+          <DialogDescription className={'italic'}>
+            Chỉnh sửa thông tin chung của tài liệu thi công.
           </DialogDescription>
         </DialogHeader>
         <Form

@@ -101,7 +101,7 @@ export const DocumentDetailEdit: FC<DocumentDetailEditProps> = ({
         <DialogHeader>
           <DialogTitle>Sửa mô tả công việc</DialogTitle>
           <DialogDescription className={'italic'}>
-            Sửa mô tả công việc
+            Chỉnh sửa chi tiết mô tả công việc
           </DialogDescription>
         </DialogHeader>
         <Form

@@ -6,11 +6,12 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   Form,
-  TextField
+  TextareaField
 } from '@storeo/theme';
 
 import { DocumentPickField } from './document-pick-field';
@@ -45,6 +46,9 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
       <DialogContent className="flex min-w-[800px] flex-col">
         <DialogHeader>
           <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
+          <DialogDescription className={'italic'}>
+            Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục
+          </DialogDescription>
         </DialogHeader>
         <Form
           schema={schema}
@@ -54,7 +58,7 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
           className={'mt-4 flex flex-col gap-3'}
           onSubmit={values => console.log(values)}
         >
-          <TextField schema={schema} name={'name'} title={'Nội dung'} />
+          <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
           <DocumentPickField
             schema={schema}
             name={'documents'}

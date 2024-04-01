@@ -237,7 +237,9 @@ export const DocumentPick: FC<DocumentPickProps> = ({
       <DialogContent className="h-[500px] min-w-[800px]">
         <DialogHeader>
           <DialogTitle>Chọn hạng mục</DialogTitle>
-          <DialogDescription>Chọn hạng mục yêu cầu.</DialogDescription>
+          <DialogDescription className={'italic'}>
+            Chọn hạng mục yêu cầu.
+          </DialogDescription>
         </DialogHeader>
         <DebouncedInput
           value={globalFilter}

@@ -59,7 +59,9 @@ export const DocumentNew: FC<DocumentNewProps> = ({ open, setOpen }) => {
       <DialogContent className="w-96">
         <DialogHeader>
           <DialogTitle>Tạo tài liệu</DialogTitle>
-          <DialogDescription>Tạo tài liệu chính.</DialogDescription>
+          <DialogDescription className={'italic'}>
+            Tạo tài liệu thi công mới.
+          </DialogDescription>
         </DialogHeader>
         <Form
           schema={schema}
