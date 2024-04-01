@@ -58,8 +58,6 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
         name: params.name
       });
 
-      console.log(params.documents);
-
       return await Promise.all(
         params.documents.map(it => {
           return pb.collection('documentRequestDetail').create(

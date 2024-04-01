@@ -1,5 +1,10 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery
+} from '@tanstack/react-query';
 import {
   ExpandedState,
   RowSelectionState,
@@ -43,7 +48,7 @@ function getDocumentRequest(documentRequestId: string, pb?: PocketBase) {
     ?.collection<
       DocumentRequestResponse & {
         expand: {
-          'documentRequestDetail(documentRequest)': (DocumentRequestDetailResponse & {
+          documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
             expand: {
               documentDetail: DocumentDetailResponse;
             };
@@ -52,7 +57,7 @@ function getDocumentRequest(documentRequestId: string, pb?: PocketBase) {
       }
     >('documentRequest')
     .getOne(documentRequestId, {
-      expand: 'documentRequestDetail(documentRequest).documentDetail'
+      expand: 'documentRequestDetail_via_documentRequest.documentDetail'
     });
 }
 
@@ -77,16 +82,35 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const pb = usePb();
+  const queryClient = useQueryClient();
 
   const documentRequestQuery = useSuspenseQuery(
     documentRequestOptions(documentRequestId, pb)
   );
 
+  const deleteDocumentRequest = useMutation({
+    mutationKey: ['deleteDocumentRequest'],
+    mutationFn: () => {
+      return pb.send('/delete-document-request', {
+        method: 'DELETE',
+        body: {
+          id: documentRequestId
+        }
+      });
+    },
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['documentRequests']
+        })
+      ])
+  });
+
   const data = useMemo(() => {
     const v = _.chain(
       documentRequestQuery.data
         ? documentRequestQuery.data.expand[
-            'documentRequestDetail(documentRequest)'
+            'documentRequestDetail_via_documentRequest'
           ]
         : []
     )
@@ -244,6 +268,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           <Button
             className={'text-appWhite bg-red-500 hover:bg-red-600'}
             size="icon"
+            onClick={() => deleteDocumentRequest.mutate()}
           >
             <Cross2Icon className={'h-5 w-5'} />
           </Button>

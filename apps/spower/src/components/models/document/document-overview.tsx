@@ -258,7 +258,7 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'NCC',
         footer: info => info.column.id,
-        size: 100
+        size: 300
       }),
       columnHelper.display({
         id: 'supplierStatus',
