@@ -59,13 +59,11 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
           setOpen={setOpenPick}
           onChange={value => {
             setValue('documents', []);
-            setTimeout(() => {
-              const items = _.sortBy(value, 'level');
-              append(items);
-              items.forEach((it, index) => {
-                setValue(`documents[${index}].requestVolume`, null);
-              });
-            }, 100);
+            const items = _.sortBy(value, 'level');
+            append(items);
+            items.forEach((it, index) => {
+              setValue(`documents[${index}].requestVolume`, null);
+            });
           }}
         ></DocumentPick>
       ) : null}
