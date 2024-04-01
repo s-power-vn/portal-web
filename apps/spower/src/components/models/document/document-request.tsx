@@ -173,7 +173,7 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
         </div>
         <div
           className={
-            'bg-appGrayLight h-[calc(100vh-270px)]  overflow-auto rounded-md border p-4'
+            'bg-appGrayLight flex h-[calc(100vh-270px)] flex-col gap-2 overflow-auto rounded-md border p-4'
           }
         >
           {documentRequestsQuery.data

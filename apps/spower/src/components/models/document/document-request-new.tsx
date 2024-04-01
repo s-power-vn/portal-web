@@ -1,7 +1,9 @@
-import { array, number, object, string } from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InferType, array, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction } from 'react';
 
+import { usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -21,6 +23,7 @@ const schema = object().shape({
   documents: array()
     .of(
       object().shape({
+        id: string().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
             Number(originalValue?.toString().replace(/,/g, '.'))
@@ -44,6 +47,43 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
   open,
   setOpen
 }) => {
+  const pb = usePb();
+  const queryClient = useQueryClient();
+
+  const createDocumentRequest = useMutation({
+    mutationKey: ['createDocumentRequest'],
+    mutationFn: async (params: InferType<typeof schema>) => {
+      const record = await pb.collection('documentRequest').create({
+        document: documentId,
+        name: params.name
+      });
+
+      console.log(params.documents);
+
+      return await Promise.all(
+        params.documents.map(it => {
+          return pb.collection('documentRequestDetail').create(
+            {
+              documentRequest: record.id,
+              documentDetail: it.id,
+              volume: it.requestVolume
+            },
+            {
+              requestKey: null
+            }
+          );
+        })
+      );
+    },
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['documentRequests', documentId]
+        })
+      ]),
+    onSettled: () => setOpen(false)
+  });
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="flex min-w-[800px] flex-col">
@@ -59,7 +99,8 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
             name: ''
           }}
           className={'mt-4 flex flex-col gap-3'}
-          onSubmit={values => console.log(values)}
+          loading={createDocumentRequest.isPending}
+          onSubmit={values => createDocumentRequest.mutate(values)}
         >
           <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
           <DocumentPickField

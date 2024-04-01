@@ -11,13 +11,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import {
-  Edit2Icon,
-  Edit3,
-  EditIcon,
-  SquareMinusIcon,
-  SquarePlusIcon
-} from 'lucide-react';
+import { Edit3, EditIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -197,7 +191,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'NCC',
         footer: info => info.column.id,
-        size: 100
+        size: 200
       })
     ],
     [columnHelper]
@@ -230,11 +224,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   }, [table]);
 
   return (
-    <div
-      className={
-        'bg-appWhite flex max-h-80 flex-col overflow-hidden rounded-md border'
-      }
-    >
+    <div className={'bg-appWhite flex flex-col rounded-md border'}>
       <div className={'flex justify-between border-b p-4'}>
         <div className={'flex-1 text-lg font-bold'}>
           {documentRequestQuery.data?.name}
@@ -260,7 +250,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         </div>
       </div>
       <div className={'flex flex-col p-2'}>
-        <div className={'relative overflow-auto rounded-md border pb-2'}>
+        <div className={'rounded-md border pb-2'}>
           <Table
             style={{
               width: table.getTotalSize() + 10
