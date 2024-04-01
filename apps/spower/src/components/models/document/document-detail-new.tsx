@@ -26,9 +26,17 @@ import {
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
-  volume: number().typeError('Sai định dạng số'),
+  volume: number()
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số'),
   unit: string(),
-  unitPrice: number().typeError('Sai định dạng số')
+  unitPrice: number()
+    .transform((_, originalValue) =>
+      Number(originalValue.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số')
 });
 
 export type DocumentDetailNewProps = {

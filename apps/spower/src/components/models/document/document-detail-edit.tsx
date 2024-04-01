@@ -32,7 +32,7 @@ const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
   volume: number()
     .transform((_, originalValue) =>
-      Number(originalValue.toString().replace(/,/g, '.'))
+      Number(originalValue?.toString().replace(/,/g, '.'))
     )
     .typeError('Sai định dạng số'),
   unit: string(),

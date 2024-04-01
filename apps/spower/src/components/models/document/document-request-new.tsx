@@ -22,8 +22,11 @@ const schema = object().shape({
     .of(
       object().shape({
         requestVolume: number()
-          .typeError('Hãy nhập khối lượng')
-          .required('Hãy nhập khối lượng')
+          .transform((_, originalValue) =>
+            Number(originalValue?.toString().replace(/,/g, '.'))
+          )
+          .typeError('Hãy nhập khối lượng yêu cầu')
+          .required('Hãy nhập khối lượng yêu cầu')
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
