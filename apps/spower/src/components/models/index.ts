@@ -10,6 +10,7 @@ export * from './document/document-edit';
 export * from './document/document-new';
 export * from './document/document-overview';
 export * from './document/document-pick';
+export * from './document/document-pick-field';
 export * from './document/document-request';
 export * from './document/document-request-item';
 export * from './document/document-status';

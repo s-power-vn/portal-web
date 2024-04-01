@@ -17,7 +17,14 @@ import {
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { DocumentDetailData, arrayToTree, cn, usePb } from '@storeo/core';
 import {
@@ -43,12 +50,16 @@ import { documentDetailsOptions } from './document-overview';
 
 export type DocumentPickProps = {
   documentId: string;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   value?: DocumentDetailData[];
   onChange?: (value: DocumentDetailData[]) => void;
 };
 
 export const DocumentPick: FC<DocumentPickProps> = ({
   documentId,
+  open,
+  setOpen,
   value = [],
   onChange
 }) => {
@@ -212,7 +223,7 @@ export const DocumentPick: FC<DocumentPickProps> = ({
   }, [table]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
@@ -304,7 +315,7 @@ export const DocumentPick: FC<DocumentPickProps> = ({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-16 text-center"
+                    className="h-16 border-r text-center"
                   >
                     Không có dữ liệu.
                   </TableCell>
@@ -316,7 +327,7 @@ export const DocumentPick: FC<DocumentPickProps> = ({
         <DialogFooter className={'mt-4'}>
           <Button
             type="submit"
-            onClick={() =>
+            onClick={() => {
               onChange?.([
                 ...table
                   .getRowModel()
@@ -325,8 +336,9 @@ export const DocumentPick: FC<DocumentPickProps> = ({
                 ...table
                   .getSelectedRowModel()
                   .flatRows.map(item => item.original)
-              ])
-            }
+              ]);
+              setOpen(false);
+            }}
           >
             Chấp nhận
           </Button>

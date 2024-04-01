@@ -1,13 +1,11 @@
-import { object, string } from 'yup';
+import { array, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction } from 'react';
 
-import { usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -15,10 +13,20 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { DocumentPick } from './document-pick';
+import { DocumentPickField } from './document-pick-field';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập nội dung')
+  name: string().required('Hãy nhập nội dung'),
+  documents: array()
+    .of(
+      object().shape({
+        requestVolume: number()
+          .typeError('Hãy nhập khối lượng')
+          .required('Hãy nhập khối lượng')
+      })
+    )
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
+    .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
 export type DocumentRequestNewProps = {
@@ -32,14 +40,11 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
   open,
   setOpen
 }) => {
-  const pb = usePb();
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="flex h-[500px] min-w-[800px] flex-col">
+      <DialogContent className="flex min-w-[800px] flex-col">
         <DialogHeader>
           <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
-          <DialogDescription>Tạo yêu cầu mua hàng mới.</DialogDescription>
         </DialogHeader>
         <Form
           schema={schema}
@@ -47,13 +52,13 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
             name: ''
           }}
           className={'mt-4 flex flex-col gap-3'}
+          onSubmit={values => console.log(values)}
         >
           <TextField schema={schema} name={'name'} title={'Nội dung'} />
-          <DocumentPick
-            documentId={documentId}
-            onChange={value => {
-              console.log(value);
-            }}
+          <DocumentPickField
+            schema={schema}
+            name={'documents'}
+            options={{ documentId }}
           />
           <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>

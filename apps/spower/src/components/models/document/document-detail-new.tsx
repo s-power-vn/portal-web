@@ -5,6 +5,7 @@ import { number, object, string } from 'yup';
 import React, { Dispatch, FC, SetStateAction } from 'react';
 
 import {
+  DocumentDetailData,
   DocumentDetailMaxResponse,
   DocumentDetailRecord,
   usePb
@@ -22,8 +23,6 @@ import {
   TextField,
   TextareaField
 } from '@storeo/theme';
-
-import { DocumentDetailData } from './document-overview';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
