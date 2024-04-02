@@ -27,7 +27,6 @@ import {
   SquareMinusIcon,
   SquarePlusIcon
 } from 'lucide-react';
-import PocketBase from 'pocketbase';
 
 import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -35,11 +34,11 @@ import {
   DocumentDetailData,
   DocumentDetailResponse,
   arrayToTree,
+  client,
   cn,
   formatCurrency,
   formatNumber,
-  getCommonPinningStyles,
-  usePb
+  getCommonPinningStyles
 } from '@storeo/core';
 import {
   Button,
@@ -55,26 +54,28 @@ import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
 import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
 
-function getDocumentDetails(documentId: string, pb?: PocketBase) {
-  return pb?.collection<DocumentDetailResponse>('documentDetail').getFullList({
-    filter: `document = "${documentId}"`
-  });
+function getDocumentDetails(documentId: string) {
+  return client
+    .collection<DocumentDetailResponse>('documentDetail')
+    .getFullList({
+      filter: `document = "${documentId}"`
+    });
 }
 
-function deleteDocumentDetails(documentIds: string[], pb?: PocketBase) {
+function deleteDocumentDetails(documentIds: string[]) {
   return Promise.all(
     documentIds.map(documentId =>
-      pb
-        ?.collection<DocumentDetailResponse>('documentDetail')
+      client
+        .collection<DocumentDetailResponse>('documentDetail')
         .delete(documentId)
     )
   );
 }
 
-export function documentDetailsOptions(documentId: string, pb?: PocketBase) {
+export function documentDetailsOptions(documentId: string) {
   return queryOptions({
     queryKey: ['documentDetails', documentId],
-    queryFn: () => getDocumentDetails(documentId, pb)
+    queryFn: () => getDocumentDetails(documentId)
   });
 }
 
@@ -82,22 +83,22 @@ export type DocumentOverviewProps = {
   documentId: string;
 };
 
-export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({ documentId }) => {
+export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
+  documentId
+}) => {
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<DocumentDetailData>>();
 
-  const pb = usePb();
   const documentDetailsQuery = useSuspenseQuery(
-    documentDetailsOptions(documentId, pb)
+    documentDetailsOptions(documentId)
   );
 
   const queryClient = useQueryClient();
 
   const deleteDocumentDetailsMutation = useMutation({
     mutationKey: ['deleteDocumentDetails'],
-    mutationFn: (documentIds: string[]) =>
-      deleteDocumentDetails(documentIds, pb),
+    mutationFn: (documentIds: string[]) => deleteDocumentDetails(documentIds),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({

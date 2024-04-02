@@ -4,7 +4,12 @@ import { object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction } from 'react';
 
-import { DocumentRecord, DocumentStatusOptions, usePb } from '@storeo/core';
+import {
+  DocumentRecord,
+  DocumentResponse,
+  DocumentStatusOptions,
+  client
+} from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -25,6 +30,10 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
+function createDocument(data: DocumentRecord) {
+  return client.collection<DocumentResponse>('document').create(data);
+}
+
 export type DocumentNewProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -32,13 +41,12 @@ export type DocumentNewProps = {
 
 export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
   const navigate = useNavigate();
-  const pb = usePb();
+
   const queryClient = useQueryClient();
 
-  const createDocument = useMutation({
+  const createDocumentMutation = useMutation({
     mutationKey: ['createDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      pb.collection<DocumentRecord>('document').create(params),
+    mutationFn: (params: DocumentRecord) => createDocument(params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -66,10 +74,10 @@ export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
         <Form
           schema={schema}
           onSubmit={values =>
-            createDocument.mutate({
+            createDocumentMutation.mutate({
               ...values,
               status: DocumentStatusOptions.ToDo,
-              createdBy: pb.authStore.model?.id
+              createdBy: client.authStore.model?.id
             })
           }
           defaultValues={{
@@ -77,7 +85,7 @@ export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
             bidding: '',
             customer: ''
           }}
-          loading={createDocument.isPending}
+          loading={createDocumentMutation.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
           <TextField

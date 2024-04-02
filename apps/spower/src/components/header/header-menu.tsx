@@ -1,4 +1,4 @@
-import { usePb } from '@storeo/core';
+import { client } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -15,7 +15,6 @@ import {
 import { useLogout } from '../../api';
 
 export const HeaderMenu = () => {
-  const pb = usePb();
   const logout = useLogout();
 
   return (
@@ -23,10 +22,10 @@ export const HeaderMenu = () => {
       <DropdownMenuTrigger>
         <Avatar className="h-8 w-8">
           <AvatarImage
-            src={`http://localhost:8090/api/files/users/${pb.authStore.model?.id}/${pb.authStore.model?.avatar}`}
+            src={`http://localhost:8090/api/files/users/${client.authStore.model?.id}/${client.authStore.model?.avatar}`}
           />
           <AvatarFallback className={'text-sm'}>
-            {pb.authStore.model?.name.split(' ')[0][0]}
+            {client.authStore.model?.name.split(' ')[0][0]}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -34,10 +33,10 @@ export const HeaderMenu = () => {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {pb.authStore.model?.name}
+              {client.authStore.model?.name}
             </p>
             <p className="text-muted-foreground text-xs font-normal leading-none">
-              {pb.authStore.model?.email}
+              {client.authStore.model?.email}
             </p>
           </div>
         </DropdownMenuLabel>

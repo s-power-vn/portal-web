@@ -1,28 +1,26 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import PocketBase from 'pocketbase';
 
 import { FC } from 'react';
 
-import { CustomerResponse, usePb } from '@storeo/core';
+import { CustomerResponse, client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-function getCustomers(pb?: PocketBase) {
-  return pb?.collection('customer').getFullList<CustomerResponse>();
+function getCustomers() {
+  return client.collection('customer').getFullList<CustomerResponse>();
 }
 
-function customersOptions(pb?: PocketBase) {
+function customersOptions() {
   return queryOptions({
     queryKey: ['customers'],
-    queryFn: () => getCustomers(pb)
+    queryFn: getCustomers
   });
 }
 
 export type CustomerDropdownProps = Omit<SelectInputProps, 'items'>;
 
 export const CustomerDropdown: FC<CustomerDropdownProps> = ({ ...props }) => {
-  const pb = usePb();
-  const query = useQuery(customersOptions(pb));
+  const query = useQuery(customersOptions());
 
   const items = _.map(query.data, ({ id, name }) => ({
     value: id,

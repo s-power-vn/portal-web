@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
-import { PbProvider } from '@storeo/core';
 import { Toaster, TooltipProvider } from '@storeo/theme';
 
 import { App } from './app';
@@ -17,13 +16,11 @@ const queryClient = new QueryClient();
 
 root.render(
   <StrictMode>
-    <TooltipProvider>
-      <PbProvider endpoint={'http://localhost:8090'}>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </PbProvider>
-      <Toaster />
-    </TooltipProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <App />
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
   </StrictMode>
 );

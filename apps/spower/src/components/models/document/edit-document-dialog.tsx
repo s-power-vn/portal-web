@@ -1,19 +1,19 @@
 import {
   queryOptions,
   useMutation,
-  useQueryClient,
-  useSuspenseQuery
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query';
-import PocketBase from 'pocketbase';
 import { object, string } from 'yup';
 
-import { Dispatch, FC, SetStateAction } from 'react';
+import { FC } from 'react';
 
 import {
+  DialogProps,
   DocumentRecord,
   DocumentResponse,
   DocumentStatusOptions,
-  usePb
+  client
 } from '@storeo/core';
 import {
   Button,
@@ -35,38 +35,35 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-function getDocument(id?: string, pb?: PocketBase) {
-  return id ? pb?.collection<DocumentResponse>('document').getOne(id) : null;
+async function getDocument(id: string) {
+  return id
+    ? await client.collection<DocumentResponse>('document').getOne(id)
+    : null;
 }
 
-function documentOptions(id?: string, pb?: PocketBase) {
+async function updateDocument(id: string, data: DocumentRecord) {
+  return id
+    ? await client.collection<DocumentResponse>('document').update(id, data)
+    : null;
+}
+
+export function getDocumentOptions(id: string) {
   return queryOptions({
     queryKey: ['document', id],
-    queryFn: () => getDocument(id, pb),
-    enabled: !!id
+    queryFn: () => getDocument(id)
   });
 }
 
-export type DocumentEditProps = {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  documentId?: string;
-};
-
-export const EditDocumentDialog: FC<DocumentEditProps> = ({
-  open,
+const Content: FC<Omit<EditDocumentDialogProps, 'open'>> = ({
   setOpen,
   documentId
 }) => {
-  const pb = usePb();
   const queryClient = useQueryClient();
+  const documentQuery = useQuery(getDocumentOptions(documentId));
 
-  const documentQuery = useSuspenseQuery(documentOptions(documentId, pb));
-
-  const updateDocument = useMutation({
+  const updateDocumentMutation = useMutation({
     mutationKey: ['updateDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      pb.collection('document').update(documentId ?? '', params),
+    mutationFn: (params: DocumentRecord) => updateDocument(documentId, params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -78,52 +75,66 @@ export const EditDocumentDialog: FC<DocumentEditProps> = ({
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-96">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Chỉnh sửa thông tin chung của tài liệu thi công.
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+    <DialogContent className="w-96">
+      <DialogHeader>
+        <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
+        <DialogDescription className={'italic'}>
+          Chỉnh sửa thông tin chung của tài liệu thi công.
+        </DialogDescription>
+      </DialogHeader>
+      <Form
+        schema={schema}
+        onSubmit={values =>
+          updateDocumentMutation.mutate({
+            ...values,
+            status: DocumentStatusOptions.ToDo,
+            createdBy: client.authStore.model?.id
+          })
+        }
+        defaultValues={documentQuery.data ?? undefined}
+        loading={updateDocumentMutation.isPending}
+        className={'mt-4 flex flex-col gap-3'}
+      >
+        <TextField
           schema={schema}
-          onSubmit={values =>
-            updateDocument.mutate({
-              ...values,
-              status: DocumentStatusOptions.ToDo,
-              createdBy: pb.authStore.model?.id
-            })
-          }
-          defaultValues={documentQuery.data ?? undefined}
-          loading={updateDocument.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'bidding'}
-            title={'Tên gói thầu'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Tên công trình'}
-            options={{}}
-          />
-          <CustomerDropdownField
-            schema={schema}
-            name={'customer'}
-            title={'Chủ đầu tư'}
-            options={{
-              placeholder: 'Hãy chọn chủ đầu tư'
-            }}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
+          name={'bidding'}
+          title={'Tên gói thầu'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'name'}
+          title={'Tên công trình'}
+          options={{}}
+        />
+        <CustomerDropdownField
+          schema={schema}
+          name={'customer'}
+          title={'Chủ đầu tư'}
+          options={{
+            placeholder: 'Hãy chọn chủ đầu tư'
+          }}
+        />
+        <DialogFooter className={'mt-4'}>
+          <Button type="submit">Chấp nhận</Button>
+        </DialogFooter>
+      </Form>
+    </DialogContent>
+  );
+};
+
+export type EditDocumentDialogProps = DialogProps & {
+  documentId: string;
+};
+
+export const EditDocumentDialog: FC<EditDocumentDialogProps> = ({
+  open,
+  setOpen,
+  documentId
+}) => {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Content setOpen={setOpen} documentId={documentId} />
     </Dialog>
   );
 };

@@ -17,7 +17,7 @@ import { HeaderMenu } from './header-menu';
 
 const Logo = () => (
   <img
-    src={'http://s-power.vn/wp-content/uploads/2021/04/spower-non-bg-1.png'}
+    src={'https://s-power.vn/wp-content/uploads/2021/04/spower-non-bg-1.png'}
     className={`h-9 w-20`}
     alt="logo"
   />
@@ -36,7 +36,7 @@ export const Header = () => {
     })
   )
     .groupBy('title')
-    .map((values, key) => {
+    .map(values => {
       return _.chain(values)
         .groupBy('path')
         .map(values => values[0])
