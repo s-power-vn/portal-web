@@ -77,8 +77,6 @@ const ContentForm = ({
     return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
   }, [documentRequestQuery.data]);
 
-  console.log(data);
-
   const updateDocumentRequest = useMutation({
     mutationKey: ['updateDocumentRequest'],
     mutationFn: async (params: InferType<typeof schema>) => {
