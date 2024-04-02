@@ -18,7 +18,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentPick } from './document-pick';
+import { PickDocumentDetailDialog } from './pick-document-detail-dialog';
 
 export type DocumentPickArrayProps = {
   schema: ObjectSchema<AnyObject>;
@@ -56,7 +56,7 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
   return (
     <div className={'flex flex-col gap-2'}>
       {documentId ? (
-        <DocumentPick
+        <PickDocumentDetailDialog
           documentId={documentId}
           open={openPick}
           setOpen={setOpenPick}
@@ -64,11 +64,11 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
             const items = _.sortBy(value, 'level');
             setValue('documents', []);
             append(items);
-            items.forEach((it, index) => {
+            items.forEach((_, index) => {
               setValue(`documents[${index}].requestVolume`, 0);
             });
           }}
-        ></DocumentPick>
+        ></PickDocumentDetailDialog>
       ) : null}
       <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
@@ -104,7 +104,7 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
                     it: DocumentDetailData & {
                       uid?: string;
                     },
-                    index
+                    index: number
                   ) => (
                     <TableRow key={it.id}>
                       <TableCell className={'border-r px-2 py-1'}>
@@ -142,7 +142,7 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
 export type DocumentPickFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<Omit<DocumentPickArrayProps, 'schema'>, S>;
 
-export const DocumentPickField = <S extends ObjectSchema<AnyObject>>({
+export const PickDocumentDetailField = <S extends ObjectSchema<AnyObject>>({
   options,
   ...props
 }: DocumentPickFieldProps<S>) => {

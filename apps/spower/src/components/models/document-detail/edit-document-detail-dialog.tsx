@@ -64,7 +64,7 @@ export type DocumentDetailEditProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const DocumentDetailEdit: FC<DocumentDetailEditProps> = ({
+export const EditDocumentDetailDialog: FC<DocumentDetailEditProps> = ({
   documentId,
   documentDetailId,
   open,

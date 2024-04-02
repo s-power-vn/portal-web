@@ -46,7 +46,7 @@ import {
 } from '@storeo/theme';
 
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { documentDetailsOptions } from './document-overview';
+import { documentDetailsOptions } from '../document/document-overview-tab';
 
 export type DocumentPickProps = {
   documentId: string;
@@ -56,7 +56,7 @@ export type DocumentPickProps = {
   onChange?: (value: DocumentDetailData[]) => void;
 };
 
-export const DocumentPick: FC<DocumentPickProps> = ({
+export const PickDocumentDetailDialog: FC<DocumentPickProps> = ({
   documentId,
   open,
   setOpen,

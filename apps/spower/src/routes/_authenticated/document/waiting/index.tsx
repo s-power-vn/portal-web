@@ -32,11 +32,10 @@ import {
 } from '@storeo/theme';
 
 import {
-  DocumentEdit,
   DocumentStatus,
+  EditDocumentDialog,
   EmployeeItem
 } from '../../../../components';
-
 
 const documentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -182,7 +181,11 @@ const Component = () => {
   return (
     <>
       <Suspense>
-        <DocumentEdit documentId={documentId} open={open} setOpen={setOpen} />
+        <EditDocumentDialog
+          documentId={documentId}
+          open={open}
+          setOpen={setOpen}
+        />
       </Suspense>
       <div className={'flex flex-col gap-2'}>
         <DebouncedInput

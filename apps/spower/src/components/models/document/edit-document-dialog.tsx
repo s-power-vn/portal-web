@@ -53,7 +53,7 @@ export type DocumentEditProps = {
   documentId?: string;
 };
 
-export const DocumentEdit: FC<DocumentEditProps> = ({
+export const EditDocumentDialog: FC<DocumentEditProps> = ({
   open,
   setOpen,
   documentId

@@ -18,7 +18,7 @@ import {
   useSidebar
 } from '@storeo/theme';
 
-import { DocumentNew, Header } from '../components';
+import { NewDocumentDialog, Header } from '../components';
 
 const EmptyIcon = () => <span></span>;
 
@@ -28,7 +28,7 @@ const SidebarHeader = () => {
 
   return (
     <div className={'flex w-full items-center justify-center border-b p-1'}>
-      <DocumentNew open={openDocumentNew} setOpen={setOpenDocumentNew} />
+      <NewDocumentDialog open={openDocumentNew} setOpen={setOpenDocumentNew} />
 
       <Button
         className={cn(

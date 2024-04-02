@@ -30,7 +30,7 @@ export type DocumentNewProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const DocumentNew: FC<DocumentNewProps> = ({ open, setOpen }) => {
+export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const pb = usePb();
   const queryClient = useQueryClient();

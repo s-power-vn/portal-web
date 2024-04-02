@@ -52,8 +52,8 @@ import {
 } from '@storeo/theme';
 
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { DocumentDetailEdit } from './document-detail-edit';
-import { DocumentDetailNew } from './document-detail-new';
+import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
+import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
 
 function getDocumentDetails(documentId: string, pb?: PocketBase) {
   return pb?.collection<DocumentDetailResponse>('documentDetail').getFullList({
@@ -82,7 +82,7 @@ export type DocumentOverviewProps = {
   documentId: string;
 };
 
-export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
+export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({ documentId }) => {
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<DocumentDetailData>>();
@@ -338,14 +338,14 @@ export const DocumentOverview: FC<DocumentOverviewProps> = ({ documentId }) => {
 
   return (
     <>
-      <DocumentDetailNew
+      <NewDocumentDetailDialog
         documentId={documentId}
         open={openDocumentDetailNew}
         setOpen={setOpenDocumentDetailNew}
         parent={selectedRow}
       />
       <Suspense>
-        <DocumentDetailEdit
+        <EditDocumentDetailDialog
           documentId={documentId}
           documentDetailId={selectedRow?.original.id}
           open={openDocumentDetailEdit}

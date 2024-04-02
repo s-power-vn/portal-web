@@ -46,7 +46,7 @@ export type DocumentDetailNewProps = {
   parent?: Row<DocumentDetailData>;
 };
 
-export const DocumentDetailNew: FC<DocumentDetailNewProps> = ({
+export const NewDocumentDetailDialog: FC<DocumentDetailNewProps> = ({
   documentId,
   open,
   setOpen,

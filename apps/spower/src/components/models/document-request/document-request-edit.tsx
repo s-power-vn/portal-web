@@ -17,7 +17,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DocumentPickField } from './document-pick-field';
+import { PickDocumentDetailField } from '../document-detail/pick-document-detail-field';
 import { documentRequestOptions } from './document-request-item';
 
 const schema = object().shape({
@@ -118,7 +118,7 @@ const ContentForm = ({
       onSubmit={values => updateDocumentRequest.mutate(values)}
     >
       <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-      <DocumentPickField
+      <PickDocumentDetailField
         schema={schema}
         name={'documents'}
         options={{ documentId: '' }}

@@ -4,6 +4,6 @@ export type DocumentContractProps = {
   documentId: string;
 };
 
-export const DocumentContract: FC<DocumentContractProps> = ({ documentId }) => {
+export const DocumentContractTab: FC<DocumentContractProps> = ({ documentId }) => {
   return <></>;
 };
