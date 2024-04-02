@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { ForwardIcon } from 'lucide-react';
 import PocketBase from 'pocketbase';
 
 import { FC, useMemo, useState } from 'react';
@@ -13,6 +14,9 @@ import { FC, useMemo, useState } from 'react';
 import { DocumentRequestResponse, formatDate, usePb } from '@storeo/core';
 import {
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Table,
   TableBody,
   TableCell,
@@ -109,71 +113,80 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
               Thêm yêu cầu mua hàng
             </Button>
           </div>
-          <div className={'rounded-md border'}>
-            <Table>
-              <TableHeader className={'bg-appGrayLight'}>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className={
-                          'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                        }
-                        style={{
-                          width: header.column.getSize()
-                        }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant={'outline'} className={'flex gap-1'}>
+                <ForwardIcon />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className={'w-[800px]'}>
+              <div className={'rounded-md border'}>
+                <Table>
+                  <TableHeader className={'bg-appGrayLight'}>
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map(header => (
+                          <TableHead
+                            key={header.id}
+                            className={
+                              'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                            }
+                            style={{
+                              width: header.column.getSize()
+                            }}
+                          >
+                            {header.isPlaceholder ? null : (
+                              <>
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                              </>
                             )}
-                          </>
-                        )}
-                      </TableHead>
+                          </TableHead>
+                        ))}
+                      </TableRow>
                     ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id} className={'last:border-b-0'}>
-                      {row.getVisibleCells().map(cell => (
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.length ? (
+                      table.getRowModel().rows.map(row => (
+                        <TableRow key={row.id} className={'last:border-b-0'}>
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              style={{
+                                width: cell.column.getSize()
+                              }}
+                              className={'border-r px-2 py-1 last:border-r-0'}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
                         <TableCell
-                          key={cell.id}
-                          style={{
-                            width: cell.column.getSize()
-                          }}
-                          className={'border-r px-2 py-1 last:border-r-0'}
+                          colSpan={columns.length}
+                          className="h-16 text-center"
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          Không có dữ liệu.
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         <div
           className={
-            'bg-appGrayLight flex h-[calc(100vh-270px)] flex-col gap-4 overflow-auto rounded-md border p-4'
+            'bg-appGrayLight flex h-[calc(100vh-215px)] flex-col gap-4 overflow-auto rounded-md border p-4'
           }
         >
           {documentRequestsQuery.data

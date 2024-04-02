@@ -254,7 +254,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           {documentRequestQuery.data?.name}
         </div>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'}>
+          <Button disabled={true} className={'flex gap-1'}>
             <PlusIcon />
             Thêm nhà cung cấp
           </Button>
