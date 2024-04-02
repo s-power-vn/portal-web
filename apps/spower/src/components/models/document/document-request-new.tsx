@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { InferType, array, number, object, string } from 'yup';
+import { InferType, array, boolean, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction } from 'react';
 
@@ -24,12 +24,20 @@ const schema = object().shape({
     .of(
       object().shape({
         id: string().optional(),
+        hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
             Number(originalValue?.toString().replace(/,/g, '.'))
           )
           .typeError('Hãy nhập khối lượng yêu cầu')
-          .required('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            console.log(hasChild);
+            return hasChild[0]
+              ? schema
+              : schema
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                  .required('Hãy nhập khối lượng yêu cầu');
+          })
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')

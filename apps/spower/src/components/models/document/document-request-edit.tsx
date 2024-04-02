@@ -36,7 +36,7 @@ const schema = object().shape({
             return hasChild[0]
               ? schema
               : schema
-                  .moreThan(0, 'Khối lượng yêu cầu phải > 0')
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
                   .required('Hãy nhập khối lượng yêu cầu');
           })
       })

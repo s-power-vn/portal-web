@@ -45,7 +45,10 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
       .value()
       .forEach((it, index) => {
         if ((it as any).children?.length) {
+          setValue(`documents[${index}].hasChild`, true);
           setValue(`documents[${index}].requestVolume`, 0);
+        } else {
+          setValue(`documents[${index}].hasChild`, false);
         }
       });
   }, [fields, setValue]);
@@ -58,11 +61,11 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
           open={openPick}
           setOpen={setOpenPick}
           onChange={value => {
-            setValue('documents', []);
             const items = _.sortBy(value, 'level');
+            setValue('documents', []);
             append(items);
             items.forEach((it, index) => {
-              setValue(`documents[${index}].requestVolume`, null);
+              setValue(`documents[${index}].requestVolume`, 0);
             });
           }}
         ></DocumentPick>
