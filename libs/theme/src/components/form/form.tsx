@@ -32,6 +32,8 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
     resolver: yupResolver(schema)
   });
 
+  console.log(methods.formState.errors);
+
   const onSubmitData: SubmitHandler<InferType<S>> = v => {
     onSubmit?.(v);
   };

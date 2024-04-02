@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Column } from '@tanstack/react-table';
 import { type ClassValue, clsx } from 'clsx';
 import _ from 'lodash';
@@ -17,6 +18,7 @@ export type DocumentDetailData = DocumentDetailResponse & {
 export function arrayToTree(
   arr: DocumentDetailData[],
   parent = 'root',
+  field = 'id',
   parentLevel?: string
 ): DocumentDetailData[] {
   return _.chain(arr)
@@ -26,11 +28,31 @@ export function arrayToTree(
       return {
         ...child,
         level,
-        children: arrayToTree(arr, child.id, level)
+        children: arrayToTree(arr, (child as any)[field], field, level)
       };
     })
     .sortBy('index')
     .value();
+}
+
+export function flatTree(arr: DocumentDetailData[]): DocumentDetailData[] {
+  const getMembers = (member: DocumentDetailData): any => {
+    if (!member.children || !member.children.length) {
+      return {
+        ...member,
+        hasChild: false
+      };
+    }
+    return [
+      {
+        ...member,
+        hasChild: true
+      },
+      _.flatMapDeep(member.children, getMembers)
+    ];
+  };
+
+  return _.chain(arr).flatMapDeep(getMembers).sortBy('level').value();
 }
 
 export function getCommonPinningStyles(

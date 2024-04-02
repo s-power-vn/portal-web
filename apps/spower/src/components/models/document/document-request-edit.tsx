@@ -1,9 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { InferType, array, number, object, string } from 'yup';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import _ from 'lodash';
+import { InferType, array, boolean, number, object, string } from 'yup';
 
-import { Dispatch, FC, SetStateAction } from 'react';
+import { Dispatch, FC, SetStateAction, useMemo } from 'react';
 
-import { usePb } from '@storeo/core';
+import { arrayToTree, flatTree, usePb } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -17,6 +18,7 @@ import {
 } from '@storeo/theme';
 
 import { DocumentPickField } from './document-pick-field';
+import { documentRequestOptions } from './document-request-item';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -24,94 +26,133 @@ const schema = object().shape({
     .of(
       object().shape({
         id: string().optional(),
+        hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
             Number(originalValue?.toString().replace(/,/g, '.'))
           )
           .typeError('Hãy nhập khối lượng yêu cầu')
-          .required('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            return hasChild[0]
+              ? schema
+              : schema
+                  .moreThan(0, 'Khối lượng yêu cầu phải > 0')
+                  .required('Hãy nhập khối lượng yêu cầu');
+          })
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-export type DocumentRequestEditProps = {
-  documentId: string;
-  documentRequestId: string;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-export const DocumentRequestEdit: FC<DocumentRequestEditProps> = ({
-  documentId,
+const ContentForm = ({
   documentRequestId,
-  open,
   setOpen
+}: {
+  documentRequestId: string;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const pb = usePb();
   const queryClient = useQueryClient();
 
-  const createDocumentRequest = useMutation({
-    mutationKey: ['createDocumentRequest'],
+  const documentRequestQuery = useQuery(
+    documentRequestOptions(documentRequestId, pb)
+  );
+
+  const data = useMemo(() => {
+    const v = _.chain(
+      documentRequestQuery.data
+        ? documentRequestQuery.data.expand[
+            'documentRequestDetail_via_documentRequest'
+          ]
+        : []
+    )
+      .map(it => ({
+        ...it.expand.documentDetail,
+        id: it.id,
+        documentDetailId: it.expand.documentDetail.id,
+        requestVolume: it.volume
+      }))
+      .value();
+    return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
+  }, [documentRequestQuery.data]);
+
+  console.log(data);
+
+  const updateDocumentRequest = useMutation({
+    mutationKey: ['updateDocumentRequest'],
     mutationFn: async (params: InferType<typeof schema>) => {
-      const record = await pb.collection('documentRequest').create({
-        document: documentId,
+      await pb.collection('documentRequest').update(documentRequestId, {
         name: params.name
       });
-
-      return await Promise.all(
+      await Promise.all(
         params.documents.map(it => {
-          return pb.collection('documentRequestDetail').create(
-            {
-              documentRequest: record.id,
-              documentDetail: it.id,
-              volume: it.requestVolume
-            },
-            {
-              requestKey: null
-            }
-          );
+          return it.id
+            ? pb.collection('documentRequestDetail').update(
+                it.id,
+                { volume: it.requestVolume },
+                {
+                  requestKey: null
+                }
+              )
+            : null;
         })
       );
     },
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['documentRequests', documentId]
+          queryKey: ['documentRequest', documentRequestId]
         })
       ]),
     onSettled: () => setOpen(false)
   });
 
   return (
+    <Form
+      schema={schema}
+      defaultValues={{
+        name: documentRequestQuery.data?.name,
+        documents: data
+      }}
+      className={'mt-4 flex flex-col gap-3'}
+      loading={updateDocumentRequest.isPending}
+      onSubmit={values => updateDocumentRequest.mutate(values)}
+    >
+      <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
+      <DocumentPickField
+        schema={schema}
+        name={'documents'}
+        options={{ documentId: '' }}
+      />
+      <DialogFooter className={'mt-4'}>
+        <Button type="submit">Chấp nhận</Button>
+      </DialogFooter>
+    </Form>
+  );
+};
+
+export type DocumentRequestEditProps = {
+  documentRequestId: string;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const DocumentRequestEdit: FC<DocumentRequestEditProps> = ({
+  documentRequestId,
+  open,
+  setOpen
+}) => {
+  return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="flex min-w-[800px] flex-col">
         <DialogHeader>
-          <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
+          <DialogTitle>Sửa yêu cầu mua hàng</DialogTitle>
           <DialogDescription className={'italic'}>
-            Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục
+            Sửa khối lượng yêu cầu mua hàng
           </DialogDescription>
         </DialogHeader>
-        <Form
-          schema={schema}
-          defaultValues={{
-            name: ''
-          }}
-          className={'mt-4 flex flex-col gap-3'}
-          loading={createDocumentRequest.isPending}
-          onSubmit={values => createDocumentRequest.mutate(values)}
-        >
-          <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-          <DocumentPickField
-            schema={schema}
-            name={'documents'}
-            options={{ documentId }}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
+        <ContentForm documentRequestId={documentRequestId} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );

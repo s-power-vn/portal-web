@@ -43,6 +43,8 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DocumentRequestEdit } from './document-request-edit';
+
 function getDocumentRequest(documentRequestId: string, pb?: PocketBase) {
   return pb
     ?.collection<
@@ -78,6 +80,8 @@ export type DocumentRequestItemProps = {
 export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   documentRequestId
 }) => {
+  const [openDocumentRequestEdit, setOpenDocumentRequestEdit] = useState(false);
+
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -116,10 +120,12 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
     )
       .map(it => ({
         ...it.expand.documentDetail,
+        id: it.id,
+        documentDetailId: it.expand.documentDetail.id,
         requestVolume: it.volume
       }))
       .value();
-    return arrayToTree(v);
+    return arrayToTree(v, 'root', 'documentDetailId');
   }, [documentRequestQuery.data]);
 
   const columnHelper = createColumnHelper<
@@ -248,114 +254,125 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   }, [table]);
 
   return (
-    <div className={'bg-appWhite flex flex-col rounded-md border'}>
-      <div className={'flex justify-between border-b p-4'}>
-        <div className={'flex-1 text-lg font-bold'}>
-          {documentRequestQuery.data?.name}
+    <>
+      <DocumentRequestEdit
+        documentRequestId={documentRequestId}
+        open={openDocumentRequestEdit}
+        setOpen={setOpenDocumentRequestEdit}
+      />
+      <div className={'bg-appWhite flex flex-col rounded-md border'}>
+        <div className={'flex justify-between border-b p-4'}>
+          <div className={'flex-1 text-lg font-bold'}>
+            {documentRequestQuery.data?.name}
+          </div>
+          <div className={'flex gap-2'}>
+            <Button disabled={true} className={'flex gap-1'}>
+              <PlusIcon />
+              Thêm nhà cung cấp
+            </Button>
+            <Button disabled={true} className={'flex gap-1'}>
+              <Edit3 width={14} height={14} />
+              Thay đổi nhà cung cấp
+            </Button>
+            <Button
+              className={'text-appWhite'}
+              size="icon"
+              onClick={() => setOpenDocumentRequestEdit(true)}
+            >
+              <EditIcon className={'h-5 w-5'} />
+            </Button>
+            <Button
+              className={'text-appWhite bg-red-500 hover:bg-red-600'}
+              size="icon"
+              onClick={() => deleteDocumentRequest.mutate()}
+            >
+              <Cross2Icon className={'h-5 w-5'} />
+            </Button>
+          </div>
         </div>
-        <div className={'flex gap-2'}>
-          <Button disabled={true} className={'flex gap-1'}>
-            <PlusIcon />
-            Thêm nhà cung cấp
-          </Button>
-          <Button disabled={true} className={'flex gap-1'}>
-            <Edit3 width={14} height={14} />
-            Thay đổi nhà cung cấp
-          </Button>
-          <Button className={'text-appWhite'} size="icon">
-            <EditIcon className={'h-5 w-5'} />
-          </Button>
-          <Button
-            className={'text-appWhite bg-red-500 hover:bg-red-600'}
-            size="icon"
-            onClick={() => deleteDocumentRequest.mutate()}
-          >
-            <Cross2Icon className={'h-5 w-5'} />
-          </Button>
-        </div>
-      </div>
-      <div className={'flex flex-col p-2'}>
-        <div className={'overflow-x-auto rounded-md border pb-2'}>
-          <Table
-            style={{
-              width: table.getTotalSize() + 10
-            }}
-          >
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow className={'flex'} key={headerGroup.id}>
-                  {headerGroup.headers.map(header => {
+        <div className={'flex flex-col p-2'}>
+          <div className={'overflow-x-auto rounded-md border pb-2'}>
+            <Table
+              style={{
+                width: table.getTotalSize() + 10
+              }}
+            >
+              <TableHeader className={'bg-appGrayLight'}>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow className={'flex'} key={headerGroup.id}>
+                    {headerGroup.headers.map(header => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          style={{
+                            ...getCommonPinningStyles(header.column),
+                            width: header.getSize()
+                          }}
+                          className={
+                            'bg-appGrayLight flex items-center whitespace-nowrap border-r p-1'
+                          }
+                        >
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
+                          )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map(row => {
                     return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{
-                          ...getCommonPinningStyles(header.column),
-                          width: header.getSize()
-                        }}
-                        className={
-                          'bg-appGrayLight flex items-center whitespace-nowrap border-r p-1'
-                        }
+                      <TableRow
+                        key={row.id}
+                        className={'group flex w-full cursor-pointer'}
                       >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      className={'group flex w-full cursor-pointer'}
-                    >
-                      {row.getVisibleCells().map(cell => {
-                        return (
-                          <TableCell
-                            key={cell.id}
-                            style={{
-                              ...getCommonPinningStyles(cell.column),
-                              width: cell.column.getSize()
-                            }}
-                            className={cn(
-                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight
+                        {row.getVisibleCells().map(cell => {
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              style={{
+                                ...getCommonPinningStyles(cell.column),
+                                width: cell.column.getSize()
+                              }}
+                              className={cn(
+                                `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight
                                       flex items-center border-r p-1 text-xs`
-                            )}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell
-                    className={'flex items-center justify-center'}
-                    colSpan={columns.length}
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                              )}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      className={'flex items-center justify-center'}
+                      colSpan={columns.length}
+                    >
+                      Không có dữ liệu.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
