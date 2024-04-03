@@ -18,7 +18,7 @@ import {
   useSidebar
 } from '@storeo/theme';
 
-import { NewDocumentDialog, Header } from '../components';
+import { Header, NewDocumentDialog } from '../components';
 
 const EmptyIcon = () => <span></span>;
 

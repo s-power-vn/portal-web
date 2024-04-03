@@ -8,10 +8,9 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { DepartmentResponse, UserResponse, usePb } from '@storeo/core';
+import { DepartmentResponse, UserResponse, client } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -35,29 +34,26 @@ const employeeSearchSchema = object().shape({
 
 type EmployeeSearch = InferType<typeof employeeSearchSchema>;
 
-function getEmployees(search: EmployeeSearch, pb?: PocketBase) {
-  const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-  return pb
-    ?.collection<UserResponse>('user')
-    .getList(search.pageIndex, search.pageSize, {
-      filter,
-      sort: '-created',
-      expand: 'department'
-    });
-}
-
-function employeesOptions(search: EmployeeSearch, pb?: PocketBase) {
+function getEmployeesOptions(search: EmployeeSearch) {
   return queryOptions({
-    queryKey: ['employees', search],
-    queryFn: () => getEmployees(search, pb)
+    queryKey: ['getEmployees', search],
+    queryFn: () => {
+      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+      return client
+        .collection<UserResponse>('user')
+        .getList(search.pageIndex, search.pageSize, {
+          filter,
+          sort: '-created',
+          expand: 'department'
+        });
+    }
   });
 }
 
 const Component = () => {
-  const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const employeesQuery = useSuspenseQuery(employeesOptions(search, pb));
+  const employeesQuery = useSuspenseQuery(getEmployeesOptions(search));
 
   const columnHelper = createColumnHelper<UserResponse>();
 
@@ -280,8 +276,8 @@ export const Route = createFileRoute('/_authenticated/general/employees')({
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(employeesOptions(deps.search, pb)),
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(getEmployeesOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhân viên'

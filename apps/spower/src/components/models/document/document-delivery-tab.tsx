@@ -4,6 +4,8 @@ export type DocumentDeliveryProps = {
   documentId: string;
 };
 
-export const DocumentDeliveryTab: FC<DocumentDeliveryProps> = ({ documentId }) => {
+export const DocumentDeliveryTab: FC<DocumentDeliveryProps> = ({
+  documentId
+}) => {
   return <></>;
 };

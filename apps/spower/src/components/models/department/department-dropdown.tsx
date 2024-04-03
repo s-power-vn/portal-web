@@ -6,14 +6,11 @@ import { FC } from 'react';
 import { DepartmentResponse, client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-function getDepartments() {
-  return client.collection('department').getFullList<DepartmentResponse>();
-}
-
 function departmentsOptions() {
   return queryOptions({
-    queryKey: ['departments'],
-    queryFn: getDepartments
+    queryKey: ['getDepartments'],
+    queryFn: () =>
+      client.collection<DepartmentResponse>('department').getFullList()
   });
 }
 

@@ -28,7 +28,7 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 
-import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   DocumentDetailData,
@@ -54,28 +54,13 @@ import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
 import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
 
-function getDocumentDetails(documentId: string) {
-  return client
-    .collection<DocumentDetailResponse>('documentDetail')
-    .getFullList({
-      filter: `document = "${documentId}"`
-    });
-}
-
-function deleteDocumentDetails(documentIds: string[]) {
-  return Promise.all(
-    documentIds.map(documentId =>
-      client
-        .collection<DocumentDetailResponse>('documentDetail')
-        .delete(documentId)
-    )
-  );
-}
-
-export function documentDetailsOptions(documentId: string) {
+export function getDocumentDetailsOptions(documentId: string) {
   return queryOptions({
-    queryKey: ['documentDetails', documentId],
-    queryFn: () => getDocumentDetails(documentId)
+    queryKey: ['getDocumentDetails', documentId],
+    queryFn: () =>
+      client.collection<DocumentDetailResponse>('documentDetail').getFullList({
+        filter: `document = "${documentId}"`
+      })
   });
 }
 
@@ -91,18 +76,27 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [selectedRow, setSelectedRow] = useState<Row<DocumentDetailData>>();
 
   const documentDetailsQuery = useSuspenseQuery(
-    documentDetailsOptions(documentId)
+    getDocumentDetailsOptions(documentId)
   );
 
   const queryClient = useQueryClient();
 
   const deleteDocumentDetailsMutation = useMutation({
     mutationKey: ['deleteDocumentDetails'],
-    mutationFn: (documentIds: string[]) => deleteDocumentDetails(documentIds),
+    mutationFn: (documentIds: string[]) =>
+      Promise.all(
+        documentIds.map(documentId =>
+          client
+            .collection<DocumentDetailResponse>('documentDetail')
+            .delete(documentId, {
+              requestKey: null
+            })
+        )
+      ),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['documentDetails', documentId]
+          queryKey: ['getDocumentDetails', documentId]
         })
       ])
   });
@@ -345,14 +339,12 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         setOpen={setOpenDocumentDetailNew}
         parent={selectedRow}
       />
-      <Suspense>
-        <EditDocumentDetailDialog
-          documentId={documentId}
-          documentDetailId={selectedRow?.original.id}
-          open={openDocumentDetailEdit}
-          setOpen={setOpenDocumentDetailEdit}
-        />
-      </Suspense>
+      <EditDocumentDetailDialog
+        documentId={documentId}
+        documentDetailId={selectedRow?.original.id ?? ''}
+        open={openDocumentDetailEdit}
+        setOpen={setOpenDocumentDetailEdit}
+      />
       <div className={'flex flex-col gap-2'}>
         <div className={'flex gap-2'}>
           <Button variant={'outline'} className={'flex gap-1'}>

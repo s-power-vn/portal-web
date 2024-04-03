@@ -7,11 +7,10 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { ForwardIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 
 import { FC, useMemo, useState } from 'react';
 
-import { DocumentRequestResponse, formatDate, usePb } from '@storeo/core';
+import { DocumentRequestResponse, client, formatDate } from '@storeo/core';
 import {
   Button,
   Popover,
@@ -26,20 +25,17 @@ import {
 } from '@storeo/theme';
 
 import { DocumentRequestItem } from './document-request-item';
-import { DocumentRequestNew } from './document-request-new';
+import { NewDocumentRequestDialog } from './new-document-request-dialog';
 
-function getDocumentRequests(documentId: string, pb?: PocketBase) {
-  return pb
-    ?.collection<DocumentRequestResponse>('documentRequest')
-    .getFullList({
-      filter: `document = "${documentId}"`
-    });
-}
-
-export function documentRequestsOptions(documentId: string, pb?: PocketBase) {
+export function getDocumentRequestsOptions(documentId: string) {
   return queryOptions({
-    queryKey: ['documentRequests', documentId],
-    queryFn: () => getDocumentRequests(documentId, pb)
+    queryKey: ['getDocumentRequests', documentId],
+    queryFn: () =>
+      client
+        ?.collection<DocumentRequestResponse>('documentRequest')
+        .getFullList({
+          filter: `document = "${documentId}"`
+        })
   });
 }
 
@@ -49,9 +45,8 @@ export type DocumentRequestProps = {
 
 export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
   const [openDocumentRequestNew, setOpenDocumentRequestNew] = useState(false);
-  const pb = usePb();
   const documentRequestsQuery = useSuspenseQuery(
-    documentRequestsOptions(documentId, pb)
+    getDocumentRequestsOptions(documentId)
   );
 
   const columnHelper = createColumnHelper<DocumentRequestResponse>();
@@ -97,7 +92,7 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
 
   return (
     <>
-      <DocumentRequestNew
+      <NewDocumentRequestDialog
         documentId={documentId}
         open={openDocumentRequestNew}
         setOpen={setOpenDocumentRequestNew}

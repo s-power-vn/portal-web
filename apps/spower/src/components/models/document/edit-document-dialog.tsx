@@ -35,22 +35,15 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-async function getDocument(id: string) {
-  return id
-    ? await client.collection<DocumentResponse>('document').getOne(id)
-    : null;
-}
-
-async function updateDocument(id: string, data: DocumentRecord) {
-  return id
-    ? await client.collection<DocumentResponse>('document').update(id, data)
-    : null;
-}
-
-export function getDocumentOptions(id: string) {
+export function getDocumentOptions(documentId: string) {
   return queryOptions({
-    queryKey: ['document', id],
-    queryFn: () => getDocument(id)
+    queryKey: ['getDocument', documentId],
+    queryFn: async () =>
+      documentId
+        ? await client
+            .collection<DocumentResponse>('document')
+            .getOne(documentId)
+        : null
   });
 }
 
@@ -63,11 +56,16 @@ const Content: FC<Omit<EditDocumentDialogProps, 'open'>> = ({
 
   const updateDocumentMutation = useMutation({
     mutationKey: ['updateDocument'],
-    mutationFn: (params: DocumentRecord) => updateDocument(documentId, params),
+    mutationFn: async (params: DocumentRecord) =>
+      documentId
+        ? await client
+            .collection<DocumentResponse>('document')
+            .update(documentId, params)
+        : null,
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['documents'] }),
-        queryClient.invalidateQueries({ queryKey: ['document', documentId] })
+        queryClient.invalidateQueries({ queryKey: ['getDocuments'] }),
+        queryClient.invalidateQueries({ queryKey: ['getDocument', documentId] })
       ]),
     onSettled: () => {
       setOpen(false);

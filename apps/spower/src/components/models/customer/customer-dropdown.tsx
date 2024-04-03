@@ -6,14 +6,10 @@ import { FC } from 'react';
 import { CustomerResponse, client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-function getCustomers() {
-  return client.collection('customer').getFullList<CustomerResponse>();
-}
-
 function customersOptions() {
   return queryOptions({
-    queryKey: ['customers'],
-    queryFn: getCustomers
+    queryKey: ['getCustomers'],
+    queryFn: () => client.collection<CustomerResponse>('customer').getFullList()
   });
 }
 

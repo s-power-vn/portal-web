@@ -17,7 +17,6 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import { Edit3, EditIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
@@ -27,11 +26,11 @@ import {
   DocumentRequestDetailResponse,
   DocumentRequestResponse,
   arrayToTree,
+  client,
   cn,
   formatCurrency,
   formatNumber,
-  getCommonPinningStyles,
-  usePb
+  getCommonPinningStyles
 } from '@storeo/core';
 import {
   Button,
@@ -43,33 +42,27 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentRequestEdit } from './document-request-edit';
+import { EditDocumentRequestDialog } from './edit-document-request-dialog';
 
-function getDocumentRequest(documentRequestId: string, pb?: PocketBase) {
-  return pb
-    ?.collection<
-      DocumentRequestResponse & {
-        expand: {
-          documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
-            expand: {
-              documentDetail: DocumentDetailResponse;
-            };
-          })[];
-        };
-      }
-    >('documentRequest')
-    .getOne(documentRequestId, {
-      expand: 'documentRequestDetail_via_documentRequest.documentDetail'
-    });
-}
-
-export function documentRequestOptions(
-  documentRequestId: string,
-  pb?: PocketBase
-) {
+export function getDocumentRequestOptions(documentRequestId: string) {
   return queryOptions({
-    queryKey: ['documentRequest', documentRequestId],
-    queryFn: () => getDocumentRequest(documentRequestId, pb)
+    queryKey: ['getDocumentRequest', documentRequestId],
+    queryFn: () =>
+      client
+        ?.collection<
+          DocumentRequestResponse & {
+            expand: {
+              documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
+                expand: {
+                  documentDetail: DocumentDetailResponse;
+                };
+              })[];
+            };
+          }
+        >('documentRequest')
+        .getOne(documentRequestId, {
+          expand: 'documentRequestDetail_via_documentRequest.documentDetail'
+        })
   });
 }
 
@@ -85,17 +78,16 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const pb = usePb();
   const queryClient = useQueryClient();
 
   const documentRequestQuery = useSuspenseQuery(
-    documentRequestOptions(documentRequestId, pb)
+    getDocumentRequestOptions(documentRequestId)
   );
 
   const deleteDocumentRequest = useMutation({
     mutationKey: ['deleteDocumentRequest'],
     mutationFn: () => {
-      return pb.send('/delete-document-request', {
+      return client.send('/delete-document-request', {
         method: 'DELETE',
         body: {
           id: documentRequestId
@@ -105,7 +97,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['documentRequests']
+          queryKey: ['getDocumentRequests']
         })
       ])
   });
@@ -255,7 +247,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
 
   return (
     <>
-      <DocumentRequestEdit
+      <EditDocumentRequestDialog
         documentRequestId={documentRequestId}
         open={openDocumentRequestEdit}
         setOpen={setOpenDocumentRequestEdit}

@@ -5,12 +5,11 @@ import {
   useSuspenseQuery
 } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import PocketBase from 'pocketbase';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { CustomerRecord, CustomerResponse, usePb } from '@storeo/core';
+import { CustomerRecord, CustomerResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -31,34 +30,30 @@ const schema = object().shape({
   note: string()
 });
 
-function getCustomer(id: string, pb?: PocketBase) {
-  return pb?.collection<CustomerResponse>('customer').getOne(id);
-}
-
-function customerOptions(id: string, pb?: PocketBase) {
+function getCustomerOptions(customerId: string) {
   return queryOptions({
-    queryKey: ['customer', id],
-    queryFn: () => getCustomer(id, pb)
+    queryKey: ['getCustomer', customerId],
+    queryFn: () =>
+      client.collection<CustomerResponse>('customer').getOne(customerId)
   });
 }
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const pb = usePb();
   const queryClient = useQueryClient();
   const { customerId } = Route.useParams();
 
-  const customerQuery = useSuspenseQuery(customerOptions(customerId, pb));
+  const customerQuery = useSuspenseQuery(getCustomerOptions(customerId));
 
   const updateCustomer = useMutation({
     mutationKey: ['updateCustomer'],
     mutationFn: (params: CustomerRecord) =>
-      pb.collection('customer').update(customerId, params),
+      client.collection('customer').update(customerId, params),
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['customers'] }),
-        queryClient.invalidateQueries({ queryKey: ['customer', customerId] })
+        queryClient.invalidateQueries({ queryKey: ['getCustomers'] }),
+        queryClient.invalidateQueries({ queryKey: ['getCustomer', customerId] })
       ]),
     onSettled: () => {
       setOpen(false);
@@ -131,6 +126,6 @@ export const Route = createFileRoute(
   '/_authenticated/general/customers/$customerId/edit'
 )({
   component: Component,
-  loader: ({ context: { pb, queryClient }, params: { customerId } }) =>
-    queryClient?.ensureQueryData(customerOptions(customerId, pb))
+  loader: ({ context: { queryClient }, params: { customerId } }) =>
+    queryClient?.ensureQueryData(getCustomerOptions(customerId))
 });

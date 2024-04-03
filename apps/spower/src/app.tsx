@@ -7,8 +7,6 @@ import {
 } from '@tanstack/react-router';
 import { parse, stringify } from 'zipson';
 
-import { usePb } from '@storeo/core';
-
 import { routeTree } from './routes.gen';
 
 export function decodeFromBinary(str: string): string {
@@ -46,7 +44,6 @@ declare module '@tanstack/react-router' {
 }
 
 export const App = () => {
-  const pb = usePb();
   const queryClient = useQueryClient();
-  return <RouterProvider router={router} context={{ pb, queryClient }} />;
+  return <RouterProvider router={router} context={{ queryClient }} />;
 };

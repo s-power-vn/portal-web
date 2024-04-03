@@ -7,14 +7,13 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
 import {
   CustomerResponse,
   DocumentResponse,
   UserResponse,
-  usePb
+  client
 } from '@storeo/core';
 import {
   Button,
@@ -38,29 +37,26 @@ const documentSearchSchema = object().shape({
 
 type DocumentSearch = InferType<typeof documentSearchSchema>;
 
-function getDocuments(search: DocumentSearch, pb?: PocketBase) {
-  const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
-  return pb
-    ?.collection<DocumentResponse>('document')
-    .getList(search.pageIndex, search.pageSize, {
-      filter: filter + `&& (createdBy = "${pb?.authStore.model?.id}")`,
-      sort: '-created',
-      expand: 'customer,assignee,createdBy'
-    });
-}
-
-export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
+function getDocumentsOptions(search: DocumentSearch) {
   return queryOptions({
-    queryKey: ['documents', 'mine', search],
-    queryFn: () => getDocuments(search, pb)
+    queryKey: ['getDocuments', 'mine', search],
+    queryFn: () => {
+      const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
+      return client
+        .collection<DocumentResponse>('document')
+        .getList(search.pageIndex, search.pageSize, {
+          filter: filter + `&& (createdBy = "${client.authStore.model?.id}")`,
+          sort: '-created',
+          expand: 'customer,assignee,createdBy'
+        });
+    }
   });
 }
 
 const Component = () => {
-  const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const documentsQuery = useSuspenseQuery(documentsOptions(search, pb));
+  const documentsQuery = useSuspenseQuery(getDocumentsOptions(search));
 
   const columnHelper = createColumnHelper<DocumentResponse>();
 
@@ -132,7 +128,7 @@ const Component = () => {
     }),
     columnHelper.display({
       id: 'actions',
-      cell: ({ row }) => {
+      cell: () => {
         return (
           <div className={'flex gap-1'}>
             <Button variant={'destructive'} className={'h-6 px-3'}>
@@ -279,6 +275,6 @@ export const Route = createFileRoute('/_authenticated/document/mine/')({
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(documentsOptions(deps.search, pb))
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(getDocumentsOptions(deps.search))
 });

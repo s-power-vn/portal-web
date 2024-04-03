@@ -1,26 +1,21 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import PocketBase from 'pocketbase';
 
-import { DocumentResponse, usePb } from '@storeo/core';
+import { DocumentResponse, client } from '@storeo/core';
 
-function getDocument(id: string, pb?: PocketBase) {
-  return pb?.collection<DocumentResponse>('document').getOne(id, {
-    expand: 'customer'
-  });
-}
-
-export function documentOptions(id: string, pb?: PocketBase) {
+export function getDocumentOptions(documentId: string) {
   return queryOptions({
-    queryKey: ['document', id],
-    queryFn: () => getDocument(id, pb)
+    queryKey: ['getDocument', documentId],
+    queryFn: () =>
+      client.collection<DocumentResponse>('document').getOne(documentId, {
+        expand: 'customer'
+      })
   });
 }
 
 const Component = () => {
   const { documentId } = Route.useParams();
-  const pb = usePb();
-  const documentQuery = useSuspenseQuery(documentOptions(documentId, pb));
+  const documentQuery = useSuspenseQuery(getDocumentOptions(documentId));
 
   return (
     <div className={'flex flex-col gap-4'}>
@@ -45,7 +40,7 @@ export const Route = createFileRoute(
   '/_authenticated/document/waiting/$documentId'
 )({
   component: Component,
-  loader: ({ context: { pb, queryClient }, params: { documentId } }) =>
-    queryClient?.ensureQueryData(documentOptions(documentId, pb)),
+  loader: ({ context: { queryClient }, params: { documentId } }) =>
+    queryClient?.ensureQueryData(getDocumentOptions(documentId)),
   beforeLoad: ({ params }) => ({ title: params.documentId })
 });

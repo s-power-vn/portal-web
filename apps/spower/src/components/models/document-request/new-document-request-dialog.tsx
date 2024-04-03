@@ -3,7 +3,7 @@ import { InferType, array, boolean, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction } from 'react';
 
-import { usePb } from '@storeo/core';
+import { client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { PickDocumentDetailField } from '../document-detail/pick-document-detail-field';
+import { DocumentRequestDetailListField } from '../document-request-detail/document-request-detail-list-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -44,31 +44,23 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-export type DocumentRequestNewProps = {
-  documentId: string;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
-  documentId,
-  open,
-  setOpen
+const Content: FC<Omit<NewDocumentRequestDialogProps, 'open'>> = ({
+  setOpen,
+  documentId
 }) => {
-  const pb = usePb();
   const queryClient = useQueryClient();
 
   const createDocumentRequest = useMutation({
     mutationKey: ['createDocumentRequest'],
     mutationFn: async (params: InferType<typeof schema>) => {
-      const record = await pb.collection('documentRequest').create({
+      const record = await client.collection('documentRequest').create({
         document: documentId,
         name: params.name
       });
 
       return await Promise.all(
         params.documents.map(it => {
-          return pb.collection('documentRequestDetail').create(
+          return client.collection('documentRequestDetail').create(
             {
               documentRequest: record.id,
               documentDetail: it.id,
@@ -84,41 +76,57 @@ export const DocumentRequestNew: FC<DocumentRequestNewProps> = ({
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['documentRequests', documentId]
+          queryKey: ['getDocumentRequests', documentId]
         })
       ]),
     onSettled: () => setOpen(false)
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="flex min-w-[800px] flex-col">
-        <DialogHeader>
-          <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+    <DialogContent className="flex min-w-[800px] flex-col">
+      <DialogHeader>
+        <DialogTitle>Tạo yêu cầu mua hàng</DialogTitle>
+        <DialogDescription className={'italic'}>
+          Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục
+        </DialogDescription>
+      </DialogHeader>
+      <Form
+        schema={schema}
+        defaultValues={{
+          name: ''
+        }}
+        className={'mt-4 flex flex-col gap-3'}
+        loading={createDocumentRequest.isPending}
+        onSubmit={values => createDocumentRequest.mutate(values)}
+      >
+        <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
+        <DocumentRequestDetailListField
           schema={schema}
-          defaultValues={{
-            name: ''
-          }}
-          className={'mt-4 flex flex-col gap-3'}
-          loading={createDocumentRequest.isPending}
-          onSubmit={values => createDocumentRequest.mutate(values)}
-        >
-          <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-          <PickDocumentDetailField
-            schema={schema}
-            name={'documents'}
-            options={{ documentId }}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
+          name={'documents'}
+          options={{ documentId }}
+        />
+        <DialogFooter className={'mt-4'}>
+          <Button type="submit">Chấp nhận</Button>
+        </DialogFooter>
+      </Form>
+    </DialogContent>
+  );
+};
+
+export type NewDocumentRequestDialogProps = {
+  documentId: string;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const NewDocumentRequestDialog: FC<NewDocumentRequestDialogProps> = ({
+  documentId,
+  open,
+  setOpen
+}) => {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Content documentId={documentId} setOpen={setOpen} />
     </Dialog>
   );
 };

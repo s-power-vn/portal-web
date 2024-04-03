@@ -1,5 +1,5 @@
 import { CaretSortIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
   RowSelectionState,
@@ -17,16 +17,9 @@ import {
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
-import { DocumentDetailData, arrayToTree, cn, usePb } from '@storeo/core';
+import { DialogProps, DocumentDetailData, arrayToTree, cn } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -46,19 +39,10 @@ import {
 } from '@storeo/theme';
 
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { documentDetailsOptions } from '../document/document-overview-tab';
+import { getDocumentDetailsOptions } from '../document/document-overview-tab';
 
-export type DocumentPickProps = {
-  documentId: string;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  value?: DocumentDetailData[];
-  onChange?: (value: DocumentDetailData[]) => void;
-};
-
-export const PickDocumentDetailDialog: FC<DocumentPickProps> = ({
+const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
   documentId,
-  open,
   setOpen,
   value = [],
   onChange
@@ -67,10 +51,7 @@ export const PickDocumentDetailDialog: FC<DocumentPickProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const pb = usePb();
-  const documentDetailsQuery = useSuspenseQuery(
-    documentDetailsOptions(documentId, pb)
-  );
+  const documentDetailsQuery = useQuery(getDocumentDetailsOptions(documentId));
 
   const data = useMemo(
     () => arrayToTree(documentDetailsQuery.data ?? []),
@@ -223,6 +204,140 @@ export const PickDocumentDetailDialog: FC<DocumentPickProps> = ({
   }, [table]);
 
   return (
+    <DialogContent className="h-[500px] min-w-[800px]">
+      <DialogHeader>
+        <DialogTitle>Chọn hạng mục</DialogTitle>
+        <DialogDescription className={'italic'}>
+          Chọn hạng mục yêu cầu.
+        </DialogDescription>
+      </DialogHeader>
+      <DebouncedInput
+        value={globalFilter}
+        className={'h-8 w-56'}
+        placeholder={'Tìm kiếm...'}
+        onChange={value => setGlobalFilter(String(value))}
+      />
+      <div className="overflow-auto rounded-md border pb-2">
+        <Table
+          style={{
+            width: table.getTotalSize() + 10
+          }}
+        >
+          <TableHeader
+            className={
+              'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+            }
+          >
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    className={
+                      'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                    }
+                    style={{
+                      width: header.column.getSize()
+                    }}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </>
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  className={cn(
+                    'cursor-pointer',
+                    row.getIsSelected() ||
+                      row.getIsSomeSelected() ||
+                      row.getIsAllSubRowsSelected()
+                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight'
+                      : null
+                  )}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize()
+                      }}
+                      className={'border-r px-2 py-1'}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-16 border-r text-center"
+                >
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <DialogFooter className={'mt-4'}>
+        <Button
+          type="submit"
+          onClick={() => {
+            onChange?.(
+              _.uniqBy(
+                [
+                  ...table
+                    .getRowModel()
+                    .flatRows.filter(row => row.getIsSomeSelected())
+                    .map(it => it.original),
+                  ...table
+                    .getSelectedRowModel()
+                    .flatRows.map(item => item.original)
+                ],
+                'id'
+              )
+            );
+            setOpen(false);
+          }}
+        >
+          Chấp nhận
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
+};
+
+export type PickDocumentDetailDialogProps = DialogProps & {
+  documentId: string;
+  value?: DocumentDetailData[];
+  onChange?: (value: DocumentDetailData[]) => void;
+};
+
+export const PickDocumentDetailDialog: FC<PickDocumentDetailDialogProps> = ({
+  documentId,
+  open,
+  setOpen,
+  value = [],
+  onChange
+}) => {
+  return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
@@ -234,123 +349,12 @@ export const PickDocumentDetailDialog: FC<DocumentPickProps> = ({
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-[500px] min-w-[800px]">
-        <DialogHeader>
-          <DialogTitle>Chọn hạng mục</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Chọn hạng mục yêu cầu.
-          </DialogDescription>
-        </DialogHeader>
-        <DebouncedInput
-          value={globalFilter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value => setGlobalFilter(String(value))}
-        />
-        <div className="overflow-auto rounded-md border pb-2">
-          <Table
-            style={{
-              width: table.getTotalSize() + 10
-            }}
-          >
-            <TableHeader
-              className={
-                'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
-              }
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={
-                        'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
-                      }
-                      style={{
-                        width: header.column.getSize()
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow
-                    key={row.id}
-                    className={cn(
-                      'cursor-pointer',
-                      row.getIsSelected() ||
-                        row.getIsSomeSelected() ||
-                        row.getIsAllSubRowsSelected()
-                        ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight'
-                        : null
-                    )}
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize()
-                        }}
-                        className={'border-r px-2 py-1'}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 border-r text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <DialogFooter className={'mt-4'}>
-          <Button
-            type="submit"
-            onClick={() => {
-              onChange?.(
-                _.uniqBy(
-                  [
-                    ...table
-                      .getRowModel()
-                      .flatRows.filter(row => row.getIsSomeSelected())
-                      .map(it => it.original),
-                    ...table
-                      .getSelectedRowModel()
-                      .flatRows.map(item => item.original)
-                  ],
-                  'id'
-                )
-              );
-              setOpen(false);
-            }}
-          >
-            Chấp nhận
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+      <Content
+        setOpen={setOpen}
+        documentId={documentId}
+        onChange={onChange}
+        value={value}
+      />
     </Dialog>
   );
 };

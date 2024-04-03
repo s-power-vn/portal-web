@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UserRecord, usePb } from '@storeo/core';
+import { UserRecord, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -28,14 +28,14 @@ const schema = object().shape({
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const pb = usePb();
   const queryClient = useQueryClient();
 
   const createEmployee = useMutation({
     mutationKey: ['createEmployee'],
     mutationFn: (params: UserRecord) =>
-      pb.collection<UserRecord>('user').create(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['employees'] }),
+      client.collection<UserRecord>('user').create(params),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['getEmployees'] }),
     onSettled: () => {
       setOpen(false);
       history.back();

@@ -8,10 +8,9 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { SupplierResponse, usePb } from '@storeo/core';
+import { SupplierResponse, client } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -32,28 +31,25 @@ const suppliersSearchSchema = object().shape({
 
 type SuppliersSearch = InferType<typeof suppliersSearchSchema>;
 
-function getSuppliers(search: SuppliersSearch, pb?: PocketBase) {
-  const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-  return pb
-    ?.collection<SupplierResponse>('supplier')
-    .getList(search.pageIndex, search.pageSize, {
-      filter,
-      sort: '-created'
-    });
-}
-
-function suppliersOptions(search: SuppliersSearch, pb?: PocketBase) {
+function getSuppliersOptions(search: SuppliersSearch) {
   return queryOptions({
-    queryKey: ['suppliers', search],
-    queryFn: () => getSuppliers(search, pb)
+    queryKey: ['getSuppliers', search],
+    queryFn: () => {
+      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+      return client
+        .collection<SupplierResponse>('supplier')
+        .getList(search.pageIndex, search.pageSize, {
+          filter,
+          sort: '-created'
+        });
+    }
   });
 }
 
 const Component = () => {
-  const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const suppliersQuery = useSuspenseQuery(suppliersOptions(search, pb));
+  const suppliersQuery = useSuspenseQuery(getSuppliersOptions(search));
 
   const columnHelper = createColumnHelper<SupplierResponse>();
 
@@ -271,8 +267,8 @@ export const Route = createFileRoute('/_authenticated/general/suppliers')({
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(suppliersOptions(deps.search, pb)),
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(getSuppliersOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhà cung cấp'

@@ -8,10 +8,9 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { CustomerResponse, usePb } from '@storeo/core';
+import { CustomerResponse, client } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -32,28 +31,25 @@ const customersSearchSchema = object().shape({
 
 type CustomersSearch = InferType<typeof customersSearchSchema>;
 
-function getCustomers(search: CustomersSearch, pb?: PocketBase) {
-  const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-  return pb
-    ?.collection<CustomerResponse>('customer')
-    .getList(search.pageIndex, search.pageSize, {
-      filter,
-      sort: '-created'
-    });
-}
-
-function customersOptions(search: CustomersSearch, pb?: PocketBase) {
+function getCustomersOptions(search: CustomersSearch) {
   return queryOptions({
-    queryKey: ['customers', search],
-    queryFn: () => getCustomers(search, pb)
+    queryKey: ['getCustomers', search],
+    queryFn: () => {
+      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+      return client
+        .collection<CustomerResponse>('customer')
+        .getList(search.pageIndex, search.pageSize, {
+          filter,
+          sort: '-created'
+        });
+    }
   });
 }
 
 const Component = () => {
-  const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const customersQuery = useSuspenseQuery(customersOptions(search, pb));
+  const customersQuery = useSuspenseQuery(getCustomersOptions(search));
 
   const columnHelper = createColumnHelper<CustomerResponse>();
 
@@ -271,8 +267,8 @@ export const Route = createFileRoute('/_authenticated/general/customers')({
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(customersOptions(deps.search, pb)),
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(getCustomersOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý chủ đầu tư'

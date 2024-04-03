@@ -8,16 +8,15 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon } from 'lucide-react';
-import PocketBase from 'pocketbase';
 import { InferType, number, object, string } from 'yup';
 
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import {
   CustomerResponse,
   DocumentResponse,
   UserResponse,
-  usePb
+  client
 } from '@storeo/core';
 import {
   Button,
@@ -45,33 +44,31 @@ const documentSearchSchema = object().shape({
 
 type DocumentSearch = InferType<typeof documentSearchSchema>;
 
-function getDocuments(search: DocumentSearch, pb?: PocketBase) {
-  const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
-  return pb
-    ?.collection<DocumentResponse>('document')
-    .getList(search.pageIndex, search.pageSize, {
-      filter:
-        filter +
-        `&& (assignee = "${pb?.authStore.model?.id}") && (status = "ToDo")`,
-      sort: '-created',
-      expand: 'customer,assignee,createdBy'
-    });
-}
-
-export function documentsOptions(search: DocumentSearch, pb?: PocketBase) {
+function getDocumentsOptions(search: DocumentSearch) {
   return queryOptions({
-    queryKey: ['documents', 'waiting', search],
-    queryFn: () => getDocuments(search, pb)
+    queryKey: ['getDocuments', 'waiting', search],
+    queryFn: () => {
+      const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
+      return client
+        ?.collection<DocumentResponse>('document')
+        .getList(search.pageIndex, search.pageSize, {
+          filter:
+            filter +
+            `&& (assignee = "${client?.authStore.model?.id}") && (status = "ToDo")`,
+          sort: '-created',
+          expand: 'customer,assignee,createdBy'
+        });
+    }
   });
 }
 
 const Component = () => {
   const [open, setOpen] = useState(false);
   const [documentId, setDocumentId] = useState<string>();
-  const pb = usePb();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const documentsQuery = useSuspenseQuery(documentsOptions(search, pb));
+
+  const documentsQuery = useSuspenseQuery(getDocumentsOptions(search));
 
   const columnHelper = createColumnHelper<DocumentResponse>();
 
@@ -180,13 +177,11 @@ const Component = () => {
 
   return (
     <>
-      <Suspense>
-        <EditDocumentDialog
-          documentId={documentId}
-          open={open}
-          setOpen={setOpen}
-        />
-      </Suspense>
+      <EditDocumentDialog
+        documentId={documentId ?? ''}
+        open={open}
+        setOpen={setOpen}
+      />
       <div className={'flex flex-col gap-2'}>
         <DebouncedInput
           value={search.filter}
@@ -311,7 +306,7 @@ export const Route = createFileRoute('/_authenticated/document/waiting/')({
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, context: { pb, queryClient } }) =>
-    queryClient?.ensureQueryData(documentsOptions(deps.search, pb)),
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(getDocumentsOptions(deps.search)),
   beforeLoad: () => ({ title: 'Đang chờ xử lý' })
 });

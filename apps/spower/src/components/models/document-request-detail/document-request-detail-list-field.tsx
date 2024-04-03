@@ -18,14 +18,14 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { PickDocumentDetailDialog } from './pick-document-detail-dialog';
+import { PickDocumentDetailDialog } from '../document-detail/pick-document-detail-dialog';
 
-export type DocumentPickArrayProps = {
+export type DocumentRequestDetailListProps = {
   schema: ObjectSchema<AnyObject>;
   documentId?: string;
 };
 
-export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
+export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   schema,
   documentId
 }) => {
@@ -139,16 +139,19 @@ export const DocumentPickArray: FC<DocumentPickArrayProps> = ({
   );
 };
 
-export type DocumentPickFieldProps<S extends ObjectSchema<AnyObject>> =
-  FormFieldProps<Omit<DocumentPickArrayProps, 'schema'>, S>;
+export type DocumentRequestDetailListFieldProps<
+  S extends ObjectSchema<AnyObject>
+> = FormFieldProps<Omit<DocumentRequestDetailListProps, 'schema'>, S>;
 
-export const PickDocumentDetailField = <S extends ObjectSchema<AnyObject>>({
+export const DocumentRequestDetailListField = <
+  S extends ObjectSchema<AnyObject>
+>({
   options,
   ...props
-}: DocumentPickFieldProps<S>) => {
+}: DocumentRequestDetailListFieldProps<S>) => {
   return (
     <FormField {...props}>
-      <DocumentPickArray schema={props.schema} {...options} />
+      <DocumentRequestDetailList schema={props.schema} {...options} />
     </FormField>
   );
 };

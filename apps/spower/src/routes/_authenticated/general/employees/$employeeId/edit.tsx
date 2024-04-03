@@ -10,7 +10,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UserRecord, UserResponse, usePb } from '@storeo/core';
+import { UserRecord, UserResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -31,34 +31,29 @@ const schema = object().shape({
   department: string().required('Hãy chọn phòng ban')
 });
 
-function getEmployee(id: string, pb?: PocketBase) {
-  return pb?.collection('user').getOne<UserResponse>(id);
-}
-
-function employeeOptions(id: string, pb?: PocketBase) {
+function getEmployeeOptions(employeeId: string, pb?: PocketBase) {
   return queryOptions({
-    queryKey: ['employee', id],
-    queryFn: () => getEmployee(id, pb)
+    queryKey: ['getEmployee', employeeId],
+    queryFn: () => client.collection('user').getOne<UserResponse>(employeeId)
   });
 }
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const pb = usePb();
   const queryClient = useQueryClient();
   const { employeeId } = Route.useParams();
 
-  const employeeQuery = useSuspenseQuery(employeeOptions(employeeId, pb));
+  const employeeQuery = useSuspenseQuery(getEmployeeOptions(employeeId));
 
   const updateEmployee = useMutation({
     mutationKey: ['updateEmployee'],
     mutationFn: (params: UserRecord) =>
-      pb.collection('user').update(employeeId, params),
+      client.collection('user').update(employeeId, params),
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['employees'] }),
-        queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+        queryClient.invalidateQueries({ queryKey: ['getEmployees'] }),
+        queryClient.invalidateQueries({ queryKey: ['getEmployee', employeeId] })
       ]),
     onSettled: () => {
       setOpen(false);
@@ -121,6 +116,6 @@ export const Route = createFileRoute(
   '/_authenticated/general/employees/$employeeId/edit'
 )({
   component: Component,
-  loader: ({ context: { pb, queryClient }, params: { employeeId } }) =>
-    queryClient?.ensureQueryData(employeeOptions(employeeId, pb))
+  loader: ({ context: { queryClient }, params: { employeeId } }) =>
+    queryClient?.ensureQueryData(getEmployeeOptions(employeeId))
 });

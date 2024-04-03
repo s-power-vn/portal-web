@@ -4,7 +4,13 @@ import { InferType, array, boolean, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction, useMemo } from 'react';
 
-import { arrayToTree, flatTree, usePb } from '@storeo/core';
+import {
+  DocumentRequestDetailRecord,
+  DocumentRequestRecord,
+  arrayToTree,
+  client,
+  flatTree
+} from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -17,8 +23,8 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { PickDocumentDetailField } from '../document-detail/pick-document-detail-field';
-import { documentRequestOptions } from './document-request-item';
+import { DocumentRequestDetailListField } from '../document-request-detail/document-request-detail-list-field';
+import { getDocumentRequestOptions } from './document-request-item';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -45,18 +51,14 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-const ContentForm = ({
-  documentRequestId,
-  setOpen
-}: {
-  documentRequestId: string;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+const Content: FC<Omit<EditDocumentRequestDialogProps, 'open'>> = ({
+  setOpen,
+  documentRequestId
 }) => {
-  const pb = usePb();
   const queryClient = useQueryClient();
 
   const documentRequestQuery = useQuery(
-    documentRequestOptions(documentRequestId, pb)
+    getDocumentRequestOptions(documentRequestId)
   );
 
   const data = useMemo(() => {
@@ -80,19 +82,25 @@ const ContentForm = ({
   const updateDocumentRequest = useMutation({
     mutationKey: ['updateDocumentRequest'],
     mutationFn: async (params: InferType<typeof schema>) => {
-      await pb.collection('documentRequest').update(documentRequestId, {
-        name: params.name
-      });
+      await client
+        .collection<DocumentRequestRecord>('documentRequest')
+        .update(documentRequestId, {
+          name: params.name
+        });
       await Promise.all(
         params.documents.map(it => {
           return it.id
-            ? pb.collection('documentRequestDetail').update(
-                it.id,
-                { volume: it.requestVolume },
-                {
-                  requestKey: null
-                }
-              )
+            ? client
+                .collection<DocumentRequestDetailRecord>(
+                  'documentRequestDetail'
+                )
+                .update(
+                  it.id,
+                  { volume: it.requestVolume },
+                  {
+                    requestKey: null
+                  }
+                )
             : null;
         })
       );
@@ -100,58 +108,58 @@ const ContentForm = ({
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['documentRequest', documentRequestId]
+          queryKey: ['getDocumentRequest', documentRequestId]
         })
       ]),
     onSettled: () => setOpen(false)
   });
 
   return (
-    <Form
-      schema={schema}
-      defaultValues={{
-        name: documentRequestQuery.data?.name,
-        documents: data
-      }}
-      className={'mt-4 flex flex-col gap-3'}
-      loading={updateDocumentRequest.isPending}
-      onSubmit={values => updateDocumentRequest.mutate(values)}
-    >
-      <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-      <PickDocumentDetailField
+    <DialogContent className="flex min-w-[800px] flex-col">
+      <DialogHeader>
+        <DialogTitle>Sửa yêu cầu mua hàng</DialogTitle>
+        <DialogDescription className={'italic'}>
+          Sửa khối lượng yêu cầu mua hàng
+        </DialogDescription>
+      </DialogHeader>
+      <Form
         schema={schema}
-        name={'documents'}
-        options={{ documentId: '' }}
-      />
-      <DialogFooter className={'mt-4'}>
-        <Button type="submit">Chấp nhận</Button>
-      </DialogFooter>
-    </Form>
+        defaultValues={{
+          name: documentRequestQuery.data?.name,
+          documents: data
+        }}
+        className={'mt-4 flex flex-col gap-3'}
+        loading={updateDocumentRequest.isPending}
+        onSubmit={values => updateDocumentRequest.mutate(values)}
+      >
+        <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
+        <DocumentRequestDetailListField
+          schema={schema}
+          name={'documents'}
+          options={{ documentId: '' }}
+        />
+        <DialogFooter className={'mt-4'}>
+          <Button type="submit">Chấp nhận</Button>
+        </DialogFooter>
+      </Form>
+    </DialogContent>
   );
 };
 
-export type DocumentRequestEditProps = {
+export type EditDocumentRequestDialogProps = {
   documentRequestId: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const DocumentRequestEdit: FC<DocumentRequestEditProps> = ({
+export const EditDocumentRequestDialog: FC<EditDocumentRequestDialogProps> = ({
   documentRequestId,
   open,
   setOpen
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="flex min-w-[800px] flex-col">
-        <DialogHeader>
-          <DialogTitle>Sửa yêu cầu mua hàng</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Sửa khối lượng yêu cầu mua hàng
-          </DialogDescription>
-        </DialogHeader>
-        <ContentForm documentRequestId={documentRequestId} setOpen={setOpen} />
-      </DialogContent>
+      <Content documentRequestId={documentRequestId} setOpen={setOpen} />
     </Dialog>
   );
 };

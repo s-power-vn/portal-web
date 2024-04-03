@@ -5,12 +5,11 @@ import {
   useSuspenseQuery
 } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import PocketBase from 'pocketbase';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { SupplierRecord, SupplierResponse, usePb } from '@storeo/core';
+import { SupplierRecord, SupplierResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -31,34 +30,30 @@ const schema = object().shape({
   note: string()
 });
 
-function getSupplier(id: string, pb?: PocketBase) {
-  return pb?.collection<SupplierResponse>('supplier').getOne(id);
-}
-
-function supplierOptions(id: string, pb?: PocketBase) {
+function getSupplierOptions(supplierId: string) {
   return queryOptions({
-    queryKey: ['supplier', id],
-    queryFn: () => getSupplier(id, pb)
+    queryKey: ['getSupplier', supplierId],
+    queryFn: () =>
+      client.collection<SupplierResponse>('supplier').getOne(supplierId)
   });
 }
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const pb = usePb();
   const queryClient = useQueryClient();
   const { supplierId } = Route.useParams();
 
-  const supplierQuery = useSuspenseQuery(supplierOptions(supplierId, pb));
+  const supplierQuery = useSuspenseQuery(getSupplierOptions(supplierId));
 
   const updateSupplier = useMutation({
     mutationKey: ['updateSupplier'],
     mutationFn: (params: SupplierRecord) =>
-      pb.collection('supplier').update(supplierId, params),
+      client.collection('supplier').update(supplierId, params),
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
-        queryClient.invalidateQueries({ queryKey: ['supplier', supplierId] })
+        queryClient.invalidateQueries({ queryKey: ['getSuppliers'] }),
+        queryClient.invalidateQueries({ queryKey: ['getSupplier', supplierId] })
       ]),
     onSettled: () => {
       setOpen(false);
@@ -131,6 +126,6 @@ export const Route = createFileRoute(
   '/_authenticated/general/suppliers/$supplierId/edit'
 )({
   component: Component,
-  loader: ({ context: { pb, queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(supplierOptions(supplierId, pb))
+  loader: ({ context: { queryClient }, params: { supplierId } }) =>
+    queryClient?.ensureQueryData(getSupplierOptions(supplierId))
 });
