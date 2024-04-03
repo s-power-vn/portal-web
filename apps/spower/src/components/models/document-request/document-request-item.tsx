@@ -258,11 +258,29 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
             {documentRequestQuery.data?.name}
           </div>
           <div className={'flex gap-2'}>
-            <Button disabled={true} className={'flex gap-1'}>
+            <Button
+              disabled={
+                !(
+                  table.getSelectedRowModel().flatRows.length > 0 &&
+                  table.getSelectedRowModel().flatRows[0].original.children
+                    ?.length === 0
+                )
+              }
+              className={'flex gap-1'}
+            >
               <PlusIcon />
               Thêm nhà cung cấp
             </Button>
-            <Button disabled={true} className={'flex gap-1'}>
+            <Button
+              disabled={
+                !(
+                  table.getSelectedRowModel().flatRows.length > 0 &&
+                  table.getSelectedRowModel().flatRows[0].original.children
+                    ?.length === 0
+                )
+              }
+              className={'flex gap-1'}
+            >
               <Edit3 width={14} height={14} />
               Thay đổi nhà cung cấp
             </Button>
@@ -326,6 +344,13 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                       <TableRow
                         key={row.id}
                         className={'group flex w-full cursor-pointer'}
+                        onClick={() => {
+                          setRowSelection(() => {
+                            const test: Record<string, boolean> = {};
+                            test[row.id] = true;
+                            return test;
+                          });
+                        }}
                       >
                         {row.getVisibleCells().map(cell => {
                           return (
@@ -337,7 +362,10 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                               }}
                               className={cn(
                                 `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight
-                                      flex items-center border-r p-1 text-xs`
+                                      flex items-center border-r p-1 text-xs`,
+                                row.getIsSelected()
+                                  ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
+                                  : null
                               )}
                             >
                               {flexRender(

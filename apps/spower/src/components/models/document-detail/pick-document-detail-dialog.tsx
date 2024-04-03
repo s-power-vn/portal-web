@@ -225,7 +225,7 @@ const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
         >
           <TableHeader
             className={
-              'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+              'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
             }
           >
             {table.getHeaderGroups().map(headerGroup => (
@@ -234,7 +234,7 @@ const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
                   <TableHead
                     key={header.id}
                     className={
-                      'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                      'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
                     }
                     style={{
                       width: header.column.getSize()
@@ -263,7 +263,7 @@ const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
                     row.getIsSelected() ||
                       row.getIsSomeSelected() ||
                       row.getIsAllSubRowsSelected()
-                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight'
+                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
                       : null
                   )}
                 >
