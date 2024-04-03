@@ -10,6 +10,7 @@ export enum Collections {
 	DocumentDetailMax = "documentDetailMax",
 	DocumentRequest = "documentRequest",
 	DocumentRequestDetail = "documentRequestDetail",
+	DocumentRequestDetailSupplier = "documentRequestDetailSupplier",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -94,6 +95,12 @@ export type DocumentRequestDetailRecord = {
 	volume?: number
 }
 
+export type DocumentRequestDetailSupplierRecord = {
+	documentRequestDetail?: RecordIdString
+	price?: number
+	supplier?: RecordIdString
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -117,6 +124,7 @@ export type DocumentDetailResponse<Texpand = unknown> = Required<DocumentDetailR
 export type DocumentDetailMaxResponse<TmaxIndex = unknown, Texpand = unknown> = Required<DocumentDetailMaxRecord<TmaxIndex>> & BaseSystemFields<Texpand>
 export type DocumentRequestResponse<Texpand = unknown> = Required<DocumentRequestRecord> & BaseSystemFields<Texpand>
 export type DocumentRequestDetailResponse<Texpand = unknown> = Required<DocumentRequestDetailRecord> & BaseSystemFields<Texpand>
+export type DocumentRequestDetailSupplierResponse<Texpand = unknown> = Required<DocumentRequestDetailSupplierRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -130,6 +138,7 @@ export type CollectionRecords = {
 	documentDetailMax: DocumentDetailMaxRecord
 	documentRequest: DocumentRequestRecord
 	documentRequestDetail: DocumentRequestDetailRecord
+	documentRequestDetailSupplier: DocumentRequestDetailSupplierRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -142,6 +151,7 @@ export type CollectionResponses = {
 	documentDetailMax: DocumentDetailMaxResponse
 	documentRequest: DocumentRequestResponse
 	documentRequestDetail: DocumentRequestDetailResponse
+	documentRequestDetailSupplier: DocumentRequestDetailSupplierResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }

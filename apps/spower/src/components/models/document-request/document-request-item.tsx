@@ -24,7 +24,9 @@ import {
   DocumentDetailData,
   DocumentDetailResponse,
   DocumentRequestDetailResponse,
+  DocumentRequestDetailSupplierResponse,
   DocumentRequestResponse,
+  SupplierResponse,
   arrayToTree,
   client,
   cn,
@@ -55,13 +57,20 @@ export function getDocumentRequestOptions(documentRequestId: string) {
               documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
                 expand: {
                   documentDetail: DocumentDetailResponse;
+                  documentRequestDetailSupplier_via_documentRequestDetail: (DocumentRequestDetailSupplierResponse & {
+                    expand: {
+                      supplier: SupplierResponse;
+                    };
+                  })[];
                 };
               })[];
             };
           }
         >('documentRequest')
         .getOne(documentRequestId, {
-          expand: 'documentRequestDetail_via_documentRequest.documentDetail'
+          expand:
+            'documentRequestDetail_via_documentRequest.documentDetail,' +
+            'documentRequestDetail_via_documentRequest.documentRequestDetailSupplier_via_documentRequestDetail.supplier'
         })
   });
 }
@@ -102,7 +111,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
       ])
   });
 
-  const data = useMemo(() => {
+  const requests = useMemo(() => {
     const v = _.chain(
       documentRequestQuery.data
         ? documentRequestQuery.data.expand[
@@ -110,19 +119,51 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           ]
         : []
     )
-      .map(it => ({
-        ...it.expand.documentDetail,
-        id: it.id,
-        documentDetailId: it.expand.documentDetail.id,
-        requestVolume: it.volume
-      }))
+      .map(it => {
+        return {
+          ...it.expand.documentDetail,
+          id: it.id,
+          documentDetailId: it.expand.documentDetail.id,
+          requestVolume: it.volume,
+          suppliers:
+            it.expand.documentRequestDetailSupplier_via_documentRequestDetail?.map(
+              st => {
+                return {
+                  id: st.expand.supplier.id,
+                  name: st.expand.supplier.name,
+                  price: st.price
+                };
+              }
+            )
+        };
+      })
       .value();
-    return arrayToTree(v, 'root', 'documentDetailId');
+
+    const list = [];
+    for (const vi of v) {
+      if (vi.suppliers?.length > 0) {
+        for (const s of vi.suppliers) {
+          list.push({
+            ..._.omit(vi, ['suppliers']),
+            id: vi.id,
+            supplier: s.id,
+            supplierUnitPrice: s.price,
+            supplierName: s.name
+          });
+        }
+      } else {
+        list.push(vi);
+      }
+    }
+
+    return arrayToTree(list, 'root', 'documentDetailId');
   }, [documentRequestQuery.data]);
 
   const columnHelper = createColumnHelper<
     DocumentDetailData & {
       requestVolume?: number;
+      supplierUnitPrice?: number;
+      supplierName?: string;
     }
   >();
 
@@ -194,8 +235,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         footer: info => info.column.id,
         size: 100
       }),
-      columnHelper.display({
-        id: 'supplierUnitPrice',
+      columnHelper.accessor('supplierUnitPrice', {
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
@@ -208,9 +248,8 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.display({
-        id: 'supplier',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+      columnHelper.accessor('supplierName', {
+        cell: info => info.getValue(),
         header: () => 'NCC',
         footer: info => info.column.id,
         size: 300
@@ -220,7 +259,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   );
 
   const table = useReactTable({
-    data,
+    data: requests,
     columns,
     initialState: {
       columnPinning: {
