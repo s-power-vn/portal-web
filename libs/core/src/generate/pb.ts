@@ -99,6 +99,7 @@ export type DocumentRequestDetailSupplierRecord = {
 	documentRequestDetail?: RecordIdString
 	price?: number
 	supplier?: RecordIdString
+	volume?: number
 }
 
 export type SupplierRecord = {

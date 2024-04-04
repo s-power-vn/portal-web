@@ -51,15 +51,17 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-const Content: FC<Omit<EditDocumentRequestDialogProps, 'open'>> = ({
+const Content: FC<EditDocumentRequestDialogProps> = ({
+  open,
   setOpen,
   documentRequestId
 }) => {
   const queryClient = useQueryClient();
 
-  const documentRequestQuery = useQuery(
-    getDocumentRequestOptions(documentRequestId)
-  );
+  const documentRequestQuery = useQuery({
+    ...getDocumentRequestOptions(documentRequestId),
+    enabled: open
+  });
 
   const data = useMemo(() => {
     const v = _.chain(
@@ -159,7 +161,11 @@ export const EditDocumentRequestDialog: FC<EditDocumentRequestDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Content documentRequestId={documentRequestId} setOpen={setOpen} />
+      <Content
+        open={open}
+        documentRequestId={documentRequestId}
+        setOpen={setOpen}
+      />
     </Dialog>
   );
 };

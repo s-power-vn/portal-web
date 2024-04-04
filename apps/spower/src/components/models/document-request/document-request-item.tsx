@@ -49,14 +49,14 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { ListDocumentSupplierDialog } from '../document-request-detail/list-document-supplier-dialog';
+import { ListDocumentRequestSupplierDialog } from '../document-request-detail/list-document-request-supplier-dialog';
 import { EditDocumentRequestDialog } from './edit-document-request-dialog';
 
 export function getDocumentRequestOptions(documentRequestId: string) {
   return queryOptions({
     queryKey: ['getDocumentRequest', documentRequestId],
-    queryFn: () =>
-      client
+    queryFn: () => {
+      return client
         ?.collection<
           DocumentRequestResponse & {
             expand: {
@@ -77,7 +77,8 @@ export function getDocumentRequestOptions(documentRequestId: string) {
           expand:
             'documentRequestDetail_via_documentRequest.documentDetail,' +
             'documentRequestDetail_via_documentRequest.documentRequestDetailSupplier_via_documentRequestDetail.supplier'
-        })
+        });
+    }
   });
 }
 
@@ -268,14 +269,34 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         }
       }),
       columnHelper.accessor('supplierUnitPrice', {
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+        cell: ({ row }) =>
+          row.original.supplierUnitPrice
+            ? formatCurrency(row.original.supplierUnitPrice)
+            : null,
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
       }),
       columnHelper.display({
         id: 'exceedUnitPrice',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+        cell: ({ row }) => {
+          if (row.original.supplierUnitPrice) {
+            const exceed =
+              row.original.supplierUnitPrice - row.original.unitPrice;
+            if (exceed > 0) {
+              return (
+                <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
+              );
+            } else {
+              return (
+                <span className={'text-green-500'}>
+                  {formatCurrency(-exceed)}
+                </span>
+              );
+            }
+          }
+          return null;
+        },
         header: () => 'Đơn giá phát sinh',
         footer: info => info.column.id,
         size: 150
@@ -318,7 +339,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
 
   return (
     <>
-      <ListDocumentSupplierDialog
+      <ListDocumentRequestSupplierDialog
         documentRequestDetail={
           table.getSelectedRowModel().flatRows.length > 0
             ? table.getSelectedRowModel().flatRows[0].original
