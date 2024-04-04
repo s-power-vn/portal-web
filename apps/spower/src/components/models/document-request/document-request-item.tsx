@@ -1,4 +1,4 @@
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import {
   queryOptions,
   useMutation,
@@ -16,7 +16,12 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { Edit3, EditIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import {
+  EditIcon,
+  SquareMinusIcon,
+  SquarePlusIcon,
+  StoreIcon
+} from 'lucide-react';
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
@@ -44,6 +49,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { ListDocumentSupplierDialog } from '../document-request-detail/list-document-supplier-dialog';
 import { EditDocumentRequestDialog } from './edit-document-request-dialog';
 
 export function getDocumentRequestOptions(documentRequestId: string) {
@@ -83,6 +89,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
   documentRequestId
 }) => {
   const [openDocumentRequestEdit, setOpenDocumentRequestEdit] = useState(false);
+  const [openListSupplier, setOpenListSupplier] = useState(false);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -311,6 +318,15 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
 
   return (
     <>
+      <ListDocumentSupplierDialog
+        documentRequestDetail={
+          table.getSelectedRowModel().flatRows.length > 0
+            ? table.getSelectedRowModel().flatRows[0].original
+            : undefined
+        }
+        open={openListSupplier}
+        setOpen={setOpenListSupplier}
+      />
       <EditDocumentRequestDialog
         documentRequestId={documentRequestId}
         open={openDocumentRequestEdit}
@@ -331,36 +347,24 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                 )
               }
               className={'flex gap-1'}
+              onClick={() => setOpenListSupplier(true)}
             >
-              <PlusIcon />
-              Thêm nhà cung cấp
-            </Button>
-            <Button
-              disabled={
-                !(
-                  table.getSelectedRowModel().flatRows.length > 0 &&
-                  table.getSelectedRowModel().flatRows[0].original.children
-                    ?.length === 0
-                )
-              }
-              className={'flex gap-1'}
-            >
-              <Edit3 width={14} height={14} />
-              Thay đổi nhà cung cấp
+              <StoreIcon className={'h-5 w-5'} />
+              Quản lý nhà cung cấp
             </Button>
             <Button
               className={'text-appWhite'}
               size="icon"
               onClick={() => setOpenDocumentRequestEdit(true)}
             >
-              <EditIcon className={'h-5 w-5'} />
+              <EditIcon className={'h-4 w-4'} />
             </Button>
             <Button
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"
               onClick={() => deleteDocumentRequest.mutate()}
             >
-              <Cross2Icon className={'h-5 w-5'} />
+              <Cross2Icon className={'h-4 w-4'} />
             </Button>
           </div>
         </div>
