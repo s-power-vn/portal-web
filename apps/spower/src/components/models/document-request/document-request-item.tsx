@@ -142,14 +142,17 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
     const list = [];
     for (const vi of v) {
       if (vi.suppliers?.length > 0) {
+        let index = 0;
         for (const s of vi.suppliers) {
           list.push({
             ..._.omit(vi, ['suppliers']),
             id: vi.id,
             supplier: s.id,
             supplierUnitPrice: s.price,
-            supplierName: s.name
+            supplierName: s.name,
+            rowSpan: index === 0 ? vi.suppliers.length : 0
           });
+          index++;
         }
       } else {
         list.push(vi);
@@ -164,6 +167,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
       requestVolume?: number;
       supplierUnitPrice?: number;
       supplierName?: string;
+      rowSpan?: number;
     }
   >();
 
@@ -195,7 +199,10 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           <div className={'flex w-full items-center justify-center'}>#</div>
         ),
         footer: info => info.column.id,
-        size: 30
+        size: 30,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('level', {
         cell: info => info.getValue(),
@@ -203,37 +210,55 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
-        size: 50
+        size: 50,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
         header: () => 'Mô tả công việc',
         footer: info => info.column.id,
-        size: 300
+        size: 300,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('volume', {
         cell: ({ row }) => formatNumber(row.original.volume),
         header: () => 'KL thầu',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('unit', {
         cell: info => info.getValue(),
         header: () => 'Đơn vị',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('unitPrice', {
         cell: ({ row }) => formatCurrency(row.original.unitPrice),
         header: () => 'Đơn giá thầu',
         footer: info => info.column.id,
-        size: 150
+        size: 150,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('requestVolume', {
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: true
+        }
       }),
       columnHelper.accessor('supplierUnitPrice', {
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
@@ -348,7 +373,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
             >
               <TableHeader className={'bg-appGrayLight'}>
                 {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow className={'flex'} key={headerGroup.id}>
+                  <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map(header => {
                       return (
                         <TableHead
@@ -359,7 +384,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                             width: header.getSize()
                           }}
                           className={
-                            'bg-appGrayLight flex items-center whitespace-nowrap border-r p-1'
+                            'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
                           }
                         >
                           {header.isPlaceholder ? null : (
@@ -382,17 +407,18 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                     return (
                       <TableRow
                         key={row.id}
-                        className={'group flex w-full cursor-pointer'}
+                        className={'tranparent group w-full cursor-pointer'}
                         onClick={() => {
                           setRowSelection(() => {
-                            const test: Record<string, boolean> = {};
-                            test[row.id] = true;
-                            return test;
+                            const object: Record<string, boolean> = {};
+                            object[row.id] = true;
+                            return object;
                           });
                         }}
                       >
                         {row.getVisibleCells().map(cell => {
-                          return (
+                          return cell.column.columnDef.meta?.hasRowSpan &&
+                            cell.row.original.rowSpan === 0 ? null : (
                             <TableCell
                               key={cell.id}
                               style={{
@@ -400,12 +426,17 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                                 width: cell.column.getSize()
                               }}
                               className={cn(
-                                `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight
-                                      flex items-center border-r p-1 text-xs`,
+                                `hover:bg-appGrayLight group-hover:bg-appGrayLight
+                                       border-r p-1 text-xs`,
                                 row.getIsSelected()
                                   ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
                                   : null
                               )}
+                              rowSpan={
+                                cell.column.columnDef.meta?.hasRowSpan
+                                  ? cell.row.original.rowSpan
+                                  : undefined
+                              }
                             >
                               {flexRender(
                                 cell.column.columnDef.cell,
