@@ -52,27 +52,27 @@ import {
 import { ListDocumentRequestSupplierDialog } from '../document-request-detail/list-document-request-supplier-dialog';
 import { EditDocumentRequestDialog } from './edit-document-request-dialog';
 
+export type DocumentRequestData = DocumentRequestResponse & {
+  expand: {
+    documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
+      expand: {
+        documentDetail: DocumentDetailResponse;
+        documentRequestDetailSupplier_via_documentRequestDetail: (DocumentRequestDetailSupplierResponse & {
+          expand: {
+            supplier: SupplierResponse;
+          };
+        })[];
+      };
+    })[];
+  };
+};
+
 export function getDocumentRequestOptions(documentRequestId: string) {
   return queryOptions({
     queryKey: ['getDocumentRequest', documentRequestId],
     queryFn: () => {
       return client
-        ?.collection<
-          DocumentRequestResponse & {
-            expand: {
-              documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
-                expand: {
-                  documentDetail: DocumentDetailResponse;
-                  documentRequestDetailSupplier_via_documentRequestDetail: (DocumentRequestDetailSupplierResponse & {
-                    expand: {
-                      supplier: SupplierResponse;
-                    };
-                  })[];
-                };
-              })[];
-            };
-          }
-        >('documentRequest')
+        ?.collection<DocumentRequestData>('documentRequest')
         .getOne(documentRequestId, {
           expand:
             'documentRequestDetail_via_documentRequest.documentDetail,' +

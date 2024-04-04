@@ -31,7 +31,7 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-const Content: FC<Omit<DocumentNewProps, 'open'>> = ({ setOpen }) => {
+const Content: FC<DocumentNewProps> = ({ setOpen }) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -110,10 +110,10 @@ const Content: FC<Omit<DocumentNewProps, 'open'>> = ({ setOpen }) => {
 
 export type DocumentNewProps = DialogProps;
 
-export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
+export const NewDocumentDialog: FC<DocumentNewProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content setOpen={setOpen} />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

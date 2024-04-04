@@ -47,12 +47,16 @@ export function getDocumentOptions(documentId: string) {
   });
 }
 
-const Content: FC<Omit<EditDocumentDialogProps, 'open'>> = ({
+const Content: FC<EditDocumentDialogProps> = ({
+  open,
   setOpen,
   documentId
 }) => {
   const queryClient = useQueryClient();
-  const documentQuery = useQuery(getDocumentOptions(documentId));
+  const documentQuery = useQuery({
+    ...getDocumentOptions(documentId),
+    enabled: open
+  });
 
   const updateDocumentMutation = useMutation({
     mutationKey: ['updateDocument'],
@@ -125,14 +129,10 @@ export type EditDocumentDialogProps = DialogProps & {
   documentId: string;
 };
 
-export const EditDocumentDialog: FC<EditDocumentDialogProps> = ({
-  open,
-  setOpen,
-  documentId
-}) => {
+export const EditDocumentDialog: FC<EditDocumentDialogProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content setOpen={setOpen} documentId={documentId} />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };
