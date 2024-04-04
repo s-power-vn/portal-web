@@ -5,12 +5,12 @@
 export enum Collections {
 	Customer = "customer",
 	Department = "department",
+	Detail = "detail",
+	DetailMax = "detailMax",
 	Document = "document",
-	DocumentDetail = "documentDetail",
-	DocumentDetailMax = "documentDetailMax",
-	DocumentRequest = "documentRequest",
-	DocumentRequestDetail = "documentRequestDetail",
-	DocumentRequestDetailSupplier = "documentRequestDetailSupplier",
+	Request = "request",
+	RequestDetail = "requestDetail",
+	RequestDetailSupplier = "requestDetailSupplier",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -54,6 +54,22 @@ export type DepartmentRecord = {
 	name: string
 }
 
+export type DetailRecord = {
+	document: RecordIdString
+	index?: number
+	note?: string
+	parent?: string
+	requestVolume?: number
+	title: string
+	unit?: string
+	unitPrice?: number
+	volume?: number
+}
+
+export type DetailMaxRecord<TmaxIndex = unknown> = {
+	maxIndex?: null | TmaxIndex
+}
+
 export enum DocumentStatusOptions {
 	"ToDo" = "ToDo",
 	"Done" = "Done",
@@ -67,37 +83,21 @@ export type DocumentRecord = {
 	status?: DocumentStatusOptions
 }
 
-export type DocumentDetailRecord = {
-	document: RecordIdString
-	index?: number
-	note?: string
-	parent?: string
-	requestVolume?: number
-	title: string
-	unit?: string
-	unitPrice?: number
-	volume?: number
-}
-
-export type DocumentDetailMaxRecord<TmaxIndex = unknown> = {
-	maxIndex?: null | TmaxIndex
-}
-
-export type DocumentRequestRecord = {
+export type RequestRecord = {
 	document?: RecordIdString
 	name?: string
 	status?: string
 }
 
-export type DocumentRequestDetailRecord = {
-	documentDetail?: RecordIdString
-	documentRequest?: RecordIdString
+export type RequestDetailRecord = {
+	detail?: RecordIdString
+	request?: RecordIdString
 	volume?: number
 }
 
-export type DocumentRequestDetailSupplierRecord = {
-	documentRequestDetail?: RecordIdString
+export type RequestDetailSupplierRecord = {
 	price?: number
+	requestDetail?: RecordIdString
 	supplier?: RecordIdString
 	volume?: number
 }
@@ -120,12 +120,12 @@ export type UserRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
+export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
+export type DetailMaxResponse<TmaxIndex = unknown, Texpand = unknown> = Required<DetailMaxRecord<TmaxIndex>> & BaseSystemFields<Texpand>
 export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & BaseSystemFields<Texpand>
-export type DocumentDetailResponse<Texpand = unknown> = Required<DocumentDetailRecord> & BaseSystemFields<Texpand>
-export type DocumentDetailMaxResponse<TmaxIndex = unknown, Texpand = unknown> = Required<DocumentDetailMaxRecord<TmaxIndex>> & BaseSystemFields<Texpand>
-export type DocumentRequestResponse<Texpand = unknown> = Required<DocumentRequestRecord> & BaseSystemFields<Texpand>
-export type DocumentRequestDetailResponse<Texpand = unknown> = Required<DocumentRequestDetailRecord> & BaseSystemFields<Texpand>
-export type DocumentRequestDetailSupplierResponse<Texpand = unknown> = Required<DocumentRequestDetailSupplierRecord> & BaseSystemFields<Texpand>
+export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
+export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
+export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -134,12 +134,12 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
+	detail: DetailRecord
+	detailMax: DetailMaxRecord
 	document: DocumentRecord
-	documentDetail: DocumentDetailRecord
-	documentDetailMax: DocumentDetailMaxRecord
-	documentRequest: DocumentRequestRecord
-	documentRequestDetail: DocumentRequestDetailRecord
-	documentRequestDetailSupplier: DocumentRequestDetailSupplierRecord
+	request: RequestRecord
+	requestDetail: RequestDetailRecord
+	requestDetailSupplier: RequestDetailSupplierRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -147,12 +147,12 @@ export type CollectionRecords = {
 export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
+	detail: DetailResponse
+	detailMax: DetailMaxResponse
 	document: DocumentResponse
-	documentDetail: DocumentDetailResponse
-	documentDetailMax: DocumentDetailMaxResponse
-	documentRequest: DocumentRequestResponse
-	documentRequestDetail: DocumentRequestDetailResponse
-	documentRequestDetailSupplier: DocumentRequestDetailSupplierResponse
+	request: RequestResponse
+	requestDetail: RequestDetailResponse
+	requestDetailSupplier: RequestDetailSupplierResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }

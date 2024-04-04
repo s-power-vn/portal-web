@@ -26,8 +26,8 @@ import {
 import { FC, useEffect, useMemo, useState } from 'react';
 
 import {
+  DetailResponse,
   DocumentDetailData,
-  DocumentDetailResponse,
   DocumentRequestDetailResponse,
   DocumentRequestDetailSupplierResponse,
   DocumentRequestResponse,

@@ -16,9 +16,9 @@ import { EditIcon } from 'lucide-react';
 import React, { FC, useState } from 'react';
 
 import {
+  DetailResponse,
   DialogProps,
   DocumentDetailData,
-  DocumentDetailResponse,
   DocumentRequestDetailResponse,
   DocumentRequestDetailSupplierResponse,
   SupplierResponse,

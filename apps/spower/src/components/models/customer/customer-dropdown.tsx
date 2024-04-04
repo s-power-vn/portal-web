@@ -1,24 +1,17 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 
 import { FC } from 'react';
 
-import { CustomerResponse, client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-function customersOptions() {
-  return queryOptions({
-    queryKey: ['getCustomers'],
-    queryFn: () => client.collection<CustomerResponse>('customer').getFullList()
-  });
-}
+import { useGetAllCustomers } from '../../../api';
 
 export type CustomerDropdownProps = Omit<SelectInputProps, 'items'>;
 
 export const CustomerDropdown: FC<CustomerDropdownProps> = ({ ...props }) => {
-  const query = useQuery(customersOptions());
+  const customersQuery = useGetAllCustomers();
 
-  const items = _.map(query.data, ({ id, name }) => ({
+  const items = _.map(customersQuery.data, ({ id, name }) => ({
     value: id,
     label: name
   }));

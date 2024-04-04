@@ -31,8 +31,8 @@ import {
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+  DetailResponse,
   DocumentDetailData,
-  DocumentDetailResponse,
   arrayToTree,
   client,
   cn,
@@ -58,7 +58,7 @@ export function getDocumentDetailsOptions(documentId: string) {
   return queryOptions({
     queryKey: ['getDocumentDetails', documentId],
     queryFn: () =>
-      client.collection<DocumentDetailResponse>('documentDetail').getFullList({
+      client.collection<DetailResponse>('documentDetail').getFullList({
         filter: `document = "${documentId}"`
       })
   });
@@ -86,11 +86,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     mutationFn: (documentIds: string[]) =>
       Promise.all(
         documentIds.map(documentId =>
-          client
-            .collection<DocumentDetailResponse>('documentDetail')
-            .delete(documentId, {
-              requestKey: null
-            })
+          client.collection<DetailResponse>('detail').delete(documentId, {
+            requestKey: null
+          })
         )
       ),
     onSuccess: () =>

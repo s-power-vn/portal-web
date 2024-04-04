@@ -8,9 +8,9 @@ import { extendTailwindMerge } from 'tailwind-merge';
 
 import { CSSProperties } from 'react';
 
-import { DocumentDetailResponse } from './generate/pb';
+import { DetailResponse } from './generate/pb';
 
-export type DocumentDetailData = DocumentDetailResponse & {
+export type DocumentDetailData = DetailResponse & {
   children?: DocumentDetailData[];
   level?: string;
 };

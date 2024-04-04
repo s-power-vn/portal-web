@@ -9,9 +9,9 @@ import { number, object, string } from 'yup';
 import React, { FC } from 'react';
 
 import {
+  DetailResponse,
   DialogProps,
   DocumentDetailRecord,
-  DocumentDetailResponse,
   client
 } from '@storeo/core';
 import {
