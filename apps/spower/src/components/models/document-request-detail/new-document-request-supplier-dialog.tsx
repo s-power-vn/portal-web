@@ -1,14 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { object, string } from 'yup';
+import { number, object, string } from 'yup';
 
 import { FC } from 'react';
 
 import {
   DialogProps,
-  DocumentRecord,
-  DocumentResponse,
-  DocumentStatusOptions,
+  DocumentRequestDetailSupplierRecord,
+  DocumentRequestDetailSupplierResponse,
   client
 } from '@storeo/core';
 import {
@@ -20,86 +18,75 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-  TextField
+  NumericField
 } from '@storeo/theme';
 
-import { CustomerDropdownField } from '../customer/customer-dropdown-field';
+import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
+  supplier: string().required('Hãy chọn nhà cung cấp'),
+  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
+  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
 });
 
-const Content: FC<Omit<DocumentNewProps, 'open'>> = ({ setOpen }) => {
-  const navigate = useNavigate();
-
+const Content: FC<NewDocumentRequestSupplierDialogProps> = ({
+  setOpen,
+  documentRequestDetailId
+}) => {
   const queryClient = useQueryClient();
 
-  const createDocumentMutation = useMutation({
-    mutationKey: ['createDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      client.collection<DocumentResponse>('document').create(params),
+  const createDocumentRequestSupplierMutation = useMutation({
+    mutationKey: ['createDocumentRequestSupplier'],
+    mutationFn: async (params: DocumentRequestDetailSupplierRecord) =>
+      await client
+        .collection<DocumentRequestDetailSupplierResponse>(
+          'documentRequestDetailSupplier'
+        )
+        .create(params),
     onSuccess: () =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] }),
-        navigate({
-          to: '/document/mine',
-          search: {
-            pageIndex: 1,
-            pageSize: 10,
-            filter: ''
-          }
+        queryClient.invalidateQueries({
+          queryKey: ['getDocumentRequestSuppliers']
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['getDocumentRequest']
         })
       ]),
-    onSettled: () => setOpen(false)
+    onSettled: () => {
+      setOpen(false);
+    }
   });
 
   return (
     <DialogContent className="w-96">
       <DialogHeader>
-        <DialogTitle>Tạo tài liệu</DialogTitle>
+        <DialogTitle>Chỉnh sửa nhà cung cấp</DialogTitle>
         <DialogDescription className={'italic'}>
-          Tạo tài liệu thi công mới.
+          Chỉnh sửa thông tin về giá của nhà cung cấp.
         </DialogDescription>
       </DialogHeader>
       <Form
         schema={schema}
         onSubmit={values =>
-          createDocumentMutation.mutate({
+          createDocumentRequestSupplierMutation.mutate({
             ...values,
-            status: DocumentStatusOptions.ToDo,
-            createdBy: client.authStore.model?.id
+            documentRequestDetail: documentRequestDetailId
           })
         }
-        defaultValues={{
-          name: '',
-          bidding: '',
-          customer: ''
-        }}
-        loading={createDocumentMutation.isPending}
+        defaultValues={{}}
+        loading={createDocumentRequestSupplierMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
-        <TextField
+        <SupplierDropdownField
           schema={schema}
-          name={'bidding'}
-          title={'Tên gói thầu'}
-          options={{}}
-        />
-        <TextField
-          schema={schema}
-          name={'name'}
-          title={'Tên công trình'}
-          options={{}}
-        />
-        <CustomerDropdownField
-          schema={schema}
-          name={'customer'}
-          title={'Chủ đầu tư'}
+          name={'supplier'}
+          title={'Nhà cung cấp'}
           options={{
-            placeholder: 'Hãy chọn chủ đầu tư'
+            placeholder: 'Hãy chọn nhà cung cấp'
           }}
         />
+        <NumericField schema={schema} name={'price'} title={'Đơn giá'} />
+        <NumericField schema={schema} name={'volume'} title={'Khối lượng'} />
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
         </DialogFooter>
@@ -108,12 +95,20 @@ const Content: FC<Omit<DocumentNewProps, 'open'>> = ({ setOpen }) => {
   );
 };
 
-export type DocumentNewProps = DialogProps;
+export type NewDocumentRequestSupplierDialogProps = DialogProps & {
+  documentRequestDetailId: string;
+};
 
-export const NewDocumentDialog: FC<DocumentNewProps> = ({ open, setOpen }) => {
+export const NewDocumentRequestSupplierDialog: FC<
+  NewDocumentRequestSupplierDialogProps
+> = ({ open, setOpen, documentRequestDetailId }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Content setOpen={setOpen} />
+      <Content
+        open={open}
+        setOpen={setOpen}
+        documentRequestDetailId={documentRequestDetailId}
+      />
     </Dialog>
   );
 };

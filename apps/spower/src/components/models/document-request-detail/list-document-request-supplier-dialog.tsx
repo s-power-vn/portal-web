@@ -42,17 +42,19 @@ import {
 } from '@storeo/theme';
 
 import { EditDocumentRequestSupplierDialog } from './edit-document-request-supplier-dialog';
+import { NewDocumentRequestSupplierDialog } from './new-document-request-supplier-dialog';
 
-type ItemData = DocumentRequestDetailSupplierResponse & {
-  expand: {
-    supplier: SupplierResponse;
-    documentRequestDetail: DocumentRequestDetailResponse & {
-      expand: {
-        documentDetail: DocumentDetailResponse;
+export type DocumentRequestDetailSupplierData =
+  DocumentRequestDetailSupplierResponse & {
+    expand: {
+      supplier: SupplierResponse;
+      documentRequestDetail: DocumentRequestDetailResponse & {
+        expand: {
+          documentDetail: DocumentDetailResponse;
+        };
       };
     };
   };
-};
 
 export function getDocumentRequestSuppliersOptions(
   documentRequestDetailId: string
@@ -60,10 +62,14 @@ export function getDocumentRequestSuppliersOptions(
   return queryOptions({
     queryKey: ['getDocumentRequestSuppliers', documentRequestDetailId],
     queryFn: () =>
-      client.collection<ItemData>('documentRequestDetailSupplier').getFullList({
-        filter: `documentRequestDetail = "${documentRequestDetailId}"`,
-        expand: 'supplier,documentRequestDetail.documentDetail'
-      })
+      client
+        .collection<DocumentRequestDetailSupplierData>(
+          'documentRequestDetailSupplier'
+        )
+        .getFullList({
+          filter: `documentRequestDetail = "${documentRequestDetailId}"`,
+          expand: 'supplier,documentRequestDetail.documentDetail'
+        })
   });
 }
 
@@ -71,9 +77,10 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
   open,
   documentRequestDetail
 }) => {
+  const [openNew, setOpenNew] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [documentRequestSupplier, setDocumentRequestSupplier] =
-    useState<DocumentRequestDetailSupplierResponse>();
+    useState<DocumentRequestDetailSupplierData>();
 
   const documentRequestSuppliersQuery = useQuery({
     ...getDocumentRequestSuppliersOptions(documentRequestDetail?.id ?? ''),
@@ -101,7 +108,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
         })
       ])
   });
-  const columnHelper = createColumnHelper<ItemData>();
+  const columnHelper = createColumnHelper<DocumentRequestDetailSupplierData>();
 
   const columns = [
     columnHelper.accessor('supplier', {
@@ -180,11 +187,21 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <div className={'flex gap-2'}>
-        <Button className={'flex gap-1'} onClick={() => {}}>
+        <Button
+          className={'flex gap-1'}
+          onClick={() => {
+            setOpenNew(true);
+          }}
+        >
           <PlusIcon />
           Thêm nhà cung cấp
         </Button>
       </div>
+      <NewDocumentRequestSupplierDialog
+        open={openNew}
+        setOpen={setOpenNew}
+        documentRequestDetailId={documentRequestDetail?.id ?? ''}
+      />
       <EditDocumentRequestSupplierDialog
         open={openEdit}
         setOpen={setOpenEdit}

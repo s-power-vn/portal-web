@@ -22,11 +22,12 @@ import {
 } from '@storeo/theme';
 
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
+import { DocumentRequestDetailSupplierData } from './list-document-request-supplier-dialog';
 
 const schema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
   price: number().required('Hãy nhập đơn giá nhà cung cấp'),
-  volume: string().required('Hãy nhập khối lượng nhà cung cấp')
+  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
 });
 
 const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
@@ -35,8 +36,8 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const updateDocumentMutation = useMutation({
-    mutationKey: ['updateDocument'],
+  const updateDocumentRequestSupplierMutation = useMutation({
+    mutationKey: ['updateDocumentRequestSupplier'],
     mutationFn: async (params: DocumentRequestDetailSupplierRecord) =>
       documentRequestSupplier?.id
         ? await client
@@ -49,6 +50,13 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
       Promise.all([
         queryClient.invalidateQueries({
           queryKey: ['getDocumentRequestSuppliers']
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [
+            'getDocumentRequest',
+            documentRequestSupplier?.expand.documentRequestDetail
+              .documentRequest
+          ]
         })
       ]),
     onSettled: () => {
@@ -67,12 +75,12 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
       <Form
         schema={schema}
         onSubmit={values =>
-          updateDocumentMutation.mutate({
+          updateDocumentRequestSupplierMutation.mutate({
             ...values
           })
         }
         defaultValues={documentRequestSupplier}
-        loading={updateDocumentMutation.isPending}
+        loading={updateDocumentRequestSupplierMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <SupplierDropdownField
@@ -94,7 +102,7 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
 };
 
 export type EditDocumentRequestSupplierDialogProps = DialogProps & {
-  documentRequestSupplier?: DocumentRequestDetailSupplierResponse;
+  documentRequestSupplier?: DocumentRequestDetailSupplierData;
 };
 
 export const EditDocumentRequestSupplierDialog: FC<
