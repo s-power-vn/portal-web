@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -7,14 +7,8 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { InferType, number, object, string } from 'yup';
 
-import {
-  CustomerResponse,
-  DocumentResponse,
-  UserResponse,
-  client
-} from '@storeo/core';
+import { CustomerResponse, DocumentResponse, UserResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -27,36 +21,13 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DocumentSearchSchema, getAllDocuments } from '../../../../api';
 import { DocumentStatus, EmployeeItem } from '../../../../components';
-
-const documentSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type DocumentSearch = InferType<typeof documentSearchSchema>;
-
-export function getDocumentsOptions(search: DocumentSearch) {
-  return queryOptions({
-    queryKey: ['getDocuments', 'all', search],
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
-      return client
-        .collection<DocumentResponse>('document')
-        .getList(search.pageIndex, search.pageSize, {
-          filter,
-          sort: '-created',
-          expand: 'customer,assignee,createdBy'
-        });
-    }
-  });
-}
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const documentsQuery = useSuspenseQuery(getDocumentsOptions(search));
+  const documentsQuery = useSuspenseQuery(getAllDocuments(search));
 
   const columnHelper = createColumnHelper<DocumentResponse>();
 
@@ -268,10 +239,10 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/document/all/')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    documentSearchSchema.validateSync(search),
+    DocumentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getDocumentsOptions(deps.search))
+    queryClient?.ensureQueryData(getAllDocuments(deps.search))
 });
