@@ -1,24 +1,17 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 
 import { FC } from 'react';
 
-import { SupplierResponse, client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-function suppliersOptions() {
-  return queryOptions({
-    queryKey: ['getSuppliers'],
-    queryFn: () => client.collection<SupplierResponse>('supplier').getFullList()
-  });
-}
+import { useGetAllSuppliers } from '../../../api';
 
 export type SupplierDropdownProps = Omit<SelectInputProps, 'items'>;
 
 export const SupplierDropdown: FC<SupplierDropdownProps> = ({ ...props }) => {
-  const query = useQuery(suppliersOptions());
+  const suppliersQuery = useGetAllSuppliers();
 
-  const items = _.map(query.data, ({ id, name }) => ({
+  const items = _.map(suppliersQuery.data, ({ id, name }) => ({
     value: id,
     label: name
   }));

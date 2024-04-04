@@ -2,8 +2,6 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 
 import { CustomerResponse, client } from '@storeo/core';
 
-const collectionName = 'customer';
-
 export function getAllCustomersKey() {
   return ['getAllCustomersKey'];
 }
@@ -11,8 +9,7 @@ export function getAllCustomersKey() {
 export function getAllCustomers() {
   return queryOptions({
     queryKey: getAllCustomersKey(),
-    queryFn: () =>
-      client.collection<CustomerResponse>(collectionName).getFullList()
+    queryFn: () => client.collection<CustomerResponse>('customer').getFullList()
   });
 }
 
