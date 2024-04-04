@@ -368,7 +368,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
           <div className={'overflow-x-auto rounded-md border pb-2'}>
             <Table
               style={{
-                width: table.getTotalSize() + 10
+                width: table.getTotalSize()
               }}
             >
               <TableHeader className={'bg-appGrayLight'}>
@@ -383,9 +383,8 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                             ...getCommonPinningStyles(header.column),
                             width: header.getSize()
                           }}
-                          className={
-                            'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
-                          }
+                          className={`bg-appGrayLight whitespace-nowrap p-1 after:absolute after:right-0
+                          after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
                         >
                           {header.isPlaceholder ? null : (
                             <>
@@ -407,7 +406,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                     return (
                       <TableRow
                         key={row.id}
-                        className={'tranparent group w-full cursor-pointer'}
+                        className={'group w-full cursor-pointer'}
                         onClick={() => {
                           setRowSelection(() => {
                             const object: Record<string, boolean> = {};
@@ -426,8 +425,8 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                                 width: cell.column.getSize()
                               }}
                               className={cn(
-                                `hover:bg-appGrayLight group-hover:bg-appGrayLight
-                                       border-r p-1 text-xs`,
+                                `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
+                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
                                 row.getIsSelected()
                                   ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
                                   : null
@@ -451,8 +450,8 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
                 ) : (
                   <TableRow>
                     <TableCell
-                      className={'flex items-center justify-center'}
                       colSpan={columns.length}
+                      className={'text-center'}
                     >
                       Không có dữ liệu.
                     </TableCell>

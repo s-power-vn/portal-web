@@ -427,7 +427,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
               }}
             >
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow className={'flex'} key={headerGroup.id}>
+                <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => {
                     return (
                       <TableHead
@@ -437,9 +437,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                           ...getCommonPinningStyles(header.column),
                           width: header.getSize()
                         }}
-                        className={
-                          'bg-appGrayLight flex items-center whitespace-nowrap border-r p-1 last:border-r-0'
-                        }
+                        className={`bg-appGrayLight whitespace-nowrap p-1 after:absolute after:right-0
+                          after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
                       >
                         {header.isPlaceholder ? null : (
                           <>
@@ -457,7 +456,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             </TableHeader>
             <TableBody
               style={{
-                display: 'grid',
                 height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
                 position: 'relative' //needed for absolute positioning of rows
               }}
@@ -470,9 +468,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                       data-index={virtualRow.index} //needed for dynamic row height measurement
                       ref={node => rowVirtualizer.measureElement(node)} //measure dynamic row height
                       key={row.id}
-                      className={
-                        'group absolute flex w-full cursor-pointer last:border-b-0'
-                      }
+                      className={'group absolute w-full cursor-pointer'}
                       style={{
                         transform: `translateY(${virtualRow.start}px)` //this should always be a `style` as it changes on scroll
                       }}
@@ -493,10 +489,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                               width: cell.column.getSize()
                             }}
                             className={cn(
-                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight
-                              flex items-center border-r p-1 text-xs last:border-r-0`,
+                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs
+                              after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
                               selectedRow?.id === row.id
-                                ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlueLight'
+                                ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
                                 : null
                             )}
                           >
@@ -512,10 +508,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                 })
               ) : (
                 <TableRow>
-                  <TableCell
-                    className={'flex items-center justify-center'}
-                    colSpan={columns.length}
-                  >
+                  <TableCell className={'text-center'} colSpan={columns.length}>
                     Không có dữ liệu.
                   </TableCell>
                 </TableRow>
