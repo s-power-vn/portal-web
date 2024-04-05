@@ -1,7 +1,20 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { DocumentResponse, client } from '@storeo/core';
+import {
+  CustomerResponse,
+  DocumentResponse,
+  UserResponse,
+  client
+} from '@storeo/core';
+
+export type DocumentData = DocumentResponse & {
+  expand: {
+    customer: CustomerResponse;
+    assignee: UserResponse;
+    createdBy: UserResponse;
+  };
+};
 
 export const DocumentSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -21,7 +34,7 @@ export function getWaitingDocuments(search?: DocumentSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`;
       return client
-        ?.collection<DocumentResponse>('document')
+        ?.collection<DocumentData>('document')
         .getList(search?.pageIndex, search?.pageSize, {
           filter:
             filter +
@@ -47,7 +60,7 @@ export function getMineDocuments(search?: DocumentSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`;
       return client
-        .collection<DocumentResponse>('document')
+        .collection<DocumentData>('document')
         .getList(search?.pageIndex, search?.pageSize, {
           filter: filter + `&& (createdBy = "${client.authStore.model?.id}")`,
           sort: '-created',
@@ -71,7 +84,7 @@ export function getAllDocuments(search?: DocumentSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`;
       return client
-        .collection<DocumentResponse>('document')
+        .collection<DocumentData>('document')
         .getList(search?.pageIndex, search?.pageSize, {
           filter,
           sort: '-created',

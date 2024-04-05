@@ -8,7 +8,6 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
-import { CustomerResponse, DocumentResponse, UserResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -21,7 +20,11 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentSearchSchema, getAllDocuments } from '../../../../api';
+import {
+  DocumentData,
+  DocumentSearchSchema,
+  getAllDocuments
+} from '../../../../api';
 import { DocumentStatus, EmployeeItem } from '../../../../components';
 
 const Component = () => {
@@ -29,7 +32,7 @@ const Component = () => {
   const search = Route.useSearch();
   const documentsQuery = useSuspenseQuery(getAllDocuments(search));
 
-  const columnHelper = createColumnHelper<DocumentResponse>();
+  const columnHelper = createColumnHelper<DocumentData>();
 
   const columns = [
     columnHelper.display({
@@ -53,42 +56,18 @@ const Component = () => {
     }),
     columnHelper.accessor('customer', {
       cell: ({ row }) => {
-        return (
-          row.original.expand as {
-            customer: CustomerResponse;
-          }
-        ).customer.name;
+        return row.original.expand.customer.name;
       },
       header: () => 'Chủ đầu tư',
       footer: info => info.column.id
     }),
     columnHelper.accessor('assignee', {
-      cell: ({ row }) => (
-        <EmployeeItem
-          data={
-            (
-              row.original.expand as {
-                assignee: UserResponse;
-              }
-            ).assignee
-          }
-        />
-      ),
+      cell: ({ row }) => <EmployeeItem data={row.original.expand.assignee} />,
       header: () => 'Người đang xử lý',
       footer: info => info.column.id
     }),
     columnHelper.accessor('createdBy', {
-      cell: ({ row }) => (
-        <EmployeeItem
-          data={
-            (
-              row.original.expand as {
-                createdBy: UserResponse;
-              }
-            ).createdBy
-          }
-        />
-      ),
+      cell: ({ row }) => <EmployeeItem data={row.original.expand.createdBy} />,
       header: () => 'Người tạo',
       footer: info => info.column.id
     }),
