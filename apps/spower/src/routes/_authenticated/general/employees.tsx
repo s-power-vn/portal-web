@@ -1,5 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -8,9 +8,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
-import { InferType, number, object, string } from 'yup';
 
-import { DepartmentResponse, UserResponse, client } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -26,36 +24,14 @@ import {
   TableRow
 } from '@storeo/theme';
 
-const employeeSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type EmployeeSearch = InferType<typeof employeeSearchSchema>;
-
-function getEmployeesOptions(search: EmployeeSearch) {
-  return queryOptions({
-    queryKey: ['getEmployees', search],
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-      return client
-        .collection<UserResponse>('user')
-        .getList(search.pageIndex, search.pageSize, {
-          filter,
-          sort: '-created',
-          expand: 'department'
-        });
-    }
-  });
-}
+import { EmployeesSearchSchema, UserData, getEmployees } from '../../../api';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const employeesQuery = useSuspenseQuery(getEmployeesOptions(search));
+  const employees = useSuspenseQuery(getEmployees(search));
 
-  const columnHelper = createColumnHelper<UserResponse>();
+  const columnHelper = createColumnHelper<UserData>();
 
   const columns = [
     columnHelper.accessor('avatar', {
@@ -86,11 +62,7 @@ const Component = () => {
     }),
     columnHelper.accessor('department', {
       cell: ({ row }) => {
-        return (
-          row.original.expand as {
-            department: DepartmentResponse;
-          }
-        ).department.name;
+        return row.original.expand.department.name;
       },
       header: () => 'Phòng ban',
       footer: info => info.column.id
@@ -125,12 +97,12 @@ const Component = () => {
   ];
 
   const table = useReactTable({
-    data: employeesQuery.data?.items ?? [],
+    data: employees.data?.items ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
-    rowCount: employeesQuery.data?.totalItems,
-    pageCount: employeesQuery.data?.totalPages
+    rowCount: employees.data?.totalItems,
+    pageCount: employees.data?.totalPages
   });
 
   return (
@@ -234,8 +206,8 @@ const Component = () => {
           </Table>
         </div>
         <Pagination
-          totalItems={employeesQuery.data?.totalItems}
-          totalPages={employeesQuery.data?.totalPages}
+          totalItems={employees.data?.totalItems}
+          totalPages={employees.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -272,12 +244,12 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/employees')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    employeeSearchSchema.validateSync(search),
+    EmployeesSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getEmployeesOptions(deps.search)),
+    queryClient?.ensureQueryData(getEmployees(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhân viên'

@@ -6,7 +6,18 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { UserRecord, UserResponse, client } from '@storeo/core';
+import {
+  DepartmentResponse,
+  UserRecord,
+  UserResponse,
+  client
+} from '@storeo/core';
+
+export type UserData = UserResponse & {
+  expand: {
+    department: DepartmentResponse;
+  };
+};
 
 export const EmployeesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -23,7 +34,10 @@ export function getAllEmployeesKey() {
 export function getAllEmployees() {
   return queryOptions({
     queryKey: getAllEmployeesKey(),
-    queryFn: () => client.collection<UserResponse>('user').getFullList()
+    queryFn: () =>
+      client.collection<UserData>('user').getFullList({
+        expand: 'department'
+      })
   });
 }
 
@@ -41,10 +55,11 @@ export function getEmployees(search: EmployeesSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
       return client
-        .collection<UserResponse>('user')
+        .collection<UserData>('user')
         .getList(search.pageIndex, search.pageSize, {
           filter,
-          sort: '-created'
+          sort: '-created',
+          expand: 'department'
         });
     }
   });
@@ -61,7 +76,10 @@ export function getEmployeeByIdKey(employeeId: string) {
 export function getEmployeeById(employeeId: string) {
   return queryOptions({
     queryKey: getEmployeeByIdKey(employeeId),
-    queryFn: () => client.collection<UserResponse>('user').getOne(employeeId)
+    queryFn: () =>
+      client.collection<UserData>('user').getOne(employeeId, {
+        expand: 'department'
+      })
   });
 }
 

@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UserRecord, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -17,6 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
+import { getEmployeesKey, useCreateEmployee } from '../../../../api';
 import { DepartmentDropdownField } from '../../../../components';
 
 const schema = object().shape({
@@ -29,17 +29,14 @@ const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const queryClient = useQueryClient();
+  const search = Route.useSearch();
 
-  const createEmployee = useMutation({
-    mutationKey: ['createEmployee'],
-    mutationFn: (params: UserRecord) =>
-      client.collection<UserRecord>('user').create(params),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['getEmployees'] }),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const createEmployee = useCreateEmployee(async () => {
+    setOpen(false);
+    history.back();
+    await queryClient.invalidateQueries({
+      queryKey: getEmployeesKey(search)
+    });
   });
 
   return (

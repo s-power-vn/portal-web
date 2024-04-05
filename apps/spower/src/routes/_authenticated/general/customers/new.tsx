@@ -33,9 +33,9 @@ const Component = () => {
   const search = Route.useSearch();
 
   const createCustomer = useCreateCustomer(async () => {
-    await queryClient.invalidateQueries({ queryKey: getCustomersKey(search) });
     setOpen(false);
     history.back();
+    await queryClient.invalidateQueries({ queryKey: getCustomersKey(search) });
   });
 
   return (

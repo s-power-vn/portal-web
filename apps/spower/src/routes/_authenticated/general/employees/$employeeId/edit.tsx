@@ -1,16 +1,9 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import PocketBase from 'pocketbase';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { UserRecord, UserResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -23,6 +16,11 @@ import {
   TextField
 } from '@storeo/theme';
 
+import {
+  getEmployeeById,
+  getEmployeesKey,
+  useUpdateEmployee
+} from '../../../../../api';
 import { DepartmentDropdownField } from '../../../../../components';
 
 const schema = object().shape({
@@ -31,34 +29,21 @@ const schema = object().shape({
   department: string().required('Hãy chọn phòng ban')
 });
 
-function getEmployeeOptions(employeeId: string, pb?: PocketBase) {
-  return queryOptions({
-    queryKey: ['getEmployee', employeeId],
-    queryFn: () => client.collection('user').getOne<UserResponse>(employeeId)
-  });
-}
-
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const queryClient = useQueryClient();
   const { employeeId } = Route.useParams();
+  const queryClient = useQueryClient();
+  const search = Route.useSearch();
 
-  const employeeQuery = useSuspenseQuery(getEmployeeOptions(employeeId));
+  const employeeById = useSuspenseQuery(getEmployeeById(employeeId));
 
-  const updateEmployee = useMutation({
-    mutationKey: ['updateEmployee'],
-    mutationFn: (params: UserRecord) =>
-      client.collection('user').update(employeeId, params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getEmployees'] }),
-        queryClient.invalidateQueries({ queryKey: ['getEmployee', employeeId] })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const updateEmployee = useUpdateEmployee(employeeId, async () => {
+    setOpen(false);
+    history.back();
+    await queryClient.invalidateQueries({
+      queryKey: getEmployeesKey(search)
+    });
   });
 
   return (
@@ -79,7 +64,7 @@ const Component = () => {
         <Form
           schema={schema}
           onSubmit={values => updateEmployee.mutate(values)}
-          defaultValues={employeeQuery.data}
+          defaultValues={employeeById.data}
           loading={updateEmployee.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
@@ -117,5 +102,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { employeeId } }) =>
-    queryClient?.ensureQueryData(getEmployeeOptions(employeeId))
+    queryClient?.ensureQueryData(getEmployeeById(employeeId))
 });

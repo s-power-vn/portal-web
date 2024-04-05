@@ -40,11 +40,11 @@ const Component = () => {
   const customerById = useSuspenseQuery(getCustomerById(customerId));
 
   const updateCustomer = useUpdateCustomer(customerId, async () => {
+    setOpen(false);
+    history.back();
     await queryClient.invalidateQueries({
       queryKey: getCustomersKey(search)
     });
-    setOpen(false);
-    history.back();
   });
 
   return (
