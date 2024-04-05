@@ -106,7 +106,9 @@ export function getDocumentById(documentId: string) {
   return queryOptions({
     queryKey: getDocumentByIdKey(documentId),
     queryFn: () => {
-      return client.collection<DocumentData>('document').getOne(documentId);
+      return client.collection<DocumentData>('document').getOne(documentId, {
+        expand: 'customer,assignee,createdBy'
+      });
     }
   });
 }

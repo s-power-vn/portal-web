@@ -14,11 +14,7 @@ const Component = () => {
           {document.data?.bidding}
         </span>
         <span className={'text-muted-foreground text-sm'}>
-          {document.data?.name} -{' '}
-          {
-            (document.data?.expand as { customer: { name: string } })?.customer
-              .name
-          }
+          {document.data?.name} - {document.data?.expand.customer.name}
         </span>
       </div>
       <Outlet />
