@@ -1,15 +1,9 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { CustomerRecord, CustomerResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -22,6 +16,12 @@ import {
   TextField
 } from '@storeo/theme';
 
+import {
+  getCustomerById,
+  getCustomersKey,
+  useUpdateCustomer
+} from '../../../../../api';
+
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
   email: string().email('Sai định dạng email'),
@@ -30,35 +30,21 @@ const schema = object().shape({
   note: string()
 });
 
-function getCustomerOptions(customerId: string) {
-  return queryOptions({
-    queryKey: ['getCustomer', customerId],
-    queryFn: () =>
-      client.collection<CustomerResponse>('customer').getOne(customerId)
-  });
-}
-
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const queryClient = useQueryClient();
   const { customerId } = Route.useParams();
+  const queryClient = useQueryClient();
+  const search = Route.useSearch();
 
-  const customerQuery = useSuspenseQuery(getCustomerOptions(customerId));
+  const customerById = useSuspenseQuery(getCustomerById(customerId));
 
-  const updateCustomer = useMutation({
-    mutationKey: ['updateCustomer'],
-    mutationFn: (params: CustomerRecord) =>
-      client.collection('customer').update(customerId, params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getCustomers'] }),
-        queryClient.invalidateQueries({ queryKey: ['getCustomer', customerId] })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const updateCustomer = useUpdateCustomer(customerId, async () => {
+    await queryClient.invalidateQueries({
+      queryKey: getCustomersKey(search)
+    });
+    setOpen(false);
+    history.back();
   });
 
   return (
@@ -79,7 +65,7 @@ const Component = () => {
         <Form
           schema={schema}
           onSubmit={values => updateCustomer.mutate(values)}
-          defaultValues={customerQuery.data}
+          defaultValues={customerById.data}
           loading={updateCustomer.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
@@ -127,5 +113,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { customerId } }) =>
-    queryClient?.ensureQueryData(getCustomerOptions(customerId))
+    queryClient?.ensureQueryData(getCustomerById(customerId))
 });

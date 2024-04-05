@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { CustomerRecord, CustomerResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,6 +15,8 @@ import {
   Form,
   TextField
 } from '@storeo/theme';
+
+import { getCustomersKey, useCreateCustomer } from '../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -29,17 +30,12 @@ const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const queryClient = useQueryClient();
+  const search = Route.useSearch();
 
-  const createCustomer = useMutation({
-    mutationKey: ['createCustomer'],
-    mutationFn: (params: CustomerRecord) =>
-      client.collection('customer').create<CustomerResponse>(params),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['getCustomers'] }),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const createCustomer = useCreateCustomer(async () => {
+    await queryClient.invalidateQueries({ queryKey: getCustomersKey(search) });
+    setOpen(false);
+    history.back();
   });
 
   return (

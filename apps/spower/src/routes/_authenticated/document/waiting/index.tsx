@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -8,16 +8,10 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon } from 'lucide-react';
-import { InferType, number, object, string } from 'yup';
 
 import { useState } from 'react';
 
-import {
-  CustomerResponse,
-  DocumentResponse,
-  UserResponse,
-  client
-} from '@storeo/core';
+import { CustomerResponse, DocumentResponse, UserResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -30,37 +24,12 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DocumentSearchSchema, getWaitingDocuments } from '../../../../api';
 import {
   DocumentStatus,
   EditDocumentDialog,
   EmployeeItem
 } from '../../../../components';
-
-const documentSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type DocumentSearch = InferType<typeof documentSearchSchema>;
-
-function getDocumentsOptions(search: DocumentSearch) {
-  return queryOptions({
-    queryKey: ['getDocuments', 'waiting', search],
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || bidding ~ "${search.filter ?? ''}")`;
-      return client
-        ?.collection<DocumentResponse>('document')
-        .getList(search.pageIndex, search.pageSize, {
-          filter:
-            filter +
-            `&& (assignee = "${client?.authStore.model?.id}") && (status = "ToDo")`,
-          sort: '-created',
-          expand: 'customer,assignee,createdBy'
-        });
-    }
-  });
-}
 
 const Component = () => {
   const [open, setOpen] = useState(false);
@@ -68,7 +37,7 @@ const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const documentsQuery = useSuspenseQuery(getDocumentsOptions(search));
+  const documentsQuery = useSuspenseQuery(getWaitingDocuments(search));
 
   const columnHelper = createColumnHelper<DocumentResponse>();
 
@@ -302,11 +271,11 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/document/waiting/')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    documentSearchSchema.validateSync(search),
+    DocumentSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getDocumentsOptions(deps.search)),
+    queryClient?.ensureQueryData(getWaitingDocuments(deps.search)),
   beforeLoad: () => ({ title: 'Đang chờ xử lý' })
 });

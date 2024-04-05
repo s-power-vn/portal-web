@@ -1,5 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -8,9 +8,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
-import { InferType, number, object, string } from 'yup';
 
-import { CustomerResponse, client } from '@storeo/core';
+import { CustomerResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -23,33 +22,12 @@ import {
   TableRow
 } from '@storeo/theme';
 
-const customersSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type CustomersSearch = InferType<typeof customersSearchSchema>;
-
-function getCustomersOptions(search: CustomersSearch) {
-  return queryOptions({
-    queryKey: ['getCustomers', search],
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-      return client
-        .collection<CustomerResponse>('customer')
-        .getList(search.pageIndex, search.pageSize, {
-          filter,
-          sort: '-created'
-        });
-    }
-  });
-}
+import { CustomersSearchSchema, getCustomers } from '../../../api';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const customersQuery = useSuspenseQuery(getCustomersOptions(search));
+  const customers = useSuspenseQuery(getCustomers(search));
 
   const columnHelper = createColumnHelper<CustomerResponse>();
 
@@ -118,7 +96,7 @@ const Component = () => {
   ];
 
   const table = useReactTable({
-    data: customersQuery.data?.items ?? [],
+    data: customers.data?.items ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
@@ -225,8 +203,8 @@ const Component = () => {
           </Table>
         </div>
         <Pagination
-          totalItems={customersQuery.data?.totalItems}
-          totalPages={customersQuery.data?.totalPages}
+          totalItems={customers.data?.totalItems}
+          totalPages={customers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -263,12 +241,12 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/customers')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    customersSearchSchema.validateSync(search),
+    CustomersSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getCustomersOptions(deps.search)),
+    queryClient?.ensureQueryData(getCustomers(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý chủ đầu tư'
