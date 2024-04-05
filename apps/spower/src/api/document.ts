@@ -97,3 +97,20 @@ export function getAllDocuments(search?: DocumentSearch) {
 export function useGetAllDocuments(search?: DocumentSearch) {
   return useQuery(getAllDocuments(search));
 }
+
+export function getDocumentByIdKey(documentId: string) {
+  return ['getDocumentByIdKey', documentId];
+}
+
+export function getDocumentById(documentId: string) {
+  return queryOptions({
+    queryKey: getDocumentByIdKey(documentId),
+    queryFn: () => {
+      return client.collection<DocumentData>('document').getOne(documentId);
+    }
+  });
+}
+
+export function useGetDocumentById(documentId: string) {
+  return useQuery(getDocumentById(documentId));
+}

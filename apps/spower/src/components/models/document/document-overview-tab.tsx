@@ -1,10 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ExpandedState,
   Row,
@@ -50,19 +45,10 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { useGetAllDetailsByDocumentId } from '../../../api';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
 import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
-
-export function getDocumentDetailsOptions(documentId: string) {
-  return queryOptions({
-    queryKey: ['getDocumentDetails', documentId],
-    queryFn: () =>
-      client.collection<DetailResponse>('documentDetail').getFullList({
-        filter: `document = "${documentId}"`
-      })
-  });
-}
 
 export type DocumentOverviewProps = {
   documentId: string;
@@ -75,9 +61,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<DocumentDetailData>>();
 
-  const documentDetailsQuery = useSuspenseQuery(
-    getDocumentDetailsOptions(documentId)
-  );
+  const details = useGetAllDetailsByDocumentId(documentId);
 
   const queryClient = useQueryClient();
 
@@ -102,10 +86,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const data = useMemo(
-    () => arrayToTree(documentDetailsQuery.data ?? []),
-    [documentDetailsQuery.data]
-  );
+  const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
 
   const columnHelper = createColumnHelper<DocumentDetailData>();
 

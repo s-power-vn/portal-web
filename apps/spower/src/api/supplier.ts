@@ -104,11 +104,12 @@ export function useUpdateSupplier(supplierId: string, onSuccess?: () => void) {
   });
 }
 
-export function useDeleteSupplier(supplierId: string, onSuccess?: () => void) {
+export function useDeleteSupplier(onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: ['deleteSupplier', supplierId],
-    mutationFn: () => client.collection('supplier').delete(supplierId),
+    mutationKey: ['deleteSupplier'],
+    mutationFn: (supplierId: string) =>
+      client.collection('supplier').delete(supplierId),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({

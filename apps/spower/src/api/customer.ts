@@ -104,11 +104,12 @@ export function useUpdateCustomer(customerId: string, onSuccess?: () => void) {
   });
 }
 
-export function useDeleteCustomer(customerId: string, onSuccess?: () => void) {
+export function useDeleteCustomer(onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: ['deleteCustomer', customerId],
-    mutationFn: () => client.collection('customer').delete(customerId),
+    mutationKey: ['deleteCustomer'],
+    mutationFn: (customerId: string) =>
+      client.collection('customer').delete(customerId),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({
