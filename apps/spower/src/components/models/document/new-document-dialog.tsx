@@ -1,16 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import {
-  DialogProps,
-  DocumentRecord,
-  DocumentResponse,
-  DocumentStatusOptions,
-  client
-} from '@storeo/core';
+import { DialogProps, DocumentStatusOptions, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -23,6 +17,13 @@ import {
   TextField
 } from '@storeo/theme';
 
+import {
+  DocumentSearch,
+  getAllDocumentsKey,
+  getMineDocumentsKey,
+  getWaitingDocumentsKey,
+  useCreateDocument
+} from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
 const schema = object().shape({
@@ -31,28 +32,29 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-const Content: FC<DocumentNewProps> = ({ setOpen }) => {
+const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
-  const createDocumentMutation = useMutation({
-    mutationKey: ['createDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      client.collection<DocumentResponse>('document').create(params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] }),
-        navigate({
-          to: '/document/mine',
-          search: {
-            pageIndex: 1,
-            pageSize: 10,
-            filter: ''
-          }
-        })
-      ]),
-    onSettled: () => setOpen(false)
+  const createDocument = useCreateDocument(async () => {
+    setOpen(false);
+    await queryClient.invalidateQueries({
+      queryKey:
+        screen === 'all'
+          ? getAllDocumentsKey(search)
+          : screen === 'wating'
+            ? getWaitingDocumentsKey(search)
+            : getMineDocumentsKey(search)
+    });
+    await navigate({
+      to: '/document/mine',
+      search: {
+        pageIndex: 1,
+        pageSize: 10,
+        filter: ''
+      }
+    });
   });
 
   return (
@@ -66,7 +68,7 @@ const Content: FC<DocumentNewProps> = ({ setOpen }) => {
       <Form
         schema={schema}
         onSubmit={values =>
-          createDocumentMutation.mutate({
+          createDocument.mutate({
             ...values,
             status: DocumentStatusOptions.ToDo,
             createdBy: client.authStore.model?.id
@@ -77,19 +79,19 @@ const Content: FC<DocumentNewProps> = ({ setOpen }) => {
           bidding: '',
           customer: ''
         }}
-        loading={createDocumentMutation.isPending}
+        loading={createDocument.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
           schema={schema}
-          name={'bidding'}
-          title={'Tên gói thầu'}
+          name={'name'}
+          title={'Tên công trình'}
           options={{}}
         />
         <TextField
           schema={schema}
-          name={'name'}
-          title={'Tên công trình'}
+          name={'bidding'}
+          title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
@@ -108,7 +110,10 @@ const Content: FC<DocumentNewProps> = ({ setOpen }) => {
   );
 };
 
-export type DocumentNewProps = DialogProps;
+export type DocumentNewProps = DialogProps & {
+  screen: 'wating' | 'mine' | 'all';
+  search: DocumentSearch;
+};
 
 export const NewDocumentDialog: FC<DocumentNewProps> = props => {
   return (
