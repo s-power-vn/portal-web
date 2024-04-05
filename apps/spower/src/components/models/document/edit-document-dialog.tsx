@@ -1,16 +1,10 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
 
 import {
   DialogProps,
-  DocumentRecord,
   DocumentResponse,
   DocumentStatusOptions,
   client
@@ -27,6 +21,13 @@ import {
   TextField
 } from '@storeo/theme';
 
+import {
+  DocumentSearch,
+  getAllDocumentsKey,
+  getMineDocumentsKey,
+  getWaitingDocumentsKey,
+  useUpdateDocument
+} from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
 const schema = object().shape({
@@ -35,45 +36,24 @@ const schema = object().shape({
   customer: string().required('Hãy chọn chủ đầu tư')
 });
 
-export function getDocumentOptions(documentId: string) {
-  return queryOptions({
-    queryKey: ['getDocument', documentId],
-    queryFn: async () =>
-      documentId
-        ? await client
-            .collection<DocumentResponse>('document')
-            .getOne(documentId)
-        : null
-  });
-}
-
 const Content: FC<EditDocumentDialogProps> = ({
-  open,
   setOpen,
-  documentId
+  search,
+  screen,
+  document
 }) => {
   const queryClient = useQueryClient();
-  const documentQuery = useQuery({
-    ...getDocumentOptions(documentId),
-    enabled: open
-  });
 
-  const updateDocumentMutation = useMutation({
-    mutationKey: ['updateDocument'],
-    mutationFn: async (params: DocumentRecord) =>
-      documentId
-        ? await client
-            .collection<DocumentResponse>('document')
-            .update(documentId, params)
-        : null,
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] }),
-        queryClient.invalidateQueries({ queryKey: ['getDocument', documentId] })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-    }
+  const updateDocumentMutation = useUpdateDocument(document.id, async () => {
+    setOpen(false);
+    await queryClient.invalidateQueries({
+      queryKey:
+        screen === 'all'
+          ? getAllDocumentsKey(search)
+          : screen === 'wating'
+            ? getWaitingDocumentsKey(search)
+            : getMineDocumentsKey(search)
+    });
   });
 
   return (
@@ -93,20 +73,20 @@ const Content: FC<EditDocumentDialogProps> = ({
             createdBy: client.authStore.model?.id
           })
         }
-        defaultValues={documentQuery.data ?? undefined}
+        defaultValues={document}
         loading={updateDocumentMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
           schema={schema}
-          name={'bidding'}
-          title={'Tên gói thầu'}
+          name={'name'}
+          title={'Tên công trình'}
           options={{}}
         />
         <TextField
           schema={schema}
-          name={'name'}
-          title={'Tên công trình'}
+          name={'bidding'}
+          title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
@@ -126,7 +106,9 @@ const Content: FC<EditDocumentDialogProps> = ({
 };
 
 export type EditDocumentDialogProps = DialogProps & {
-  documentId: string;
+  screen: 'wating' | 'mine' | 'all';
+  search: DocumentSearch;
+  document: DocumentResponse;
 };
 
 export const EditDocumentDialog: FC<EditDocumentDialogProps> = props => {

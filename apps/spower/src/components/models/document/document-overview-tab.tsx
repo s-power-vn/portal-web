@@ -1,5 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ExpandedState,
   Row,
@@ -26,10 +26,8 @@ import {
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  DetailResponse,
   DocumentDetailData,
   arrayToTree,
-  client,
   cn,
   formatCurrency,
   formatNumber,
@@ -45,7 +43,11 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { useGetAllDetailsByDocumentId } from '../../../api';
+import {
+  getAllDetailsByDocumentIdKey,
+  useDeleteDetails,
+  useGetAllDetailsByDocumentId
+} from '../../../api';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
 import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
@@ -65,22 +67,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 
   const queryClient = useQueryClient();
 
-  const deleteDocumentDetailsMutation = useMutation({
-    mutationKey: ['deleteDocumentDetails'],
-    mutationFn: (documentIds: string[]) =>
-      Promise.all(
-        documentIds.map(documentId =>
-          client.collection<DetailResponse>('detail').delete(documentId, {
-            requestKey: null
-          })
-        )
-      ),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentDetails', documentId]
-        })
-      ])
+  const deleteDocumentDetailsMutation = useDeleteDetails(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: getAllDetailsByDocumentIdKey(documentId)
+    });
   });
 
   const [expanded, setExpanded] = useState<ExpandedState>({});

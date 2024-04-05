@@ -1,8 +1,9 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
 import {
   CustomerResponse,
+  DocumentRecord,
   DocumentResponse,
   UserResponse,
   client
@@ -115,4 +116,26 @@ export function getDocumentById(documentId: string) {
 
 export function useGetDocumentById(documentId: string) {
   return useQuery(getDocumentById(documentId));
+}
+
+export function useCreateDocument(onSuccess?: () => void) {
+  return useMutation({
+    mutationKey: ['createDocument'],
+    mutationFn: (params: DocumentRecord) =>
+      client.collection('document').create<DocumentResponse>(params),
+    onSuccess: async () => {
+      onSuccess?.();
+    }
+  });
+}
+
+export function useUpdateDocument(documentId: string, onSuccess?: () => void) {
+  return useMutation({
+    mutationKey: ['updateDocument', documentId],
+    mutationFn: (params: DocumentRecord) =>
+      client.collection('document').update(documentId, params),
+    onSuccess: async () => {
+      onSuccess?.();
+    }
+  });
 }

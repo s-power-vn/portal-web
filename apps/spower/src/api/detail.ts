@@ -70,10 +70,17 @@ export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
   });
 }
 
-export function useDeleteDetail(detailId: string, onSuccess?: () => void) {
+export function useDeleteDetails(onSuccess?: () => void) {
   return useMutation({
-    mutationKey: ['deleteDetail', detailId],
-    mutationFn: () => client.collection('detail').delete(detailId),
+    mutationKey: ['deleteDetail'],
+    mutationFn: (documentDetailIds: string[]) =>
+      Promise.all(
+        documentDetailIds.map(documentId =>
+          client.collection<DetailResponse>('detail').delete(documentId, {
+            requestKey: null
+          })
+        )
+      ),
     onSuccess: async () => {
       onSuccess?.();
     }

@@ -33,7 +33,7 @@ import {
 
 const Component = () => {
   const [open, setOpen] = useState(false);
-  const [documentId, setDocumentId] = useState<string>();
+  const [document, setDocument] = useState<DocumentResponse>();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
@@ -116,7 +116,7 @@ const Component = () => {
               className={'h-6 px-3'}
               onClick={e => {
                 e.stopPropagation();
-                setDocumentId(row.original.id);
+                setDocument(row.original);
                 setOpen(true);
               }}
             >
@@ -146,11 +146,15 @@ const Component = () => {
 
   return (
     <>
-      <EditDocumentDialog
-        documentId={documentId ?? ''}
-        open={open}
-        setOpen={setOpen}
-      />
+      {document ? (
+        <EditDocumentDialog
+          screen={'wating'}
+          search={search}
+          document={document}
+          open={open}
+          setOpen={setOpen}
+        />
+      ) : null}
       <div className={'flex flex-col gap-2'}>
         <DebouncedInput
           value={search.filter}
