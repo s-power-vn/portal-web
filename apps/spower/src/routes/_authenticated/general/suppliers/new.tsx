@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { SupplierRecord, SupplierResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,6 +15,8 @@ import {
   Form,
   TextField
 } from '@storeo/theme';
+
+import { getSuppliersKey, useCreateSupplier } from '../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -29,17 +30,14 @@ const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const queryClient = useQueryClient();
+  const search = Route.useSearch();
 
-  const createSupplier = useMutation({
-    mutationKey: ['createSupplier'],
-    mutationFn: (params: SupplierRecord) =>
-      client.collection('supplier').create<SupplierResponse>(params),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['getSuppliers'] }),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const createSupplier = useCreateSupplier(async () => {
+    setOpen(false);
+    history.back();
+    await queryClient.invalidateQueries({
+      queryKey: getSuppliersKey(search)
+    });
   });
 
   return (
