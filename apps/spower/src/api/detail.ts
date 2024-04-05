@@ -5,7 +5,12 @@ import {
   useQueryClient
 } from '@tanstack/react-query';
 
-import { DetailRecord, DetailResponse, client } from '@storeo/core';
+import {
+  DetailMaxResponse,
+  DetailRecord,
+  DetailResponse,
+  client
+} from '@storeo/core';
 
 export function getAllDetailsByDocumentIdKey(documentId: string) {
   return ['getAllDetailsByDocumentIdKey', documentId];
@@ -45,8 +50,15 @@ export function useGetDetailById(detailId: string) {
 export function useCreateDetail(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createDetail'],
-    mutationFn: (params: DetailRecord) =>
-      client.collection('detail').create<DetailResponse>(params),
+    mutationFn: async (params: DetailRecord) => {
+      const maxInfo = await client
+        .collection<DetailMaxResponse>('detailMax')
+        .getOne(params.parent ? params.parent : 'root');
+      return await client.collection('detail').create({
+        ...params,
+        index: (maxInfo.maxIndex as number) + 1
+      });
+    },
     onSuccess: async () => {
       onSuccess?.();
     }

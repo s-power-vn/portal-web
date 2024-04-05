@@ -18,7 +18,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { PickDocumentDetailDialog } from '../document-detail/pick-document-detail-dialog';
+import { PickDocumentDetailDialog } from '../detail/pick-document-detail-dialog';
 
 export type DocumentRequestDetailListProps = {
   schema: ObjectSchema<AnyObject>;

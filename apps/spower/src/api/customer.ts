@@ -76,7 +76,7 @@ export function useCreateCustomer(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createCustomer'],
     mutationFn: (params: CustomerRecord) =>
-      client.collection('customer').create<CustomerResponse>(params),
+      client.collection('customer').create(params),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({ queryKey: getAllCustomersKey() });

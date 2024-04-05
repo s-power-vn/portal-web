@@ -1,16 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Row } from '@tanstack/react-table';
 import { number, object, string } from 'yup';
 
 import React, { FC } from 'react';
 
-import {
-  DialogProps,
-  DocumentDetailData,
-  DocumentDetailMaxResponse,
-  DocumentDetailRecord,
-  client
-} from '@storeo/core';
+import { DialogProps, DocumentDetailData } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -24,6 +18,8 @@ import {
   TextField,
   TextareaField
 } from '@storeo/theme';
+
+import { getAllDetailsByDocumentIdKey, useCreateDetail } from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
@@ -40,33 +36,14 @@ const schema = object().shape({
     .typeError('Sai định dạng số')
 });
 
-const Content: FC<Omit<NewDocumentDetailDialogProps, 'open'>> = ({
-  setOpen,
-  documentId,
-  parent
-}) => {
+const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
   const queryClient = useQueryClient();
 
-  const createDocumentDetail = useMutation({
-    mutationKey: ['createDocumentDetail'],
-    mutationFn: async (params: DocumentDetailRecord) => {
-      const maxInfo = await client
-        .collection<DocumentDetailMaxResponse>('documentDetailMax')
-        .getOne(parent ? parent.original.id : 'root');
-      return await client
-        .collection<DocumentDetailRecord>('documentDetail')
-        .create({
-          ...params,
-          index: (maxInfo.maxIndex as number) + 1
-        });
-    },
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentDetails', documentId]
-        })
-      ]),
-    onSettled: () => setOpen(false)
+  const createDocumentDetail = useCreateDetail(async () => {
+    setOpen(false);
+    await queryClient.invalidateQueries({
+      queryKey: getAllDetailsByDocumentIdKey(documentId)
+    });
   });
 
   return (
@@ -136,20 +113,15 @@ const Content: FC<Omit<NewDocumentDetailDialogProps, 'open'>> = ({
   );
 };
 
-export type NewDocumentDetailDialogProps = DialogProps & {
+export type NewDetailDialogProps = DialogProps & {
   documentId: string;
   parent?: Row<DocumentDetailData>;
 };
 
-export const NewDocumentDetailDialog: FC<NewDocumentDetailDialogProps> = ({
-  documentId,
-  open,
-  setOpen,
-  parent
-}) => {
+export const NewDetailDialog: FC<NewDetailDialogProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content setOpen={setOpen} documentId={documentId} parent={parent} />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

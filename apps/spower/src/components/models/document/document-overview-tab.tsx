@@ -49,8 +49,8 @@ import {
   useGetAllDetailsByDocumentId
 } from '../../../api';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { EditDocumentDetailDialog } from '../document-detail/edit-document-detail-dialog';
-import { NewDocumentDetailDialog } from '../document-detail/new-document-detail-dialog';
+import { EditDetailDialog } from '../detail/edit-detail-dialog';
+import { NewDetailDialog } from '../detail/new-detail-dialog';
 
 export type DocumentOverviewProps = {
   documentId: string;
@@ -302,18 +302,19 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 
   return (
     <>
-      <NewDocumentDetailDialog
-        documentId={documentId}
+      <NewDetailDialog
         open={openDocumentDetailNew}
         setOpen={setOpenDocumentDetailNew}
+        documentId={documentId}
         parent={selectedRow}
       />
-      <EditDocumentDetailDialog
-        documentId={documentId}
-        documentDetailId={selectedRow?.original.id ?? ''}
-        open={openDocumentDetailEdit}
-        setOpen={setOpenDocumentDetailEdit}
-      />
+      {selectedRow ? (
+        <EditDetailDialog
+          open={openDocumentDetailEdit}
+          setOpen={setOpenDocumentDetailEdit}
+          detail={selectedRow.original}
+        />
+      ) : null}
       <div className={'flex flex-col gap-2'}>
         <div className={'flex gap-2'}>
           <Button variant={'outline'} className={'flex gap-1'}>
