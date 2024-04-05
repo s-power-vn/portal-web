@@ -92,9 +92,14 @@ export function useUpdateSupplier(supplierId: string, onSuccess?: () => void) {
       client.collection('supplier').update(supplierId, params),
     onSuccess: async () => {
       onSuccess?.();
-      await queryClient.invalidateQueries({
-        queryKey: getAllSuppliersKey()
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getSupplierByIdKey(supplierId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllSuppliersKey()
+        })
+      ]);
     }
   });
 }

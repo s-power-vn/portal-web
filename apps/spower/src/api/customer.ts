@@ -92,9 +92,14 @@ export function useUpdateCustomer(customerId: string, onSuccess?: () => void) {
       client.collection('customer').update(customerId, params),
     onSuccess: async () => {
       onSuccess?.();
-      await queryClient.invalidateQueries({
-        queryKey: getAllCustomersKey()
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getCustomerByIdKey(customerId)
+        }),
+        await queryClient.invalidateQueries({
+          queryKey: getAllCustomersKey()
+        })
+      ]);
     }
   });
 }

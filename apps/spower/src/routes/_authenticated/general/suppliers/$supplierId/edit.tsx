@@ -1,15 +1,9 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import { SupplierRecord, SupplierResponse, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -22,6 +16,12 @@ import {
   TextField
 } from '@storeo/theme';
 
+import {
+  getSupplierById,
+  getSuppliersKey,
+  useUpdateSupplier
+} from '../../../../../api';
+
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
   email: string().email('Sai định dạng email'),
@@ -30,35 +30,21 @@ const schema = object().shape({
   note: string()
 });
 
-function getSupplierOptions(supplierId: string) {
-  return queryOptions({
-    queryKey: ['getSupplier', supplierId],
-    queryFn: () =>
-      client.collection<SupplierResponse>('supplier').getOne(supplierId)
-  });
-}
-
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const queryClient = useQueryClient();
   const { supplierId } = Route.useParams();
+  const search = Route.useSearch();
 
-  const supplierQuery = useSuspenseQuery(getSupplierOptions(supplierId));
+  const supplierQuery = useSuspenseQuery(getSupplierById(supplierId));
 
-  const updateSupplier = useMutation({
-    mutationKey: ['updateSupplier'],
-    mutationFn: (params: SupplierRecord) =>
-      client.collection('supplier').update(supplierId, params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['getSuppliers'] }),
-        queryClient.invalidateQueries({ queryKey: ['getSupplier', supplierId] })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-      history.back();
-    }
+  const updateSupplier = useUpdateSupplier(supplierId, async () => {
+    setOpen(false);
+    history.back();
+    await queryClient.invalidateQueries({
+      queryKey: getSuppliersKey(search)
+    });
   });
 
   return (
@@ -127,5 +113,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(getSupplierOptions(supplierId))
+    queryClient?.ensureQueryData(getSupplierById(supplierId))
 });

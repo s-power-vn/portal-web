@@ -109,9 +109,14 @@ export function useUpdateEmployee(employeeId: string, onSuccess?: () => void) {
       client.collection('user').update(employeeId, params),
     onSuccess: async () => {
       onSuccess?.();
-      await queryClient.invalidateQueries({
-        queryKey: getAllEmployeesKey()
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getEmployeeByIdKey(employeeId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllEmployeesKey()
+        })
+      ]);
     }
   });
 }
