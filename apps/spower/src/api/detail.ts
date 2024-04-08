@@ -4,6 +4,7 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query';
+import { InferType, number, object, string } from 'yup';
 
 import {
   DetailMaxResponse,
@@ -72,17 +73,30 @@ export function useCreateDetail(onSuccess?: () => void) {
   });
 }
 
+export const UpdateDetailSchema = object().shape({
+  title: string().required('Hãy nhập mô tả công việc'),
+  volume: number()
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số'),
+  unit: string(),
+  unitPrice: number().typeError('Sai định dạng số')
+});
+
+export type UpdateDetailInput = InferType<typeof UpdateDetailSchema>;
+
 export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['updateDetail', detailId],
-    mutationFn: (params: DetailRecord) =>
-      client.collection('detail').update(detailId, params),
-    onSuccess: async () => {
+    mutationFn: (params: UpdateDetailInput) =>
+      client.collection<DetailResponse>('detail').update(detailId, params),
+    onSuccess: async record => {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getDetailByIdKey(detailId)
+          queryKey: getAllDetailsKey(record.document)
         })
       ]);
     }

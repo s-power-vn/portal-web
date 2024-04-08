@@ -1,6 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { number, object, string } from 'yup';
-
 import React, { FC } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -18,28 +15,12 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DetailData, getAllDetailsKey, useUpdateDetail } from '../../../api';
-
-const schema = object().shape({
-  title: string().required('Hãy nhập mô tả công việc'),
-  volume: number()
-    .transform((_, originalValue) =>
-      Number(originalValue?.toString().replace(/,/g, '.'))
-    )
-    .typeError('Sai định dạng số'),
-  unit: string(),
-  unitPrice: number().typeError('Sai định dạng số')
-});
+import { DetailData, UpdateDetailSchema, useUpdateDetail } from '../../../api';
 
 const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
-  const queryClient = useQueryClient();
-
-  const updateDocumentDetail = useUpdateDetail(detail.id, async () => {
-    setOpen(false);
-    await queryClient.invalidateQueries({
-      queryKey: getAllDetailsKey(detail.document)
-    });
-  });
+  const updateDocumentDetail = useUpdateDetail(detail.id, async () =>
+    setOpen(false)
+  );
 
   return (
     <DialogContent className="w-96">
@@ -50,37 +31,32 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          updateDocumentDetail.mutate({
-            document: detail.document,
-            ...values
-          })
-        }
+        schema={UpdateDetailSchema}
+        onSubmit={values => updateDocumentDetail.mutate(values)}
         defaultValues={detail}
         loading={updateDocumentDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextareaField
-          schema={schema}
+          schema={UpdateDetailSchema}
           name={'title'}
           title={'Mô tả công việc'}
           options={{}}
         />
         <NumericField
-          schema={schema}
+          schema={UpdateDetailSchema}
           name={'volume'}
           title={'Khối lượng thầu'}
           options={{}}
         />
         <TextField
-          schema={schema}
+          schema={UpdateDetailSchema}
           name={'unit'}
           title={'Đơn vị'}
           options={{}}
         />
         <NumericField
-          schema={schema}
+          schema={UpdateDetailSchema}
           name={'unitPrice'}
           title={'Đơn giá thầu'}
           options={{}}
