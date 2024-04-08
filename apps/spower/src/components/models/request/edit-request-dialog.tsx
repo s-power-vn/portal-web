@@ -33,15 +33,13 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
   const data = useMemo(() => {
     const v = _.chain(request.data.expand.requestDetail_via_request)
       .map(it => ({
-        ...it.expand.detail,
-        id: it.id,
-        documentDetailId: it.expand.detail.id,
-        requestVolume: it.volume
+        ...it,
+        index: it.expand.detail.index,
+        group: it.expand.detail.id,
+        parent: it.expand.detail.parent
       }))
       .value();
-    return flatTree(
-      arrayToTree(v, `${request.data.document}_root`, 'documentDetailId')
-    );
+    return flatTree(arrayToTree(v, `${request.data.document}_root`));
   }, [request]);
 
   return (
@@ -56,7 +54,10 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
         schema={UpdateRequestSchema}
         defaultValues={{
           name: request.data?.name,
-          details: data
+          details: data.map(it => ({
+            ...it,
+            requestVolume: it.volume
+          }))
         }}
         className={'mt-4 flex flex-col gap-3'}
         loading={updateDocumentRequest.isPending}
@@ -67,11 +68,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
           name={'name'}
           title={'Nội dung'}
         />
-        <RequestDetailListField
-          schema={UpdateRequestSchema}
-          name={'details'}
-          options={{ documentId: '' }}
-        />
+        <RequestDetailListField schema={UpdateRequestSchema} name={'details'} />
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
         </DialogFooter>

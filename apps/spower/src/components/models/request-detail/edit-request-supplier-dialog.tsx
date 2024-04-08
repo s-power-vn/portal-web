@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
 import {
@@ -85,7 +85,9 @@ export const EditRequestSupplierDialog: FC<
 > = props => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <Content {...props} />
+      <Suspense>
+        <Content {...props} />
+      </Suspense>
     </Dialog>
   );
 };

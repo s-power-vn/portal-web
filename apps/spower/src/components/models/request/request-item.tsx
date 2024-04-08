@@ -31,9 +31,16 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData } from '../../../api';
-import { getRequestById, useDeleteRequest } from '../../../api/request';
-import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
+import {
+  RequestDetailData,
+  getRequestById,
+  useDeleteRequest
+} from '../../../api';
+import {
+  TreeData,
+  arrayToTree,
+  getCommonPinningStyles
+} from '../../../commons/utils';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
 import { EditRequestDialog } from './edit-request-dialog';
 
@@ -48,20 +55,20 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const requestById = useSuspenseQuery(getRequestById(requestId));
+  const request = useSuspenseQuery(getRequestById(requestId));
 
   const deleteRequest = useDeleteRequest();
 
   const requests = useMemo(() => {
     const v = _.chain(
-      requestById.data ? requestById.data.expand.requestDetail_via_request : []
+      request.data ? request.data.expand.requestDetail_via_request : []
     )
       .map(it => {
         return {
-          ...it.expand.detail,
-          id: it.id,
-          documentDetailId: it.expand.detail.id,
-          requestVolume: it.volume,
+          ...it,
+          index: it.expand.detail.index,
+          group: it.expand.detail.id,
+          parent: it.expand.detail.parent,
           suppliers: it.expand.requestDetailSupplier_via_requestDetail?.map(
             st => {
               return {
@@ -82,7 +89,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         for (const s of vi.suppliers) {
           list.push({
             ..._.omit(vi, ['suppliers']),
-            id: vi.id,
             supplier: s.id,
             supplierUnitPrice: s.price,
             supplierName: s.name,
@@ -91,25 +97,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           index++;
         }
       } else {
-        list.push(vi);
+        list.push({ ..._.omit(vi, ['suppliers']) });
       }
     }
 
-    return arrayToTree(
-      list,
-      `${requestById.data.document}_root`,
-      'documentDetailId'
-    );
-  }, [requestById.data]);
+    return arrayToTree(list, `${request.data.document}_root`);
+  }, [request.data]);
 
-  const columnHelper = createColumnHelper<
-    DetailData & {
-      requestVolume?: number;
-      supplierUnitPrice?: number;
-      supplierName?: string;
-      rowSpan?: number;
-    }
-  >();
+  const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
 
   const columns = useMemo(
     () => [
@@ -144,8 +139,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('level', {
-        cell: info => info.getValue(),
+      columnHelper.display({
+        id: 'level',
+        cell: ({ row }) => row.original.level,
         header: () => (
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
@@ -155,8 +151,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('title', {
-        cell: info => info.getValue(),
+      columnHelper.display({
+        id: 'title',
+        cell: ({ row }) => row.original.expand.detail.title,
         header: () => 'Mô tả công việc',
         footer: info => info.column.id,
         size: 300,
@@ -164,8 +161,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('volume', {
-        cell: ({ row }) => formatNumber(row.original.volume),
+      columnHelper.display({
+        id: 'volume',
+        cell: ({ row }) => formatNumber(row.original.expand.detail.volume),
         header: () => 'KL thầu',
         footer: info => info.column.id,
         size: 100,
@@ -173,8 +171,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('unit', {
-        cell: info => info.getValue(),
+      columnHelper.display({
+        id: 'unit',
+        cell: ({ row }) => row.original.expand.detail.unit,
         header: () => 'Đơn vị',
         footer: info => info.column.id,
         size: 100,
@@ -182,8 +181,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('unitPrice', {
-        cell: ({ row }) => formatCurrency(row.original.unitPrice),
+      columnHelper.display({
+        id: 'unitPrice',
+        cell: ({ row }) => formatCurrency(row.original.expand.detail.unitPrice),
         header: () => 'Đơn giá thầu',
         footer: info => info.column.id,
         size: 150,
@@ -191,8 +191,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: true
         }
       }),
-      columnHelper.accessor('requestVolume', {
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+      columnHelper.display({
+        id: 'requestVolume',
+        cell: ({ row }) => formatNumber(row.original.volume),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
         size: 100,
@@ -214,7 +215,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         cell: ({ row }) => {
           if (row.original.supplierUnitPrice) {
             const exceed =
-              row.original.supplierUnitPrice - row.original.unitPrice;
+              row.original.supplierUnitPrice -
+              row.original.expand.detail.unitPrice;
             if (exceed > 0) {
               return (
                 <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
@@ -280,15 +282,13 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         />
       ) : null}
       <EditRequestDialog
-        requestId={requestById.data.id}
+        requestId={request.data.id}
         open={openDocumentRequestEdit}
         setOpen={setOpenDocumentRequestEdit}
       />
       <div className={'bg-appWhite flex flex-col rounded-md border'}>
         <div className={'flex justify-between border-b p-4'}>
-          <div className={'flex-1 text-lg font-bold'}>
-            {requestById.data?.name}
-          </div>
+          <div className={'flex-1 text-lg font-bold'}>{request.data?.name}</div>
           <div className={'flex gap-2'}>
             <Button
               disabled={

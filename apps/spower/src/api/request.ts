@@ -10,31 +10,29 @@ import {
 } from '@storeo/core';
 import {array, boolean, InferType, number, object, string} from "yup";
 
-export type RequestData = RequestResponse & {
-  expand: {
-    requestDetail_via_request: (RequestDetailResponse & {
-      expand: {
-        detail: DetailResponse;
-        requestDetailSupplier_via_requestDetail: (RequestDetailSupplierResponse & {
-          expand: {
-            supplier: SupplierResponse;
-          };
-        })[];
-      };
-    })[];
-  };
-};
-
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
     supplier: SupplierResponse;
-    requestDetail: RequestDetailResponse & {
-      expand: {
-        detail: DetailResponse;
-      };
-    };
+    requestDetail: RequestDetailData;
   }
 }
+
+export type RequestDetailData = RequestDetailResponse & {
+  expand: {
+    detail: DetailResponse;
+    requestDetailSupplier_via_requestDetail: RequestDetailSupplierData[];
+  },
+  supplier?: string,
+  supplierUnitPrice?: number,
+  supplierName?: string,
+}
+
+export type RequestData = RequestResponse & {
+  expand: {
+    requestDetail_via_request: RequestDetailData[];
+  }
+};
+
 
 export function getAllRequestsKey(documentId: string) {
   return ['getAllRequestsKey', documentId];

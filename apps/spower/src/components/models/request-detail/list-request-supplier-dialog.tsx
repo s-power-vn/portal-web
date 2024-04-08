@@ -27,12 +27,13 @@ import {
 } from '@storeo/theme';
 
 import {
-  DetailData,
+  RequestDetailData,
   RequestDetailSupplierData,
   getAllRequestDetailSuppliersKey,
   useDeleteRequestDetailSupplier,
   useGetAllRequestDetailSuppliers
 } from '../../../api';
+import { TreeData } from '../../../commons/utils';
 import { EditRequestSupplierDialog } from './edit-request-supplier-dialog';
 import { NewRequestSupplierDialog } from './new-request-supplier-dialog';
 
@@ -54,9 +55,11 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
 
   const deleteRequestDetailSupplier = useDeleteRequestDetailSupplier(
     async () => {
-      await queryClient.invalidateQueries({
-        queryKey: getAllRequestDetailSuppliersKey(requestDetail.id)
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllRequestDetailSuppliersKey(requestDetail.id)
+        })
+      ]);
     }
   );
 
@@ -131,7 +134,7 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
         <EditRequestSupplierDialog
           open={openEdit}
           setOpen={setOpenEdit}
-          requestDetailSupplier={requestDetailSupplier}
+          requestDetailSupplierId={requestDetailSupplier.id}
         />
       ) : null}
       <DialogContent className={'min-w-[600px]'}>
@@ -143,7 +146,7 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
                 <span
                   className={'inline font-bold'}
                 >{`Hạng mục: ${requestDetail.level} `}</span>
-                {` (${requestDetail.title})`}
+                {` (${requestDetail.expand.detail.title})`}
               </>
             ) : (
               'Tạo đầu mục mô tả công việc chính'
@@ -223,7 +226,7 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
 };
 
 export type ListRequestSupplierDialogProps = DialogProps & {
-  requestDetail: DetailData;
+  requestDetail: TreeData<RequestDetailData>;
 };
 
 export const ListRequestSupplierDialog: FC<

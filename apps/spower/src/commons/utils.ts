@@ -3,14 +3,21 @@ import _ from 'lodash';
 
 import { CSSProperties } from 'react';
 
-import { DetailData } from '../api';
+export type TreeData<T> = T & {
+  group: string;
+  index: number;
+  parent: string;
+  level?: string;
+  hasChild?: boolean;
+  children?: TreeData<T>[];
+  rowSpan?: number;
+};
 
-export function arrayToTree(
-  arr: DetailData[],
-  parent = 'root',
-  field = 'id',
+export function arrayToTree<T>(
+  arr: TreeData<T>[],
+  parent: string,
   parentLevel?: string
-): DetailData[] {
+): TreeData<T>[] {
   return _.chain(arr)
     .filter(item => item.parent === parent)
     .map(child => {
@@ -18,15 +25,15 @@ export function arrayToTree(
       return {
         ...child,
         level,
-        children: arrayToTree(arr, (child as any)[field], field, level)
+        children: arrayToTree(arr, child.group, level)
       };
     })
     .sortBy('index')
     .value();
 }
 
-export function flatTree(arr: DetailData[]): DetailData[] {
-  const getMembers = (member: DetailData): DetailData[] => {
+export function flatTree<T>(arr: TreeData<T>[]): TreeData<T>[] {
+  const getMembers = (member: TreeData<T>): TreeData<T>[] => {
     if (!member.children || !member.children.length) {
       return [
         {
@@ -47,9 +54,7 @@ export function flatTree(arr: DetailData[]): DetailData[] {
   return _.chain(arr).flatMapDeep(getMembers).sortBy('level').value();
 }
 
-export function getCommonPinningStyles(
-  column: Column<DetailData>
-): CSSProperties {
+export function getCommonPinningStyles<T>(column: Column<T>): CSSProperties {
   const isPinned = column.getIsPinned();
 
   return {
