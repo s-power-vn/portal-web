@@ -1,6 +1,7 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 
-import { Dispatch, FC, SetStateAction, useMemo } from 'react';
+import { Dispatch, FC, SetStateAction, Suspense, useMemo } from 'react';
 
 import {
   Button,
@@ -15,20 +16,22 @@ import {
 } from '@storeo/theme';
 
 import {
-  RequestData,
   UpdateRequestSchema,
+  getRequestById,
   useUpdateRequest
 } from '../../../api';
 import { arrayToTree, flatTree } from '../../../commons/utils';
 import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
-const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
-  const updateDocumentRequest = useUpdateRequest(request.id, () =>
+const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
+  const request = useSuspenseQuery(getRequestById(requestId));
+
+  const updateDocumentRequest = useUpdateRequest(requestId, () =>
     setOpen(false)
   );
 
   const data = useMemo(() => {
-    const v = _.chain(request.expand.requestDetail_via_request)
+    const v = _.chain(request.data.expand.requestDetail_via_request)
       .map(it => ({
         ...it.expand.detail,
         id: it.id,
@@ -37,7 +40,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
       }))
       .value();
     return flatTree(
-      arrayToTree(v, `${request.document}_root`, 'documentDetailId')
+      arrayToTree(v, `${request.data.document}_root`, 'documentDetailId')
     );
   }, [request]);
 
@@ -52,7 +55,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
       <Form
         schema={UpdateRequestSchema}
         defaultValues={{
-          name: request.name,
+          name: request.data?.name,
           details: data
         }}
         className={'mt-4 flex flex-col gap-3'}
@@ -80,13 +83,15 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
 export type EditRequestDialogProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  request: RequestData;
+  requestId: string;
 };
 
 export const EditRequestDialog: FC<EditRequestDialogProps> = props => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <Content {...props} />
+      <Suspense>
+        <Content {...props} />
+      </Suspense>
     </Dialog>
   );
 };

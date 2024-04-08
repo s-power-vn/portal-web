@@ -280,7 +280,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         />
       ) : null}
       <EditRequestDialog
-        request={requestById.data}
+        requestId={requestById.data.id}
         open={openDocumentRequestEdit}
         setOpen={setOpenDocumentRequestEdit}
       />

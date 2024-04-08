@@ -4,7 +4,6 @@ import {
   client,
   DetailResponse,
   RequestDetailResponse,
-  RequestDetailSupplierRecord,
   RequestDetailSupplierResponse,
   RequestResponse,
   SupplierResponse
@@ -229,14 +228,49 @@ export function useGetAllRequestDetailSuppliers(requestDetailId: string, enabled
   });
 }
 
-export function useCreateRequestDetailSupplier(onSuccess?: () => void) {
+export function getRequestDetailSupplierByIdKey(requestDetailSupplierId: string) {
+  return ['getRequestDetailSupplierByIdKey', requestDetailSupplierId];
+}
+
+export function getRequestDetailSupplierById(requestDetailSupplierId: string) {
+  return queryOptions({
+    queryKey: getRequestDetailSupplierByIdKey(requestDetailSupplierId),
+    queryFn: () =>
+      client
+        .collection<RequestDetailSupplierData>(
+          'requestDetailSupplier'
+        )
+        .getOne(requestDetailSupplierId, {
+          expand: 'supplier,requestDetail.detail'
+        })
+  });
+}
+
+export function useGetRequestDetailSupplierById(requestDetailSupplierId: string) {
+  return useQuery(getRequestDetailSupplierById(requestDetailSupplierId));
+}
+
+export const CreateRequestDetailSupplierSchema = object().shape({
+  supplier: string().required('Hãy chọn nhà cung cấp'),
+  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
+  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
+});
+
+export type CreateRequestDetailSupplierInput = InferType<
+  typeof CreateRequestDetailSupplierSchema
+>;
+
+export function useCreateRequestDetailSupplier(reqestDetailId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['createRequestDetailSupplier'],
-    mutationFn: (params: RequestDetailSupplierRecord) =>
+    mutationFn: (params: CreateRequestDetailSupplierInput) =>
       client
         .collection<RequestDetailSupplierData>('requestDetailSupplier')
-        .create(params, {
+        .create({
+          ...params,
+          requestDetail: reqestDetailId
+        }, {
           expand: 'supplier,requestDetail.detail'
         }),
     onSuccess: async (record) => {
@@ -255,6 +289,16 @@ export function useCreateRequestDetailSupplier(onSuccess?: () => void) {
   });
 }
 
+export const UpdateRequestDetailSupplierSchema = object().shape({
+  supplier: string().required('Hãy chọn nhà cung cấp'),
+  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
+  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
+});
+
+export type UpdateRequestDetailSupplierInput = InferType<
+  typeof UpdateRequestDetailSupplierSchema
+>;
+
 export function useUpdateRequestDetailSupplier(
   requestDetailSupplierId: string,
   onSuccess?: () => void
@@ -262,7 +306,7 @@ export function useUpdateRequestDetailSupplier(
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['updateRequestDetailSupplier', requestDetailSupplierId],
-    mutationFn: (params: RequestDetailSupplierRecord) =>
+    mutationFn: (params: UpdateRequestDetailSupplierInput) =>
       client
         .collection<RequestDetailSupplierData>('requestDetailSupplier')
         .update(requestDetailSupplierId, params, {

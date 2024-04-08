@@ -1,4 +1,4 @@
-import { number, object, string } from 'yup';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { FC } from 'react';
 
@@ -16,23 +16,22 @@ import {
 } from '@storeo/theme';
 
 import {
-  RequestDetailSupplierData,
+  UpdateRequestDetailSupplierSchema,
+  getRequestDetailSupplierById,
   useUpdateRequestDetailSupplier
 } from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
-const schema = object().shape({
-  supplier: string().required('Hãy chọn nhà cung cấp'),
-  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
-  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
-});
-
 const Content: FC<EditRequestSupplierDialogProps> = ({
   setOpen,
-  requestDetailSupplier
+  requestDetailSupplierId
 }) => {
-  const updateDocumentRequestSupplierMutation = useUpdateRequestDetailSupplier(
-    requestDetailSupplier.id,
+  const requestDetailSupplier = useSuspenseQuery(
+    getRequestDetailSupplierById(requestDetailSupplierId)
+  );
+
+  const updateRequestDetailSupplier = useUpdateRequestDetailSupplier(
+    requestDetailSupplierId,
     () => setOpen(false)
   );
 
@@ -45,26 +44,30 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          updateDocumentRequestSupplierMutation.mutate({
-            ...values
-          })
-        }
-        defaultValues={requestDetailSupplier}
-        loading={updateDocumentRequestSupplierMutation.isPending}
+        schema={UpdateRequestDetailSupplierSchema}
+        onSubmit={values => updateRequestDetailSupplier.mutate(values)}
+        defaultValues={requestDetailSupplier.data}
+        loading={updateRequestDetailSupplier.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <SupplierDropdownField
-          schema={schema}
+          schema={UpdateRequestDetailSupplierSchema}
           name={'supplier'}
           title={'Nhà cung cấp'}
           options={{
             placeholder: 'Hãy chọn nhà cung cấp'
           }}
         />
-        <NumericField schema={schema} name={'price'} title={'Đơn giá'} />
-        <NumericField schema={schema} name={'volume'} title={'Khối lượng'} />
+        <NumericField
+          schema={UpdateRequestDetailSupplierSchema}
+          name={'price'}
+          title={'Đơn giá'}
+        />
+        <NumericField
+          schema={UpdateRequestDetailSupplierSchema}
+          name={'volume'}
+          title={'Khối lượng'}
+        />
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
         </DialogFooter>
@@ -74,7 +77,7 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
 };
 
 export type EditRequestSupplierDialogProps = DialogProps & {
-  requestDetailSupplier: RequestDetailSupplierData;
+  requestDetailSupplierId: string;
 };
 
 export const EditRequestSupplierDialog: FC<

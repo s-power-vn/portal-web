@@ -22,8 +22,9 @@ import {
 } from '../../../api';
 
 const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
-  const updateDetail = useUpdateDetail(detailId, () => setOpen(false));
   const detail = useGetDetailById(detailId);
+
+  const updateDetail = useUpdateDetail(detailId, () => setOpen(false));
 
   return (
     <DialogContent className="w-96">

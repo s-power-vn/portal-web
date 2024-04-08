@@ -1,5 +1,3 @@
-import { number, object, string } from 'yup';
-
 import { FC } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -15,21 +13,19 @@ import {
   NumericField
 } from '@storeo/theme';
 
-import { useCreateRequestDetailSupplier } from '../../../api';
+import {
+  CreateRequestDetailSupplierSchema,
+  useCreateRequestDetailSupplier
+} from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
-
-const schema = object().shape({
-  supplier: string().required('Hãy chọn nhà cung cấp'),
-  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
-  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
-});
 
 const Content: FC<NewRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailId
 }) => {
-  const createRequestSupplier = useCreateRequestDetailSupplier(() =>
-    setOpen(false)
+  const createRequestSupplier = useCreateRequestDetailSupplier(
+    requestDetailId,
+    () => setOpen(false)
   );
 
   return (
@@ -41,27 +37,30 @@ const Content: FC<NewRequestSupplierDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          createRequestSupplier.mutate({
-            ...values,
-            requestDetail: requestDetailId
-          })
-        }
+        schema={CreateRequestDetailSupplierSchema}
+        onSubmit={values => createRequestSupplier.mutate(values)}
         defaultValues={{}}
         loading={createRequestSupplier.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <SupplierDropdownField
-          schema={schema}
+          schema={CreateRequestDetailSupplierSchema}
           name={'supplier'}
           title={'Nhà cung cấp'}
           options={{
             placeholder: 'Hãy chọn nhà cung cấp'
           }}
         />
-        <NumericField schema={schema} name={'price'} title={'Đơn giá'} />
-        <NumericField schema={schema} name={'volume'} title={'Khối lượng'} />
+        <NumericField
+          schema={CreateRequestDetailSupplierSchema}
+          name={'price'}
+          title={'Đơn giá'}
+        />
+        <NumericField
+          schema={CreateRequestDetailSupplierSchema}
+          name={'volume'}
+          title={'Khối lượng'}
+        />
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
         </DialogFooter>
