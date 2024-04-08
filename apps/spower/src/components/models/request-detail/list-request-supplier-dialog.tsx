@@ -1,10 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   createColumnHelper,
   flexRender,
@@ -15,16 +10,7 @@ import { EditIcon } from 'lucide-react';
 
 import React, { FC, useState } from 'react';
 
-import {
-  DetailResponse,
-  DialogProps,
-  RequestDetailResponse,
-  RequestDetailSupplierResponse,
-  SupplierResponse,
-  client,
-  formatCurrency,
-  formatNumber
-} from '@storeo/core';
+import { DialogProps, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -41,72 +27,40 @@ import {
 } from '@storeo/theme';
 
 import { DetailData } from '../../../api';
+import {
+  RequestDetailSupplierData,
+  getAllRequestDetailSuppliersKey,
+  useDeleteRequestDetailSupplier,
+  useGetAllRequestDetailSuppliers
+} from '../../../api/request';
 import { EditRequestSupplierDialog } from './edit-request-supplier-dialog';
 import { NewRequestSupplierDialog } from './new-request-supplier-dialog';
 
-export type DocumentRequestDetailSupplierData =
-  RequestDetailSupplierResponse & {
-    expand: {
-      supplier: SupplierResponse;
-      documentRequestDetail: RequestDetailResponse & {
-        expand: {
-          documentDetail: DetailResponse;
-        };
-      };
-    };
-  };
-
-export function getDocumentRequestSuppliersOptions(
-  documentRequestDetailId: string
-) {
-  return queryOptions({
-    queryKey: ['getDocumentRequestSuppliers', documentRequestDetailId],
-    queryFn: () =>
-      client
-        .collection<DocumentRequestDetailSupplierData>(
-          'documentRequestDetailSupplier'
-        )
-        .getFullList({
-          filter: `documentRequestDetail = "${documentRequestDetailId}"`,
-          expand: 'supplier,documentRequestDetail.documentDetail'
-        })
-  });
-}
-
-const Content: FC<ListDocumentSupplierDialogProps> = ({
+const Content: FC<ListRequestSupplierDialogProps> = ({
   open,
-  documentRequestDetail
+  requestDetail
 }) => {
   const [openNew, setOpenNew] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const [documentRequestSupplier, setDocumentRequestSupplier] =
-    useState<DocumentRequestDetailSupplierData>();
+  const [requestDetailSupplier, setRequestDetailSupplier] =
+    useState<RequestDetailSupplierData>();
 
-  const documentRequestSuppliersQuery = useQuery({
-    ...getDocumentRequestSuppliersOptions(documentRequestDetail?.id ?? ''),
-    enabled: open
-  });
+  const documentRequestSuppliersQuery = useGetAllRequestDetailSuppliers(
+    requestDetail.id,
+    open
+  );
 
   const queryClient = useQueryClient();
 
-  const deleteDocumentRequestSupplierMutation = useMutation({
-    mutationKey: ['deleteDocumentRequestSupplier', documentRequestDetail?.id],
-    mutationFn: async (documentRequestSupplierId: string) => {
-      await client
-        .collection('documentRequestDetailSupplier')
-        .delete(documentRequestSupplierId);
-    },
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequestSuppliers', documentRequestDetail?.id]
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequest']
-        })
-      ])
-  });
-  const columnHelper = createColumnHelper<DocumentRequestDetailSupplierData>();
+  const deleteRequestDetailSupplier = useDeleteRequestDetailSupplier(
+    async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getAllRequestDetailSuppliersKey(requestDetail.id)
+      });
+    }
+  );
+
+  const columnHelper = createColumnHelper<RequestDetailSupplierData>();
 
   const columns = [
     columnHelper.accessor('supplier', {
@@ -126,8 +80,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
     }),
     columnHelper.display({
       id: 'unit',
-      cell: ({ row }) =>
-        row.original.expand.documentRequestDetail.expand.documentDetail.unit,
+      cell: ({ row }) => row.original.expand.requestDetail.expand.detail.unit,
       header: () => 'Đơn vị',
       footer: info => info.column.id
     }),
@@ -139,7 +92,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
             <Button
               className={'h-6 px-3'}
               onClick={() => {
-                setDocumentRequestSupplier(row.original);
+                setRequestDetailSupplier(row.original);
                 setOpenEdit(true);
               }}
             >
@@ -149,7 +102,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
               <Cross2Icon
                 className={'h-3 w-3'}
                 onClick={() => {
-                  deleteDocumentRequestSupplierMutation.mutate(row.original.id);
+                  deleteRequestDetailSupplier.mutate(row.original.id);
                 }}
               />
             </Button>
@@ -168,118 +121,117 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
   });
 
   return (
-    <DialogContent className={'min-w-[600px]'}>
-      <DialogHeader>
-        <DialogTitle>Quản lý nhà cung cấp</DialogTitle>
-        <DialogDescription className={'italic'}>
-          {documentRequestDetail ? (
-            <>
-              <span
-                className={'inline font-bold'}
-              >{`Hạng mục: ${documentRequestDetail.level} `}</span>
-              {` (${documentRequestDetail.title})`}
-            </>
-          ) : (
-            'Tạo đầu mục mô tả công việc chính'
-          )}
-        </DialogDescription>
-      </DialogHeader>
-      <div className={'flex gap-2'}>
-        <Button
-          className={'flex gap-1'}
-          onClick={() => {
-            setOpenNew(true);
-          }}
-        >
-          <PlusIcon />
-          Thêm nhà cung cấp
-        </Button>
-      </div>
+    <>
       <NewRequestSupplierDialog
         open={openNew}
         setOpen={setOpenNew}
-        documentRequestDetailId={documentRequestDetail?.id ?? ''}
+        requestDetailId={requestDetail.id}
       />
-      <EditRequestSupplierDialog
-        open={openEdit}
-        setOpen={setOpenEdit}
-        documentRequestSupplier={documentRequestSupplier}
-      />
-      <div className={'rounded-md border'}>
-        <Table>
-          <TableHeader className={'bg-appGrayLight'}>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                    }
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className={'last:border-b-0'}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className={'border-r px-2 py-1 last:border-r-0'}
+      {requestDetailSupplier ? (
+        <EditRequestSupplierDialog
+          open={openEdit}
+          setOpen={setOpenEdit}
+          requestDetailSupplier={requestDetailSupplier}
+        />
+      ) : null}
+      <DialogContent className={'min-w-[600px]'}>
+        <DialogHeader>
+          <DialogTitle>Quản lý nhà cung cấp</DialogTitle>
+          <DialogDescription className={'italic'}>
+            {requestDetail ? (
+              <>
+                <span
+                  className={'inline font-bold'}
+                >{`Hạng mục: ${requestDetail.level} `}</span>
+                {` (${requestDetail.title})`}
+              </>
+            ) : (
+              'Tạo đầu mục mô tả công việc chính'
+            )}
+          </DialogDescription>
+        </DialogHeader>
+        <div className={'flex gap-2'}>
+          <Button
+            className={'flex gap-1'}
+            onClick={() => {
+              setOpenNew(true);
+            }}
+          >
+            <PlusIcon />
+            Thêm nhà cung cấp
+          </Button>
+        </div>
+
+        <div className={'rounded-md border'}>
+          <Table>
+            <TableHeader className={'bg-appGrayLight'}>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className={
+                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                      }
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
                       )}
-                    </TableCell>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 text-center"
-                >
-                  Chưa có nhà cung cấp nào.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </DialogContent>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id} className={'last:border-b-0'}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        className={'border-r px-2 py-1 last:border-r-0'}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
+                    Chưa có nhà cung cấp nào.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </DialogContent>
+    </>
   );
 };
 
-export type ListDocumentSupplierDialogProps = DialogProps & {
-  documentRequestDetail?: DetailData;
+export type ListRequestSupplierDialogProps = DialogProps & {
+  requestDetail: DetailData;
 };
 
-export const ListRequestSupplierDialog: FC<ListDocumentSupplierDialogProps> = ({
-  open,
-  setOpen,
-  documentRequestDetail
-}) => {
+export const ListRequestSupplierDialog: FC<
+  ListRequestSupplierDialogProps
+> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content
-        open={open}
-        setOpen={setOpen}
-        documentRequestDetail={documentRequestDetail}
-      />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { number, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { DialogProps, RequestDetailSupplierRecord, client } from '@storeo/core';
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,6 +15,7 @@ import {
   NumericField
 } from '@storeo/theme';
 
+import { useCreateRequestDetailSupplier } from '../../../api/request';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
 const schema = object().shape({
@@ -24,28 +24,12 @@ const schema = object().shape({
   volume: number().required('Hãy nhập khối lượng nhà cung cấp')
 });
 
-const Content: FC<NewDocumentRequestSupplierDialogProps> = ({
+const Content: FC<NewRequestSupplierDialogProps> = ({
   setOpen,
-  documentRequestDetailId
+  requestDetailId
 }) => {
-  const queryClient = useQueryClient();
-
-  const createDocumentRequestSupplierMutation = useMutation({
-    mutationKey: ['createDocumentRequestSupplier'],
-    mutationFn: async (params: RequestDetailSupplierRecord) =>
-      await client.collection('documentRequestDetailSupplier').create(params),
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequestSuppliers']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequest']
-        })
-      ]),
-    onSettled: () => {
-      setOpen(false);
-    }
+  const createRequestSupplier = useCreateRequestDetailSupplier(() => {
+    setOpen(false);
   });
 
   return (
@@ -59,13 +43,13 @@ const Content: FC<NewDocumentRequestSupplierDialogProps> = ({
       <Form
         schema={schema}
         onSubmit={values =>
-          createDocumentRequestSupplierMutation.mutate({
+          createRequestSupplier.mutate({
             ...values,
-            documentRequestDetail: documentRequestDetailId
+            requestDetail: requestDetailId
           })
         }
         defaultValues={{}}
-        loading={createDocumentRequestSupplierMutation.isPending}
+        loading={createRequestSupplier.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <SupplierDropdownField
@@ -86,20 +70,16 @@ const Content: FC<NewDocumentRequestSupplierDialogProps> = ({
   );
 };
 
-export type NewDocumentRequestSupplierDialogProps = DialogProps & {
-  documentRequestDetailId: string;
+export type NewRequestSupplierDialogProps = DialogProps & {
+  requestDetailId: string;
 };
 
 export const NewRequestSupplierDialog: FC<
-  NewDocumentRequestSupplierDialogProps
-> = ({ open, setOpen, documentRequestDetailId }) => {
+  NewRequestSupplierDialogProps
+> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content
-        open={open}
-        setOpen={setOpen}
-        documentRequestDetailId={documentRequestDetailId}
-      />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

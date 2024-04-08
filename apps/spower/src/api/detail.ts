@@ -19,13 +19,13 @@ export type DetailData = DetailResponse & {
   requestVolume?: number;
 };
 
-export function getAllDetailsByDocumentIdKey(documentId: string) {
-  return ['getAllDetailsByDocumentIdKey', documentId];
+export function getAllDetailsKey(documentId: string) {
+  return ['getAllDetailsKey', documentId];
 }
 
-export function getAllDetailsByDocumentId(documentId: string) {
+export function getAllDetails(documentId: string) {
   return queryOptions({
-    queryKey: getAllDetailsByDocumentIdKey(documentId),
+    queryKey: getAllDetailsKey(documentId),
     queryFn: () => {
       return client.collection<DetailResponse>('detail').getFullList({
         filter: `document = "${documentId}"`,
@@ -35,8 +35,8 @@ export function getAllDetailsByDocumentId(documentId: string) {
   });
 }
 
-export function useGetAllDetailsByDocumentId(documentId: string) {
-  return useQuery(getAllDetailsByDocumentId(documentId));
+export function useGetAllDetails(documentId: string) {
+  return useQuery(getAllDetails(documentId));
 }
 
 export function getDetailByIdKey(detailId: string) {

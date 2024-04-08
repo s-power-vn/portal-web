@@ -267,15 +267,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
 
   return (
     <>
-      <ListRequestSupplierDialog
-        documentRequestDetail={
-          table.getSelectedRowModel().flatRows.length > 0
-            ? table.getSelectedRowModel().flatRows[0].original
-            : undefined
-        }
-        open={openListSupplier}
-        setOpen={setOpenListSupplier}
-      />
+      {table.getSelectedRowModel() &&
+      table.getSelectedRowModel().flatRows.length > 0 ? (
+        <ListRequestSupplierDialog
+          requestDetail={table.getSelectedRowModel().flatRows[0].original}
+          open={openListSupplier}
+          setOpen={setOpenListSupplier}
+        />
+      ) : null}
       <EditRequestDialog
         request={requestById.data}
         open={openDocumentRequestEdit}

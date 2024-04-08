@@ -24,7 +24,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { getAllRequestsByDocumentId } from '../../../api/request';
+import { getAllRequests } from '../../../api/request';
 import { NewRequestDialog } from '../request/new-request-dialog';
 import { RequestItem } from '../request/request-item';
 
@@ -36,7 +36,7 @@ export const DocumentRequestTab: FC<DocumentRequestTabProps> = ({
   documentId
 }) => {
   const [openDocumentRequestNew, setOpenDocumentRequestNew] = useState(false);
-  const requests = useSuspenseQuery(getAllRequestsByDocumentId(documentId));
+  const requests = useSuspenseQuery(getAllRequests(documentId));
 
   const columnHelper = createColumnHelper<RequestResponse>();
 

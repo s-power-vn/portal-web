@@ -4,6 +4,7 @@ import {
   client,
   DetailResponse,
   RequestDetailResponse,
+  RequestDetailSupplierRecord,
   RequestDetailSupplierResponse,
   RequestRecord,
   RequestResponse,
@@ -25,13 +26,24 @@ export type RequestData = RequestResponse & {
   };
 };
 
-export function getAllRequestsByDocumentIdKey(documentId: string) {
-  return ['getAllRequestsByDocumentIdKey', documentId];
+export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
+  expand: {
+    supplier: SupplierResponse;
+    requestDetail: RequestDetailResponse & {
+      expand: {
+        detail: DetailResponse;
+      };
+    };
+  }
 }
 
-export function getAllRequestsByDocumentId(documentId: string) {
+export function getAllRequestsKey(documentId: string) {
+  return ['getAllRequestsKey', documentId];
+}
+
+export function getAllRequests(documentId: string) {
   return queryOptions({
-    queryKey: getAllRequestsByDocumentIdKey(documentId),
+    queryKey: getAllRequestsKey(documentId),
     queryFn: () =>
       client.collection<RequestResponse>('request').getFullList({
         filter: `document = "${documentId}"`,
@@ -41,7 +53,7 @@ export function getAllRequestsByDocumentId(documentId: string) {
 }
 
 export function useGetAllRequests(documentId: string) {
-  return useQuery(getAllRequestsByDocumentId(documentId));
+  return useQuery(getAllRequests(documentId));
 }
 
 export function getRequestByIdKey(requestId: string) {
@@ -112,6 +124,88 @@ export function useDeleteRequest(onSuccess?: () => void) {
     mutationFn: (requestId: string) =>
       client.collection('request').delete(requestId),
     onSuccess: async () => {
+      onSuccess?.();
+    }
+  });
+}
+
+export function getAllRequestDetailSuppliersKey(requestDetailId: string) {
+  return ['getAllRequestDetailSuppliersKey', requestDetailId];
+}
+
+export function getAllRequestDetailSuppliers(requestDetailId: string) {
+  return queryOptions({
+    queryKey: getAllRequestDetailSuppliersKey(requestDetailId),
+    queryFn: () =>
+      client
+        .collection<RequestDetailSupplierData>(
+          'requestDetailSupplier'
+        )
+        .getFullList({
+          filter: `requestDetail = "${requestDetailId}"`,
+          expand: 'supplier,requestDetail.detail'
+        })
+  });
+}
+
+export function useGetAllRequestDetailSuppliers(requestDetailId: string, enabled?: boolean) {
+  return useQuery({
+    ...getAllRequestDetailSuppliers(requestDetailId),
+    enabled
+  });
+}
+
+export function useCreateRequestDetailSupplier(onSuccess?: () => void) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['createRequestDetailSupplier'],
+    mutationFn: (params: RequestDetailSupplierRecord) =>
+      client
+        .collection('requestDetailSupplier')
+        .create(params),
+    onSuccess: async (_, variables) => {
+      onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllRequestDetailSuppliersKey(variables.requestDetail ?? '')
+        })
+      ]);
+    }
+  });
+}
+
+export function useUpdateRequestDetailSupplier(
+  requestDetailSupplierId: string,
+  onSuccess?: () => void
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['updateRequestDetailSupplier', requestDetailSupplierId],
+    mutationFn: (params: RequestDetailSupplierRecord) =>
+      client
+        .collection('requestDetailSupplier')
+        .update(requestDetailSupplierId, params),
+    onSuccess: async (_, variables) => {
+      onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllRequestDetailSuppliersKey(variables.requestDetail ?? '')
+        })
+      ]);
+    }
+  });
+}
+
+export function useDeleteRequestDetailSupplier(
+  onSuccess?: () => void
+) {
+  return useMutation({
+    mutationKey: ['deleteRequestDetailSupplier'],
+    mutationFn: (requestDetailSupplierId: string) =>
+      client
+        .collection('requestDetailSupplier')
+        .delete(requestDetailSupplierId),
+    onSuccess: () => {
       onSuccess?.();
     }
   });

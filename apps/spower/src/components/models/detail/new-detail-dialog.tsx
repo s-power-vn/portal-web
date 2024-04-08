@@ -18,11 +18,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import {
-  DetailData,
-  getAllDetailsByDocumentIdKey,
-  useCreateDetail
-} from '../../../api';
+import { DetailData, getAllDetailsKey, useCreateDetail } from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
@@ -45,7 +41,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
   const createDocumentDetail = useCreateDetail(async () => {
     setOpen(false);
     await queryClient.invalidateQueries({
-      queryKey: getAllDetailsByDocumentIdKey(documentId)
+      queryKey: getAllDetailsKey(documentId)
     });
   });
 

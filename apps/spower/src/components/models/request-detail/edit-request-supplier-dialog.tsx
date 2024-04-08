@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { number, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { DialogProps, RequestDetailSupplierRecord, client } from '@storeo/core';
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,8 +16,12 @@ import {
   NumericField
 } from '@storeo/theme';
 
+import {
+  RequestDetailSupplierData,
+  getAllRequestDetailSuppliersKey,
+  useUpdateRequestDetailSupplier
+} from '../../../api/request';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
-import { DocumentRequestDetailSupplierData } from './list-request-supplier-dialog';
 
 const schema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
@@ -25,37 +29,25 @@ const schema = object().shape({
   volume: number().required('Hãy nhập khối lượng nhà cung cấp')
 });
 
-const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
+const Content: FC<EditRequestSupplierDialogProps> = ({
   setOpen,
-  documentRequestSupplier
+  requestDetailSupplier
 }) => {
   const queryClient = useQueryClient();
 
-  const updateDocumentRequestSupplierMutation = useMutation({
-    mutationKey: ['updateDocumentRequestSupplier'],
-    mutationFn: async (params: RequestDetailSupplierRecord) =>
-      documentRequestSupplier?.id
-        ? await client
-            .collection('documentRequestDetailSupplier')
-            .update(documentRequestSupplier?.id, params)
-        : null,
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequestSuppliers']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [
-            'getDocumentRequest',
-            documentRequestSupplier?.expand.documentRequestDetail
-              .documentRequest
-          ]
-        })
-      ]),
-    onSettled: () => {
+  const updateDocumentRequestSupplierMutation = useUpdateRequestDetailSupplier(
+    requestDetailSupplier.id,
+    async () => {
       setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllRequestDetailSuppliersKey(
+            requestDetailSupplier.requestDetail
+          )
+        })
+      ]);
     }
-  });
+  );
 
   return (
     <DialogContent className="w-96">
@@ -72,7 +64,7 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
             ...values
           })
         }
-        defaultValues={documentRequestSupplier}
+        defaultValues={requestDetailSupplier}
         loading={updateDocumentRequestSupplierMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
@@ -94,20 +86,16 @@ const Content: FC<EditDocumentRequestSupplierDialogProps> = ({
   );
 };
 
-export type EditDocumentRequestSupplierDialogProps = DialogProps & {
-  documentRequestSupplier?: DocumentRequestDetailSupplierData;
+export type EditRequestSupplierDialogProps = DialogProps & {
+  requestDetailSupplier: RequestDetailSupplierData;
 };
 
 export const EditRequestSupplierDialog: FC<
-  EditDocumentRequestSupplierDialogProps
-> = ({ open, setOpen, documentRequestSupplier }) => {
+  EditRequestSupplierDialogProps
+> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content
-        open={open}
-        setOpen={setOpen}
-        documentRequestSupplier={documentRequestSupplier}
-      />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

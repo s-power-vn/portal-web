@@ -37,7 +37,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData, useGetAllDetailsByDocumentId } from '../../../api';
+import { DetailData, useGetAllDetails } from '../../../api';
 import { arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
@@ -51,7 +51,7 @@ const Content: FC<PickDetailDialogProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const details = useGetAllDetailsByDocumentId(documentId);
+  const details = useGetAllDetails(documentId);
 
   const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
 

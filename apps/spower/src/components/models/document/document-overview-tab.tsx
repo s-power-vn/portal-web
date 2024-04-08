@@ -38,9 +38,9 @@ import {
 
 import {
   DetailData,
-  getAllDetailsByDocumentIdKey,
+  getAllDetailsKey,
   useDeleteDetails,
-  useGetAllDetailsByDocumentId
+  useGetAllDetails
 } from '../../../api';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
@@ -59,11 +59,11 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [selectedRow, setSelectedRow] = useState<Row<DetailData>>();
   const queryClient = useQueryClient();
 
-  const details = useGetAllDetailsByDocumentId(documentId);
+  const details = useGetAllDetails(documentId);
 
   const deleteDetails = useDeleteDetails(async () => {
     await queryClient.invalidateQueries({
-      queryKey: getAllDetailsByDocumentIdKey(documentId)
+      queryKey: getAllDetailsKey(documentId)
     });
   });
 
