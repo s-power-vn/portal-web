@@ -12,7 +12,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { NewRequestSchema, useCreateRequest } from '../../../api';
+import { CreateRequestSchema, useCreateRequest } from '../../../api';
 import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
 const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
@@ -32,7 +32,7 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={NewRequestSchema}
+        schema={CreateRequestSchema}
         defaultValues={{
           name: ''
         }}
@@ -41,12 +41,12 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
         onSubmit={values => createDocumentRequest.mutate(values)}
       >
         <TextareaField
-          schema={NewRequestSchema}
+          schema={CreateRequestSchema}
           name={'name'}
           title={'Nội dung'}
         />
         <RequestDetailListField
-          schema={NewRequestSchema}
+          schema={CreateRequestSchema}
           name={'details'}
           options={{ documentId }}
         />

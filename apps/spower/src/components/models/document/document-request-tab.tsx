@@ -24,7 +24,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { getAllRequests } from '../../../api/request';
+import { getAllRequests } from '../../../api';
 import { NewRequestDialog } from '../request/new-request-dialog';
 import { RequestItem } from '../request/request-item';
 

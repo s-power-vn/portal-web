@@ -76,7 +76,7 @@ export function useGetRequestById(requestId: string) {
   return useQuery(getRequestById(requestId));
 }
 
-export const NewRequestSchema = object().shape({
+export const CreateRequestSchema = object().shape({
   name: string().required('Hãy nhập nội dung'),
   details: array()
     .of(
@@ -102,13 +102,13 @@ export const NewRequestSchema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-export type NewRequestInput = InferType<typeof NewRequestSchema>;
+export type CreateRequestInput = InferType<typeof CreateRequestSchema>;
 
 export function useCreateRequest(documentId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['createRequest'],
-    mutationFn: async (params: NewRequestInput) => {
+    mutationFn: async (params: CreateRequestInput) => {
       const record = await client.collection('request').create({
         document: documentId,
         name: params.name

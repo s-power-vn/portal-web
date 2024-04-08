@@ -1,14 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import {
-  DialogProps,
-  DocumentResponse,
-  DocumentStatusOptions,
-  client
-} from '@storeo/core';
+import { DialogProps, DocumentResponse } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -23,18 +17,13 @@ import {
 
 import {
   DocumentSearch,
+  UpdateDocumentSchema,
   getAllDocumentsKey,
   getMineDocumentsKey,
   getWaitingDocumentsKey,
   useUpdateDocument
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
-
-const schema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
-});
 
 const Content: FC<EditDocumentDialogProps> = ({
   setOpen,
@@ -46,14 +35,16 @@ const Content: FC<EditDocumentDialogProps> = ({
 
   const updateDocumentMutation = useUpdateDocument(document.id, async () => {
     setOpen(false);
-    await queryClient.invalidateQueries({
-      queryKey:
-        screen === 'all'
-          ? getAllDocumentsKey(search)
-          : screen === 'wating'
-            ? getWaitingDocumentsKey(search)
-            : getMineDocumentsKey(search)
-    });
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey:
+          screen === 'all'
+            ? getAllDocumentsKey(search)
+            : screen === 'wating'
+              ? getWaitingDocumentsKey(search)
+              : getMineDocumentsKey(search)
+      })
+    ]);
   });
 
   return (
@@ -65,32 +56,26 @@ const Content: FC<EditDocumentDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          updateDocumentMutation.mutate({
-            ...values,
-            status: DocumentStatusOptions.ToDo,
-            createdBy: client.authStore.model?.id
-          })
-        }
+        schema={UpdateDocumentSchema}
+        onSubmit={values => updateDocumentMutation.mutate(values)}
         defaultValues={document}
         loading={updateDocumentMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={schema}
+          schema={UpdateDocumentSchema}
           name={'name'}
           title={'Tên công trình'}
           options={{}}
         />
         <TextField
-          schema={schema}
+          schema={UpdateDocumentSchema}
           name={'bidding'}
           title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
-          schema={schema}
+          schema={UpdateDocumentSchema}
           name={'customer'}
           title={'Chủ đầu tư'}
           options={{

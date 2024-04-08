@@ -3,8 +3,8 @@ import { InferType, number, object, string } from 'yup';
 
 import {
   CustomerResponse,
-  DocumentRecord,
   DocumentResponse,
+  DocumentStatusOptions,
   UserResponse,
   client
 } from '@storeo/core';
@@ -118,24 +118,40 @@ export function useGetDocumentById(documentId: string) {
   return useQuery(getDocumentById(documentId));
 }
 
+export const CreateDocumentSchema = object().shape({
+  name: string().required('Hãy nhập tên công trình'),
+  bidding: string().required('Hãy nhập tên gói thầu'),
+  customer: string().required('Hãy chọn chủ đầu tư')
+});
+
+export type CreateDocumentInput = InferType<typeof CreateDocumentSchema>;
+
 export function useCreateDocument(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createDocument'],
-    mutationFn: (params: DocumentRecord) =>
-      client.collection('document').create<DocumentResponse>(params),
-    onSuccess: async () => {
-      onSuccess?.();
-    }
+    mutationFn: (params: CreateDocumentInput) =>
+      client.collection('document').create<DocumentResponse>({
+        ...params,
+        status: DocumentStatusOptions.ToDo,
+        createdBy: client.authStore.model?.id
+      }),
+    onSuccess
   });
 }
+
+export const UpdateDocumentSchema = object().shape({
+  name: string().required('Hãy nhập tên công trình'),
+  bidding: string().required('Hãy nhập tên gói thầu'),
+  customer: string().required('Hãy chọn chủ đầu tư')
+});
+
+export type UpdateDocumentInput = InferType<typeof UpdateDocumentSchema>;
 
 export function useUpdateDocument(documentId: string, onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['updateDocument', documentId],
-    mutationFn: (params: DocumentRecord) =>
+    mutationFn: (params: UpdateDocumentInput) =>
       client.collection('document').update(documentId, params),
-    onSuccess: async () => {
-      onSuccess?.();
-    }
+    onSuccess
   });
 }

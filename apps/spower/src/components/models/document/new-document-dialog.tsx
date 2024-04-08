@@ -1,10 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { DialogProps, DocumentStatusOptions, client } from '@storeo/core';
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -18,6 +17,7 @@ import {
 } from '@storeo/theme';
 
 import {
+  CreateDocumentSchema,
   DocumentSearch,
   getAllDocumentsKey,
   getMineDocumentsKey,
@@ -26,12 +26,6 @@ import {
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
-const schema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
-});
-
 const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
   const navigate = useNavigate();
 
@@ -39,22 +33,24 @@ const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
 
   const createDocument = useCreateDocument(async () => {
     setOpen(false);
-    await queryClient.invalidateQueries({
-      queryKey:
-        screen === 'all'
-          ? getAllDocumentsKey(search)
-          : screen === 'wating'
-            ? getWaitingDocumentsKey(search)
-            : getMineDocumentsKey(search)
-    });
-    await navigate({
-      to: '/document/mine',
-      search: {
-        pageIndex: 1,
-        pageSize: 10,
-        filter: ''
-      }
-    });
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey:
+          screen === 'all'
+            ? getAllDocumentsKey(search)
+            : screen === 'wating'
+              ? getWaitingDocumentsKey(search)
+              : getMineDocumentsKey(search)
+      }),
+      navigate({
+        to: '/document/mine',
+        search: {
+          pageIndex: 1,
+          pageSize: 10,
+          filter: ''
+        }
+      })
+    ]);
   });
 
   return (
@@ -66,14 +62,8 @@ const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          createDocument.mutate({
-            ...values,
-            status: DocumentStatusOptions.ToDo,
-            createdBy: client.authStore.model?.id
-          })
-        }
+        schema={CreateDocumentSchema}
+        onSubmit={values => createDocument.mutate(values)}
         defaultValues={{
           name: '',
           bidding: '',
@@ -83,19 +73,19 @@ const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={schema}
+          schema={CreateDocumentSchema}
           name={'name'}
           title={'Tên công trình'}
           options={{}}
         />
         <TextField
-          schema={schema}
+          schema={CreateDocumentSchema}
           name={'bidding'}
           title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
-          schema={schema}
+          schema={CreateDocumentSchema}
           name={'customer'}
           title={'Chủ đầu tư'}
           options={{
