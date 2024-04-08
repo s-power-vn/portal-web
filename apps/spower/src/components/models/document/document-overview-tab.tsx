@@ -1,5 +1,4 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   ExpandedState,
   Row,
@@ -36,12 +35,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import {
-  DetailData,
-  getAllDetailsKey,
-  useDeleteDetails,
-  useGetAllDetails
-} from '../../../api';
+import { DetailData, useDeleteDetails, useGetAllDetails } from '../../../api';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
@@ -57,20 +51,17 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<DetailData>>();
-  const queryClient = useQueryClient();
 
   const details = useGetAllDetails(documentId);
-
-  const deleteDetails = useDeleteDetails(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: getAllDetailsKey(documentId)
-    });
-  });
+  const deleteDetails = useDeleteDetails(documentId);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
+  const data = useMemo(
+    () => arrayToTree(details.data ?? [], `${documentId}_root`),
+    [details.data]
+  );
 
   const columnHelper = createColumnHelper<DetailData>();
 
@@ -306,7 +297,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         <EditDetailDialog
           open={openDocumentDetailEdit}
           setOpen={setOpenDocumentDetailEdit}
-          detail={selectedRow.original}
+          detailId={selectedRow.original.id}
         />
       ) : null}
       <div className={'flex flex-col gap-2'}>

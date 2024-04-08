@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
 import {
@@ -15,10 +15,15 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DetailData, UpdateDetailSchema, useUpdateDetail } from '../../../api';
+import {
+  UpdateDetailSchema,
+  useGetDetailById,
+  useUpdateDetail
+} from '../../../api';
 
-const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
-  const updateDetail = useUpdateDetail(detail.id, () => setOpen(false));
+const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
+  const updateDetail = useUpdateDetail(detailId, () => setOpen(false));
+  const detail = useGetDetailById(detailId);
 
   return (
     <DialogContent className="w-96">
@@ -31,7 +36,7 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
       <Form
         schema={UpdateDetailSchema}
         onSubmit={values => updateDetail.mutate(values)}
-        defaultValues={detail}
+        defaultValues={detail.data}
         loading={updateDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
@@ -68,13 +73,15 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
 };
 
 export type EditDetailDialogProps = DialogProps & {
-  detail: DetailData;
+  detailId: string;
 };
 
 export const EditDetailDialog: FC<EditDetailDialogProps> = props => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <Content {...props} />
+      <Suspense>
+        <Content {...props} />
+      </Suspense>
     </Dialog>
   );
 };

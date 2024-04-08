@@ -36,7 +36,9 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
         requestVolume: it.volume
       }))
       .value();
-    return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
+    return flatTree(
+      arrayToTree(v, `${request.document}_root`, 'documentDetailId')
+    );
   }, [request]);
 
   return (

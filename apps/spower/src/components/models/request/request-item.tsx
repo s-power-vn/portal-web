@@ -95,7 +95,11 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }
     }
 
-    return arrayToTree(list, 'root', 'documentDetailId');
+    return arrayToTree(
+      list,
+      `${requestById.data.document}_root`,
+      'documentDetailId'
+    );
   }, [requestById.data]);
 
   const columnHelper = createColumnHelper<

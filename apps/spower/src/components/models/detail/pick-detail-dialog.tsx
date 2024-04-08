@@ -53,7 +53,10 @@ const Content: FC<PickDetailDialogProps> = ({
 
   const details = useGetAllDetails(documentId);
 
-  const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
+  const data = useMemo(
+    () => arrayToTree(details.data ?? [], `${documentId}_root`),
+    [details.data]
+  );
 
   const columnHelper = createColumnHelper<DetailData>();
 

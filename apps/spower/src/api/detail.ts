@@ -72,20 +72,37 @@ export function useCreateDetail(
   parentId?: string,
   onSuccess?: () => void
 ) {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['createDetail'],
     mutationFn: async (params: CreateDetailInput) => {
-      const maxInfo = await client
-        .collection<DetailMaxResponse>('detailMax')
-        .getOne(parentId ? parentId : `${documentId}-root`);
+      const parent = parentId ? parentId : `${documentId}-root`;
+
+      let index = 0;
+      try {
+        const maxInfo = await client
+          .collection<DetailMaxResponse>('detailMax')
+          .getOne(parent);
+        index = maxInfo.maxIndex as number;
+      } catch (e) {
+        /**/
+      }
+
       return await client.collection('detail').create({
         ...params,
         document: documentId,
-        index: (maxInfo.maxIndex as number) + 1
+        parent,
+        index: index + 1
       });
     },
     onSuccess: async () => {
       onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllDetailsKey(documentId)
+        })
+      ]);
     }
   });
 }
@@ -114,18 +131,22 @@ export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: getAllDetailsKey(record.document)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getDetailByIdKey(detailId)
         })
       ]);
     }
   });
 }
 
-export function useDeleteDetails(onSuccess?: () => void) {
+export function useDeleteDetails(documentId: string, onSuccess?: () => void) {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['deleteDetail'],
-    mutationFn: (documentDetailIds: string[]) =>
+    mutationFn: (detailIds: string[]) =>
       Promise.all(
-        documentDetailIds.map(documentId =>
+        detailIds.map(documentId =>
           client.collection<DetailResponse>('detail').delete(documentId, {
             requestKey: null
           })
@@ -133,6 +154,11 @@ export function useDeleteDetails(onSuccess?: () => void) {
       ),
     onSuccess: async () => {
       onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllDetailsKey(documentId)
+        })
+      ]);
     }
   });
 }
