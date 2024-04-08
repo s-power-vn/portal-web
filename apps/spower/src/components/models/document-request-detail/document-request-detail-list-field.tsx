@@ -5,7 +5,6 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { FC, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { DocumentDetailData } from '@storeo/core';
 import {
   FormField,
   FormFieldProps,
@@ -18,7 +17,8 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { PickDocumentDetailDialog } from '../detail/pick-document-detail-dialog';
+import { DetailData } from '../../../api';
+import { PickDetailDialog } from '../detail/pick-detail-dialog';
 
 export type DocumentRequestDetailListProps = {
   schema: ObjectSchema<AnyObject>;
@@ -56,7 +56,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   return (
     <div className={'flex flex-col gap-2'}>
       {documentId ? (
-        <PickDocumentDetailDialog
+        <PickDetailDialog
           documentId={documentId}
           open={openPick}
           setOpen={setOpenPick}
@@ -68,7 +68,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
               setValue(`documents[${index}].requestVolume`, 0);
             });
           }}
-        ></PickDocumentDetailDialog>
+        ></PickDetailDialog>
       ) : null}
       <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
@@ -101,7 +101,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
                 .sortBy('level')
                 .map(
                   (
-                    it: DocumentDetailData & {
+                    it: DetailData & {
                       uid?: string;
                     },
                     index: number

@@ -1,16 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { InferType, array, boolean, number, object, string } from 'yup';
+import { array, boolean, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction, useMemo } from 'react';
 
-import {
-  DocumentRequestDetailRecord,
-  DocumentRequestRecord,
-  arrayToTree,
-  client,
-  flatTree
-} from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -23,8 +15,9 @@ import {
   TextareaField
 } from '@storeo/theme';
 
+import { RequestData, useUpdateRequest } from '../../../api/request';
+import { arrayToTree, flatTree } from '../../../commons/utils';
 import { DocumentRequestDetailListField } from '../document-request-detail/document-request-detail-list-field';
-import { getDocumentRequestOptions } from './document-request-item';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -51,69 +44,21 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-const Content: FC<EditDocumentRequestDialogProps> = ({
-  open,
-  setOpen,
-  documentRequestId
-}) => {
-  const queryClient = useQueryClient();
-
-  const documentRequestQuery = useQuery({
-    ...getDocumentRequestOptions(documentRequestId),
-    enabled: open
-  });
-
+const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
   const data = useMemo(() => {
-    const v = _.chain(
-      documentRequestQuery.data
-        ? documentRequestQuery.data.expand[
-            'documentRequestDetail_via_documentRequest'
-          ]
-        : []
-    )
+    const v = _.chain(request.expand.requestDetail_via_request)
       .map(it => ({
-        ...it.expand.documentDetail,
+        ...it.expand.detail,
         id: it.id,
-        documentDetailId: it.expand.documentDetail.id,
+        documentDetailId: it.expand.detail.id,
         requestVolume: it.volume
       }))
       .value();
     return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
-  }, [documentRequestQuery.data]);
+  }, [request]);
 
-  const updateDocumentRequest = useMutation({
-    mutationKey: ['updateDocumentRequest'],
-    mutationFn: async (params: InferType<typeof schema>) => {
-      await client
-        .collection<DocumentRequestRecord>('documentRequest')
-        .update(documentRequestId, {
-          name: params.name
-        });
-      await Promise.all(
-        params.documents.map(it => {
-          return it.id
-            ? client
-                .collection<DocumentRequestDetailRecord>(
-                  'documentRequestDetail'
-                )
-                .update(
-                  it.id,
-                  { volume: it.requestVolume },
-                  {
-                    requestKey: null
-                  }
-                )
-            : null;
-        })
-      );
-    },
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequest', documentRequestId]
-        })
-      ]),
-    onSettled: () => setOpen(false)
+  const updateDocumentRequest = useUpdateRequest(request.id, () => {
+    setOpen(false);
   });
 
   return (
@@ -127,7 +72,7 @@ const Content: FC<EditDocumentRequestDialogProps> = ({
       <Form
         schema={schema}
         defaultValues={{
-          name: documentRequestQuery.data?.name,
+          name: request.name,
           documents: data
         }}
         className={'mt-4 flex flex-col gap-3'}
@@ -148,24 +93,16 @@ const Content: FC<EditDocumentRequestDialogProps> = ({
   );
 };
 
-export type EditDocumentRequestDialogProps = {
-  documentRequestId: string;
+export type EditRequestDialogProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  request: RequestData;
 };
 
-export const EditDocumentRequestDialog: FC<EditDocumentRequestDialogProps> = ({
-  documentRequestId,
-  open,
-  setOpen
-}) => {
+export const EditRequestDialog: FC<EditRequestDialogProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content
-        open={open}
-        documentRequestId={documentRequestId}
-        setOpen={setOpen}
-      />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

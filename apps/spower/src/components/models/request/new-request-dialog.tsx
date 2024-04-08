@@ -44,7 +44,7 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-const Content: FC<Omit<NewDocumentRequestDialogProps, 'open'>> = ({
+const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
   setOpen,
   documentId
 }) => {
@@ -113,20 +113,16 @@ const Content: FC<Omit<NewDocumentRequestDialogProps, 'open'>> = ({
   );
 };
 
-export type NewDocumentRequestDialogProps = {
-  documentId: string;
+export type NewRequestDialogProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  documentId: string;
 };
 
-export const NewDocumentRequestDialog: FC<NewDocumentRequestDialogProps> = ({
-  documentId,
-  open,
-  setOpen
-}) => {
+export const NewRequestDialog: FC<NewRequestDialogProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Content documentId={documentId} setOpen={setOpen} />
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <Content {...props} />
     </Dialog>
   );
 };

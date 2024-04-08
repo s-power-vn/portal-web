@@ -3,12 +3,7 @@ import { number, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import {
-  DialogProps,
-  DocumentRequestDetailSupplierRecord,
-  DocumentRequestDetailSupplierResponse,
-  client
-} from '@storeo/core';
+import { DialogProps, RequestDetailSupplierRecord, client } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -37,12 +32,8 @@ const Content: FC<NewDocumentRequestSupplierDialogProps> = ({
 
   const createDocumentRequestSupplierMutation = useMutation({
     mutationKey: ['createDocumentRequestSupplier'],
-    mutationFn: async (params: DocumentRequestDetailSupplierRecord) =>
-      await client
-        .collection<DocumentRequestDetailSupplierResponse>(
-          'documentRequestDetailSupplier'
-        )
-        .create(params),
+    mutationFn: async (params: RequestDetailSupplierRecord) =>
+      await client.collection('documentRequestDetailSupplier').create(params),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({

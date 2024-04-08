@@ -12,6 +12,12 @@ import {
   client
 } from '@storeo/core';
 
+export type DetailData = DetailResponse & {
+  children?: DetailData[];
+  level?: string;
+  hasChild?: boolean;
+};
+
 export function getAllDetailsByDocumentIdKey(documentId: string) {
   return ['getAllDetailsByDocumentIdKey', documentId];
 }

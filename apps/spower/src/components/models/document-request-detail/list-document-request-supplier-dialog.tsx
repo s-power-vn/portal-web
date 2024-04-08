@@ -18,9 +18,8 @@ import React, { FC, useState } from 'react';
 import {
   DetailResponse,
   DialogProps,
-  DocumentDetailData,
-  DocumentRequestDetailResponse,
-  DocumentRequestDetailSupplierResponse,
+  RequestDetailResponse,
+  RequestDetailSupplierResponse,
   SupplierResponse,
   client,
   formatCurrency,
@@ -41,16 +40,17 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DetailData } from '../../../api';
 import { EditDocumentRequestSupplierDialog } from './edit-document-request-supplier-dialog';
 import { NewDocumentRequestSupplierDialog } from './new-document-request-supplier-dialog';
 
 export type DocumentRequestDetailSupplierData =
-  DocumentRequestDetailSupplierResponse & {
+  RequestDetailSupplierResponse & {
     expand: {
       supplier: SupplierResponse;
-      documentRequestDetail: DocumentRequestDetailResponse & {
+      documentRequestDetail: RequestDetailResponse & {
         expand: {
-          documentDetail: DocumentDetailResponse;
+          documentDetail: DetailResponse;
         };
       };
     };
@@ -93,9 +93,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
     mutationKey: ['deleteDocumentRequestSupplier', documentRequestDetail?.id],
     mutationFn: async (documentRequestSupplierId: string) => {
       await client
-        .collection<DocumentRequestDetailSupplierResponse>(
-          'documentRequestDetailSupplier'
-        )
+        .collection('documentRequestDetailSupplier')
         .delete(documentRequestSupplierId);
     },
     onSuccess: () =>
@@ -267,7 +265,7 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
 };
 
 export type ListDocumentSupplierDialogProps = DialogProps & {
-  documentRequestDetail?: DocumentDetailData;
+  documentRequestDetail?: DetailData;
 };
 
 export const ListDocumentRequestSupplierDialog: FC<

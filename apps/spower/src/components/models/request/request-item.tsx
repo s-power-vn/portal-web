@@ -1,6 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import {
-  queryOptions,
   useMutation,
   useQueryClient,
   useSuspenseQuery
@@ -25,20 +24,7 @@ import {
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import {
-  DetailResponse,
-  DocumentDetailData,
-  DocumentRequestDetailResponse,
-  DocumentRequestDetailSupplierResponse,
-  DocumentRequestResponse,
-  SupplierResponse,
-  arrayToTree,
-  client,
-  cn,
-  formatCurrency,
-  formatNumber,
-  getCommonPinningStyles
-} from '@storeo/core';
+import { client, cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -49,46 +35,17 @@ import {
   TableRow
 } from '@storeo/theme';
 
+import { DetailData } from '../../../api';
+import { getRequestById } from '../../../api/request';
+import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { ListDocumentRequestSupplierDialog } from '../document-request-detail/list-document-request-supplier-dialog';
-import { EditDocumentRequestDialog } from './edit-document-request-dialog';
+import { EditRequestDialog } from './edit-request-dialog';
 
-export type DocumentRequestData = DocumentRequestResponse & {
-  expand: {
-    documentRequestDetail_via_documentRequest: (DocumentRequestDetailResponse & {
-      expand: {
-        documentDetail: DocumentDetailResponse;
-        documentRequestDetailSupplier_via_documentRequestDetail: (DocumentRequestDetailSupplierResponse & {
-          expand: {
-            supplier: SupplierResponse;
-          };
-        })[];
-      };
-    })[];
-  };
+export type RequestItemProps = {
+  requestId: string;
 };
 
-export function getDocumentRequestOptions(documentRequestId: string) {
-  return queryOptions({
-    queryKey: ['getDocumentRequest', documentRequestId],
-    queryFn: () => {
-      return client
-        ?.collection<DocumentRequestData>('documentRequest')
-        .getOne(documentRequestId, {
-          expand:
-            'documentRequestDetail_via_documentRequest.documentDetail,' +
-            'documentRequestDetail_via_documentRequest.documentRequestDetailSupplier_via_documentRequestDetail.supplier'
-        });
-    }
-  });
-}
-
-export type DocumentRequestItemProps = {
-  documentRequestId: string;
-};
-
-export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
-  documentRequestId
-}) => {
+export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [openDocumentRequestEdit, setOpenDocumentRequestEdit] = useState(false);
   const [openListSupplier, setOpenListSupplier] = useState(false);
 
@@ -97,9 +54,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
 
   const queryClient = useQueryClient();
 
-  const documentRequestQuery = useSuspenseQuery(
-    getDocumentRequestOptions(documentRequestId)
-  );
+  const requestById = useSuspenseQuery(getRequestById(requestId));
 
   const deleteDocumentRequest = useMutation({
     mutationKey: ['deleteDocumentRequest'],
@@ -107,7 +62,7 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
       return client.send('/delete-document-request', {
         method: 'DELETE',
         body: {
-          id: documentRequestId
+          id: requestId
         }
       });
     },
@@ -121,28 +76,24 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
 
   const requests = useMemo(() => {
     const v = _.chain(
-      documentRequestQuery.data
-        ? documentRequestQuery.data.expand[
-            'documentRequestDetail_via_documentRequest'
-          ]
-        : []
+      requestById.data ? requestById.data.expand.requestDetail_via_request : []
     )
       .map(it => {
+        console.log(it);
         return {
-          ...it.expand.documentDetail,
+          ...it.expand.detail,
           id: it.id,
-          documentDetailId: it.expand.documentDetail.id,
+          documentDetailId: it.expand.detail.id,
           requestVolume: it.volume,
-          suppliers:
-            it.expand.documentRequestDetailSupplier_via_documentRequestDetail?.map(
-              st => {
-                return {
-                  id: st.expand.supplier.id,
-                  name: st.expand.supplier.name,
-                  price: st.price
-                };
-              }
-            )
+          suppliers: it.expand.requestDetailSupplier_via_requestDetail?.map(
+            st => {
+              return {
+                id: st.expand.supplier.id,
+                name: st.expand.supplier.name,
+                price: st.price
+              };
+            }
+          )
         };
       })
       .value();
@@ -168,10 +119,10 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
     }
 
     return arrayToTree(list, 'root', 'documentDetailId');
-  }, [documentRequestQuery.data]);
+  }, [requestById.data]);
 
   const columnHelper = createColumnHelper<
-    DocumentDetailData & {
+    DetailData & {
       requestVolume?: number;
       supplierUnitPrice?: number;
       supplierName?: string;
@@ -348,15 +299,15 @@ export const DocumentRequestItem: FC<DocumentRequestItemProps> = ({
         open={openListSupplier}
         setOpen={setOpenListSupplier}
       />
-      <EditDocumentRequestDialog
-        documentRequestId={documentRequestId}
+      <EditRequestDialog
+        request={requestById.data}
         open={openDocumentRequestEdit}
         setOpen={setOpenDocumentRequestEdit}
       />
       <div className={'bg-appWhite flex flex-col rounded-md border'}>
         <div className={'flex justify-between border-b p-4'}>
           <div className={'flex-1 text-lg font-bold'}>
-            {documentRequestQuery.data?.name}
+            {requestById.data?.name}
           </div>
           <div className={'flex gap-2'}>
             <Button

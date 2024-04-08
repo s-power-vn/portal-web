@@ -1,5 +1,5 @@
 import { PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
   flexRender,
@@ -10,7 +10,7 @@ import { ForwardIcon } from 'lucide-react';
 
 import { FC, useMemo, useState } from 'react';
 
-import { DocumentRequestResponse, client, formatDate } from '@storeo/core';
+import { RequestResponse, formatDate } from '@storeo/core';
 import {
   Button,
   Popover,
@@ -24,32 +24,21 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentRequestItem } from './document-request-item';
-import { NewDocumentRequestDialog } from './new-document-request-dialog';
+import { getAllRequestsByDocumentId } from '../../../api/request';
+import { NewRequestDialog } from '../request/new-request-dialog';
+import { RequestItem } from '../request/request-item';
 
-export function getDocumentRequestsOptions(documentId: string) {
-  return queryOptions({
-    queryKey: ['getDocumentRequests', documentId],
-    queryFn: () =>
-      client
-        ?.collection<DocumentRequestResponse>('documentRequest')
-        .getFullList({
-          filter: `document = "${documentId}"`
-        })
-  });
-}
-
-export type DocumentRequestProps = {
+export type DocumentRequestTabProps = {
   documentId: string;
 };
 
-export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
+export const DocumentRequestTab: FC<DocumentRequestTabProps> = ({
+  documentId
+}) => {
   const [openDocumentRequestNew, setOpenDocumentRequestNew] = useState(false);
-  const documentRequestsQuery = useSuspenseQuery(
-    getDocumentRequestsOptions(documentId)
-  );
+  const requests = useSuspenseQuery(getAllRequestsByDocumentId(documentId));
 
-  const columnHelper = createColumnHelper<DocumentRequestResponse>();
+  const columnHelper = createColumnHelper<RequestResponse>();
 
   const columns = useMemo(
     () => [
@@ -83,7 +72,7 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
   );
 
   const table = useReactTable({
-    data: documentRequestsQuery.data ?? [],
+    data: requests.data ?? [],
     columns,
     enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
@@ -92,7 +81,7 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
 
   return (
     <>
-      <NewDocumentRequestDialog
+      <NewRequestDialog
         documentId={documentId}
         open={openDocumentRequestNew}
         setOpen={setOpenDocumentRequestNew}
@@ -184,15 +173,10 @@ export const DocumentRequest: FC<DocumentRequestProps> = ({ documentId }) => {
             'bg-appGrayLight flex h-[calc(100vh-215px)] flex-col gap-4 overflow-auto rounded-md border p-4'
           }
         >
-          {documentRequestsQuery.data
-            ? documentRequestsQuery.data.map(
-                (documentRequest: DocumentRequestResponse) => (
-                  <DocumentRequestItem
-                    key={documentRequest.id}
-                    documentRequestId={documentRequest.id}
-                  />
-                )
-              )
+          {requests.data
+            ? requests.data.map((request: RequestResponse) => (
+                <RequestItem key={request.id} requestId={request.id} />
+              ))
             : null}
         </div>
       </div>

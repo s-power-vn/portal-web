@@ -18,7 +18,7 @@ import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { DialogProps, DocumentDetailData, arrayToTree, cn } from '@storeo/core';
+import { DialogProps, cn } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -37,10 +37,11 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { useGetAllDetailsByDocumentId } from '../../../api';
+import { DetailData, useGetAllDetailsByDocumentId } from '../../../api';
+import { arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
-const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
+const Content: FC<PickDetailDialogProps> = ({
   documentId,
   setOpen,
   value = [],
@@ -54,7 +55,7 @@ const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
 
   const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
 
-  const columnHelper = createColumnHelper<DocumentDetailData>();
+  const columnHelper = createColumnHelper<DetailData>();
 
   const columns = useMemo(
     () => [
@@ -320,21 +321,15 @@ const Content: FC<Omit<PickDocumentDetailDialogProps, 'open'>> = ({
   );
 };
 
-export type PickDocumentDetailDialogProps = DialogProps & {
+export type PickDetailDialogProps = DialogProps & {
   documentId: string;
-  value?: DocumentDetailData[];
-  onChange?: (value: DocumentDetailData[]) => void;
+  value?: DetailData[];
+  onChange?: (value: DetailData[]) => void;
 };
 
-export const PickDocumentDetailDialog: FC<PickDocumentDetailDialogProps> = ({
-  documentId,
-  open,
-  setOpen,
-  value = [],
-  onChange
-}) => {
+export const PickDetailDialog: FC<PickDetailDialogProps> = props => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
@@ -345,12 +340,7 @@ export const PickDocumentDetailDialog: FC<PickDocumentDetailDialogProps> = ({
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DialogTrigger>
-      <Content
-        setOpen={setOpen}
-        documentId={documentId}
-        onChange={onChange}
-        value={value}
-      />
+      <Content {...props} />
     </Dialog>
   );
 };

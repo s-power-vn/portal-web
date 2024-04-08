@@ -1,10 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Row } from '@tanstack/react-table';
 import { number, object, string } from 'yup';
 
 import React, { FC } from 'react';
 
-import { DialogProps, DocumentDetailData } from '@storeo/core';
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -19,7 +18,11 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { getAllDetailsByDocumentIdKey, useCreateDetail } from '../../../api';
+import {
+  DetailData,
+  getAllDetailsByDocumentIdKey,
+  useCreateDetail
+} from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
@@ -55,8 +58,8 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
             <>
               <span
                 className={'inline font-bold'}
-              >{`Mục cha: ${parent.original.level} `}</span>
-              {` (${parent.original.title})`}
+              >{`Mục cha: ${parent.level} `}</span>
+              {` (${parent.title})`}
             </>
           ) : (
             'Tạo đầu mục mô tả công việc chính'
@@ -68,7 +71,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
         onSubmit={values =>
           createDocumentDetail.mutate({
             document: documentId,
-            parent: parent ? parent.original.id : 'root',
+            parent: parent ? parent.id : 'root',
             ...values
           })
         }
@@ -115,7 +118,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
 
 export type NewDetailDialogProps = DialogProps & {
   documentId: string;
-  parent?: Row<DocumentDetailData>;
+  parent?: DetailData;
 };
 
 export const NewDetailDialog: FC<NewDetailDialogProps> = props => {

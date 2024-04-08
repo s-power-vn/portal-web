@@ -3,7 +3,7 @@ import { number, object, string } from 'yup';
 
 import React, { FC } from 'react';
 
-import { DetailResponse, DialogProps } from '@storeo/core';
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -18,7 +18,11 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { getAllDetailsByDocumentIdKey, useUpdateDetail } from '../../../api';
+import {
+  DetailData,
+  getAllDetailsByDocumentIdKey,
+  useUpdateDetail
+} from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),
@@ -94,7 +98,7 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
 };
 
 export type EditDetailDialogProps = DialogProps & {
-  detail: DetailResponse;
+  detail: DetailData;
 };
 
 export const EditDetailDialog: FC<EditDetailDialogProps> = props => {

@@ -25,14 +25,7 @@ import {
 
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  DocumentDetailData,
-  arrayToTree,
-  cn,
-  formatCurrency,
-  formatNumber,
-  getCommonPinningStyles
-} from '@storeo/core';
+import { cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -44,10 +37,12 @@ import {
 } from '@storeo/theme';
 
 import {
+  DetailData,
   getAllDetailsByDocumentIdKey,
   useDeleteDetails,
   useGetAllDetailsByDocumentId
 } from '../../../api';
+import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
@@ -61,13 +56,12 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 }) => {
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Row<DocumentDetailData>>();
+  const [selectedRow, setSelectedRow] = useState<Row<DetailData>>();
+  const queryClient = useQueryClient();
 
   const details = useGetAllDetailsByDocumentId(documentId);
 
-  const queryClient = useQueryClient();
-
-  const deleteDocumentDetailsMutation = useDeleteDetails(async () => {
+  const deleteDetails = useDeleteDetails(async () => {
     await queryClient.invalidateQueries({
       queryKey: getAllDetailsByDocumentIdKey(documentId)
     });
@@ -78,7 +72,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 
   const data = useMemo(() => arrayToTree(details.data ?? []), [details.data]);
 
-  const columnHelper = createColumnHelper<DocumentDetailData>();
+  const columnHelper = createColumnHelper<DetailData>();
 
   const columns = useMemo(
     () => [
@@ -306,7 +300,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         open={openDocumentDetailNew}
         setOpen={setOpenDocumentDetailNew}
         documentId={documentId}
-        parent={selectedRow}
+        parent={selectedRow ? selectedRow.original : undefined}
       />
       {selectedRow ? (
         <EditDetailDialog
@@ -364,7 +358,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             size="icon"
             onClick={() => {
               const selected = table.getSelectedRowModel();
-              deleteDocumentDetailsMutation
+              deleteDetails
                 .mutateAsync(selected.flatRows.map(row => row.original.id))
                 .then(() => setRowSelection({}));
             }}
@@ -432,7 +426,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             >
               {virtualRows.length ? (
                 virtualRows.map(virtualRow => {
-                  const row = rows[virtualRow.index] as Row<DocumentDetailData>;
+                  const row = rows[virtualRow.index] as Row<DetailData>;
                   return (
                     <TableRow
                       data-index={virtualRow.index} //needed for dynamic row height measurement

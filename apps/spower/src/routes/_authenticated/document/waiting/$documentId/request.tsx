@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
-import { DocumentRequest } from '../../../../../components';
+import { DocumentRequestTab } from '../../../../../components';
 
 const Component = () => {
   const { documentId } = Route.useParams();
@@ -24,7 +24,7 @@ const Component = () => {
       </TabsList>
       <TabsContent value="request">
         <Suspense fallback={'Đang tải...'}>
-          <DocumentRequest documentId={documentId} />
+          <DocumentRequestTab documentId={documentId} />
         </Suspense>
       </TabsContent>
     </Tabs>
