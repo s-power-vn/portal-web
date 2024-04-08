@@ -84,18 +84,17 @@ export function useUpdateRequest(requestId: string, onSuccess?: () => void) {
         details: {
           id?: string;
           requestVolume?: number;
+          hasChild?: boolean;
         }[];
       }
-    ) => {
-      return Promise.all([
-        ...params.details.map(detail =>
-          client.collection('requestDetail').update(<string>detail.id, {
-            volume: detail.requestVolume
-          })
-        ),
-        client.collection('request').update(requestId, params)
-      ]);
-    },
+    ) => Promise.all([
+      ...params.details.filter(detail => !detail.hasChild).map(detail =>
+        client.collection('requestDetail').update(<string>detail.id, {
+          volume: detail.requestVolume
+        })
+      ),
+      client.collection('request').update(requestId, params)
+    ]),
     onSuccess: async () => {
       onSuccess?.();
       await Promise.all([
