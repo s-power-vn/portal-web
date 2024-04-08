@@ -16,7 +16,7 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DocumentRequestDetailListField } from '../document-request-detail/document-request-detail-list-field';
+import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -100,7 +100,7 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
         onSubmit={values => createDocumentRequest.mutate(values)}
       >
         <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-        <DocumentRequestDetailListField
+        <RequestDetailListField
           schema={schema}
           name={'documents'}
           options={{ documentId }}

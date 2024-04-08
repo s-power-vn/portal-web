@@ -41,8 +41,8 @@ import {
 } from '@storeo/theme';
 
 import { DetailData } from '../../../api';
-import { EditDocumentRequestSupplierDialog } from './edit-document-request-supplier-dialog';
-import { NewDocumentRequestSupplierDialog } from './new-document-request-supplier-dialog';
+import { EditRequestSupplierDialog } from './edit-request-supplier-dialog';
+import { NewRequestSupplierDialog } from './new-request-supplier-dialog';
 
 export type DocumentRequestDetailSupplierData =
   RequestDetailSupplierResponse & {
@@ -195,12 +195,12 @@ const Content: FC<ListDocumentSupplierDialogProps> = ({
           Thêm nhà cung cấp
         </Button>
       </div>
-      <NewDocumentRequestSupplierDialog
+      <NewRequestSupplierDialog
         open={openNew}
         setOpen={setOpenNew}
         documentRequestDetailId={documentRequestDetail?.id ?? ''}
       />
-      <EditDocumentRequestSupplierDialog
+      <EditRequestSupplierDialog
         open={openEdit}
         setOpen={setOpenEdit}
         documentRequestSupplier={documentRequestSupplier}
@@ -268,9 +268,11 @@ export type ListDocumentSupplierDialogProps = DialogProps & {
   documentRequestDetail?: DetailData;
 };
 
-export const ListDocumentRequestSupplierDialog: FC<
-  ListDocumentSupplierDialogProps
-> = ({ open, setOpen, documentRequestDetail }) => {
+export const ListRequestSupplierDialog: FC<ListDocumentSupplierDialogProps> = ({
+  open,
+  setOpen,
+  documentRequestDetail
+}) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Content

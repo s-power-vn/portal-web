@@ -1,18 +1,13 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
+import {queryOptions, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
 import {
+  client,
   DetailResponse,
   RequestDetailResponse,
   RequestDetailSupplierResponse,
   RequestRecord,
   RequestResponse,
-  SupplierResponse,
-  client
+  SupplierResponse
 } from '@storeo/core';
 
 export type RequestData = RequestResponse & {
@@ -84,8 +79,23 @@ export function useUpdateRequest(requestId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['updateRequest', requestId],
-    mutationFn: (params: RequestRecord) =>
-      client.collection('request').update(requestId, params),
+    mutationFn: (
+      params: RequestRecord & {
+        details: {
+          id?: string;
+          requestVolume?: number;
+        }[];
+      }
+    ) => {
+      return Promise.all([
+        ...params.details.map(detail =>
+          client.collection('requestDetail').update(<string>detail.id, {
+            volume: detail.requestVolume
+          })
+        ),
+        client.collection('request').update(requestId, params)
+      ]);
+    },
     onSuccess: async () => {
       onSuccess?.();
       await Promise.all([

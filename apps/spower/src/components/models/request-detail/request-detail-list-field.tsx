@@ -35,7 +35,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
 
   const { fields, append } = useFieldArray({
     control,
-    name: 'documents',
+    name: 'details',
     keyName: 'uid'
   });
 
@@ -45,10 +45,10 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
       .value()
       .forEach((it, index) => {
         if ((it as any).children?.length) {
-          setValue(`documents[${index}].hasChild`, true);
-          setValue(`documents[${index}].requestVolume`, 0);
+          setValue(`details[${index}].hasChild`, true);
+          setValue(`details[${index}].requestVolume`, 0);
         } else {
-          setValue(`documents[${index}].hasChild`, false);
+          setValue(`details[${index}].hasChild`, false);
         }
       });
   }, [fields, setValue]);
@@ -62,10 +62,10 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
           setOpen={setOpenPick}
           onChange={value => {
             const items = _.sortBy(value, 'level');
-            setValue('documents', []);
+            setValue('details', []);
             append(items);
             items.forEach((_, index) => {
-              setValue(`documents[${index}].requestVolume`, 0);
+              setValue(`details[${index}].requestVolume`, 0);
             });
           }}
         ></PickDetailDialog>
@@ -117,7 +117,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
                         {it.children?.length === 0 ? (
                           <NumericField
                             schema={schema}
-                            name={`documents[${index}].requestVolume`}
+                            name={`details[${index}].requestVolume`}
                           ></NumericField>
                         ) : null}
                       </TableCell>
@@ -139,16 +139,13 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   );
 };
 
-export type DocumentRequestDetailListFieldProps<
-  S extends ObjectSchema<AnyObject>
-> = FormFieldProps<Omit<DocumentRequestDetailListProps, 'schema'>, S>;
+export type RequestDetailListFieldProps<S extends ObjectSchema<AnyObject>> =
+  FormFieldProps<Omit<DocumentRequestDetailListProps, 'schema'>, S>;
 
-export const DocumentRequestDetailListField = <
-  S extends ObjectSchema<AnyObject>
->({
+export const RequestDetailListField = <S extends ObjectSchema<AnyObject>>({
   options,
   ...props
-}: DocumentRequestDetailListFieldProps<S>) => {
+}: RequestDetailListFieldProps<S>) => {
   return (
     <FormField {...props}>
       <DocumentRequestDetailList schema={props.schema} {...options} />

@@ -16,6 +16,7 @@ export type DetailData = DetailResponse & {
   children?: DetailData[];
   level?: string;
   hasChild?: boolean;
+  requestVolume?: number;
 };
 
 export function getAllDetailsByDocumentIdKey(documentId: string) {

@@ -1,9 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
   RowSelectionState,
@@ -24,7 +20,7 @@ import {
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { client, cn, formatCurrency, formatNumber } from '@storeo/core';
+import { cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -36,9 +32,9 @@ import {
 } from '@storeo/theme';
 
 import { DetailData } from '../../../api';
-import { getRequestById } from '../../../api/request';
+import { getRequestById, useDeleteRequest } from '../../../api/request';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
-import { ListDocumentRequestSupplierDialog } from '../document-request-detail/list-document-request-supplier-dialog';
+import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
 import { EditRequestDialog } from './edit-request-dialog';
 
 export type RequestItemProps = {
@@ -52,34 +48,15 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const queryClient = useQueryClient();
-
   const requestById = useSuspenseQuery(getRequestById(requestId));
 
-  const deleteDocumentRequest = useMutation({
-    mutationKey: ['deleteDocumentRequest'],
-    mutationFn: () => {
-      return client.send('/delete-document-request', {
-        method: 'DELETE',
-        body: {
-          id: requestId
-        }
-      });
-    },
-    onSuccess: () =>
-      Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getDocumentRequests']
-        })
-      ])
-  });
+  const deleteRequest = useDeleteRequest();
 
   const requests = useMemo(() => {
     const v = _.chain(
       requestById.data ? requestById.data.expand.requestDetail_via_request : []
     )
       .map(it => {
-        console.log(it);
         return {
           ...it.expand.detail,
           id: it.id,
@@ -290,7 +267,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
 
   return (
     <>
-      <ListDocumentRequestSupplierDialog
+      <ListRequestSupplierDialog
         documentRequestDetail={
           table.getSelectedRowModel().flatRows.length > 0
             ? table.getSelectedRowModel().flatRows[0].original
@@ -334,7 +311,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <Button
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"
-              onClick={() => deleteDocumentRequest.mutate()}
+              onClick={() => deleteRequest.mutate(requestId)}
             >
               <Cross2Icon className={'h-4 w-4'} />
             </Button>

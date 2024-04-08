@@ -10,7 +10,7 @@ export * from './document/edit-document-dialog';
 export * from './document/new-document-dialog';
 export * from './document/document-overview-tab';
 export * from './detail/pick-detail-dialog';
-export * from './document-request-detail/document-request-detail-list-field';
+export * from './request-detail/request-detail-list-field';
 export * from './document/document-request-tab';
 export * from './request/request-item';
 export * from './document/document-status';

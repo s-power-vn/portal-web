@@ -17,11 +17,11 @@ import {
 
 import { RequestData, useUpdateRequest } from '../../../api/request';
 import { arrayToTree, flatTree } from '../../../commons/utils';
-import { DocumentRequestDetailListField } from '../document-request-detail/document-request-detail-list-field';
+import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
-  documents: array()
+  details: array()
     .of(
       object().shape({
         id: string().optional(),
@@ -57,6 +57,8 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
     return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
   }, [request]);
 
+  console.log(data);
+
   const updateDocumentRequest = useUpdateRequest(request.id, () => {
     setOpen(false);
   });
@@ -73,16 +75,16 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
         schema={schema}
         defaultValues={{
           name: request.name,
-          documents: data
+          details: data
         }}
         className={'mt-4 flex flex-col gap-3'}
         loading={updateDocumentRequest.isPending}
         onSubmit={values => updateDocumentRequest.mutate(values)}
       >
         <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
-        <DocumentRequestDetailListField
+        <RequestDetailListField
           schema={schema}
-          name={'documents'}
+          name={'details'}
           options={{ documentId: '' }}
         />
         <DialogFooter className={'mt-4'}>
