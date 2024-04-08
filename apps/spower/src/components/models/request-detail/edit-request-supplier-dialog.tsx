@@ -18,7 +18,7 @@ import {
 import {
   RequestDetailSupplierData,
   useUpdateRequestDetailSupplier
-} from '../../../api/request';
+} from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
 const schema = object().shape({

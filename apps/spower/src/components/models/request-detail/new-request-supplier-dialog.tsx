@@ -15,7 +15,7 @@ import {
   NumericField
 } from '@storeo/theme';
 
-import { useCreateRequestDetailSupplier } from '../../../api/request';
+import { useCreateRequestDetailSupplier } from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
 const schema = object().shape({

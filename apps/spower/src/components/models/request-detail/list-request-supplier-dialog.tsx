@@ -26,13 +26,13 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData } from '../../../api';
 import {
+  DetailData,
   RequestDetailSupplierData,
   getAllRequestDetailSuppliersKey,
   useDeleteRequestDetailSupplier,
   useGetAllRequestDetailSuppliers
-} from '../../../api/request';
+} from '../../../api';
 import { EditRequestSupplierDialog } from './edit-request-supplier-dialog';
 import { NewRequestSupplierDialog } from './new-request-supplier-dialog';
 
