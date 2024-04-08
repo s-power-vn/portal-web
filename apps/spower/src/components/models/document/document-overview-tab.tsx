@@ -1,4 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
   Row,
@@ -35,7 +36,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData, useDeleteDetails, useGetAllDetails } from '../../../api';
+import { DetailData, getAllDetails, useDeleteDetails } from '../../../api';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
@@ -52,16 +53,22 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<DetailData>>();
 
-  const details = useGetAllDetails(documentId);
+  const details = useSuspenseQuery(getAllDetails(documentId));
   const deleteDetails = useDeleteDetails(documentId);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const data = useMemo(
-    () => arrayToTree(details.data ?? [], `${documentId}_root`),
-    [details.data]
-  );
+  const data = useMemo(() => {
+    const v = details.data.map(it => {
+      return {
+        ...it,
+        group: it.id
+      };
+    });
+
+    return arrayToTree(v, `${documentId}_root`);
+  }, [details.data, documentId]);
 
   const columnHelper = createColumnHelper<DetailData>();
 

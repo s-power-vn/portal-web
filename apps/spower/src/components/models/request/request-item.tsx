@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
   RowSelectionState,
@@ -33,6 +33,7 @@ import {
 
 import {
   RequestDetailData,
+  getAllRequestsKey,
   getRequestById,
   useDeleteRequest
 } from '../../../api';
@@ -56,8 +57,15 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const request = useSuspenseQuery(getRequestById(requestId));
+  const queryClient = useQueryClient();
 
-  const deleteRequest = useDeleteRequest();
+  const deleteRequest = useDeleteRequest(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: getAllRequestsKey(request.data.document)
+      })
+    ]);
+  });
 
   const requests = useMemo(() => {
     const v = _.chain(

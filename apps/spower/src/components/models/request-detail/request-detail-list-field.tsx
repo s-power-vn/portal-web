@@ -17,8 +17,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { RequestDetailData } from '../../../api';
-import { TreeData } from '../../../commons/utils';
+import { DetailData } from '../../../api';
 import { PickDetailDialog } from '../detail/pick-detail-dialog';
 
 export type DocumentRequestDetailListProps = {
@@ -39,8 +38,6 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
     name: 'details',
     keyName: 'uid'
   });
-
-  console.log(fields);
 
   useEffect(() => {
     _.chain(fields)
@@ -102,14 +99,14 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
             {fields.length ? (
               _.chain(fields)
                 .sortBy('level')
-                .map((it: TreeData<RequestDetailData>, index: number) => {
+                .map((it: DetailData, index: number) => {
                   return (
                     <TableRow key={it.id}>
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.level}
                       </TableCell>
                       <TableCell className={'border-r px-2 py-1'}>
-                        {it.expand.detail.title}
+                        {it.title}
                       </TableCell>
                       <TableCell className={'px-2 py-1'}>
                         {it.children?.length === 0 ? (

@@ -56,6 +56,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
           name: request.data?.name,
           details: data.map(it => ({
             ...it,
+            title: it.expand.detail.title,
             requestVolume: it.volume
           }))
         }}
