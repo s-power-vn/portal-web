@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
+import { client } from '@storeo/core';
 import {
   Button,
   Card,
@@ -77,7 +78,7 @@ export const Route = createFileRoute('/login')({
     return <Login />;
   },
   beforeLoad: ({ context, location }) => {
-    if (context.pb?.authStore.isValid) {
+    if (client.authStore.isValid) {
       throw redirect({
         to: '/',
         search: {

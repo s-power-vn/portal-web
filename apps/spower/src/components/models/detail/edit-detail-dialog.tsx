@@ -18,9 +18,7 @@ import {
 import { DetailData, UpdateDetailSchema, useUpdateDetail } from '../../../api';
 
 const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
-  const updateDocumentDetail = useUpdateDetail(detail.id, async () =>
-    setOpen(false)
-  );
+  const updateDetail = useUpdateDetail(detail.id, () => setOpen(false));
 
   return (
     <DialogContent className="w-96">
@@ -32,9 +30,9 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detail }) => {
       </DialogHeader>
       <Form
         schema={UpdateDetailSchema}
-        onSubmit={values => updateDocumentDetail.mutate(values)}
+        onSubmit={values => updateDetail.mutate(values)}
         defaultValues={detail}
-        loading={updateDocumentDetail.isPending}
+        loading={updateDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextareaField

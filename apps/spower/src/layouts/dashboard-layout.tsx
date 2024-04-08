@@ -28,7 +28,16 @@ const SidebarHeader = () => {
 
   return (
     <div className={'flex w-full items-center justify-center border-b p-1'}>
-      <NewDocumentDialog open={openDocumentNew} setOpen={setOpenDocumentNew} />
+      <NewDocumentDialog
+        open={openDocumentNew}
+        setOpen={setOpenDocumentNew}
+        screen={'mine'}
+        search={{
+          pageIndex: 1,
+          pageSize: 10,
+          filter: ''
+        }}
+      />
 
       <Button
         className={cn(
@@ -54,51 +63,49 @@ export type DashboardLayoutProps = {
 
 export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <>
-      <div className={'flex h-screen w-full flex-col'}>
-        <Header />
-        <div className={'flex h-full w-full grow'}>
-          <Sidebar>
-            <SidebarHeader />
+    <div className={'flex h-screen w-full flex-col'}>
+      <Header />
+      <div className={'flex h-full w-full grow'}>
+        <Sidebar>
+          <SidebarHeader />
+          <SidebarItem
+            to={'/home'}
+            icon={<LucideHome width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarGroup
+            to={'/general'}
+            title={'Quản lý chung'}
+            icon={<GearIcon width={22} height={22} />}
+          >
             <SidebarItem
-              to={'/home'}
-              icon={<LucideHome width={22} height={22} />}
-            ></SidebarItem>
-            <SidebarGroup
-              to={'/general'}
-              title={'Quản lý chung'}
-              icon={<GearIcon width={22} height={22} />}
-            >
-              <SidebarItem
-                to={'/general/employees'}
-                icon={<EmptyIcon />}
-              ></SidebarItem>
-              <SidebarItem
-                to={'/general/customers'}
-                icon={<EmptyIcon />}
-              ></SidebarItem>
-              <SidebarItem
-                to={'/general/suppliers'}
-                icon={<EmptyIcon />}
-              ></SidebarItem>
-            </SidebarGroup>
-            <SidebarItem
-              to={'/document/waiting'}
-              icon={<FileTextIcon width={22} height={22} />}
-              badge={<Badge className={'bg-red-500'}>1</Badge>}
+              to={'/general/employees'}
+              icon={<EmptyIcon />}
             ></SidebarItem>
             <SidebarItem
-              to={'/document/mine'}
-              icon={<FilePlusIcon width={22} height={22} />}
+              to={'/general/customers'}
+              icon={<EmptyIcon />}
             ></SidebarItem>
             <SidebarItem
-              to={'/document/all'}
-              icon={<FileMinusIcon width={22} height={22} />}
+              to={'/general/suppliers'}
+              icon={<EmptyIcon />}
             ></SidebarItem>
-          </Sidebar>
-          <div className={'h-full grow overflow-hidden p-2'}>{children}</div>
-        </div>
+          </SidebarGroup>
+          <SidebarItem
+            to={'/document/waiting'}
+            icon={<FileTextIcon width={22} height={22} />}
+            badge={<Badge className={'bg-red-500'}>1</Badge>}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/document/mine'}
+            icon={<FilePlusIcon width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/document/all'}
+            icon={<FileMinusIcon width={22} height={22} />}
+          ></SidebarItem>
+        </Sidebar>
+        <div className={'h-full grow overflow-hidden p-2'}>{children}</div>
       </div>
-    </>
+    </div>
   );
 };

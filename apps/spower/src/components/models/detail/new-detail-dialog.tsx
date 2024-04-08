@@ -1,6 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { number, object, string } from 'yup';
-
 import React, { FC } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -18,32 +15,12 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { DetailData, getAllDetailsKey, useCreateDetail } from '../../../api';
-
-const schema = object().shape({
-  title: string().required('Hãy nhập mô tả công việc'),
-  volume: number()
-    .transform((_, originalValue) =>
-      Number(originalValue?.toString().replace(/,/g, '.'))
-    )
-    .typeError('Sai định dạng số'),
-  unit: string(),
-  unitPrice: number()
-    .transform((_, originalValue) =>
-      Number(originalValue.toString().replace(/,/g, '.'))
-    )
-    .typeError('Sai định dạng số')
-});
+import { CreateDetailSchema, DetailData, useCreateDetail } from '../../../api';
 
 const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
-  const queryClient = useQueryClient();
-
-  const createDocumentDetail = useCreateDetail(async () => {
-    setOpen(false);
-    await queryClient.invalidateQueries({
-      queryKey: getAllDetailsKey(documentId)
-    });
-  });
+  const createDetail = useCreateDetail(documentId, parent?.id, () =>
+    setOpen(false)
+  );
 
   return (
     <DialogContent className="w-96">
@@ -63,43 +40,37 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
-        onSubmit={values =>
-          createDocumentDetail.mutate({
-            document: documentId,
-            parent: parent ? parent.id : 'root',
-            ...values
-          })
-        }
+        schema={CreateDetailSchema}
+        onSubmit={values => createDetail.mutate(values)}
         defaultValues={{
           title: '',
           volume: undefined,
           unit: '',
           unitPrice: undefined
         }}
-        loading={createDocumentDetail.isPending}
+        loading={createDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextareaField
-          schema={schema}
+          schema={CreateDetailSchema}
           name={'title'}
           title={'Mô tả công việc'}
           options={{}}
         />
         <NumericField
-          schema={schema}
+          schema={CreateDetailSchema}
           name={'volume'}
           title={'Khối lượng thầu'}
           options={{}}
         />
         <TextField
-          schema={schema}
+          schema={CreateDetailSchema}
           name={'unit'}
           title={'Đơn vị'}
           options={{}}
         />
         <NumericField
-          schema={schema}
+          schema={CreateDetailSchema}
           name={'unitPrice'}
           title={'Đơn giá thầu'}
           options={{}}

@@ -6,12 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import {
-  DetailMaxResponse,
-  DetailRecord,
-  DetailResponse,
-  client
-} from '@storeo/core';
+import { DetailMaxResponse, DetailResponse, client } from '@storeo/core';
 
 export type DetailData = DetailResponse & {
   children?: DetailData[];
@@ -55,15 +50,37 @@ export function useGetDetailById(detailId: string) {
   return useQuery(getDetailById(detailId));
 }
 
-export function useCreateDetail(onSuccess?: () => void) {
+export const CreateDetailSchema = object().shape({
+  title: string().required('Hãy nhập mô tả công việc'),
+  volume: number()
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số'),
+  unit: string(),
+  unitPrice: number()
+    .transform((_, originalValue) =>
+      Number(originalValue.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số')
+});
+
+export type CreateDetailInput = InferType<typeof CreateDetailSchema>;
+
+export function useCreateDetail(
+  documentId: string,
+  parentId?: string,
+  onSuccess?: () => void
+) {
   return useMutation({
     mutationKey: ['createDetail'],
-    mutationFn: async (params: DetailRecord) => {
+    mutationFn: async (params: CreateDetailInput) => {
       const maxInfo = await client
         .collection<DetailMaxResponse>('detailMax')
-        .getOne(params.parent ? params.parent : 'root');
+        .getOne(parentId ? parentId : `${documentId}-root`);
       return await client.collection('detail').create({
         ...params,
+        document: documentId,
         index: (maxInfo.maxIndex as number) + 1
       });
     },

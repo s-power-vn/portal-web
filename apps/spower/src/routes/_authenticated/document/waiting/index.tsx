@@ -11,7 +11,7 @@ import { EditIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { CustomerResponse, DocumentResponse, UserResponse } from '@storeo/core';
+import { DocumentResponse, UserResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -24,7 +24,11 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DocumentSearchSchema, getWaitingDocuments } from '../../../../api';
+import {
+  DocumentData,
+  DocumentSearchSchema,
+  getWaitingDocuments
+} from '../../../../api';
 import {
   DocumentStatus,
   EditDocumentDialog,
@@ -39,7 +43,7 @@ const Component = () => {
 
   const documentsQuery = useSuspenseQuery(getWaitingDocuments(search));
 
-  const columnHelper = createColumnHelper<DocumentResponse>();
+  const columnHelper = createColumnHelper<DocumentData>();
 
   const columns = [
     columnHelper.display({
@@ -63,11 +67,7 @@ const Component = () => {
     }),
     columnHelper.accessor('customer', {
       cell: ({ row }) => {
-        return (
-          row.original.expand as {
-            customer: CustomerResponse;
-          }
-        ).customer.name;
+        return row.original.expand.customer.name;
       },
       header: () => 'Chủ đầu tư',
       footer: info => info.column.id
