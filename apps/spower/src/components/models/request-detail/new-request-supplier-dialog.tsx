@@ -28,9 +28,9 @@ const Content: FC<NewRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailId
 }) => {
-  const createRequestSupplier = useCreateRequestDetailSupplier(() => {
-    setOpen(false);
-  });
+  const createRequestSupplier = useCreateRequestDetailSupplier(() =>
+    setOpen(false)
+  );
 
   return (
     <DialogContent className="w-96">

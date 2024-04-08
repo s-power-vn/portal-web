@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { array, boolean, number, object, string } from 'yup';
 
 import { Dispatch, FC, SetStateAction, useMemo } from 'react';
 
@@ -15,36 +14,19 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { RequestData, useUpdateRequest } from '../../../api/request';
+import {
+  RequestData,
+  UpdateRequestSchema,
+  useUpdateRequest
+} from '../../../api';
 import { arrayToTree, flatTree } from '../../../commons/utils';
 import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
-const schema = object().shape({
-  name: string().required('Hãy nhập nội dung'),
-  details: array()
-    .of(
-      object().shape({
-        id: string().optional(),
-        hasChild: boolean().optional(),
-        requestVolume: number()
-          .transform((_, originalValue) =>
-            Number(originalValue?.toString().replace(/,/g, '.'))
-          )
-          .typeError('Hãy nhập khối lượng yêu cầu')
-          .when('hasChild', (hasChild, schema) => {
-            return hasChild[0]
-              ? schema
-              : schema
-                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                  .required('Hãy nhập khối lượng yêu cầu');
-          })
-      })
-    )
-    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
-});
-
 const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
+  const updateDocumentRequest = useUpdateRequest(request.id, () =>
+    setOpen(false)
+  );
+
   const data = useMemo(() => {
     const v = _.chain(request.expand.requestDetail_via_request)
       .map(it => ({
@@ -57,12 +39,6 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
     return flatTree(arrayToTree(v, 'root', 'documentDetailId'));
   }, [request]);
 
-  console.log(data);
-
-  const updateDocumentRequest = useUpdateRequest(request.id, () => {
-    setOpen(false);
-  });
-
   return (
     <DialogContent className="flex min-w-[800px] flex-col">
       <DialogHeader>
@@ -72,7 +48,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={schema}
+        schema={UpdateRequestSchema}
         defaultValues={{
           name: request.name,
           details: data
@@ -81,9 +57,13 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, request }) => {
         loading={updateDocumentRequest.isPending}
         onSubmit={values => updateDocumentRequest.mutate(values)}
       >
-        <TextareaField schema={schema} name={'name'} title={'Nội dung'} />
+        <TextareaField
+          schema={UpdateRequestSchema}
+          name={'name'}
+          title={'Nội dung'}
+        />
         <RequestDetailListField
-          schema={schema}
+          schema={UpdateRequestSchema}
           name={'details'}
           options={{ documentId: '' }}
         />

@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { number, object, string } from 'yup';
 
 import { FC } from 'react';
@@ -18,7 +17,6 @@ import {
 
 import {
   RequestDetailSupplierData,
-  getAllRequestDetailSuppliersKey,
   useUpdateRequestDetailSupplier
 } from '../../../api/request';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
@@ -33,20 +31,9 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailSupplier
 }) => {
-  const queryClient = useQueryClient();
-
   const updateDocumentRequestSupplierMutation = useUpdateRequestDetailSupplier(
     requestDetailSupplier.id,
-    async () => {
-      setOpen(false);
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(
-            requestDetailSupplier.requestDetail
-          )
-        })
-      ]);
-    }
+    () => setOpen(false)
   );
 
   return (

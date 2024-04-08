@@ -6,10 +6,10 @@ import {
   RequestDetailResponse,
   RequestDetailSupplierRecord,
   RequestDetailSupplierResponse,
-  RequestRecord,
   RequestResponse,
   SupplierResponse
 } from '@storeo/core';
+import {array, boolean, InferType, number, object, string} from "yup";
 
 export type RequestData = RequestResponse & {
   expand: {
@@ -76,29 +76,103 @@ export function useGetRequestById(requestId: string) {
   return useQuery(getRequestById(requestId));
 }
 
-export function useCreateRequest(onSuccess?: () => void) {
+export const NewRequestSchema = object().shape({
+  name: string().required('Hãy nhập nội dung'),
+  details: array()
+    .of(
+      object().shape({
+        id: string().optional(),
+        hasChild: boolean().optional(),
+        requestVolume: number()
+          .transform((_, originalValue) =>
+            Number(originalValue?.toString().replace(/,/g, '.'))
+          )
+          .typeError('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            console.log(hasChild);
+            return hasChild[0]
+              ? schema
+              : schema
+                .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                .required('Hãy nhập khối lượng yêu cầu');
+          })
+      })
+    )
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
+    .required('Hãy chọn ít nhất 1 hạng mục')
+});
+
+export type NewRequestInput = InferType<typeof NewRequestSchema>;
+
+export function useCreateRequest(documentId: string, onSuccess?: () => void) {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['createRequest'],
-    mutationFn: (params: RequestRecord) =>
-      client.collection('request').create(params),
+    mutationFn: async (params: NewRequestInput) => {
+      const record = await client.collection('request').create({
+        document: documentId,
+        name: params.name
+      });
+
+      return await Promise.all(
+        params.details.map(it => {
+          return client.collection('requestDetail').create(
+            {
+              request: record.id,
+              detail: it.id,
+              volume: it.requestVolume
+            },
+            {
+              requestKey: null
+            }
+          );
+        })
+      );
+    },
     onSuccess: async () => {
       onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllRequestsKey(documentId)
+        }),
+      ])
     }
   });
 }
+
+export const UpdateRequestSchema = object().shape({
+  name: string().required('Hãy nhập nội dung'),
+  details: array()
+    .of(
+      object().shape({
+        id: string().optional(),
+        hasChild: boolean().optional(),
+        requestVolume: number()
+          .transform((_, originalValue) =>
+            Number(originalValue?.toString().replace(/,/g, '.'))
+          )
+          .typeError('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            return hasChild[0]
+              ? schema
+              : schema
+                .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                .required('Hãy nhập khối lượng yêu cầu');
+          })
+      })
+    )
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
+    .required('Hãy chọn ít nhất 1 hạng mục')
+});
+
+export type UpdateRequestInput = InferType<typeof UpdateRequestSchema>;
 
 export function useUpdateRequest(requestId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['updateRequest', requestId],
     mutationFn: (
-      params: RequestRecord & {
-        details: {
-          id?: string;
-          requestVolume?: number;
-          hasChild?: boolean;
-        }[];
-      }
+      params: UpdateRequestInput
     ) => Promise.all([
       ...params.details.filter(detail => !detail.hasChild).map(detail =>
         client.collection('requestDetail').update(<string>detail.id, {
@@ -161,13 +235,20 @@ export function useCreateRequestDetailSupplier(onSuccess?: () => void) {
     mutationKey: ['createRequestDetailSupplier'],
     mutationFn: (params: RequestDetailSupplierRecord) =>
       client
-        .collection('requestDetailSupplier')
-        .create(params),
-    onSuccess: async (_, variables) => {
+        .collection<RequestDetailSupplierData>('requestDetailSupplier')
+        .create(params, {
+          expand: 'supplier,requestDetail.detail'
+        }),
+    onSuccess: async (record) => {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(variables.requestDetail ?? '')
+          queryKey: getAllRequestDetailSuppliersKey(record.requestDetail),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getRequestByIdKey(
+            record.expand.requestDetail.request
+          )
         })
       ]);
     }
@@ -183,13 +264,20 @@ export function useUpdateRequestDetailSupplier(
     mutationKey: ['updateRequestDetailSupplier', requestDetailSupplierId],
     mutationFn: (params: RequestDetailSupplierRecord) =>
       client
-        .collection('requestDetailSupplier')
-        .update(requestDetailSupplierId, params),
-    onSuccess: async (_, variables) => {
+        .collection<RequestDetailSupplierData>('requestDetailSupplier')
+        .update(requestDetailSupplierId, params, {
+          expand: 'supplier,requestDetail.detail'
+        }),
+    onSuccess: async (record) => {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(variables.requestDetail ?? '')
+          queryKey: getAllRequestDetailSuppliersKey(record.requestDetail),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getRequestByIdKey(
+            record.expand.requestDetail.request
+          )
         })
       ]);
     }

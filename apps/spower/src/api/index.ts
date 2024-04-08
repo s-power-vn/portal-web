@@ -5,4 +5,5 @@ export * from './department';
 export * from './detail';
 export * from './document';
 export * from './employee';
+export * from './request';
 export * from './supplier';
