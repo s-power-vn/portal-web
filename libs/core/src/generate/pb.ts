@@ -12,6 +12,7 @@ export enum Collections {
 	Request = "request",
 	RequestDetail = "requestDetail",
 	RequestDetailSupplier = "requestDetailSupplier",
+	RequestSupplier = "requestSupplier",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -72,6 +73,7 @@ export type DetailInfoRecord = {
 	index?: number
 	note?: string
 	parent?: string
+	request: RecordIdString
 	requestVolume?: number
 	supplierName: string
 	supplierPrice?: number
@@ -100,7 +102,7 @@ export type DocumentRecord = {
 }
 
 export type RequestRecord = {
-	document?: RecordIdString
+	document: RecordIdString
 	name?: string
 	status?: string
 }
@@ -111,11 +113,26 @@ export type RequestDetailRecord = {
 	volume?: number
 }
 
+export enum RequestDetailSupplierStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
 export type RequestDetailSupplierRecord = {
 	price?: number
 	requestDetail?: RecordIdString
+	status?: RequestDetailSupplierStatusOptions
 	supplier?: RecordIdString
 	volume?: number
+}
+
+export enum RequestSupplierStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
+export type RequestSupplierRecord = {
+	request: RecordIdString
+	status?: RequestSupplierStatusOptions
+	supplier: RecordIdString
 }
 
 export type SupplierRecord = {
@@ -143,6 +160,7 @@ export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & Bas
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
+export type RequestSupplierResponse<Texpand = unknown> = Required<RequestSupplierRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
@@ -158,6 +176,7 @@ export type CollectionRecords = {
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
 	requestDetailSupplier: RequestDetailSupplierRecord
+	requestSupplier: RequestSupplierRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
@@ -172,6 +191,7 @@ export type CollectionResponses = {
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
 	requestDetailSupplier: RequestDetailSupplierResponse
+	requestSupplier: RequestSupplierResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }
