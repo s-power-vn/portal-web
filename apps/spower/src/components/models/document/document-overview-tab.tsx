@@ -1,3 +1,4 @@
+import { da } from '@faker-js/faker';
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -70,12 +71,18 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 
   const data = useMemo(
     () =>
-      arrayToTree(details.data, `${documentId}_root`, undefined, v => {
-        return _.chain(v)
-          .uniqBy(it => it.request)
-          .sumBy('requestVolume')
-          .value();
-      }),
+      arrayToTree(
+        details.data,
+        `${documentId}_root`,
+        undefined,
+        (value, item) => {
+          return _.chain(value)
+            .filter(it => it.group === item.group)
+            .uniqBy('request')
+            .sumBy('requestVolume')
+            .value();
+        }
+      ),
     [details.data, documentId]
   );
 
@@ -217,10 +224,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.display({
         id: 'totalRequestVolume',
         cell: ({ row }) => {
-          if (row.original.extra) {
-            return formatNumber(row.original.extra as number);
-          }
-          return null;
+          return formatNumber(row.original.extra as number);
         },
         header: () => 'Tổng KL yêu cầu',
         footer: info => info.column.id,

@@ -144,7 +144,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 30,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -156,7 +156,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 50,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -166,7 +166,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 300,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -176,7 +176,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 100,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -186,7 +186,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 100,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -196,7 +196,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 150,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.display({
@@ -206,7 +206,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 100,
         meta: {
-          hasRowSpan: true
+          hasRowSpan: 'levelRowSpan'
         }
       }),
       columnHelper.accessor('supplierUnitPrice', {
@@ -245,7 +245,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }),
       columnHelper.accessor('supplierName', {
         cell: info => info.getValue(),
-        header: () => 'NCC',
+        header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300
       })
@@ -381,7 +381,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                       >
                         {row.getVisibleCells().map(cell => {
                           return cell.column.columnDef.meta?.hasRowSpan &&
-                            cell.row.original.rowSpan === 0 ? null : (
+                            !cell.row.original[
+                              cell.column.columnDef.meta?.hasRowSpan
+                            ] ? null : (
                             <TableCell
                               key={cell.id}
                               style={{
@@ -397,7 +399,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                               )}
                               rowSpan={
                                 cell.column.columnDef.meta?.hasRowSpan
-                                  ? cell.row.original.rowSpan
+                                  ? cell.row.original[
+                                      cell.column.columnDef.meta?.hasRowSpan
+                                    ]
                                   : undefined
                               }
                             >

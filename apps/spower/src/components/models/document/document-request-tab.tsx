@@ -173,11 +173,15 @@ export const DocumentRequestTab: FC<DocumentRequestTabProps> = ({
             'bg-appGrayLight flex h-[calc(100vh-215px)] flex-col gap-4 overflow-auto rounded-md border p-4'
           }
         >
-          {requests.data
-            ? requests.data.map((request: RequestResponse) => (
-                <RequestItem key={request.id} requestId={request.id} />
-              ))
-            : null}
+          {requests.data && requests.data.length > 0 ? (
+            requests.data.map((request: RequestResponse) => (
+              <RequestItem key={request.id} requestId={request.id} />
+            ))
+          ) : (
+            <div className={'bg-appWhite rounded-md border p-4 text-center'}>
+              Chưa có yêu cầu mua hàng nào
+            </div>
+          )}
         </div>
       </div>
     </>

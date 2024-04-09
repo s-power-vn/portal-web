@@ -119,6 +119,9 @@ export function useCreateDetail(
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: getAllDetailsKey(documentId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllDetailInfosKey(documentId)
         })
       ]);
     }
@@ -151,6 +154,9 @@ export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
           queryKey: getAllDetailsKey(record.document)
         }),
         queryClient.invalidateQueries({
+          queryKey: getAllDetailInfosKey(record.document)
+        }),
+        queryClient.invalidateQueries({
           queryKey: getDetailByIdKey(detailId)
         })
       ]);
@@ -175,6 +181,9 @@ export function useDeleteDetails(documentId: string, onSuccess?: () => void) {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: getAllDetailsKey(documentId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllDetailInfosKey(documentId)
         })
       ]);
     }

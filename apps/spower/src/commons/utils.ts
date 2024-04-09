@@ -30,7 +30,8 @@ function makeRequestSpans<T>(data: TreeData<T>[]) {
   const spans: { [key: string]: number } = {};
   data.forEach(d => {
     if (d.request) {
-      spans[d.request] = (spans[d.request] || 0) + 1;
+      spans[`${d.request}${d.level}`] =
+        (spans[`${d.request}${d.level}`] || 0) + 1;
     }
   });
   return spans;
@@ -40,16 +41,17 @@ export function arrayToTree<T>(
   arr: TreeData<T>[],
   parent: string,
   parentLevel?: string,
-  extraFunction?: (arr: TreeData<T>[]) => string | number
+  extraFunction?: (arr: TreeData<T>[], it: TreeData<T>) => string | number
 ): TreeData<T>[] {
   const data = _.chain(arr)
     .filter(item => item.parent === parent)
     .map(child => {
       const level = `${parentLevel ? parentLevel + '.' : ''}${child.index + 1}`;
+      const children = arrayToTree(arr, child.group, level, extraFunction);
       return {
         ...child,
         level,
-        children: arrayToTree(arr, child.group, level, extraFunction)
+        children
       };
     })
     .sortBy('index')
@@ -58,17 +60,19 @@ export function arrayToTree<T>(
   const requestSpans = makeRequestSpans(data);
   return data.map(it => {
     const lspans = levelSpans[it.level] || 0;
-    const rspans = it.request ? requestSpans[it.request] || 0 : 1;
+    const rspans = it.request
+      ? requestSpans[`${it.request}${it.level}`] || 0
+      : 1;
     if (lspans > 0 || rspans > 0) {
       delete levelSpans[it.level];
       if (it.request) {
-        delete requestSpans[it.request];
+        delete requestSpans[`${it.request}${it.level}`];
       }
       return {
         ...it,
         levelRowSpan: lspans,
         requestRowSpan: rspans,
-        extra: extraFunction?.(data)
+        extra: extraFunction?.(data, it)
       };
     } else {
       return it;
