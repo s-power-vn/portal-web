@@ -5,6 +5,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { FC, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
+import { DetailResponse } from '@storeo/core';
 import {
   FormField,
   FormFieldProps,
@@ -17,7 +18,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData } from '../../../api';
+import { TreeData } from '../../../commons/utils';
 import { PickDetailDialog } from '../detail/pick-detail-dialog';
 
 export type DocumentRequestDetailListProps = {
@@ -99,7 +100,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
             {fields.length ? (
               _.chain(fields)
                 .sortBy('level')
-                .map((it: DetailData, index: number) => {
+                .map((it: TreeData<DetailResponse>, index: number) => {
                   return (
                     <TableRow key={it.id}>
                       <TableCell className={'border-r px-2 py-1'}>

@@ -6,14 +6,12 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { DetailMaxResponse, DetailResponse, client } from '@storeo/core';
-
-export type DetailData = DetailResponse & {
-  children?: DetailData[];
-  level?: string;
-  hasChild?: boolean;
-  requestVolume?: number;
-};
+import {
+  DetailInfoResponse,
+  DetailMaxResponse,
+  DetailResponse,
+  client
+} from '@storeo/core';
 
 export function getAllDetailsKey(documentId: string) {
   return ['getAllDetailsKey', documentId];
@@ -33,6 +31,26 @@ export function getAllDetails(documentId: string) {
 
 export function useGetAllDetails(documentId: string) {
   return useQuery(getAllDetails(documentId));
+}
+
+export function getAllDetailInfosKey(documentId: string) {
+  return ['getAllDetailInfosKey', documentId];
+}
+
+export function getAllDetailInfos(documentId: string) {
+  return queryOptions({
+    queryKey: getAllDetailInfosKey(documentId),
+    queryFn: () => {
+      return client.collection<DetailInfoResponse>('detailInfo').getFullList({
+        filter: `document = "${documentId}"`,
+        sort: '-created'
+      });
+    }
+  });
+}
+
+export function useGetAllDetailInfos(documentId: string) {
+  return useQuery(getAllDetailInfos(documentId));
 }
 
 export function getDetailByIdKey(detailId: string) {

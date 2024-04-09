@@ -6,6 +6,7 @@ export enum Collections {
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
+	DetailInfo = "detailInfo",
 	DetailMax = "detailMax",
 	Document = "document",
 	Request = "request",
@@ -59,7 +60,22 @@ export type DetailRecord = {
 	index?: number
 	note?: string
 	parent?: string
+	title: string
+	unit?: string
+	unitPrice?: number
+	volume?: number
+}
+
+export type DetailInfoRecord = {
+	document: RecordIdString
+	group?: RecordIdString
+	index?: number
+	note?: string
+	parent?: string
 	requestVolume?: number
+	supplierName: string
+	supplierPrice?: number
+	supplierVolume?: number
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -90,8 +106,8 @@ export type RequestRecord = {
 }
 
 export type RequestDetailRecord = {
-	detail?: RecordIdString
-	request?: RecordIdString
+	detail: RecordIdString
+	request: RecordIdString
 	volume?: number
 }
 
@@ -121,6 +137,7 @@ export type UserRecord = {
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
+export type DetailInfoResponse<Texpand = unknown> = Required<DetailInfoRecord> & BaseSystemFields<Texpand>
 export type DetailMaxResponse<TmaxIndex = unknown, Texpand = unknown> = Required<DetailMaxRecord<TmaxIndex>> & BaseSystemFields<Texpand>
 export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
@@ -135,6 +152,7 @@ export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
+	detailInfo: DetailInfoRecord
 	detailMax: DetailMaxRecord
 	document: DocumentRecord
 	request: RequestRecord
@@ -148,6 +166,7 @@ export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse
+	detailInfo: DetailInfoResponse
 	detailMax: DetailMaxResponse
 	document: DocumentResponse
 	request: RequestResponse

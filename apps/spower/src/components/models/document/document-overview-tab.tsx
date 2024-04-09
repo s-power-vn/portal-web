@@ -11,7 +11,6 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import {
   ArrowDownIcon,
@@ -25,7 +24,12 @@ import {
 
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { cn, formatCurrency, formatNumber } from '@storeo/core';
+import {
+  DetailInfoResponse,
+  cn,
+  formatCurrency,
+  formatNumber
+} from '@storeo/core';
 import {
   Button,
   Table,
@@ -36,8 +40,12 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData, getAllDetails, useDeleteDetails } from '../../../api';
-import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
+import { getAllDetailInfos, useDeleteDetails } from '../../../api';
+import {
+  TreeData,
+  arrayToTree,
+  getCommonPinningStyles
+} from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
@@ -51,26 +59,27 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 }) => {
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Row<DetailData>>();
+  const [selectedRow, setSelectedRow] =
+    useState<Row<TreeData<DetailInfoResponse>>>();
 
-  const details = useSuspenseQuery(getAllDetails(documentId));
+  const details = useSuspenseQuery(getAllDetailInfos(documentId));
   const deleteDetails = useDeleteDetails(documentId);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const data = useMemo(() => {
-    const v = details.data.map(it => {
-      return {
-        ...it,
-        group: it.id
-      };
-    });
+  const data = useMemo(
+    () =>
+      arrayToTree(details.data, `${documentId}_root`, undefined, v => {
+        return _.chain(v)
+          .uniqBy(it => it.request)
+          .sumBy('requestVolume')
+          .value();
+      }),
+    [details.data, documentId]
+  );
 
-    return arrayToTree(v, `${documentId}_root`);
-  }, [details.data, documentId]);
-
-  const columnHelper = createColumnHelper<DetailData>();
+  const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
 
   const columns = useMemo(
     () => [
@@ -100,7 +109,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           <div className={'flex w-full items-center justify-center'}>#</div>
         ),
         footer: info => info.column.id,
-        size: 30
+        size: 30,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.accessor('level', {
         cell: info => info.getValue(),
@@ -108,7 +120,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
-        size: 50
+        size: 50,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.display({
         id: 'select',
@@ -147,31 +162,46 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           </div>
         ),
         footer: info => info.column.id,
-        size: 30
+        size: 30,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
         header: () => 'Mô tả công việc',
         footer: info => info.column.id,
-        size: 300
+        size: 300,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.accessor('volume', {
         cell: ({ row }) => formatNumber(row.original.volume),
         header: () => 'KL thầu',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.accessor('unit', {
         cell: info => info.getValue(),
         header: () => 'Đơn vị',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.accessor('unitPrice', {
         cell: ({ row }) => formatCurrency(row.original.unitPrice),
         header: () => 'Đơn giá thầu',
         footer: info => info.column.id,
-        size: 150
+        size: 150,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.display({
         id: 'biddingTotal',
@@ -179,39 +209,78 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           formatCurrency(row.original.unitPrice * row.original.volume),
         header: () => 'Thành tiền',
         footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.display({
-        id: 'requestVolume',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
-        header: () => 'KL yêu cầu',
-        footer: info => info.column.id,
-        size: 100
+        size: 150,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.display({
         id: 'exceedVolume',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+        cell: ({ row }) => {
+          if (row.original.extra) {
+            const exceed = (row.original.extra as number) - row.original.volume;
+
+            return (
+              <div
+                className={cn(
+                  'flex w-full',
+                  exceed < 0 ? 'text-green-500' : 'text-red-500'
+                )}
+              >
+                {formatNumber(exceed < 0 ? -exceed : exceed)}
+              </div>
+            );
+          }
+          return null;
+        },
         header: () => 'KL phát sinh',
         footer: info => info.column.id,
-        size: 100
+        size: 100,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       }),
       columnHelper.display({
-        id: 'supplierUnitPrice',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+        id: 'requestVolume',
+        cell: info => formatNumber(info.row.original.requestVolume),
+        header: () => 'KL yêu cầu',
+        footer: info => info.column.id,
+        size: 100,
+        meta: {
+          hasRowSpan: 'requestRowSpan'
+        }
+      }),
+      columnHelper.accessor('supplierPrice', {
+        cell: info => formatCurrency(info.getValue()),
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
       }),
       columnHelper.display({
         id: 'exceedUnitPrice',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+        cell: ({ row }) => {
+          if (row.original.supplierPrice) {
+            const exceed = row.original.supplierPrice - row.original.unitPrice;
+            if (exceed > 0) {
+              return (
+                <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
+              );
+            } else {
+              return (
+                <span className={'text-green-500'}>
+                  {formatCurrency(-exceed)}
+                </span>
+              );
+            }
+          }
+          return null;
+        },
         header: () => 'Đơn giá phát sinh',
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.display({
-        id: 'supplier',
-        cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
+      columnHelper.accessor('supplierName', {
+        cell: info => info.getValue(),
         header: () => 'NCC',
         footer: info => info.column.id,
         size: 300
@@ -256,25 +325,11 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     manualPagination: true
   });
 
-  const { rows } = table.getRowModel();
-
   const parentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
-
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
-    overscan: 3,
-    measureElement: element => {
-      return element?.getBoundingClientRect().height;
-    }
-  });
-
-  const virtualRows = rowVirtualizer.getVirtualItems();
 
   useEffect(() => {
     const { rows } = table.getRowModel();
@@ -370,9 +425,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         </div>
         <div
           ref={parentRef}
-          className={
-            'relative h-[calc(100vh-214px)] grow overflow-auto rounded-md border'
-          }
+          className={'h-[calc(100vh-214px)] overflow-auto rounded-md border'}
         >
           <Table
             style={{
@@ -382,14 +435,13 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             <TableHeader
               className={'bg-appGrayLight'}
               style={{
-                display: 'grid',
                 position: 'sticky',
                 top: 0,
-                zIndex: 1
+                zIndex: 2
               }}
             >
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className={'!border-b-0'}>
                   {headerGroup.headers.map(header => {
                     return (
                       <TableHead
@@ -400,7 +452,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                           width: header.getSize()
                         }}
                         className={`bg-appGrayLight whitespace-nowrap p-1 after:absolute after:right-0
-                          after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
+                          after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-[''] last:after:border-r-0`}
                       >
                         {header.isPlaceholder ? null : (
                           <>
@@ -416,24 +468,13 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                position: 'relative' //needed for absolute positioning of rows
-              }}
-            >
-              {virtualRows.length ? (
-                virtualRows.map(virtualRow => {
-                  const row = rows[virtualRow.index] as Row<DetailData>;
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => {
                   return (
                     <TableRow
-                      data-index={virtualRow.index} //needed for dynamic row height measurement
-                      ref={node => rowVirtualizer.measureElement(node)} //measure dynamic row height
                       key={row.id}
-                      className={'group absolute w-full cursor-pointer'}
-                      style={{
-                        transform: `translateY(${virtualRow.start}px)` //this should always be a `style` as it changes on scroll
-                      }}
+                      className={'group w-full cursor-pointer'}
                       onClick={() => {
                         if (selectedRow?.id !== row.id) {
                           setSelectedRow(row);
@@ -443,7 +484,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                       }}
                     >
                       {row.getVisibleCells().map(cell => {
-                        return (
+                        return cell.column.columnDef.meta?.hasRowSpan &&
+                          !cell.row.original[
+                            cell.column.columnDef.meta?.hasRowSpan
+                          ] ? null : (
                           <TableCell
                             key={cell.id}
                             style={{
@@ -457,6 +501,13 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                                 ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
                                 : null
                             )}
+                            rowSpan={
+                              cell.column.columnDef.meta?.hasRowSpan
+                                ? cell.row.original[
+                                    cell.column.columnDef.meta?.hasRowSpan
+                                  ]
+                                : undefined
+                            }
                           >
                             {flexRender(
                               cell.column.columnDef.cell,

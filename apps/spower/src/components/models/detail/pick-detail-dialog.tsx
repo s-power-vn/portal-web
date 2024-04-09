@@ -19,7 +19,7 @@ import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { DialogProps, cn } from '@storeo/core';
+import { DetailResponse, DialogProps, cn } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -38,8 +38,8 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { DetailData, getAllDetails } from '../../../api';
-import { arrayToTree } from '../../../commons/utils';
+import { getAllDetails } from '../../../api';
+import { TreeData, arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
 const Content: FC<PickDetailDialogProps> = ({
@@ -65,7 +65,7 @@ const Content: FC<PickDetailDialogProps> = ({
     return arrayToTree(v, `${documentId}_root`);
   }, [details.data, documentId]);
 
-  const columnHelper = createColumnHelper<DetailData>();
+  const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
 
   const columns = useMemo(
     () => [
@@ -333,8 +333,8 @@ const Content: FC<PickDetailDialogProps> = ({
 
 export type PickDetailDialogProps = DialogProps & {
   documentId: string;
-  value?: DetailData[];
-  onChange?: (value: DetailData[]) => void;
+  value?: DetailResponse[];
+  onChange?: (value: DetailResponse[]) => void;
 };
 
 export const PickDetailDialog: FC<PickDetailDialogProps> = props => {

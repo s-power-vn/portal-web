@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { DialogProps } from '@storeo/core';
+import { DetailInfoResponse, DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -15,7 +15,8 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { CreateDetailSchema, DetailData, useCreateDetail } from '../../../api';
+import { CreateDetailSchema, useCreateDetail } from '../../../api';
+import { TreeData } from '../../../commons/utils';
 
 const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
   const createDetail = useCreateDetail(documentId, parent?.id, () =>
@@ -85,7 +86,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
 
 export type NewDetailDialogProps = DialogProps & {
   documentId: string;
-  parent?: DetailData;
+  parent?: TreeData<DetailInfoResponse>;
 };
 
 export const NewDetailDialog: FC<NewDetailDialogProps> = props => {
