@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyObject, InferType, ObjectSchema } from 'yup';
 
-import { Children, ReactNode, cloneElement, isValidElement } from 'react';
+import {
+  Children,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+  useId
+} from 'react';
 import { Controller, Path, useFormContext } from 'react-hook-form';
 
 import { cn, formatNumber } from '@storeo/core';
@@ -23,6 +29,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
   title,
   children
 }: FormFieldProps<T, S>) => {
+  const id = useId();
   const { control } = useFormContext<InferType<S>>();
 
   return (
@@ -44,7 +51,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
               onAccept?: (v: string) => void;
               value: string;
             } = {
-              id: name,
+              id,
               onChange: handleChange,
               value: typeof value === 'number' ? formatNumber(value) : value,
               ...fieldProps
@@ -65,7 +72,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
 
         return (
           <div className={'flex flex-col gap-1'}>
-            {title ? <Label htmlFor={name}>{title}</Label> : null}
+            {title ? <Label htmlFor={id}>{title}</Label> : null}
             {childrenWithProps}
             {invalid && (
               <span className={cn(`text-appError text-xs`)}>

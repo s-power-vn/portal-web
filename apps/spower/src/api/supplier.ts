@@ -112,9 +112,11 @@ export function useDeleteSupplier(onSuccess?: () => void) {
       client.collection('supplier').delete(supplierId),
     onSuccess: async () => {
       onSuccess?.();
-      await queryClient.invalidateQueries({
-        queryKey: getAllSuppliersKey()
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getAllSuppliersKey()
+        })
+      ]);
     }
   });
 }

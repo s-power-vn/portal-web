@@ -30,6 +30,7 @@ import {
   RequestDetailData,
   RequestDetailSupplierData,
   getAllRequestDetailSuppliersKey,
+  getRequestByIdKey,
   useDeleteRequestDetailSupplier,
   useGetAllRequestDetailSuppliers
 } from '../../../api';
@@ -58,6 +59,9 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: getAllRequestDetailSuppliersKey(requestDetail.id)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getRequestByIdKey(requestDetail.request)
         })
       ]);
     }
