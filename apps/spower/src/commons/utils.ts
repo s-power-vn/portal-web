@@ -58,7 +58,7 @@ export function arrayToTree<T>(
   const requestSpans = makeRequestSpans(data);
   return data.map(it => {
     const lspans = levelSpans[it.level] || 0;
-    const rspans = it.request ? requestSpans[it.request] || 0 : 0;
+    const rspans = it.request ? requestSpans[it.request] || 0 : 1;
     if (lspans > 0 || rspans > 0) {
       delete levelSpans[it.level];
       if (it.request) {

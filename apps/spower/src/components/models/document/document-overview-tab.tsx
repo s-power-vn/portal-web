@@ -215,6 +215,21 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         }
       }),
       columnHelper.display({
+        id: 'totalRequestVolume',
+        cell: ({ row }) => {
+          if (row.original.extra) {
+            return formatNumber(row.original.extra as number);
+          }
+          return null;
+        },
+        header: () => 'Tổng KL yêu cầu',
+        footer: info => info.column.id,
+        size: 120,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
+      }),
+      columnHelper.display({
         id: 'exceedVolume',
         cell: ({ row }) => {
           if (row.original.extra) {
@@ -235,7 +250,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         },
         header: () => 'KL phát sinh',
         footer: info => info.column.id,
-        size: 100,
+        size: 120,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -245,7 +260,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         cell: info => formatNumber(info.row.original.requestVolume),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
-        size: 100,
+        size: 120,
         meta: {
           hasRowSpan: 'requestRowSpan'
         }
@@ -281,7 +296,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       }),
       columnHelper.accessor('supplierName', {
         cell: info => info.getValue(),
-        header: () => 'NCC',
+        header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300
       }),
@@ -359,7 +374,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         <EditDetailDialog
           open={openDocumentDetailEdit}
           setOpen={setOpenDocumentDetailEdit}
-          detailId={selectedRow.original.id}
+          detailId={selectedRow.original.group}
         />
       ) : null}
       <div className={'flex flex-col gap-2'}>
