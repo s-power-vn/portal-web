@@ -6,7 +6,12 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { SupplierRecord, SupplierResponse, client } from '@storeo/core';
+import {
+  Collections,
+  SupplierRecord,
+  SupplierResponse,
+  client
+} from '@storeo/core';
 
 export const SuppliersSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -23,7 +28,8 @@ export function getAllSuppliersKey() {
 export function getAllSuppliers() {
   return queryOptions({
     queryKey: getAllSuppliersKey(),
-    queryFn: () => client.collection<SupplierResponse>('supplier').getFullList()
+    queryFn: () =>
+      client.collection<SupplierResponse>(Collections.Supplier).getFullList()
   });
 }
 
@@ -41,7 +47,7 @@ export function getSuppliers(search: SuppliersSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
       return client
-        .collection<SupplierResponse>('supplier')
+        .collection<SupplierResponse>(Collections.Supplier)
         .getList(search.pageIndex, search.pageSize, {
           filter,
           sort: '-created'
@@ -62,7 +68,9 @@ export function getSupplierById(supplierId: string) {
   return queryOptions({
     queryKey: getSupplierByIdKey(supplierId),
     queryFn: () =>
-      client.collection<SupplierResponse>('supplier').getOne(supplierId)
+      client
+        .collection<SupplierResponse>(Collections.Supplier)
+        .getOne(supplierId)
   });
 }
 
@@ -76,7 +84,7 @@ export function useCreateSupplier(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createSupplier'],
     mutationFn: (params: SupplierRecord) =>
-      client.collection('supplier').create<SupplierResponse>(params),
+      client.collection(Collections.Supplier).create<SupplierResponse>(params),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({ queryKey: getAllSuppliersKey() });
@@ -89,7 +97,7 @@ export function useUpdateSupplier(supplierId: string, onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['updateSupplier', supplierId],
     mutationFn: (params: SupplierRecord) =>
-      client.collection('supplier').update(supplierId, params),
+      client.collection(Collections.Supplier).update(supplierId, params),
     onSuccess: async () => {
       onSuccess?.();
       await Promise.all([
@@ -109,7 +117,7 @@ export function useDeleteSupplier(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['deleteSupplier'],
     mutationFn: (supplierId: string) =>
-      client.collection('supplier').delete(supplierId),
+      client.collection(Collections.Supplier).delete(supplierId),
     onSuccess: async () => {
       onSuccess?.();
       await Promise.all([

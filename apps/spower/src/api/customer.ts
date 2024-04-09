@@ -6,7 +6,12 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { CustomerRecord, CustomerResponse, client } from '@storeo/core';
+import {
+  Collections,
+  CustomerRecord,
+  CustomerResponse,
+  client
+} from '@storeo/core';
 
 export const CustomersSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -23,7 +28,8 @@ export function getAllCustomersKey() {
 export function getAllCustomers() {
   return queryOptions({
     queryKey: getAllCustomersKey(),
-    queryFn: () => client.collection<CustomerResponse>('customer').getFullList()
+    queryFn: () =>
+      client.collection<CustomerResponse>(Collections.Customer).getFullList()
   });
 }
 
@@ -41,7 +47,7 @@ export function getCustomers(search: CustomersSearch) {
     queryFn: () => {
       const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
       return client
-        .collection<CustomerResponse>('customer')
+        .collection<CustomerResponse>(Collections.Customer)
         .getList(search.pageIndex, search.pageSize, {
           filter,
           sort: '-created'
@@ -62,7 +68,9 @@ export function getCustomerById(customerId: string) {
   return queryOptions({
     queryKey: getCustomerByIdKey(customerId),
     queryFn: () =>
-      client.collection<CustomerResponse>('customer').getOne(customerId)
+      client
+        .collection<CustomerResponse>(Collections.Customer)
+        .getOne(customerId)
   });
 }
 
@@ -76,7 +84,7 @@ export function useCreateCustomer(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createCustomer'],
     mutationFn: (params: CustomerRecord) =>
-      client.collection('customer').create(params),
+      client.collection(Collections.Customer).create(params),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({ queryKey: getAllCustomersKey() });
@@ -89,7 +97,7 @@ export function useUpdateCustomer(customerId: string, onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['updateCustomer', customerId],
     mutationFn: (params: CustomerRecord) =>
-      client.collection('customer').update(customerId, params),
+      client.collection(Collections.Customer).update(customerId, params),
     onSuccess: async () => {
       onSuccess?.();
       await Promise.all([
@@ -109,7 +117,7 @@ export function useDeleteCustomer(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['deleteCustomer'],
     mutationFn: (customerId: string) =>
-      client.collection('customer').delete(customerId),
+      client.collection(Collections.Customer).delete(customerId),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({
