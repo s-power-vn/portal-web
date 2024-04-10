@@ -41,14 +41,10 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export enum ContractStatusOptions {
-	"ToDo" = "ToDo",
-	"Done" = "Done",
-}
 export type ContractRecord = {
-	attachFiles?: string[]
+	count?: number
+	note?: string
 	request: RecordIdString
-	status?: ContractStatusOptions
 	supplier: RecordIdString
 }
 
@@ -113,6 +109,7 @@ export type DocumentRecord = {
 }
 
 export type RequestRecord = {
+	createdBy?: RecordIdString
 	document: RecordIdString
 	name?: string
 	status?: string
