@@ -19,12 +19,12 @@ const Component = () => {
             Yêu cầu mua hàng
           </Link>
         </TabsTrigger>
-        <TabsTrigger value="contract">
+        <TabsTrigger value="contract" asChild>
           <Link to={'/document/waiting/$documentId/contract'}>
             Hợp đồng NCC
           </Link>
         </TabsTrigger>
-        <TabsTrigger value="delivery">
+        <TabsTrigger value="delivery" asChild>
           <Link to={'/document/waiting/$documentId/delivery'}>
             Tài liệu bàn giao
           </Link>
