@@ -19,8 +19,16 @@ const Component = () => {
             Yêu cầu mua hàng
           </Link>
         </TabsTrigger>
-        <TabsTrigger value="contract">Hợp đồng NCC</TabsTrigger>
-        <TabsTrigger value="delivery">Tài liệu bàn giao</TabsTrigger>
+        <TabsTrigger value="contract">
+          <Link to={'/document/waiting/$documentId/contract'}>
+            Hợp đồng NCC
+          </Link>
+        </TabsTrigger>
+        <TabsTrigger value="delivery">
+          <Link to={'/document/waiting/$documentId/delivery'}>
+            Tài liệu bàn giao
+          </Link>
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="request">
         <Suspense fallback={'Đang tải...'}>

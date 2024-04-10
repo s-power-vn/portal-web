@@ -36,6 +36,8 @@ import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './ro
 import { Route as AuthenticatedGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/general/customers/$customerId/edit'
 import { Route as AuthenticatedDocumentWaitingDocumentIdRequestImport } from './routes/_authenticated/document/waiting/$documentId/request'
 import { Route as AuthenticatedDocumentWaitingDocumentIdOverviewImport } from './routes/_authenticated/document/waiting/$documentId/overview'
+import { Route as AuthenticatedDocumentWaitingDocumentIdDeliveryImport } from './routes/_authenticated/document/waiting/$documentId/delivery'
+import { Route as AuthenticatedDocumentWaitingDocumentIdContractImport } from './routes/_authenticated/document/waiting/$documentId/contract'
 import { Route as AuthenticatedDocumentMineDocumentIdEditImport } from './routes/_authenticated/document/mine/$documentId/edit'
 import { Route as AuthenticatedDocumentAllDocumentIdEditImport } from './routes/_authenticated/document/all/$documentId/edit'
 
@@ -183,6 +185,18 @@ const AuthenticatedDocumentWaitingDocumentIdOverviewRoute =
     getParentRoute: () => AuthenticatedDocumentWaitingDocumentIdRoute,
   } as any)
 
+const AuthenticatedDocumentWaitingDocumentIdDeliveryRoute =
+  AuthenticatedDocumentWaitingDocumentIdDeliveryImport.update({
+    path: '/delivery',
+    getParentRoute: () => AuthenticatedDocumentWaitingDocumentIdRoute,
+  } as any)
+
+const AuthenticatedDocumentWaitingDocumentIdContractRoute =
+  AuthenticatedDocumentWaitingDocumentIdContractImport.update({
+    path: '/contract',
+    getParentRoute: () => AuthenticatedDocumentWaitingDocumentIdRoute,
+  } as any)
+
 const AuthenticatedDocumentMineDocumentIdEditRoute =
   AuthenticatedDocumentMineDocumentIdEditImport.update({
     path: '/$documentId/edit',
@@ -283,6 +297,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentMineDocumentIdEditImport
       parentRoute: typeof AuthenticatedDocumentMineImport
     }
+    '/_authenticated/document/waiting/$documentId/contract': {
+      preLoaderRoute: typeof AuthenticatedDocumentWaitingDocumentIdContractImport
+      parentRoute: typeof AuthenticatedDocumentWaitingDocumentIdImport
+    }
+    '/_authenticated/document/waiting/$documentId/delivery': {
+      preLoaderRoute: typeof AuthenticatedDocumentWaitingDocumentIdDeliveryImport
+      parentRoute: typeof AuthenticatedDocumentWaitingDocumentIdImport
+    }
     '/_authenticated/document/waiting/$documentId/overview': {
       preLoaderRoute: typeof AuthenticatedDocumentWaitingDocumentIdOverviewImport
       parentRoute: typeof AuthenticatedDocumentWaitingDocumentIdImport
@@ -341,6 +363,8 @@ export const routeTree = rootRoute.addChildren([
     ]),
     AuthenticatedDocumentWaitingRoute.addChildren([
       AuthenticatedDocumentWaitingDocumentIdRoute.addChildren([
+        AuthenticatedDocumentWaitingDocumentIdContractRoute,
+        AuthenticatedDocumentWaitingDocumentIdDeliveryRoute,
         AuthenticatedDocumentWaitingDocumentIdOverviewRoute,
         AuthenticatedDocumentWaitingDocumentIdRequestRoute,
         AuthenticatedDocumentWaitingDocumentIdIndexRoute,

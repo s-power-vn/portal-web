@@ -4,12 +4,12 @@ import React, { Suspense } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
-import { DocumentOverviewTab } from '../../../../../components';
+import { DocumentDeliveryTab } from '../../../../../components';
 
 const Component = () => {
   const { documentId } = Route.useParams();
   return (
-    <Tabs defaultValue={'overview'}>
+    <Tabs defaultValue={'delivery'}>
       <TabsList className="grid w-full flex-none grid-cols-4">
         <TabsTrigger value="overview" asChild>
           <Link to={'/document/waiting/$documentId/overview'}>Tổng quan</Link>
@@ -30,9 +30,9 @@ const Component = () => {
           </Link>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="overview">
+      <TabsContent value="delivery">
         <Suspense fallback={'Đang tải...'}>
-          <DocumentOverviewTab documentId={documentId} />
+          <DocumentDeliveryTab documentId={documentId} />
         </Suspense>
       </TabsContent>
     </Tabs>
@@ -40,8 +40,8 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/document/waiting/$documentId/overview'
+  '/_authenticated/document/waiting/$documentId/delivery'
 )({
   component: Component,
-  beforeLoad: () => ({ title: 'Tổng quan' })
+  beforeLoad: () => ({ title: 'Tài liệu bàn giao' })
 });

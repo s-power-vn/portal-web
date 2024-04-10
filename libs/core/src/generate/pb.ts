@@ -3,6 +3,7 @@
 */
 
 export enum Collections {
+	Contract = "contract",
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
@@ -12,7 +13,6 @@ export enum Collections {
 	Request = "request",
 	RequestDetail = "requestDetail",
 	RequestDetailSupplier = "requestDetailSupplier",
-	RequestSupplier = "requestSupplier",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -40,6 +40,17 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export enum ContractStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
+export type ContractRecord = {
+	attachFiles?: string[]
+	request: RecordIdString
+	status?: ContractStatusOptions
+	supplier: RecordIdString
+}
 
 export type CustomerRecord = {
 	address?: string
@@ -125,16 +136,6 @@ export type RequestDetailSupplierRecord = {
 	volume?: number
 }
 
-export enum RequestSupplierStatusOptions {
-	"ToDo" = "ToDo",
-	"Done" = "Done",
-}
-export type RequestSupplierRecord = {
-	request: RecordIdString
-	status?: RequestSupplierStatusOptions
-	supplier: RecordIdString
-}
-
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -151,6 +152,7 @@ export type UserRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
@@ -160,13 +162,13 @@ export type DocumentResponse<Texpand = unknown> = Required<DocumentRecord> & Bas
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
-export type RequestSupplierResponse<Texpand = unknown> = Required<RequestSupplierRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	contract: ContractRecord
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
@@ -176,12 +178,12 @@ export type CollectionRecords = {
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
 	requestDetailSupplier: RequestDetailSupplierRecord
-	requestSupplier: RequestSupplierRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
 
 export type CollectionResponses = {
+	contract: ContractResponse
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse
@@ -191,7 +193,6 @@ export type CollectionResponses = {
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
 	requestDetailSupplier: RequestDetailSupplierResponse
-	requestSupplier: RequestSupplierResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }
