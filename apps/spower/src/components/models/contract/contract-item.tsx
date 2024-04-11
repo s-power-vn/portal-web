@@ -75,7 +75,7 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
         }
       }),
       columnHelper.accessor('count', {
-        cell: ({ getValue, row, column, table }) => {
+        cell: ({ getValue, row }) => {
           const initialValue = getValue();
           const [value, setValue] = useState<string>(initialValue.toString());
           const [showInput, setShowInput] = useState(false);
@@ -121,9 +121,9 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
             </div>
           );
         },
-        header: () => 'Số lượng hợp đồng',
+        header: () => 'Số lượng HĐ',
         footer: info => info.column.id,
-        size: 150,
+        size: 100,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -133,9 +133,9 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
         cell: ({ row }) => (
           <div className={'flex justify-center'}>{row.original.count}</div>
         ),
-        header: () => 'Trạng thái hợp đồng',
+        header: () => 'Trạng thái HĐ',
         footer: info => info.column.id,
-        size: 150,
+        size: 100,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
