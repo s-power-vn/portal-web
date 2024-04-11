@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { cn } from '@storeo/core';
 import { SelectInput } from '@storeo/theme';
@@ -20,9 +20,15 @@ export type ContractStatusDropdownProps = {
 };
 
 export const ContractStatusDropdown: FC<ContractStatusDropdownProps> = ({
-  value = 'ToDo',
+  value: initialValue = 'ToDo',
   onChange
 }) => {
+  const [value, setValue] = useState<string | undefined>(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
   return (
     <SelectInput
       items={items}
@@ -33,7 +39,10 @@ export const ContractStatusDropdown: FC<ContractStatusDropdownProps> = ({
           : 'bg-green-300 hover:bg-green-400'
       )}
       value={value}
-      onChange={onChange}
+      onChange={value => {
+        setValue(value);
+        onChange?.(value);
+      }}
     />
   );
 };
