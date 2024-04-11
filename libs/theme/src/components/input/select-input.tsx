@@ -34,6 +34,7 @@ export type SelectInputProps = {
   onChange?: (value: string | undefined) => void;
   onFilter?: (value: string) => void;
   children?: ChildrenFunction;
+  className?: string;
 };
 
 export const SelectInput: FC<SelectInputProps> = ({
@@ -44,7 +45,8 @@ export const SelectInput: FC<SelectInputProps> = ({
   showSearch,
   onChange,
   onFilter,
-  children
+  children,
+  className
 }) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
@@ -71,7 +73,8 @@ export const SelectInput: FC<SelectInputProps> = ({
           aria-expanded={open}
           className={cn(
             'justify-between text-sm font-normal',
-            placeholder && !value ? 'text-muted-foreground' : 'text-appBlack'
+            placeholder && !value ? 'text-muted-foreground' : 'text-appBlack',
+            className
           )}
         >
           {value ? items.find(it => it.value === value)?.label : placeholder}

@@ -1,9 +1,13 @@
 import { PlusCircledIcon } from '@radix-ui/react-icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { FileSpreadsheetIcon } from 'lucide-react';
 
 import { FC } from 'react';
 
-import { Collections, ContractItemResponse, client } from '@storeo/core';
+import { Collections, ContractItemStatusOptions, client } from '@storeo/core';
+
+import { getContractItemById, getContractItemByIdKey } from '../../../api';
+import { ContractStatusDropdown } from './contract-status-dropdown';
 
 export type ContractItemProps = {
   itemId?: string;
@@ -11,23 +15,71 @@ export type ContractItemProps = {
 
 export const ContractItem: FC<ContractItemProps> = ({ itemId }) => {
   const item = useQuery({
-    queryKey: ['getContractItem', itemId],
-    queryFn: () => {
-      if (itemId) {
-        return client
-          .collection<ContractItemResponse>(Collections.ContractItem)
-          .getOne(itemId);
-      }
-    },
+    ...getContractItemById(itemId!),
     enabled: !!itemId
   });
 
+  const queryClient = useQueryClient();
+
+  const updateContractItem = useMutation({
+    mutationKey: ['updateContractItem', itemId],
+    mutationFn: async (params: { status: ContractItemStatusOptions }) => {
+      if (itemId) {
+        return await client
+          .collection(Collections.ContractItem)
+          .update(itemId, params);
+      }
+    },
+    onSuccess: async () => {
+      if (itemId) {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: getContractItemByIdKey(itemId)
+          })
+        ]);
+      }
+    }
+  });
+
   return (
-    <div className={'flex'}>
-      <div className={'border-r p-3'}>
-        <PlusCircledIcon className={'h-4 w-4'} />
+    <div className={'flex items-center justify-between'}>
+      <div className={'flex'}>
+        <div className={'border-r p-3'}>
+          <PlusCircledIcon className={'h-4 w-4'} />
+        </div>
+        <div className={'flex flex-col items-center justify-center p-2'}>
+          {item.data &&
+          item.data.expand.contractItemFile_via_contractItem &&
+          item.data.expand.contractItemFile_via_contractItem.length > 0 ? (
+            <div className={'flex gap-2'}>
+              <span>
+                {item.data.expand.contractItemFile_via_contractItem.length}
+              </span>
+              <span>x</span>
+              <FileSpreadsheetIcon />
+            </div>
+          ) : (
+            <span className={' text-sm italic text-gray-500'}>
+              Chưa có tài liệu nào
+            </span>
+          )}
+        </div>
       </div>
-      <div>{item.data ? <></> : <span>No data</span>}</div>
+      <div className={'border-l px-2'}>
+        {item.data ? (
+          <ContractStatusDropdown
+            value={item.data.status}
+            onChange={value => {
+              updateContractItem.mutate({
+                status:
+                  value === 'ToDo'
+                    ? ContractItemStatusOptions.ToDo
+                    : ContractItemStatusOptions.Done
+              });
+            }}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };
