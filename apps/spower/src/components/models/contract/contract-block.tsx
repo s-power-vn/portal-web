@@ -22,6 +22,7 @@ import {
 
 import { getRequestById, useUpdateContract } from '../../../api';
 import { getCommonPinningStyles } from '../../../commons/utils';
+import { ContractItem } from './contract-item';
 
 export type ContractBlockProps = {
   requestId: string;
@@ -37,6 +38,15 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         id: it.expand.supplier.id,
         name: it.expand.supplier.name
       },
+      item: {
+        id: ''
+      },
+      items:
+        it.expand.contractItem_via_contract?.map(ci => ({
+          id: ci.id,
+          index: ci.index,
+          status: ci.status
+        })) ?? [],
       id: it.id,
       count: it.count,
       note: it.note,
@@ -49,12 +59,16 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
     for (const vi of v) {
       list = [
         ...list,
-        ...[...Array(vi.count).keys()].map((_, index) => ({
-          ...vi,
-          index,
-          levelRowSpan: index === 0 ? vi.count : 0,
-          requestRowSpan: 0
-        }))
+        ...[...Array(vi.count).keys()].map((_, index) => {
+          const item = vi.items[index];
+          return {
+            ...vi,
+            index,
+            item,
+            levelRowSpan: index === 0 ? vi.count : 0,
+            requestRowSpan: 0
+          };
+        })
       ];
     }
 
@@ -141,7 +155,11 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         }
       }),
       columnHelper.accessor('index', {
-        cell: ({ row }) => row.original.index,
+        cell: ({ row }) => (
+          <ContractItem
+            itemId={row.original.item ? row.original.item.id : undefined}
+          />
+        ),
         header: () => 'Tệp đính kèm',
         footer: info => info.column.id,
         size: 400

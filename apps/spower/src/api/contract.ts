@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
   Collections,
+  ContractItemResponse,
   ContractResponse,
   SupplierResponse,
   client
@@ -12,6 +13,7 @@ import { getRequestByIdKey } from './request';
 export type ContractData = ContractResponse & {
   expand: {
     supplier: SupplierResponse;
+    contractItem_via_contract: ContractItemResponse[];
   };
 };
 

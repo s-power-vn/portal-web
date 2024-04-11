@@ -4,6 +4,8 @@
 
 export enum Collections {
 	Contract = "contract",
+	ContractItem = "contractItem",
+	ContractItemFile = "contractItemFile",
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
@@ -46,6 +48,22 @@ export type ContractRecord = {
 	note?: string
 	request: RecordIdString
 	supplier: RecordIdString
+}
+
+export enum ContractItemStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
+export type ContractItemRecord = {
+	contract: RecordIdString
+	index?: number
+	status?: ContractItemStatusOptions
+}
+
+export type ContractItemFileRecord = {
+	contractItem?: RecordIdString
+	file?: string
+	name?: string
 }
 
 export type CustomerRecord = {
@@ -150,6 +168,8 @@ export type UserRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
+export type ContractItemResponse<Texpand = unknown> = Required<ContractItemRecord> & BaseSystemFields<Texpand>
+export type ContractItemFileResponse<Texpand = unknown> = Required<ContractItemFileRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
@@ -166,6 +186,8 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 
 export type CollectionRecords = {
 	contract: ContractRecord
+	contractItem: ContractItemRecord
+	contractItemFile: ContractItemFileRecord
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
@@ -181,6 +203,8 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
 	contract: ContractResponse
+	contractItem: ContractItemResponse
+	contractItemFile: ContractItemFileResponse
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse

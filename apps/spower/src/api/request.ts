@@ -70,6 +70,7 @@ export function getRequestById(requestId: string) {
           'requestDetail_via_request.detail,' +
           'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
           'contract_via_request.supplier,' +
+          'contract_via_request.contractItem_via_contract,' +
           'createdBy.department'
       })
   });
