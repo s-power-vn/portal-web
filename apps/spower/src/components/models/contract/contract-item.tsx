@@ -5,6 +5,7 @@ import { FileSpreadsheetIcon } from 'lucide-react';
 import { FC } from 'react';
 
 import { Collections, ContractItemStatusOptions, client } from '@storeo/core';
+import { Button } from '@storeo/theme';
 
 import {
   ContractItemData,
@@ -53,8 +54,10 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId, itemId }) => {
   return (
     <div className={'flex items-center justify-between'}>
       <div className={'flex'}>
-        <div className={'border-r p-3'}>
-          <PlusCircledIcon className={'h-4 w-4'} />
+        <div className={'flex items-center border-r pl-1 pr-2'}>
+          <Button size={'icon'} className={''}>
+            <PlusCircledIcon className={'h-4 w-4'} />
+          </Button>
         </div>
         <div className={'flex flex-col items-center justify-center p-2'}>
           {item.data &&
