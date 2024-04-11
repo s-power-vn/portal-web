@@ -6,14 +6,20 @@ import { FC } from 'react';
 
 import { Collections, ContractItemStatusOptions, client } from '@storeo/core';
 
-import { getContractItemById, getContractItemByIdKey } from '../../../api';
+import {
+  ContractItemData,
+  getContractItemById,
+  getContractItemByIdKey,
+  getRequestByIdKey
+} from '../../../api';
 import { ContractStatusDropdown } from './contract-status-dropdown';
 
 export type ContractItemProps = {
+  requestId: string;
   itemId?: string;
 };
 
-export const ContractItem: FC<ContractItemProps> = ({ itemId }) => {
+export const ContractItem: FC<ContractItemProps> = ({ requestId, itemId }) => {
   const item = useQuery({
     ...getContractItemById(itemId!),
     enabled: !!itemId
@@ -26,7 +32,7 @@ export const ContractItem: FC<ContractItemProps> = ({ itemId }) => {
     mutationFn: async (params: { status: ContractItemStatusOptions }) => {
       if (itemId) {
         return await client
-          .collection(Collections.ContractItem)
+          .collection<ContractItemData>(Collections.ContractItem)
           .update(itemId, params);
       }
     },
@@ -35,6 +41,9 @@ export const ContractItem: FC<ContractItemProps> = ({ itemId }) => {
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: getContractItemByIdKey(itemId)
+          }),
+          queryClient.invalidateQueries({
+            queryKey: getRequestByIdKey(requestId)
           })
         ]);
       }
@@ -70,12 +79,14 @@ export const ContractItem: FC<ContractItemProps> = ({ itemId }) => {
           <ContractStatusDropdown
             value={item.data.status}
             onChange={value => {
-              updateContractItem.mutate({
-                status:
-                  value === 'ToDo'
-                    ? ContractItemStatusOptions.ToDo
-                    : ContractItemStatusOptions.Done
-              });
+              if (value !== item.data.status) {
+                updateContractItem.mutate({
+                  status:
+                    value === 'ToDo'
+                      ? ContractItemStatusOptions.ToDo
+                      : ContractItemStatusOptions.Done
+                });
+              }
             }}
           />
         ) : null}

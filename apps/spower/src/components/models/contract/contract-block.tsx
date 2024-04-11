@@ -144,9 +144,25 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
       }),
       columnHelper.display({
         id: 'status',
-        cell: ({ row }) => (
-          <div className={'flex justify-center'}>{row.original.count}</div>
-        ),
+        cell: ({ row }) => {
+          const successCount = row.original.items.filter(
+            it => it.status === 'Done'
+          ).length;
+          const totalCount = row.original.count;
+
+          return (
+            <div
+              className={cn(
+                'flex justify-center',
+                successCount === totalCount
+                  ? 'text-appSuccess'
+                  : 'text-appError'
+              )}
+            >
+              {successCount}/{totalCount}
+            </div>
+          );
+        },
         header: () => 'Trạng thái HĐ',
         footer: info => info.column.id,
         size: 100,
@@ -157,6 +173,7 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
       columnHelper.accessor('index', {
         cell: ({ row }) => (
           <ContractItem
+            requestId={requestId}
             itemId={row.original.item ? row.original.item.id : undefined}
           />
         ),
