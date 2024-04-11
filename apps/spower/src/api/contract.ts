@@ -14,6 +14,8 @@ import {
   client
 } from '@storeo/core';
 
+import { getRequestByIdKey } from './request';
+
 export type ContractData = ContractResponse & {
   expand: {
     supplier: SupplierResponse;
@@ -99,20 +101,22 @@ export function useCreateContract(onSuccess?: () => void) {
   });
 }
 
-export function useUpdateContract(contractId: string, onSuccess?: () => void) {
+export function useUpdateContract(onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: ['updateContract', contractId],
-    mutationFn: (params: ContractRecord) =>
-      client.collection(Collections.Contract).update(contractId, params),
-    onSuccess: async () => {
+    mutationKey: ['updateContract'],
+    mutationFn: (params: { contractId: string; count: number }) => {
+      const { contractId, ...rest } = params;
+      return client.collection(Collections.Contract).update(contractId, rest);
+    },
+    onSuccess: async data => {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getContractByIdKey(contractId)
+          queryKey: getContractByIdKey(data.id)
         }),
-        await queryClient.invalidateQueries({
-          queryKey: getAllContractsKey()
+        queryClient.invalidateQueries({
+          queryKey: getRequestByIdKey(data.request)
         })
       ]);
     }

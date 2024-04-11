@@ -407,12 +407,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             <PlusIcon />
             Thêm mục con
           </Button>
-          <Button disabled={!selectedRow} variant="outline" size="icon">
-            <ArrowUpIcon className={'h-5 w-5'} />
-          </Button>
-          <Button disabled={!selectedRow} variant="outline" size="icon">
-            <ArrowDownIcon className={'h-5 w-5'} />
-          </Button>
           <Button
             disabled={!selectedRow}
             size="icon"

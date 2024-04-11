@@ -296,29 +296,27 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         setOpen={setOpenDocumentRequestEdit}
       />
       <div className={'bg-appWhite flex flex-col rounded-md border'}>
-        <div className={'flex grow justify-between border-b p-4'}>
-          <div className={'mr-8 flex w-full flex-col gap-1'}>
-            <div className={'flex-1 text-lg font-bold'}>
-              {request.data?.name}
-            </div>
-            <div className={'max-w-96'}>
-              <div className={'flex justify-between text-sm italic'}>
+        <div className={'flex justify-between border-b p-4'}>
+          <div className={'flex h-full flex-col justify-between gap-4'}>
+            <span className={'text-lg font-bold'}>{request.data?.name}</span>
+            <div className={'text-sm italic'}>
+              <div className={'flex justify-between gap-20'}>
                 <span>Người đề nghị:</span>
                 <span>{request.data?.expand?.createdBy.name}</span>
               </div>
-              <div className={'flex justify-between text-sm italic'}>
+              <div className={'flex justify-between'}>
                 <span>Phòng ban:</span>
                 <span>
                   {request.data?.expand?.createdBy.expand.department.name}
                 </span>
               </div>
-              <div className={'flex justify-between text-sm italic'}>
+              <div className={'flex justify-between'}>
                 <span>Ngày tạo:</span>
                 <span>{formatDate(request.data?.created)}</span>
               </div>
             </div>
           </div>
-          <div className={'flex flex-none gap-2'}>
+          <div className={'flex gap-2'}>
             <Button
               disabled={
                 !(

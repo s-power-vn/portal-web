@@ -7,10 +7,11 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
-import { cn } from '@storeo/core';
+import { cn, useOutsideClick } from '@storeo/core';
 import {
+  IntegerInput,
   Table,
   TableBody,
   TableCell,
@@ -19,7 +20,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { getRequestById } from '../../../api';
+import { getRequestById, useUpdateContract } from '../../../api';
 import { getCommonPinningStyles } from '../../../commons/utils';
 
 export type ContractItemProps = {
@@ -28,6 +29,8 @@ export type ContractItemProps = {
 
 export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
   const request = useSuspenseQuery(getRequestById(requestId));
+  const updateContract = useUpdateContract();
+
   const data = useMemo(() => {
     const v = request.data.expand.contract_via_request.map(it => ({
       supplier: {
@@ -58,8 +61,6 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
     return list;
   }, [request.data]);
 
-  console.log(data);
-
   const columnHelper = createColumnHelper<(typeof data)[0]>();
 
   const columns = useMemo(
@@ -74,7 +75,52 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
         }
       }),
       columnHelper.accessor('count', {
-        cell: ({ row }) => row.original.count,
+        cell: ({ getValue, row, column, table }) => {
+          const initialValue = getValue();
+          const [value, setValue] = useState<string>(initialValue.toString());
+          const [showInput, setShowInput] = useState(false);
+          const ref = useOutsideClick(() => {
+            setShowInput(false);
+          });
+
+          const onBlur = () => {
+            updateContract.mutate({
+              contractId: row.original.id,
+              count: parseInt(value)
+            });
+          };
+
+          useEffect(() => {
+            setValue(initialValue.toString());
+          }, [initialValue]);
+
+          return (
+            <div
+              className={
+                'absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-center px-4'
+              }
+              onClick={() => {
+                setShowInput(true);
+              }}
+              ref={ref}
+            >
+              {showInput ? (
+                <IntegerInput
+                  max={10}
+                  value={value}
+                  onChange={e => {
+                    if (e.target.value) {
+                      setValue(e.target.value);
+                    }
+                  }}
+                  onBlur={onBlur}
+                />
+              ) : (
+                <span className={'pointer-events-none'}>{value}</span>
+              )}
+            </div>
+          );
+        },
         header: () => 'Số lượng hợp đồng',
         footer: info => info.column.id,
         size: 150,
@@ -84,7 +130,9 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
       }),
       columnHelper.display({
         id: 'status',
-        cell: ({ row }) => row.original.count,
+        cell: ({ row }) => (
+          <div className={'flex justify-center'}>{row.original.count}</div>
+        ),
         header: () => 'Trạng thái hợp đồng',
         footer: info => info.column.id,
         size: 150,
@@ -165,7 +213,7 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
                 {table.getRowModel().rows.length ? (
                   table.getRowModel().rows.map(row => {
                     return (
-                      <TableRow key={row.id} className={'w-full'}>
+                      <TableRow key={row.id} className={'h-14 w-full'}>
                         {row.getVisibleCells().map(cell => {
                           return cell.column.columnDef.meta?.hasRowSpan &&
                             !cell.row.original[
@@ -178,7 +226,7 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
                                 width: cell.column.getSize()
                               }}
                               className={cn(
-                                `bg-appWhite  p-1 after:absolute
+                                `bg-appWhite p-1 after:absolute
                                  after:right-0 after:top-0 after:h-full after:border-r after:content-['']`,
                                 cell.column.columnDef.meta?.hasRowSpan
                                   ? 'last:after:border-r-0'

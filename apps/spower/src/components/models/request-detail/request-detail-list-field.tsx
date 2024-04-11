@@ -83,7 +83,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
             <TableRow>
               <TableHead
                 className={
-                  'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
+                  'bg-appGrayLight flex items-center justify-center whitespace-nowrap border-r p-1'
                 }
               >
                 ID
