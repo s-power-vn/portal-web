@@ -1,28 +1,16 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-  ExpandedState,
-  RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getExpandedRowModel,
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import _ from 'lodash';
-import {
-  EditIcon,
-  SquareMinusIcon,
-  SquarePlusIcon,
-  StoreIcon
-} from 'lucide-react';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 
-import { cn, formatCurrency, formatNumber } from '@storeo/core';
+import { cn } from '@storeo/core';
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -31,167 +19,63 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import {
-  RequestDetailData,
-  getAllRequestsKey,
-  getRequestById,
-  useDeleteRequest
-} from '../../../api';
-import {
-  TreeData,
-  arrayToTree,
-  getCommonPinningStyles
-} from '../../../commons/utils';
-import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
+import { getRequestById } from '../../../api';
+import { getCommonPinningStyles } from '../../../commons/utils';
 
 export type ContractItemProps = {
   requestId: string;
 };
 
 export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
-  const [openDocumentRequestEdit, setOpenDocumentRequestEdit] = useState(false);
-  const [openListSupplier, setOpenListSupplier] = useState(false);
-
-  const [expanded, setExpanded] = useState<ExpandedState>({});
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
   const request = useSuspenseQuery(getRequestById(requestId));
-  const queryClient = useQueryClient();
+  const data = useMemo(() => {
+    const v = request.data.expand.contract_via_request.map(it => ({
+      supplier: {
+        id: it.expand.supplier.id,
+        name: it.expand.supplier.name
+      },
+      id: it.id,
+      count: it.count,
+      note: it.note,
+      index: 0,
+      levelRowSpan: 0,
+      requestRowSpan: 0
+    }));
 
-  const deleteRequest = useDeleteRequest(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: getAllRequestsKey(request.data.document)
-      })
-    ]);
-  });
-
-  const requests = useMemo(() => {
-    const v = _.chain(
-      request.data ? request.data.expand.requestDetail_via_request : []
-    )
-      .map(it => {
-        return {
-          ...it,
-          index: it.expand.detail.index,
-          group: it.expand.detail.id,
-          parent: it.expand.detail.parent,
-          suppliers: it.expand.requestDetailSupplier_via_requestDetail?.map(
-            st => {
-              return {
-                id: st.expand.supplier.id,
-                name: st.expand.supplier.name,
-                price: st.price
-              };
-            }
-          )
-        };
-      })
-      .value();
-
-    const list = [];
+    let list: typeof v = [];
     for (const vi of v) {
-      if (vi.suppliers?.length > 0) {
-        let index = 0;
-        for (const s of vi.suppliers) {
-          list.push({
-            ..._.omit(vi, ['suppliers']),
-            supplier: s.id,
-            supplierUnitPrice: s.price,
-            supplierName: s.name,
-            rowSpan: index === 0 ? vi.suppliers.length : 0
-          });
-          index++;
-        }
-      } else {
-        list.push({ ..._.omit(vi, ['suppliers']) });
-      }
+      list = [
+        ...list,
+        ...[...Array(vi.count).keys()].map((_, index) => ({
+          ...vi,
+          index,
+          levelRowSpan: index === 0 ? vi.count : 0,
+          requestRowSpan: 0
+        }))
+      ];
     }
 
-    return arrayToTree(list, `${request.data.document}_root`);
+    return list;
   }, [request.data]);
 
-  const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
+  console.log(data);
+
+  const columnHelper = createColumnHelper<(typeof data)[0]>();
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('id', {
-        cell: ({ row }) => {
-          return (
-            <div className={'flex w-full items-center '}>
-              {row.getCanExpand() ? (
-                <button
-                  className={'cursor-pointer'}
-                  onClick={e => {
-                    e.stopPropagation();
-                    row.toggleExpanded();
-                  }}
-                >
-                  {row.getIsExpanded() ? (
-                    <SquareMinusIcon width={18} height={18} />
-                  ) : (
-                    <SquarePlusIcon width={18} height={18} />
-                  )}
-                </button>
-              ) : null}
-            </div>
-          );
-        },
-        header: () => (
-          <div className={'flex w-full items-center justify-center'}>#</div>
-        ),
-        footer: info => info.column.id,
-        size: 30,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'level',
-        cell: ({ row }) => row.original.level,
-        header: () => (
-          <div className={'flex w-full items-center justify-center'}>ID</div>
-        ),
-        footer: info => info.column.id,
-        size: 50,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'title',
-        cell: ({ row }) => row.original.expand.detail.title,
-        header: () => 'Mô tả công việc',
+      columnHelper.accessor('supplier', {
+        cell: ({ row }) => row.original.supplier.name,
+        header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.display({
-        id: 'volume',
-        cell: ({ row }) => formatNumber(row.original.expand.detail.volume),
-        header: () => 'KL thầu',
-        footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'unit',
-        cell: ({ row }) => row.original.expand.detail.unit,
-        header: () => 'Đơn vị',
-        footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'unitPrice',
-        cell: ({ row }) => formatCurrency(row.original.expand.detail.unitPrice),
-        header: () => 'Đơn giá thầu',
+      columnHelper.accessor('count', {
+        cell: ({ row }) => row.original.count,
+        header: () => 'Số lượng hợp đồng',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -199,129 +83,47 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
         }
       }),
       columnHelper.display({
-        id: 'requestVolume',
-        cell: ({ row }) => formatNumber(row.original.volume),
-        header: () => 'KL yêu cầu',
+        id: 'status',
+        cell: ({ row }) => row.original.count,
+        header: () => 'Trạng thái hợp đồng',
         footer: info => info.column.id,
-        size: 100,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.accessor('supplierUnitPrice', {
-        cell: ({ row }) =>
-          row.original.supplierUnitPrice
-            ? formatCurrency(row.original.supplierUnitPrice)
-            : null,
-        header: () => 'Đơn giá NCC',
+      columnHelper.accessor('index', {
+        cell: ({ row }) => row.original.index,
+        header: () => 'Tệp đính kèm',
         footer: info => info.column.id,
-        size: 150
+        size: 400
       }),
-      columnHelper.display({
-        id: 'exceedUnitPrice',
-        cell: ({ row }) => {
-          if (row.original.supplierUnitPrice) {
-            const exceed =
-              row.original.supplierUnitPrice -
-              row.original.expand.detail.unitPrice;
-            if (exceed > 0) {
-              return (
-                <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
-              );
-            } else {
-              return (
-                <span className={'text-green-500'}>
-                  {formatCurrency(-exceed)}
-                </span>
-              );
-            }
-          }
-          return null;
-        },
-        header: () => 'Đơn giá phát sinh',
+      columnHelper.accessor('note', {
+        cell: ({ row }) => row.original.note,
+        header: () => 'Ghi chú',
         footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('supplierName', {
-        cell: info => info.getValue(),
-        header: () => 'Nhà cung cấp',
-        footer: info => info.column.id,
-        size: 300
+        size: 300,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       })
     ],
     [columnHelper]
   );
 
   const table = useReactTable({
-    data: requests,
+    data,
     columns,
-    initialState: {
-      columnPinning: {
-        left: ['id', 'level', 'title']
-      }
-    },
-    state: {
-      expanded,
-      rowSelection
-    },
-    enableRowSelection: true,
-    onExpandedChange: setExpanded,
-    onRowSelectionChange: setRowSelection,
-    getSubRows: row => row.children,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
 
-  useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
-
   return (
     <>
-      {table.getSelectedRowModel() &&
-      table.getSelectedRowModel().flatRows.length > 0 ? (
-        <ListRequestSupplierDialog
-          requestDetail={table.getSelectedRowModel().flatRows[0].original}
-          open={openListSupplier}
-          setOpen={setOpenListSupplier}
-        />
-      ) : null}
-
       <div className={'bg-appWhite flex flex-col rounded-md border'}>
         <div className={'flex justify-between border-b p-4'}>
           <div className={'flex-1 text-lg font-bold'}>{request.data?.name}</div>
-          <div className={'flex gap-2'}>
-            <Button
-              disabled={
-                !(
-                  table.getSelectedRowModel().flatRows.length > 0 &&
-                  table.getSelectedRowModel().flatRows[0].original.children
-                    ?.length === 0
-                )
-              }
-              className={'flex gap-1'}
-              onClick={() => setOpenListSupplier(true)}
-            >
-              <StoreIcon className={'h-5 w-5'} />
-              Quản lý nhà cung cấp
-            </Button>
-            <Button
-              className={'text-appWhite'}
-              size="icon"
-              onClick={() => setOpenDocumentRequestEdit(true)}
-            >
-              <EditIcon className={'h-4 w-4'} />
-            </Button>
-            <Button
-              className={'text-appWhite bg-red-500 hover:bg-red-600'}
-              size="icon"
-              onClick={() => deleteRequest.mutate(requestId)}
-            >
-              <Cross2Icon className={'h-4 w-4'} />
-            </Button>
-          </div>
         </div>
         <div className={'flex flex-col p-2'}>
           <div className={'overflow-x-auto rounded-md border pb-2'}>
@@ -363,17 +165,7 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
                 {table.getRowModel().rows.length ? (
                   table.getRowModel().rows.map(row => {
                     return (
-                      <TableRow
-                        key={row.id}
-                        className={'group w-full cursor-pointer'}
-                        onClick={() => {
-                          setRowSelection(() => {
-                            const object: Record<string, boolean> = {};
-                            object[row.id] = true;
-                            return object;
-                          });
-                        }}
-                      >
+                      <TableRow key={row.id} className={'w-full'}>
                         {row.getVisibleCells().map(cell => {
                           return cell.column.columnDef.meta?.hasRowSpan &&
                             !cell.row.original[
@@ -386,10 +178,10 @@ export const ContractItem: FC<ContractItemProps> = ({ requestId }) => {
                                 width: cell.column.getSize()
                               }}
                               className={cn(
-                                `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
-                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                                row.getIsSelected()
-                                  ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
+                                `bg-appWhite  p-1 after:absolute
+                                 after:right-0 after:top-0 after:h-full after:border-r after:content-['']`,
+                                cell.column.columnDef.meta?.hasRowSpan
+                                  ? 'last:after:border-r-0'
                                   : null
                               )}
                               rowSpan={

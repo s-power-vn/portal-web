@@ -10,6 +10,7 @@ import {
 } from '@storeo/core';
 import {array, boolean, InferType, number, object, string} from "yup";
 import {UserData} from "./employee";
+import {ContractData} from "./contract";
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
@@ -31,6 +32,7 @@ export type RequestDetailData = RequestDetailResponse & {
 export type RequestData = RequestResponse & {
   expand: {
     requestDetail_via_request: RequestDetailData[],
+    contract_via_request: ContractData[],
     createdBy: UserData
   }
 };
@@ -67,6 +69,7 @@ export function getRequestById(requestId: string) {
         expand:
           'requestDetail_via_request.detail,' +
           'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
+          'contract_via_request.supplier,' +
           'createdBy.department'
       })
   });

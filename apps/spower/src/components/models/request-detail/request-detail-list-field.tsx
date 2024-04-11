@@ -73,7 +73,13 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
       ) : null}
       <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
-          <TableHeader>
+          <TableHeader
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
+            }}
+          >
             <TableRow>
               <TableHead
                 className={

@@ -1,4 +1,3 @@
-import { da } from '@faker-js/faker';
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -158,7 +157,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           </div>
         ),
         header: () => (
-          <div className={'flex h-full w-full items-center justify-center'}>
+          <div className={'text-center'}>
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -470,8 +469,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                           ...getCommonPinningStyles(header.column),
                           width: header.getSize()
                         }}
-                        className={`bg-appGrayLight whitespace-nowrap p-1 after:absolute after:right-0
-                          after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-[''] last:after:border-r-0`}
+                        className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                          after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
+                          after:content-[''] last:after:border-r-0`}
                       >
                         {header.isPlaceholder ? null : (
                           <>
@@ -514,7 +514,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                               width: cell.column.getSize()
                             }}
                             className={cn(
-                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs
+                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs
                               after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
                               selectedRow?.id === row.id
                                 ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'

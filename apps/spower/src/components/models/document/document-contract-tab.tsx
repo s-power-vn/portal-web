@@ -24,6 +24,7 @@ import {
 } from '@storeo/theme';
 
 import { getAllRequests } from '../../../api';
+import { ContractItem } from '../contract/contract-item';
 import { RequestItem } from '../request/request-item';
 
 export type DocumentContractProps = {
@@ -159,7 +160,7 @@ export const DocumentContractTab: FC<DocumentContractProps> = ({
         >
           {requests.data && requests.data.length > 0 ? (
             requests.data.map((request: RequestResponse) => (
-              <RequestItem key={request.id} requestId={request.id} />
+              <ContractItem key={request.id} requestId={request.id} />
             ))
           ) : (
             <div className={'bg-appWhite rounded-md border p-4 text-center'}>

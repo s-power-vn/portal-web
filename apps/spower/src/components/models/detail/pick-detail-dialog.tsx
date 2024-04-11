@@ -234,15 +234,20 @@ const Content: FC<PickDetailDialogProps> = ({
             className={
               'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
             }
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
+            }}
           >
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className={'!border-b-0'}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className={
-                      'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
-                    }
+                    className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                          after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
+                          after:content-[''] last:after:border-r-0`}
                     style={{
                       width: header.column.getSize()
                     }}
@@ -280,7 +285,8 @@ const Content: FC<PickDetailDialogProps> = ({
                       style={{
                         width: cell.column.getSize()
                       }}
-                      className={'border-r px-2 py-1'}
+                      className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                      after:border-r after:content-['']`}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

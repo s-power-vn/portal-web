@@ -10,8 +10,15 @@ import {
   Collections,
   ContractRecord,
   ContractResponse,
+  SupplierResponse,
   client
 } from '@storeo/core';
+
+export type ContractData = ContractResponse & {
+  expand: {
+    supplier: SupplierResponse;
+  };
+};
 
 export const ContractsSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
