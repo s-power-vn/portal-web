@@ -27,6 +27,7 @@ export type RequestDetailData = RequestDetailResponse & {
   supplier?: string,
   supplierUnitPrice?: number,
   supplierName?: string,
+  supplierVolume?: number
 }
 
 export type RequestData = RequestResponse & {

@@ -210,11 +210,7 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         </div>
         <div className={'flex flex-col p-2'}>
           <div className={'overflow-x-auto rounded-md border pb-2'}>
-            <Table
-              style={{
-                width: table.getTotalSize()
-              }}
-            >
+            <Table>
               <TableHeader className={'bg-appGrayLight'}>
                 {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id}>

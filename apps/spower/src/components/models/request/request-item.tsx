@@ -83,7 +83,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               return {
                 id: st.expand.supplier.id,
                 name: st.expand.supplier.name,
-                price: st.price
+                price: st.price,
+                volume: st.volume
               };
             }
           )
@@ -101,6 +102,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             supplier: s.id,
             supplierUnitPrice: s.price,
             supplierName: s.name,
+            supplierVolume: s.volume,
             rowSpan: index === 0 ? vi.suppliers.length : 0
           });
           index++;
@@ -172,7 +174,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }),
       columnHelper.display({
         id: 'volume',
-        cell: ({ row }) => formatNumber(row.original.expand.detail.volume),
+        cell: ({ row }) => (
+          <div className={'flex gap-1'}>
+            <span className={'font-semibold'}>
+              {formatNumber(row.original.expand.detail.volume)}
+            </span>
+            <span>{row.original.expand.detail.unit}</span>
+          </div>
+        ),
         header: () => 'KL thầu',
         footer: info => info.column.id,
         size: 100,
@@ -181,18 +190,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         }
       }),
       columnHelper.display({
-        id: 'unit',
-        cell: ({ row }) => row.original.expand.detail.unit,
-        header: () => 'Đơn vị',
-        footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
         id: 'unitPrice',
-        cell: ({ row }) => formatCurrency(row.original.expand.detail.unitPrice),
+        cell: ({ row }) => (
+          <span className={'font-semibold'}>
+            {formatCurrency(row.original.expand.detail.unitPrice)}
+          </span>
+        ),
         header: () => 'Đơn giá thầu',
         footer: info => info.column.id,
         size: 150,
@@ -202,7 +205,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }),
       columnHelper.display({
         id: 'requestVolume',
-        cell: ({ row }) => formatNumber(row.original.volume),
+        cell: ({ row }) => (
+          <div className={'flex gap-1'}>
+            <span className={'font-semibold'}>
+              {formatNumber(row.original.volume)}
+            </span>
+            <span>{row.original.expand.detail.unit}</span>
+          </div>
+        ),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
         size: 100,
@@ -212,9 +222,11 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }),
       columnHelper.accessor('supplierUnitPrice', {
         cell: ({ row }) =>
-          row.original.supplierUnitPrice
-            ? formatCurrency(row.original.supplierUnitPrice)
-            : null,
+          row.original.supplierUnitPrice ? (
+            <span className={'font-semibold'}>
+              {formatCurrency(row.original.supplierUnitPrice)}
+            </span>
+          ) : null,
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
@@ -228,11 +240,13 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               row.original.expand.detail.unitPrice;
             if (exceed > 0) {
               return (
-                <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
+                <span className={'font-semibold text-red-500'}>
+                  {formatCurrency(exceed)}
+                </span>
               );
             } else {
               return (
-                <span className={'text-green-500'}>
+                <span className={'font-semibold text-green-500'}>
                   {formatCurrency(-exceed)}
                 </span>
               );
@@ -243,6 +257,20 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         header: () => 'Đơn giá phát sinh',
         footer: info => info.column.id,
         size: 150
+      }),
+      columnHelper.accessor('supplierVolume', {
+        cell: ({ row }) =>
+          row.original.supplierVolume ? (
+            <div className={'flex gap-1'}>
+              <span className={'font-semibold'}>
+                {formatNumber(row.original.supplierVolume)}
+              </span>
+              <span>{row.original.expand.detail.unit}</span>
+            </div>
+          ) : null,
+        header: () => 'Khối lượng NCC',
+        footer: info => info.column.id,
+        size: 100
       }),
       columnHelper.accessor('supplierName', {
         cell: info => info.getValue(),
@@ -298,7 +326,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       <div className={'bg-appWhite flex flex-col rounded-md border'}>
         <div className={'flex justify-between border-b p-4'}>
           <div className={'flex h-full flex-col justify-between gap-4'}>
-            <span className={'text-lg font-bold'}>{request.data?.name}</span>
+            <span className={'text-lg font-semibold'}>
+              {request.data?.name}
+            </span>
             <div className={'text-sm italic'}>
               <div className={'flex justify-between gap-20'}>
                 <span>Người đề nghị:</span>
