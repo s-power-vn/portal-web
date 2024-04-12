@@ -24,11 +24,6 @@ const Component = () => {
             Hợp đồng NCC
           </Link>
         </TabsTrigger>
-        <TabsTrigger value="delivery" asChild>
-          <Link to={'/document/waiting/$documentId/delivery'}>
-            Tài liệu bàn giao
-          </Link>
-        </TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
         <Suspense fallback={'Đang tải...'}>

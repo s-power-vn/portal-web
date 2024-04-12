@@ -48,29 +48,35 @@ const Component = () => {
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
-      header: () => '#'
+      cell: info => info.row.index + 1,
+      header: () => '#',
+      size: 50
     }),
     columnHelper.accessor('name', {
-      cell: info => info.getValue(),
+      cell: info => (
+        <div className={'w-[300px] truncate'}>{info.getValue()}</div>
+      ),
       header: () => 'Tên công trình',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 300
     }),
     columnHelper.accessor('bidding', {
-      cell: info => info.getValue(),
+      cell: info => (
+        <div className={'w-[300px] truncate'}>{info.getValue()}</div>
+      ),
       header: () => 'Tên gói thầu',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 300
     }),
     columnHelper.accessor('customer', {
-      cell: ({ row }) => {
-        return row.original.expand.customer.name;
-      },
+      cell: ({ row }) => (
+        <div className={'w-[200px] truncate'}>
+          {row.original.expand.customer.name}
+        </div>
+      ),
       header: () => 'Chủ đầu tư',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('assignee', {
       cell: ({ row }) => (
@@ -85,7 +91,8 @@ const Component = () => {
         />
       ),
       header: () => 'Người đang xử lý',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 150
     }),
     columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
@@ -100,12 +107,14 @@ const Component = () => {
         />
       ),
       header: () => 'Người tạo',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 150
     }),
     columnHelper.accessor('status', {
       cell: info => <DocumentStatus value={info.getValue()} />,
       header: () => 'Trạng thái',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 100
     }),
     columnHelper.display({
       id: 'actions',
@@ -128,7 +137,8 @@ const Component = () => {
           </div>
         );
       },
-      header: () => 'Thao tác'
+      header: () => 'Thao tác',
+      size: 300
     })
   ];
 
@@ -136,12 +146,7 @@ const Component = () => {
     data: documentsQuery.data?.items ?? [],
     columns,
     manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    defaultColumn: {
-      enableResizing: true,
-      size: 100,
-      maxSize: 150
-    }
+    getCoreRowModel: getCoreRowModel()
   });
 
   return (
@@ -170,8 +175,12 @@ const Component = () => {
             })
           }
         />
-        <div className={'rounded-md border'}>
-          <Table>
+        <div className={'overflow-auto rounded-md border pb-2'}>
+          <Table
+            style={{
+              width: table.getTotalSize()
+            }}
+          >
             <TableHeader className={'bg-appGrayLight'}>
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
@@ -181,6 +190,9 @@ const Component = () => {
                       className={
                         'whitespace-nowrap border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
                       }
+                      style={{
+                        width: header.getSize()
+                      }}
                     >
                       {header.isPlaceholder ? null : (
                         <>
@@ -200,7 +212,7 @@ const Component = () => {
                 table.getRowModel().rows.map(row => (
                   <TableRow
                     key={row.id}
-                    className={'cursor-pointer last:border-b-0'}
+                    className={'cursor-pointer'}
                     onClick={() =>
                       navigate({
                         to: './$documentId',
@@ -213,7 +225,10 @@ const Component = () => {
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className={'border-r px-2 py-1 last:border-r-0'}
+                        className={'border-r p-2 last:border-r-0'}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
