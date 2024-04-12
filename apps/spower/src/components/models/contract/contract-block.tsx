@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -24,6 +25,48 @@ import { getRequestById, useUpdateContract } from '../../../api';
 import { getCommonPinningStyles } from '../../../commons/utils';
 import { ContractItem } from './contract-item';
 
+export function EditableInput(props: {
+  initialValue: string;
+  onChange: (value: string) => void;
+}) {
+  const [value, setValue] = useState<string>(props.toString());
+  const [showInput, setShowInput] = useState(false);
+  const ref = useOutsideClick(() => {
+    setShowInput(false);
+  });
+
+  useEffect(() => {
+    setValue(props.initialValue.toString());
+  }, [props.initialValue]);
+
+  return (
+    <div
+      className={
+        'absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-center px-4'
+      }
+      onClick={() => {
+        setShowInput(true);
+      }}
+      ref={ref}
+    >
+      {showInput ? (
+        <IntegerInput
+          max={10}
+          value={value}
+          onChange={e => {
+            if (e.target.value) {
+              setValue(e.target.value);
+            }
+          }}
+          onBlur={() => props.onChange?.(value)}
+        />
+      ) : (
+        <span className={'pointer-events-none'}>{value}</span>
+      )}
+    </div>
+  );
+}
+
 export type ContractBlockProps = {
   requestId: string;
 };
@@ -38,9 +81,7 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         id: it.expand.supplier.id,
         name: it.expand.supplier.name
       },
-      item: {
-        id: ''
-      },
+      item: undefined as any,
       items:
         it.expand.contractItem_via_contract?.map(ci => ({
           id: ci.id,
@@ -60,7 +101,7 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
       list = [
         ...list,
         ...[...Array(vi.count).keys()].map((_, index) => {
-          const item = vi.items[index];
+          const item = vi.items.find(i => i.index === index);
           return {
             ...vi,
             index,
@@ -89,52 +130,17 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         }
       }),
       columnHelper.accessor('count', {
-        cell: ({ getValue, row }) => {
-          const initialValue = getValue();
-          const [value, setValue] = useState<string>(initialValue.toString());
-          const [showInput, setShowInput] = useState(false);
-          const ref = useOutsideClick(() => {
-            setShowInput(false);
-          });
-
-          const onBlur = () => {
-            updateContract.mutate({
-              contractId: row.original.id,
-              count: parseInt(value)
-            });
-          };
-
-          useEffect(() => {
-            setValue(initialValue.toString());
-          }, [initialValue]);
-
-          return (
-            <div
-              className={
-                'absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-center px-4'
-              }
-              onClick={() => {
-                setShowInput(true);
-              }}
-              ref={ref}
-            >
-              {showInput ? (
-                <IntegerInput
-                  max={10}
-                  value={value}
-                  onChange={e => {
-                    if (e.target.value) {
-                      setValue(e.target.value);
-                    }
-                  }}
-                  onBlur={onBlur}
-                />
-              ) : (
-                <span className={'pointer-events-none'}>{value}</span>
-              )}
-            </div>
-          );
-        },
+        cell: ({ getValue, row }) => (
+          <EditableInput
+            initialValue={getValue().toString()}
+            onChange={value => {
+              updateContract.mutate({
+                contractId: row.original.id,
+                count: parseInt(value)
+              });
+            }}
+          />
+        ),
         header: () => 'Số lượng HĐ',
         footer: info => info.column.id,
         size: 100,
@@ -174,6 +180,8 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         cell: ({ row }) => (
           <ContractItem
             requestId={requestId}
+            contractId={row.original.id}
+            index={row.original.index}
             itemId={row.original.item ? row.original.item.id : undefined}
           />
         ),
@@ -191,7 +199,7 @@ export const ContractBlock: FC<ContractBlockProps> = ({ requestId }) => {
         }
       })
     ],
-    [columnHelper]
+    [columnHelper, requestId, updateContract]
   );
 
   const table = useReactTable({
