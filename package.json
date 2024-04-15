@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nx serve spower",
     "build": "nx build spower",
-    "pb": "pocketbase-typegen --no-sdk --db ../api/pb_data/data.db -o libs/core/src/generate/pb.ts"
+    "pb": "pocketbase-typegen --db ../api/pb_data/data.db -o libs/core/src/generate/pb.ts"
   },
   "private": true,
   "dependencies": {

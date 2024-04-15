@@ -6,12 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import {
-  DetailInfoResponse,
-  DetailMaxResponse,
-  DetailResponse,
-  client
-} from '@storeo/core';
+import { DetailInfoResponse, DetailResponse, client } from '@storeo/core';
 
 export function getAllDetailsKey(documentId: string) {
   return ['getAllDetailsKey', documentId];
@@ -96,22 +91,10 @@ export function useCreateDetail(
     mutationKey: ['createDetail'],
     mutationFn: async (params: CreateDetailInput) => {
       const parent = parentId ? parentId : `${documentId}-root`;
-
-      let index = 0;
-      try {
-        const maxInfo = await client
-          .collection<DetailMaxResponse>('detailMax')
-          .getOne(parent);
-        index = maxInfo.maxIndex as number;
-      } catch (e) {
-        /**/
-      }
-
       return await client.collection('detail').create({
         ...params,
         document: documentId,
-        parent,
-        index: index + 1
+        parent
       });
     },
     onSuccess: async () => {

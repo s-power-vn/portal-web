@@ -4,7 +4,7 @@ export * from './contract';
 export * from './customer';
 export * from './department';
 export * from './detail';
-export * from './document';
+export * from './project';
 export * from './employee';
 export * from './request';
 export * from './supplier';

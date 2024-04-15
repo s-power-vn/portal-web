@@ -10,7 +10,6 @@ import {
 } from '@storeo/core';
 import {array, boolean, InferType, number, object, string} from "yup";
 import {UserData} from "./employee";
-import {ContractData} from "./contract";
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
@@ -33,7 +32,6 @@ export type RequestDetailData = RequestDetailResponse & {
 export type RequestData = RequestResponse & {
   expand: {
     requestDetail_via_request: RequestDetailData[],
-    contract_via_request: ContractData[],
     createdBy: UserData
   }
 };
@@ -94,7 +92,6 @@ export const CreateRequestSchema = object().shape({
           )
           .typeError('Hãy nhập khối lượng yêu cầu')
           .when('hasChild', (hasChild, schema) => {
-            console.log(hasChild);
             return hasChild[0]
               ? schema
               : schema
@@ -116,7 +113,8 @@ export function useCreateRequest(documentId: string, onSuccess?: () => void) {
     mutationFn: async (params: CreateRequestInput) => {
       const record = await client.collection('request').create({
         document: documentId,
-        name: params.name
+        name: params.name,
+        createdBy: client.authStore.model?.id,
       });
 
       return await Promise.all(
