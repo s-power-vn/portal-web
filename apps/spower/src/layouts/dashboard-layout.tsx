@@ -1,16 +1,10 @@
-import {
-  FileMinusIcon,
-  FilePlusIcon,
-  FileTextIcon,
-  GearIcon
-} from '@radix-ui/react-icons';
+import { FileTextIcon, GearIcon } from '@radix-ui/react-icons';
 import { LucideHome, PackagePlusIcon } from 'lucide-react';
 
 import { FC, ReactNode, useState } from 'react';
 
 import { cn } from '@storeo/core';
 import {
-  Badge,
   Button,
   Sidebar,
   SidebarGroup,
@@ -18,19 +12,19 @@ import {
   useSidebar
 } from '@storeo/theme';
 
-import { Header, NewDocumentDialog } from '../components';
+import { Header, NewProjectDialog } from '../components';
 
 const EmptyIcon = () => <span></span>;
 
 const SidebarHeader = () => {
-  const [openDocumentNew, setOpenDocumentNew] = useState(false);
+  const [openProjectNew, setOpenProjectNew] = useState(false);
   const { collapsed } = useSidebar();
 
   return (
     <div className={'flex w-full items-center justify-center border-b p-1'}>
-      <NewDocumentDialog
-        open={openDocumentNew}
-        setOpen={setOpenDocumentNew}
+      <NewProjectDialog
+        open={openProjectNew}
+        setOpen={setOpenProjectNew}
         screen={'mine'}
         search={{
           pageIndex: 1,
@@ -44,13 +38,13 @@ const SidebarHeader = () => {
           'flex w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
           collapsed && 'gap-0'
         )}
-        onClick={() => setOpenDocumentNew(true)}
+        onClick={() => setOpenProjectNew(true)}
       >
         <PackagePlusIcon />
         <span
           className={cn('transition-opacity', collapsed && `w-0 opacity-0`)}
         >
-          Tạo tài liệu
+          Tạo dự án
         </span>
       </Button>
     </div>
@@ -91,17 +85,8 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             ></SidebarItem>
           </SidebarGroup>
           <SidebarItem
-            to={'/document/waiting'}
+            to={'/project'}
             icon={<FileTextIcon width={22} height={22} />}
-            badge={<Badge className={'bg-red-500'}>1</Badge>}
-          ></SidebarItem>
-          <SidebarItem
-            to={'/document/mine'}
-            icon={<FilePlusIcon width={22} height={22} />}
-          ></SidebarItem>
-          <SidebarItem
-            to={'/document/all'}
-            icon={<FileMinusIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
         <div className={'h-full grow overflow-hidden p-2'}>{children}</div>

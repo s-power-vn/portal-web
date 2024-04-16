@@ -13,8 +13,6 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   DownloadIcon,
   EditIcon,
   SheetIcon,
@@ -51,38 +49,33 @@ import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
 
 export type DocumentOverviewProps = {
-  documentId: string;
+  projectId: string;
 };
 
 export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
-  documentId
+  projectId
 }) => {
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
 
-  const details = useSuspenseQuery(getAllDetailInfos(documentId));
-  const deleteDetails = useDeleteDetails(documentId);
+  const details = useSuspenseQuery(getAllDetailInfos(projectId));
+  const deleteDetails = useDeleteDetails(projectId);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const data = useMemo(
     () =>
-      arrayToTree(
-        details.data,
-        `${documentId}_root`,
-        undefined,
-        (value, item) => {
-          return _.chain(value)
-            .filter(it => it.group === item.group)
-            .uniqBy('request')
-            .sumBy('requestVolume')
-            .value();
-        }
-      ),
-    [details.data, documentId]
+      arrayToTree(details.data, `${projectId}-root`, (value, item) => {
+        return _.chain(value)
+          .filter(it => it.group === item.group)
+          .uniqBy('request')
+          .sumBy('requestVolume')
+          .value();
+      }),
+    [details.data, projectId]
   );
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
@@ -370,7 +363,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       <NewDetailDialog
         open={openDocumentDetailNew}
         setOpen={setOpenDocumentDetailNew}
-        documentId={documentId}
+        projectId={projectId}
         parent={selectedRow ? selectedRow.original : undefined}
       />
       {selectedRow ? (

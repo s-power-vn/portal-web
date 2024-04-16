@@ -36,9 +36,7 @@ export function getWaitingProjects(search?: ProjectSearch) {
       return client
         ?.collection<ProjectData>('project')
         .getList(search?.pageIndex, search?.pageSize, {
-          filter:
-            filter +
-            `&& (assignee = "${client?.authStore.model?.id}") && (status = "ToDo")`,
+          filter: filter,
           sort: '-created',
           expand: 'customer,assignee,createdBy'
         });

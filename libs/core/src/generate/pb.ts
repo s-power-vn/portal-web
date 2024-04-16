@@ -67,10 +67,10 @@ export type DepartmentRecord = {
 }
 
 export type DetailRecord = {
-	document: RecordIdString
 	level: string
 	note?: string
 	parent?: string
+	project?: RecordIdString
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -78,11 +78,11 @@ export type DetailRecord = {
 }
 
 export type DetailInfoRecord = {
-	document: RecordIdString
 	group?: RecordIdString
 	level: string
 	note?: string
 	parent?: string
+	project?: RecordIdString
 	request: RecordIdString
 	requestVolume?: number
 	supplierName: string

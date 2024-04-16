@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { FC } from 'react';
 
-import { DialogProps, DocumentResponse } from '@storeo/core';
+import { DialogProps, ProjectResponse } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -16,33 +16,33 @@ import {
 } from '@storeo/theme';
 
 import {
-  DocumentSearch,
-  UpdateDocumentSchema,
-  getAllDocumentsKey,
-  getMineDocumentsKey,
-  getWaitingDocumentsKey,
-  useUpdateDocument
+  ProjectSearch,
+  UpdateProjectSchema,
+  getAllProjectsKey,
+  getMineProjectsKey,
+  getWaitingProjectsKey,
+  useUpdateProject
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
-const Content: FC<EditDocumentDialogProps> = ({
+const Content: FC<EditProjectDialogProps> = ({
   setOpen,
   search,
   screen,
-  document
+  project
 }) => {
   const queryClient = useQueryClient();
 
-  const updateDocumentMutation = useUpdateDocument(document.id, async () => {
+  const updateProjectMutation = useUpdateProject(project.id, async () => {
     setOpen(false);
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey:
           screen === 'all'
-            ? getAllDocumentsKey(search)
+            ? getAllProjectsKey(search)
             : screen === 'wating'
-              ? getWaitingDocumentsKey(search)
-              : getMineDocumentsKey(search)
+              ? getWaitingProjectsKey(search)
+              : getMineProjectsKey(search)
       })
     ]);
   });
@@ -56,26 +56,26 @@ const Content: FC<EditDocumentDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={UpdateDocumentSchema}
-        onSubmit={values => updateDocumentMutation.mutate(values)}
-        defaultValues={document}
-        loading={updateDocumentMutation.isPending}
+        schema={UpdateProjectSchema}
+        onSubmit={values => updateProjectMutation.mutate(values)}
+        defaultValues={project}
+        loading={updateProjectMutation.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={UpdateDocumentSchema}
+          schema={UpdateProjectSchema}
           name={'name'}
           title={'Tên công trình'}
           options={{}}
         />
         <TextField
-          schema={UpdateDocumentSchema}
+          schema={UpdateProjectSchema}
           name={'bidding'}
           title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
-          schema={UpdateDocumentSchema}
+          schema={UpdateProjectSchema}
           name={'customer'}
           title={'Chủ đầu tư'}
           options={{
@@ -90,13 +90,13 @@ const Content: FC<EditDocumentDialogProps> = ({
   );
 };
 
-export type EditDocumentDialogProps = DialogProps & {
+export type EditProjectDialogProps = DialogProps & {
   screen: 'wating' | 'mine' | 'all';
-  search: DocumentSearch;
-  document: DocumentResponse;
+  search: ProjectSearch;
+  project: ProjectResponse;
 };
 
-export const EditDocumentDialog: FC<EditDocumentDialogProps> = props => {
+export const EditProjectDialog: FC<EditProjectDialogProps> = props => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <Content {...props} />

@@ -8,44 +8,44 @@ import { InferType, number, object, string } from 'yup';
 
 import { DetailInfoResponse, DetailResponse, client } from '@storeo/core';
 
-export function getAllDetailsKey(documentId: string) {
-  return ['getAllDetailsKey', documentId];
+export function getAllDetailsKey(projectId: string) {
+  return ['getAllDetailsKey', projectId];
 }
 
-export function getAllDetails(documentId: string) {
+export function getAllDetails(projectId: string) {
   return queryOptions({
-    queryKey: getAllDetailsKey(documentId),
+    queryKey: getAllDetailsKey(projectId),
     queryFn: () => {
       return client.collection<DetailResponse>('detail').getFullList({
-        filter: `document = "${documentId}"`,
+        filter: `project = "${projectId}"`,
         sort: '-created'
       });
     }
   });
 }
 
-export function useGetAllDetails(documentId: string) {
-  return useQuery(getAllDetails(documentId));
+export function useGetAllDetails(projectId: string) {
+  return useQuery(getAllDetails(projectId));
 }
 
-export function getAllDetailInfosKey(documentId: string) {
-  return ['getAllDetailInfosKey', documentId];
+export function getAllDetailInfosKey(projectId: string) {
+  return ['getAllDetailInfosKey', projectId];
 }
 
-export function getAllDetailInfos(documentId: string) {
+export function getAllDetailInfos(projectId: string) {
   return queryOptions({
-    queryKey: getAllDetailInfosKey(documentId),
+    queryKey: getAllDetailInfosKey(projectId),
     queryFn: () => {
       return client.collection<DetailInfoResponse>('detailInfo').getFullList({
-        filter: `document = "${documentId}"`,
+        filter: `project = "${projectId}"`,
         sort: '-created'
       });
     }
   });
 }
 
-export function useGetAllDetailInfos(documentId: string) {
-  return useQuery(getAllDetailInfos(documentId));
+export function useGetAllDetailInfos(projectId: string) {
+  return useQuery(getAllDetailInfos(projectId));
 }
 
 export function getDetailByIdKey(detailId: string) {
@@ -64,6 +64,7 @@ export function useGetDetailById(detailId: string) {
 }
 
 export const CreateDetailSchema = object().shape({
+  level: string().required('Hãy nhập ID'),
   title: string().required('Hãy nhập mô tả công việc'),
   volume: number()
     .transform((_, originalValue) =>
@@ -81,7 +82,7 @@ export const CreateDetailSchema = object().shape({
 export type CreateDetailInput = InferType<typeof CreateDetailSchema>;
 
 export function useCreateDetail(
-  documentId: string,
+  projectId: string,
   parentId?: string,
   onSuccess?: () => void
 ) {
@@ -90,10 +91,10 @@ export function useCreateDetail(
   return useMutation({
     mutationKey: ['createDetail'],
     mutationFn: async (params: CreateDetailInput) => {
-      const parent = parentId ? parentId : `${documentId}-root`;
+      const parent = parentId ? parentId : `${projectId}-root`;
       return await client.collection('detail').create({
         ...params,
-        document: documentId,
+        project: projectId,
         parent
       });
     },
@@ -101,10 +102,10 @@ export function useCreateDetail(
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllDetailsKey(documentId)
+          queryKey: getAllDetailsKey(projectId)
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllDetailInfosKey(documentId)
+          queryKey: getAllDetailInfosKey(projectId)
         })
       ]);
     }
@@ -112,6 +113,7 @@ export function useCreateDetail(
 }
 
 export const UpdateDetailSchema = object().shape({
+  level: string().required('Hãy nhập ID'),
   title: string().required('Hãy nhập mô tả công việc'),
   volume: number()
     .transform((_, originalValue) =>
@@ -134,10 +136,10 @@ export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllDetailsKey(record.document)
+          queryKey: getAllDetailsKey(record.project)
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllDetailInfosKey(record.document)
+          queryKey: getAllDetailInfosKey(record.project)
         }),
         queryClient.invalidateQueries({
           queryKey: getDetailByIdKey(detailId)
@@ -147,14 +149,14 @@ export function useUpdateDetail(detailId: string, onSuccess?: () => void) {
   });
 }
 
-export function useDeleteDetails(documentId: string, onSuccess?: () => void) {
+export function useDeleteDetails(projectId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['deleteDetail'],
     mutationFn: (detailIds: string[]) =>
       Promise.all(
-        detailIds.map(documentId =>
-          client.collection<DetailResponse>('detail').delete(documentId, {
+        detailIds.map(projectId =>
+          client.collection<DetailResponse>('detail').delete(projectId, {
             requestKey: null
           })
         )
@@ -163,10 +165,10 @@ export function useDeleteDetails(documentId: string, onSuccess?: () => void) {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllDetailsKey(documentId)
+          queryKey: getAllDetailsKey(projectId)
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllDetailInfosKey(documentId)
+          queryKey: getAllDetailInfosKey(projectId)
         })
       ]);
     }

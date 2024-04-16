@@ -18,8 +18,8 @@ import {
 import { CreateDetailSchema, useCreateDetail } from '../../../api';
 import { TreeData } from '../../../commons/utils';
 
-const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
-  const createDetail = useCreateDetail(documentId, parent?.id, () =>
+const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
+  const createDetail = useCreateDetail(projectId, parent?.group, () =>
     setOpen(false)
   );
 
@@ -52,6 +52,12 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
         loading={createDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
+        <TextField
+          schema={CreateDetailSchema}
+          name={'level'}
+          title={'Mã công việc'}
+          options={{}}
+        />
         <TextareaField
           schema={CreateDetailSchema}
           name={'title'}
@@ -85,7 +91,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, documentId, parent }) => {
 };
 
 export type NewDetailDialogProps = DialogProps & {
-  documentId: string;
+  projectId: string;
   parent?: TreeData<DetailInfoResponse>;
 };
 

@@ -11,7 +11,7 @@ import { EditIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { DocumentResponse, UserResponse } from '@storeo/core';
+import { ProjectResponse, UserResponse } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -25,25 +25,21 @@ import {
 } from '@storeo/theme';
 
 import {
-  DocumentData,
-  DocumentSearchSchema,
-  getWaitingDocuments
-} from '../../../../api';
-import {
-  DocumentStatus,
-  EditDocumentDialog,
-  EmployeeItem
-} from '../../../../components';
+  ProjectData,
+  ProjectSearchSchema,
+  getWaitingProjects
+} from '../../../api';
+import { EditProjectDialog, EmployeeItem } from '../../../components';
 
 const Component = () => {
   const [open, setOpen] = useState(false);
-  const [document, setDocument] = useState<DocumentResponse>();
+  const [project, setProject] = useState<ProjectResponse>();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const documentsQuery = useSuspenseQuery(getWaitingDocuments(search));
+  const projectsQuery = useSuspenseQuery(getWaitingProjects(search));
 
-  const columnHelper = createColumnHelper<DocumentData>();
+  const columnHelper = createColumnHelper<ProjectData>();
 
   const columns = [
     columnHelper.display({
@@ -78,22 +74,6 @@ const Component = () => {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('assignee', {
-      cell: ({ row }) => (
-        <EmployeeItem
-          data={
-            (
-              row.original.expand as {
-                assignee: UserResponse;
-              }
-            ).assignee
-          }
-        />
-      ),
-      header: () => 'Người đang xử lý',
-      footer: info => info.column.id,
-      size: 150
-    }),
     columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
         <EmployeeItem
@@ -110,12 +90,6 @@ const Component = () => {
       footer: info => info.column.id,
       size: 150
     }),
-    columnHelper.accessor('status', {
-      cell: info => <DocumentStatus value={info.getValue()} />,
-      header: () => 'Trạng thái',
-      footer: info => info.column.id,
-      size: 100
-    }),
     columnHelper.display({
       id: 'actions',
       cell: ({ row }) => {
@@ -125,7 +99,7 @@ const Component = () => {
               className={'h-6 px-3'}
               onClick={e => {
                 e.stopPropagation();
-                setDocument(row.original);
+                setProject(row.original);
                 setOpen(true);
               }}
             >
@@ -143,7 +117,7 @@ const Component = () => {
   ];
 
   const table = useReactTable({
-    data: documentsQuery.data?.items ?? [],
+    data: projectsQuery.data?.items ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
@@ -151,11 +125,11 @@ const Component = () => {
 
   return (
     <>
-      {document ? (
-        <EditDocumentDialog
+      {project ? (
+        <EditProjectDialog
           screen={'wating'}
           search={search}
-          document={document}
+          project={project}
           open={open}
           setOpen={setOpen}
         />
@@ -215,9 +189,9 @@ const Component = () => {
                     className={'cursor-pointer'}
                     onClick={() =>
                       navigate({
-                        to: './$documentId',
+                        to: './$projectId',
                         params: {
-                          documentId: row.original.id
+                          projectId: row.original.id
                         }
                       })
                     }
@@ -252,8 +226,8 @@ const Component = () => {
           </Table>
         </div>
         <Pagination
-          totalItems={documentsQuery.data?.totalItems}
-          totalPages={documentsQuery.data?.totalPages}
+          totalItems={projectsQuery.data?.totalItems}
+          totalPages={projectsQuery.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -287,14 +261,13 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/document/waiting/')({
+export const Route = createFileRoute('/_authenticated/project/')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    DocumentSearchSchema.validateSync(search),
+    ProjectSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getWaitingDocuments(deps.search)),
-  beforeLoad: () => ({ title: 'Đang chờ xử lý' })
+    queryClient?.ensureQueryData(getWaitingProjects(deps.search))
 });

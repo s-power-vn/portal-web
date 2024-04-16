@@ -24,8 +24,6 @@ import {
 } from '@storeo/theme';
 
 import { getAllRequests } from '../../../api';
-import { ContractBlock } from '../contract/contract-block';
-import { RequestItem } from '../request/request-item';
 
 export type DocumentContractProps = {
   documentId: string;
@@ -159,9 +157,7 @@ export const DocumentContractTab: FC<DocumentContractProps> = ({
           }
         >
           {requests.data && requests.data.length > 0 ? (
-            requests.data.map((request: RequestResponse) => (
-              <ContractBlock key={request.id} requestId={request.id} />
-            ))
+            requests.data.map((request: RequestResponse) => <></>)
           ) : (
             <div className={'bg-appWhite rounded-md border p-4 text-center'}>
               Chưa có yêu cầu mua hàng nào

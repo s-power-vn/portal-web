@@ -16,6 +16,7 @@ import {
 } from '@storeo/theme';
 
 import {
+  CreateDetailSchema,
   UpdateDetailSchema,
   useGetDetailById,
   useUpdateDetail
@@ -41,6 +42,12 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
         loading={updateDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
+        <TextField
+          schema={CreateDetailSchema}
+          name={'level'}
+          title={'Mã công việc'}
+          options={{}}
+        />
         <TextareaField
           schema={UpdateDetailSchema}
           name={'title'}

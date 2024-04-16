@@ -5,9 +5,8 @@ import { CSSProperties } from 'react';
 
 export type TreeData<T> = T & {
   group: string;
-  index: number;
+  level: string;
   parent: string;
-  level?: string;
   request?: string;
   hasChild?: boolean;
   children?: TreeData<T>[];
@@ -40,21 +39,18 @@ function makeRequestSpans<T>(data: TreeData<T>[]) {
 export function arrayToTree<T>(
   arr: TreeData<T>[],
   parent: string,
-  parentLevel?: string,
   extraFunction?: (arr: TreeData<T>[], it: TreeData<T>) => string | number
 ): TreeData<T>[] {
   const data = _.chain(arr)
     .filter(item => item.parent === parent)
     .map(child => {
-      const level = `${parentLevel ? parentLevel + '.' : ''}${child.index + 1}`;
-      const children = arrayToTree(arr, child.group, level, extraFunction);
+      const children = arrayToTree(arr, child.group, extraFunction);
       return {
         ...child,
-        level,
         children
       };
     })
-    .sortBy('index')
+    .sortBy('level')
     .value();
   const levelSpans = makeLevelSpans(data);
   const requestSpans = makeRequestSpans(data);

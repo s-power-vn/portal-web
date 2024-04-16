@@ -17,33 +17,33 @@ import {
 } from '@storeo/theme';
 
 import {
-  CreateDocumentSchema,
-  DocumentSearch,
-  getAllDocumentsKey,
-  getMineDocumentsKey,
-  getWaitingDocumentsKey,
-  useCreateDocument
+  CreateProjectSchema,
+  ProjectSearch,
+  getAllProjectsKey,
+  getMineProjectsKey,
+  getWaitingProjectsKey,
+  useCreateProject
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
-const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
+const Content: FC<ProjectNewProps> = ({ setOpen, search, screen }) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
-  const createDocument = useCreateDocument(async () => {
+  const createProject = useCreateProject(async () => {
     setOpen(false);
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey:
           screen === 'all'
-            ? getAllDocumentsKey(search)
+            ? getAllProjectsKey(search)
             : screen === 'wating'
-              ? getWaitingDocumentsKey(search)
-              : getMineDocumentsKey(search)
+              ? getWaitingProjectsKey(search)
+              : getMineProjectsKey(search)
       }),
       navigate({
-        to: '/document/mine',
+        to: '/project',
         search: {
           pageIndex: 1,
           pageSize: 10,
@@ -62,30 +62,30 @@ const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={CreateDocumentSchema}
-        onSubmit={values => createDocument.mutate(values)}
+        schema={CreateProjectSchema}
+        onSubmit={values => createProject.mutate(values)}
         defaultValues={{
           name: '',
           bidding: '',
           customer: ''
         }}
-        loading={createDocument.isPending}
+        loading={createProject.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={CreateDocumentSchema}
+          schema={CreateProjectSchema}
           name={'name'}
           title={'Tên công trình'}
           options={{}}
         />
         <TextField
-          schema={CreateDocumentSchema}
+          schema={CreateProjectSchema}
           name={'bidding'}
           title={'Tên gói thầu'}
           options={{}}
         />
         <CustomerDropdownField
-          schema={CreateDocumentSchema}
+          schema={CreateProjectSchema}
           name={'customer'}
           title={'Chủ đầu tư'}
           options={{
@@ -100,12 +100,12 @@ const Content: FC<DocumentNewProps> = ({ setOpen, search, screen }) => {
   );
 };
 
-export type DocumentNewProps = DialogProps & {
+export type ProjectNewProps = DialogProps & {
   screen: 'wating' | 'mine' | 'all';
-  search: DocumentSearch;
+  search: ProjectSearch;
 };
 
-export const NewDocumentDialog: FC<DocumentNewProps> = props => {
+export const NewProjectDialog: FC<ProjectNewProps> = props => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <Content {...props} />
