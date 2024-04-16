@@ -417,7 +417,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             onClick={() => {
               const selected = table.getSelectedRowModel();
               deleteDetails
-                .mutateAsync(selected.flatRows.map(row => row.original.id))
+                .mutateAsync(selected.flatRows.map(row => row.original.group))
                 .then(() => setRowSelection({}));
             }}
           >
