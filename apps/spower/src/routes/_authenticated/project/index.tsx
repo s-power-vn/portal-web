@@ -11,7 +11,7 @@ import { EditIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { ProjectResponse, UserResponse } from '@storeo/core';
+import { ProjectResponse, formatDate } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -29,7 +29,7 @@ import {
   ProjectSearchSchema,
   getWaitingProjects
 } from '../../../api';
-import { EditProjectDialog, EmployeeItem } from '../../../components';
+import { EditProjectDialog, EmployeeDisplay } from '../../../components';
 
 const Component = () => {
   const [open, setOpen] = useState(false);
@@ -76,43 +76,23 @@ const Component = () => {
     }),
     columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
-        <EmployeeItem
-          data={
-            (
-              row.original.expand as {
-                createdBy: UserResponse;
-              }
-            ).createdBy
-          }
-        />
+        <EmployeeDisplay employeeId={row.original.createdBy} />
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id,
       size: 150
     }),
-    columnHelper.display({
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                setProject(row.original);
-                setOpen(true);
-              }}
-            >
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
-              <Cross2Icon className={'h-3 w-3'} />
-            </Button>
-          </div>
-        );
-      },
-      header: () => 'Thao tác',
-      size: 300
+    columnHelper.accessor('created', {
+      cell: ({ row }) => formatDate(row.original.created),
+      header: () => 'Ngày tạo',
+      footer: info => info.column.id,
+      size: 170
+    }),
+    columnHelper.accessor('updated', {
+      cell: ({ row }) => formatDate(row.original.updated),
+      header: () => 'Ngày cập nhật',
+      footer: info => info.column.id,
+      size: 170
     })
   ];
 

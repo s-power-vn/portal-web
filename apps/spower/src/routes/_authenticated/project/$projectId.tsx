@@ -1,6 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { BarChart3Icon, ListTodoIcon } from 'lucide-react';
+import {
+  BarChart3Icon,
+  BriefcaseBusinessIcon,
+  ListTodoIcon
+} from 'lucide-react';
 
 import { Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
 
@@ -32,7 +36,7 @@ const Component = () => {
           ></SidebarItem>
           <SidebarGroup
             to={'/project/$projectId/issue'}
-            icon={<ListTodoIcon width={22} height={22} />}
+            icon={<BriefcaseBusinessIcon width={22} height={22} />}
           >
             <SidebarItem
               to={'/project/$projectId/issue/me'}

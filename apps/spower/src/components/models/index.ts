@@ -11,4 +11,6 @@ export * from './detail/pick-detail-dialog';
 export * from './request-detail/request-detail-list-field';
 export * from './project/document-request-tab';
 export * from './request/request-item';
-export * from './employee/employee-item';
+export * from './employee/employee-display';
+export * from './issue/issue-status';
+export * from './issue/issue-type';
