@@ -70,12 +70,16 @@ export const CreateDetailSchema = object().shape({
     .transform((_, originalValue) =>
       Number(originalValue?.toString().replace(/,/g, '.'))
     )
+    .transform(value => (Number.isNaN(value) ? null : value))
+    .nullable()
     .typeError('Sai định dạng số'),
   unit: string(),
   unitPrice: number()
     .transform((_, originalValue) =>
       Number(originalValue.toString().replace(/,/g, '.'))
     )
+    .transform(value => (Number.isNaN(value) ? null : value))
+    .nullable()
     .typeError('Sai định dạng số')
 });
 
@@ -119,12 +123,16 @@ export const UpdateDetailSchema = object().shape({
     .transform((_, originalValue) =>
       Number(originalValue?.toString().replace(/,/g, '.'))
     )
+    .transform(value => (Number.isNaN(value) ? null : value))
+    .nullable()
     .typeError('Sai định dạng số'),
   unit: string(),
   unitPrice: number()
     .transform((_, originalValue) =>
       Number(originalValue.toString().replace(/,/g, '.'))
     )
+    .transform(value => (Number.isNaN(value) ? null : value))
+    .nullable()
     .typeError('Sai định dạng số')
 });
 

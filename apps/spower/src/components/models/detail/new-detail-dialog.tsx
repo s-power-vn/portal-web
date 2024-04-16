@@ -55,7 +55,7 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
         <TextField
           schema={CreateDetailSchema}
           name={'level'}
-          title={'Mã công việc'}
+          title={'ID (Mã công việc)'}
           options={{}}
         />
         <TextareaField
@@ -64,24 +64,28 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
           title={'Mô tả công việc'}
           options={{}}
         />
-        <NumericField
-          schema={CreateDetailSchema}
-          name={'volume'}
-          title={'Khối lượng thầu'}
-          options={{}}
-        />
-        <TextField
-          schema={CreateDetailSchema}
-          name={'unit'}
-          title={'Đơn vị'}
-          options={{}}
-        />
-        <NumericField
-          schema={CreateDetailSchema}
-          name={'unitPrice'}
-          title={'Đơn giá thầu'}
-          options={{}}
-        />
+        {parent ? (
+          <>
+            <NumericField
+              schema={CreateDetailSchema}
+              name={'volume'}
+              title={'Khối lượng thầu'}
+              options={{}}
+            />
+            <TextField
+              schema={CreateDetailSchema}
+              name={'unit'}
+              title={'Đơn vị'}
+              options={{}}
+            />
+            <NumericField
+              schema={CreateDetailSchema}
+              name={'unitPrice'}
+              title={'Đơn giá thầu'}
+              options={{}}
+            />
+          </>
+        ) : null}
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
         </DialogFooter>

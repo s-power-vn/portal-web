@@ -23,12 +23,12 @@ import { PickDetailDialog } from '../detail/pick-detail-dialog';
 
 export type DocumentRequestDetailListProps = {
   schema: ObjectSchema<AnyObject>;
-  documentId?: string;
+  projectId?: string;
 };
 
 export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   schema,
-  documentId
+  projectId
 }) => {
   const [openPick, setOpenPick] = useState(false);
 
@@ -56,9 +56,9 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
 
   return (
     <div className={'flex flex-col gap-2'}>
-      {documentId ? (
+      {projectId ? (
         <PickDetailDialog
-          documentId={documentId}
+          projectId={projectId}
           open={openPick}
           setOpen={setOpenPick}
           onChange={value => {

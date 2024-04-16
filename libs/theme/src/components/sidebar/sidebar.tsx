@@ -67,7 +67,7 @@ export const Sidebar: FC<SidebarProps> = ({ children, ...props }) => {
       <div
         className={cn(
           `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
-          collapsed ? `w-12` : `w-64`
+          collapsed ? `w-12` : `w-48`
         )}
         {...props}
       >

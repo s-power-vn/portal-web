@@ -45,7 +45,7 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
         <TextField
           schema={CreateDetailSchema}
           name={'level'}
-          title={'Mã công việc'}
+          title={'ID (Mã công việc)'}
           options={{}}
         />
         <TextareaField

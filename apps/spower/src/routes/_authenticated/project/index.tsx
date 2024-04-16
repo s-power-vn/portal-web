@@ -162,7 +162,7 @@ const Component = () => {
                     <TableHead
                       key={header.id}
                       className={
-                        'whitespace-nowrap border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                        'whitespace-nowrap first:rounded-tl-md last:rounded-tr-md last:border-r-0'
                       }
                       style={{
                         width: header.getSize()
@@ -199,7 +199,7 @@ const Component = () => {
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className={'border-r p-2 last:border-r-0'}
+                        className={'p-2'}
                         style={{
                           width: cell.column.getSize()
                         }}

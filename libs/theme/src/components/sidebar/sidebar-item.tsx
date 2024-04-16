@@ -71,11 +71,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
           (collapsed ? (
             <Tooltip>
               <TooltipTrigger>{iconElement}</TooltipTrigger>
-              <TooltipContent
-                side={'right'}
-                arrowPadding={5}
-                className={'font-normal'}
-              >
+              <TooltipContent side={'right'} className={'font-normal'}>
                 {routeContext?.title}
               </TooltipContent>
             </Tooltip>

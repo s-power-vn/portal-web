@@ -1,5 +1,9 @@
+import { FileTextIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { LucideHome } from 'lucide-react';
+
+import { Sidebar, SidebarItem } from '@storeo/theme';
 
 import { getProjectById } from '../../../api';
 
@@ -8,16 +12,34 @@ const Component = () => {
   const project = useSuspenseQuery(getProjectById(projectId));
 
   return (
-    <div className={'flex flex-col gap-4'}>
-      <div className={'flex flex-col'}>
-        <span className={'text-appBlack text-lg font-semibold'}>
+    <div className={'flex h-full flex-col'}>
+      <div
+        className={
+          'flex h-[50px] flex-none flex-col justify-center border-b p-1'
+        }
+      >
+        <span className={'text-appBlack font-semibold'}>
           {project.data?.bidding}
         </span>
         <span className={'text-muted-foreground text-sm'}>
           {project.data?.name} - {project.data?.expand.customer.name}
         </span>
       </div>
-      <Outlet />
+      <div className={'flex h-full w-full'}>
+        <Sidebar>
+          <SidebarItem
+            to={'/home'}
+            icon={<LucideHome width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/project'}
+            icon={<FileTextIcon width={22} height={22} />}
+          ></SidebarItem>
+        </Sidebar>
+        <div className={'h-full grow overflow-hidden p-2'}>
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };

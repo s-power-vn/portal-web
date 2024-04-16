@@ -21,7 +21,11 @@ const SidebarHeader = () => {
   const { collapsed } = useSidebar();
 
   return (
-    <div className={'flex w-full items-center justify-center border-b p-1'}>
+    <div
+      className={
+        'flex h-[50px] w-full items-center justify-center border-b p-2'
+      }
+    >
       <NewProjectDialog
         open={openProjectNew}
         setOpen={setOpenProjectNew}
@@ -59,7 +63,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className={'flex h-screen w-full flex-col'}>
       <Header />
-      <div className={'flex h-full w-full grow'}>
+      <div className={'flex h-full w-full'}>
         <Sidebar>
           <SidebarHeader />
           <SidebarItem
@@ -89,7 +93,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<FileTextIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
-        <div className={'h-full grow overflow-hidden p-2'}>{children}</div>
+        <div className={'h-full grow overflow-hidden'}>{children}</div>
       </div>
     </div>
   );

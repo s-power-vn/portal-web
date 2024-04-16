@@ -1,3 +1,4 @@
+import { PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -7,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { ForwardIcon } from 'lucide-react';
 
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import { RequestResponse, formatDate } from '@storeo/core';
 import {
@@ -24,15 +25,18 @@ import {
 } from '@storeo/theme';
 
 import { getAllRequests } from '../../../api';
+import { NewRequestDialog } from '../request/new-request-dialog';
+import { RequestItem } from '../request/request-item';
 
-export type DocumentContractProps = {
-  documentId: string;
+export type DocumentRequestTabProps = {
+  projectId: string;
 };
 
-export const DocumentContractTab: FC<DocumentContractProps> = ({
-  documentId
+export const DocumentRequestTab: FC<DocumentRequestTabProps> = ({
+  projectId
 }) => {
-  const requests = useSuspenseQuery(getAllRequests(documentId));
+  const [openDocumentRequestNew, setOpenDocumentRequestNew] = useState(false);
+  const requests = useSuspenseQuery(getAllRequests(projectId));
 
   const columnHelper = createColumnHelper<RequestResponse>();
 
@@ -77,9 +81,22 @@ export const DocumentContractTab: FC<DocumentContractProps> = ({
 
   return (
     <>
+      <NewRequestDialog
+        projectId={projectId}
+        open={openDocumentRequestNew}
+        setOpen={setOpenDocumentRequestNew}
+      />
       <div className={'flex flex-col gap-2'}>
         <div className={'flex justify-between gap-2'}>
-          <div className={'flex gap-2'}></div>
+          <div className={'flex gap-2'}>
+            <Button
+              className={'flex gap-1'}
+              onClick={() => setOpenDocumentRequestNew(true)}
+            >
+              <PlusIcon />
+              Thêm yêu cầu mua hàng
+            </Button>
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant={'outline'} className={'flex gap-1'}>
@@ -157,7 +174,9 @@ export const DocumentContractTab: FC<DocumentContractProps> = ({
           }
         >
           {requests.data && requests.data.length > 0 ? (
-            requests.data.map((request: RequestResponse) => <></>)
+            requests.data.map((request: RequestResponse) => (
+              <RequestItem key={request.id} requestId={request.id} />
+            ))
           ) : (
             <div className={'bg-appWhite rounded-md border p-4 text-center'}>
               Chưa có yêu cầu mua hàng nào

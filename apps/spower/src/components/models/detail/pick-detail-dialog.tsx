@@ -43,7 +43,7 @@ import { TreeData, arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
 const Content: FC<PickDetailDialogProps> = ({
-  documentId,
+  projectId,
   setOpen,
   value = [],
   onChange
@@ -52,7 +52,7 @@ const Content: FC<PickDetailDialogProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const details = useSuspenseQuery(getAllDetails(documentId));
+  const details = useSuspenseQuery(getAllDetails(projectId));
 
   const data = useMemo(() => {
     const v = details.data.map(it => {
@@ -62,8 +62,8 @@ const Content: FC<PickDetailDialogProps> = ({
       };
     });
 
-    return arrayToTree(v, `${documentId}_root`);
-  }, [details.data, documentId]);
+    return arrayToTree(v, `${projectId}_root`);
+  }, [details.data, projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
 
@@ -338,7 +338,7 @@ const Content: FC<PickDetailDialogProps> = ({
 };
 
 export type PickDetailDialogProps = DialogProps & {
-  documentId: string;
+  projectId: string;
   value?: DetailResponse[];
   onChange?: (value: DetailResponse[]) => void;
 };

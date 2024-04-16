@@ -17,9 +17,9 @@ import { RequestDetailListField } from '../request-detail/request-detail-list-fi
 
 const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
   setOpen,
-  documentId
+  projectId
 }) => {
-  const createDocumentRequest = useCreateRequest(documentId, () =>
+  const createDocumentRequest = useCreateRequest(projectId, () =>
     setOpen(false)
   );
 
@@ -48,7 +48,7 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
         <RequestDetailListField
           schema={CreateRequestSchema}
           name={'details'}
-          options={{ documentId }}
+          options={{ projectId }}
         />
         <DialogFooter className={'mt-4'}>
           <Button type="submit">Chấp nhận</Button>
@@ -61,7 +61,7 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
 export type NewRequestDialogProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  documentId: string;
+  projectId: string;
 };
 
 export const NewRequestDialog: FC<NewRequestDialogProps> = props => {
