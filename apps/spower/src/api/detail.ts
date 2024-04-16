@@ -121,7 +121,11 @@ export const UpdateDetailSchema = object().shape({
     )
     .typeError('Sai định dạng số'),
   unit: string(),
-  unitPrice: number().typeError('Sai định dạng số')
+  unitPrice: number()
+    .transform((_, originalValue) =>
+      Number(originalValue.toString().replace(/,/g, '.'))
+    )
+    .typeError('Sai định dạng số')
 });
 
 export type UpdateDetailInput = InferType<typeof UpdateDetailSchema>;
