@@ -54,12 +54,14 @@ const SidebarContext = createContext<{
   collapsed: false
 });
 
-export type SidebarProps = HTMLAttributes<HTMLDivElement>;
+export type SidebarProps = HTMLAttributes<HTMLDivElement> & {
+  uid: string;
+};
 
-export const Sidebar: FC<SidebarProps> = ({ children, ...props }) => {
+export const Sidebar: FC<SidebarProps> = ({ children, uid, ...props }) => {
   const [collapsed, setCollapsed] = usePersistedState(
     false,
-    'sidebar.collapsed'
+    `${uid}.sidebar.collapsed`
   );
 
   return (
@@ -67,7 +69,7 @@ export const Sidebar: FC<SidebarProps> = ({ children, ...props }) => {
       <div
         className={cn(
           `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
-          collapsed ? `w-12` : `w-48`
+          collapsed ? `w-12` : `w-56`
         )}
         {...props}
       >

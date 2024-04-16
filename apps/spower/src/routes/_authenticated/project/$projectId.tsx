@@ -1,9 +1,8 @@
-import { FileTextIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { LucideHome } from 'lucide-react';
+import { BarChart3Icon, ListTodoIcon } from 'lucide-react';
 
-import { Sidebar, SidebarItem } from '@storeo/theme';
+import { Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
 
 import { getProjectById } from '../../../api';
 
@@ -26,15 +25,24 @@ const Component = () => {
         </span>
       </div>
       <div className={'flex h-full w-full'}>
-        <Sidebar>
+        <Sidebar uid={'project'}>
           <SidebarItem
-            to={'/home'}
-            icon={<LucideHome width={22} height={22} />}
+            to={'/project/$projectId/overview'}
+            icon={<BarChart3Icon width={22} height={22} />}
           ></SidebarItem>
-          <SidebarItem
-            to={'/project'}
-            icon={<FileTextIcon width={22} height={22} />}
-          ></SidebarItem>
+          <SidebarGroup
+            to={'/project/$projectId/issue'}
+            icon={<ListTodoIcon width={22} height={22} />}
+          >
+            <SidebarItem
+              to={'/project/$projectId/issue/me'}
+              icon={<ListTodoIcon width={22} height={22} />}
+            ></SidebarItem>
+            <SidebarItem
+              to={'/project/$projectId/issue/manager'}
+              icon={<ListTodoIcon width={22} height={22} />}
+            ></SidebarItem>
+          </SidebarGroup>
         </Sidebar>
         <div className={'h-full grow overflow-hidden p-2'}>
           <Outlet />

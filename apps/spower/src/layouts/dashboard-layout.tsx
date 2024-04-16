@@ -1,5 +1,11 @@
-import { FileTextIcon, GearIcon } from '@radix-ui/react-icons';
-import { LucideHome, PackagePlusIcon } from 'lucide-react';
+import { GearIcon, HomeIcon } from '@radix-ui/react-icons';
+import {
+  FactoryIcon,
+  HandshakeIcon,
+  PackagePlusIcon,
+  SquareKanbanIcon,
+  Users2Icon
+} from 'lucide-react';
 
 import { FC, ReactNode, useState } from 'react';
 
@@ -64,33 +70,32 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     <div className={'flex h-screen w-full flex-col'}>
       <Header />
       <div className={'flex h-full w-full'}>
-        <Sidebar>
+        <Sidebar uid={'dashboard'}>
           <SidebarHeader />
           <SidebarItem
             to={'/home'}
-            icon={<LucideHome width={22} height={22} />}
+            icon={<HomeIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarGroup
             to={'/general'}
-            title={'Quản lý chung'}
             icon={<GearIcon width={22} height={22} />}
           >
             <SidebarItem
               to={'/general/employees'}
-              icon={<EmptyIcon />}
+              icon={<Users2Icon />}
             ></SidebarItem>
             <SidebarItem
               to={'/general/customers'}
-              icon={<EmptyIcon />}
+              icon={<HandshakeIcon />}
             ></SidebarItem>
             <SidebarItem
               to={'/general/suppliers'}
-              icon={<EmptyIcon />}
+              icon={<FactoryIcon />}
             ></SidebarItem>
           </SidebarGroup>
           <SidebarItem
             to={'/project'}
-            icon={<FileTextIcon width={22} height={22} />}
+            icon={<SquareKanbanIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
         <div className={'h-full grow overflow-hidden'}>{children}</div>

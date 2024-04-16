@@ -3,7 +3,8 @@ import {
   Link,
   RegisteredRouter,
   RoutePaths,
-  ToPathOption
+  ToPathOption,
+  useRouter
 } from '@tanstack/react-router';
 
 import {
@@ -26,18 +27,21 @@ export type SidebarGroupProps<
   TTo extends string = ''
 > = {
   to?: ToPathOption<TRouteTree, TFrom, TTo>;
-  title?: string;
   icon?: ReactNode;
   children: ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
 export const SidebarGroup: FC<SidebarGroupProps> = ({
   to,
-  title,
   icon,
   children,
   ...props
 }) => {
+  const { flatRoutes } = useRouter();
+  const foundedRoute = flatRoutes.find(it => it.fullPath === to);
+  const routeContext = foundedRoute?.options.beforeLoad?.({} as never) as {
+    title?: string;
+  };
   const { isActive } = useLink({ to });
   const { collapsed } = useSidebar();
 
@@ -65,22 +69,22 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
         )}
         to={to}
       >
-        {icon && (
+        {icon ? (
           <div className={cn(`flex h-10 w-10 items-center justify-center p-2`)}>
             {icon}
           </div>
-        )}
+        ) : null}
         <div
           className={cn(
             `duration-default transition-opacity`,
             collapsed && `w-0 opacity-0`
           )}
         >
-          {title}
+          {routeContext?.title}
         </div>
       </Link>
     ),
-    [icon, to, title, isActive, collapsed]
+    [icon, to, isActive, collapsed]
   );
 
   return (

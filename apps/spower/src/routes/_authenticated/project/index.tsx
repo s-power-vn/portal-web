@@ -134,7 +134,7 @@ const Component = () => {
           setOpen={setOpen}
         />
       ) : null}
-      <div className={'flex flex-col gap-2'}>
+      <div className={'flex flex-col gap-2 p-2'}>
         <DebouncedInput
           value={search.filter}
           className={'h-8 w-56'}
