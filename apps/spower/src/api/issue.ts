@@ -7,7 +7,7 @@ export const IssuesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
   pageSize: number().optional().default(10),
   filter: string().optional().default('')
-})
+});
 
 export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
 
@@ -22,7 +22,9 @@ export function getAllIssues(projectId: string, search?: IssuesSearch) {
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${projectId}" && title ~ "${search?.filter ?? ''}"`,
+          filter: `project = "${projectId}" 
+          && title ~ "${search?.filter ?? ''}" 
+          && deleted = false`,
           sort: '-created'
         })
   });
@@ -45,7 +47,9 @@ export function getMyIssues(projectId: string, search?: IssuesSearch) {
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${projectId}"
         && assignee = "${client.authStore.model?.id}"
-        && title ~ "${search?.filter ?? ''}"`
+        && title ~ "${search?.filter ?? ''}" 
+        && deleted = false`,
+          sort: '-created'
         })
   });
 }

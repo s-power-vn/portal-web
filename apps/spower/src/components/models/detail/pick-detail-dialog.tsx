@@ -17,7 +17,7 @@ import {
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { DetailResponse, DialogProps, cn } from '@storeo/core';
 import {
@@ -356,7 +356,9 @@ export const PickDetailDialog: FC<PickDetailDialogProps> = props => {
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DialogTrigger>
-      <Content {...props} />
+      <Suspense>
+        <Content {...props} />
+      </Suspense>
     </Dialog>
   );
 };

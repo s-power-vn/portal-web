@@ -5,5 +5,5 @@ export type IssueStatusProps = {
 };
 
 export const IssueStatus: FC<IssueStatusProps> = () => {
-  return <></>;
+  return null;
 };

@@ -1,4 +1,3 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -7,13 +6,11 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
 import { ProjectResponse, formatDate } from '@storeo/core';
 import {
-  Button,
   DebouncedInput,
   Pagination,
   Table,

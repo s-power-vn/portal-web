@@ -12,10 +12,19 @@ import {
 } from '@tanstack/react-table';
 import { PlusIcon } from 'lucide-react';
 
+import { useState } from 'react';
+
 import { IssueResponse, formatDate } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Pagination,
   Table,
   TableBody,
@@ -31,8 +40,10 @@ import {
   getMyIssues
 } from '../../../../../api/issue';
 import { EmployeeDisplay, IssueType } from '../../../../../components';
+import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
 
 const Component = () => {
+  const [openRequestNew, setOpenRequestNew] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -58,7 +69,7 @@ const Component = () => {
       size: 300
     }),
     columnHelper.accessor('type', {
-      cell: ({ row }) => (<IssueType type={row.original.type}></IssueType>),
+      cell: ({ row }) => <IssueType type={row.original.type}></IssueType>,
       header: () => 'Phân loại',
       footer: info => info.column.id,
       size: 150
@@ -100,11 +111,37 @@ const Component = () => {
 
   return (
     <div className={'flex flex-col gap-2'}>
+      <NewRequestDialog
+        projectId={projectId}
+        open={openRequestNew}
+        setOpen={setOpenRequestNew}
+      />
       <div className={'flex items-center justify-between gap-2'}>
-        <Button className={'flex gap-1'}>
-          <PlusIcon />
-          Thêm công việc
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className={'flex gap-1'}>
+              <PlusIcon />
+              Thêm công việc
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56"
+            side="bottom"
+            align="start"
+            sideOffset={2}
+          >
+            <DropdownMenuItem
+              onClick={() => {
+                setOpenRequestNew(true);
+              }}
+            >
+              Yêu cầu mua hàng
+            </DropdownMenuItem>
+            <DropdownMenuItem>Hợp đồng</DropdownMenuItem>
+            <DropdownMenuItem>Tạm ứng</DropdownMenuItem>
+            <DropdownMenuItem>Biên bản bàn giao</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DebouncedInput
           value={search.filter}
           className={'h-8 w-56'}
@@ -121,7 +158,7 @@ const Component = () => {
         />
       </div>
 
-      <div className={'overflow-auto rounded-md border pb-2'}>
+      <div className={'overflow-auto rounded-md border'}>
         <Table
           style={{
             width: table.getTotalSize()
@@ -129,10 +166,11 @@ const Component = () => {
         >
           <TableHeader className={'bg-appGrayLight'}>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="flex">
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
+                    className="flex items-center"
                     style={{
                       width: header.getSize()
                     }}
@@ -153,10 +191,14 @@ const Component = () => {
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className={'last:border-b-0'}>
+                <TableRow
+                  key={row.id}
+                  className={'flex cursor-pointer last:border-b-0'}
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
+                      className="flex items-center"
                       style={{
                         width: cell.column.getSize()
                       }}
