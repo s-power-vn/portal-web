@@ -56,9 +56,9 @@ const Content: FC<ProjectNewProps> = ({ setOpen, search, screen }) => {
   return (
     <DialogContent className="w-96">
       <DialogHeader>
-        <DialogTitle>Tạo tài liệu</DialogTitle>
+        <DialogTitle>Tạo dự án</DialogTitle>
         <DialogDescription className={'italic'}>
-          Tạo tài liệu thi công mới.
+          Tạo dự án mới.
         </DialogDescription>
       </DialogHeader>
       <Form

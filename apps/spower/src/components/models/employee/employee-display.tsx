@@ -28,13 +28,13 @@ const Component = ({ employeeId }: { employeeId: string }) => {
 };
 
 export type EmployeeDisplayProps = {
-  employeeId: string;
+  employeeId?: string;
 };
 
 export const EmployeeDisplay: FC<EmployeeDisplayProps> = ({ employeeId }) => {
   return (
     <Suspense fallback={'...'}>
-      <Component employeeId={employeeId} />
+      {employeeId ? <Component employeeId={employeeId} /> : null}
     </Suspense>
   );
 };

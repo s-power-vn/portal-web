@@ -36,7 +36,7 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
         defaultValues={{
           name: ''
         }}
-        className={'mt-4 flex flex-col gap-3'}
+        className={'mt-2 flex flex-col gap-2'}
         loading={createDocumentRequest.isPending}
         onSubmit={values => createDocumentRequest.mutate(values)}
       >

@@ -62,7 +62,7 @@ const Content: FC<PickDetailDialogProps> = ({
       };
     });
 
-    return arrayToTree(v, `${projectId}_root`);
+    return arrayToTree(v, `${projectId}-root`);
   }, [details.data, projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
@@ -211,128 +211,130 @@ const Content: FC<PickDetailDialogProps> = ({
   }, [table]);
 
   return (
-    <DialogContent className="h-[500px] min-w-[800px]">
+    <DialogContent className="min-w-[800px]">
       <DialogHeader>
         <DialogTitle>Chọn hạng mục</DialogTitle>
         <DialogDescription className={'italic'}>
           Chọn hạng mục yêu cầu.
         </DialogDescription>
       </DialogHeader>
-      <DebouncedInput
-        value={globalFilter}
-        className={'h-8 w-56'}
-        placeholder={'Tìm kiếm...'}
-        onChange={value => setGlobalFilter(String(value))}
-      />
-      <div className="overflow-auto rounded-md border pb-2">
-        <Table
-          style={{
-            width: table.getTotalSize() + 10
-          }}
-        >
-          <TableHeader
-            className={
-              'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
-            }
+      <div className='flex flex-col gap-2'>
+        <DebouncedInput
+          value={globalFilter}
+          className={'h-8 w-56'}
+          placeholder={'Tìm kiếm...'}
+          onChange={value => setGlobalFilter(String(value))}
+        />
+        <div className="overflow-auto rounded-md border pb-2 max-h-[300px]">
+          <Table
             style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2
+              width: table.getTotalSize() + 10
             }}
           >
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+            <TableHeader
+              className={
+                'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
+              }
+              style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 2
+              }}
+            >
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className={'!border-b-0'}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
                           after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
                           after:content-[''] last:after:border-r-0`}
-                    style={{
-                      width: header.column.getSize()
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className={cn(
-                    'cursor-pointer',
-                    row.getIsSelected() ||
-                      row.getIsSomeSelected() ||
-                      row.getIsAllSubRowsSelected()
-                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
-                      : null
-                  )}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
                       style={{
-                        width: cell.column.getSize()
+                        width: header.column.getSize()
                       }}
-                      className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                      after:border-r after:content-['']`}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
                       )}
-                    </TableCell>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 border-r text-center"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow
+                    key={row.id}
+                    className={cn(
+                      'cursor-pointer',
+                      row.getIsSelected() ||
+                        row.getIsSomeSelected() ||
+                        row.getIsAllSubRowsSelected()
+                        ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
+                        : null
+                    )}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
+                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                      after:border-r after:content-['']`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 border-r text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <DialogFooter className={'mt-4'}>
+          <Button
+            type="submit"
+            onClick={() => {
+              onChange?.(
+                _.uniqBy(
+                  [
+                    ...table
+                      .getRowModel()
+                      .flatRows.filter(row => row.getIsSomeSelected())
+                      .map(it => it.original),
+                    ...table
+                      .getSelectedRowModel()
+                      .flatRows.map(item => item.original)
+                  ],
+                  'id'
+                )
+              );
+              setOpen(false);
+            }}
+          >
+            Chấp nhận
+          </Button>
+        </DialogFooter>
       </div>
-      <DialogFooter className={'mt-4'}>
-        <Button
-          type="submit"
-          onClick={() => {
-            onChange?.(
-              _.uniqBy(
-                [
-                  ...table
-                    .getRowModel()
-                    .flatRows.filter(row => row.getIsSomeSelected())
-                    .map(it => it.original),
-                  ...table
-                    .getSelectedRowModel()
-                    .flatRows.map(item => item.original)
-                ],
-                'id'
-              )
-            );
-            setOpen(false);
-          }}
-        >
-          Chấp nhận
-        </Button>
-      </DialogFooter>
     </DialogContent>
   );
 };

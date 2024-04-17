@@ -83,20 +83,20 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
             <TableRow>
               <TableHead
                 className={
-                  'bg-appGrayLight flex items-center justify-center whitespace-nowrap border-r p-1'
+                  'bg-appGrayLight whitespace-nowrap border-r p-2 w-[50px]'
                 }
               >
                 ID
               </TableHead>
               <TableHead
                 className={
-                  'bg-appGrayLight  items-center whitespace-nowrap border-r p-1'
+                  'bg-appGrayLight items-center whitespace-nowrap border-r p-2 w-[500px]'
                 }
               >
                 Mô tả công việc
               </TableHead>
               <TableHead
-                className={'bg-appGrayLight items-center whitespace-nowrap p-1'}
+                className={'bg-appGrayLight items-center whitespace-nowrap p-2'}
               >
                 Khối lượng yêu cầu
               </TableHead>
@@ -115,7 +115,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.title}
                       </TableCell>
-                      <TableCell className={'px-2 py-1'}>
+                      <TableCell className={'p-1'}>
                         {it.children?.length === 0 ? (
                           <NumericField
                             schema={schema}

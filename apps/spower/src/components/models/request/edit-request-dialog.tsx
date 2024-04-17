@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import { Dispatch, FC, SetStateAction, Suspense, useMemo } from 'react';
 
+import { DialogProps } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -53,7 +54,6 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
       <Form
         schema={UpdateRequestSchema}
         defaultValues={{
-          name: request.data?.name,
           details: data.map(it => ({
             ...it,
             title: it.expand.detail.title,
@@ -78,9 +78,7 @@ const Content: FC<EditRequestDialogProps> = ({ setOpen, requestId }) => {
   );
 };
 
-export type EditRequestDialogProps = {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+export type EditRequestDialogProps = DialogProps & {
   requestId: string;
 };
 

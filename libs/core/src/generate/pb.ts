@@ -77,6 +77,10 @@ export type DetailRecord = {
 	volume?: number
 }
 
+export enum DetailInfoStatusOptions {
+	"ToDo" = "ToDo",
+	"Done" = "Done",
+}
 export type DetailInfoRecord = {
 	group?: RecordIdString
 	level: string
@@ -85,6 +89,7 @@ export type DetailInfoRecord = {
 	project?: RecordIdString
 	request: RecordIdString
 	requestVolume?: number
+	status?: DetailInfoStatusOptions
 	supplierName: string
 	supplierPrice?: number
 	supplierVolume?: number

@@ -3,6 +3,8 @@ import {queryOptions, useMutation, useQuery, useQueryClient} from '@tanstack/rea
 import {
   client,
   DetailResponse,
+  IssueResponse,
+  IssueTypeOptions,
   RequestDetailResponse,
   RequestDetailSupplierResponse,
   RequestResponse,
@@ -32,28 +34,32 @@ export type RequestDetailData = RequestDetailResponse & {
 export type RequestData = RequestResponse & {
   expand: {
     requestDetail_via_request: RequestDetailData[],
-    createdBy: UserData
+    issue: IssueResponse & {
+      expand: {
+        createdBy: UserData;
+      }
+    }
   }
 };
 
 
-export function getAllRequestsKey(documentId: string) {
-  return ['getAllRequestsKey', documentId];
+export function getAllRequestsKey(projectId: string) {
+  return ['getAllRequestsKey', projectId];
 }
 
-export function getAllRequests(documentId: string) {
+export function getAllRequests(projectId: string) {
   return queryOptions({
-    queryKey: getAllRequestsKey(documentId),
+    queryKey: getAllRequestsKey(projectId),
     queryFn: () =>
       client.collection<RequestResponse>('request').getFullList({
-        filter: `document = "${documentId}"`,
+        filter: `project = "${projectId}"`,
         sort: '-created'
       })
   });
 }
 
-export function useGetAllRequests(documentId: string) {
-  return useQuery(getAllRequests(documentId));
+export function useGetAllRequests(projectId: string) {
+  return useQuery(getAllRequests(projectId));
 }
 
 export function getRequestByIdKey(requestId: string) {
@@ -70,7 +76,8 @@ export function getRequestById(requestId: string) {
           'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
           'contract_via_request.supplier,' +
           'contract_via_request.contractItem_via_contract,' +
-          'createdBy.department'
+          'issue.createdBy,' +
+          'issue.createdBy.department'
       })
   });
 }
@@ -106,22 +113,29 @@ export const CreateRequestSchema = object().shape({
 
 export type CreateRequestInput = InferType<typeof CreateRequestSchema>;
 
-export function useCreateRequest(documentId: string, onSuccess?: () => void) {
+export function useCreateRequest(projectId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['createRequest'],
     mutationFn: async (params: CreateRequestInput) => {
-      const record = await client.collection('request').create({
-        document: documentId,
-        name: params.name,
+      const issue = await client.collection<IssueResponse>('issue').create({
+        project: projectId,
+        title: params.name,
+        type: IssueTypeOptions.Request,
         createdBy: client.authStore.model?.id,
+        assignee: client.authStore.model?.id,
+      })
+
+      const request = await client.collection('request').create({
+        project: projectId,
+        issue: issue.id,
       });
 
       return await Promise.all(
         params.details.map(it => {
           return client.collection('requestDetail').create(
             {
-              request: record.id,
+              request: request.id,
               detail: it.id,
               volume: it.requestVolume
             },
@@ -136,7 +150,7 @@ export function useCreateRequest(documentId: string, onSuccess?: () => void) {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllRequestsKey(documentId)
+          queryKey: getAllRequestsKey(projectId)
         }),
       ])
     }

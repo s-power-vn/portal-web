@@ -28,8 +28,7 @@ import {
 import {
   IssuesSearch,
   IssuesSearchSchema,
-  getAllIssues,
-  getMyIssues
+  getAllIssues
 } from '../../../../../api/issue';
 import { EmployeeDisplay, IssueType } from '../../../../../components';
 
@@ -59,7 +58,7 @@ const Component = () => {
       size: 300
     }),
     columnHelper.accessor('type', {
-      cell: ({ row }) => (<IssueType type={row.original.type}></IssueType>),
+      cell: ({ row }) => <IssueType type={row.original.type}></IssueType>,
       header: () => 'Phân loại',
       footer: info => info.column.id,
       size: 150
@@ -130,11 +129,11 @@ const Component = () => {
         >
           <TableHeader className={'bg-appGrayLight'}>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='flex'>
+              <TableRow key={headerGroup.id} className="flex">
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className='flex items-center'
+                    className="flex items-center"
                     style={{
                       width: header.getSize()
                     }}
@@ -155,11 +154,14 @@ const Component = () => {
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className={'flex last:border-b-0 cursor-pointer'}>
+                <TableRow
+                  key={row.id}
+                  className={'flex cursor-pointer last:border-b-0'}
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className='flex items-center'
+                      className="flex items-center p-1"
                       style={{
                         width: cell.column.getSize()
                       }}

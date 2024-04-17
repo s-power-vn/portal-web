@@ -20,8 +20,6 @@ import {
 
 import { Header, NewProjectDialog } from '../components';
 
-const EmptyIcon = () => <span></span>;
-
 const SidebarHeader = () => {
   const [openProjectNew, setOpenProjectNew] = useState(false);
   const { collapsed } = useSidebar();

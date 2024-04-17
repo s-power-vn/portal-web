@@ -19,11 +19,8 @@ import {
   Button,
   DebouncedInput,
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Pagination,
   Table,
@@ -41,12 +38,15 @@ import {
 } from '../../../../../api/issue';
 import { EmployeeDisplay, IssueType } from '../../../../../components';
 import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
+import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
 
 const Component = () => {
   const [openRequestNew, setOpenRequestNew] = useState(false);
+  const [openRequestDetail, setOpenRequestDetail] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
+  const [selected, setSelected] = useState<IssueResponse>();
   const customers = useSuspenseQuery(getMyIssues(projectId, search));
 
   const columnHelper = createColumnHelper<IssueResponse>();
@@ -116,6 +116,13 @@ const Component = () => {
         open={openRequestNew}
         setOpen={setOpenRequestNew}
       />
+      {selected ? (
+        <RequestDetailDialog
+          open={openRequestDetail}
+          setOpen={setOpenRequestDetail}
+          issueId={selected.id}
+        ></RequestDetailDialog>
+      ) : null}
       <div className={'flex items-center justify-between gap-2'}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -194,11 +201,15 @@ const Component = () => {
                 <TableRow
                   key={row.id}
                   className={'flex cursor-pointer last:border-b-0'}
+                  onClick={() => {
+                    setSelected(row.original);
+                    setOpenRequestDetail(true);
+                  }}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className="flex items-center"
+                      className="flex items-center p-1"
                       style={{
                         width: cell.column.getSize()
                       }}

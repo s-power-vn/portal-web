@@ -63,7 +63,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const deleteRequest = useDeleteRequest(async () => {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: getAllRequestsKey(request.data.document)
+        queryKey: getAllRequestsKey(request.data.project)
       })
     ]);
   });
@@ -75,8 +75,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       .map(it => {
         return {
           ...it,
-          index: it.expand.detail.index,
           group: it.expand.detail.id,
+          level: it.expand.detail.level,
           parent: it.expand.detail.parent,
           suppliers: it.expand.requestDetailSupplier_via_requestDetail?.map(
             st => {
@@ -112,7 +112,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       }
     }
 
-    return arrayToTree(list, `${request.data.document}_root`);
+    return arrayToTree(list, `${request.data.project}-root`);
   }, [request.data]);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
@@ -323,21 +323,21 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         open={openDocumentRequestEdit}
         setOpen={setOpenDocumentRequestEdit}
       />
-      <div className={'bg-appWhite flex flex-col rounded-md border'}>
-        <div className={'flex justify-between border-b p-4'}>
-          <div className={'flex h-full flex-col justify-between gap-4'}>
-            <span className={'text-lg font-semibold'}>
-              {request.data?.name}
-            </span>
+      <div className={'bg-appWhite flex flex-col'}>
+        <div className={'flex justify-between p-2'}>
+          <div className={'flex h-full flex-col gap-4'}>
             <div className={'text-sm italic'}>
               <div className={'flex justify-between gap-20'}>
                 <span>Người đề nghị:</span>
-                <span>{request.data?.expand?.createdBy.name}</span>
+                <span>{request.data?.expand?.issue.expand.createdBy.name}</span>
               </div>
               <div className={'flex justify-between'}>
                 <span>Phòng ban:</span>
                 <span>
-                  {request.data?.expand?.createdBy.expand.department.name}
+                  {
+                    request.data?.expand?.issue.expand.createdBy.expand
+                      .department.name
+                  }
                 </span>
               </div>
               <div className={'flex justify-between'}>
