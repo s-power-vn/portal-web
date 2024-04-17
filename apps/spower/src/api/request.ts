@@ -8,6 +8,7 @@ import {
   RequestDetailResponse,
   RequestDetailSupplierResponse,
   RequestResponse,
+  RequestStatusOptions,
   SupplierResponse
 } from '@storeo/core';
 import {array, boolean, InferType, number, object, string} from "yup";
@@ -130,6 +131,7 @@ export function useCreateRequest(projectId: string, onSuccess?: () => void) {
       const request = await client.collection('request').create({
         project: projectId,
         issue: issue.id,
+        status: RequestStatusOptions.ToDo
       });
 
       return await Promise.all(

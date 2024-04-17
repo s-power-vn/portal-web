@@ -98,7 +98,7 @@ export const SelectInput: FC<SelectInputProps> = ({
                   {normalizedItems[key].map(it => (
                     <CommandItem
                       key={it.value}
-                      className={'hover:bg-appGrayLight'}
+                      className={'hover:bg-appGrayLight whitespace-nowrap'}
                       onSelect={() => {
                         setValue(it.value);
                         setOpen(false);

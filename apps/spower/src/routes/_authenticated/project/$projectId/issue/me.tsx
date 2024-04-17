@@ -164,7 +164,6 @@ const Component = () => {
           }
         />
       </div>
-
       <div className={'overflow-auto rounded-md border'}>
         <Table
           style={{

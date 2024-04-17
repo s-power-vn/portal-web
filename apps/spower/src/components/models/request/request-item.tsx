@@ -21,7 +21,7 @@ import {
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { cn, formatCurrency, formatDate, formatNumber } from '@storeo/core';
+import { cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -29,7 +29,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  Textarea
 } from '@storeo/theme';
 
 import {
@@ -43,6 +44,7 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
+import { IssueAssignee } from '../issue/issue-assignee';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
 import { EditRequestDialog } from './edit-request-dialog';
 
@@ -318,13 +320,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           setOpen={setOpenListSupplier}
         />
       ) : null}
-      <EditRequestDialog
-        requestId={request.data.id}
-        open={openDocumentRequestEdit}
-        setOpen={setOpenDocumentRequestEdit}
-      />
-      <div className={'bg-appWhite flex flex-col'}>
-        <div className={'flex items-center justify-between p-2'}>
+      <div className={'bg-appWhite flex flex-col gap-3'}>
+        <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
             <Button
               disabled={
@@ -344,13 +341,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
             <Button
-              className={'text-appWhite'}
-              size="icon"
-              onClick={() => setOpenDocumentRequestEdit(true)}
-            >
-              <EditIcon className={'h-4 w-4'} />
-            </Button>
-            <Button
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"
               onClick={() => deleteRequest.mutate(requestId)}
@@ -358,9 +348,18 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <Cross2Icon className={'h-4 w-4'} />
             </Button>
           </div>
-          <div>XXX</div>
+          <div className={'flex items-center gap-2'}>
+            <span className={'text-sm'}>Người thực hiện</span>
+            <IssueAssignee
+              issueId={request.data.expand.issue.id}
+              className={'w-56'}
+              onChange={value => {
+                console.log(value);
+              }}
+            ></IssueAssignee>
+          </div>
         </div>
-        <div className={'flex flex-col p-2'}>
+        <div className={'flex flex-col'}>
           <div className={'overflow-x-auto rounded-md border pb-2'}>
             <Table
               style={{
@@ -460,6 +459,10 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               </TableBody>
             </Table>
           </div>
+        </div>
+        <div className={'flex flex-col gap-1'}>
+          <span className={'text-base'}>Ghi chú</span>
+          <Textarea />
         </div>
       </div>
     </>
