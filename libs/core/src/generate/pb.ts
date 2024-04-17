@@ -79,6 +79,7 @@ export type DetailRecord = {
 
 export enum DetailInfoStatusOptions {
 	"ToDo" = "ToDo",
+	"VolumeDone" = "VolumeDone",
 	"Done" = "Done",
 }
 export type DetailInfoRecord = {
@@ -122,6 +123,7 @@ export type ProjectRecord = {
 
 export enum RequestStatusOptions {
 	"ToDo" = "ToDo",
+	"VolumeDone" = "VolumeDone",
 	"Done" = "Done",
 }
 export type RequestRecord = {
@@ -161,6 +163,7 @@ export type UserRecord = {
 	avatar?: string
 	department: RecordIdString
 	name: string
+	role?: number
 }
 
 // Response types include system fields and match responses from the PocketBase API

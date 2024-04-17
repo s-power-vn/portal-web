@@ -12,7 +12,6 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
-  EditIcon,
   PrinterIcon,
   SquareMinusIcon,
   SquarePlusIcon,
@@ -21,7 +20,7 @@ import {
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { cn, formatCurrency, formatNumber } from '@storeo/core';
+import { client, cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -46,14 +45,12 @@ import {
 } from '../../../commons/utils';
 import { IssueAssignee } from '../issue/issue-assignee';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
-import { EditRequestDialog } from './edit-request-dialog';
 
 export type RequestItemProps = {
   requestId: string;
 };
 
 export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
-  const [openDocumentRequestEdit, setOpenDocumentRequestEdit] = useState(false);
   const [openListSupplier, setOpenListSupplier] = useState(false);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -349,14 +346,19 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             </Button>
           </div>
           <div className={'flex items-center gap-2'}>
-            <span className={'text-sm'}>Người thực hiện</span>
-            <IssueAssignee
-              issueId={request.data.expand.issue.id}
-              className={'w-56'}
-              onChange={value => {
-                console.log(value);
-              }}
-            ></IssueAssignee>
+            {client.authStore.model?.role !== 1 ? (
+              <>
+                <span className={'text-sm'}>Người thực hiện</span>
+                <IssueAssignee
+                  issueId={request.data.expand.issue.id}
+                  value={request.data.expand.issue.assignee}
+                  className={'w-56'}
+                  onChange={value => {
+                    console.log(value);
+                  }}
+                ></IssueAssignee>
+              </>
+            ) : null}
           </div>
         </div>
         <div className={'flex flex-col'}>
@@ -460,9 +462,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             </Table>
           </div>
         </div>
-        <div className={'flex flex-col gap-1'}>
-          <span className={'text-base'}>Ghi chú</span>
-          <Textarea />
+        <div className={'flex flex-col'}>
+          <Textarea placeholder={'Ghi chú'} />
         </div>
       </div>
     </>
