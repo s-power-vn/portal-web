@@ -47,7 +47,7 @@ const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
   const [selected, setSelected] = useState<IssueResponse>();
-  const customers = useSuspenseQuery(getMyIssues(projectId, search));
+  const issues = useSuspenseQuery(getMyIssues(projectId, search));
 
   const columnHelper = createColumnHelper<IssueResponse>();
 
@@ -103,7 +103,7 @@ const Component = () => {
   ];
 
   const table = useReactTable({
-    data: customers.data?.items ?? [],
+    data: issues.data?.items ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
@@ -236,8 +236,8 @@ const Component = () => {
         </Table>
       </div>
       <Pagination
-        totalItems={customers.data?.totalItems}
-        totalPages={customers.data?.totalPages}
+        totalItems={issues.data?.totalItems}
+        totalPages={issues.data?.totalPages}
         pageIndex={search.pageIndex ?? 1}
         pageSize={search.pageSize ?? 10}
         onPageNext={() =>

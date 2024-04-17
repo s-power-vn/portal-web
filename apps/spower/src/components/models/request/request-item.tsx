@@ -324,28 +324,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         setOpen={setOpenDocumentRequestEdit}
       />
       <div className={'bg-appWhite flex flex-col'}>
-        <div className={'flex justify-between p-2'}>
-          <div className={'flex h-full flex-col gap-4'}>
-            <div className={'text-sm italic'}>
-              <div className={'flex justify-between gap-20'}>
-                <span>Người đề nghị:</span>
-                <span>{request.data?.expand?.issue.expand.createdBy.name}</span>
-              </div>
-              <div className={'flex justify-between'}>
-                <span>Phòng ban:</span>
-                <span>
-                  {
-                    request.data?.expand?.issue.expand.createdBy.expand
-                      .department.name
-                  }
-                </span>
-              </div>
-              <div className={'flex justify-between'}>
-                <span>Ngày tạo:</span>
-                <span>{formatDate(request.data?.created)}</span>
-              </div>
-            </div>
-          </div>
+        <div className={'flex items-center justify-between p-2'}>
           <div className={'flex gap-2'}>
             <Button
               disabled={
@@ -379,6 +358,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <Cross2Icon className={'h-4 w-4'} />
             </Button>
           </div>
+          <div>XXX</div>
         </div>
         <div className={'flex flex-col p-2'}>
           <div className={'overflow-x-auto rounded-md border pb-2'}>

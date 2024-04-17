@@ -11,19 +11,19 @@ export const IssuesSearchSchema = object().shape({
 
 export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
 
-export function getAllIssuesKey(projectId: string, search?: IssuesSearch) {
-  return ['getAllIssuesKey', projectId, search];
+export function getAllIssuesKey(projectId: string) {
+  return ['getAllIssuesKey', projectId];
 }
 
 export function getAllIssues(projectId: string, search?: IssuesSearch) {
   return queryOptions({
-    queryKey: getAllIssuesKey(projectId, search),
+    queryKey: getAllIssuesKey(projectId),
     queryFn: () =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${projectId}" 
-          && title ~ "${search?.filter ?? ''}" 
+          filter: `project = "${projectId}"
+          && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
           sort: '-created'
         })
@@ -34,20 +34,20 @@ export function useGetAllIssue(projectId: string, search?: IssuesSearch) {
   return useQuery(getAllIssues(projectId, search));
 }
 
-export function getMyIssuesKey(projectId: string, search?: IssuesSearch) {
-  return ['getMyIssuesKey', projectId, search];
+export function getMyIssuesKey(projectId: string) {
+  return ['getMyIssuesKey', projectId];
 }
 
 export function getMyIssues(projectId: string, search?: IssuesSearch) {
   return queryOptions({
-    queryKey: getMyIssuesKey(projectId, search),
+    queryKey: getMyIssuesKey(projectId),
     queryFn: () =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${projectId}"
         && assignee = "${client.authStore.model?.id}"
-        && title ~ "${search?.filter ?? ''}" 
+        && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
           sort: '-created'
         })

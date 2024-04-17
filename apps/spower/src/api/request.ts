@@ -12,6 +12,7 @@ import {
 } from '@storeo/core';
 import {array, boolean, InferType, number, object, string} from "yup";
 import {UserData} from "./employee";
+import {getAllIssuesKey, getMyIssuesKey} from "./issue";
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
@@ -150,8 +151,11 @@ export function useCreateRequest(projectId: string, onSuccess?: () => void) {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getAllRequestsKey(projectId)
+          queryKey: getMyIssuesKey(projectId)
         }),
+        queryClient.invalidateQueries({
+          queryKey: getAllIssuesKey(projectId)
+        })
       ])
     }
   });
