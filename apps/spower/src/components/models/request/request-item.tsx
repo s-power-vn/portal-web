@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
+  EditIcon,
   PrinterIcon,
   SquareMinusIcon,
   SquarePlusIcon,
@@ -187,9 +188,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <span>{row.original.expand.detail.unit}</span>
           </div>
         ),
-        header: () => 'KL thầu',
+        header: () => 'Khối lượng HĐ',
         footer: info => info.column.id,
-        size: 100,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -201,7 +202,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             {formatCurrency(row.original.expand.detail.unitPrice)}
           </span>
         ),
-        header: () => 'Đơn giá thầu',
+        header: () => 'Đơn giá HĐ',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -218,9 +219,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <span>{row.original.expand.detail.unit}</span>
           </div>
         ),
-        header: () => 'KL yêu cầu',
+        header: () => 'Khối lượng YC',
         footer: info => info.column.id,
-        size: 100,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -275,7 +276,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           ) : null,
         header: () => 'Khối lượng NCC',
         footer: info => info.column.id,
-        size: 100
+        size: 150
       }),
       columnHelper.accessor('supplierName', {
         cell: info => info.getValue(),
@@ -345,6 +346,11 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
+            {request.data.status === RequestStatusOptions.ToDo ? (
+              <Button className={'text-appWhite'} size="icon">
+                <EditIcon className={'h-4 w-4'} />
+              </Button>
+            ) : null}
             <Button
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"

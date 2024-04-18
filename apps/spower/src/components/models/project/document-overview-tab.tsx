@@ -177,9 +177,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       }),
       columnHelper.accessor('volume', {
         cell: ({ row }) => formatNumber(row.original.volume),
-        header: () => 'KL thầu',
+        header: () => 'Khối lượng HĐ',
         footer: info => info.column.id,
-        size: 100,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -195,7 +195,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       }),
       columnHelper.accessor('unitPrice', {
         cell: ({ row }) => formatCurrency(row.original.unitPrice),
-        header: () => 'Đơn giá thầu',
+        header: () => 'Đơn giá HĐ',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -218,9 +218,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         cell: ({ row }) => {
           return formatNumber(row.original.extra as number);
         },
-        header: () => 'Tổng KL yêu cầu',
+        header: () => 'Tổng khối lượng YC',
         footer: info => info.column.id,
-        size: 120,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -244,9 +244,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           }
           return null;
         },
-        header: () => 'KL phát sinh',
+        header: () => 'Khối lượng PS',
         footer: info => info.column.id,
-        size: 120,
+        size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -254,7 +254,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.display({
         id: 'requestVolume',
         cell: ({ row }) => formatNumber(row.original.requestVolume),
-        header: () => 'KL yêu cầu',
+        header: () => 'Khối lượng YC',
         footer: info => info.column.id,
         size: 120,
         meta: {
@@ -286,7 +286,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           }
           return null;
         },
-        header: () => 'Đơn giá phát sinh',
+        header: () => 'Đơn giá PS',
         footer: info => info.column.id,
         size: 150
       }),
