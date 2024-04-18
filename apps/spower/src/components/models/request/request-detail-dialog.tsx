@@ -1,3 +1,4 @@
+import { Cross2Icon } from '@radix-ui/react-icons';
 import {
   useMutation,
   useQuery,
@@ -35,6 +36,7 @@ import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
 
 const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
+  const [comment, setComment] = useState('');
   const [showCommentButton, setShowCommentButton] = useState(false);
   const ref = useOutsideClick(() => {
     setShowCommentButton(false);
@@ -96,6 +98,73 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
         }),
         queryClient.invalidateQueries({
           queryKey: getAllIssuesKey(request.data.project)
+        })
+      ]);
+    }
+  });
+
+  const rejectRequest = useMutation({
+    mutationKey: ['rejectRequest', request.data.id],
+    mutationFn: async () => {
+      const status = RequestStatusOptions.VolumeDone
+        ? RequestStatusOptions.ToDo
+        : RequestStatusOptions.VolumeDone;
+
+      return Promise.all([
+        client.collection('request').update(request.data.id, {
+          status
+        }),
+        client.collection('issue').update(issueId, {
+          assignee: request.data.expand.issue.lastAssignee,
+          lastAssignee: client.authStore.model?.id
+        })
+      ]);
+    },
+    onSuccess: async () => {
+      setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getMyIssuesKey(request.data.project)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllIssuesKey(request.data.project)
+        })
+      ]);
+    }
+  });
+
+  const createComment = useMutation({
+    mutationKey: ['createComment', issueId],
+    mutationFn: async (comment: string) => {
+      return Promise.all([
+        client.collection('comment').create({
+          content: comment,
+          issue: issueId,
+          createdBy: client.authStore.model?.id
+        })
+      ]);
+    },
+    onSuccess: async () => {
+      setShowCommentButton(false);
+      setComment('');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['getComments', issueId]
+        })
+      ]);
+    }
+  });
+
+  const deleteComment = useMutation({
+    mutationKey: ['deleteComment'],
+    mutationFn: async (id: string) => {
+      return Promise.all([client.collection('comment').delete(id)]);
+    },
+    onSuccess: async () => {
+      setShowCommentButton(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['getComments', issueId]
         })
       ]);
     }
@@ -164,22 +233,34 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
       <div className={'flex basis-1/3 flex-col gap-2'} ref={ref}>
         <Textarea
           placeholder={'Ghi chú'}
+          value={comment}
+          onChange={e => {
+            setComment(e.target.value);
+          }}
           onFocus={() => setShowCommentButton(true)}
         />
         {showCommentButton ? (
           <div className={'flex items-center justify-end'}>
-            <Button className={'h-4 p-4 text-xs'}>Nhập</Button>
+            <Button
+              className={'h-4 p-4 text-xs'}
+              onClick={() => createComment.mutate(comment)}
+            >
+              Nhập
+            </Button>
           </div>
         ) : null}
       </div>
       <div
         className={
-          'flex max-h-[150px] basis-1/2 flex-col gap-2 overflow-y-auto'
+          'flex max-h-[150px] basis-1/2 flex-col gap-2 overflow-y-auto p-1'
         }
       >
         {comments.data && comments.data.length > 0
           ? comments.data.map(it => (
-              <div className={'flex'} key={it.id}>
+              <div
+                className={'relative flex rounded-md border p-2'}
+                key={it.id}
+              >
                 <div className={'flex flex-col pr-3'}>
                   <Avatar className="h-8 w-8">
                     <AvatarImage
@@ -196,6 +277,17 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
                   </div>
                   <div className={'text-sm italic'}>{it.content}</div>
                 </div>
+                {client.authStore.model?.id === it.expand.createdBy.id ? (
+                  <Button
+                    className={
+                      'text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full bg-red-400 p-1'
+                    }
+                    variant={'ghost'}
+                    onClick={() => deleteComment.mutate(it.id)}
+                  >
+                    <Cross2Icon width={20} height={20}></Cross2Icon>
+                  </Button>
+                ) : null}
               </div>
             ))
           : null}
@@ -210,7 +302,12 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
             >
               Phê duyệt
             </Button>
-            <Button className={'bg-red-500 hover:bg-red-600'}>Từ chối</Button>
+            <Button
+              className={'bg-red-500 hover:bg-red-600'}
+              onClick={() => rejectRequest.mutate()}
+            >
+              Từ chối
+            </Button>
           </>
         ) : null}
       </DialogFooter>
