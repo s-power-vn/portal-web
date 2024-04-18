@@ -20,7 +20,13 @@ import {
 
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { client, cn, formatCurrency, formatNumber } from '@storeo/core';
+import {
+  RequestStatusOptions,
+  client,
+  cn,
+  formatCurrency,
+  formatNumber
+} from '@storeo/core';
 import {
   Button,
   Table,
@@ -320,20 +326,22 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       <div className={'bg-appWhite flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
-            <Button
-              disabled={
-                !(
-                  table.getSelectedRowModel().flatRows.length > 0 &&
-                  table.getSelectedRowModel().flatRows[0].original.children
-                    ?.length === 0
-                )
-              }
-              className={'flex gap-1'}
-              onClick={() => setOpenListSupplier(true)}
-            >
-              <StoreIcon className={'h-5 w-5'} />
-              Nhà cung cấp (NCC)
-            </Button>
+            {request.data.status === RequestStatusOptions.VolumeDone ? (
+              <Button
+                disabled={
+                  !(
+                    table.getSelectedRowModel().flatRows.length > 0 &&
+                    table.getSelectedRowModel().flatRows[0].original.children
+                      ?.length === 0
+                  )
+                }
+                className={'flex gap-1'}
+                onClick={() => setOpenListSupplier(true)}
+              >
+                <StoreIcon className={'h-5 w-5'} />
+                Nhà cung cấp (NCC)
+              </Button>
+            ) : null}
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
@@ -350,12 +358,10 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <>
                 <span className={'text-sm'}>Người thực hiện</span>
                 <IssueAssignee
+                  projectId={request.data.project}
                   issueId={request.data.expand.issue.id}
                   value={request.data.expand.issue.assignee}
                   className={'w-56'}
-                  onChange={value => {
-                    console.log(value);
-                  }}
                 ></IssueAssignee>
               </>
             ) : null}

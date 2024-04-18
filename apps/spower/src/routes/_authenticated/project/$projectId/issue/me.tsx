@@ -63,7 +63,7 @@ const Component = () => {
       size: 50
     }),
     columnHelper.accessor('title', {
-      cell: info => info.getValue(),
+      cell: info => <span className={'truncate'}>{info.getValue()}</span>,
       header: () => 'Nội dung',
       footer: info => info.column.id,
       size: 300
@@ -166,9 +166,13 @@ const Component = () => {
       </div>
       <div className={'overflow-auto rounded-md border'}>
         <Table
-          style={{
-            width: table.getTotalSize()
-          }}
+          style={
+            table.getRowModel().rows.length
+              ? {
+                  width: table.getTotalSize()
+                }
+              : undefined
+          }
         >
           <TableHeader className={'bg-appGrayLight'}>
             {table.getHeaderGroups().map(headerGroup => (
@@ -177,9 +181,13 @@ const Component = () => {
                   <TableHead
                     key={header.id}
                     className="flex items-center"
-                    style={{
-                      width: header.getSize()
-                    }}
+                    style={
+                      table.getRowModel().rows.length
+                        ? {
+                            width: header.getSize()
+                          }
+                        : undefined
+                    }
                   >
                     {header.isPlaceholder ? null : (
                       <>
@@ -222,10 +230,10 @@ const Component = () => {
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className={'border-b-0'}>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-16 text-center"
+                  className="h-16  text-center"
                 >
                   Không có dữ liệu.
                 </TableCell>

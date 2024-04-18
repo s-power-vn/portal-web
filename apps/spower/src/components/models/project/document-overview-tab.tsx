@@ -216,9 +216,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.display({
         id: 'totalRequestVolume',
         cell: ({ row }) => {
-          return row.original.status === 'Done'
-            ? formatNumber(row.original.extra as number)
-            : null;
+          return formatNumber(row.original.extra as number);
         },
         header: () => 'Tổng KL yêu cầu',
         footer: info => info.column.id,
@@ -230,7 +228,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.display({
         id: 'exceedVolume',
         cell: ({ row }) => {
-          if (row.original.status === 'Done' && row.original.extra) {
+          if (row.original.extra) {
             const exceed = (row.original.extra as number) - row.original.volume;
 
             return (
@@ -255,10 +253,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       }),
       columnHelper.display({
         id: 'requestVolume',
-        cell: ({ row }) =>
-          row.original.status === 'Done'
-            ? formatNumber(row.original.requestVolume)
-            : null,
+        cell: ({ row }) => formatNumber(row.original.requestVolume),
         header: () => 'KL yêu cầu',
         footer: info => info.column.id,
         size: 120,

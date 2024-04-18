@@ -12,10 +12,16 @@ import {
 } from '@tanstack/react-table';
 import { PlusIcon } from 'lucide-react';
 
+import { useState } from 'react';
+
 import { IssueResponse, formatDate } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Pagination,
   Table,
   TableBody,
@@ -31,12 +37,17 @@ import {
   getAllIssues
 } from '../../../../../api/issue';
 import { EmployeeDisplay, IssueType } from '../../../../../components';
+import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
+import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
 
 const Component = () => {
+  const [openRequestNew, setOpenRequestNew] = useState(false);
+  const [openRequestDetail, setOpenRequestDetail] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const customers = useSuspenseQuery(getAllIssues(projectId, search));
+  const [selected, setSelected] = useState<IssueResponse>();
+  const issues = useSuspenseQuery(getAllIssues(projectId, search));
 
   const columnHelper = createColumnHelper<IssueResponse>();
 
@@ -52,7 +63,7 @@ const Component = () => {
       size: 50
     }),
     columnHelper.accessor('title', {
-      cell: info => info.getValue(),
+      cell: info => <span className={'truncate'}>{info.getValue()}</span>,
       header: () => 'Nội dung',
       footer: info => info.column.id,
       size: 300
@@ -92,7 +103,7 @@ const Component = () => {
   ];
 
   const table = useReactTable({
-    data: customers.data?.items ?? [],
+    data: issues.data?.items ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
@@ -100,11 +111,44 @@ const Component = () => {
 
   return (
     <div className={'flex flex-col gap-2'}>
+      <NewRequestDialog
+        projectId={projectId}
+        open={openRequestNew}
+        setOpen={setOpenRequestNew}
+      />
+      {selected ? (
+        <RequestDetailDialog
+          open={openRequestDetail}
+          setOpen={setOpenRequestDetail}
+          issueId={selected.id}
+        ></RequestDetailDialog>
+      ) : null}
       <div className={'flex items-center justify-between gap-2'}>
-        <Button className={'flex gap-1'}>
-          <PlusIcon />
-          Thêm công việc
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className={'flex gap-1'}>
+              <PlusIcon />
+              Thêm công việc
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56"
+            side="bottom"
+            align="start"
+            sideOffset={2}
+          >
+            <DropdownMenuItem
+              onClick={() => {
+                setOpenRequestNew(true);
+              }}
+            >
+              Yêu cầu mua hàng
+            </DropdownMenuItem>
+            <DropdownMenuItem>Hợp đồng</DropdownMenuItem>
+            <DropdownMenuItem>Tạm ứng</DropdownMenuItem>
+            <DropdownMenuItem>Biên bản bàn giao</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DebouncedInput
           value={search.filter}
           className={'h-8 w-56'}
@@ -120,7 +164,6 @@ const Component = () => {
           }
         />
       </div>
-
       <div className={'overflow-auto rounded-md border'}>
         <Table
           style={{
@@ -157,6 +200,10 @@ const Component = () => {
                 <TableRow
                   key={row.id}
                   className={'flex cursor-pointer last:border-b-0'}
+                  onClick={() => {
+                    setSelected(row.original);
+                    setOpenRequestDetail(true);
+                  }}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
@@ -188,8 +235,8 @@ const Component = () => {
         </Table>
       </div>
       <Pagination
-        totalItems={customers.data?.totalItems}
-        totalPages={customers.data?.totalPages}
+        totalItems={issues.data?.totalItems}
+        totalPages={issues.data?.totalPages}
         pageIndex={search.pageIndex ?? 1}
         pageSize={search.pageSize ?? 10}
         onPageNext={() =>

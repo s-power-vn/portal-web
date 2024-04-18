@@ -28,7 +28,7 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
   });
 
   return (
-    <DialogContent className="flex min-w-[800px] flex-col">
+    <DialogContent className="flex min-w-[80%] flex-col">
       <DialogHeader>
         <DialogTitle className={'flex items-center justify-between'}>
           <div className={'flex items-center gap-4'}>
@@ -39,26 +39,44 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
           </div>
           {request.data.status === RequestStatusOptions.ToDo ? (
             client.authStore.model?.role === 1 ? (
-              <span className={'mr-4 text-base italic text-red-500'}>
+              <span
+                className={
+                  'm-4 whitespace-nowrap text-base italic text-red-500'
+                }
+              >
                 Chờ duyệt khối lượng
               </span>
             ) : (
-              <span className={'mr-4 text-base italic text-red-500'}>
-                Đang xử lý
+              <span
+                className={
+                  'm-4 whitespace-nowrap text-base italic text-red-500'
+                }
+              >
+                Đang xử lý khối lượng
               </span>
             )
           ) : request.data.status === RequestStatusOptions.VolumeDone ? (
             client.authStore.model?.role === 1 ? (
-              <span className={'mr-4 text-base italic text-orange-500'}>
+              <span
+                className={
+                  'm-4 whitespace-nowrap text-base italic text-orange-500'
+                }
+              >
                 Chờ duyệt giá
               </span>
             ) : (
-              <span className={'mr-4 text-base italic text-orange-500'}>
-                Đã duyệt khối lượng
+              <span
+                className={
+                  'm-4 whitespace-nowrap text-base italic text-orange-500'
+                }
+              >
+                Đang xử lý giá
               </span>
             )
           ) : (
-            <span className={'mr-4 text-base italic text-blue-500'}>
+            <span
+              className={'m-4 whitespace-nowrap text-base italic text-blue-500'}
+            >
               Đã duyệt
             </span>
           )}
@@ -74,7 +92,6 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
             <Button className={'bg-red-500 hover:bg-red-600'}>Từ chối</Button>
           </>
         ) : null}
-        <Button>Đóng</Button>
       </DialogFooter>
     </DialogContent>
   );
