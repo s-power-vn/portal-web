@@ -24,54 +24,6 @@ export const ProjectSearchSchema = object().shape({
 
 export type ProjectSearch = InferType<typeof ProjectSearchSchema>;
 
-export function getWaitingProjectsKey(search?: ProjectSearch) {
-  return ['getWaitingProjectsKey', search];
-}
-
-export function getWaitingProjects(search?: ProjectSearch) {
-  return queryOptions({
-    queryKey: getWaitingProjectsKey(search),
-    queryFn: () => {
-      const filter = `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`;
-      return client
-        ?.collection<ProjectData>('project')
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: filter,
-          sort: '-created',
-          expand: 'customer,assignee,createdBy'
-        });
-    }
-  });
-}
-
-export function useGetWaitingProjects(search?: ProjectSearch) {
-  return useQuery(getWaitingProjects(search));
-}
-
-export function getMineProjectsKey(search?: ProjectSearch) {
-  return ['getMineProjectsKey', search];
-}
-
-export function getMineProjects(search?: ProjectSearch) {
-  return queryOptions({
-    queryKey: getMineProjectsKey(search),
-    queryFn: () => {
-      const filter = `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`;
-      return client
-        .collection<ProjectData>('project')
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: filter + `&& (createdBy = "${client.authStore.model?.id}")`,
-          sort: '-created',
-          expand: 'customer,assignee,createdBy'
-        });
-    }
-  });
-}
-
-export function useGetMineProjects(search?: ProjectSearch) {
-  return useQuery(getMineProjects(search));
-}
-
 export function getAllProjectsKey(search?: ProjectSearch) {
   return ['getAllProjectsKey', search];
 }

@@ -31,11 +31,16 @@ import {
   Textarea
 } from '@storeo/theme';
 
-import { RequestData } from '../../../api';
+import { ProjectSearch, RequestData } from '../../../api';
 import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
 
-const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
+const Content: FC<RequestDetailDialogProps> = ({
+  issueId,
+  open,
+  setOpen,
+  search
+}) => {
   const [comment, setComment] = useState('');
   const [showCommentButton, setShowCommentButton] = useState(false);
   const ref = useOutsideClick(() => {
@@ -229,7 +234,7 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
           )}
         </DialogTitle>
       </DialogHeader>
-      <RequestItem requestId={request.data.id} />
+      <RequestItem requestId={request.data.id} search={search} />
       <div className={'flex basis-1/3 flex-col gap-2'} ref={ref}>
         <Textarea
           placeholder={'Ghi chú'}
@@ -317,6 +322,7 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
 
 export type RequestDetailDialogProps = DialogProps & {
   issueId: string;
+  search?: ProjectSearch;
 };
 
 export const RequestDetailDialog: FC<RequestDetailDialogProps> = props => {

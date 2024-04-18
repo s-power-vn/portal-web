@@ -5,7 +5,7 @@ import { FC, useMemo, useState } from 'react';
 import { client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-import { useGetAllEmployees } from '../../../api';
+import { ProjectSearch, useGetAllEmployees } from '../../../api';
 import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 
 export type IssueAssigneeProps = Omit<
@@ -14,11 +14,13 @@ export type IssueAssigneeProps = Omit<
 > & {
   projectId: string;
   issueId: string;
+  search?: ProjectSearch;
 };
 
 export const IssueAssignee: FC<IssueAssigneeProps> = ({
   projectId,
   issueId,
+  search,
   ...props
 }) => {
   const [value, setValue] = useState(props.value);
@@ -47,10 +49,10 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
     onSuccess: () => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getMyIssuesKey(projectId)
+          queryKey: getMyIssuesKey(projectId, search)
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllIssuesKey(projectId)
+          queryKey: getAllIssuesKey(projectId, search)
         })
       ]);
     }

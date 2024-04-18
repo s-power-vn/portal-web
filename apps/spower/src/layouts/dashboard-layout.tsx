@@ -33,14 +33,12 @@ const SidebarHeader = () => {
       <NewProjectDialog
         open={openProjectNew}
         setOpen={setOpenProjectNew}
-        screen={'mine'}
         search={{
           pageIndex: 1,
           pageSize: 10,
           filter: ''
         }}
       />
-
       <Button
         className={cn(
           'flex w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',

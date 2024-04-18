@@ -11,13 +11,13 @@ export const IssuesSearchSchema = object().shape({
 
 export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
 
-export function getAllIssuesKey(projectId: string) {
-  return ['getAllIssuesKey', projectId];
+export function getAllIssuesKey(projectId: string, search?: IssuesSearch) {
+  return ['getAllIssuesKey', projectId, search];
 }
 
 export function getAllIssues(projectId: string, search?: IssuesSearch) {
   return queryOptions({
-    queryKey: getAllIssuesKey(projectId),
+    queryKey: getAllIssuesKey(projectId, search),
     queryFn: () =>
       client
         .collection<IssueResponse>(Collections.Issue)
@@ -34,13 +34,13 @@ export function useGetAllIssue(projectId: string, search?: IssuesSearch) {
   return useQuery(getAllIssues(projectId, search));
 }
 
-export function getMyIssuesKey(projectId: string) {
-  return ['getMyIssuesKey', projectId];
+export function getMyIssuesKey(projectId: string, search?: IssuesSearch) {
+  return ['getMyIssuesKey', projectId, search];
 }
 
 export function getMyIssues(projectId: string, search?: IssuesSearch) {
   return queryOptions({
-    queryKey: getMyIssuesKey(projectId),
+    queryKey: getMyIssuesKey(projectId, search),
     queryFn: () =>
       client
         .collection<IssueResponse>(Collections.Issue)

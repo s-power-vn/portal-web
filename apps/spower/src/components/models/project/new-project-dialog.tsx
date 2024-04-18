@@ -20,35 +20,18 @@ import {
   CreateProjectSchema,
   ProjectSearch,
   getAllProjectsKey,
-  getMineProjectsKey,
-  getWaitingProjectsKey,
   useCreateProject
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
-const Content: FC<ProjectNewProps> = ({ setOpen, search, screen }) => {
-  const navigate = useNavigate();
-
+const Content: FC<ProjectNewProps> = ({ setOpen, search }) => {
   const queryClient = useQueryClient();
 
   const createProject = useCreateProject(async () => {
     setOpen(false);
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey:
-          screen === 'all'
-            ? getAllProjectsKey(search)
-            : screen === 'wating'
-              ? getWaitingProjectsKey(search)
-              : getMineProjectsKey(search)
-      }),
-      navigate({
-        to: '/project',
-        search: {
-          pageIndex: 1,
-          pageSize: 10,
-          filter: ''
-        }
+        queryKey: getAllProjectsKey(search)
       })
     ]);
   });
@@ -101,7 +84,6 @@ const Content: FC<ProjectNewProps> = ({ setOpen, search, screen }) => {
 };
 
 export type ProjectNewProps = DialogProps & {
-  screen: 'wating' | 'mine' | 'all';
   search: ProjectSearch;
 };
 

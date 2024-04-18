@@ -121,6 +121,7 @@ const Component = () => {
           open={openRequestDetail}
           setOpen={setOpenRequestDetail}
           issueId={selected.id}
+          search={search}
         ></RequestDetailDialog>
       ) : null}
       <div className={'flex items-center justify-between gap-2'}>

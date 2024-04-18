@@ -19,30 +19,18 @@ import {
   ProjectSearch,
   UpdateProjectSchema,
   getAllProjectsKey,
-  getMineProjectsKey,
-  getWaitingProjectsKey,
   useUpdateProject
 } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
-const Content: FC<EditProjectDialogProps> = ({
-  setOpen,
-  search,
-  screen,
-  project
-}) => {
+const Content: FC<EditProjectDialogProps> = ({ setOpen, search, project }) => {
   const queryClient = useQueryClient();
 
   const updateProjectMutation = useUpdateProject(project.id, async () => {
     setOpen(false);
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey:
-          screen === 'all'
-            ? getAllProjectsKey(search)
-            : screen === 'wating'
-              ? getWaitingProjectsKey(search)
-              : getMineProjectsKey(search)
+        queryKey: getAllProjectsKey(search)
       })
     ]);
   });
@@ -91,7 +79,6 @@ const Content: FC<EditProjectDialogProps> = ({
 };
 
 export type EditProjectDialogProps = DialogProps & {
-  screen: 'wating' | 'mine' | 'all';
   search: ProjectSearch;
   project: ProjectResponse;
 };

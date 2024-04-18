@@ -21,11 +21,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import {
-  ProjectData,
-  ProjectSearchSchema,
-  getWaitingProjects
-} from '../../../api';
+import { ProjectData, ProjectSearchSchema, getAllProjects } from '../../../api';
 import { EditProjectDialog, EmployeeDisplay } from '../../../components';
 
 const Component = () => {
@@ -34,7 +30,7 @@ const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const projectsQuery = useSuspenseQuery(getWaitingProjects(search));
+  const projectsQuery = useSuspenseQuery(getAllProjects(search));
 
   const columnHelper = createColumnHelper<ProjectData>();
 
@@ -104,7 +100,6 @@ const Component = () => {
     <>
       {project ? (
         <EditProjectDialog
-          screen={'wating'}
           search={search}
           project={project}
           open={open}
@@ -126,7 +121,7 @@ const Component = () => {
             })
           }
         />
-        <div className={'overflow-auto rounded-md border pb-2'}>
+        <div className={'overflow-auto rounded-md border'}>
           <Table
             style={{
               width: table.getTotalSize()
@@ -134,12 +129,12 @@ const Component = () => {
           >
             <TableHeader className={'bg-appGrayLight'}>
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className={'flex'}>
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
                       className={
-                        'whitespace-nowrap first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                        'flex items-center whitespace-nowrap first:rounded-tl-md last:rounded-tr-md'
                       }
                       style={{
                         width: header.getSize()
@@ -163,7 +158,7 @@ const Component = () => {
                 table.getRowModel().rows.map(row => (
                   <TableRow
                     key={row.id}
-                    className={'cursor-pointer'}
+                    className={'flex cursor-pointer last:border-b-0'}
                     onClick={() =>
                       navigate({
                         to: './$projectId',
@@ -176,7 +171,7 @@ const Component = () => {
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className={'p-2'}
+                        className={'flex p-2'}
                         style={{
                           width: cell.column.getSize()
                         }}
@@ -246,5 +241,5 @@ export const Route = createFileRoute('/_authenticated/project/')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getWaitingProjects(deps.search))
+    queryClient?.ensureQueryData(getAllProjects(deps.search))
 });
