@@ -38,7 +38,9 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
             </Button>
           </div>
           {request.data.status === RequestStatusOptions.ToDo ? (
-            client.authStore.model?.role === 1 ? (
+            client.authStore.model?.role === 1 &&
+            client.authStore.model?.id ===
+              request.data.expand.issue.assignee ? (
               <span
                 className={
                   'm-4 whitespace-nowrap text-base italic text-red-500'
@@ -56,7 +58,9 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
               </span>
             )
           ) : request.data.status === RequestStatusOptions.VolumeDone ? (
-            client.authStore.model?.role === 1 ? (
+            client.authStore.model?.role === 1 &&
+            client.authStore.model?.id ===
+              request.data.expand.issue.assignee ? (
               <span
                 className={
                   'm-4 whitespace-nowrap text-base italic text-orange-500'
@@ -84,7 +88,8 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
       </DialogHeader>
       <RequestItem requestId={request.data.id} />
       <DialogFooter>
-        {client.authStore.model?.role === 1 ? (
+        {client.authStore.model?.role === 1 &&
+        client.authStore.model?.id === request.data.expand.issue.assignee ? (
           <>
             <Button className={'bg-blue-500 hover:bg-blue-600'}>
               Phê duyệt

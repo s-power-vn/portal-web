@@ -327,7 +327,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       <div className={'bg-appWhite flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
-            {request.data.status === RequestStatusOptions.VolumeDone ? (
+            {request.data.status === RequestStatusOptions.VolumeDone &&
+            client.authStore.model?.role !== 1 ? (
               <Button
                 disabled={
                   !(
