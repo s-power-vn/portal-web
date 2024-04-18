@@ -1,4 +1,8 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery
+} from '@tanstack/react-query';
 import { PencilIcon } from 'lucide-react';
 
 import { FC, Suspense } from 'react';
@@ -14,9 +18,10 @@ import {
 } from '@storeo/theme';
 
 import { RequestData } from '../../../api';
+import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
 
-const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
+const Content: FC<RequestDetailDialogProps> = ({ issueId, setOpen }) => {
   const request = useSuspenseQuery({
     queryKey: ['getRequest', issueId],
     queryFn: () =>
@@ -25,6 +30,38 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
         .getFirstListItem(`issue = "${issueId}"`, {
           expand: 'issue'
         })
+  });
+
+  const queryClient = useQueryClient();
+
+  const approveRequest = useMutation({
+    mutationKey: ['approveRequest', request.data.id],
+    mutationFn: async () => {
+      const status =
+        request.data.status === RequestStatusOptions.ToDo
+          ? RequestStatusOptions.VolumeDone
+          : RequestStatusOptions.Done;
+      return Promise.all([
+        client.collection('request').update(request.data.id, {
+          status
+        }),
+        client.collection('issue').update(issueId, {
+          assignee: request.data.expand.issue.lastAssignee,
+          lastAssignee: client.authStore.model?.id
+        })
+      ]);
+    },
+    onSuccess: async () => {
+      setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: getMyIssuesKey(request.data.project)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getAllIssuesKey(request.data.project)
+        })
+      ]);
+    }
   });
 
   return (
@@ -91,7 +128,10 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId }) => {
         {client.authStore.model?.role === 1 &&
         client.authStore.model?.id === request.data.expand.issue.assignee ? (
           <>
-            <Button className={'bg-blue-500 hover:bg-blue-600'}>
+            <Button
+              className={'bg-blue-500 hover:bg-blue-600'}
+              onClick={() => approveRequest.mutate()}
+            >
               Phê duyệt
             </Button>
             <Button className={'bg-red-500 hover:bg-red-600'}>Từ chối</Button>

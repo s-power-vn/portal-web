@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Comment = "comment",
 	Contract = "contract",
 	Customer = "customer",
 	Department = "department",
@@ -15,7 +16,9 @@ export enum Collections {
 	Project = "project",
 	Request = "request",
 	RequestDetail = "requestDetail",
+	RequestDetailInfo = "requestDetailInfo",
 	RequestDetailSupplier = "requestDetailSupplier",
+	RequestDetailSupplierInfo = "requestDetailSupplierInfo",
 	Supplier = "supplier",
 	User = "user",
 }
@@ -43,6 +46,12 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export type CommentRecord = {
+	content?: string
+	createdBy?: RecordIdString
+	isssue?: RecordIdString
+}
 
 export type ContractRecord = {
 	count?: number
@@ -77,11 +86,6 @@ export type DetailRecord = {
 	volume?: number
 }
 
-export enum DetailInfoStatusOptions {
-	"ToDo" = "ToDo",
-	"VolumeDone" = "VolumeDone",
-	"Done" = "Done",
-}
 export type DetailInfoRecord = {
 	group?: RecordIdString
 	level: string
@@ -90,7 +94,6 @@ export type DetailInfoRecord = {
 	project?: RecordIdString
 	request: RecordIdString
 	requestVolume?: number
-	status?: DetailInfoStatusOptions
 	supplierName: string
 	supplierPrice?: number
 	supplierVolume?: number
@@ -109,6 +112,7 @@ export type IssueRecord = {
 	assignee?: RecordIdString
 	createdBy?: RecordIdString
 	deleted?: boolean
+	lastAssignee?: RecordIdString
 	project: RecordIdString
 	title?: string
 	type?: IssueTypeOptions
@@ -138,14 +142,23 @@ export type RequestDetailRecord = {
 	volume?: number
 }
 
-export enum RequestDetailSupplierStatusOptions {
-	"ToDo" = "ToDo",
-	"Done" = "Done",
+export type RequestDetailInfoRecord = {
+	deleted?: boolean
+	detail?: RecordIdString
+	request: RecordIdString
+	volume?: number
 }
+
 export type RequestDetailSupplierRecord = {
 	price?: number
 	requestDetail: RecordIdString
-	status?: RequestDetailSupplierStatusOptions
+	supplier: RecordIdString
+	volume?: number
+}
+
+export type RequestDetailSupplierInfoRecord = {
+	price?: number
+	requestDetail?: RecordIdString
 	supplier: RecordIdString
 	volume?: number
 }
@@ -167,6 +180,7 @@ export type UserRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type CommentResponse<Texpand = unknown> = Required<CommentRecord> & BaseSystemFields<Texpand>
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
@@ -176,13 +190,16 @@ export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSyste
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
+export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
+export type RequestDetailSupplierInfoResponse<Texpand = unknown> = Required<RequestDetailSupplierInfoRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	comment: CommentRecord
 	contract: ContractRecord
 	customer: CustomerRecord
 	department: DepartmentRecord
@@ -192,12 +209,15 @@ export type CollectionRecords = {
 	project: ProjectRecord
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
+	requestDetailInfo: RequestDetailInfoRecord
 	requestDetailSupplier: RequestDetailSupplierRecord
+	requestDetailSupplierInfo: RequestDetailSupplierInfoRecord
 	supplier: SupplierRecord
 	user: UserRecord
 }
 
 export type CollectionResponses = {
+	comment: CommentResponse
 	contract: ContractResponse
 	customer: CustomerResponse
 	department: DepartmentResponse
@@ -207,7 +227,9 @@ export type CollectionResponses = {
 	project: ProjectResponse
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
+	requestDetailInfo: RequestDetailInfoResponse
 	requestDetailSupplier: RequestDetailSupplierResponse
+	requestDetailSupplierInfo: RequestDetailSupplierInfoResponse
 	supplier: SupplierResponse
 	user: UserResponse
 }
@@ -216,6 +238,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'comment'): RecordService<CommentResponse>
 	collection(idOrName: 'contract'): RecordService<ContractResponse>
 	collection(idOrName: 'customer'): RecordService<CustomerResponse>
 	collection(idOrName: 'department'): RecordService<DepartmentResponse>
@@ -225,7 +248,9 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'project'): RecordService<ProjectResponse>
 	collection(idOrName: 'request'): RecordService<RequestResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>
+	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
 	collection(idOrName: 'requestDetailSupplier'): RecordService<RequestDetailSupplierResponse>
+	collection(idOrName: 'requestDetailSupplierInfo'): RecordService<RequestDetailSupplierInfoResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>
 }

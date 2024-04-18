@@ -36,10 +36,14 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
   const queryClient = useQueryClient();
   const updateIssueAssignee = useMutation({
     mutationKey: ['updateIssueAssignee', issueId],
-    mutationFn: (id?: string) =>
-      client.collection('issue').update(issueId, {
-        assignee: id
-      }),
+    mutationFn: async (id?: string) => {
+      const issue = await client.collection('issue').getOne(issueId);
+      const lastAssignee = issue.assignee;
+      return await client.collection('issue').update(issueId, {
+        assignee: id,
+        lastAssignee
+      });
+    },
     onSuccess: () => {
       return Promise.all([
         queryClient.invalidateQueries({
