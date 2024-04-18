@@ -1,27 +1,44 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
 import { PencilIcon } from 'lucide-react';
 
-import { FC, Suspense } from 'react';
+import { FC, Suspense, useState } from 'react';
 
-import { DialogProps, RequestStatusOptions, client } from '@storeo/core';
 import {
+  CommentResponse,
+  DialogProps,
+  IssueResponse,
+  RequestStatusOptions,
+  UserResponse,
+  client,
+  useOutsideClick
+} from '@storeo/core';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  Textarea
 } from '@storeo/theme';
 
 import { RequestData } from '../../../api';
 import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
 
-const Content: FC<RequestDetailDialogProps> = ({ issueId, setOpen }) => {
+const Content: FC<RequestDetailDialogProps> = ({ issueId, open, setOpen }) => {
+  const [showCommentButton, setShowCommentButton] = useState(false);
+  const ref = useOutsideClick(() => {
+    setShowCommentButton(false);
+  });
   const request = useSuspenseQuery({
     queryKey: ['getRequest', issueId],
     queryFn: () =>
@@ -30,6 +47,26 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, setOpen }) => {
         .getFirstListItem(`issue = "${issueId}"`, {
           expand: 'issue'
         })
+  });
+
+  const comments = useQuery({
+    queryKey: ['getComments', issueId],
+    queryFn: () =>
+      client
+        .collection<
+          CommentResponse & {
+            expand: {
+              issue: IssueResponse;
+              createdBy: UserResponse;
+            };
+          }
+        >('comment')
+        .getFullList({
+          filter: `issue = "${issueId}"`,
+          expand: 'issue,createdBy',
+          sort: '-created'
+        }),
+    enabled: open
   });
 
   const queryClient = useQueryClient();
@@ -124,6 +161,45 @@ const Content: FC<RequestDetailDialogProps> = ({ issueId, setOpen }) => {
         </DialogTitle>
       </DialogHeader>
       <RequestItem requestId={request.data.id} />
+      <div className={'flex basis-1/3 flex-col gap-2'} ref={ref}>
+        <Textarea
+          placeholder={'Ghi chú'}
+          onFocus={() => setShowCommentButton(true)}
+        />
+        {showCommentButton ? (
+          <div className={'flex items-center justify-end'}>
+            <Button className={'h-4 p-4 text-xs'}>Nhập</Button>
+          </div>
+        ) : null}
+      </div>
+      <div
+        className={
+          'flex max-h-[150px] basis-1/2 flex-col gap-2 overflow-y-auto'
+        }
+      >
+        {comments.data && comments.data.length > 0
+          ? comments.data.map(it => (
+              <div className={'flex'} key={it.id}>
+                <div className={'flex flex-col pr-3'}>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={`http://localhost:8090/api/files/user/${it.expand.createdBy.id}/${it.expand.createdBy.avatar}`}
+                    />
+                    <AvatarFallback className={'text-sm'}>
+                      {it.expand.createdBy.name.split(' ')[0][0]}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <div className={'flex flex-col gap-1'}>
+                  <div className={'text-sm font-bold text-gray-500'}>
+                    {it.expand.createdBy.name}
+                  </div>
+                  <div className={'text-sm italic'}>{it.content}</div>
+                </div>
+              </div>
+            ))
+          : null}
+      </div>
       <DialogFooter>
         {client.authStore.model?.role === 1 &&
         client.authStore.model?.id === request.data.expand.issue.assignee ? (

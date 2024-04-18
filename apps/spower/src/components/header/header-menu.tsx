@@ -22,7 +22,7 @@ export const HeaderMenu = () => {
       <DropdownMenuTrigger>
         <Avatar className="h-8 w-8">
           <AvatarImage
-            src={`http://localhost:8090/api/files/users/${client.authStore.model?.id}/${client.authStore.model?.avatar}`}
+            src={`http://localhost:8090/api/files/user/${client.authStore.model?.id}/${client.authStore.model?.avatar}`}
           />
           <AvatarFallback className={'text-sm'}>
             {client.authStore.model?.name.split(' ')[0][0]}

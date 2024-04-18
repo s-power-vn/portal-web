@@ -376,7 +376,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         </div>
         <div className={'flex flex-col'}>
           <div
-            className={'max-h-[400px] overflow-x-auto rounded-md border pb-2'}
+            className={'max-h-[350px] overflow-x-auto rounded-md border pb-2'}
           >
             <Table
               style={{
@@ -476,9 +476,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               </TableBody>
             </Table>
           </div>
-        </div>
-        <div className={'flex flex-col'}>
-          <Textarea placeholder={'Ghi chú'} />
         </div>
       </div>
     </>
