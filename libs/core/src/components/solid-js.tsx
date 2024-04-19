@@ -122,13 +122,10 @@ export function For<T, U extends ReactNode>(props: {
 
   return useMemo(
     () =>
-      props.each &&
-      props.each?.map((item, index) =>
-        isValidElement(props.children(item, index)) ? (
-          props.children(item, index)
-        ) : (
-          <>{fallback ? fallback.fallback() : null}</>
-        )
+      props.each && props.each.length > 0 ? (
+        props.each?.map((item, index) => props.children(item, index))
+      ) : (
+        <>{fallback ? fallback.fallback() : null}</>
       ),
     [props.each, fallback, props.children]
   );
