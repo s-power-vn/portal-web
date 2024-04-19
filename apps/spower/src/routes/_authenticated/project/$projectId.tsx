@@ -3,7 +3,8 @@ import { Outlet, createFileRoute } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BriefcaseBusinessIcon,
-  ListTodoIcon
+  LayoutListIcon,
+  ListChecksIcon
 } from 'lucide-react';
 
 import { Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
@@ -40,11 +41,11 @@ const Component = () => {
           >
             <SidebarItem
               to={'/project/$projectId/issue/me'}
-              icon={<ListTodoIcon width={22} height={22} />}
+              icon={<ListChecksIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
               to={'/project/$projectId/issue/manager'}
-              icon={<ListTodoIcon width={22} height={22} />}
+              icon={<LayoutListIcon width={22} height={22} />}
             ></SidebarItem>
           </SidebarGroup>
         </Sidebar>

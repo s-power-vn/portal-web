@@ -153,10 +153,10 @@ export function useCreateRequest(projectId: string, onSuccess?: () => void) {
       onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getMyIssuesKey(projectId)
+          queryKey: ['getMyIssuesKey']
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllIssuesKey(projectId)
+          queryKey: ['getAllIssuesKey']
         })
       ])
     }

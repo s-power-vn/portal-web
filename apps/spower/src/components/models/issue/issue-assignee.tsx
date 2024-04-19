@@ -6,7 +6,6 @@ import { client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
 import { ProjectSearch, useGetAllEmployees } from '../../../api';
-import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 
 export type IssueAssigneeProps = Omit<
   SelectInputProps,
@@ -49,10 +48,10 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
     onSuccess: () => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getMyIssuesKey(projectId, search)
+          queryKey: ['getMyIssuesKey']
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllIssuesKey(projectId, search)
+          queryKey: ['getAllIssuesKey']
         })
       ]);
     }

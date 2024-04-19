@@ -32,7 +32,6 @@ import {
 } from '@storeo/theme';
 
 import { ProjectSearch, RequestData } from '../../../api';
-import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
 import { RequestStatus } from './request-status';
 
@@ -101,10 +100,10 @@ const Content: FC<RequestDetailDialogProps> = ({
       setOpen(false);
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getMyIssuesKey(request.data.project)
+          queryKey: ['getMyIssuesKey']
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllIssuesKey(request.data.project)
+          queryKey: ['getAllIssuesKey']
         })
       ]);
     }
@@ -131,10 +130,10 @@ const Content: FC<RequestDetailDialogProps> = ({
       setOpen(false);
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: getMyIssuesKey(request.data.project)
+          queryKey: ['getMyIssuesKey']
         }),
         queryClient.invalidateQueries({
-          queryKey: getAllIssuesKey(request.data.project)
+          queryKey: ['getAllIssuesKey']
         })
       ]);
     }

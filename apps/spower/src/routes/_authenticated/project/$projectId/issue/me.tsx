@@ -10,7 +10,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { PlusIcon } from 'lucide-react';
+import { ShoppingCartIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
@@ -22,12 +22,7 @@ import {
   formatDate
 } from '@storeo/core';
 import {
-  Button,
   DebouncedInput,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Pagination,
   Table,
   TableBody,
@@ -43,12 +38,11 @@ import {
   getMyIssues
 } from '../../../../../api/issue';
 import { EmployeeDisplay } from '../../../../../components';
-import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
+import { NewIssueButton } from '../../../../../components/models/issue/new-issue-button';
 import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
 import { RequestStatus } from '../../../../../components/models/request/request-status';
 
 const Component = () => {
-  const [openRequestNew, setOpenRequestNew] = useState(false);
   const [openRequestDetail, setOpenRequestDetail] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -70,7 +64,20 @@ const Component = () => {
       size: 50
     }),
     columnHelper.accessor('title', {
-      cell: info => <span className={'truncate'}>{info.getValue()}</span>,
+      cell: info => (
+        <div className={'flex w-full items-center gap-1'}>
+          <Switch fallback={<span></span>}>
+            <Match when={info.row.original.type === IssueTypeOptions.Request}>
+              <ShoppingCartIcon
+                className={'text-red-500'}
+                width={20}
+                height={20}
+              />
+            </Match>
+          </Switch>
+          <span className={'w-full truncate'}>{info.getValue()}</span>
+        </div>
+      ),
       header: () => 'Nội dung',
       footer: info => info.column.id,
       size: 400
@@ -125,11 +132,6 @@ const Component = () => {
 
   return (
     <div className={'flex flex-col gap-2'}>
-      <NewRequestDialog
-        projectId={projectId}
-        open={openRequestNew}
-        setOpen={setOpenRequestNew}
-      />
       {selected ? (
         <RequestDetailDialog
           open={openRequestDetail}
@@ -139,31 +141,7 @@ const Component = () => {
         ></RequestDetailDialog>
       ) : null}
       <div className={'flex items-center justify-between gap-2'}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className={'flex gap-1'}>
-              <PlusIcon />
-              Thêm công việc
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56"
-            side="bottom"
-            align="start"
-            sideOffset={2}
-          >
-            <DropdownMenuItem
-              onClick={() => {
-                setOpenRequestNew(true);
-              }}
-            >
-              Yêu cầu mua hàng
-            </DropdownMenuItem>
-            <DropdownMenuItem>Hợp đồng</DropdownMenuItem>
-            <DropdownMenuItem>Tạm ứng</DropdownMenuItem>
-            <DropdownMenuItem>Biên bản bàn giao</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NewIssueButton projectId={projectId} />
         <DebouncedInput
           value={search.filter}
           className={'h-8 w-56'}
