@@ -34,6 +34,7 @@ import {
 import { ProjectSearch, RequestData } from '../../../api';
 import { getAllIssuesKey, getMyIssuesKey } from '../../../api/issue';
 import { RequestItem } from './request-item';
+import { RequestStatus } from './request-status';
 
 const Content: FC<RequestDetailDialogProps> = ({
   issueId,
@@ -46,6 +47,7 @@ const Content: FC<RequestDetailDialogProps> = ({
   const ref = useOutsideClick(() => {
     setShowCommentButton(false);
   });
+
   const request = useSuspenseQuery({
     queryKey: ['getRequest', issueId],
     queryFn: () =>
@@ -178,60 +180,17 @@ const Content: FC<RequestDetailDialogProps> = ({
   return (
     <DialogContent className="flex min-w-[80%] flex-col">
       <DialogHeader>
-        <DialogTitle className={'flex items-center justify-between'}>
+        <DialogTitle className={'flex items-center justify-between pr-4'}>
           <div className={'flex items-center gap-4'}>
             {request.data.expand.issue.title}
             <Button className={'p-0 text-gray-500'} variant={'link'}>
               <PencilIcon width={15} height={15} />
             </Button>
           </div>
-          {request.data.status === RequestStatusOptions.ToDo ? (
-            client.authStore.model?.role === 1 &&
-            client.authStore.model?.id ===
-              request.data.expand.issue.assignee ? (
-              <span
-                className={
-                  'm-4 whitespace-nowrap text-base italic text-red-500'
-                }
-              >
-                Chờ duyệt khối lượng
-              </span>
-            ) : (
-              <span
-                className={
-                  'm-4 whitespace-nowrap text-base italic text-red-500'
-                }
-              >
-                Đang xử lý khối lượng
-              </span>
-            )
-          ) : request.data.status === RequestStatusOptions.VolumeDone ? (
-            client.authStore.model?.role === 1 &&
-            client.authStore.model?.id ===
-              request.data.expand.issue.assignee ? (
-              <span
-                className={
-                  'm-4 whitespace-nowrap text-base italic text-orange-500'
-                }
-              >
-                Chờ duyệt giá
-              </span>
-            ) : (
-              <span
-                className={
-                  'm-4 whitespace-nowrap text-base italic text-orange-500'
-                }
-              >
-                Đang xử lý giá
-              </span>
-            )
-          ) : (
-            <span
-              className={'m-4 whitespace-nowrap text-base italic text-blue-500'}
-            >
-              Đã duyệt
-            </span>
-          )}
+          <RequestStatus
+            className={'px-3 py-2 text-sm italic'}
+            issueId={issueId}
+          />
         </DialogTitle>
       </DialogHeader>
       <RequestItem requestId={request.data.id} search={search} />

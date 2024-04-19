@@ -14,7 +14,13 @@ import { PlusIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { IssueResponse, formatDate } from '@storeo/core';
+import {
+  IssueResponse,
+  IssueTypeOptions,
+  Match,
+  Switch,
+  formatDate
+} from '@storeo/core';
 import {
   Button,
   DebouncedInput,
@@ -36,9 +42,10 @@ import {
   IssuesSearchSchema,
   getMyIssues
 } from '../../../../../api/issue';
-import { EmployeeDisplay, IssueType } from '../../../../../components';
+import { EmployeeDisplay } from '../../../../../components';
 import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
 import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
+import { RequestStatus } from '../../../../../components/models/request/request-status';
 
 const Component = () => {
   const [openRequestNew, setOpenRequestNew] = useState(false);
@@ -66,17 +73,24 @@ const Component = () => {
       cell: info => <span className={'truncate'}>{info.getValue()}</span>,
       header: () => 'Nội dung',
       footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('type', {
-      cell: ({ row }) => <IssueType type={row.original.type}></IssueType>,
-      header: () => 'Phân loại',
-      footer: info => info.column.id,
-      size: 150
+      size: 400
     }),
     columnHelper.accessor('assignee', {
       cell: ({ row }) => <EmployeeDisplay employeeId={row.original.assignee} />,
       header: () => 'Người thực hiện',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.display({
+      id: 'status',
+      cell: ({ row }) => (
+        <Switch>
+          <Match when={row.original.type === IssueTypeOptions.Request}>
+            <RequestStatus issueId={row.original.id} />
+          </Match>
+        </Switch>
+      ),
+      header: () => 'Trạng thái',
       footer: info => info.column.id,
       size: 200
     }),
@@ -211,13 +225,15 @@ const Component = () => {
                   className={'flex cursor-pointer last:border-b-0'}
                   onClick={() => {
                     setSelected(row.original);
-                    setOpenRequestDetail(true);
+                    if (row.original.type === IssueTypeOptions.Request) {
+                      setOpenRequestDetail(true);
+                    }
                   }}
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className="flex items-center p-1"
+                      className="flex items-center"
                       style={{
                         width: cell.column.getSize()
                       }}
@@ -234,7 +250,7 @@ const Component = () => {
               <TableRow className={'border-b-0'}>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-16  text-center"
+                  className="h-16 text-center"
                 >
                   Không có dữ liệu.
                 </TableCell>
