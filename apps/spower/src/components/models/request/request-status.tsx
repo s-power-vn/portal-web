@@ -40,7 +40,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           fallback={
             <span
               className={cn(
-                'text-appWhite rounded-full bg-red-500 px-2 py-1 text-xs shadow',
+                'text-appWhite whitespace-nowrap rounded-full bg-red-500 px-2 py-1 text-xs shadow',
                 className
               )}
             >
@@ -50,7 +50,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
         >
           <span
             className={cn(
-              'text-appWhite rounded-full bg-red-500 px-2 py-1 text-xs shadow',
+              'text-appWhite whitespace-nowrap rounded-full bg-red-500 px-2 py-1 text-xs shadow',
               className
             )}
           >
@@ -67,7 +67,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           fallback={
             <span
               className={cn(
-                'text-appWhite rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
+                'text-appWhite whitespace-nowrap rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
                 className
               )}
             >
@@ -77,7 +77,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
         >
           <span
             className={cn(
-              'text-appWhite rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
+              'text-appWhite whitespace-nowrap rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
               className
             )}
           >
@@ -88,7 +88,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
       <Match when={request.data.status === RequestStatusOptions.Done}>
         <span
           className={cn(
-            'text-appWhite rounded-full bg-blue-500 px-2 py-1 text-xs shadow',
+            'text-appWhite whitespace-nowrap rounded-full bg-blue-500 px-2 py-1 text-xs shadow',
             className
           )}
         >

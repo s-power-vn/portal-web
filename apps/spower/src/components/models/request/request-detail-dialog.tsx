@@ -179,9 +179,9 @@ const Content: FC<RequestDetailDialogProps> = ({
   return (
     <DialogContent className="flex min-w-[80%] flex-col">
       <DialogHeader>
-        <DialogTitle className={'flex items-center justify-between pr-4'}>
-          <div className={'flex items-center gap-4'}>
-            {request.data.expand.issue.title}
+        <DialogTitle className={'flex items-center justify-between gap-4 pr-4'}>
+          <div className={'flex items-center gap-2'}>
+            <span className={'w-full'}>{request.data.expand.issue.title}</span>
             <Button className={'p-0 text-gray-500'} variant={'link'}>
               <PencilIcon width={15} height={15} />
             </Button>

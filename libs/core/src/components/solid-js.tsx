@@ -1,4 +1,4 @@
-import { Children, ReactNode, isValidElement, useMemo } from 'react';
+import React, { Children, ReactNode, isValidElement, useMemo } from 'react';
 
 type ShowProps<T> = {
   when: T;
@@ -111,4 +111,25 @@ export function Switch({ fallback, children }: SwitchProps) {
   }
 
   return null;
+}
+
+export function For<T, U extends ReactNode>(props: {
+  each: readonly T[] | undefined | null | false;
+  fallback?: ReactNode;
+  children: (item: T, index: number) => U;
+}) {
+  const fallback = 'fallback' in props && { fallback: () => props.fallback };
+
+  return useMemo(
+    () =>
+      props.each &&
+      props.each?.map((item, index) =>
+        isValidElement(props.children(item, index)) ? (
+          props.children(item, index)
+        ) : (
+          <>{fallback ? fallback.fallback() : null}</>
+        )
+      ),
+    [props.each, fallback, props.children]
+  );
 }

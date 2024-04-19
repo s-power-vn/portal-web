@@ -95,6 +95,16 @@ const Component = () => {
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
   });
+  const cats = [
+    {
+      id: 1,
+      name: 'Thiết kế 1'
+    },
+    {
+      id: 2,
+      name: 'Thiết kế 2'
+    }
+  ];
 
   return (
     <>
