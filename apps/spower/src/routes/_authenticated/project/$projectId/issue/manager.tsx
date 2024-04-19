@@ -10,7 +10,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { PlusIcon, ShoppingCartIcon } from 'lucide-react';
+import { ShoppingCartIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
@@ -22,12 +22,7 @@ import {
   formatDate
 } from '@storeo/core';
 import {
-  Button,
   DebouncedInput,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Pagination,
   Table,
   TableBody,
@@ -43,6 +38,7 @@ import {
   getAllIssues
 } from '../../../../../api/issue';
 import { EmployeeDisplay } from '../../../../../components';
+import { NewIssueButton } from '../../../../../components/models/issue/new-issue-button';
 import { NewRequestDialog } from '../../../../../components/models/request/new-request-dialog';
 import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
 import { RequestStatus } from '../../../../../components/models/request/request-status';
@@ -152,31 +148,7 @@ const Component = () => {
         ></RequestDetailDialog>
       ) : null}
       <div className={'flex items-center justify-between gap-2'}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className={'flex gap-1'}>
-              <PlusIcon />
-              Thêm công việc
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56"
-            side="bottom"
-            align="start"
-            sideOffset={2}
-          >
-            <DropdownMenuItem
-              onClick={() => {
-                setOpenRequestNew(true);
-              }}
-            >
-              Yêu cầu mua hàng
-            </DropdownMenuItem>
-            <DropdownMenuItem>Hợp đồng</DropdownMenuItem>
-            <DropdownMenuItem>Tạm ứng</DropdownMenuItem>
-            <DropdownMenuItem>Biên bản bàn giao</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NewIssueButton projectId={projectId} />
         <DebouncedInput
           value={search.filter}
           className={'h-8 w-56'}

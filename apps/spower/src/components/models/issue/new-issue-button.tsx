@@ -1,4 +1,10 @@
-import { PlusIcon } from 'lucide-react';
+import {
+  DollarSignIcon,
+  FileTextIcon,
+  NotebookPenIcon,
+  PlusIcon,
+  ShoppingCartIcon
+} from 'lucide-react';
 
 import { FC, useState } from 'react';
 
@@ -44,11 +50,21 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
               setOpenRequestNew(true);
             }}
           >
+            <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
             Yêu cầu mua hàng
           </DropdownMenuItem>
-          <DropdownMenuItem>Hợp đồng</DropdownMenuItem>
-          <DropdownMenuItem>Tạm ứng</DropdownMenuItem>
-          <DropdownMenuItem>Biên bản bàn giao</DropdownMenuItem>
+          <DropdownMenuItem>
+            <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
+            Hợp đồng
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
+            Tạm ứng
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <NotebookPenIcon className="mr-2 h-4 w-4 text-orange-500" />
+            Biên bản bàn giao
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
