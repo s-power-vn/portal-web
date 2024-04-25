@@ -1,7 +1,18 @@
 import PocketBase from 'pocketbase';
 
-import { TypedPocketBase } from './generate/pb';
+import { Collections, TypedPocketBase, UserResponse } from './generate/pb';
 
-const BASE_URL = 'http://localhost:8090';
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const client = new PocketBase(BASE_URL) as TypedPocketBase;
+
+export const getUser = (): UserResponse | undefined =>
+  client.authStore.model ? (client.authStore.model as UserResponse) : undefined;
+
+export const getImageUrl = (
+  collection: Collections,
+  id?: string,
+  file?: string
+): string => {
+  return `${BASE_URL}/api/files/${collection}/${id}/${file}`;
+};

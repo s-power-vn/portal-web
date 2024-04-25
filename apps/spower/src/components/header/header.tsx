@@ -4,6 +4,7 @@ import { LucideHome } from 'lucide-react';
 
 import { Fragment } from 'react';
 
+import { Show } from '@storeo/core';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -53,21 +54,22 @@ export const Header = () => {
             {breadcrumbs.map((it, index) => (
               <Fragment key={it.path}>
                 <BreadcrumbItem>
-                  {index === breadcrumbs.length - 1 ? (
+                  <Show
+                    when={index === breadcrumbs.length - 1}
+                    fallback={
+                      <BreadcrumbLink href={it.path}>
+                        <Show when={it.path === '/'} fallback={it.title}>
+                          <LucideHome width={20} height={20} />
+                        </Show>
+                      </BreadcrumbLink>
+                    }
+                  >
                     <BreadcrumbPage>{it.title}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink href={it.path}>
-                      {it.path === '/' ? (
-                        <LucideHome width={20} height={20} />
-                      ) : (
-                        it.title
-                      )}
-                    </BreadcrumbLink>
-                  )}
+                  </Show>
                 </BreadcrumbItem>
-                {index === breadcrumbs.length - 1 ? null : (
+                <Show when={index !== breadcrumbs.length - 1}>
                   <BreadcrumbSeparator />
-                )}
+                </Show>
               </Fragment>
             ))}
           </BreadcrumbList>

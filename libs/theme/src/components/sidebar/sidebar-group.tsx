@@ -17,7 +17,7 @@ import {
   useMemo
 } from 'react';
 
-import { cn, useLink } from '@storeo/core';
+import { Show, cn, useLink } from '@storeo/core';
 
 import { useSidebar } from './sidebar';
 
@@ -65,15 +65,15 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
       <Link
         className={cn(
           `hover:bg-appGrayLight flex w-full items-center justify-start truncate whitespace-nowrap border-b pl-[3px] text-sm`,
-          isActive && `bg-appGrayLight font-semibold`
+          isActive && `font-semibold`
         )}
         to={to}
       >
-        {icon ? (
+        <Show when={icon}>
           <div className={cn(`flex h-10 w-10 items-center justify-center p-2`)}>
             {icon}
           </div>
-        ) : null}
+        </Show>
         <div
           className={cn(
             `duration-default transition-opacity`,
@@ -88,20 +88,19 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
   );
 
   return (
-    <div
-      className={cn(
-        `relative`,
-        isActive &&
-          `before:bg-appGray before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5`
-      )}
-      {...props}
-    >
+    <div {...props}>
       {link}
-      {isActive && (
-        <div className={cn(isActive && `bg-appGrayLight`)}>
+      <Show when={isActive}>
+        <div
+          className={cn(
+            `bg-appGrayLight relative`,
+            isActive &&
+              `before:bg-appGray before:hover:bg-appGrayDark before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5`
+          )}
+        >
           {childrenWithProps}
         </div>
-      )}
+      </Show>
     </div>
   );
 };
