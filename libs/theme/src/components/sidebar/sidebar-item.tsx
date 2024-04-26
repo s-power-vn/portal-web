@@ -63,7 +63,8 @@ export const SidebarItem: FC<SidebarItemProps> = ({
       <Link
         className={cn(
           `flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
-          isActive && `bg-primary text-appWhite`
+          isActive &&
+            `bg-appBlueLight text-appWhite after:bg-appBlue after:absolute after:bottom-0 after:left-0 after:top-0 after:z-20 after:w-1`
         )}
         to={to}
       >

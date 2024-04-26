@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { DetailInfoResponse, DialogProps } from '@storeo/core';
+import { DetailInfoResponse, DialogProps, Show } from '@storeo/core';
 import {
   Button,
   Dialog,
@@ -28,16 +28,14 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
       <DialogHeader>
         <DialogTitle>Tạo mô tả công việc</DialogTitle>
         <DialogDescription className={'italic'}>
-          {parent ? (
+          <Show when={parent} fallback={'Tạo đầu mục mô tả công việc chính'}>
             <>
               <span
                 className={'inline font-bold'}
-              >{`Mục cha: ${parent.level} `}</span>
-              {` (${parent.title})`}
+              >{`Mục cha: ${parent?.level}`}</span>
+              {`(${parent?.title})`}
             </>
-          ) : (
-            'Tạo đầu mục mô tả công việc chính'
-          )}
+          </Show>
         </DialogDescription>
       </DialogHeader>
       <Form

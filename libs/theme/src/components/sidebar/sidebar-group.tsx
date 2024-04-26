@@ -64,8 +64,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
     () => (
       <Link
         className={cn(
-          `hover:bg-appGrayLight flex w-full items-center justify-start truncate whitespace-nowrap border-b pl-[3px] text-sm`,
-          isActive && `font-semibold`
+          `hover:bg-appGrayLight flex w-full items-center justify-start truncate whitespace-nowrap border-b pl-[3px] text-sm`
         )}
         to={to}
       >
@@ -95,7 +94,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
           className={cn(
             `bg-appGrayLight relative`,
             isActive &&
-              `before:bg-appGray before:hover:bg-appGrayDark before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5`
+              `after:bg-appGray after:absolute after:bottom-0 after:left-0 after:top-0 after:w-1`
           )}
         >
           {childrenWithProps}
