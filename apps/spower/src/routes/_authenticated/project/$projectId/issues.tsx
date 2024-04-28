@@ -1,7 +1,7 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issue'
+  '/_authenticated/project/$projectId/issues'
 )({
   component: () => <Outlet />,
   beforeLoad: () => ({ title: 'Quản lý công việc' })

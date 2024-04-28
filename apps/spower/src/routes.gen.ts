@@ -25,16 +25,18 @@ import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
 import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
-import { Route as AuthenticatedProjectProjectIdIssueImport } from './routes/_authenticated/project/$projectId/issue'
+import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
 import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authenticated/general/employees/new'
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
-import { Route as AuthenticatedProjectProjectIdIssueIndexImport } from './routes/_authenticated/project/$projectId/issue/index'
-import { Route as AuthenticatedProjectProjectIdIssueMeImport } from './routes/_authenticated/project/$projectId/issue/me'
-import { Route as AuthenticatedProjectProjectIdIssueManagerImport } from './routes/_authenticated/project/$projectId/issue/manager'
+import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
+import { Route as AuthenticatedProjectProjectIdIssuesMeImport } from './routes/_authenticated/project/$projectId/issues/me'
+import { Route as AuthenticatedProjectProjectIdIssuesAllImport } from './routes/_authenticated/project/$projectId/issues/all'
 import { Route as AuthenticatedGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/general/suppliers/$supplierId/edit'
 import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/general/employees/$employeeId/edit'
 import { Route as AuthenticatedGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/general/customers/$customerId/edit'
+import { Route as AuthenticatedProjectProjectIdIssuesAllIndexImport } from './routes/_authenticated/project/$projectId/issues/all/index'
+import { Route as AuthenticatedProjectProjectIdIssuesAllIssueIdImport } from './routes/_authenticated/project/$projectId/issues/all/$issueId'
 
 // Create/Update Routes
 
@@ -114,9 +116,9 @@ const AuthenticatedProjectProjectIdOverviewRoute =
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssueRoute =
-  AuthenticatedProjectProjectIdIssueImport.update({
-    path: '/issue',
+const AuthenticatedProjectProjectIdIssuesRoute =
+  AuthenticatedProjectProjectIdIssuesImport.update({
+    path: '/issues',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
@@ -138,22 +140,22 @@ const AuthenticatedGeneralCustomersNewRoute =
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssueIndexRoute =
-  AuthenticatedProjectProjectIdIssueIndexImport.update({
+const AuthenticatedProjectProjectIdIssuesIndexRoute =
+  AuthenticatedProjectProjectIdIssuesIndexImport.update({
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssueRoute,
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssueMeRoute =
-  AuthenticatedProjectProjectIdIssueMeImport.update({
+const AuthenticatedProjectProjectIdIssuesMeRoute =
+  AuthenticatedProjectProjectIdIssuesMeImport.update({
     path: '/me',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssueRoute,
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssueManagerRoute =
-  AuthenticatedProjectProjectIdIssueManagerImport.update({
-    path: '/manager',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssueRoute,
+const AuthenticatedProjectProjectIdIssuesAllRoute =
+  AuthenticatedProjectProjectIdIssuesAllImport.update({
+    path: '/all',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
 const AuthenticatedGeneralSuppliersSupplierIdEditRoute =
@@ -172,6 +174,18 @@ const AuthenticatedGeneralCustomersCustomerIdEditRoute =
   AuthenticatedGeneralCustomersCustomerIdEditImport.update({
     path: '/$customerId/edit',
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdIssuesAllIndexRoute =
+  AuthenticatedProjectProjectIdIssuesAllIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdIssuesAllIssueIdRoute =
+  AuthenticatedProjectProjectIdIssuesAllIssueIdImport.update({
+    path: '/$issueId',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -238,8 +252,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersNewImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
-    '/_authenticated/project/$projectId/issue': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssueImport
+    '/_authenticated/project/$projectId/issues': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/project/$projectId/overview': {
@@ -262,17 +276,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersSupplierIdEditImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
-    '/_authenticated/project/$projectId/issue/manager': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssueManagerImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssueImport
+    '/_authenticated/project/$projectId/issues/all': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issue/me': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssueMeImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssueImport
+    '/_authenticated/project/$projectId/issues/me': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issue/': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssueIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssueImport
+    '/_authenticated/project/$projectId/issues/': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesIndexImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+    }
+    '/_authenticated/project/$projectId/issues/all/$issueId': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIssueIdImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
+    }
+    '/_authenticated/project/$projectId/issues/all/': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIndexImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
     }
   }
 }
@@ -300,10 +322,13 @@ export const routeTree = rootRoute.addChildren([
     AuthenticatedHomeRoute,
     AuthenticatedProjectRoute.addChildren([
       AuthenticatedProjectProjectIdRoute.addChildren([
-        AuthenticatedProjectProjectIdIssueRoute.addChildren([
-          AuthenticatedProjectProjectIdIssueManagerRoute,
-          AuthenticatedProjectProjectIdIssueMeRoute,
-          AuthenticatedProjectProjectIdIssueIndexRoute,
+        AuthenticatedProjectProjectIdIssuesRoute.addChildren([
+          AuthenticatedProjectProjectIdIssuesAllRoute.addChildren([
+            AuthenticatedProjectProjectIdIssuesAllIssueIdRoute,
+            AuthenticatedProjectProjectIdIssuesAllIndexRoute,
+          ]),
+          AuthenticatedProjectProjectIdIssuesMeRoute,
+          AuthenticatedProjectProjectIdIssuesIndexRoute,
         ]),
         AuthenticatedProjectProjectIdOverviewRoute,
         AuthenticatedProjectProjectIdIndexRoute,

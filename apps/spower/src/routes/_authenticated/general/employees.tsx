@@ -1,8 +1,8 @@
-import { PlusIcon } from '@radix-ui/react-icons';
+import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { SheetIcon, UserIcon } from 'lucide-react';
+import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
 import {
   Avatar,
@@ -55,6 +55,33 @@ const Component = () => {
       },
       header: () => 'Phòng ban',
       footer: info => info.column.id
+    }),
+    columnHelper.display({
+      id: 'actions',
+      cell: ({ row }) => {
+        return (
+          <div className={'flex gap-1'}>
+            <Button
+              className={'h-6 px-3'}
+              onClick={() =>
+                navigate({
+                  to: './$employeeId/edit',
+                  params: {
+                    employeeId: row.original.id
+                  },
+                  search
+                })
+              }
+            >
+              <EditIcon className={'h-3 w-3'} />
+            </Button>
+            <Button variant={'destructive'} className={'h-6 px-3'}>
+              <Cross2Icon className={'h-3 w-3'} />
+            </Button>
+          </div>
+        );
+      },
+      header: () => 'Thao tác'
     })
   ];
 

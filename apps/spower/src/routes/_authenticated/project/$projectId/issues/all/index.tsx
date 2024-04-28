@@ -21,20 +21,22 @@ import { CommonTable, DebouncedInput } from '@storeo/theme';
 import {
   IssuesSearch,
   IssuesSearchSchema,
-  getMyIssues
-} from '../../../../../api/issue';
-import { EmployeeDisplay } from '../../../../../components';
-import { NewIssueButton } from '../../../../../components/models/issue/new-issue-button';
-import { RequestDetailDialog } from '../../../../../components/models/request/request-detail-dialog';
-import { RequestStatus } from '../../../../../components/models/request/request-status';
+  getAllIssues
+} from '../../../../../../api/issue';
+import { EmployeeDisplay } from '../../../../../../components';
+import { NewIssueButton } from '../../../../../../components/models/issue/new-issue-button';
+import { NewRequestDialog } from '../../../../../../components/models/request/new-request-dialog';
+import { RequestDetailDialog } from '../../../../../../components/models/request/request-detail-dialog';
+import { RequestStatus } from '../../../../../../components/models/request/request-status';
 
 const Component = () => {
+  const [openRequestNew, setOpenRequestNew] = useState(false);
   const [openRequestDetail, setOpenRequestDetail] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
   const [selected, setSelected] = useState<IssueResponse>();
-  const issues = useSuspenseQuery(getMyIssues(projectId, search));
+  const issues = useSuspenseQuery(getAllIssues(projectId, search));
 
   const columnHelper = createColumnHelper<IssueResponse>();
 
@@ -47,10 +49,14 @@ const Component = () => {
     }),
     columnHelper.accessor('title', {
       cell: info => (
-        <div className={'flex w-full items-center gap-2'}>
+        <div className={'flex w-full items-center gap-1'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Request}>
-              <ShoppingCartIcon className={'h-5 w-5 text-red-500'} />
+              <ShoppingCartIcon
+                className={'text-red-500'}
+                width={20}
+                height={20}
+              />
             </Match>
           </Switch>
           <span className={'w-full truncate'}>{info.getValue()}</span>
@@ -103,6 +109,11 @@ const Component = () => {
 
   return (
     <div className={'flex flex-col gap-2'}>
+      <NewRequestDialog
+        projectId={projectId}
+        open={openRequestNew}
+        setOpen={setOpenRequestNew}
+      />
       {selected ? (
         <RequestDetailDialog
           open={openRequestDetail}
@@ -136,10 +147,14 @@ const Component = () => {
         pageIndex={search.pageIndex}
         pageSize={search.pageSize}
         fixedWidth={true}
-        onRowClick={row => {
-          setSelected(row.original);
-          setOpenRequestDetail(true);
-        }}
+        onRowClick={row =>
+          navigate({
+            to: '/project/$projectId/issues/manager/$issueId',
+            params: {
+              issueId: row.original.id
+            }
+          })
+        }
         onPageNext={() =>
           navigate({
             to: './',
@@ -171,7 +186,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issue/me'
+  '/_authenticated/project/$projectId/issues/all/'
 )({
   component: Component,
   validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
@@ -183,6 +198,5 @@ export const Route = createFileRoute(
     deps: { search },
     context: { queryClient },
     params: { projectId }
-  }) => queryClient?.ensureQueryData(getMyIssues(projectId, search)),
-  beforeLoad: () => ({ title: 'Công việc của tôi' })
+  }) => queryClient?.ensureQueryData(getAllIssues(projectId, search))
 });

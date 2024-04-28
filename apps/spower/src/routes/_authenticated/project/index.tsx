@@ -1,25 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import { useState } from 'react';
 
 import { ProjectResponse, formatDate } from '@storeo/core';
-import {
-  DebouncedInput,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
+import { CommonTable, DebouncedInput } from '@storeo/theme';
 
 import { ProjectData, ProjectSearchSchema, getAllProjects } from '../../../api';
 import { EditProjectDialog, EmployeeDisplay } from '../../../components';
@@ -30,7 +16,7 @@ const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const projectsQuery = useSuspenseQuery(getAllProjects(search));
+  const projects = useSuspenseQuery(getAllProjects(search));
 
   const columnHelper = createColumnHelper<ProjectData>();
 
@@ -89,23 +75,6 @@ const Component = () => {
     })
   ];
 
-  const table = useReactTable({
-    data: projectsQuery.data?.items ?? [],
-    columns,
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
-  });
-  const cats = [
-    {
-      id: 1,
-      name: 'Thiết kế 1'
-    },
-    {
-      id: 2,
-      name: 'Thiết kế 2'
-    }
-  ];
-
   return (
     <>
       {project ? (
@@ -131,87 +100,22 @@ const Component = () => {
             })
           }
         />
-        <div className={'overflow-auto rounded-md border'}>
-          <Table
-            style={{
-              width: table.getTotalSize()
-            }}
-          >
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className={'flex'}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={
-                        'flex items-center whitespace-nowrap first:rounded-tl-md last:rounded-tr-md'
-                      }
-                      style={{
-                        width: header.getSize()
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow
-                    key={row.id}
-                    className={'flex cursor-pointer last:border-b-0'}
-                    onClick={() =>
-                      navigate({
-                        to: './$projectId',
-                        params: {
-                          projectId: row.original.id
-                        }
-                      })
-                    }
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        className={'flex p-2'}
-                        style={{
-                          width: cell.column.getSize()
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination
-          totalItems={projectsQuery.data?.totalItems}
-          totalPages={projectsQuery.data?.totalPages}
+        <CommonTable
+          data={projects.data?.items ?? []}
+          columns={columns}
+          rowCount={projects.data?.totalItems}
+          pageCount={projects.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          fixedWidth={true}
+          onRowClick={row =>
+            navigate({
+              to: './$projectId',
+              params: {
+                projectId: row.original.id
+              }
+            })
+          }
           onPageNext={() =>
             navigate({
               to: './',
@@ -237,7 +141,7 @@ const Component = () => {
               }
             })
           }
-        ></Pagination>
+        ></CommonTable>
       </div>
     </>
   );

@@ -43,7 +43,12 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
 
   return (
     <>
-      <div className={cn('overflow-auto rounded-md border', props.className)}>
+      <div
+        className={cn(
+          'border-appBlueLight overflow-auto rounded-md border',
+          props.className
+        )}
+      >
         <Table
           style={
             table.getRowModel().rows.length
@@ -53,12 +58,13 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
               : undefined
           }
         >
-          <TableHeader className={'bg-appGrayLight'}>
+          <TableHeader className={'bg-appBlueLight'}>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
+                    className={'text-appWhite'}
                     style={
                       table.getRowModel().rows.length
                         ? {

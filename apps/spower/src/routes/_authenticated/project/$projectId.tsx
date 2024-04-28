@@ -36,15 +36,15 @@ const Component = () => {
             icon={<BarChart3Icon width={22} height={22} />}
           ></SidebarItem>
           <SidebarGroup
-            to={'/project/$projectId/issue'}
+            to={'/project/$projectId/issues'}
             icon={<BriefcaseBusinessIcon width={22} height={22} />}
           >
             <SidebarItem
-              to={'/project/$projectId/issue/me'}
+              to={'/project/$projectId/issues/me'}
               icon={<ListChecksIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/project/$projectId/issue/manager'}
+              to={'/project/$projectId/issues/all'}
               icon={<LayoutListIcon width={22} height={22} />}
             ></SidebarItem>
           </SidebarGroup>
