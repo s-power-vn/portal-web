@@ -1,27 +1,16 @@
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
+import { createColumnHelper } from '@tanstack/react-table';
+import { SheetIcon, UserIcon } from 'lucide-react';
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
-  DebouncedInput,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
+  CommonTable,
+  DebouncedInput
 } from '@storeo/theme';
 
 import { EmployeesSearchSchema, UserData, getEmployees } from '../../../api';
@@ -66,44 +55,8 @@ const Component = () => {
       },
       header: () => 'Phòng ban',
       footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'h-6 px-3'}
-              onClick={() =>
-                navigate({
-                  to: './$employeeId/edit',
-                  params: {
-                    employeeId: row.original.id
-                  },
-                  search
-                })
-              }
-            >
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
-              <Cross2Icon className={'h-3 w-3'} />
-            </Button>
-          </div>
-        );
-      },
-      header: () => 'Thao tác'
     })
   ];
-
-  const table = useReactTable({
-    data: employees.data?.items ?? [],
-    columns,
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    rowCount: employees.data?.totalItems,
-    pageCount: employees.data?.totalPages
-  });
 
   return (
     <>
@@ -150,64 +103,11 @@ const Component = () => {
             })
           }
         />
-        <div className={'rounded-md border'}>
-          <Table>
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={
-                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                      }
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id} className={'last:border-b-0'}>
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        className={'border-r px-2 py-1 last:border-r-0'}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination
-          totalItems={employees.data?.totalItems}
-          totalPages={employees.data?.totalPages}
+        <CommonTable
+          data={employees.data?.items ?? []}
+          columns={columns}
+          rowCount={employees.data?.totalItems}
+          pageCount={employees.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -235,7 +135,7 @@ const Component = () => {
               }
             })
           }
-        ></Pagination>
+        ></CommonTable>
       </div>
     </>
   );

@@ -1,27 +1,12 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 import { InferType, number, object, string } from 'yup';
 
-import { For, Show, SupplierResponse, client } from '@storeo/core';
-import {
-  Button,
-  DebouncedInput,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
+import { SupplierResponse, client } from '@storeo/core';
+import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
 const suppliersSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -49,7 +34,7 @@ function getSuppliersOptions(search: SuppliersSearch) {
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const suppliersQuery = useSuspenseQuery(getSuppliersOptions(search));
+  const suppliers = useSuspenseQuery(getSuppliersOptions(search));
 
   const columnHelper = createColumnHelper<SupplierResponse>();
 
@@ -117,13 +102,6 @@ const Component = () => {
     })
   ];
 
-  const table = useReactTable({
-    data: suppliersQuery.data?.items ?? [],
-    columns,
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
-  });
-
   return (
     <>
       <Outlet />
@@ -169,69 +147,11 @@ const Component = () => {
             })
           }
         />
-        <div className={'rounded-md border'}>
-          <Table>
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  <For each={headerGroup.headers}>
-                    {header => (
-                      <TableHead
-                        key={header.id}
-                        className={
-                          'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                        }
-                      >
-                        <Show when={!header.isPlaceholder}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </Show>
-                      </TableHead>
-                    )}
-                  </For>
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              <For
-                each={table.getRowModel().rows}
-                fallback={
-                  <TableRow className={'border-b-0'}>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                }
-              >
-                {row => (
-                  <TableRow key={row.id} className={'last:border-b-0'}>
-                    <For each={row.getVisibleCells()}>
-                      {cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={'border-r px-2 py-1 last:border-r-0'}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      )}
-                    </For>
-                  </TableRow>
-                )}
-              </For>
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination
-          totalItems={suppliersQuery.data?.totalItems}
-          totalPages={suppliersQuery.data?.totalPages}
+        <CommonTable
+          data={suppliers.data?.items ?? []}
+          columns={columns}
+          rowCount={suppliers.data?.totalItems}
+          pageCount={suppliers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -259,7 +179,7 @@ const Component = () => {
               }
             })
           }
-        ></Pagination>
+        ></CommonTable>
       </div>
     </>
   );

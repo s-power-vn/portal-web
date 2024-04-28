@@ -1,26 +1,11 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
 import { CustomerResponse } from '@storeo/core';
-import {
-  Button,
-  DebouncedInput,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
+import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
 import { CustomersSearchSchema, getCustomers } from '../../../api';
 
@@ -95,13 +80,6 @@ const Component = () => {
     })
   ];
 
-  const table = useReactTable({
-    data: customers.data?.items ?? [],
-    columns,
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
-  });
-
   return (
     <>
       <Outlet />
@@ -147,64 +125,11 @@ const Component = () => {
             })
           }
         />
-        <div className={'rounded-md border'}>
-          <Table>
-            <TableHeader className={'bg-appGrayLight'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={
-                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
-                      }
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id} className={'last:border-b-0'}>
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        className={'border-r px-2 py-1 last:border-r-0'}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination
-          totalItems={customers.data?.totalItems}
-          totalPages={customers.data?.totalPages}
+        <CommonTable
+          data={customers.data?.items ?? []}
+          columns={columns}
+          rowCount={customers.data?.totalItems}
+          pageCount={customers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -232,7 +157,7 @@ const Component = () => {
               }
             })
           }
-        ></Pagination>
+        ></CommonTable>
       </div>
     </>
   );

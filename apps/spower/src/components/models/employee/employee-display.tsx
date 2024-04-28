@@ -13,7 +13,7 @@ const Component = ({ employeeId }: { employeeId: string }) => {
   });
 
   return query.data ? (
-    <div className={'flex items-center justify-center gap-2 whitespace-nowrap'}>
+    <div className={'flex items-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
         <AvatarImage
           src={`http://localhost:8090/api/files/user/${query.data.id}/${query.data.avatar}`}

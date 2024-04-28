@@ -4,12 +4,7 @@ import {
   createFileRoute,
   useNavigate
 } from '@tanstack/react-router';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
 import { useState } from 'react';
@@ -21,16 +16,7 @@ import {
   Switch,
   formatDate
 } from '@storeo/core';
-import {
-  DebouncedInput,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
+import { CommonTable, DebouncedInput } from '@storeo/theme';
 
 import {
   IssuesSearch,
@@ -55,24 +41,16 @@ const Component = () => {
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
+      cell: info => info.row.index + 1,
       header: () => '#',
       size: 50
     }),
     columnHelper.accessor('title', {
       cell: info => (
-        <div className={'flex w-full items-center gap-1'}>
+        <div className={'flex w-full items-center gap-2'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Request}>
-              <ShoppingCartIcon
-                className={'text-red-500'}
-                width={20}
-                height={20}
-              />
+              <ShoppingCartIcon className={'h-5 w-5 text-red-500'} />
             </Match>
           </Switch>
           <span className={'w-full truncate'}>{info.getValue()}</span>
@@ -123,13 +101,6 @@ const Component = () => {
     })
   ];
 
-  const table = useReactTable({
-    data: issues.data?.items ?? [],
-    columns,
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel()
-  });
-
   return (
     <div className={'flex flex-col gap-2'}>
       {selected ? (
@@ -157,91 +128,18 @@ const Component = () => {
           }
         />
       </div>
-      <div className={'overflow-auto rounded-md border'}>
-        <Table
-          style={
-            table.getRowModel().rows.length
-              ? {
-                  width: table.getTotalSize()
-                }
-              : undefined
-          }
-        >
-          <TableHeader className={'bg-appGrayLight'}>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="flex">
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className="flex items-center"
-                    style={
-                      table.getRowModel().rows.length
-                        ? {
-                            width: header.getSize()
-                          }
-                        : undefined
-                    }
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className={'flex cursor-pointer last:border-b-0'}
-                  onClick={() => {
-                    setSelected(row.original);
-                    if (row.original.type === IssueTypeOptions.Request) {
-                      setOpenRequestDetail(true);
-                    }
-                  }}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className="flex items-center"
-                      style={{
-                        width: cell.column.getSize()
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow className={'border-b-0'}>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 text-center"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <Pagination
-        totalItems={issues.data?.totalItems}
-        totalPages={issues.data?.totalPages}
-        pageIndex={search.pageIndex ?? 1}
-        pageSize={search.pageSize ?? 10}
+      <CommonTable
+        data={issues.data?.items ?? []}
+        columns={columns}
+        rowCount={issues.data?.totalItems}
+        pageCount={issues.data?.totalPages}
+        pageIndex={search.pageIndex}
+        pageSize={search.pageSize}
+        fixedWidth={true}
+        onRowClick={row => {
+          setSelected(row.original);
+          setOpenRequestDetail(true);
+        }}
         onPageNext={() =>
           navigate({
             to: './',
@@ -267,7 +165,7 @@ const Component = () => {
             }
           })
         }
-      ></Pagination>
+      ></CommonTable>
     </div>
   );
 };
