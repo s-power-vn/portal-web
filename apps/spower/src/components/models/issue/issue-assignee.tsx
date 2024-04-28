@@ -5,7 +5,7 @@ import { FC, useMemo, useState } from 'react';
 import { client } from '@storeo/core';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-import { ProjectSearch, useGetAllEmployees } from '../../../api';
+import { useGetAllEmployees } from '../../../api';
 
 export type IssueAssigneeProps = Omit<
   SelectInputProps,
@@ -13,13 +13,11 @@ export type IssueAssigneeProps = Omit<
 > & {
   projectId: string;
   issueId: string;
-  search?: ProjectSearch;
 };
 
 export const IssueAssignee: FC<IssueAssigneeProps> = ({
   projectId,
   issueId,
-  search,
   ...props
 }) => {
   const [value, setValue] = useState(props.value);

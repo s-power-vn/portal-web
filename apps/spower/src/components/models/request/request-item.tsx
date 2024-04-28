@@ -39,7 +39,6 @@ import {
 } from '@storeo/theme';
 
 import {
-  ProjectSearch,
   RequestDetailData,
   getAllRequestsKey,
   getRequestById,
@@ -55,10 +54,9 @@ import { ListRequestSupplierDialog } from '../request-detail/list-request-suppli
 
 export type RequestItemProps = {
   requestId: string;
-  search?: ProjectSearch;
 };
 
-export const RequestItem: FC<RequestItemProps> = ({ requestId, search }) => {
+export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [openListSupplier, setOpenListSupplier] = useState(false);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -368,7 +366,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId, search }) => {
                 <IssueAssignee
                   projectId={request.data.project}
                   issueId={request.data.expand.issue.id}
-                  search={search}
                   value={request.data.expand.issue.assignee}
                   className={'w-56'}
                 ></IssueAssignee>
