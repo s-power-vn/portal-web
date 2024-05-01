@@ -60,30 +60,30 @@ export function timeSince(timeStamp: Date | number): string | undefined {
     ];
     const MMM = [
       '\x01',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
+      'Th 1',
+      'Th 2',
+      'Th 3',
+      'Th 4',
+      'Th 5',
+      'Th 6',
+      'Th 7',
+      'Th 8',
+      'Th 9',
+      'Th 10',
+      'Th 11',
+      'Th 12'
     ];
     const dddd = [
       '\x02',
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday'
+      'Chủ Nhật',
+      'Thứ Hai',
+      'Thứ Ba',
+      'Thứ Tư',
+      'Thứ Năm',
+      'Thứ Sáu',
+      'Thứ Bảy'
     ];
-    const ddd = ['\x03', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const ddd = ['\x03', 'CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
     function ii(i: string | number, len = 0) {
       let s = i + '';
@@ -193,9 +193,9 @@ export function timeSince(timeStamp: Date | number): string | undefined {
         formatDate(timeStamp, 'h:mmtt');
     // with in a week
     else if (now.getFullYear() > timeStamp.getFullYear())
-      timeString = formatDate(timeStamp, 'MMMM d, yyyy'); // a year ago
+      timeString = formatDate(timeStamp, 'd MMMM, yyyy'); // a year ago
     else if (now.getMonth() > timeStamp.getMonth())
-      timeString = formatDate(timeStamp, 'MMMM d'); // months ago
+      timeString = formatDate(timeStamp, 'd MMMM'); // months ago
     else
       timeString =
         formatDate(timeStamp, 'MMMM d') +
