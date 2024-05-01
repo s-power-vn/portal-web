@@ -18,5 +18,6 @@ export * from './request/request-status';
 export * from './employee/employee-display';
 export * from './issue/issue-assignee';
 export * from './issue/issue-detail';
+export * from './issue/issue-title';
 export * from './issue/issue-type';
 export * from './issue/new-issue-button';

@@ -35,7 +35,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  useConfirm
 } from '@storeo/theme';
 
 import {
@@ -49,7 +50,6 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
-import { IssueAssignee } from '../issue/issue-assignee';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
 
 export type RequestItemProps = {
@@ -313,6 +313,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
 
+  const { confirm } = useConfirm();
+
   return (
     <>
       {table.getSelectedRowModel() &&
@@ -354,7 +356,11 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <Button
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"
-              onClick={() => deleteRequest.mutate(requestId)}
+              onClick={() => {
+                confirm?.('Bạn muốn xóa yêu cầu mua hàng này?', () =>
+                  deleteRequest.mutate(requestId)
+                );
+              }}
             >
               <Cross2Icon className={'h-4 w-4'} />
             </Button>

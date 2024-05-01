@@ -53,7 +53,7 @@ const Content: FC<RequestDetailDialogProps> = ({
       client
         .collection<RequestData>('request')
         .getFirstListItem(`issue = "${issueId}"`, {
-          expand: 'issue'
+          expand: 'issue,issue.createdBy'
         })
   });
 
@@ -192,7 +192,7 @@ const Content: FC<RequestDetailDialogProps> = ({
           />
         </DialogTitle>
       </DialogHeader>
-      <RequestItem requestId={request.data.id} search={search} />
+      <RequestItem requestId={request.data.id} />
       <div className={'flex basis-1/3 flex-col gap-2'} ref={ref}>
         <Textarea
           placeholder={'Ghi chú'}

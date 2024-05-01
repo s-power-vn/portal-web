@@ -5,7 +5,7 @@ import {
   useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
-import { CalendarIcon, PencilIcon } from 'lucide-react';
+import { CalendarIcon, User2Icon } from 'lucide-react';
 
 import { FC, useState } from 'react';
 
@@ -13,6 +13,7 @@ import {
   CommentResponse,
   IssueResponse,
   RequestStatusOptions,
+  Show,
   UserResponse,
   client,
   formatDate,
@@ -29,6 +30,7 @@ import {
 
 import { RequestData } from '../../../api';
 import { IssueAssignee } from '../issue/issue-assignee';
+import { IssueTitle } from '../issue/issue-title';
 import { RequestItem } from './request-item';
 import { RequestStatus } from './request-status';
 
@@ -49,7 +51,7 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
       client
         .collection<RequestData>('request')
         .getFirstListItem(`issue = "${issueId}"`, {
-          expand: 'issue'
+          expand: 'issue,issue.createdBy'
         })
   });
 
@@ -176,28 +178,32 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
           'bg-appGrayLight flex items-start justify-between border-b p-2'
         }
       >
-        <div className={'flex flex-col gap-1'}>
-          <div className={'flex items-center gap-2 text-xl font-bold'}>
-            <RequestStatus
-              className={'px-2 py-1 text-xs italic'}
-              issueId={issueId}
-            />
-            <span className={'w-full'}>{request.data.expand.issue.title}</span>
-            <Button className={'p-0 text-gray-500'} variant={'link'}>
-              <PencilIcon width={15} height={15} />
-            </Button>
-          </div>
-          <div>
-            <span className={'flex items-center gap-1 text-xs'}>
+        <div className={'flex w-full flex-col gap-1'}>
+          <RequestStatus
+            className={'px-3 py-1.5 text-xs font-bold'}
+            issueId={issueId}
+          />
+          <IssueTitle
+            issueId={issueId}
+            title={request.data.expand.issue.title}
+          />
+          <div className={'flex items-center gap-2'}>
+            <div className={'flex items-center gap-1 text-xs'}>
               <CalendarIcon className={'h-4 w-4'} />
               {formatDate(request.data.created)}
-            </span>
+            </div>
+            <div className={'flex items-center gap-1 text-xs'}>
+              <User2Icon className={'h-4 w-4'} />
+              {request.data.expand.issue.expand?.createdBy.name}
+            </div>
           </div>
         </div>
         <div className={'flex items-center gap-2'}>
           {client.authStore.model?.role !== 1 ? (
             <>
-              <span className={'text-sm'}>Người thực hiện</span>
+              <span className={'whitespace-nowrap text-sm'}>
+                Người thực hiện
+              </span>
               <IssueAssignee
                 projectId={request.data.project}
                 issueId={request.data.expand.issue.id}
@@ -207,6 +213,27 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
             </>
           ) : null}
         </div>
+        <Show
+          when={
+            client.authStore.model?.role === 1 &&
+            client.authStore.model?.id === request.data.expand.issue.assignee
+          }
+        >
+          <div className={'flex gap-2'}>
+            <Button
+              className={'bg-blue-500 hover:bg-blue-600'}
+              onClick={() => approveRequest.mutate()}
+            >
+              Phê duyệt
+            </Button>
+            <Button
+              className={'bg-red-500 hover:bg-red-600'}
+              onClick={() => rejectRequest.mutate()}
+            >
+              Từ chối
+            </Button>
+          </div>
+        </Show>
       </div>
       <div
         className={
@@ -262,7 +289,7 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
                     {client.authStore.model?.id === it.expand.createdBy.id ? (
                       <Button
                         className={
-                          'text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full bg-red-400 p-1'
+                          'text-appWhite bg-appError hover:bg-appErrorLight hover:text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full p-1 shadow-lg'
                         }
                         variant={'ghost'}
                         onClick={() => deleteComment.mutate(it.id)}
@@ -274,23 +301,6 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
                 ))
               : null}
           </div>
-          {client.authStore.model?.role === 1 &&
-          client.authStore.model?.id === request.data.expand.issue.assignee ? (
-            <>
-              <Button
-                className={'bg-blue-500 hover:bg-blue-600'}
-                onClick={() => approveRequest.mutate()}
-              >
-                Phê duyệt
-              </Button>
-              <Button
-                className={'bg-red-500 hover:bg-red-600'}
-                onClick={() => rejectRequest.mutate()}
-              >
-                Từ chối
-              </Button>
-            </>
-          ) : null}
         </div>
       </div>
     </>

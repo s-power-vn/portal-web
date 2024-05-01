@@ -25,7 +25,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
       client
         .collection<RequestData>('request')
         .getFirstListItem(`issue = "${issueId}"`, {
-          expand: 'issue'
+          expand: 'issue,issue.createdBy'
         })
   });
 
