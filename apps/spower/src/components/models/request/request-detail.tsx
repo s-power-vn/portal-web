@@ -5,7 +5,7 @@ import {
   useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
-import { PencilIcon } from 'lucide-react';
+import { CalendarIcon, PencilIcon } from 'lucide-react';
 
 import { FC, useState } from 'react';
 
@@ -15,6 +15,8 @@ import {
   RequestStatusOptions,
   UserResponse,
   client,
+  formatDate,
+  timeSince,
   useOutsideClick
 } from '@storeo/core';
 import {
@@ -26,6 +28,7 @@ import {
 } from '@storeo/theme';
 
 import { RequestData } from '../../../api';
+import { IssueAssignee } from '../issue/issue-assignee';
 import { RequestItem } from './request-item';
 import { RequestStatus } from './request-status';
 
@@ -168,93 +171,128 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
 
   return (
     <>
-      <div className={'flex items-center gap-2'}>
-        <span className={'w-full'}>{request.data.expand.issue.title}</span>
-        <Button className={'p-0 text-gray-500'} variant={'link'}>
-          <PencilIcon width={15} height={15} />
-        </Button>
-      </div>
-      <RequestStatus className={'px-3 py-2 text-sm italic'} issueId={issueId} />
-      <RequestItem requestId={request.data.id} />
-      <div className={'flex basis-1/3 flex-col gap-2'} ref={ref}>
-        <Textarea
-          placeholder={'Ghi chú'}
-          value={comment}
-          onChange={e => {
-            setComment(e.target.value);
-          }}
-          onFocus={() => setShowCommentButton(true)}
-        />
-        {showCommentButton ? (
-          <div className={'flex items-center justify-end'}>
-            <Button
-              className={'h-4 p-4 text-xs'}
-              onClick={() => createComment.mutate(comment)}
-            >
-              Nhập
+      <div
+        className={
+          'bg-appGrayLight flex items-start justify-between border-b p-2'
+        }
+      >
+        <div className={'flex flex-col gap-1'}>
+          <div className={'flex items-center gap-2 text-xl font-bold'}>
+            <RequestStatus
+              className={'px-2 py-1 text-xs italic'}
+              issueId={issueId}
+            />
+            <span className={'w-full'}>{request.data.expand.issue.title}</span>
+            <Button className={'p-0 text-gray-500'} variant={'link'}>
+              <PencilIcon width={15} height={15} />
             </Button>
           </div>
-        ) : null}
+          <div>
+            <span className={'flex items-center gap-1 text-xs'}>
+              <CalendarIcon className={'h-4 w-4'} />
+              {formatDate(request.data.created)}
+            </span>
+          </div>
+        </div>
+        <div className={'flex items-center gap-2'}>
+          {client.authStore.model?.role !== 1 ? (
+            <>
+              <span className={'text-sm'}>Người thực hiện</span>
+              <IssueAssignee
+                projectId={request.data.project}
+                issueId={request.data.expand.issue.id}
+                value={request.data.expand.issue.assignee}
+                className={'w-56'}
+              ></IssueAssignee>
+            </>
+          ) : null}
+        </div>
       </div>
       <div
         className={
-          'flex max-h-[150px] basis-1/2 flex-col gap-2 overflow-y-auto p-1'
+          'flex h-[calc(100vh-200px)] flex-col gap-2 overflow-y-auto p-2'
         }
       >
-        {comments.data && comments.data.length > 0
-          ? comments.data.map(it => (
-              <div
-                className={'relative flex rounded-md border p-2'}
-                key={it.id}
+        <RequestItem requestId={request.data.id} />
+        <div className={'flex flex-col gap-2'} ref={ref}>
+          <Textarea
+            placeholder={'Ghi chú'}
+            value={comment}
+            onChange={e => {
+              setComment(e.target.value);
+            }}
+            onFocus={() => setShowCommentButton(true)}
+          />
+          {showCommentButton ? (
+            <div className={'flex items-center justify-end'}>
+              <Button
+                className={'h-4 p-4 text-xs'}
+                onClick={() => createComment.mutate(comment)}
               >
-                <div className={'flex flex-col pr-3'}>
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={`http://localhost:8090/api/files/user/${it.expand.createdBy.id}/${it.expand.createdBy.avatar}`}
-                    />
-                    <AvatarFallback className={'text-sm'}>
-                      {it.expand.createdBy.name.split(' ')[0][0]}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className={'flex flex-col gap-1'}>
-                  <div className={'text-sm font-bold text-gray-500'}>
-                    {it.expand.createdBy.name}
+                Nhập
+              </Button>
+            </div>
+          ) : null}
+          <div className={'flex flex-col gap-2'}>
+            {comments.data && comments.data.length > 0
+              ? comments.data.map(it => (
+                  <div className={'relative flex border-b p-2'} key={it.id}>
+                    <div className={'flex flex-col pr-3'}>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={`http://localhost:8090/api/files/user/${it.expand.createdBy.id}/${it.expand.createdBy.avatar}`}
+                        />
+                        <AvatarFallback className={'text-sm'}>
+                          {it.expand.createdBy.name.split(' ')[0][0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className={'flex flex-col gap-1'}>
+                      <div className={'flex items-center gap-2'}>
+                        <div className={'text-sm font-bold text-gray-500'}>
+                          {it.expand.createdBy.name}
+                        </div>
+                        <div className={'flex items-center gap-1 text-xs'}>
+                          <CalendarIcon className={'h-3 w-3'} />
+                          {timeSince(new Date(Date.parse(it.created)))}
+                        </div>
+                      </div>
+                      <div className={'text-sm italic'}>{it.content}</div>
+                    </div>
+                    {client.authStore.model?.id === it.expand.createdBy.id ? (
+                      <Button
+                        className={
+                          'text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full bg-red-400 p-1'
+                        }
+                        variant={'ghost'}
+                        onClick={() => deleteComment.mutate(it.id)}
+                      >
+                        <Cross2Icon width={20} height={20}></Cross2Icon>
+                      </Button>
+                    ) : null}
                   </div>
-                  <div className={'text-sm italic'}>{it.content}</div>
-                </div>
-                {client.authStore.model?.id === it.expand.createdBy.id ? (
-                  <Button
-                    className={
-                      'text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full bg-red-400 p-1'
-                    }
-                    variant={'ghost'}
-                    onClick={() => deleteComment.mutate(it.id)}
-                  >
-                    <Cross2Icon width={20} height={20}></Cross2Icon>
-                  </Button>
-                ) : null}
-              </div>
-            ))
-          : null}
+                ))
+              : null}
+          </div>
+          {client.authStore.model?.role === 1 &&
+          client.authStore.model?.id === request.data.expand.issue.assignee ? (
+            <>
+              <Button
+                className={'bg-blue-500 hover:bg-blue-600'}
+                onClick={() => approveRequest.mutate()}
+              >
+                Phê duyệt
+              </Button>
+              <Button
+                className={'bg-red-500 hover:bg-red-600'}
+                onClick={() => rejectRequest.mutate()}
+              >
+                Từ chối
+              </Button>
+            </>
+          ) : null}
+        </div>
       </div>
-      {client.authStore.model?.role === 1 &&
-      client.authStore.model?.id === request.data.expand.issue.assignee ? (
-        <>
-          <Button
-            className={'bg-blue-500 hover:bg-blue-600'}
-            onClick={() => approveRequest.mutate()}
-          >
-            Phê duyệt
-          </Button>
-          <Button
-            className={'bg-red-500 hover:bg-red-600'}
-            onClick={() => rejectRequest.mutate()}
-          >
-            Từ chối
-          </Button>
-        </>
-      ) : null}
     </>
   );
 };

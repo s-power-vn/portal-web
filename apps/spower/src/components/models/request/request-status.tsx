@@ -29,6 +29,9 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
         })
   });
 
+  const style = `text-appWhite flex w-fit h-fit items-center
+  justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs shadow`;
+
   return (
     <Switch fallback={<span>Không xác định</span>}>
       <Match when={request.data.status === RequestStatusOptions.ToDo}>
@@ -38,22 +41,12 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
             client.authStore.model?.id === request.data.expand.issue.assignee
           }
           fallback={
-            <span
-              className={cn(
-                'text-appWhite whitespace-nowrap rounded-full bg-red-500 px-2 py-1 text-xs shadow',
-                className
-              )}
-            >
+            <span className={cn(style, 'bg-appError', className)}>
               Đang xử lý khối lượng
             </span>
           }
         >
-          <span
-            className={cn(
-              'text-appWhite whitespace-nowrap rounded-full bg-red-500 px-2 py-1 text-xs shadow',
-              className
-            )}
-          >
+          <span className={cn(style, 'bg-appError', className)}>
             Chờ duyệt khối lượng
           </span>
         </Show>
@@ -66,34 +59,19 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           }
           fallback={
             <span
-              className={cn(
-                'text-appWhite whitespace-nowrap rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
-                className
-              )}
+              className={cn(style, 'bg-appWarning text-appBlack', className)}
             >
               Đang xử lý giá
             </span>
           }
         >
-          <span
-            className={cn(
-              'text-appWhite whitespace-nowrap rounded-full bg-orange-500 px-2 py-1 text-xs shadow',
-              className
-            )}
-          >
+          <span className={cn(style, 'bg-appWarning text-appBlack', className)}>
             Chờ duyệt giá
           </span>
         </Show>
       </Match>
       <Match when={request.data.status === RequestStatusOptions.Done}>
-        <span
-          className={cn(
-            'text-appWhite whitespace-nowrap rounded-full bg-blue-500 px-2 py-1 text-xs shadow',
-            className
-          )}
-        >
-          Đã duyệt
-        </span>
+        <span className={cn(style, 'bg-appSuccess', className)}>Đã duyệt</span>
       </Match>
     </Switch>
   );

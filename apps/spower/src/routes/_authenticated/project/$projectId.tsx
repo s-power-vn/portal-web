@@ -49,7 +49,7 @@ const Component = () => {
             ></SidebarItem>
           </SidebarGroup>
         </Sidebar>
-        <div className={'h-full grow overflow-hidden p-2'}>
+        <div className={'h-full grow overflow-hidden'}>
           <Outlet />
         </div>
       </div>

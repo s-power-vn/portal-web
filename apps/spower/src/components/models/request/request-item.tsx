@@ -359,19 +359,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <Cross2Icon className={'h-4 w-4'} />
             </Button>
           </div>
-          <div className={'flex items-center gap-2'}>
-            {client.authStore.model?.role !== 1 ? (
-              <>
-                <span className={'text-sm'}>Người thực hiện</span>
-                <IssueAssignee
-                  projectId={request.data.project}
-                  issueId={request.data.expand.issue.id}
-                  value={request.data.expand.issue.assignee}
-                  className={'w-56'}
-                ></IssueAssignee>
-              </>
-            ) : null}
-          </div>
         </div>
         <div className={'flex flex-col'}>
           <div
