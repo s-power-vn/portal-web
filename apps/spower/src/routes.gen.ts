@@ -24,6 +24,7 @@ import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
+import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
 import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
 import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
@@ -109,6 +110,12 @@ const AuthenticatedGeneralCustomersRoute =
 const AuthenticatedProjectProjectIdIndexRoute =
   AuthenticatedProjectProjectIdIndexImport.update({
     path: '/',
+    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdSettingsRoute =
+  AuthenticatedProjectProjectIdSettingsImport.update({
+    path: '/settings',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
@@ -274,6 +281,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdOverviewImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
+    '/_authenticated/project/$projectId/settings': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdSettingsImport
+      parentRoute: typeof AuthenticatedProjectProjectIdImport
+    }
     '/_authenticated/project/$projectId/': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
@@ -356,6 +367,7 @@ export const routeTree = rootRoute.addChildren([
           AuthenticatedProjectProjectIdIssuesIndexRoute,
         ]),
         AuthenticatedProjectProjectIdOverviewRoute,
+        AuthenticatedProjectProjectIdSettingsRoute,
         AuthenticatedProjectProjectIdIndexRoute,
       ]),
       AuthenticatedProjectIndexRoute,

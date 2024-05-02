@@ -36,7 +36,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  useConfirm
 } from '@storeo/theme';
 
 import { getAllDetailInfos, useDeleteDetails } from '../../../api';
@@ -80,6 +81,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   );
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
+
+  const { confirm } = useConfirm();
 
   const columns = useMemo(
     () => [
@@ -423,7 +426,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           detailId={selectedRow.original.group}
         />
       ) : null}
-      <div className={'flex flex-col gap-2'}>
+      <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <Button variant={'outline'} className={'flex gap-1'}>
             <SheetIcon className={'h-5 w-5'} />
@@ -464,12 +467,14 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             variant="outline"
             className={'text-appWhite bg-red-500'}
             size="icon"
-            onClick={() => {
-              const selected = table.getSelectedRowModel();
-              deleteDetails
-                .mutateAsync(selected.flatRows.map(row => row.original.group))
-                .then(() => setRowSelection({}));
-            }}
+            onClick={() =>
+              confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
+                const selected = table.getSelectedRowModel();
+                deleteDetails
+                  .mutateAsync(selected.flatRows.map(row => row.original.group))
+                  .then(() => setRowSelection({}));
+              })
+            }
           >
             <Cross2Icon className={'h-5 w-5'} />
           </Button>

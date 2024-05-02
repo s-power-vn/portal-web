@@ -10,7 +10,7 @@ const Component = () => {
   const { projectId } = Route.useParams();
   return (
     <Tabs defaultValue={'overview'}>
-      <TabsList className="grid w-full flex-none grid-cols-4">
+      <TabsList className="grid w-full flex-none grid-cols-4 rounded-none">
         <TabsTrigger value="overview" asChild>
           <Link to={'/project/$projectId/overview'}>Tổng quan</Link>
         </TabsTrigger>
