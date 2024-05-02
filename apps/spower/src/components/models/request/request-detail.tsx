@@ -5,7 +5,8 @@ import {
   useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
-import { CalendarIcon, User2Icon } from 'lucide-react';
+import { useRouter } from '@tanstack/react-router';
+import { CalendarIcon, Undo2Icon, User2Icon } from 'lucide-react';
 
 import { FC, useState } from 'react';
 
@@ -25,7 +26,8 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
-  Textarea
+  Textarea,
+  useConfirm
 } from '@storeo/theme';
 
 import { RequestData } from '../../../api';
@@ -171,6 +173,9 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
     }
   });
 
+  const { confirm } = useConfirm();
+  const router = useRouter();
+
   return (
     <>
       <div
@@ -179,10 +184,19 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
         }
       >
         <div className={'flex w-full flex-col gap-1'}>
-          <RequestStatus
-            className={'px-3 py-1.5 text-xs font-bold'}
-            issueId={issueId}
-          />
+          <div className={'flex items-center gap-2'}>
+            <RequestStatus
+              className={'px-3 py-1.5 text-xs font-bold'}
+              issueId={issueId}
+            />
+            <Button
+              className={'h-6'}
+              size={'icon'}
+              onClick={() => router.history.back()}
+            >
+              <Undo2Icon className={'h-4 w-4'} />
+            </Button>
+          </div>
           <IssueTitle
             issueId={issueId}
             title={request.data.expand.issue.title}
@@ -292,7 +306,11 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
                           'text-appWhite bg-appError hover:bg-appErrorLight hover:text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full p-1 shadow-lg'
                         }
                         variant={'ghost'}
-                        onClick={() => deleteComment.mutate(it.id)}
+                        onClick={() =>
+                          confirm('Bạn chắc chắn muốn xóa ghi chú này?', () =>
+                            deleteComment.mutate(it.id)
+                          )
+                        }
                       >
                         <Cross2Icon width={20} height={20}></Cross2Icon>
                       </Button>

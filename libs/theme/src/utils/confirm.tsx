@@ -15,9 +15,11 @@ type ConfirmContextValue = {
   show: (message: string, onConfirm?: () => void) => void;
 };
 
-const ConfirmContext = createContext<ConfirmContextValue | undefined>(
-  undefined
-);
+const ConfirmContext = createContext<ConfirmContextValue>({
+  show: () => {
+    /**/
+  }
+});
 
 export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -60,5 +62,5 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
 
 export const useConfirm = () => {
   const context = useContext(ConfirmContext);
-  return { confirm: context?.show };
+  return { confirm: context.show };
 };

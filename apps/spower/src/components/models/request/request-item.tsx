@@ -357,7 +357,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               className={'text-appWhite bg-red-500 hover:bg-red-600'}
               size="icon"
               onClick={() => {
-                confirm?.('Bạn muốn xóa yêu cầu mua hàng này?', () =>
+                confirm?.('Bạn chắc chắn muốn xóa yêu cầu mua hàng này?', () =>
                   deleteRequest.mutate(requestId)
                 );
               }}
