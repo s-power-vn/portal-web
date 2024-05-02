@@ -256,8 +256,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               row.original.expand.detail.unitPrice;
             if (exceed > 0) {
               return (
-                <div className={'flex justify-end'}>
-                  <span className={'font-semibold text-red-500'}>
+                <div className={'flex justify-end text-red-500'}>
+                  <span className={'font-semibold'}>
                     {formatCurrency(exceed)}
                   </span>
                   <span>₫</span>
@@ -265,8 +265,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               );
             } else {
               return (
-                <div className={'flex justify-end'}>
-                  <span className={'font-semibold text-green-500'}>
+                <div className={'flex justify-end text-green-500'}>
+                  <span className={'font-semibold'}>
                     {formatCurrency(-exceed)}
                   </span>
                   <span>₫</span>

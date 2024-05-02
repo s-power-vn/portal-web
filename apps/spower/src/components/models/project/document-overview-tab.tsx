@@ -24,6 +24,7 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   DetailInfoResponse,
+  Show,
   cn,
   formatCurrency,
   formatNumber
@@ -85,7 +86,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
-            <div className={'flex w-full items-center '}>
+            <div className={'flex w-full items-center'}>
               {row.getCanExpand() ? (
                 <button
                   className={'cursor-pointer'}
@@ -176,7 +177,14 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         }
       }),
       columnHelper.accessor('volume', {
-        cell: ({ row }) => formatNumber(row.original.volume),
+        cell: ({ row }) => (
+          <div className={'flex justify-end gap-1'}>
+            <span className={'font-semibold'}>
+              {formatNumber(row.original.volume)}
+            </span>
+            <span>{row.original.unit}</span>
+          </div>
+        ),
         header: () => 'Khối lượng HĐ',
         footer: info => info.column.id,
         size: 150,
@@ -184,17 +192,17 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.accessor('unit', {
-        cell: info => info.getValue(),
-        header: () => 'Đơn vị',
-        footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
       columnHelper.accessor('unitPrice', {
-        cell: ({ row }) => formatCurrency(row.original.unitPrice),
+        cell: ({ row }) => (
+          <Show when={row.original.unitPrice}>
+            <div className={'flex justify-end'}>
+              <span className={'font-semibold'}>
+                {formatCurrency(row.original.unitPrice)}
+              </span>
+              <span>₫</span>
+            </div>
+          </Show>
+        ),
         header: () => 'Đơn giá HĐ',
         footer: info => info.column.id,
         size: 150,
@@ -204,8 +212,16 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       }),
       columnHelper.display({
         id: 'biddingTotal',
-        cell: ({ row }) =>
-          formatCurrency(row.original.unitPrice * row.original.volume),
+        cell: ({ row }) => (
+          <Show when={row.original.unitPrice}>
+            <div className={'flex justify-end'}>
+              <span className={'font-semibold'}>
+                {formatCurrency(row.original.unitPrice * row.original.volume)}
+              </span>
+              <span>₫</span>
+            </div>
+          </Show>
+        ),
         header: () => 'Thành tiền',
         footer: info => info.column.id,
         size: 150,
@@ -214,11 +230,37 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         }
       }),
       columnHelper.display({
+        id: 'requestVolume',
+        cell: ({ row }) => (
+          <Show when={row.original.requestVolume}>
+            <div className={'flex justify-end gap-1'}>
+              <span className={'font-semibold'}>
+                {formatNumber(row.original.requestVolume)}
+              </span>
+              <span>{row.original.unit}</span>
+            </div>
+          </Show>
+        ),
+        header: () => 'Khối lượng yêu cầu',
+        footer: info => info.column.id,
+        size: 150,
+        meta: {
+          hasRowSpan: 'requestRowSpan'
+        }
+      }),
+      columnHelper.display({
         id: 'totalRequestVolume',
-        cell: ({ row }) => {
-          return formatNumber(row.original.extra as number);
-        },
-        header: () => 'Tổng khối lượng YC',
+        cell: ({ row }) => (
+          <Show when={row.original.extra}>
+            <div className={'flex justify-end gap-1'}>
+              <span className={'font-semibold'}>
+                {formatNumber(row.original.extra as number)}
+              </span>
+              <span>{row.original.unit}</span>
+            </div>
+          </Show>
+        ),
+        header: () => 'Tổng KL yêu cầu',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -232,37 +274,41 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             const exceed = (row.original.extra as number) - row.original.volume;
 
             return (
-              <div
-                className={cn(
-                  'flex w-full',
-                  exceed < 0 ? 'text-green-500' : 'text-red-500'
-                )}
-              >
-                {formatNumber(exceed < 0 ? -exceed : exceed)}
-              </div>
+              <Show when={exceed}>
+                <div
+                  className={cn(
+                    'flex w-full justify-end gap-1',
+                    exceed < 0 ? 'text-green-500' : 'text-red-500'
+                  )}
+                >
+                  <span className={'font-semibold'}>
+                    {formatNumber(exceed < 0 ? -exceed : exceed)}
+                  </span>
+                  <span>{row.original.unit}</span>
+                </div>
+              </Show>
             );
           }
           return null;
         },
-        header: () => 'Khối lượng PS',
+        header: () => 'Khối lượng phát sinh',
         footer: info => info.column.id,
         size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.display({
-        id: 'requestVolume',
-        cell: ({ row }) => formatNumber(row.original.requestVolume),
-        header: () => 'Khối lượng YC',
-        footer: info => info.column.id,
-        size: 120,
-        meta: {
-          hasRowSpan: 'requestRowSpan'
-        }
-      }),
       columnHelper.accessor('supplierPrice', {
-        cell: info => formatCurrency(info.getValue()),
+        cell: info => (
+          <Show when={info.getValue()}>
+            <div className={'flex justify-end gap-1'}>
+              <span className={'font-semibold'}>
+                {formatCurrency(info.getValue())}
+              </span>
+              <span>₫</span>
+            </div>
+          </Show>
+        ),
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
@@ -274,19 +320,23 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             const exceed = row.original.supplierPrice - row.original.unitPrice;
             if (exceed > 0) {
               return (
-                <span className={'text-red-500'}>{formatCurrency(exceed)}</span>
+                <div className={'flex justify-end text-red-500'}>
+                  <span className={'font-bold'}>{formatCurrency(exceed)}</span>
+                  <span>₫</span>
+                </div>
               );
             } else {
               return (
-                <span className={'text-green-500'}>
-                  {formatCurrency(-exceed)}
-                </span>
+                <div className={'flex justify-end text-green-500'}>
+                  <span className={'font-bold'}>{formatCurrency(-exceed)}</span>
+                  <span>₫</span>
+                </div>
               );
             }
           }
           return null;
         },
-        header: () => 'Đơn giá PS',
+        header: () => 'Đơn giá phát sinh',
         footer: info => info.column.id,
         size: 150
       }),
