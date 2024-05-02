@@ -15,8 +15,11 @@ export function formatCurrency(value: number) {
   return value
     ? new Intl.NumberFormat('vi-VN', {
         style: 'currency',
-        currency: 'VND'
-      }).format(value)
+        currency: 'VND',
+        currencyDisplay: 'code'
+      })
+        .format(value)
+        .replace('VND', '')
     : '';
 }
 

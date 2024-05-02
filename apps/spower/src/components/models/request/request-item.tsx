@@ -23,6 +23,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 
 import {
   RequestStatusOptions,
+  Show,
   client,
   cn,
   formatCurrency,
@@ -180,7 +181,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       columnHelper.display({
         id: 'volume',
         cell: ({ row }) => (
-          <div className={'flex gap-1'}>
+          <div className={'flex justify-end gap-1'}>
             <span className={'font-semibold'}>
               {formatNumber(row.original.expand.detail.volume)}
             </span>
@@ -197,9 +198,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       columnHelper.display({
         id: 'unitPrice',
         cell: ({ row }) => (
-          <span className={'font-semibold'}>
-            {formatCurrency(row.original.expand.detail.unitPrice)}
-          </span>
+          <Show when={row.original.expand.detail.unitPrice}>
+            <div className={'flex justify-end'}>
+              <span className={'font-semibold'}>
+                {formatCurrency(row.original.expand.detail.unitPrice)}
+              </span>
+              <span>₫</span>
+            </div>
+          </Show>
         ),
         header: () => 'Đơn giá HĐ',
         footer: info => info.column.id,
@@ -211,14 +217,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       columnHelper.display({
         id: 'requestVolume',
         cell: ({ row }) => (
-          <div className={'flex gap-1'}>
+          <div className={'flex justify-end gap-1'}>
             <span className={'font-semibold'}>
               {formatNumber(row.original.volume)}
             </span>
             <span>{row.original.expand.detail.unit}</span>
           </div>
         ),
-        header: () => 'Khối lượng YC',
+        header: () => 'Khối lượng yêu cầu',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -226,12 +232,17 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         }
       }),
       columnHelper.accessor('supplierUnitPrice', {
-        cell: ({ row }) =>
-          row.original.supplierUnitPrice ? (
-            <span className={'font-semibold'}>
-              {formatCurrency(row.original.supplierUnitPrice)}
-            </span>
-          ) : null,
+        cell: ({ row }) => (
+          <Show when={row.original.supplierUnitPrice}>
+            <div className={'flex justify-end gap-1'}>
+              <span className={'font-semibold'}>
+                {row.original.supplierUnitPrice &&
+                  formatCurrency(row.original.supplierUnitPrice)}
+              </span>
+              <span>₫</span>
+            </div>
+          </Show>
+        ),
         header: () => 'Đơn giá NCC',
         footer: info => info.column.id,
         size: 150
@@ -245,15 +256,21 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               row.original.expand.detail.unitPrice;
             if (exceed > 0) {
               return (
-                <span className={'font-semibold text-red-500'}>
-                  {formatCurrency(exceed)}
-                </span>
+                <div className={'flex justify-end'}>
+                  <span className={'font-semibold text-red-500'}>
+                    {formatCurrency(exceed)}
+                  </span>
+                  <span>₫</span>
+                </div>
               );
             } else {
               return (
-                <span className={'font-semibold text-green-500'}>
-                  {formatCurrency(-exceed)}
-                </span>
+                <div className={'flex justify-end'}>
+                  <span className={'font-semibold text-green-500'}>
+                    {formatCurrency(-exceed)}
+                  </span>
+                  <span>₫</span>
+                </div>
               );
             }
           }
@@ -266,7 +283,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       columnHelper.accessor('supplierVolume', {
         cell: ({ row }) =>
           row.original.supplierVolume ? (
-            <div className={'flex gap-1'}>
+            <div className={'flex justify-end gap-1'}>
               <span className={'font-semibold'}>
                 {formatNumber(row.original.supplierVolume)}
               </span>
