@@ -367,9 +367,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           </div>
         </div>
         <div className={'flex flex-col'}>
-          <div
-            className={'max-h-[350px] overflow-x-auto rounded-md border pb-2'}
-          >
+          <div className={'overflow-x-auto rounded-md border pb-2'}>
             <Table
               style={{
                 width: table.getTotalSize()

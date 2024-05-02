@@ -168,7 +168,6 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
             Thêm nhà cung cấp
           </Button>
         </div>
-
         <div className={'rounded-md border'}>
           <Table>
             <TableHeader className={'bg-appGrayLight'}>
