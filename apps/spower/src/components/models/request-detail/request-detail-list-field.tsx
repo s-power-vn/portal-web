@@ -71,7 +71,7 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
           }}
         ></PickDetailDialog>
       ) : null}
-      <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
+      <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
           <TableHeader
             style={{
@@ -83,20 +83,22 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
             <TableRow>
               <TableHead
                 className={
-                  'bg-appGrayLight whitespace-nowrap border-r p-2 w-[50px]'
+                  'bg-appBlueLight text-appWhite w-[50px] whitespace-nowrap border-r p-2'
                 }
               >
                 ID
               </TableHead>
               <TableHead
                 className={
-                  'bg-appGrayLight items-center whitespace-nowrap border-r p-2 w-[500px]'
+                  'bg-appBlueLight text-appWhite w-[500px] items-center whitespace-nowrap border-r p-2'
                 }
               >
                 Mô tả công việc
               </TableHead>
               <TableHead
-                className={'bg-appGrayLight items-center whitespace-nowrap p-2'}
+                className={
+                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap p-2'
+                }
               >
                 Khối lượng yêu cầu
               </TableHead>

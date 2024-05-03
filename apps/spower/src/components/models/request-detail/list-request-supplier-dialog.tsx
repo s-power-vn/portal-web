@@ -168,16 +168,16 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
             Thêm nhà cung cấp
           </Button>
         </div>
-        <div className={'rounded-md border'}>
+        <div className={'border-appBlue rounded-md border'}>
           <Table>
-            <TableHeader className={'bg-appGrayLight'}>
+            <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
                       className={
-                        'border-r first:rounded-tl-md last:rounded-tr-md last:border-r-0'
+                        'bg-appBlueLight text-appWhite border-r first:rounded-tl last:rounded-tr last:border-r-0'
                       }
                     >
                       {header.isPlaceholder ? null : (

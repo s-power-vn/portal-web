@@ -485,7 +485,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         </div>
         <div
           ref={parentRef}
-          className={'h-[calc(100vh-214px)] overflow-auto rounded-md border'}
+          className={
+            'border-appBlue h-[calc(100vh-214px)] overflow-auto rounded-md border'
+          }
         >
           <Table
             style={{
@@ -493,7 +495,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             }}
           >
             <TableHeader
-              className={'bg-appGrayLight'}
               style={{
                 position: 'sticky',
                 top: 0,
@@ -511,7 +512,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                           ...getCommonPinningStyles(header.column),
                           width: header.getSize()
                         }}
-                        className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                        className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
                           after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
                           after:content-[''] last:after:border-r-0`}
                       >

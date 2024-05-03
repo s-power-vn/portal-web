@@ -228,16 +228,14 @@ const Content: FC<PickDetailDialogProps> = ({
           placeholder={'Tìm kiếm...'}
           onChange={value => setGlobalFilter(String(value))}
         />
-        <div className="max-h-[300px] overflow-auto rounded-md border pb-2">
+        <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
           <Table
             style={{
               width: table.getTotalSize() + 10
             }}
           >
             <TableHeader
-              className={
-                'bg-appGrayLight items-center whitespace-nowrap border-r p-1'
-              }
+              className={'items-center whitespace-nowrap border-r p-1'}
               style={{
                 position: 'sticky',
                 top: 0,
@@ -251,7 +249,7 @@ const Content: FC<PickDetailDialogProps> = ({
                       {header => (
                         <TableHead
                           key={header.id}
-                          className={`bg-appGrayLight relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                          className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
                           after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
                           after:content-[''] last:after:border-r-0`}
                           style={{

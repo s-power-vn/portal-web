@@ -384,13 +384,15 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           </div>
         </div>
         <div className={'flex flex-col'}>
-          <div className={'overflow-x-auto rounded-md border pb-2'}>
+          <div
+            className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
+          >
             <Table
               style={{
                 width: table.getTotalSize()
               }}
             >
-              <TableHeader className={'bg-appGrayLight'}>
+              <TableHeader>
                 {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map(header => {
@@ -402,7 +404,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                             ...getCommonPinningStyles(header.column),
                             width: header.getSize()
                           }}
-                          className={`bg-appGrayLight whitespace-nowrap p-1 after:absolute after:right-0
+                          className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 after:absolute after:right-0
                           after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
                         >
                           {header.isPlaceholder ? null : (
