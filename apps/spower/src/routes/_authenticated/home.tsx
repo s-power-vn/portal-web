@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { AreaChart, Card, ProgressBar } from '@tremor/react';
+import { AreaChart, Card, DonutChart } from '@tremor/react';
 
 const chartdata = [
   {
-    date: 'Jan 22',
+    date: '22 Tháng 1',
     SemiAnalysis: 2890,
     'The Pragmatic Engineer': 2338
   },
@@ -64,38 +64,59 @@ const chartdata = [
   }
 ];
 
+const datahero = [
+  {
+    name: 'Noche Holding AG',
+    value: 9800
+  },
+  {
+    name: 'Rain Drop AG',
+    value: 4567
+  },
+  {
+    name: 'Push Rail AG',
+    value: 3908
+  },
+  {
+    name: 'Flow Steal AG',
+    value: 2400
+  },
+  {
+    name: 'Tiny Loop Inc.',
+    value: 2174
+  },
+  {
+    name: 'Anton Resorts Holding',
+    value: 1398
+  }
+];
+
 const Component = () => {
   const dataFormatter = number =>
     `$${Intl.NumberFormat('us').format(number).toString()}`;
 
   return (
-    <div className={'flex h-full w-full items-center justify-center'}>
-      <Card className="mx-auto max-w-sm">
-        <div className="flex justify-between">
-          <p className="flex items-center space-x-1">
-            <span className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-              $9,000
-            </span>
-            <span className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-              (45%)
-            </span>
-          </p>
-          <span className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Goal: 20,000
-          </span>
-        </div>
-        <ProgressBar value={45} className="mt-2" color="fuchsia" />
+    <div className={'flex gap-2 p-2'}>
+      <Card>
+        <DonutChart
+          data={datahero}
+          variant="donut"
+          valueFormatter={dataFormatter}
+          onValueChange={v => console.log(v)}
+        />
       </Card>
-      <AreaChart
-        className="h-80"
-        data={chartdata}
-        index="date"
-        categories={['SemiAnalysis', 'The Pragmatic Engineer']}
-        colors={['indigo', 'rose']}
-        valueFormatter={dataFormatter}
-        yAxisWidth={60}
-        onValueChange={v => console.log(v)}
-      />
+      <Card>
+        <AreaChart
+          className="h-80"
+          data={chartdata}
+          index="date"
+          categories={['SemiAnalysis', 'The Pragmatic Engineer']}
+          colors={['indigo', 'rose']}
+          valueFormatter={dataFormatter}
+          yAxisWidth={60}
+          onValueChange={v => console.log(v)}
+        />
+      </Card>
     </div>
   );
 };
