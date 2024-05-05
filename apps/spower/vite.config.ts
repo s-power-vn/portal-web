@@ -2,6 +2,7 @@
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
 import react from '@vitejs/plugin-react';
+import { join } from 'path';
 import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig } from 'vite';
 
@@ -33,7 +34,8 @@ export default defineConfig({
       }
     }),
     TanStackRouterVite({
-      generatedRouteTree: 'src/routes.gen.ts'
+      routesDirectory: join(__dirname, 'src/routes'),
+      generatedRouteTree: join(__dirname, '../../libs/core/src/routes.gen.ts')
     })
   ],
 

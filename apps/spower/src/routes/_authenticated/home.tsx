@@ -92,7 +92,7 @@ const datahero = [
 ];
 
 const Component = () => {
-  const dataFormatter = number =>
+  const dataFormatter = (number: number) =>
     `$${Intl.NumberFormat('us').format(number).toString()}`;
 
   return (
