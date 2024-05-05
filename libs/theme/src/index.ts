@@ -2,7 +2,6 @@ export * from './components/form';
 export * from './components/input';
 export * from './components/table';
 export * from './components/pagination';
-export * from './components/sidebar';
 export * from './components/ui/alert-dialog';
 export * from './components/ui/avatar';
 export * from './components/ui/badge';

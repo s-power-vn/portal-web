@@ -10,15 +10,16 @@ import {
 import { FC, ReactNode, useState } from 'react';
 
 import { cn } from '@storeo/core';
+import { Button } from '@storeo/theme';
+
 import {
-  Button,
+  Header,
+  NewProjectDialog,
   Sidebar,
   SidebarGroup,
   SidebarItem,
   useSidebar
-} from '@storeo/theme';
-
-import { Header, NewProjectDialog } from '../components';
+} from '../components';
 
 const SidebarHeader = () => {
   const [openProjectNew, setOpenProjectNew] = useState(false);

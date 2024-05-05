@@ -14,9 +14,10 @@ import {
 } from 'lucide-react';
 
 import { Show } from '@storeo/core';
-import { Button, Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
+import { Button } from '@storeo/theme';
 
 import { getProjectById } from '../../../api';
+import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 
 const Component = () => {
   const matchRoute = useMatchRoute();

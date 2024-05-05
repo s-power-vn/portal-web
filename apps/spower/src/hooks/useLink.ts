@@ -9,8 +9,6 @@ import {
   useRouterState
 } from '@tanstack/react-router';
 
-import '../routes.gen';
-
 export function useLink<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TFrom extends RoutePaths<TRouteTree> | string = string,

@@ -17,8 +17,9 @@ import {
   useMemo
 } from 'react';
 
-import { Show, cn, useLink } from '@storeo/core';
+import { Show, cn } from '@storeo/core';
 
+import { useLink } from '../../hooks';
 import { useSidebar } from './sidebar';
 
 export type SidebarGroupProps<

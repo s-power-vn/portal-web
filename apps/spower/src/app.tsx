@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { parse, stringify } from 'zipson';
 
-import { routeTree } from '../../../libs/core/src/routes.gen';
+import { routeTree } from './routes.gen';
 
 export function decodeFromBinary(str: string): string {
   return decodeURIComponent(

@@ -5,7 +5,6 @@ const { fontFamily } = require('tailwindcss/defaultTheme');
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join } = require('path');
 
-console.log(join(__dirname, '../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}'));
 module.exports = {
   darkMode: ['class'],
   content: [

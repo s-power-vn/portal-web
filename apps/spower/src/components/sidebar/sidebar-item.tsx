@@ -9,9 +9,10 @@ import {
 
 import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
 
-import { cn, useLink } from '@storeo/core';
+import { cn } from '@storeo/core';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@storeo/theme';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { useLink } from '../../hooks';
 import { useSidebar } from './sidebar';
 
 export type SidebarItemProps<

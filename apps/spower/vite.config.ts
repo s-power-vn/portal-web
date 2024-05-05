@@ -35,7 +35,7 @@ export default defineConfig({
     }),
     TanStackRouterVite({
       routesDirectory: join(__dirname, 'src/routes'),
-      generatedRouteTree: join(__dirname, '../../libs/core/src/routes.gen.ts')
+      generatedRouteTree: join(__dirname, 'src/routes.gen.ts')
     })
   ],
 
