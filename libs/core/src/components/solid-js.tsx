@@ -1,4 +1,4 @@
-import React, { Children, ReactNode, isValidElement, useMemo } from 'react';
+import { Children, ReactNode, isValidElement, useMemo } from 'react';
 
 type ShowProps<T> = {
   when: T;

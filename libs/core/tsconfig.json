@@ -8,7 +8,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "module": "ES2022",
+    "module": "esnext",
     "noPropertyAccessFromIndexSignature": false
   },
   "files": [],
