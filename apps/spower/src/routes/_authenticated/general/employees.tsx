@@ -4,6 +4,7 @@ import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
+import { Collections, getImageUrl } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -28,7 +29,11 @@ const Component = () => {
         <div className={'flex justify-center'}>
           <Avatar className={'h-6 w-6 '}>
             <AvatarImage
-              src={`http://localhost:8090/api/files/user/${row.original.id}/${row.original.avatar}`}
+              src={getImageUrl(
+                Collections.User,
+                row.original.id,
+                row.original.avatar
+              )}
             />
             <AvatarFallback className={'text-sm'}>
               <UserIcon />

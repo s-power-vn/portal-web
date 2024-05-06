@@ -10,12 +10,14 @@ import { PencilIcon } from 'lucide-react';
 import { FC, Suspense, useState } from 'react';
 
 import {
+  Collections,
   CommentResponse,
   DialogProps,
   IssueResponse,
   RequestStatusOptions,
   UserResponse,
   client,
+  getImageUrl,
   useOutsideClick
 } from '@storeo/core';
 import {
@@ -227,7 +229,11 @@ const Content: FC<RequestDetailDialogProps> = ({
                 <div className={'flex flex-col pr-3'}>
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={`http://localhost:8090/api/files/user/${it.expand.createdBy.id}/${it.expand.createdBy.avatar}`}
+                      src={getImageUrl(
+                        Collections.User,
+                        it.expand.createdBy?.id,
+                        it.expand.createdBy?.avatar
+                      )}
                     />
                     <AvatarFallback className={'text-sm'}>
                       {it.expand.createdBy.name.split(' ')[0][0]}

@@ -3,7 +3,7 @@ import { UserIcon } from 'lucide-react';
 
 import { FC, Suspense } from 'react';
 
-import { client } from '@storeo/core';
+import { Collections, client, getImageUrl } from '@storeo/core';
 import { Avatar, AvatarFallback, AvatarImage } from '@storeo/theme';
 
 const Component = ({ employeeId }: { employeeId: string }) => {
@@ -16,7 +16,7 @@ const Component = ({ employeeId }: { employeeId: string }) => {
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
         <AvatarImage
-          src={`http://localhost:8090/api/files/user/${query.data.id}/${query.data.avatar}`}
+          src={getImageUrl(Collections.User, query.data.id, query.data.avatar)}
         />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
