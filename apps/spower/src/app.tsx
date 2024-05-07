@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   RouterProvider,
   createRouter,
@@ -27,8 +27,13 @@ export function encodeToBinary(str: string): string {
   );
 }
 
+const queryClient = new QueryClient();
+
 const router = createRouter({
   routeTree,
+  context: {
+    queryClient
+  },
   parseSearch: parseSearchWith(value =>
     parse(decodeURIComponent(decodeFromBinary(value)))
   ),
@@ -44,6 +49,9 @@ declare module '@tanstack/react-router' {
 }
 
 export const App = () => {
-  const queryClient = useQueryClient();
-  return <RouterProvider router={router} context={{ queryClient }} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 };

@@ -13,17 +13,13 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const queryClient = new QueryClient();
-
 root.render(
   <StrictMode>
     <ConfirmProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <App />
-          <Toaster />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <TooltipProvider>
+        <App />
+        <Toaster />
+      </TooltipProvider>
     </ConfirmProvider>
   </StrictMode>
 );

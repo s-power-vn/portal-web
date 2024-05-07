@@ -24,6 +24,7 @@ import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
+import { Route as AuthenticatedGeneralEmployeesIndexImport } from './routes/_authenticated/general/employees/index'
 import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
 import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
 import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
@@ -111,6 +112,12 @@ const AuthenticatedProjectProjectIdIndexRoute =
   AuthenticatedProjectProjectIdIndexImport.update({
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+  } as any)
+
+const AuthenticatedGeneralEmployeesIndexRoute =
+  AuthenticatedGeneralEmployeesIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthenticatedGeneralEmployeesRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdSettingsRoute =
@@ -285,6 +292,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdSettingsImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
+    '/_authenticated/general/employees/': {
+      preLoaderRoute: typeof AuthenticatedGeneralEmployeesIndexImport
+      parentRoute: typeof AuthenticatedGeneralEmployeesImport
+    }
     '/_authenticated/project/$projectId/': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
@@ -344,6 +355,7 @@ export const routeTree = rootRoute.addChildren([
       ]),
       AuthenticatedGeneralEmployeesRoute.addChildren([
         AuthenticatedGeneralEmployeesNewRoute,
+        AuthenticatedGeneralEmployeesIndexRoute,
         AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
       ]),
       AuthenticatedGeneralSuppliersRoute.addChildren([
