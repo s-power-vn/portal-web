@@ -49,7 +49,7 @@ const Component = () => {
       header: () => 'Họ tên',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('displayEmail', {
       cell: info => info.getValue(),
       header: () => 'Email',
       footer: info => info.column.id

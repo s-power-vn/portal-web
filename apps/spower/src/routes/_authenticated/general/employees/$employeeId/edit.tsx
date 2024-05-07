@@ -25,7 +25,9 @@ import { DepartmentDropdownField } from '../../../../../components';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email'),
+  displayEmail: string()
+    .email('Sai định dạng email')
+    .required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban')
 });
 
@@ -64,7 +66,11 @@ const Component = () => {
         <Form
           schema={schema}
           onSubmit={values => updateEmployee.mutate(values)}
-          defaultValues={employeeById.data}
+          defaultValues={{
+            name: employeeById.data?.name,
+            displayEmail: employeeById.data?.displayEmail,
+            department: employeeById.data?.department
+          }}
           loading={updateEmployee.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
@@ -76,7 +82,7 @@ const Component = () => {
           />
           <TextField
             schema={schema}
-            name={'email'}
+            name={'displayEmail'}
             title={'Email'}
             options={{}}
           />

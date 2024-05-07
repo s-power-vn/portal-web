@@ -49,8 +49,8 @@ export type AuthSystemFields<T = never> = {
 
 export type CommentRecord = {
 	content?: string
-	createdBy?: RecordIdString
-	isssue?: RecordIdString
+	createdBy: RecordIdString
+	issue: RecordIdString
 }
 
 export type ContractRecord = {
@@ -175,6 +175,7 @@ export type SupplierRecord = {
 export type UserRecord = {
 	avatar?: string
 	department: RecordIdString
+	displayEmail?: string
 	name: string
 	role?: number
 }
