@@ -46,6 +46,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.51.1",
     "react-imask": "^7.5.0",
+    "react-query-kit": "^3.2.2",
     "sonner": "^1.4.41",
     "uuid": "^9.0.1",
     "vaul": "^0.9.0",

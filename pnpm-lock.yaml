@@ -116,6 +116,9 @@ importers:
       react-imask:
         specifier: ^7.5.0
         version: 7.5.0(react@18.2.0)
+      react-query-kit:
+        specifier: ^3.2.2
+        version: 3.2.2(@tanstack/react-query@5.28.4(react@18.2.0))
       sonner:
         specifier: ^1.4.41
         version: 1.4.41(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -4838,6 +4841,14 @@ packages:
 
   react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+
+  react-query-kit@3.2.2:
+    resolution: {integrity: sha512-JhDa5FP5K/kJxfQjbu/UQ7IYG/F3xnnK+vUBOl0rPdZoG0ZV2guzEEm4xOefGwykpCC79AM3ywi5mPb40U2eXA==}
+    peerDependencies:
+      '@tanstack/react-query': ^4 || ^5
+    peerDependenciesMeta:
+      '@tanstack/react-query':
+        optional: true
 
   react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
@@ -11111,6 +11122,10 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.2.0: {}
+
+  react-query-kit@3.2.2(@tanstack/react-query@5.28.4(react@18.2.0)):
+    optionalDependencies:
+      '@tanstack/react-query': 5.28.4(react@18.2.0)
 
   react-refresh@0.14.0: {}
 

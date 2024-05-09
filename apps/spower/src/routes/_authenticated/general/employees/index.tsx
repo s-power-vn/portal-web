@@ -1,5 +1,4 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
@@ -14,12 +13,14 @@ import {
   DebouncedInput
 } from '@storeo/theme';
 
-import { EmployeesSearchSchema, UserData, getEmployees } from '../../../../api';
+import { EmployeesSearchSchema, UserData, employeeApi } from '../../../../api';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const employees = useSuspenseQuery(getEmployees(search));
+  const listEmployee = employeeApi.list.useQuery({
+    variables: search
+  });
 
   const columnHelper = createColumnHelper<UserData>();
 
@@ -136,10 +137,10 @@ const Component = () => {
           }
         />
         <CommonTable
-          data={employees.data?.items ?? []}
+          data={listEmployee.data?.items ?? []}
           columns={columns}
-          rowCount={employees.data?.totalItems}
-          pageCount={employees.data?.totalPages}
+          rowCount={listEmployee.data?.totalItems}
+          pageCount={listEmployee.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -181,5 +182,5 @@ export const Route = createFileRoute('/_authenticated/general/employees/')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getEmployees(deps.search))
+    queryClient?.ensureQueryData(employeeApi.list.getOptions(deps.search))
 });

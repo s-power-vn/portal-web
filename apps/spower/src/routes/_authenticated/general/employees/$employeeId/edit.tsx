@@ -1,4 +1,4 @@
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
@@ -16,11 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import {
-  getEmployeeById,
-  getEmployeesKey,
-  useUpdateEmployee
-} from '../../../../../api';
+import { employeeApi } from '../../../../../api';
 import { DepartmentDropdownField } from '../../../../../components';
 
 const schema = object().shape({
@@ -38,14 +34,20 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const employeeById = useSuspenseQuery(getEmployeeById(employeeId));
+  const employee = employeeApi.byId.useSuspenseQuery({
+    variables: employeeId
+  });
 
-  const updateEmployee = useUpdateEmployee(employeeId, async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({
-      queryKey: getEmployeesKey(search)
-    });
+  const updateEmployee = employeeApi.update.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (
@@ -65,11 +67,16 @@ const Component = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => updateEmployee.mutate(values)}
+          onSubmit={values =>
+            updateEmployee.mutate({
+              id: employeeId,
+              ...values
+            })
+          }
           defaultValues={{
-            name: employeeById.data?.name,
-            displayEmail: employeeById.data?.displayEmail,
-            department: employeeById.data?.department
+            name: employee.data?.name,
+            displayEmail: employee.data?.displayEmail,
+            department: employee.data?.department
           }}
           loading={updateEmployee.isPending}
           className={'mt-4 flex flex-col gap-3'}
@@ -108,5 +115,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { employeeId } }) =>
-    queryClient?.ensureQueryData(getEmployeeById(employeeId))
+    queryClient?.ensureQueryData(employeeApi.byId.getOptions(employeeId))
 });

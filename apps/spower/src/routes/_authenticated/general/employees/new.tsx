@@ -17,7 +17,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { getEmployeesKey, useCreateEmployee } from '../../../../api';
+import { employeeApi } from '../../../../api';
 import { DepartmentDropdownField } from '../../../../components';
 
 const schema = object().shape({
@@ -38,12 +38,16 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const createEmployee = useCreateEmployee(async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({
-      queryKey: getEmployeesKey(search)
-    });
+  const createEmployee = employeeApi.create.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (
