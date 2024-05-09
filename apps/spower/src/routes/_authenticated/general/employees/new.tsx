@@ -14,7 +14,8 @@ import {
   DialogTitle,
   Form,
   PasswordField,
-  TextField
+  TextField,
+  success
 } from '@storeo/theme';
 
 import { employeeApi } from '../../../../api';
@@ -40,6 +41,7 @@ const Component = () => {
 
   const createEmployee = employeeApi.create.useMutation({
     onSuccess: async () => {
+      success('Thêm nhân viên thành công');
       setOpen(false);
       history.back();
       await Promise.all([

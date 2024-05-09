@@ -13,7 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-  TextField
+  TextField,
+  success
 } from '@storeo/theme';
 
 import { employeeApi } from '../../../../../api';
@@ -38,6 +39,7 @@ const Component = () => {
 
   const updateEmployee = employeeApi.update.useMutation({
     onSuccess: async () => {
+      success('Chỉnh sửa nhân viên thành công');
       setOpen(false);
       history.back();
       await Promise.all([

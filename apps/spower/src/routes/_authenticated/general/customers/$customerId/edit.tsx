@@ -13,7 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-  TextField
+  TextField,
+  success
 } from '@storeo/theme';
 
 import { customerApi } from '../../../../../api';
@@ -39,6 +40,7 @@ const Component = () => {
 
   const updateCustomer = customerApi.update.useMutation({
     onSuccess: async () => {
+      success('Chỉnh sửa chủ đầu tư thành công');
       setOpen(false);
       history.back();
       await Promise.all([

@@ -13,7 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
-  TextField
+  TextField,
+  success
 } from '@storeo/theme';
 
 import { supplierApi } from '../../../../api';
@@ -34,6 +35,7 @@ const Component = () => {
 
   const createSupplier = supplierApi.create.useMutation({
     onSuccess: async () => {
+      success('Thêm nhà cung cấp thành công');
       setOpen(false);
       history.back();
       await Promise.all([
