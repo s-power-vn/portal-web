@@ -178,6 +178,7 @@ export type UserRecord = {
 	displayEmail?: string
 	name: string
 	role?: number
+	title?: string
 }
 
 // Response types include system fields and match responses from the PocketBase API

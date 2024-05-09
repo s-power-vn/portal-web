@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { object, string } from 'yup';
+import { object, ref, string } from 'yup';
 
 import { useState } from 'react';
 
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   Form,
+  PasswordField,
   TextField
 } from '@storeo/theme';
 
@@ -21,10 +22,14 @@ import { DepartmentDropdownField } from '../../../../components';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
-  displayEmail: string()
-    .email('Sai định dạng email')
-    .required('Hãy nhập email'),
-  department: string().required('Hãy chọn phòng ban')
+  email: string().email('Sai định dạng email').required('Hãy nhập email'),
+  department: string().required('Hãy chọn phòng ban'),
+  password: string()
+    .required('Hãy nhập mật khẩu')
+    .min(8, 'Mật khẩu dài ít nhất 8 ký tự'),
+  passwordConfirmation: string()
+    .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
+    .required('Hãy xác nhận mật khẩu')
 });
 
 const Component = () => {
@@ -61,7 +66,7 @@ const Component = () => {
           onSubmit={values => createEmployee.mutate(values)}
           defaultValues={{
             name: '',
-            displayEmail: '',
+            email: '',
             department: ''
           }}
           loading={createEmployee.isPending}
@@ -73,12 +78,7 @@ const Component = () => {
             title={'Họ tên'}
             options={{}}
           />
-          <TextField
-            schema={schema}
-            name={'displayEmail'}
-            title={'Email'}
-            options={{}}
-          />
+          <TextField schema={schema} name={'email'} title={'Email'} />
           <DepartmentDropdownField
             schema={schema}
             name={'department'}
@@ -86,6 +86,12 @@ const Component = () => {
             options={{
               placeholder: 'Hãy chọn phòng ban'
             }}
+          />
+          <PasswordField schema={schema} name={'password'} title={'Mật khẩu'} />
+          <PasswordField
+            schema={schema}
+            name={'passwordConfirmation'}
+            title={'Xác nhận mật khẩu'}
           />
           <DialogFooter className={'mt-4'}>
             <Button type="submit">Chấp nhận</Button>

@@ -92,8 +92,15 @@ export function useCreateEmployee(onSuccess?: () => void) {
 
   return useMutation({
     mutationKey: ['createEmployee'],
-    mutationFn: (params: UserRecord) =>
-      client.collection('user').create<UserResponse>(params),
+    mutationFn: (
+      params: UserRecord & {
+        password: string;
+      }
+    ) =>
+      client.send('/create-employee', {
+        method: 'POST',
+        body: params
+      }),
     onSuccess: async () => {
       onSuccess?.();
       await queryClient.invalidateQueries({ queryKey: getAllEmployeesKey() });
