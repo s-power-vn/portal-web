@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { object, ref, string } from 'yup';
+import { boolean, object, ref, string } from 'yup';
 
 import { useState } from 'react';
 
@@ -30,7 +30,9 @@ const schema = object().shape({
     .min(8, 'Mật khẩu dài ít nhất 8 ký tự'),
   passwordConfirmation: string()
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
-    .required('Hãy xác nhận mật khẩu')
+    .required('Hãy xác nhận mật khẩu'),
+  title: string(),
+  role: boolean()
 });
 
 const Component = () => {
@@ -69,7 +71,12 @@ const Component = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => createEmployee.mutate(values)}
+          onSubmit={values =>
+            createEmployee.mutate({
+              ...values,
+              role: values.role ? 1 : 0
+            })
+          }
           defaultValues={{
             name: '',
             email: '',
@@ -93,6 +100,7 @@ const Component = () => {
               placeholder: 'Hãy chọn phòng ban'
             }}
           />
+          <TextField schema={schema} name={'title'} title={'Chức danh'} />
           <PasswordField schema={schema} name={'password'} title={'Mật khẩu'} />
           <PasswordField
             schema={schema}

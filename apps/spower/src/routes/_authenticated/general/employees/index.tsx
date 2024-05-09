@@ -1,7 +1,7 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
+import { CircleCheckIcon, EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
 import { Collections, getImageUrl } from '@storeo/core';
 import {
@@ -50,7 +50,7 @@ const Component = () => {
       header: () => 'Họ tên',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('displayEmail', {
+    columnHelper.accessor('email', {
       cell: info => info.getValue(),
       header: () => 'Email',
       footer: info => info.column.id
@@ -60,6 +60,24 @@ const Component = () => {
         return row.original.expand.department.name;
       },
       header: () => 'Phòng ban',
+      footer: info => info.column.id
+    }),
+    columnHelper.accessor('department', {
+      cell: ({ row }) => {
+        return row.original.title;
+      },
+      header: () => 'Chức danh',
+      footer: info => info.column.id
+    }),
+    columnHelper.accessor('department', {
+      cell: ({ row }) => {
+        return row.original.role === 1 ? (
+          <div className={'flex w-full justify-center'}>
+            <CircleCheckIcon className={'text-appBlue'} />
+          </div>
+        ) : null;
+      },
+      header: () => 'Quyền duyệt',
       footer: info => info.column.id
     }),
     columnHelper.display({
