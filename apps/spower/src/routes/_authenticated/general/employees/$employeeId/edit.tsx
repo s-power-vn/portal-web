@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { object, string } from 'yup';
+import { boolean, object, string } from 'yup';
 
 import { useState } from 'react';
 
 import {
   Button,
+  CheckField,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -23,9 +24,10 @@ import { DepartmentDropdownField } from '../../../../../components';
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
-  department: string().required('Hãy chọn phòng ban')
+  department: string().required('Hãy chọn phòng ban'),
+  title: string(),
+  role: boolean()
 });
-
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
@@ -45,6 +47,9 @@ const Component = () => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: employeeApi.list.getKey(search)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.byId.getKey(employeeId)
         })
       ]);
     }
@@ -69,14 +74,14 @@ const Component = () => {
           schema={schema}
           onSubmit={values =>
             updateEmployee.mutate({
+              ...values,
               id: employeeId,
-              ...values
+              role: values.role ? 1 : 0
             })
           }
           defaultValues={{
-            name: employee.data?.name,
-            email: employee.data?.email,
-            department: employee.data?.department
+            ...employee.data,
+            role: employee.data.role === 1
           }}
           loading={updateEmployee.isPending}
           className={'mt-4 flex flex-col gap-3'}
@@ -91,7 +96,9 @@ const Component = () => {
             schema={schema}
             name={'email'}
             title={'Email'}
-            options={{}}
+            options={{
+              disabled: true
+            }}
           />
           <DepartmentDropdownField
             schema={schema}
@@ -99,6 +106,14 @@ const Component = () => {
             title={'Phòng ban'}
             options={{
               placeholder: 'Hãy chọn phòng ban'
+            }}
+          />
+          <TextField schema={schema} name={'title'} title={'Chức danh'} />
+          <CheckField
+            schema={schema}
+            name={'role'}
+            options={{
+              label: 'Quyền duyệt'
             }}
           />
           <DialogFooter className={'mt-4'}>

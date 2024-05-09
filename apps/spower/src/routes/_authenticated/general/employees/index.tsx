@@ -80,14 +80,14 @@ const Component = () => {
       header: () => 'Phòng ban',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('department', {
+    columnHelper.accessor('title', {
       cell: ({ row }) => {
         return row.original.title;
       },
       header: () => 'Chức danh',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('department', {
+    columnHelper.accessor('role', {
       cell: ({ row }) => {
         return row.original.role === 1 ? (
           <div className={'flex w-full justify-center'}>
