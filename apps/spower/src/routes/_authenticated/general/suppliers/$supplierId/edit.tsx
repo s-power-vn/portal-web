@@ -1,4 +1,4 @@
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
@@ -16,11 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import {
-  getSupplierById,
-  getSuppliersKey,
-  useUpdateSupplier
-} from '../../../../../api';
+import { supplierApi } from '../../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -37,14 +33,20 @@ const Component = () => {
   const { supplierId } = Route.useParams();
   const search = Route.useSearch();
 
-  const supplierQuery = useSuspenseQuery(getSupplierById(supplierId));
+  const supplierById = supplierApi.byId.useSuspenseQuery({
+    variables: supplierId
+  });
 
-  const updateSupplier = useUpdateSupplier(supplierId, async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({
-      queryKey: getSuppliersKey(search)
-    });
+  const updateSupplier = supplierApi.update.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: supplierApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (
@@ -64,8 +66,13 @@ const Component = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => updateSupplier.mutate(values)}
-          defaultValues={supplierQuery.data}
+          onSubmit={values =>
+            updateSupplier.mutate({
+              id: supplierId,
+              ...values
+            })
+          }
+          defaultValues={supplierById.data}
           loading={updateSupplier.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
@@ -113,5 +120,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(getSupplierById(supplierId))
+    queryClient?.ensureQueryData(supplierApi.byId.getOptions(supplierId))
 });

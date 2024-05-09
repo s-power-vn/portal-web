@@ -3,11 +3,20 @@ import { InferType, number, object, string } from 'yup';
 import { router } from 'react-query-kit';
 
 import {
+  Collections,
   DepartmentResponse,
   UserRecord,
   UserResponse,
   client
 } from '@storeo/core';
+
+export const EmployeesSearchSchema = object().shape({
+  pageIndex: number().optional().default(1),
+  pageSize: number().optional().default(10),
+  filter: string().optional().default('')
+});
+
+type EmployeesSearch = InferType<typeof EmployeesSearchSchema>;
 
 export type UserData = UserResponse & {
   expand: {
@@ -18,7 +27,8 @@ export type UserData = UserResponse & {
 export const employeeApi = router('employee', {
   listFull: router.query({
     fetcher: () =>
-      client.collection<UserData>('user').getFullList({
+      client.collection<UserData>(Collections.User).getFullList({
+        sort: '-created',
         expand: 'department'
       })
   }),
@@ -26,7 +36,7 @@ export const employeeApi = router('employee', {
     fetcher: (search?: EmployeesSearch) => {
       const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
       return client
-        .collection<UserData>('user')
+        .collection<UserData>(Collections.User)
         .getList(search?.pageIndex, search?.pageSize, {
           filter,
           sort: '-created',
@@ -36,7 +46,7 @@ export const employeeApi = router('employee', {
   }),
   byId: router.query({
     fetcher: (id: string) =>
-      client.collection<UserData>('user').getOne(id, {
+      client.collection<UserData>(Collections.User).getOne(id, {
         expand: 'department'
       })
   }),
@@ -49,17 +59,9 @@ export const employeeApi = router('employee', {
   }),
   update: router.mutation({
     mutationFn: (params: UserRecord & { id: string }) =>
-      client.collection('user').update(params.id, params)
+      client.collection(Collections.User).update(params.id, params)
   }),
   delete: router.mutation({
-    mutationFn: (id: string) => client.collection('user').delete(id)
+    mutationFn: (id: string) => client.collection(Collections.User).delete(id)
   })
 });
-
-export const EmployeesSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type EmployeesSearch = InferType<typeof EmployeesSearchSchema>;

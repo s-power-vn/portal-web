@@ -1,5 +1,4 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
@@ -7,12 +6,15 @@ import { EditIcon, SheetIcon } from 'lucide-react';
 import { CustomerResponse } from '@storeo/core';
 import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
-import { CustomersSearchSchema, getCustomers } from '../../../../api';
+import { CustomersSearchSchema, customerApi } from '../../../../api';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const customers = useSuspenseQuery(getCustomers(search));
+
+  const listCustomers = customerApi.list.useSuspenseQuery({
+    variables: search
+  });
 
   const columnHelper = createColumnHelper<CustomerResponse>();
 
@@ -126,10 +128,10 @@ const Component = () => {
           }
         />
         <CommonTable
-          data={customers.data?.items ?? []}
+          data={listCustomers.data?.items ?? []}
           columns={columns}
-          rowCount={customers.data?.totalItems}
-          pageCount={customers.data?.totalPages}
+          rowCount={listCustomers.data?.totalItems}
+          pageCount={listCustomers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -171,5 +173,5 @@ export const Route = createFileRoute('/_authenticated/general/customers/')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getCustomers(deps.search))
+    queryClient?.ensureQueryData(customerApi.list.getOptions(deps.search))
 });

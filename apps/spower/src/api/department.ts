@@ -1,19 +1,12 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { router } from 'react-query-kit';
 
-import { DepartmentResponse, client } from '@storeo/core';
+import { Collections, client } from '@storeo/core';
 
-export function getAllDepartmentsKey() {
-  return ['getAllDepartmentsKey'];
-}
-
-export function getAllDepartments() {
-  return queryOptions({
-    queryKey: getAllDepartmentsKey(),
-    queryFn: () =>
-      client.collection<DepartmentResponse>('department').getFullList()
-  });
-}
-
-export function useGetAllDepartments() {
-  return useQuery(getAllDepartments());
-}
+export const departmentApi = router('department', {
+  listFull: router.query({
+    fetcher: () =>
+      client.collection(Collections.Department).getFullList({
+        sort: '-created'
+      })
+  })
+});

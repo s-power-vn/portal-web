@@ -1,40 +1,19 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
-import { InferType, number, object, string } from 'yup';
 
-import { SupplierResponse, client } from '@storeo/core';
+import { SupplierResponse } from '@storeo/core';
 import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
-const suppliersSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type SuppliersSearch = InferType<typeof suppliersSearchSchema>;
-
-function getSuppliersOptions(search: SuppliersSearch) {
-  return queryOptions({
-    queryKey: ['getSuppliers', search],
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
-      return client
-        .collection<SupplierResponse>('supplier')
-        .getList(search.pageIndex, search.pageSize, {
-          filter,
-          sort: '-created'
-        });
-    }
-  });
-}
+import { SuppliersSearchSchema, supplierApi } from '../../../../api';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const suppliers = useSuspenseQuery(getSuppliersOptions(search));
+  const listSuppliers = supplierApi.list.useSuspenseQuery({
+    variables: search
+  });
 
   const columnHelper = createColumnHelper<SupplierResponse>();
 
@@ -148,10 +127,10 @@ const Component = () => {
           }
         />
         <CommonTable
-          data={suppliers.data?.items ?? []}
+          data={listSuppliers.data?.items ?? []}
           columns={columns}
-          rowCount={suppliers.data?.totalItems}
-          pageCount={suppliers.data?.totalPages}
+          rowCount={listSuppliers.data?.totalItems}
+          pageCount={listSuppliers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>
@@ -188,10 +167,10 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/suppliers/')({
   component: Component,
   validateSearch: (search?: Record<string, unknown>) =>
-    suppliersSearchSchema.validateSync(search),
+    SuppliersSearchSchema.validateSync(search),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getSuppliersOptions(deps.search))
+    queryClient?.ensureQueryData(supplierApi.list.getOptions(deps.search))
 });

@@ -1,6 +1,5 @@
 export * from './auth/use-login';
 export * from './auth/use-logout';
-export * from './contract';
 export * from './customer';
 export * from './department';
 export * from './detail';

@@ -18,7 +18,7 @@ import { EmployeesSearchSchema, UserData, employeeApi } from '../../../../api';
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const listEmployee = employeeApi.list.useQuery({
+  const listEmployees = employeeApi.list.useQuery({
     variables: search
   });
 
@@ -137,10 +137,10 @@ const Component = () => {
           }
         />
         <CommonTable
-          data={listEmployee.data?.items ?? []}
+          data={listEmployees.data?.items ?? []}
           columns={columns}
-          rowCount={listEmployee.data?.totalItems}
-          pageCount={listEmployee.data?.totalPages}
+          rowCount={listEmployees.data?.totalItems}
+          pageCount={listEmployees.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onPageNext={() =>

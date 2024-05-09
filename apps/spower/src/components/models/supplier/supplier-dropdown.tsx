@@ -4,14 +4,14 @@ import { FC } from 'react';
 
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-import { useGetAllSuppliers } from '../../../api';
+import { supplierApi } from '../../../api';
 
 export type SupplierDropdownProps = Omit<SelectInputProps, 'items'>;
 
 export const SupplierDropdown: FC<SupplierDropdownProps> = ({ ...props }) => {
-  const suppliersQuery = useGetAllSuppliers();
+  const listSuppliers = supplierApi.listFull.useQuery();
 
-  const items = _.map(suppliersQuery.data, ({ id, name }) => ({
+  const items = _.map(listSuppliers.data, ({ id, name }) => ({
     value: id,
     label: name
   }));

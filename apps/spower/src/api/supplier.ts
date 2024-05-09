@@ -1,17 +1,8 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import {
-  Collections,
-  SupplierRecord,
-  SupplierResponse,
-  client
-} from '@storeo/core';
+import { router } from 'react-query-kit';
+
+import { Collections, SupplierRecord, client } from '@storeo/core';
 
 export const SuppliersSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -21,110 +12,37 @@ export const SuppliersSearchSchema = object().shape({
 
 type SuppliersSearch = InferType<typeof SuppliersSearchSchema>;
 
-export function getAllSuppliersKey() {
-  return ['getAllSuppliersKey'];
-}
-
-export function getAllSuppliers() {
-  return queryOptions({
-    queryKey: getAllSuppliersKey(),
-    queryFn: () =>
-      client.collection<SupplierResponse>(Collections.Supplier).getFullList()
-  });
-}
-
-export function useGetAllSuppliers() {
-  return useQuery(getAllSuppliers());
-}
-
-export function getSuppliersKey(search: SuppliersSearch) {
-  return ['getSuppliers', search];
-}
-
-export function getSuppliers(search: SuppliersSearch) {
-  return queryOptions({
-    queryKey: getSuppliersKey(search),
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+export const supplierApi = router('supplier', {
+  listFull: router.query({
+    fetcher: () =>
+      client.collection(Collections.Supplier).getFullList({
+        sort: '-created'
+      })
+  }),
+  list: router.query({
+    fetcher: (search?: SuppliersSearch) => {
+      const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
       return client
-        .collection<SupplierResponse>(Collections.Supplier)
-        .getList(search.pageIndex, search.pageSize, {
+        .collection(Collections.Supplier)
+        .getList(search?.pageIndex, search?.pageSize, {
           filter,
           sort: '-created'
         });
     }
-  });
-}
-
-export function useGetSuppliers(search: SuppliersSearch) {
-  return useQuery(getSuppliers(search));
-}
-
-export function getSupplierByIdKey(supplierId: string) {
-  return ['getSupplierByIdKey', supplierId];
-}
-
-export function getSupplierById(supplierId: string) {
-  return queryOptions({
-    queryKey: getSupplierByIdKey(supplierId),
-    queryFn: () =>
-      client
-        .collection<SupplierResponse>(Collections.Supplier)
-        .getOne(supplierId)
-  });
-}
-
-export function useGetSupplierById(supplierId: string) {
-  return useQuery(getSupplierById(supplierId));
-}
-
-export function useCreateSupplier(onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationKey: ['createSupplier'],
+  }),
+  byId: router.query({
+    fetcher: (id: string) => client.collection(Collections.Supplier).getOne(id)
+  }),
+  create: router.mutation({
     mutationFn: (params: SupplierRecord) =>
-      client.collection(Collections.Supplier).create<SupplierResponse>(params),
-    onSuccess: async () => {
-      onSuccess?.();
-      await queryClient.invalidateQueries({ queryKey: getAllSuppliersKey() });
-    }
-  });
-}
-
-export function useUpdateSupplier(supplierId: string, onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['updateSupplier', supplierId],
-    mutationFn: (params: SupplierRecord) =>
-      client.collection(Collections.Supplier).update(supplierId, params),
-    onSuccess: async () => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getSupplierByIdKey(supplierId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: getAllSuppliersKey()
-        })
-      ]);
-    }
-  });
-}
-
-export function useDeleteSupplier(onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['deleteSupplier'],
-    mutationFn: (supplierId: string) =>
-      client.collection(Collections.Supplier).delete(supplierId),
-    onSuccess: async () => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getAllSuppliersKey()
-        })
-      ]);
-    }
-  });
-}
+      client.collection(Collections.Supplier).create(params)
+  }),
+  update: router.mutation({
+    mutationFn: (params: SupplierRecord & { id: string }) =>
+      client.collection(Collections.Supplier).update(params.id, params)
+  }),
+  delete: router.mutation({
+    mutationFn: (id: string) =>
+      client.collection(Collections.Supplier).delete(id)
+  })
+});

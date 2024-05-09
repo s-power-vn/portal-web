@@ -4,16 +4,16 @@ import { FC } from 'react';
 
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
-import { useGetAllDepartments } from '../../../api';
+import { departmentApi } from '../../../api';
 
 export type DepartmentDropdownProps = Omit<SelectInputProps, 'items'>;
 
 export const DepartmentDropdown: FC<DepartmentDropdownProps> = ({
   ...props
 }) => {
-  const departmentsQuery = useGetAllDepartments();
+  const listDepartments = departmentApi.listFull.useQuery();
 
-  const items = _.map(departmentsQuery.data, ({ id, name }) => ({
+  const items = _.map(listDepartments.data, ({ id, name }) => ({
     value: id,
     label: name
   }));

@@ -16,7 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { getCustomersKey, useCreateCustomer } from '../../../../api';
+import { customerApi } from '../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -32,10 +32,16 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const createCustomer = useCreateCustomer(async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({ queryKey: getCustomersKey(search) });
+  const createCustomer = customerApi.create.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: customerApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (

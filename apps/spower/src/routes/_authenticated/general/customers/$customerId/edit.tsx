@@ -1,4 +1,4 @@
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
@@ -16,11 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import {
-  getCustomerById,
-  getCustomersKey,
-  useUpdateCustomer
-} from '../../../../../api';
+import { customerApi } from '../../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -37,14 +33,20 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const customerById = useSuspenseQuery(getCustomerById(customerId));
+  const customerById = customerApi.byId.useSuspenseQuery({
+    variables: customerId
+  });
 
-  const updateCustomer = useUpdateCustomer(customerId, async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({
-      queryKey: getCustomersKey(search)
-    });
+  const updateCustomer = customerApi.update.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: customerApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (
@@ -64,7 +66,12 @@ const Component = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => updateCustomer.mutate(values)}
+          onSubmit={values =>
+            updateCustomer.mutate({
+              id: customerId,
+              ...values
+            })
+          }
           defaultValues={customerById.data}
           loading={updateCustomer.isPending}
           className={'mt-4 flex flex-col gap-3'}
@@ -113,5 +120,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { customerId } }) =>
-    queryClient?.ensureQueryData(getCustomerById(customerId))
+    queryClient?.ensureQueryData(customerApi.byId.getOptions(customerId))
 });

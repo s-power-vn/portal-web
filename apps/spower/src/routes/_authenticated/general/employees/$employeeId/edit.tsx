@@ -21,9 +21,7 @@ import { DepartmentDropdownField } from '../../../../../components';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
-  displayEmail: string()
-    .email('Sai định dạng email')
-    .required('Hãy nhập email'),
+  email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban')
 });
 
@@ -75,7 +73,7 @@ const Component = () => {
           }
           defaultValues={{
             name: employee.data?.name,
-            displayEmail: employee.data?.displayEmail,
+            email: employee.data?.email,
             department: employee.data?.department
           }}
           loading={updateEmployee.isPending}
@@ -89,7 +87,7 @@ const Component = () => {
           />
           <TextField
             schema={schema}
-            name={'displayEmail'}
+            name={'email'}
             title={'Email'}
             options={{}}
           />

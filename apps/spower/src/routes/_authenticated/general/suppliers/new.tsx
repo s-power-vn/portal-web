@@ -16,7 +16,7 @@ import {
   TextField
 } from '@storeo/theme';
 
-import { getSuppliersKey, useCreateSupplier } from '../../../../api';
+import { supplierApi } from '../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -32,12 +32,16 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const createSupplier = useCreateSupplier(async () => {
-    setOpen(false);
-    history.back();
-    await queryClient.invalidateQueries({
-      queryKey: getSuppliersKey(search)
-    });
+  const createSupplier = supplierApi.create.useMutation({
+    onSuccess: async () => {
+      setOpen(false);
+      history.back();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: supplierApi.list.getKey(search)
+        })
+      ]);
+    }
   });
 
   return (

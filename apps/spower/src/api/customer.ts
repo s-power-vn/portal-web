@@ -1,17 +1,8 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import {
-  Collections,
-  CustomerRecord,
-  CustomerResponse,
-  client
-} from '@storeo/core';
+import { router } from 'react-query-kit';
+
+import { Collections, CustomerRecord, client } from '@storeo/core';
 
 export const CustomersSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -21,108 +12,37 @@ export const CustomersSearchSchema = object().shape({
 
 type CustomersSearch = InferType<typeof CustomersSearchSchema>;
 
-export function getAllCustomersKey() {
-  return ['getAllCustomersKey'];
-}
-
-export function getAllCustomers() {
-  return queryOptions({
-    queryKey: getAllCustomersKey(),
-    queryFn: () =>
-      client.collection<CustomerResponse>(Collections.Customer).getFullList()
-  });
-}
-
-export function useGetAllCustomers() {
-  return useQuery(getAllCustomers());
-}
-
-export function getCustomersKey(search: CustomersSearch) {
-  return ['getCustomers', search];
-}
-
-export function getCustomers(search: CustomersSearch) {
-  return queryOptions({
-    queryKey: getCustomersKey(search),
-    queryFn: () => {
-      const filter = `(name ~ "${search.filter ?? ''}" || email ~ "${search.filter ?? ''}")`;
+export const customerApi = router('customer', {
+  listFull: router.query({
+    fetcher: () =>
+      client.collection(Collections.Customer).getFullList({
+        sort: '-created'
+      })
+  }),
+  list: router.query({
+    fetcher: (search?: CustomersSearch) => {
+      const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
       return client
-        .collection<CustomerResponse>(Collections.Customer)
-        .getList(search.pageIndex, search.pageSize, {
+        .collection(Collections.Customer)
+        .getList(search?.pageIndex, search?.pageSize, {
           filter,
           sort: '-created'
         });
     }
-  });
-}
-
-export function useGetCustomers(search: CustomersSearch) {
-  return useQuery(getCustomers(search));
-}
-
-export function getCustomerByIdKey(customerId: string) {
-  return ['getCustomerByIdKey', customerId];
-}
-
-export function getCustomerById(customerId: string) {
-  return queryOptions({
-    queryKey: getCustomerByIdKey(customerId),
-    queryFn: () =>
-      client
-        .collection<CustomerResponse>(Collections.Customer)
-        .getOne(customerId)
-  });
-}
-
-export function useGetCustomerById(customerId: string) {
-  return useQuery(getCustomerById(customerId));
-}
-
-export function useCreateCustomer(onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationKey: ['createCustomer'],
+  }),
+  byId: router.query({
+    fetcher: (id: string) => client.collection(Collections.Customer).getOne(id)
+  }),
+  create: router.mutation({
     mutationFn: (params: CustomerRecord) =>
-      client.collection(Collections.Customer).create(params),
-    onSuccess: async () => {
-      onSuccess?.();
-      await queryClient.invalidateQueries({ queryKey: getAllCustomersKey() });
-    }
-  });
-}
-
-export function useUpdateCustomer(customerId: string, onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['updateCustomer', customerId],
-    mutationFn: (params: CustomerRecord) =>
-      client.collection(Collections.Customer).update(customerId, params),
-    onSuccess: async () => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getCustomerByIdKey(customerId)
-        }),
-        await queryClient.invalidateQueries({
-          queryKey: getAllCustomersKey()
-        })
-      ]);
-    }
-  });
-}
-
-export function useDeleteCustomer(onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['deleteCustomer'],
-    mutationFn: (customerId: string) =>
-      client.collection(Collections.Customer).delete(customerId),
-    onSuccess: async () => {
-      onSuccess?.();
-      await queryClient.invalidateQueries({
-        queryKey: getAllCustomersKey()
-      });
-    }
-  });
-}
+      client.collection(Collections.Customer).create(params)
+  }),
+  update: router.mutation({
+    mutationFn: (params: CustomerRecord & { id: string }) =>
+      client.collection(Collections.Customer).update(params.id, params)
+  }),
+  delete: router.mutation({
+    mutationFn: (id: string) =>
+      client.collection(Collections.Customer).delete(id)
+  })
+});
