@@ -44,7 +44,10 @@ const Component = () => {
             className={'flex h-8 w-8 items-center justify-center p-0'}
             onClick={() =>
               navigate({
-                to: './settings'
+                to: '/project/$projectId/settings',
+                params: {
+                  projectId
+                }
               })
             }
           >
