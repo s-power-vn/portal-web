@@ -1,4 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { CircleCheckIcon, EditIcon, SheetIcon, UserIcon } from 'lucide-react';
@@ -10,7 +11,9 @@ import {
   AvatarImage,
   Button,
   CommonTable,
-  DebouncedInput
+  DebouncedInput,
+  success,
+  useConfirm
 } from '@storeo/theme';
 
 import { EmployeesSearchSchema, UserData, employeeApi } from '../../../../api';
@@ -18,9 +21,24 @@ import { EmployeesSearchSchema, UserData, employeeApi } from '../../../../api';
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
+  const queryClient = useQueryClient();
+
   const listEmployees = employeeApi.list.useQuery({
     variables: search
   });
+
+  const deleteEmployee = employeeApi.delete.useMutation({
+    onSuccess: async () => {
+      success('Xóa nhân viên thành công');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.list.getKey(search)
+        })
+      ]);
+    }
+  });
+
+  const { confirm } = useConfirm();
 
   const columnHelper = createColumnHelper<UserData>();
 
@@ -99,7 +117,15 @@ const Component = () => {
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
+            <Button
+              variant={'destructive'}
+              className={'h-6 px-3'}
+              onClick={() =>
+                confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
+                  deleteEmployee.mutate(row.original.id);
+                })
+              }
+            >
               <Cross2Icon className={'h-3 w-3'} />
             </Button>
           </div>

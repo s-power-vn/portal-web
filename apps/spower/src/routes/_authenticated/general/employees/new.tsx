@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import {
   Button,
+  CheckField,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -101,6 +102,13 @@ const Component = () => {
             }}
           />
           <TextField schema={schema} name={'title'} title={'Chức danh'} />
+          <CheckField
+            schema={schema}
+            name={'role'}
+            options={{
+              label: 'Quyền duyệt'
+            }}
+          />
           <PasswordField schema={schema} name={'password'} title={'Mật khẩu'} />
           <PasswordField
             schema={schema}
