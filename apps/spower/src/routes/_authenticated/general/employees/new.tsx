@@ -67,7 +67,7 @@ const Component = () => {
         <DialogHeader>
           <DialogTitle>Thêm nhân viên</DialogTitle>
           <DialogDescription className={'italic'}>
-            Tạo nhân viên mới cho hệ thống.
+            Thêm nhân viên mới cho hệ thống.
           </DialogDescription>
         </DialogHeader>
         <Form

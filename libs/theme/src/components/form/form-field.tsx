@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AnyObject, InferType, ObjectSchema } from 'yup';
+import { AnyObject, InferType, ObjectSchema, SchemaDescription } from 'yup';
 
 import {
   Children,
   ReactNode,
   cloneElement,
   isValidElement,
+  useCallback,
   useId
 } from 'react';
 import { Controller, Path, useFormContext } from 'react-hook-form';
 
-import { cn, formatNumber } from '@storeo/core';
+import { Show, cn, formatNumber } from '@storeo/core';
 
 import { Label } from '../ui/label';
 
@@ -25,12 +26,21 @@ export type FormFieldProps<T, S extends ObjectSchema<AnyObject>> = {
 };
 
 export const FormField = <T, S extends ObjectSchema<AnyObject>>({
+  schema,
   name,
   title,
   children
 }: FormFieldProps<T, S>) => {
   const id = useId();
   const { control } = useFormContext<InferType<S>>();
+
+  const isRequiredField = useCallback(
+    (name: string) =>
+      !!(schema.describe().fields[name] as SchemaDescription).tests.find(
+        test => test.name === 'required'
+      ),
+    [schema]
+  );
 
   return (
     <Controller
@@ -72,13 +82,20 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
 
         return (
           <div className={'flex flex-col gap-1'}>
-            {title ? <Label htmlFor={id}>{title}</Label> : null}
+            <Show when={title}>
+              <Label htmlFor={id}>
+                {title}
+                <Show when={isRequiredField(name)}>
+                  <span className={'text-appError'}>*</span>
+                </Show>
+              </Label>
+            </Show>
             {childrenWithProps}
-            {invalid && (
+            <Show when={invalid}>
               <span className={cn(`text-appError text-xs`)}>
                 {error?.message}
               </span>
-            )}
+            </Show>
           </div>
         );
       }}
