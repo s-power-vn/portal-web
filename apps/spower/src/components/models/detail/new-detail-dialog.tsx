@@ -1,3 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { number, object, string } from 'yup';
+
 import React, { FC } from 'react';
 
 import { DetailInfoResponse, DialogProps, Show } from '@storeo/core';
@@ -12,16 +15,47 @@ import {
   Form,
   NumericField,
   TextField,
-  TextareaField
+  TextareaField,
+  success
 } from '@storeo/theme';
 
-import { CreateDetailSchema, useCreateDetail } from '../../../api';
+import { detailApi, detailInfoApi } from '../../../api';
 import { TreeData } from '../../../commons/utils';
 
+const schema = object().shape({
+  level: string().required('Hãy nhập ID'),
+  title: string().required('Hãy nhập mô tả công việc'),
+  volume: number()
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số'),
+  unit: string(),
+  unitPrice: number()
+    .transform((_, originalValue) =>
+      Number(originalValue.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số')
+});
+
 const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
-  const createDetail = useCreateDetail(projectId, parent?.group, () =>
-    setOpen(false)
-  );
+  const queryClient = useQueryClient();
+  const createDetail = detailApi.create.useMutation({
+    onSuccess: async () => {
+      success('Tạo hạng mục công việc thành công');
+      setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: detailApi.listFull.getKey(projectId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailInfoApi.listFull.getKey(projectId)
+        })
+      ]);
+    }
+  });
 
   return (
     <DialogContent className="w-96">
@@ -39,8 +73,14 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={CreateDetailSchema}
-        onSubmit={values => createDetail.mutate(values)}
+        schema={schema}
+        onSubmit={values =>
+          createDetail.mutate({
+            ...values,
+            projectId,
+            parentId: parent?.group
+          })
+        }
         defaultValues={{
           title: '',
           volume: undefined,
@@ -51,13 +91,13 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={CreateDetailSchema}
+          schema={schema}
           name={'level'}
           title={'ID (Mã công việc)'}
           options={{}}
         />
         <TextareaField
-          schema={CreateDetailSchema}
+          schema={schema}
           name={'title'}
           title={'Mô tả công việc'}
           options={{}}
@@ -65,19 +105,19 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
         {parent ? (
           <>
             <NumericField
-              schema={CreateDetailSchema}
+              schema={schema}
               name={'volume'}
               title={'Khối lượng thầu'}
               options={{}}
             />
             <TextField
-              schema={CreateDetailSchema}
+              schema={schema}
               name={'unit'}
               title={'Đơn vị'}
               options={{}}
             />
             <NumericField
-              schema={CreateDetailSchema}
+              schema={schema}
               name={'unitPrice'}
               title={'Đơn giá thầu'}
               options={{}}

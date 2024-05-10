@@ -1,5 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ExpandedState,
   Row,
@@ -37,10 +37,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  success,
   useConfirm
 } from '@storeo/theme';
 
-import { getAllDetailInfos, useDeleteDetails } from '../../../api';
+import { detailApi, detailInfoApi } from '../../../api';
 import {
   TreeData,
   arrayToTree,
@@ -57,27 +58,43 @@ export type DocumentOverviewProps = {
 export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   projectId
 }) => {
+  const queryClient = useQueryClient();
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
 
-  const details = useSuspenseQuery(getAllDetailInfos(projectId));
-  const deleteDetails = useDeleteDetails(projectId);
+  const listDetailInfos = detailInfoApi.listFull.useSuspenseQuery({
+    variables: projectId
+  });
+
+  const deleteDetails = detailApi.delete.useMutation({
+    onSuccess: async () => {
+      success('Xóa hạng mục công việc thành công');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: detailApi.listFull.getKey(projectId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailInfoApi.listFull.getKey(projectId)
+        })
+      ]);
+    }
+  });
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const data = useMemo(
     () =>
-      arrayToTree(details.data, `${projectId}-root`, (value, item) => {
+      arrayToTree(listDetailInfos.data, `${projectId}-root`, (value, item) => {
         return _.chain(value)
           .filter(it => it.group === item.group)
           .uniqBy('request')
           .sumBy('requestVolume')
           .value();
       }),
-    [details.data, projectId]
+    [listDetailInfos.data, projectId]
   );
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();

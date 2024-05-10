@@ -1,5 +1,4 @@
 import { CaretSortIcon } from '@radix-ui/react-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   ExpandedState,
   RowSelectionState,
@@ -38,7 +37,7 @@ import {
   TableRow
 } from '@storeo/theme';
 
-import { getAllDetails } from '../../../api';
+import { detailApi } from '../../../api';
 import { TreeData, arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
@@ -52,17 +51,19 @@ const Content: FC<PickDetailDialogProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const details = useSuspenseQuery(getAllDetails(projectId));
+  const listDetails = detailApi.listFull.useSuspenseQuery({
+    variables: projectId
+  });
 
   const data = useMemo(() => {
-    const v = details.data.map(it => {
+    const v = listDetails.data.map(it => {
       return {
         ...it,
         group: it.id
       };
     });
     return arrayToTree(v, `${projectId}-root`);
-  }, [details.data, projectId]);
+  }, [listDetails.data, projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
 

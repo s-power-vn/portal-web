@@ -1,3 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { number, object, string } from 'yup';
+
 import React, { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -12,20 +15,53 @@ import {
   Form,
   NumericField,
   TextField,
-  TextareaField
+  TextareaField,
+  success
 } from '@storeo/theme';
 
-import {
-  CreateDetailSchema,
-  UpdateDetailSchema,
-  useGetDetailById,
-  useUpdateDetail
-} from '../../../api';
+import { detailApi, detailInfoApi } from '../../../api';
+
+const schema = object().shape({
+  level: string().required('Hãy nhập ID'),
+  title: string().required('Hãy nhập mô tả công việc'),
+  volume: number()
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số'),
+  unit: string(),
+  unitPrice: number()
+    .transform((_, originalValue) =>
+      Number(originalValue.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số')
+});
 
 const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
-  const detail = useGetDetailById(detailId);
+  const queryClient = useQueryClient();
+  const detailById = detailApi.byId.useSuspenseQuery({
+    variables: detailId
+  });
 
-  const updateDetail = useUpdateDetail(detailId, () => setOpen(false));
+  const updateDetail = detailApi.update.useMutation({
+    onSuccess: async record => {
+      success('Chỉnh sửa hạng mục công việc thành công');
+      setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: detailApi.listFull.getKey(record.project)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailInfoApi.listFull.getKey(record.project)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailApi.byId.getKey(detailId)
+        })
+      ]);
+    }
+  });
 
   return (
     <DialogContent className="w-96">
@@ -36,38 +72,43 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
         </DialogDescription>
       </DialogHeader>
       <Form
-        schema={UpdateDetailSchema}
-        onSubmit={values => updateDetail.mutate(values)}
-        defaultValues={detail.data}
+        schema={schema}
+        onSubmit={values =>
+          updateDetail.mutate({
+            ...values,
+            id: detailId
+          })
+        }
+        defaultValues={detailById.data}
         loading={updateDetail.isPending}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextField
-          schema={CreateDetailSchema}
+          schema={schema}
           name={'level'}
           title={'ID (Mã công việc)'}
           options={{}}
         />
         <TextareaField
-          schema={UpdateDetailSchema}
+          schema={schema}
           name={'title'}
           title={'Mô tả công việc'}
           options={{}}
         />
         <NumericField
-          schema={UpdateDetailSchema}
+          schema={schema}
           name={'volume'}
           title={'Khối lượng thầu'}
           options={{}}
         />
         <TextField
-          schema={UpdateDetailSchema}
+          schema={schema}
           name={'unit'}
           title={'Đơn vị'}
           options={{}}
         />
         <NumericField
-          schema={UpdateDetailSchema}
+          schema={schema}
           name={'unitPrice'}
           title={'Đơn giá thầu'}
           options={{}}
