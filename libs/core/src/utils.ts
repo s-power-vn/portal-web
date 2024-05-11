@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ClassValue, clsx } from 'clsx';
-import { round } from 'lodash';
+import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { withExtendedShadows } from 'tailwind-extended-shadows-merge';
 import { extendTailwindMerge } from 'tailwind-merge';
@@ -171,15 +171,15 @@ export function timeSince(timeStamp: Date | number): string | undefined {
   }
   if (secondsPast < 60) {
     // Less than a minute
-    return round(secondsPast) + ' giây trước';
+    return _.round(secondsPast) + ' giây trước';
   }
   if (secondsPast < 3600) {
     // Less than an hour
-    return round(secondsPast / 60) + ' phút trước';
+    return _.round(secondsPast / 60) + ' phút trước';
   }
   if (secondsPast <= 86400) {
     // Less than a day
-    return round(secondsPast / 3600) + ' giờ trước';
+    return _.round(secondsPast / 3600) + ' giờ trước';
   }
   if (secondsPast <= 172800) {
     // Less than 2 days
