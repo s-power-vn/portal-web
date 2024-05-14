@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx serve spower --host=0.0.0.0",
+    "dev": "nx dev spower",
     "build": "nx build spower",
     "pb": "pocketbase-typegen -u https://api.s-power.vn -e minhdtb.83@gmail.com -p JpeA8ebWxuWNsjK -o libs/core/src/generate/pb.ts"
   },

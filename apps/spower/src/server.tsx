@@ -1,6 +1,5 @@
 /// <reference types="vinxi/types/server" />
 import * as React from 'react';
-import { StrictMode } from 'react';
 import type { PipeableStream } from 'react-dom/server';
 import { renderToPipeableStream } from 'react-dom/server';
 import { eventHandler, getResponseHeaders, toWebRequest } from 'vinxi/server';
@@ -11,8 +10,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { serverFnPayloadTypeHeader, serverFnReturnTypeHeader } from '@tanstack/start';
 import { isbot } from 'isbot';
 import { createRouter } from './router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfirmProvider, Toaster, TooltipProvider } from '@storeo/theme';
+import { QueryClient } from '@tanstack/react-query';
 
 import './global.css';
 
@@ -29,8 +27,6 @@ export default eventHandler(async (event) => {
   ).filter((d: any) => {
     return !d.children?.includes('nuxt-devtools');
   }) as any;
-
-  console.log(assets);
 
   if (import.meta.env.DEV) {
     assets.push(
@@ -108,29 +104,19 @@ export default eventHandler(async (event) => {
 
   const stream = await new Promise<PipeableStream>((resolve) => {
     // eslint-disable-next-line no-shadow
-    const stream = renderToPipeableStream(
-      <StrictMode>
-        <ConfirmProvider>
-          <TooltipProvider>
-            <QueryClientProvider client={queryClient}>
-              <StartServer router={router} />
-            </QueryClientProvider>
-            <Toaster />
-          </TooltipProvider>
-        </ConfirmProvider>
-      </StrictMode>, {
-        ...(isRobot
-          ? {
-            onAllReady() {
-              resolve(stream);
-            }
+    const stream = renderToPipeableStream(<StartServer router={router} />, {
+      ...(isRobot
+        ? {
+          onAllReady() {
+            resolve(stream);
           }
-          : {
-            onShellReady() {
-              resolve(stream);
-            }
-          })
-      });
+        }
+        : {
+          onShellReady() {
+            resolve(stream);
+          }
+        })
+    });
   });
 
   // Add our Router transform to the stream

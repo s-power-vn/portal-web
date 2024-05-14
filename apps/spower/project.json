@@ -5,9 +5,21 @@
   "projectType": "application",
   "tags": [],
   "options": {
-    "postcssConfig": "apps/spower/postcss.config.js"
+    "postcssConfig": "apps/spower/postcss.config.mjs"
   },
   "targets": {
+    "dev": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{workspaceRoot}/dist/apps/spower"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/spower",
+        "command": "vinxi dev"
+      },
+      "configurations": {}
+    },
     "build": {
       "cache": true,
       "dependsOn": ["^build"],

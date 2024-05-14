@@ -1,10 +1,12 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { ReactNode } from 'react';
 import { Meta, Scripts } from '@tanstack/start';
+import { ConfirmProvider, TooltipProvider } from '@storeo/theme';
 
 function RootComponent() {
+  const queryClient = new QueryClient();
   return (
     <html lang="vi">
     <head>
@@ -13,7 +15,13 @@ function RootComponent() {
       <Meta />
     </head>
     <body>
-    <Outlet />
+    <ConfirmProvider>
+      <TooltipProvider>
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
+      </TooltipProvider>
+    </ConfirmProvider>
     <TanStackRouterDevtools position="bottom-right" />
     <Scripts />
     </body>
