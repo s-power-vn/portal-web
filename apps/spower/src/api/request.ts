@@ -62,8 +62,8 @@ export const CreateRequestSchema = object().shape({
             return hasChild[0]
               ? schema
               : schema
-                .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                .required('Hãy nhập khối lượng yêu cầu');
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                  .required('Hãy nhập khối lượng yêu cầu');
           })
       })
     )
@@ -206,7 +206,10 @@ export const requestApi = router('request', {
   }),
   delete: router.mutation({
     mutationFn: async (requestId: string) => {
-      await client.collection(Collections.Request).delete(requestId);
+      const request = await client
+        .collection(Collections.Request)
+        .getOne(requestId);
+      await client.collection(Collections.Issue).delete(request.issue);
     }
   })
 });

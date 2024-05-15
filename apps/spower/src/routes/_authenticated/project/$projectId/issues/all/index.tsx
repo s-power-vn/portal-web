@@ -180,24 +180,24 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issues/all/'
-)({
-  component: Component,
-  validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
-    IssuesSearchSchema.validateSync(input),
-  loaderDeps: ({ search }) => {
-    return { search };
-  },
-  loader: ({
-             deps: { search },
-             context: { queryClient },
-             params: { projectId }
-           }) =>
-    queryClient?.ensureQueryData(
-      issueApi.list.getOptions({
-        ...search,
-        projectId
-      })
-    )
-});
+export const Route = createFileRoute('/_authenticated/project/$projectId/issues/all/')(
+  {
+    component: Component,
+    validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
+      IssuesSearchSchema.validateSync(input),
+    loaderDeps: ({ search }) => {
+      return { search };
+    },
+    loader: ({
+      deps: { search },
+      context: { queryClient },
+      params: { projectId }
+    }) =>
+      queryClient?.ensureQueryData(
+        issueApi.list.getOptions({
+          ...search,
+          projectId
+        })
+      )
+  }
+);

@@ -167,9 +167,7 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issues/me/'
-)({
+export const Route = createFileRoute('/_authenticated/project/$projectId/issues/me/')({
   component: Component,
   validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
     IssuesSearchSchema.validateSync(input),
@@ -177,10 +175,10 @@ export const Route = createFileRoute(
     return { search };
   },
   loader: ({
-             deps: { search },
-             context: { queryClient },
-             params: { projectId }
-           }) =>
+    deps: { search },
+    context: { queryClient },
+    params: { projectId }
+  }) =>
     queryClient?.ensureQueryData(
       issueApi.listMine.getOptions({
         ...search,
