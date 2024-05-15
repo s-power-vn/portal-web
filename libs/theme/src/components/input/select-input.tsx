@@ -60,10 +60,6 @@ export const SelectInput: FC<SelectInputProps> = ({
     setValue(initialValue);
   }, [initialValue]);
 
-  useEffect(() => {
-    onChange?.(value);
-  }, [value]);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -101,6 +97,7 @@ export const SelectInput: FC<SelectInputProps> = ({
                       className={'hover:bg-appGrayLight whitespace-nowrap'}
                       onSelect={() => {
                         setValue(it.value);
+                        onChange?.(it.value);
                         setOpen(false);
                       }}
                     >
