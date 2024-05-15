@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
 import { InferType, number, object, string } from 'yup';
 
-import { Collections, IssueResponse, client } from '@storeo/core';
+import { client, Collections, IssueResponse } from '@storeo/core';
+import { router } from 'react-query-kit';
 
 export const IssuesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -11,49 +11,32 @@ export const IssuesSearchSchema = object().shape({
 
 export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
 
-export function getAllIssuesKey(projectId: string, search?: IssuesSearch) {
-  return ['getAllIssuesKey', projectId, search];
-}
-
-export function getAllIssues(projectId: string, search?: IssuesSearch) {
-  return queryOptions({
-    queryKey: getAllIssuesKey(projectId, search),
-    queryFn: () =>
+export const issueApi = router('issue', {
+  list: router.query({
+    fetcher: (search?: IssuesSearch & { projectId: string }) =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${projectId}"
+          filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
           sort: '-created'
         })
-  });
-}
-
-export function useGetAllIssue(projectId: string, search?: IssuesSearch) {
-  return useQuery(getAllIssues(projectId, search));
-}
-
-export function getMyIssuesKey(projectId: string, search?: IssuesSearch) {
-  return ['getMyIssuesKey', projectId, search];
-}
-
-export function getMyIssues(projectId: string, search?: IssuesSearch) {
-  return queryOptions({
-    queryKey: getMyIssuesKey(projectId, search),
-    queryFn: () =>
+  }),
+  listMine: router.query({
+    fetcher: (search?: IssuesSearch & { projectId: string }) =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${projectId}"
+          filter: `project = "${search?.projectId}"
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
           sort: '-created'
         })
-  });
-}
+  }),
+  byId: router.query({
+    fetcher: (id: string) => client.collection(Collections.Issue).getOne(id)
+  })
+});
 
-export function useGetMyIssues(projectId: string, search?: IssuesSearch) {
-  return useQuery(getMyIssues(projectId, search));
-}

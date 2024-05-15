@@ -1,41 +1,26 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-import {
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
+import { createFileRoute, SearchSchemaInput, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import {
-  IssueResponse,
-  IssueTypeOptions,
-  Match,
-  Switch,
-  formatDate
-} from '@storeo/core';
+import { formatDate, IssueResponse, IssueTypeOptions, Match, Switch } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
-import {
-  IssuesSearch,
-  IssuesSearchSchema,
-  getAllIssues
-} from '../../../../../../api/issue';
-import {
-  EmployeeDisplay,
-  NewIssueButton,
-  NewRequestDialog,
-  RequestStatus
-} from '../../../../../../components';
+import { issueApi, IssuesSearch, IssuesSearchSchema } from '../../../../../../api/issue';
+import { EmployeeDisplay, NewIssueButton, NewRequestDialog, RequestStatus } from '../../../../../../components';
 
 const Component = () => {
   const [openRequestNew, setOpenRequestNew] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const issues = useSuspenseQuery(getAllIssues(projectId, search));
+  const issues = issueApi.list.useSuspenseQuery({
+    variables: {
+      ...search,
+      projectId
+    }
+  });
 
   const columnHelper = createColumnHelper<IssueResponse>();
 
@@ -186,8 +171,11 @@ export const Route = createFileRoute(
     return { search };
   },
   loader: ({
-    deps: { search },
-    context: { queryClient },
-    params: { projectId }
-  }) => queryClient?.ensureQueryData(getAllIssues(projectId, search))
+             deps: { search },
+             context: { queryClient },
+             params: { projectId }
+           }) => queryClient?.ensureQueryData(issueApi.list.getOptions({
+    ...search,
+    projectId
+  }))
 });

@@ -1,19 +1,17 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-
 import { FC, Suspense } from 'react';
 
-import { IssueTypeOptions, Match, Switch, client } from '@storeo/core';
+import { IssueTypeOptions, Match, Switch } from '@storeo/core';
 
 import { RequestDetail } from '../request/request-detail';
+import { issueApi } from '../../../api/issue';
 
 export type IssueDetailProps = {
   issueId: string;
 };
 
 export const IssueDetail: FC<IssueDetailProps> = ({ issueId }) => {
-  const issue = useSuspenseQuery({
-    queryKey: ['issue', issueId],
-    queryFn: () => client.collection('issue').getOne(issueId)
+  const issue = issueApi.byId.useSuspenseQuery({
+    variables: issueId
   });
 
   return (
