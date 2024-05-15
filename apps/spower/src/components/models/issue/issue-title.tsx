@@ -1,10 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { PencilIcon } from 'lucide-react';
 
 import React, { FC, useCallback, useState } from 'react';
 
-import { Show, client } from '@storeo/core';
+import { Show } from '@storeo/core';
 import { Button, Textarea } from '@storeo/theme';
+
+import { requestApi } from '../../../api';
+import { issueApi } from '../../../api/issue';
 
 export type IssueTitleProps = {
   title: string;
@@ -16,18 +19,15 @@ export const IssueTitle: FC<IssueTitleProps> = ({ title, issueId }) => {
   const [value, setValue] = useState(title);
   const queryClient = useQueryClient();
 
-  const updateTitle = useMutation({
-    mutationKey: ['updateTitle', issueId],
-    mutationFn: async (title: string) => {
-      return await client.collection('issue').update(issueId, {
-        title
-      });
-    },
+  const updateTitle = issueApi.updateTitle.useMutation({
     onSuccess: async () => {
       setIsEditing(false);
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['getRequest', issueId]
+          queryKey: issueApi.byId.getKey(issueId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: requestApi.byIssueId.getKey(issueId)
         })
       ]);
     }
@@ -35,7 +35,10 @@ export const IssueTitle: FC<IssueTitleProps> = ({ title, issueId }) => {
 
   const onBlur = useCallback(() => {
     setIsEditing(false);
-    updateTitle.mutate(value);
+    updateTitle.mutate({
+      issueId,
+      title: value
+    });
   }, [updateTitle, value]);
 
   const onFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -57,15 +60,17 @@ export const IssueTitle: FC<IssueTitleProps> = ({ title, issueId }) => {
           onFocus={onFocus}
         />
       </Show>
-      <div className={'flex items-center'}>
-        <Button
-          className={'flex h-4 items-center p-0 text-gray-500'}
-          variant={'link'}
-          onClick={() => setIsEditing(prevState => !prevState)}
-        >
-          <PencilIcon width={15} height={15} />
-        </Button>
-      </div>
+      <Show when={!isEditing}>
+        <div className={'flex items-center'}>
+          <Button
+            className={'flex h-4 items-center p-0 text-gray-500'}
+            variant={'link'}
+            onClick={() => setIsEditing(prevState => !prevState)}
+          >
+            <PencilIcon width={15} height={15} />
+          </Button>
+        </div>
+      </Show>
     </div>
   );
 };

@@ -54,5 +54,18 @@ export const issueApi = router('issue', {
         lastAssignee
       });
     }
+  }),
+  updateTitle: router.mutation({
+    mutationFn: async ({
+      title,
+      issueId
+    }: {
+      title: string;
+      issueId: string;
+    }) => {
+      return await client.collection('issue').update(issueId, {
+        title
+      });
+    }
   })
 });
