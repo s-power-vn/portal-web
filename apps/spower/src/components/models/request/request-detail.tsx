@@ -1,10 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { CalendarIcon, Undo2Icon, User2Icon } from 'lucide-react';
 
@@ -14,7 +9,6 @@ import {
   Collections,
   CommentResponse,
   IssueResponse,
-  RequestStatusOptions,
   Show,
   UserResponse,
   client,
@@ -29,10 +23,11 @@ import {
   AvatarImage,
   Button,
   Textarea,
+  success,
   useConfirm
 } from '@storeo/theme';
 
-import { RequestData } from '../../../api';
+import { requestApi } from '../../../api';
 import { IssueAssignee } from '../issue/issue-assignee';
 import { IssueTitle } from '../issue/issue-title';
 import { RequestItem } from './request-item';
@@ -49,14 +44,8 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
     setShowCommentButton(false);
   });
 
-  const request = useSuspenseQuery({
-    queryKey: ['getRequest', issueId],
-    queryFn: () =>
-      client
-        .collection<RequestData>('request')
-        .getFirstListItem(`issue = "${issueId}"`, {
-          expand: 'issue,issue.createdBy'
-        })
+  const request = requestApi.byIssueId.useSuspenseQuery({
+    variables: issueId
   });
 
   const comments = useQuery({
@@ -80,61 +69,17 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
 
   const queryClient = useQueryClient();
 
-  const approveRequest = useMutation({
-    mutationKey: ['approveRequest', request.data.id],
-    mutationFn: async () => {
-      const status =
-        request.data.status === RequestStatusOptions.ToDo
-          ? RequestStatusOptions.VolumeDone
-          : RequestStatusOptions.Done;
-      return Promise.all([
-        client.collection('request').update(request.data.id, {
-          status
-        }),
-        client.collection('issue').update(issueId, {
-          assignee: request.data.expand.issue.lastAssignee,
-          lastAssignee: client.authStore.model?.id
-        })
-      ]);
-    },
+  const approveRequest = requestApi.approve.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getMyIssuesKey']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getAllIssuesKey']
-        })
-      ]);
+      success('Yêu cầu đã được duyệt');
+      router.history.back();
     }
   });
 
-  const rejectRequest = useMutation({
-    mutationKey: ['rejectRequest', request.data.id],
-    mutationFn: async () => {
-      const status = RequestStatusOptions.VolumeDone
-        ? RequestStatusOptions.ToDo
-        : RequestStatusOptions.VolumeDone;
-
-      return Promise.all([
-        client.collection('request').update(request.data.id, {
-          status
-        }),
-        client.collection('issue').update(issueId, {
-          assignee: request.data.expand.issue.lastAssignee,
-          lastAssignee: client.authStore.model?.id
-        })
-      ]);
-    },
+  const rejectRequest = requestApi.reject.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getMyIssuesKey']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getAllIssuesKey']
-        })
-      ]);
+      success('Yêu cầu đã bị từ chối');
+      router.history.back();
     }
   });
 
@@ -238,13 +183,13 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
           <div className={'flex gap-2'}>
             <Button
               className={'bg-blue-500 hover:bg-blue-600'}
-              onClick={() => approveRequest.mutate()}
+              onClick={() => approveRequest.mutate(request.data)}
             >
               Phê duyệt
             </Button>
             <Button
               className={'bg-red-500 hover:bg-red-600'}
-              onClick={() => rejectRequest.mutate()}
+              onClick={() => rejectRequest.mutate(request.data)}
             >
               Từ chối
             </Button>

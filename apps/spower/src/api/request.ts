@@ -211,6 +211,40 @@ export const requestApi = router('request', {
         .getOne(requestId);
       await client.collection(Collections.Issue).delete(request.issue);
     }
+  }),
+  approve: router.mutation({
+    mutationFn: async (params: RequestData) => {
+      const status =
+        params.status === RequestStatusOptions.ToDo
+          ? RequestStatusOptions.VolumeDone
+          : RequestStatusOptions.Done;
+      return Promise.all([
+        client.collection(Collections.Request).update(params.id, {
+          status
+        }),
+        client.collection(Collections.Issue).update(params.issue, {
+          assignee: params.expand.issue.lastAssignee,
+          lastAssignee: client.authStore.model?.id
+        })
+      ]);
+    }
+  }),
+  reject: router.mutation({
+    mutationFn: async (params: RequestData) => {
+      const status = RequestStatusOptions.VolumeDone
+        ? RequestStatusOptions.ToDo
+        : RequestStatusOptions.VolumeDone;
+
+      return Promise.all([
+        client.collection(Collections.Request).update(params.id, {
+          status
+        }),
+        client.collection(Collections.Issue).update(params.issue, {
+          assignee: params.expand.issue.lastAssignee,
+          lastAssignee: client.authStore.model?.id
+        })
+      ]);
+    }
   })
 });
 
