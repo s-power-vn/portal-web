@@ -167,7 +167,9 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/project/$projectId/issues/me/')({
+export const Route = createFileRoute(
+  '/_authenticated/project/$projectId/issues/me/'
+)({
   component: Component,
   validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
     IssuesSearchSchema.validateSync(input),
