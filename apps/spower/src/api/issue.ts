@@ -38,5 +38,21 @@ export const issueApi = router('issue', {
   }),
   byId: router.query({
     fetcher: (id: string) => client.collection(Collections.Issue).getOne(id)
+  }),
+  changeAssignee: router.mutation({
+    mutationFn: async ({
+      issueId,
+      assigneeId
+    }: {
+      issueId: string;
+      assigneeId?: string;
+    }) => {
+      const issue = await client.collection('issue').getOne(issueId);
+      const lastAssignee = issue.assignee;
+      return await client.collection('issue').update(issueId, {
+        assignee: assigneeId,
+        lastAssignee
+      });
+    }
   })
 });

@@ -1,11 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 import { FC, useMemo, useState } from 'react';
 
-import { client } from '@storeo/core';
-import { SelectInput, SelectInputProps } from '@storeo/theme';
+import { SelectInput, SelectInputProps, success } from '@storeo/theme';
 
 import { employeeApi } from '../../../api';
+import { issueApi } from '../../../api/issue';
 
 export type IssueAssigneeProps = Omit<
   SelectInputProps,
@@ -32,26 +30,9 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
     [employees.data]
   );
 
-  const queryClient = useQueryClient();
-  const updateIssueAssignee = useMutation({
-    mutationKey: ['updateIssueAssignee', issueId],
-    mutationFn: async (id?: string) => {
-      const issue = await client.collection('issue').getOne(issueId);
-      const lastAssignee = issue.assignee;
-      return await client.collection('issue').update(issueId, {
-        assignee: id,
-        lastAssignee
-      });
-    },
+  const changeAssignee = issueApi.changeAssignee.useMutation({
     onSuccess: () => {
-      return Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getMyIssuesKey']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getAllIssuesKey']
-        })
-      ]);
+      success('Thay đổi người thực hiện thành công');
     }
   });
 
@@ -64,7 +45,10 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
       showSearch={true}
       onChange={value => {
         setValue(value);
-        updateIssueAssignee.mutate(value);
+        changeAssignee.mutate({
+          issueId,
+          assigneeId: value
+        });
       }}
       {...props}
     />
