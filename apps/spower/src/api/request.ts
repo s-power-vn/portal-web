@@ -1,7 +1,9 @@
-import {queryOptions, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { InferType, array, boolean, number, object, string } from 'yup';
+
+import { router } from 'react-query-kit';
 
 import {
-  client,
+  Collections,
   DetailResponse,
   IssueResponse,
   IssueTypeOptions,
@@ -9,84 +11,40 @@ import {
   RequestDetailSupplierResponse,
   RequestResponse,
   RequestStatusOptions,
-  SupplierResponse
+  SupplierResponse,
+  client
 } from '@storeo/core';
-import {array, boolean, InferType, number, object, string} from "yup";
-import {UserData} from "./employee";
-import {getAllIssuesKey, getMyIssuesKey} from "./issue";
+
+import { UserData } from './employee';
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
     supplier: SupplierResponse;
     requestDetail: RequestDetailData;
-  }
-}
+  };
+};
 
 export type RequestDetailData = RequestDetailResponse & {
   expand: {
     detail: DetailResponse;
     requestDetailSupplier_via_requestDetail: RequestDetailSupplierData[];
-  },
-  supplier?: string,
-  supplierUnitPrice?: number,
-  supplierName?: string,
-  supplierVolume?: number
-}
+  };
+  supplier?: string;
+  supplierUnitPrice?: number;
+  supplierName?: string;
+  supplierVolume?: number;
+};
 
 export type RequestData = RequestResponse & {
   expand: {
-    requestDetail_via_request: RequestDetailData[],
+    requestDetail_via_request: RequestDetailData[];
     issue: IssueResponse & {
       expand: {
         createdBy: UserData;
-      }
-    }
-  }
+      };
+    };
+  };
 };
-
-
-export function getAllRequestsKey(projectId: string) {
-  return ['getAllRequestsKey', projectId];
-}
-
-export function getAllRequests(projectId: string) {
-  return queryOptions({
-    queryKey: getAllRequestsKey(projectId),
-    queryFn: () =>
-      client.collection<RequestResponse>('request').getFullList({
-        filter: `project = "${projectId}"`,
-        sort: '-created'
-      })
-  });
-}
-
-export function useGetAllRequests(projectId: string) {
-  return useQuery(getAllRequests(projectId));
-}
-
-export function getRequestByIdKey(requestId: string) {
-  return ['getRequestByIdKey', requestId];
-}
-
-export function getRequestById(requestId: string) {
-  return queryOptions({
-    queryKey: getRequestByIdKey(requestId),
-    queryFn: () =>
-      client.collection<RequestData>('request').getOne(requestId, {
-        expand:
-          'requestDetail_via_request.detail,' +
-          'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
-          'contract_via_request.supplier,' +
-          'contract_via_request.contractItem_via_contract,' +
-          'issue.createdBy,' +
-          'issue.createdBy.department'
-      })
-  });
-}
-
-export function useGetRequestById(requestId: string) {
-  return useQuery(getRequestById(requestId));
-}
 
 export const CreateRequestSchema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -115,60 +73,12 @@ export const CreateRequestSchema = object().shape({
 
 export type CreateRequestInput = InferType<typeof CreateRequestSchema>;
 
-export function useCreateRequest(projectId: string, onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['createRequest'],
-    mutationFn: async (params: CreateRequestInput) => {
-      const issue = await client.collection<IssueResponse>('issue').create({
-        project: projectId,
-        title: params.name,
-        type: IssueTypeOptions.Request,
-        createdBy: client.authStore.model?.id,
-        assignee: client.authStore.model?.id,
-      })
-
-      const request = await client.collection('request').create({
-        project: projectId,
-        issue: issue.id,
-        status: RequestStatusOptions.ToDo
-      });
-
-      return await Promise.all(
-        params.details.map(it => {
-          return client.collection('requestDetail').create(
-            {
-              request: request.id,
-              detail: it.id,
-              volume: it.requestVolume
-            },
-            {
-              requestKey: null
-            }
-          );
-        })
-      );
-    },
-    onSuccess: async () => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['getMyIssuesKey']
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['getAllIssuesKey']
-        })
-      ])
-    }
-  });
-}
-
 export const UpdateRequestSchema = object().shape({
   name: string().required('Hãy nhập nội dung'),
   details: array()
     .of(
       object().shape({
-        id: string().optional(),
+        id: string().required(),
         hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
@@ -179,8 +89,8 @@ export const UpdateRequestSchema = object().shape({
             return hasChild[0]
               ? schema
               : schema
-                .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                .required('Hãy nhập khối lượng yêu cầu');
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                  .required('Hãy nhập khối lượng yêu cầu');
           })
       })
     )
@@ -189,90 +99,6 @@ export const UpdateRequestSchema = object().shape({
 });
 
 export type UpdateRequestInput = InferType<typeof UpdateRequestSchema>;
-
-export function useUpdateRequest(requestId: string, onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['updateRequest', requestId],
-    mutationFn: (
-      params: UpdateRequestInput
-    ) => Promise.all([
-      ...params.details.filter(detail => !detail.hasChild).map(detail =>
-        client.collection('requestDetail').update(<string>detail.id, {
-          volume: detail.requestVolume
-        })
-      ),
-      client.collection('request').update(requestId, params)
-    ]),
-    onSuccess: async () => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getRequestByIdKey(requestId)
-        })
-      ]);
-    }
-  });
-}
-
-export function useDeleteRequest(onSuccess?: () => void) {
-  return useMutation({
-    mutationKey: ['deleteRequest'],
-    mutationFn: (requestId: string) =>
-      client.collection('request').delete(requestId),
-    onSuccess: async () => {
-      onSuccess?.();
-    }
-  });
-}
-
-export function getAllRequestDetailSuppliersKey(requestDetailId: string) {
-  return ['getAllRequestDetailSuppliersKey', requestDetailId];
-}
-
-export function getAllRequestDetailSuppliers(requestDetailId: string) {
-  return queryOptions({
-    queryKey: getAllRequestDetailSuppliersKey(requestDetailId),
-    queryFn: () =>
-      client
-        .collection<RequestDetailSupplierData>(
-          'requestDetailSupplier'
-        )
-        .getFullList({
-          filter: `requestDetail = "${requestDetailId}"`,
-          expand: 'supplier,requestDetail.detail'
-        })
-  });
-}
-
-export function useGetAllRequestDetailSuppliers(requestDetailId: string, enabled?: boolean) {
-  return useQuery({
-    ...getAllRequestDetailSuppliers(requestDetailId),
-    enabled
-  });
-}
-
-export function getRequestDetailSupplierByIdKey(requestDetailSupplierId: string) {
-  return ['getRequestDetailSupplierByIdKey', requestDetailSupplierId];
-}
-
-export function getRequestDetailSupplierById(requestDetailSupplierId: string) {
-  return queryOptions({
-    queryKey: getRequestDetailSupplierByIdKey(requestDetailSupplierId),
-    queryFn: () =>
-      client
-        .collection<RequestDetailSupplierData>(
-          'requestDetailSupplier'
-        )
-        .getOne(requestDetailSupplierId, {
-          expand: 'supplier,requestDetail.detail'
-        })
-  });
-}
-
-export function useGetRequestDetailSupplierById(requestDetailSupplierId: string) {
-  return useQuery(getRequestDetailSupplierById(requestDetailSupplierId));
-}
 
 export const CreateRequestDetailSupplierSchema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
@@ -284,35 +110,6 @@ export type CreateRequestDetailSupplierInput = InferType<
   typeof CreateRequestDetailSupplierSchema
 >;
 
-export function useCreateRequestDetailSupplier(reqestDetailId: string, onSuccess?: () => void) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['createRequestDetailSupplier'],
-    mutationFn: (params: CreateRequestDetailSupplierInput) =>
-      client
-        .collection<RequestDetailSupplierData>('requestDetailSupplier')
-        .create({
-          ...params,
-          requestDetail: reqestDetailId
-        }, {
-          expand: 'supplier,requestDetail.detail'
-        }),
-    onSuccess: async (record) => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(record.requestDetail),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: getRequestByIdKey(
-            record.expand.requestDetail.request
-          )
-        })
-      ]);
-    }
-  });
-}
-
 export const UpdateRequestDetailSupplierSchema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
   price: number().required('Hãy nhập đơn giá nhà cung cấp'),
@@ -323,46 +120,155 @@ export type UpdateRequestDetailSupplierInput = InferType<
   typeof UpdateRequestDetailSupplierSchema
 >;
 
-export function useUpdateRequestDetailSupplier(
-  requestDetailSupplierId: string,
-  onSuccess?: () => void
-) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['updateRequestDetailSupplier', requestDetailSupplierId],
-    mutationFn: (params: UpdateRequestDetailSupplierInput) =>
+export const requestApi = router('request', {
+  listFull: router.query({
+    fetcher: (projectId: string) =>
+      client.collection<RequestResponse>('request').getFullList({
+        filter: `project = "${projectId}"`,
+        sort: '-created'
+      })
+  }),
+  byId: router.query({
+    fetcher: (requestId: string) =>
+      client.collection<RequestData>(Collections.Request).getOne(requestId, {
+        expand:
+          'requestDetail_via_request.detail,' +
+          'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
+          'contract_via_request.supplier,' +
+          'contract_via_request.contractItem_via_contract,' +
+          'issue.createdBy,' +
+          'issue.createdBy.department'
+      })
+  }),
+  byIssueId: router.query({
+    fetcher: (issueId: string) =>
       client
-        .collection<RequestDetailSupplierData>('requestDetailSupplier')
-        .update(requestDetailSupplierId, params, {
-          expand: 'supplier,requestDetail.detail'
-        }),
-    onSuccess: async (record) => {
-      onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(record.requestDetail),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: getRequestByIdKey(
-            record.expand.requestDetail.request
-          )
+        .collection<RequestData>(Collections.Request)
+        .getFirstListItem(`issue = "${issueId}"`, {
+          expand:
+            'requestDetail_via_request.detail,' +
+            'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
+            'contract_via_request.supplier,' +
+            'contract_via_request.contractItem_via_contract,' +
+            'issue.createdBy,' +
+            'issue.createdBy.department'
         })
+  }),
+  create: router.mutation({
+    mutationFn: async (params: CreateRequestInput & { projectId: string }) => {
+      const issue = await client.collection(Collections.Issue).create({
+        project: params.projectId,
+        title: params.name,
+        type: IssueTypeOptions.Request,
+        createdBy: client.authStore.model?.id,
+        assignee: client.authStore.model?.id
+      });
+
+      const request = await client.collection(Collections.Request).create({
+        project: params.projectId,
+        issue: issue.id,
+        status: RequestStatusOptions.ToDo
+      });
+
+      await Promise.all(
+        params.details.map(it => {
+          return client.collection(Collections.RequestDetail).create(
+            {
+              request: request.id,
+              detail: it.id,
+              volume: it.requestVolume
+            },
+            {
+              requestKey: null
+            }
+          );
+        })
+      );
+
+      return request;
+    }
+  }),
+  update: router.mutation({
+    mutationFn: (params: UpdateRequestInput & { requestId: string }) => {
+      const { requestId, ...data } = params;
+
+      return Promise.all([
+        ...params.details
+          .filter(detail => !detail.hasChild)
+          .map(detail =>
+            client.collection(Collections.RequestDetail).update(detail.id, {
+              volume: detail.requestVolume
+            })
+          ),
+        client.collection(Collections.Request).update(requestId, data)
       ]);
     }
-  });
-}
+  }),
+  delete: router.mutation({
+    mutationFn: async (requestId: string) => {
+      await client.collection(Collections.Request).delete(requestId);
+    }
+  })
+});
 
-export function useDeleteRequestDetailSupplier(
-  onSuccess?: () => void
-) {
-  return useMutation({
-    mutationKey: ['deleteRequestDetailSupplier'],
+export const requestDetailSupplierApi = router('requestDetailSupplier', {
+  listFull: router.query({
+    fetcher: (requestDetailId: string) =>
+      client
+        .collection<RequestDetailSupplierData>(
+          Collections.RequestDetailSupplier
+        )
+        .getFullList({
+          filter: `requestDetail = "${requestDetailId}"`,
+          expand: 'supplier,requestDetail.detail'
+        })
+  }),
+  byId: router.query({
+    fetcher: (requestDetailSupplierId: string) =>
+      client
+        .collection<RequestDetailSupplierData>(
+          Collections.RequestDetailSupplier
+        )
+        .getOne(requestDetailSupplierId, {
+          expand: 'supplier,requestDetail.detail'
+        })
+  }),
+  create: router.mutation({
+    mutationFn: (
+      params: CreateRequestDetailSupplierInput & { requestDetailId: string }
+    ) =>
+      client
+        .collection<RequestDetailSupplierData>(
+          Collections.RequestDetailSupplier
+        )
+        .create(
+          {
+            ...params,
+            requestDetail: params.requestDetailId
+          },
+          {
+            expand: 'supplier,requestDetail.detail'
+          }
+        )
+  }),
+  update: router.mutation({
+    mutationFn: (
+      params: UpdateRequestDetailSupplierInput & {
+        requestDetailSupplierId: string;
+      }
+    ) =>
+      client
+        .collection<RequestDetailSupplierData>(
+          Collections.RequestDetailSupplier
+        )
+        .update(params.requestDetailSupplierId, params)
+  }),
+  delete: router.mutation({
     mutationFn: (requestDetailSupplierId: string) =>
       client
-        .collection('requestDetailSupplier')
-        .delete(requestDetailSupplierId),
-    onSuccess: () => {
-      onSuccess?.();
-    }
-  });
-}
+        .collection<RequestDetailSupplierData>(
+          Collections.RequestDetailSupplier
+        )
+        .delete(requestDetailSupplierId)
+  })
+});

@@ -1,5 +1,3 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-
 import { FC, Suspense } from 'react';
 
 import {
@@ -11,7 +9,7 @@ import {
   cn
 } from '@storeo/core';
 
-import { RequestData } from '../../../api';
+import { requestApi } from '../../../api';
 
 export type RequestStatusProps = {
   issueId: string;
@@ -19,14 +17,8 @@ export type RequestStatusProps = {
 };
 
 const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
-  const request = useSuspenseQuery({
-    queryKey: ['getRequest', issueId],
-    queryFn: () =>
-      client
-        .collection<RequestData>('request')
-        .getFirstListItem(`issue = "${issueId}"`, {
-          expand: 'issue,issue.createdBy'
-        })
+  const request = requestApi.byIssueId.useSuspenseQuery({
+    variables: issueId
   });
 
   const style = `text-appWhite flex w-fit h-fit items-center

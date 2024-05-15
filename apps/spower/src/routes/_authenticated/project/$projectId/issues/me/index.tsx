@@ -1,24 +1,41 @@
-import { createFileRoute, SearchSchemaInput, useNavigate } from '@tanstack/react-router';
+import {
+  SearchSchemaInput,
+  createFileRoute,
+  useNavigate
+} from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
-import { formatDate, IssueResponse, IssueTypeOptions, Match, Switch } from '@storeo/core';
+import {
+  IssueResponse,
+  IssueTypeOptions,
+  Match,
+  Switch,
+  formatDate
+} from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
-import { issueApi, IssuesSearch, IssuesSearchSchema } from '../../../../../../api/issue';
-import { EmployeeDisplay, NewIssueButton, RequestStatus } from '../../../../../../components';
+import {
+  IssuesSearch,
+  IssuesSearchSchema,
+  issueApi
+} from '../../../../../../api/issue';
+import {
+  EmployeeDisplay,
+  NewIssueButton,
+  RequestStatus
+} from '../../../../../../components';
 
 const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
   const issues = issueApi.listMine.useSuspenseQuery({
-      variables: {
-        ...search,
-        projectId
-      }
+    variables: {
+      ...search,
+      projectId
     }
-  );
+  });
 
   const columnHelper = createColumnHelper<IssueResponse>();
 
@@ -163,8 +180,11 @@ export const Route = createFileRoute(
              deps: { search },
              context: { queryClient },
              params: { projectId }
-           }) => queryClient?.ensureQueryData(issueApi.listMine.getOptions({
-    ...search,
-    projectId
-  }))
+           }) =>
+    queryClient?.ensureQueryData(
+      issueApi.listMine.getOptions({
+        ...search,
+        projectId
+      })
+    )
 });

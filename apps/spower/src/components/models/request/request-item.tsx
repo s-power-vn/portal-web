@@ -1,5 +1,6 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
   ExpandedState,
   RowSelectionState,
@@ -40,12 +41,7 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import {
-  RequestDetailData,
-  getAllRequestsKey,
-  getRequestById,
-  useDeleteRequest
-} from '../../../api';
+import { RequestDetailData, requestApi } from '../../../api';
 import {
   TreeData,
   arrayToTree,
@@ -63,15 +59,23 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const request = useSuspenseQuery(getRequestById(requestId));
+  const request = requestApi.byId.useSuspenseQuery({
+    variables: requestId
+  });
+
+  const router = useRouter();
+
   const queryClient = useQueryClient();
 
-  const deleteRequest = useDeleteRequest(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: getAllRequestsKey(request.data.project)
-      })
-    ]);
+  const deleteRequest = requestApi.delete.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestApi.listFull.getKey(request.data.project)
+        })
+      ]);
+      router.history.back();
+    }
   });
 
   const requests = useMemo(() => {

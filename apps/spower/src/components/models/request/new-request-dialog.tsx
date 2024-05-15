@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { Dispatch, FC, SetStateAction } from 'react';
 
 import {
@@ -12,16 +14,37 @@ import {
   TextareaField
 } from '@storeo/theme';
 
-import { CreateRequestSchema, useCreateRequest } from '../../../api';
+import { CreateRequestSchema, requestApi } from '../../../api';
+import { issueApi } from '../../../api/issue';
 import { RequestDetailListField } from '../request-detail/request-detail-list-field';
 
 const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
   setOpen,
   projectId
 }) => {
-  const createDocumentRequest = useCreateRequest(projectId, () =>
-    setOpen(false)
-  );
+  const queryClient = useQueryClient();
+
+  const createRequest = requestApi.create.useMutation({
+    onSuccess: async request => {
+      setOpen(false);
+
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestApi.listFull.getKey(projectId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: issueApi.list.getKey({
+            projectId
+          })
+        }),
+        queryClient.invalidateQueries({
+          queryKey: issueApi.listMine.getKey({
+            projectId
+          })
+        })
+      ]);
+    }
+  });
 
   return (
     <DialogContent className="flex min-w-[800px] flex-col">
@@ -37,8 +60,13 @@ const Content: FC<Omit<NewRequestDialogProps, 'open'>> = ({
           name: ''
         }}
         className={'mt-2 flex flex-col gap-2'}
-        loading={createDocumentRequest.isPending}
-        onSubmit={values => createDocumentRequest.mutate(values)}
+        loading={createRequest.isPending}
+        onSubmit={values =>
+          createRequest.mutate({
+            ...values,
+            projectId
+          })
+        }
       >
         <TextareaField
           schema={CreateRequestSchema}

@@ -1,7 +1,8 @@
 import { InferType, number, object, string } from 'yup';
 
-import { client, Collections, IssueResponse } from '@storeo/core';
 import { router } from 'react-query-kit';
+
+import { Collections, IssueResponse, client } from '@storeo/core';
 
 export const IssuesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -39,4 +40,3 @@ export const issueApi = router('issue', {
     fetcher: (id: string) => client.collection(Collections.Issue).getOne(id)
   })
 });
-

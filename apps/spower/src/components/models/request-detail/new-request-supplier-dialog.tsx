@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { FC } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -15,7 +17,8 @@ import {
 
 import {
   CreateRequestDetailSupplierSchema,
-  useCreateRequestDetailSupplier
+  requestApi,
+  requestDetailSupplierApi
 } from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
@@ -23,22 +26,37 @@ const Content: FC<NewRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailId
 }) => {
-  const createRequestSupplier = useCreateRequestDetailSupplier(
-    requestDetailId,
-    () => setOpen(false)
-  );
+  const queryClient = useQueryClient();
+  const createRequestSupplier = requestDetailSupplierApi.create.useMutation({
+    onSuccess: async record => {
+      setOpen(false);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestDetailSupplierApi.listFull.getKey(requestDetailId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: requestApi.byId.getKey(record.expand.requestDetail.request)
+        })
+      ]);
+    }
+  });
 
   return (
     <DialogContent className="w-96">
       <DialogHeader>
-        <DialogTitle>Chỉnh sửa nhà cung cấp</DialogTitle>
+        <DialogTitle>Thêm mới nhà cung cấp</DialogTitle>
         <DialogDescription className={'italic'}>
-          Chỉnh sửa thông tin về giá của nhà cung cấp.
+          Thêm mới thông tin về giá của nhà cung cấp.
         </DialogDescription>
       </DialogHeader>
       <Form
         schema={CreateRequestDetailSupplierSchema}
-        onSubmit={values => createRequestSupplier.mutate(values)}
+        onSubmit={values =>
+          createRequestSupplier.mutate({
+            ...values,
+            requestDetailId
+          })
+        }
         defaultValues={{}}
         loading={createRequestSupplier.isPending}
         className={'mt-4 flex flex-col gap-3'}

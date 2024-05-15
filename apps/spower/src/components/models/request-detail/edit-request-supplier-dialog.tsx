@@ -1,5 +1,3 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-
 import { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -17,8 +15,7 @@ import {
 
 import {
   UpdateRequestDetailSupplierSchema,
-  getRequestDetailSupplierById,
-  useUpdateRequestDetailSupplier
+  requestDetailSupplierApi
 } from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
@@ -26,14 +23,14 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailSupplierId
 }) => {
-  const requestDetailSupplier = useSuspenseQuery(
-    getRequestDetailSupplierById(requestDetailSupplierId)
-  );
+  const requestDetailSupplier = requestDetailSupplierApi.byId.useSuspenseQuery({
+    variables: requestDetailSupplierId
+  });
 
-  const updateRequestDetailSupplier = useUpdateRequestDetailSupplier(
-    requestDetailSupplierId,
-    () => setOpen(false)
-  );
+  const updateRequestDetailSupplier =
+    requestDetailSupplierApi.update.useMutation({
+      onSuccess: () => setOpen(false)
+    });
 
   return (
     <DialogContent className="w-96">
@@ -45,7 +42,12 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
       </DialogHeader>
       <Form
         schema={UpdateRequestDetailSupplierSchema}
-        onSubmit={values => updateRequestDetailSupplier.mutate(values)}
+        onSubmit={values =>
+          updateRequestDetailSupplier.mutate({
+            ...values,
+            requestDetailSupplierId
+          })
+        }
         defaultValues={requestDetailSupplier.data}
         loading={updateRequestDetailSupplier.isPending}
         className={'mt-4 flex flex-col gap-3'}

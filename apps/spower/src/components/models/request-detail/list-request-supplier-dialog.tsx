@@ -29,43 +29,38 @@ import {
 import {
   RequestDetailData,
   RequestDetailSupplierData,
-  getAllRequestDetailSuppliersKey,
-  getRequestByIdKey,
-  useDeleteRequestDetailSupplier,
-  useGetAllRequestDetailSuppliers
+  requestApi,
+  requestDetailSupplierApi
 } from '../../../api';
 import { TreeData } from '../../../commons/utils';
 import { EditRequestSupplierDialog } from './edit-request-supplier-dialog';
 import { NewRequestSupplierDialog } from './new-request-supplier-dialog';
 
-const Content: FC<ListRequestSupplierDialogProps> = ({
-  open,
-  requestDetail
-}) => {
+const Content: FC<ListRequestSupplierDialogProps> = ({ requestDetail }) => {
   const [openNew, setOpenNew] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [requestDetailSupplier, setRequestDetailSupplier] =
     useState<RequestDetailSupplierData>();
 
-  const documentRequestSuppliersQuery = useGetAllRequestDetailSuppliers(
-    requestDetail.id,
-    open
-  );
+  const requestDetailSuppliers = requestDetailSupplierApi.listFull.useQuery({
+    variables: requestDetail.id
+  });
 
   const queryClient = useQueryClient();
 
-  const deleteRequestDetailSupplier = useDeleteRequestDetailSupplier(
-    async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: getAllRequestDetailSuppliersKey(requestDetail.id)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: getRequestByIdKey(requestDetail.request)
-        })
-      ]);
-    }
-  );
+  const deleteRequestDetailSupplier =
+    requestDetailSupplierApi.delete.useMutation({
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: requestDetailSupplierApi.listFull.getKey(requestDetail.id)
+          }),
+          queryClient.invalidateQueries({
+            queryKey: requestApi.byId.getKey(requestDetail.request)
+          })
+        ]);
+      }
+    });
 
   const columnHelper = createColumnHelper<RequestDetailSupplierData>();
 
@@ -121,7 +116,7 @@ const Content: FC<ListRequestSupplierDialogProps> = ({
   ];
 
   const table = useReactTable({
-    data: documentRequestSuppliersQuery.data ?? [],
+    data: requestDetailSuppliers.data ?? [],
     columns,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel()
