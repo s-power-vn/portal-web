@@ -98,7 +98,7 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
         <NumericField
           schema={schema}
           name={'volume'}
-          title={'Khối lượng thầu'}
+          title={'Khối lượng hợp đồng'}
           options={{}}
         />
         <TextField

@@ -309,3 +309,40 @@ export const requestDetailSupplierApi = router('requestDetailSupplier', {
         .delete(requestDetailSupplierId)
   })
 });
+
+export const UpdateRequestDetailSchema = object().shape({
+  volume: number()
+    .required('Hãy nhập khối lượng yêu cầu')
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số')
+    .moreThan(0, 'Khối lượng không thể <= 0')
+});
+
+export type UpdateRequestDetailInput = InferType<
+  typeof UpdateRequestDetailSchema
+>;
+
+export const requestDetailApi = router('requestDetail', {
+  byId: router.query({
+    fetcher: (requestDetailId: string) =>
+      client
+        .collection<RequestDetailData>(Collections.RequestDetail)
+        .getOne(requestDetailId, {
+          expand:
+            'detail,requestDetailSupplier_via_requestDetail.supplier,request_via_requestDetail.request'
+        })
+  }),
+  update: router.mutation({
+    mutationFn: (
+      params: UpdateRequestDetailInput & {
+        requestDetailId: string;
+      }
+    ) =>
+      client
+        .collection<RequestDetailData>(Collections.RequestDetail)
+        .update(params.requestDetailId, params)
+  })
+});

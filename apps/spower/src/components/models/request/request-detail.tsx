@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { CalendarIcon, Undo2Icon, User2Icon } from 'lucide-react';
 
@@ -7,10 +7,7 @@ import { FC, useState } from 'react';
 
 import {
   Collections,
-  CommentResponse,
-  IssueResponse,
   Show,
-  UserResponse,
   client,
   formatDate,
   getImageUrl,
@@ -28,6 +25,7 @@ import {
 } from '@storeo/theme';
 
 import { requestApi } from '../../../api';
+import { commentApi } from '../../../api/comment';
 import { IssueAssignee } from '../issue/issue-assignee';
 import { IssueTitle } from '../issue/issue-title';
 import { RequestItem } from './request-item';
@@ -48,23 +46,8 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
     variables: issueId
   });
 
-  const comments = useQuery({
-    queryKey: ['getComments', issueId],
-    queryFn: () =>
-      client
-        .collection<
-          CommentResponse & {
-            expand: {
-              issue: IssueResponse;
-              createdBy: UserResponse;
-            };
-          }
-        >('comment')
-        .getFullList({
-          filter: `issue = "${issueId}"`,
-          expand: 'issue,createdBy',
-          sort: '-created'
-        })
+  const comments = commentApi.list.useSuspenseQuery({
+    variables: issueId
   });
 
   const queryClient = useQueryClient();

@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
   ExpandedState,
+  Row,
   RowSelectionState,
   createColumnHelper,
   flexRender,
@@ -48,6 +49,7 @@ import {
   getCommonPinningStyles
 } from '../../../commons/utils';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
+import { EditRequestDetailDialog } from './edit-request-detail-dialog';
 
 export type RequestItemProps = {
   requestId: string;
@@ -58,6 +60,10 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const [openRequestDetailEdit, setOpenRequestDetailEdit] = useState(false);
+  const [selectedRow, setSelectedRow] =
+    useState<Row<TreeData<RequestDetailData>>>();
 
   const request = requestApi.byId.useSuspenseQuery({
     variables: requestId
@@ -346,6 +352,13 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           setOpen={setOpenListSupplier}
         />
       ) : null}
+      {selectedRow ? (
+        <EditRequestDetailDialog
+          open={openRequestDetailEdit}
+          setOpen={setOpenRequestDetailEdit}
+          requestDetailId={selectedRow.original.id}
+        />
+      ) : null}
       <div className={'bg-appWhite flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
@@ -370,7 +383,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
             {request.data.status === RequestStatusOptions.ToDo ? (
-              <Button className={'text-appWhite'} size="icon">
+              <Button
+                className={'text-appWhite'}
+                size="icon"
+                disabled={!selectedRow}
+                onClick={() => setOpenRequestDetailEdit(true)}
+              >
                 <EditIcon className={'h-4 w-4'} />
               </Button>
             ) : null}
@@ -438,6 +456,16 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                             object[row.id] = true;
                             return object;
                           });
+
+                          if (
+                            selectedRow?.id !== row.id &&
+                            row.original.children &&
+                            row.original.children.length === 0
+                          ) {
+                            setSelectedRow(row);
+                          } else {
+                            setSelectedRow(undefined);
+                          }
                         }}
                       >
                         {row.getVisibleCells().map(cell => {

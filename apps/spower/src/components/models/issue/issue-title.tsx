@@ -39,7 +39,7 @@ export const IssueTitle: FC<IssueTitleProps> = ({ title, issueId }) => {
       issueId,
       title: value
     });
-  }, [updateTitle, value]);
+  }, [issueId, updateTitle, value]);
 
   const onFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     e.target?.select();
