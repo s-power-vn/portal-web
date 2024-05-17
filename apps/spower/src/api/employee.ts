@@ -28,7 +28,7 @@ export const employeeApi = router('employee', {
   listFull: router.query({
     fetcher: () =>
       client.collection<UserData>(Collections.User).getFullList({
-        sort: '-created',
+        sort: 'department',
         expand: 'department'
       })
   }),
@@ -39,7 +39,7 @@ export const employeeApi = router('employee', {
         .collection<UserData>(Collections.User)
         .getList(search?.pageIndex, search?.pageSize, {
           filter,
-          sort: '-created',
+          sort: 'department',
           expand: 'department'
         });
     }
