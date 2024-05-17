@@ -87,9 +87,14 @@ export type DetailRecord = {
 	volume?: number
 }
 
+export enum DetailImportStatusOptions {
+	"Working" = "Working",
+	"Done" = "Done",
+}
 export type DetailImportRecord = {
 	file?: string
 	project?: RecordIdString
+	status?: DetailImportStatusOptions
 }
 
 export type DetailInfoRecord = {

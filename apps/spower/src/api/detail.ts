@@ -67,6 +67,7 @@ export const detailImportApi = router('detailImport', {
         formData.append('file', file);
       }
       formData.append('project', projectId);
+      formData.append('status', 'Working');
       return client.collection(Collections.DetailImport).create(formData);
     }
   })

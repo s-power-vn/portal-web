@@ -56,6 +56,7 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
+import { useDetailImportStatus } from '../../../hooks';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
@@ -420,9 +421,19 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const { showLoading, hideLoading } = useLoading();
 
   const parentRef = useRef<HTMLDivElement>(null);
+  const [detailImportId, setDetailImportId] = useState<string | undefined>();
+
+  useDetailImportStatus(detailImportId, status => {
+    if (status === 'Done') {
+      hideLoading();
+    }
+  });
 
   const uploadFile = detailImportApi.upload.useMutation({
-    onSettled: () => {
+    onSuccess: record => {
+      setDetailImportId(record.id);
+    },
+    onError: () => {
       hideLoading();
     }
   });
