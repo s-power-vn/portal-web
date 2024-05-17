@@ -421,18 +421,21 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const { showLoading, hideLoading } = useLoading();
 
   const parentRef = useRef<HTMLDivElement>(null);
-  const [detailImportId, setDetailImportId] = useState<string | undefined>();
 
-  useDetailImportStatus(detailImportId, status => {
+  useDetailImportStatus(async (_, status) => {
     if (status === 'Done') {
+      hideLoading();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: detailInfoApi.listFull.getKey(projectId)
+        })
+      ]);
+    } else if (status === 'Error') {
       hideLoading();
     }
   });
 
   const uploadFile = detailImportApi.upload.useMutation({
-    onSuccess: record => {
-      setDetailImportId(record.id);
-    },
     onError: () => {
       hideLoading();
     }
@@ -448,7 +451,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         });
       }
     },
-    []
+    [projectId, showLoading, uploadFile]
   );
 
   useEffect(() => {
