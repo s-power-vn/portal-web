@@ -5,6 +5,7 @@ import {
   parseSearchWith,
   stringifySearchWith
 } from '@tanstack/react-router';
+import { Loader } from 'lucide-react';
 import { parse, stringify } from 'zipson';
 
 import { routeTree } from './routes.gen';
@@ -34,12 +35,18 @@ const router = createRouter({
   context: {
     queryClient
   },
+  defaultPendingComponent: () => (
+    <div className={`p-2 text-2xl`}>
+      <Loader className={'h-6 w-6'} />
+    </div>
+  ),
   parseSearch: parseSearchWith(value =>
     parse(decodeURIComponent(decodeFromBinary(value)))
   ),
   stringifySearch: stringifySearchWith(value =>
     encodeToBinary(encodeURIComponent(stringify(value)))
-  )
+  ),
+  defaultPreload: 'intent'
 });
 
 declare module '@tanstack/react-router' {

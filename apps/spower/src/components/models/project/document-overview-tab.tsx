@@ -479,6 +479,16 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     });
   }, [rowSelection, table]);
 
+  const editDialog = useMemo(() => {
+    return selectedRow ? (
+      <EditDetailDialog
+        open={openDocumentDetailEdit}
+        setOpen={setOpenDocumentDetailEdit}
+        detailId={selectedRow.original.group}
+      />
+    ) : null;
+  }, [openDocumentDetailEdit, selectedRow]);
+
   return (
     <>
       <NewDetailDialog
@@ -487,13 +497,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         projectId={projectId}
         parent={selectedRow ? selectedRow.original : undefined}
       />
-      {selectedRow ? (
-        <EditDetailDialog
-          open={openDocumentDetailEdit}
-          setOpen={setOpenDocumentDetailEdit}
-          detailId={selectedRow.original.group}
-        />
-      ) : null}
+      {editDialog}
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <input
