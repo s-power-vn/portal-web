@@ -52,3 +52,22 @@ export const detailInfoApi = router('detailInfo', {
       })
   })
 });
+
+export const detailImportApi = router('detailImport', {
+  upload: router.mutation({
+    mutationFn: ({
+      projectId,
+      files
+    }: {
+      projectId: string;
+      files: FileList;
+    }) => {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append('file', file);
+      }
+      formData.append('project', projectId);
+      return client.collection(Collections.DetailImport).create(formData);
+    }
+  })
+});

@@ -11,6 +11,7 @@ export enum Collections {
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
+	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
 	Project = "project",
@@ -84,6 +85,11 @@ export type DetailRecord = {
 	unit?: string
 	unitPrice?: number
 	volume?: number
+}
+
+export type DetailImportRecord = {
+	file?: string
+	project?: RecordIdString
 }
 
 export type DetailInfoRecord = {
@@ -187,6 +193,7 @@ export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & Bas
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
+export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Texpand = unknown> = Required<DetailInfoRecord> & BaseSystemFields<Texpand>
 export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
@@ -206,6 +213,7 @@ export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
+	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
 	project: ProjectRecord
@@ -224,6 +232,7 @@ export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse
+	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
 	project: ProjectResponse
@@ -245,6 +254,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'customer'): RecordService<CustomerResponse>
 	collection(idOrName: 'department'): RecordService<DepartmentResponse>
 	collection(idOrName: 'detail'): RecordService<DetailResponse>
+	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
 	collection(idOrName: 'project'): RecordService<ProjectResponse>

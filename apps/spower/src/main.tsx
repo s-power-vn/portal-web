@@ -1,10 +1,12 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
-import { ConfirmProvider } from '@storeo/theme';
-import { Toaster, TooltipProvider } from '@storeo/theme';
+import {
+  ConfirmProvider,
+  LoadingProvider,
+  Toaster,
+  TooltipProvider
+} from '@storeo/theme';
 
 import { App } from './app';
 import './global.css';
@@ -15,11 +17,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <ConfirmProvider>
-      <TooltipProvider>
-        <App />
-        <Toaster />
-      </TooltipProvider>
-    </ConfirmProvider>
+    <LoadingProvider>
+      <ConfirmProvider>
+        <TooltipProvider>
+          <App />
+          <Toaster />
+        </TooltipProvider>
+      </ConfirmProvider>
+    </LoadingProvider>
   </StrictMode>
 );

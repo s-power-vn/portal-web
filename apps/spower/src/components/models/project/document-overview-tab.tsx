@@ -20,7 +20,15 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import {
   DetailInfoResponse,
@@ -38,10 +46,11 @@ import {
   TableHeader,
   TableRow,
   success,
-  useConfirm
+  useConfirm,
+  useLoading
 } from '@storeo/theme';
 
-import { detailApi, detailInfoApi } from '../../../api';
+import { detailApi, detailImportApi, detailInfoApi } from '../../../api';
 import {
   TreeData,
   arrayToTree,
@@ -63,6 +72,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
+
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const listDetailInfos = detailInfoApi.listFull.useSuspenseQuery({
     variables: projectId
@@ -406,7 +417,28 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     manualPagination: true
   });
 
+  const { showLoading, hideLoading } = useLoading();
+
   const parentRef = useRef<HTMLDivElement>(null);
+
+  const uploadFile = detailImportApi.upload.useMutation({
+    onSettled: () => {
+      hideLoading();
+    }
+  });
+
+  const onFileChangeCapture = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        showLoading();
+        uploadFile.mutate({
+          files: e.target.files,
+          projectId
+        });
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     table.toggleAllRowsExpanded(true);
@@ -445,7 +477,19 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       ) : null}
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button variant={'outline'} className={'flex gap-1'}>
+          <input
+            type="file"
+            ref={inputFileRef}
+            multiple={false}
+            className={'hidden'}
+            accept=".xlsx"
+            onChangeCapture={onFileChangeCapture}
+          />
+          <Button
+            variant={'outline'}
+            className={'flex gap-1'}
+            onClick={() => inputFileRef.current?.click()}
+          >
             <SheetIcon className={'h-5 w-5'} />
             Nhập từ Excel
           </Button>

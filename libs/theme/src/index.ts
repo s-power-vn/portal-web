@@ -27,3 +27,4 @@ export * from './components/ui/textarea';
 export * from './components/ui/tooltip';
 export * from './utils/toast';
 export * from './utils/confirm';
+export * from './utils/loading';
