@@ -13,5 +13,5 @@ export function useDetailImportStatus(
     return () => {
       client.collection(Collections.DetailImport).unsubscribe();
     };
-  }, [onStatusChange]);
+  }, []);
 }

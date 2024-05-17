@@ -438,6 +438,11 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   const uploadFile = detailImportApi.upload.useMutation({
     onError: () => {
       hideLoading();
+    },
+    onSettled: () => {
+      if (inputFileRef.current) {
+        inputFileRef.current.value = '';
+      }
     }
   });
 
