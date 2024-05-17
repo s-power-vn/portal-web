@@ -23,7 +23,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  useConfirm
 } from '@storeo/theme';
 
 import {
@@ -47,6 +48,7 @@ const Content: FC<ListRequestSupplierDialogProps> = ({ requestDetail }) => {
   });
 
   const queryClient = useQueryClient();
+  const { confirm } = useConfirm();
 
   const deleteRequestDetailSupplier =
     requestDetailSupplierApi.delete.useMutation({
@@ -100,13 +102,16 @@ const Content: FC<ListRequestSupplierDialogProps> = ({ requestDetail }) => {
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
-              <Cross2Icon
-                className={'h-3 w-3'}
-                onClick={() => {
+            <Button
+              variant={'destructive'}
+              className={'h-6 px-3'}
+              onClick={() => {
+                confirm('Bạn chắc chắn muốn xóa nhà cung cấp này?', () => {
                   deleteRequestDetailSupplier.mutate(row.original.id);
-                }}
-              />
+                });
+              }}
+            >
+              <Cross2Icon className={'h-3 w-3'} />
             </Button>
           </div>
         );
