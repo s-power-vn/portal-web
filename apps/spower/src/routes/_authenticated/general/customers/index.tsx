@@ -134,6 +134,15 @@ const Component = () => {
           pageCount={listCustomers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          onRowClick={row =>
+            navigate({
+              to: './$customerId/edit',
+              params: {
+                customerId: row.original.id
+              },
+              search
+            })
+          }
           onPageNext={() =>
             navigate({
               to: './',

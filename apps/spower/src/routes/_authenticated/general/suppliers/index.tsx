@@ -133,6 +133,15 @@ const Component = () => {
           pageCount={listSuppliers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          onRowClick={row =>
+            navigate({
+              to: './$supplierId/edit',
+              params: {
+                supplierId: row.original.id
+              },
+              search
+            })
+          }
           onPageNext={() =>
             navigate({
               to: './',

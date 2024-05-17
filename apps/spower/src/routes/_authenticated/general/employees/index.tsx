@@ -187,6 +187,15 @@ const Component = () => {
           pageCount={listEmployees.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          onRowClick={row =>
+            navigate({
+              to: './$employeeId/edit',
+              params: {
+                employeeId: row.original.id
+              },
+              search
+            })
+          }
           onPageNext={() =>
             navigate({
               to: './',
