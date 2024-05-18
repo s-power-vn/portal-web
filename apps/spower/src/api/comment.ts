@@ -23,5 +23,25 @@ export const commentApi = router('comment', {
         expand: 'issue,createdBy',
         sort: '-created'
       })
+  }),
+  create: router.mutation({
+    mutationFn: async ({
+      comment,
+      issueId
+    }: {
+      comment: string;
+      issueId: string;
+    }) => {
+      return client.collection(Collections.Comment).create({
+        content: comment,
+        issue: issueId,
+        createdBy: client.authStore.model?.id
+      });
+    }
+  }),
+  delete: router.mutation({
+    mutationFn: (id: string) => {
+      return client.collection(Collections.Comment).delete(id);
+    }
   })
 });

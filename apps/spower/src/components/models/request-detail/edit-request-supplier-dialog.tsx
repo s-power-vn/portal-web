@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
@@ -15,6 +17,7 @@ import {
 
 import {
   UpdateRequestDetailSupplierSchema,
+  requestApi,
   requestDetailSupplierApi
 } from '../../../api';
 import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
@@ -23,13 +26,28 @@ const Content: FC<EditRequestSupplierDialogProps> = ({
   setOpen,
   requestDetailSupplierId
 }) => {
+  const queryClient = useQueryClient();
   const requestDetailSupplier = requestDetailSupplierApi.byId.useSuspenseQuery({
     variables: requestDetailSupplierId
   });
 
   const updateRequestDetailSupplier =
     requestDetailSupplierApi.update.useMutation({
-      onSuccess: () => setOpen(false)
+      onSuccess: async () => {
+        setOpen(false);
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: requestDetailSupplierApi.listFull.getKey(
+              requestDetailSupplier.data.requestDetail
+            )
+          }),
+          queryClient.invalidateQueries({
+            queryKey: requestApi.byId.getKey(
+              requestDetailSupplier.data.expand.requestDetail.request
+            )
+          })
+        ]);
+      }
     });
 
   return (

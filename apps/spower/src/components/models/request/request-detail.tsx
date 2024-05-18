@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { CalendarIcon, Undo2Icon, User2Icon } from 'lucide-react';
 
@@ -66,38 +66,24 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
     }
   });
 
-  const createComment = useMutation({
-    mutationKey: ['createComment', issueId],
-    mutationFn: async (comment: string) => {
-      return Promise.all([
-        client.collection('comment').create({
-          content: comment,
-          issue: issueId,
-          createdBy: client.authStore.model?.id
-        })
-      ]);
-    },
+  const createComment = commentApi.create.useMutation({
     onSuccess: async () => {
       setShowCommentButton(false);
       setComment('');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['getComments', issueId]
+          queryKey: commentApi.list.getKey(issueId)
         })
       ]);
     }
   });
 
-  const deleteComment = useMutation({
-    mutationKey: ['deleteComment'],
-    mutationFn: async (id: string) => {
-      return Promise.all([client.collection('comment').delete(id)]);
-    },
+  const deleteComment = commentApi.delete.useMutation({
     onSuccess: async () => {
       setShowCommentButton(false);
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['getComments', issueId]
+          queryKey: commentApi.list.getKey(issueId)
         })
       ]);
     }
@@ -198,7 +184,12 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
             <div className={'flex items-center justify-end'}>
               <Button
                 className={'h-4 p-4 text-xs'}
-                onClick={() => createComment.mutate(comment)}
+                onClick={() =>
+                  createComment.mutate({
+                    comment,
+                    issueId
+                  })
+                }
               >
                 Nhập
               </Button>
