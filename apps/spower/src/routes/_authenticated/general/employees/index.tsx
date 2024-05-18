@@ -1,6 +1,11 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  Outlet,
+  SearchSchemaInput,
+  createFileRoute,
+  useNavigate
+} from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { CircleCheckIcon, EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
@@ -229,8 +234,8 @@ const Component = () => {
 
 export const Route = createFileRoute('/_authenticated/general/employees/')({
   component: Component,
-  validateSearch: (search?: Record<string, unknown>) =>
-    EmployeesSearchSchema.validateSync(search),
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    EmployeesSearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

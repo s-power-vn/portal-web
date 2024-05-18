@@ -9,9 +9,9 @@ export type DebouncedInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange'
 > & {
+  value?: string;
   debounce?: number;
-  value: string | undefined;
-  onChange: (value: string | undefined) => void;
+  onChange?: (value: string | undefined) => void;
 };
 
 export const DebouncedInput: FC<DebouncedInputProps> = ({
@@ -28,11 +28,13 @@ export const DebouncedInput: FC<DebouncedInputProps> = ({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onChange(value);
+      if (value !== initialValue) {
+        onChange?.(value);
+      }
     }, debounce);
 
     return () => clearTimeout(timeout);
-  }, [value]);
+  }, [value, debounce]);
 
   return (
     <div className={'relative flex w-min'}>

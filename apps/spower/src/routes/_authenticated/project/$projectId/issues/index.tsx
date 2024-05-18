@@ -6,12 +6,7 @@ export const Route = createFileRoute(
   beforeLoad: ({ params }) => {
     throw redirect({
       to: '/project/$projectId/issues/me',
-      params,
-      search: {
-        pageIndex: 1,
-        pageSize: 10,
-        filter: ''
-      }
+      params
     });
   }
 });

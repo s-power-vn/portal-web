@@ -1,5 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  SearchSchemaInput,
+  createFileRoute,
+  useNavigate
+} from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { useState } from 'react';
@@ -149,8 +153,8 @@ const Component = () => {
 
 export const Route = createFileRoute('/_authenticated/project/')({
   component: Component,
-  validateSearch: (search?: Record<string, unknown>) =>
-    ProjectSearchSchema.validateSync(search),
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    ProjectSearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

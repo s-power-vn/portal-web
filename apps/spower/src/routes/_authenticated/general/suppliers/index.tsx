@@ -1,5 +1,10 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  Outlet,
+  SearchSchemaInput,
+  createFileRoute,
+  useNavigate
+} from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
@@ -175,8 +180,8 @@ const Component = () => {
 
 export const Route = createFileRoute('/_authenticated/general/suppliers/')({
   component: Component,
-  validateSearch: (search?: Record<string, unknown>) =>
-    SuppliersSearchSchema.validateSync(search),
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    SuppliersSearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

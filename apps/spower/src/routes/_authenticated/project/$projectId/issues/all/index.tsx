@@ -17,11 +17,7 @@ import {
 } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
-import {
-  IssuesSearch,
-  IssuesSearchSchema,
-  issueApi
-} from '../../../../../../api/issue';
+import { IssuesSearchSchema, issueApi } from '../../../../../../api/issue';
 import {
   EmployeeDisplay,
   NewIssueButton,
@@ -52,7 +48,7 @@ const Component = () => {
     }),
     columnHelper.accessor('title', {
       cell: info => (
-        <div className={'flex w-full items-center gap-1'}>
+        <div className={'flex w-full items-center gap-2'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Request}>
               <ShoppingCartIcon
@@ -184,7 +180,7 @@ export const Route = createFileRoute(
   '/_authenticated/project/$projectId/issues/all/'
 )({
   component: Component,
-  validateSearch: (input: IssuesSearch & SearchSchemaInput) =>
+  validateSearch: (input: unknown & SearchSchemaInput) =>
     IssuesSearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
