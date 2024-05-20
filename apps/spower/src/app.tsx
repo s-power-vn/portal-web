@@ -37,7 +37,7 @@ const router = createRouter({
   },
   defaultPendingComponent: () => (
     <div className={`p-2 text-2xl`}>
-      <Loader className={'h-6 w-6'} />
+      <Loader className={'h-6 w-6 animate-spin'} />
     </div>
   ),
   parseSearch: parseSearchWith(value =>
