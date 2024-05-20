@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Loader } from 'lucide-react';
 
 import { Suspense } from 'react';
 
@@ -8,7 +9,13 @@ const Component = () => {
   const { issueId } = Route.useParams();
 
   return (
-    <Suspense fallback={'Đang tải...'}>
+    <Suspense
+      fallback={
+        <div className={`p-2`}>
+          <Loader className={'h-6 w-6 animate-spin'} />
+        </div>
+      }
+    >
       <IssueDetail issueId={issueId} />
     </Suspense>
   );

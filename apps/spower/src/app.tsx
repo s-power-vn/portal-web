@@ -36,7 +36,7 @@ const router = createRouter({
     queryClient
   },
   defaultPendingComponent: () => (
-    <div className={`p-2 text-2xl`}>
+    <div className={`p-2`}>
       <Loader className={'h-6 w-6 animate-spin'} />
     </div>
   ),

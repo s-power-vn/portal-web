@@ -1,3 +1,5 @@
+import { Loader } from 'lucide-react';
+
 import { FC, Suspense } from 'react';
 
 import { IssueTypeOptions, Match, Switch } from '@storeo/core';
@@ -15,7 +17,13 @@ export const IssueDetail: FC<IssueDetailProps> = ({ issueId }) => {
   });
 
   return (
-    <Switch fallback={'Đang tải...'}>
+    <Switch
+      fallback={
+        <div className={`p-2`}>
+          <Loader className={'h-6 w-6 animate-spin'} />
+        </div>
+      }
+    >
       <Match when={issue.data.type === IssueTypeOptions.Request}>
         <Suspense>
           <RequestDetail issueId={issueId} />
