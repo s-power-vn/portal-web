@@ -110,7 +110,7 @@ const Component = () => {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <Button
+            <SubmitButton
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
@@ -123,8 +123,8 @@ const Component = () => {
               }
             >
               <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
+            </SubmitButton>
+            <SubmitButton
               variant={'destructive'}
               className={'h-6 px-3'}
               onClick={() =>
@@ -134,7 +134,7 @@ const Component = () => {
               }
             >
               <Cross2Icon className={'h-3 w-3'} />
-            </Button>
+            </SubmitButton>
           </div>
         );
       },
