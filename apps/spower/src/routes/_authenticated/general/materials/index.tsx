@@ -9,7 +9,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
 import { MaterialResponse } from '@storeo/core';
-import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
+import { CommonTable, DebouncedInput, SubmitButton } from '@storeo/theme';
 
 import { MaterialsSearchSchema, materialApi } from '../../../../api';
 import { PageHeader } from '../../../../components';
@@ -58,7 +58,7 @@ const Component = () => {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <Button
+            <SubmitButton
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
@@ -71,10 +71,10 @@ const Component = () => {
               }
             >
               <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
+            </SubmitButton>
+            <SubmitButton variant={'destructive'} className={'h-6 px-3'}>
               <Cross2Icon className={'h-3 w-3'} />
-            </Button>
+            </SubmitButton>
           </div>
         );
       },
@@ -88,7 +88,7 @@ const Component = () => {
       <PageHeader title={'Quản lý danh mục vật tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button
+          <SubmitButton
             className={'flex gap-1'}
             onClick={() =>
               navigate({
@@ -99,20 +99,11 @@ const Component = () => {
           >
             <PlusIcon />
             Thêm vật tư
-          </Button>
-          <Button
-            variant={'outline'}
-            className={'flex gap-1'}
-            onClick={() =>
-              navigate({
-                to: './new',
-                search
-              })
-            }
-          >
+          </SubmitButton>
+          <SubmitButton variant={'outline'} className={'flex gap-1'}>
             <SheetIcon />
             Nhập từ Excel
-          </Button>
+          </SubmitButton>
           <DebouncedInput
             value={search.filter}
             className={'h-9 w-56'}

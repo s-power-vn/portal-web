@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   Form,
@@ -104,9 +103,7 @@ const Component = () => {
             title={'Ghi chú'}
             options={{}}
           />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
+          <Button type="submit">Chấp nhận</Button>
         </Form>
       </DialogContent>
     </Dialog>

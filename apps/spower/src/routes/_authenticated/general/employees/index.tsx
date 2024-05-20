@@ -17,6 +17,7 @@ import {
   Button,
   CommonTable,
   DebouncedInput,
+  SubmitButton,
   success,
   useConfirm
 } from '@storeo/theme';
@@ -147,7 +148,7 @@ const Component = () => {
       <PageHeader title={'Quản lý nhân viên'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button
+          <SubmitButton
             className={'flex gap-1'}
             onClick={() =>
               navigate({
@@ -158,20 +159,11 @@ const Component = () => {
           >
             <PlusIcon />
             Thêm nhân viên
-          </Button>
-          <Button
-            variant={'outline'}
-            className={'flex gap-1'}
-            onClick={() =>
-              navigate({
-                to: './new',
-                search
-              })
-            }
-          >
+          </SubmitButton>
+          <SubmitButton variant={'outline'} className={'flex gap-1'}>
             <SheetIcon />
             Nhập từ Excel
-          </Button>
+          </SubmitButton>
           <DebouncedInput
             value={search.filter}
             className={'h-9 w-56'}

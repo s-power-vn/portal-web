@@ -1,4 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
   SearchSchemaInput,
@@ -9,12 +10,20 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
 import { CustomerResponse } from '@storeo/core';
-import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
+import {
+  Button,
+  CommonTable,
+  DebouncedInput,
+  SubmitButton,
+  success,
+  useConfirm
+} from '@storeo/theme';
 
 import { CustomersSearchSchema, customerApi } from '../../../../api';
 import { PageHeader } from '../../../../components';
 
 const Component = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
@@ -23,6 +32,19 @@ const Component = () => {
   });
 
   const columnHelper = createColumnHelper<CustomerResponse>();
+
+  const deleteCustomer = customerApi.delete.useMutation({
+    onSuccess: async () => {
+      success('Xóa chủ đầu tư thành công');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: customerApi.list.getKey(search)
+        })
+      ]);
+    }
+  });
+
+  const { confirm } = useConfirm();
 
   const columns = [
     columnHelper.display({
@@ -64,9 +86,9 @@ const Component = () => {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <Button
+            <SubmitButton
               className={'h-6 px-3'}
-              onClick={() =>
+              onClick={e =>
                 navigate({
                   to: './$customerId/edit',
                   params: {
@@ -77,10 +99,18 @@ const Component = () => {
               }
             >
               <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button variant={'destructive'} className={'h-6 px-3'}>
+            </SubmitButton>
+            <SubmitButton
+              variant={'destructive'}
+              className={'h-6 px-3'}
+              onClick={e => {
+                confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
+                  deleteCustomer.mutate(row.original.id);
+                });
+              }}
+            >
               <Cross2Icon className={'h-3 w-3'} />
-            </Button>
+            </SubmitButton>
           </div>
         );
       },
@@ -94,7 +124,7 @@ const Component = () => {
       <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button
+          <SubmitButton
             className={'flex gap-1'}
             onClick={() =>
               navigate({
@@ -105,20 +135,11 @@ const Component = () => {
           >
             <PlusIcon />
             Thêm chủ đầu tư
-          </Button>
-          <Button
-            variant={'outline'}
-            className={'flex gap-1'}
-            onClick={() =>
-              navigate({
-                to: './new',
-                search
-              })
-            }
-          >
+          </SubmitButton>
+          <SubmitButton variant={'outline'} className={'flex gap-1'}>
             <SheetIcon />
             Nhập từ Excel
-          </Button>
+          </SubmitButton>
           <DebouncedInput
             value={search.filter}
             className={'h-9 w-56'}

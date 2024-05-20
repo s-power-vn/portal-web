@@ -17,13 +17,14 @@ import {
   success
 } from '@storeo/theme';
 
-import { supplierApi } from '../../../../api';
+import { materialApi } from '../../../../api';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập tên chủ đầu tư'),
-  email: string().email('Sai định dạng email'),
-  phone: string(),
-  address: string(),
+  code: string()
+    .required('Hãy nhập mã vật liệu')
+    .max(10, 'Mã vật liệu không vượt quá 10 ký tự'),
+  name: string().required('Hãy nhập tên vật liệu'),
+  unit: string().required('Hãy nhập đơn vị'),
   note: string()
 });
 
@@ -33,14 +34,14 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const createSupplier = supplierApi.create.useMutation({
+  const createMaterial = materialApi.create.useMutation({
     onSuccess: async () => {
-      success('Thêm nhà cung cấp thành công');
+      success('Thêm vật liệu thành công');
       setOpen(false);
       history.back();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: supplierApi.list.getKey(search)
+          queryKey: materialApi.list.getKey(search)
         })
       ]);
     }
@@ -63,39 +64,32 @@ const Component = () => {
         </DialogHeader>
         <Form
           schema={schema}
-          onSubmit={values => createSupplier.mutate(values)}
+          onSubmit={values => createMaterial.mutate(values)}
           defaultValues={{
+            code: '',
             name: '',
-            email: '',
-            phone: '',
-            address: '',
+            unit: '',
             note: ''
           }}
-          loading={createSupplier.isPending}
+          loading={createMaterial.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
           <TextField
             schema={schema}
+            name={'code'}
+            title={'Mã vật liệu'}
+            options={{}}
+          />
+          <TextField
+            schema={schema}
             name={'name'}
-            title={'Tên nhà cung cấp'}
+            title={'Tên vật liệu'}
             options={{}}
           />
           <TextField
             schema={schema}
-            name={'email'}
-            title={'Email'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'phone'}
-            title={'Số điện thoại'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'address'}
-            title={'Địa chỉ'}
+            name={'unit'}
+            title={'Đơn vị'}
             options={{}}
           />
           <TextField
