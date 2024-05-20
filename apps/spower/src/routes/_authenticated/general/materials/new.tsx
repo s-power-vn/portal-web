@@ -21,9 +21,9 @@ import { materialApi } from '../../../../api';
 
 const schema = object().shape({
   code: string()
-    .required('Hãy nhập mã vật liệu')
-    .max(10, 'Mã vật liệu không vượt quá 10 ký tự'),
-  name: string().required('Hãy nhập tên vật liệu'),
+    .required('Hãy nhập mã vật tư')
+    .max(10, 'Mã vật tư không vượt quá 10 ký tự'),
+  name: string().required('Hãy nhập tên vật tư'),
   unit: string().required('Hãy nhập đơn vị'),
   note: string()
 });
@@ -36,7 +36,7 @@ const Component = () => {
 
   const createMaterial = materialApi.create.useMutation({
     onSuccess: async () => {
-      success('Thêm vật liệu thành công');
+      success('Thêm vật tư thành công');
       setOpen(false);
       history.back();
       await Promise.all([
@@ -57,9 +57,9 @@ const Component = () => {
     >
       <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Thêm vật liệu</DialogTitle>
+          <DialogTitle>Thêm vật tư</DialogTitle>
           <DialogDescription className={'italic'}>
-            Thêm danh mục vật liệu mới
+            Thêm danh mục vật tư mới
           </DialogDescription>
         </DialogHeader>
         <Form
@@ -77,13 +77,13 @@ const Component = () => {
           <TextField
             schema={schema}
             name={'code'}
-            title={'Mã vật liệu'}
+            title={'Mã vật tư'}
             options={{}}
           />
           <TextField
             schema={schema}
             name={'name'}
-            title={'Tên vật liệu'}
+            title={'Tên vật tư'}
             options={{}}
           />
           <TextField

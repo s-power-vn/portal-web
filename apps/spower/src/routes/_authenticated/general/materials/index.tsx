@@ -40,7 +40,7 @@ const Component = () => {
     }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
-      header: () => 'Tên vật liệu',
+      header: () => 'Tên vật tư',
       footer: info => info.column.id
     }),
     columnHelper.accessor('unit', {
