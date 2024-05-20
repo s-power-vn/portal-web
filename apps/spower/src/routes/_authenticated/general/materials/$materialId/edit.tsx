@@ -17,7 +17,7 @@ import {
   success
 } from '@storeo/theme';
 
-import { supplierApi } from '../../../../../api';
+import { materialApi } from '../../../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),
@@ -31,21 +31,21 @@ const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const queryClient = useQueryClient();
-  const { supplierId } = Route.useParams();
+  const { materialId } = Route.useParams();
   const search = Route.useSearch();
 
-  const supplierById = supplierApi.byId.useSuspenseQuery({
-    variables: supplierId
+  const materialById = materialApi.byId.useSuspenseQuery({
+    variables: materialId
   });
 
-  const updateSupplier = supplierApi.update.useMutation({
+  const updateMaterial = materialApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa nhà cung cấp thành công');
       setOpen(false);
       history.back();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: supplierApi.list.getKey(search)
+          queryKey: materialApi.list.getKey(search)
         })
       ]);
     }
@@ -69,13 +69,13 @@ const Component = () => {
         <Form
           schema={schema}
           onSubmit={values =>
-            updateSupplier.mutate({
-              id: supplierId,
+            updateMaterial.mutate({
+              id: materialId,
               ...values
             })
           }
-          defaultValues={supplierById.data}
-          loading={updateSupplier.isPending}
+          defaultValues={materialById.data}
+          loading={updateMaterial.isPending}
           className={'mt-4 flex flex-col gap-3'}
         >
           <TextField
@@ -121,6 +121,6 @@ export const Route = createFileRoute(
   '/_authenticated/general/materials/$materialId/edit'
 )({
   component: Component,
-  loader: ({ context: { queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(supplierApi.byId.getOptions(supplierId))
+  loader: ({ context: { queryClient }, params: { materialId } }) =>
+    queryClient?.ensureQueryData(materialApi.byId.getOptions(materialId))
 });
