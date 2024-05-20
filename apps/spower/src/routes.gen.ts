@@ -27,10 +27,6 @@ import { Route as AuthenticatedGeneralMaterialsImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
-import { Route as AuthenticatedGeneralSuppliersIndexImport } from './routes/_authenticated/general/suppliers/index'
-import { Route as AuthenticatedGeneralMaterialsIndexImport } from './routes/_authenticated/general/materials/index'
-import { Route as AuthenticatedGeneralEmployeesIndexImport } from './routes/_authenticated/general/employees/index'
-import { Route as AuthenticatedGeneralCustomersIndexImport } from './routes/_authenticated/general/customers/index'
 import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
 import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
 import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
@@ -136,30 +132,6 @@ const AuthenticatedProjectProjectIdIndexRoute =
   AuthenticatedProjectProjectIdIndexImport.update({
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
-  } as any)
-
-const AuthenticatedGeneralSuppliersIndexRoute =
-  AuthenticatedGeneralSuppliersIndexImport.update({
-    path: '/',
-    getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
-  } as any)
-
-const AuthenticatedGeneralMaterialsIndexRoute =
-  AuthenticatedGeneralMaterialsIndexImport.update({
-    path: '/',
-    getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
-  } as any)
-
-const AuthenticatedGeneralEmployeesIndexRoute =
-  AuthenticatedGeneralEmployeesIndexImport.update({
-    path: '/',
-    getParentRoute: () => AuthenticatedGeneralEmployeesRoute,
-  } as any)
-
-const AuthenticatedGeneralCustomersIndexRoute =
-  AuthenticatedGeneralCustomersIndexImport.update({
-    path: '/',
-    getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdSettingsRoute =
@@ -362,22 +334,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdSettingsImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
-    '/_authenticated/general/customers/': {
-      preLoaderRoute: typeof AuthenticatedGeneralCustomersIndexImport
-      parentRoute: typeof AuthenticatedGeneralCustomersImport
-    }
-    '/_authenticated/general/employees/': {
-      preLoaderRoute: typeof AuthenticatedGeneralEmployeesIndexImport
-      parentRoute: typeof AuthenticatedGeneralEmployeesImport
-    }
-    '/_authenticated/general/materials/': {
-      preLoaderRoute: typeof AuthenticatedGeneralMaterialsIndexImport
-      parentRoute: typeof AuthenticatedGeneralMaterialsImport
-    }
-    '/_authenticated/general/suppliers/': {
-      preLoaderRoute: typeof AuthenticatedGeneralSuppliersIndexImport
-      parentRoute: typeof AuthenticatedGeneralSuppliersImport
-    }
     '/_authenticated/project/$projectId/': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
@@ -437,22 +393,18 @@ export const routeTree = rootRoute.addChildren([
     AuthenticatedGeneralRoute.addChildren([
       AuthenticatedGeneralCustomersRoute.addChildren([
         AuthenticatedGeneralCustomersNewRoute,
-        AuthenticatedGeneralCustomersIndexRoute,
         AuthenticatedGeneralCustomersCustomerIdEditRoute,
       ]),
       AuthenticatedGeneralEmployeesRoute.addChildren([
         AuthenticatedGeneralEmployeesNewRoute,
-        AuthenticatedGeneralEmployeesIndexRoute,
         AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
       ]),
       AuthenticatedGeneralMaterialsRoute.addChildren([
         AuthenticatedGeneralMaterialsNewRoute,
-        AuthenticatedGeneralMaterialsIndexRoute,
         AuthenticatedGeneralMaterialsMaterialIdEditRoute,
       ]),
       AuthenticatedGeneralSuppliersRoute.addChildren([
         AuthenticatedGeneralSuppliersNewRoute,
-        AuthenticatedGeneralSuppliersIndexRoute,
         AuthenticatedGeneralSuppliersSupplierIdEditRoute,
       ]),
       AuthenticatedGeneralIndexRoute,

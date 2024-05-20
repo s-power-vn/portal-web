@@ -20,6 +20,7 @@ type ModalType = Partial<DialogProps> & {
   children: ReactNode;
   preventOutsideClick?: boolean;
   description?: string;
+  className?: string;
 };
 
 const modals = signal<ModalType[]>([]);
@@ -28,6 +29,7 @@ export const Modal = (props: Omit<ModalType, 'id'>) => {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogContent
+        className={props.className}
         onPointerDownOutside={
           props.preventOutsideClick ? e => e.preventDefault() : undefined
         }
