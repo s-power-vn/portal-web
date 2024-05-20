@@ -1,7 +1,11 @@
-import { GearIcon, HomeIcon } from '@radix-ui/react-icons';
+import { GearIcon } from '@radix-ui/react-icons';
 import {
+  AnvilIcon,
+  AreaChartIcon,
+  BellDotIcon,
   FactoryIcon,
   HandshakeIcon,
+  HexagonIcon,
   PackagePlusIcon,
   SquareKanbanIcon,
   Users2Icon
@@ -71,11 +75,15 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           <SidebarHeader />
           <SidebarItem
             to={'/home'}
-            icon={<HomeIcon width={22} height={22} />}
+            icon={<AreaChartIcon width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/notification'}
+            icon={<BellDotIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarGroup
             to={'/general'}
-            icon={<GearIcon width={22} height={22} />}
+            icon={<HexagonIcon width={22} height={22} />}
           >
             <SidebarItem
               to={'/general/employees'}
@@ -89,10 +97,18 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
               to={'/general/suppliers'}
               icon={<FactoryIcon />}
             ></SidebarItem>
+            <SidebarItem
+              to={'/general/materials'}
+              icon={<AnvilIcon />}
+            ></SidebarItem>
           </SidebarGroup>
           <SidebarItem
             to={'/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/settings'}
+            icon={<GearIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
         <div className={'h-full grow overflow-hidden'}>{children}</div>

@@ -7,3 +7,4 @@ export * from './project';
 export * from './employee';
 export * from './request';
 export * from './supplier';
+export * from './material';

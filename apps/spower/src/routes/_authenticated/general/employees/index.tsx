@@ -22,6 +22,7 @@ import {
 } from '@storeo/theme';
 
 import { EmployeesSearchSchema, UserData, employeeApi } from '../../../../api';
+import { PageHeader } from '../../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
@@ -143,6 +144,7 @@ const Component = () => {
   return (
     <>
       <Outlet />
+      <PageHeader title={'Quản lý nhân viên'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <Button
@@ -170,21 +172,21 @@ const Component = () => {
             <SheetIcon />
             Nhập từ Excel
           </Button>
+          <DebouncedInput
+            value={search.filter}
+            className={'h-9 w-56'}
+            placeholder={'Tìm kiếm...'}
+            onChange={value =>
+              navigate({
+                to: './',
+                search: {
+                  ...search,
+                  filter: value ?? ''
+                }
+              })
+            }
+          />
         </div>
-        <DebouncedInput
-          value={search.filter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                filter: value ?? ''
-              }
-            })
-          }
-        />
         <CommonTable
           data={listEmployees.data?.items ?? []}
           columns={columns}

@@ -8,20 +8,20 @@ import {
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
-import { SupplierResponse } from '@storeo/core';
+import { MaterialResponse } from '@storeo/core';
 import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
-import { SuppliersSearchSchema, supplierApi } from '../../../../api';
+import { MaterialsSearchSchema, materialApi } from '../../../../api';
 import { PageHeader } from '../../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const listSuppliers = supplierApi.list.useSuspenseQuery({
+  const listMaterials = materialApi.list.useSuspenseQuery({
     variables: search
   });
 
-  const columnHelper = createColumnHelper<SupplierResponse>();
+  const columnHelper = createColumnHelper<MaterialResponse>();
 
   const columns = [
     columnHelper.display({
@@ -33,24 +33,19 @@ const Component = () => {
       ),
       header: () => '#'
     }),
+    columnHelper.accessor('code', {
+      cell: info => info.getValue(),
+      header: () => 'Mã vật tư',
+      footer: info => info.column.id
+    }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
-      header: () => 'Tên nhà cung cấp',
+      header: () => 'Tên vật liệu',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('phone', {
+    columnHelper.accessor('unit', {
       cell: info => info.getValue(),
-      header: () => 'Số điện thoại',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('email', {
-      cell: info => info.getValue(),
-      header: () => 'Email',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('address', {
-      cell: info => info.getValue(),
-      header: () => 'Địa chỉ',
+      header: () => 'Đơn vị',
       footer: info => info.column.id
     }),
     columnHelper.accessor('note', {
@@ -67,9 +62,9 @@ const Component = () => {
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
-                  to: './$supplierId/edit',
+                  to: './$materialId/edit',
                   params: {
-                    supplierId: row.original.id
+                    materialId: row.original.id
                   },
                   search
                 })
@@ -90,7 +85,7 @@ const Component = () => {
   return (
     <>
       <Outlet />
-      <PageHeader title={'Quản lý nhà cung cấp'} />
+      <PageHeader title={'Quản lý danh mục vật tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <Button
@@ -103,7 +98,7 @@ const Component = () => {
             }
           >
             <PlusIcon />
-            Thêm nhà cung cấp
+            Thêm vật tư
           </Button>
           <Button
             variant={'outline'}
@@ -134,17 +129,17 @@ const Component = () => {
           />
         </div>
         <CommonTable
-          data={listSuppliers.data?.items ?? []}
+          data={listMaterials.data?.items ?? []}
           columns={columns}
-          rowCount={listSuppliers.data?.totalItems}
-          pageCount={listSuppliers.data?.totalPages}
+          rowCount={listMaterials.data?.totalItems}
+          pageCount={listMaterials.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           onRowClick={row =>
             navigate({
-              to: './$supplierId/edit',
+              to: './$materialId/edit',
               params: {
-                supplierId: row.original.id
+                materialId: row.original.id
               },
               search
             })
@@ -180,13 +175,13 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/suppliers/')({
+export const Route = createFileRoute('/_authenticated/general/materials/')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SuppliersSearchSchema.validateSync(input),
+    MaterialsSearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(supplierApi.list.getOptions(deps.search))
+    queryClient?.ensureQueryData(materialApi.list.getOptions(deps.search))
 });

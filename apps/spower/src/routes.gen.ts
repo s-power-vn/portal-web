@@ -14,29 +14,35 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProjectImport } from './routes/_authenticated/project'
+import { Route as AuthenticatedNotificationImport } from './routes/_authenticated/notification'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
 import { Route as AuthenticatedProjectIndexImport } from './routes/_authenticated/project/index'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
 import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
 import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenticated/general/suppliers'
+import { Route as AuthenticatedGeneralMaterialsImport } from './routes/_authenticated/general/materials'
 import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenticated/general/employees'
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
 import { Route as AuthenticatedGeneralSuppliersIndexImport } from './routes/_authenticated/general/suppliers/index'
+import { Route as AuthenticatedGeneralMaterialsIndexImport } from './routes/_authenticated/general/materials/index'
 import { Route as AuthenticatedGeneralEmployeesIndexImport } from './routes/_authenticated/general/employees/index'
 import { Route as AuthenticatedGeneralCustomersIndexImport } from './routes/_authenticated/general/customers/index'
 import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
 import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
 import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
+import { Route as AuthenticatedGeneralMaterialsNewImport } from './routes/_authenticated/general/materials/new'
 import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authenticated/general/employees/new'
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
 import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
 import { Route as AuthenticatedProjectProjectIdIssuesMeImport } from './routes/_authenticated/project/$projectId/issues/me'
 import { Route as AuthenticatedProjectProjectIdIssuesAllImport } from './routes/_authenticated/project/$projectId/issues/all'
 import { Route as AuthenticatedGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/general/suppliers/$supplierId/edit'
+import { Route as AuthenticatedGeneralMaterialsMaterialIdEditImport } from './routes/_authenticated/general/materials/$materialId/edit'
 import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/general/employees/$employeeId/edit'
 import { Route as AuthenticatedGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/general/customers/$customerId/edit'
 import { Route as AuthenticatedProjectProjectIdIssuesMeIndexImport } from './routes/_authenticated/project/$projectId/issues/me/index'
@@ -61,8 +67,18 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
   path: '/project',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedNotificationRoute = AuthenticatedNotificationImport.update({
+  path: '/notification',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -98,6 +114,12 @@ const AuthenticatedGeneralSuppliersRoute =
     getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
+const AuthenticatedGeneralMaterialsRoute =
+  AuthenticatedGeneralMaterialsImport.update({
+    path: '/materials',
+    getParentRoute: () => AuthenticatedGeneralRoute,
+  } as any)
+
 const AuthenticatedGeneralEmployeesRoute =
   AuthenticatedGeneralEmployeesImport.update({
     path: '/employees',
@@ -120,6 +142,12 @@ const AuthenticatedGeneralSuppliersIndexRoute =
   AuthenticatedGeneralSuppliersIndexImport.update({
     path: '/',
     getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
+  } as any)
+
+const AuthenticatedGeneralMaterialsIndexRoute =
+  AuthenticatedGeneralMaterialsIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesIndexRoute =
@@ -158,6 +186,12 @@ const AuthenticatedGeneralSuppliersNewRoute =
     getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
   } as any)
 
+const AuthenticatedGeneralMaterialsNewRoute =
+  AuthenticatedGeneralMaterialsNewImport.update({
+    path: '/new',
+    getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
+  } as any)
+
 const AuthenticatedGeneralEmployeesNewRoute =
   AuthenticatedGeneralEmployeesNewImport.update({
     path: '/new',
@@ -192,6 +226,12 @@ const AuthenticatedGeneralSuppliersSupplierIdEditRoute =
   AuthenticatedGeneralSuppliersSupplierIdEditImport.update({
     path: '/$supplierId/edit',
     getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
+  } as any)
+
+const AuthenticatedGeneralMaterialsMaterialIdEditRoute =
+  AuthenticatedGeneralMaterialsMaterialIdEditImport.update({
+    path: '/$materialId/edit',
+    getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesEmployeeIdEditRoute =
@@ -254,8 +294,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/notification': {
+      preLoaderRoute: typeof AuthenticatedNotificationImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/project': {
       preLoaderRoute: typeof AuthenticatedProjectImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/settings': {
+      preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/customers': {
@@ -264,6 +312,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/general/employees': {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesImport
+      parentRoute: typeof AuthenticatedGeneralImport
+    }
+    '/_authenticated/general/materials': {
+      preLoaderRoute: typeof AuthenticatedGeneralMaterialsImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/suppliers': {
@@ -290,6 +342,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesNewImport
       parentRoute: typeof AuthenticatedGeneralEmployeesImport
     }
+    '/_authenticated/general/materials/new': {
+      preLoaderRoute: typeof AuthenticatedGeneralMaterialsNewImport
+      parentRoute: typeof AuthenticatedGeneralMaterialsImport
+    }
     '/_authenticated/general/suppliers/new': {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersNewImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
@@ -314,6 +370,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesIndexImport
       parentRoute: typeof AuthenticatedGeneralEmployeesImport
     }
+    '/_authenticated/general/materials/': {
+      preLoaderRoute: typeof AuthenticatedGeneralMaterialsIndexImport
+      parentRoute: typeof AuthenticatedGeneralMaterialsImport
+    }
     '/_authenticated/general/suppliers/': {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersIndexImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
@@ -329,6 +389,10 @@ declare module '@tanstack/react-router' {
     '/_authenticated/general/employees/$employeeId/edit': {
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesEmployeeIdEditImport
       parentRoute: typeof AuthenticatedGeneralEmployeesImport
+    }
+    '/_authenticated/general/materials/$materialId/edit': {
+      preLoaderRoute: typeof AuthenticatedGeneralMaterialsMaterialIdEditImport
+      parentRoute: typeof AuthenticatedGeneralMaterialsImport
     }
     '/_authenticated/general/suppliers/$supplierId/edit': {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersSupplierIdEditImport
@@ -381,6 +445,11 @@ export const routeTree = rootRoute.addChildren([
         AuthenticatedGeneralEmployeesIndexRoute,
         AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
       ]),
+      AuthenticatedGeneralMaterialsRoute.addChildren([
+        AuthenticatedGeneralMaterialsNewRoute,
+        AuthenticatedGeneralMaterialsIndexRoute,
+        AuthenticatedGeneralMaterialsMaterialIdEditRoute,
+      ]),
       AuthenticatedGeneralSuppliersRoute.addChildren([
         AuthenticatedGeneralSuppliersNewRoute,
         AuthenticatedGeneralSuppliersIndexRoute,
@@ -389,6 +458,7 @@ export const routeTree = rootRoute.addChildren([
       AuthenticatedGeneralIndexRoute,
     ]),
     AuthenticatedHomeRoute,
+    AuthenticatedNotificationRoute,
     AuthenticatedProjectRoute.addChildren([
       AuthenticatedProjectProjectIdRoute.addChildren([
         AuthenticatedProjectProjectIdIssuesRoute.addChildren([
@@ -408,6 +478,7 @@ export const routeTree = rootRoute.addChildren([
       ]),
       AuthenticatedProjectIndexRoute,
     ]),
+    AuthenticatedSettingsRoute,
   ]),
   LoginRoute,
 ])

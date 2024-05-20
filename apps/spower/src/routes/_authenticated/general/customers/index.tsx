@@ -12,6 +12,7 @@ import { CustomerResponse } from '@storeo/core';
 import { Button, CommonTable, DebouncedInput } from '@storeo/theme';
 
 import { CustomersSearchSchema, customerApi } from '../../../../api';
+import { PageHeader } from '../../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
@@ -90,6 +91,7 @@ const Component = () => {
   return (
     <>
       <Outlet />
+      <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <Button
@@ -117,21 +119,21 @@ const Component = () => {
             <SheetIcon />
             Nhập từ Excel
           </Button>
+          <DebouncedInput
+            value={search.filter}
+            className={'h-9 w-56'}
+            placeholder={'Tìm kiếm...'}
+            onChange={value =>
+              navigate({
+                to: './',
+                search: {
+                  ...search,
+                  filter: value ?? ''
+                }
+              })
+            }
+          />
         </div>
-        <DebouncedInput
-          value={search.filter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                filter: value ?? ''
-              }
-            })
-          }
-        />
         <CommonTable
           data={listCustomers.data?.items ?? []}
           columns={columns}
