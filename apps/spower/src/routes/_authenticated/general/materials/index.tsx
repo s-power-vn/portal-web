@@ -1,4 +1,5 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
   SearchSchemaInput,
@@ -9,12 +10,19 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, SheetIcon } from 'lucide-react';
 
 import { MaterialResponse } from '@storeo/core';
-import { CommonTable, DebouncedInput, SubmitButton } from '@storeo/theme';
+import {
+  CommonTable,
+  DebouncedInput,
+  SubmitButton,
+  success,
+  useConfirm
+} from '@storeo/theme';
 
 import { MaterialsSearchSchema, materialApi } from '../../../../api';
 import { PageHeader } from '../../../../components';
 
 const Component = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
   const listMaterials = materialApi.list.useSuspenseQuery({
@@ -22,6 +30,19 @@ const Component = () => {
   });
 
   const columnHelper = createColumnHelper<MaterialResponse>();
+
+  const deleteMaterial = materialApi.delete.useMutation({
+    onSuccess: async () => {
+      success('Xóa vật tư thành công');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: materialApi.list.getKey(search)
+        })
+      ]);
+    }
+  });
+
+  const { confirm } = useConfirm();
 
   const columns = [
     columnHelper.display({
@@ -72,7 +93,15 @@ const Component = () => {
             >
               <EditIcon className={'h-3 w-3'} />
             </SubmitButton>
-            <SubmitButton variant={'destructive'} className={'h-6 px-3'}>
+            <SubmitButton
+              variant={'destructive'}
+              className={'h-6 px-3'}
+              onClick={() => {
+                confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
+                  deleteMaterial.mutate(row.original.id);
+                });
+              }}
+            >
               <Cross2Icon className={'h-3 w-3'} />
             </SubmitButton>
           </div>
