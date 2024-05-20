@@ -57,9 +57,9 @@ const Component = () => {
     >
       <DialogContent className="w-1/4">
         <DialogHeader>
-          <DialogTitle>Thêm nhà cung cấp</DialogTitle>
+          <DialogTitle>Thêm vật liệu</DialogTitle>
           <DialogDescription className={'italic'}>
-            Tạo nhà cung cấp mới.
+            Thêm danh mục vật liệu mới
           </DialogDescription>
         </DialogHeader>
         <Form
