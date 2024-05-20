@@ -34,6 +34,7 @@ import {
   DetailInfoResponse,
   Show,
   cn,
+  downloadTemplate,
   formatCurrency,
   formatNumber
 } from '@storeo/core';
@@ -489,6 +490,10 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     ) : null;
   }, [openDocumentDetailEdit, selectedRow]);
 
+  const handleDownloadTemplate = useCallback(() => {
+    return downloadTemplate('detail', 'application/vnd.ms-excel');
+  }, []);
+
   return (
     <>
       <NewDetailDialog
@@ -515,6 +520,14 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           >
             <SheetIcon className={'h-5 w-5'} />
             Nhập từ Excel
+          </Button>
+          <Button
+            variant={'outline'}
+            className={'flex gap-1'}
+            onClick={handleDownloadTemplate}
+          >
+            <DownloadIcon className={'h-5 w-5'} />
+            Tải file mẫu
           </Button>
           <Button
             className={'flex gap-1'}
@@ -561,10 +574,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             }
           >
             <Cross2Icon className={'h-5 w-5'} />
-          </Button>
-          <Button variant={'outline'} className={'flex gap-1'}>
-            <DownloadIcon className={'h-5 w-5'} />
-            Xuất Excel
           </Button>
         </div>
         <div

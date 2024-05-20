@@ -21,6 +21,7 @@ export enum Collections {
 	RequestDetailSupplier = "requestDetailSupplier",
 	RequestDetailSupplierInfo = "requestDetailSupplierInfo",
 	Supplier = "supplier",
+	Template = "template",
 	User = "user",
 }
 
@@ -90,9 +91,12 @@ export type DetailRecord = {
 export enum DetailImportStatusOptions {
 	"Working" = "Working",
 	"Done" = "Done",
+	"Error" = "Error",
 }
 export type DetailImportRecord = {
+	error?: string
 	file?: string
+	percent?: number
 	project?: RecordIdString
 	status?: DetailImportStatusOptions
 }
@@ -183,6 +187,10 @@ export type SupplierRecord = {
 	phone?: string
 }
 
+export type TemplateRecord = {
+	detail?: string
+}
+
 export type UserRecord = {
 	avatar?: string
 	department: RecordIdString
@@ -208,6 +216,7 @@ export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetai
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierInfoResponse<Texpand = unknown> = Required<RequestDetailSupplierInfoRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
+export type TemplateResponse<Texpand = unknown> = Required<TemplateRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -228,6 +237,7 @@ export type CollectionRecords = {
 	requestDetailSupplier: RequestDetailSupplierRecord
 	requestDetailSupplierInfo: RequestDetailSupplierInfoRecord
 	supplier: SupplierRecord
+	template: TemplateRecord
 	user: UserRecord
 }
 
@@ -247,6 +257,7 @@ export type CollectionResponses = {
 	requestDetailSupplier: RequestDetailSupplierResponse
 	requestDetailSupplierInfo: RequestDetailSupplierInfoResponse
 	supplier: SupplierResponse
+	template: TemplateResponse
 	user: UserResponse
 }
 
@@ -269,5 +280,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'requestDetailSupplier'): RecordService<RequestDetailSupplierResponse>
 	collection(idOrName: 'requestDetailSupplierInfo'): RecordService<RequestDetailSupplierInfoResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
+	collection(idOrName: 'template'): RecordService<TemplateResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>
 }

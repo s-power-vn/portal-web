@@ -5,6 +5,9 @@ import { DateTime } from 'luxon';
 import { withExtendedShadows } from 'tailwind-extended-shadows-merge';
 import { extendTailwindMerge } from 'tailwind-merge';
 
+import { client } from './client';
+import { Collections, TemplateRecord } from './generate/pb';
+
 export const twMerge = extendTailwindMerge(withExtendedShadows);
 
 export function cn(...inputs: ClassValue[]) {
@@ -209,4 +212,32 @@ export function timeSince(timeStamp: Date | number): string | undefined {
   }
 
   return undefined;
+}
+
+export async function downloadTemplate(
+  fileName: keyof TemplateRecord,
+  contentType?: string
+) {
+  const record = await client
+    .collection(Collections.Template)
+    .getFirstListItem('');
+  const url = client.files.getUrl(record, record[fileName]);
+  fetch(url, {
+    method: 'GET',
+    headers: contentType
+      ? {
+          'Content-Type': contentType
+        }
+      : undefined
+  })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `template.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    });
 }
