@@ -1,27 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { object, string } from 'yup';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import {
-  Button,
-  DialogFooter,
-  Form,
-  Modal,
-  TextField,
-  success
-} from '@storeo/theme';
+import { Modal } from '@storeo/theme';
 
 import { customerApi } from '../../../../../api';
-
-const schema = object().shape({
-  name: string().required('Hãy nhập tên chủ đầu tư'),
-  email: string().email('Sai định dạng email'),
-  phone: string(),
-  address: string(),
-  note: string()
-});
+import { EditCustomerForm } from '../../../../../components';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -30,25 +15,18 @@ const Component = () => {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const customerById = customerApi.byId.useSuspenseQuery({
-    variables: customerId
-  });
-
-  const updateCustomer = customerApi.update.useMutation({
-    onSuccess: async () => {
-      success('Chỉnh sửa chủ đầu tư thành công');
-      setOpen(false);
-      history.back();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: customerApi.byId.getKey(customerId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: customerApi.list.getKey(search)
-        })
-      ]);
-    }
-  });
+  const onSuccessHandler = useCallback(async () => {
+    setOpen(false);
+    history.back();
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: customerApi.byId.getKey(customerId)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: customerApi.list.getKey(search)
+      })
+    ]);
+  }, [customerId, history, queryClient, search]);
 
   return (
     <Modal
@@ -60,52 +38,7 @@ const Component = () => {
         history.back();
       }}
     >
-      <Form
-        schema={schema}
-        onSubmit={values =>
-          updateCustomer.mutate({
-            id: customerId,
-            ...values
-          })
-        }
-        defaultValues={customerById.data}
-        loading={updateCustomer.isPending}
-        className={'mt-4 flex flex-col gap-3'}
-      >
-        <TextField
-          schema={schema}
-          name={'name'}
-          title={'Tên chủ đầu tư'}
-          options={{}}
-        />
-        <TextField
-          schema={schema}
-          name={'email'}
-          title={'Email'}
-          options={{}}
-        />
-        <TextField
-          schema={schema}
-          name={'phone'}
-          title={'Số điện thoại'}
-          options={{}}
-        />
-        <TextField
-          schema={schema}
-          name={'address'}
-          title={'Địa chỉ'}
-          options={{}}
-        />
-        <TextField
-          schema={schema}
-          name={'note'}
-          title={'Ghi chú'}
-          options={{}}
-        />
-        <div className={'mt-6 flex justify-end'}>
-          <Button type="submit">Chấp nhận</Button>
-        </div>
-      </Form>
+      <EditCustomerForm customerId={customerId} onSuccess={onSuccessHandler} />
     </Modal>
   );
 };

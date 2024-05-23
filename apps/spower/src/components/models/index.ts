@@ -2,6 +2,8 @@ export * from './department/department-dropdown';
 export * from './department/department-dropdown-field';
 export * from './customer/customer-dropdown';
 export * from './customer/customer-dropdown-field';
+export * from './customer/new-customer-form';
+export * from './customer/edit-customer-form';
 export * from './detail/edit-detail-dialog';
 export * from './detail/new-detail-dialog';
 export * from './project/edit-project-dialog';
