@@ -7,13 +7,8 @@ import { useState } from 'react';
 import {
   Button,
   CheckField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Form,
+  Modal,
   TextField,
   success
 } from '@storeo/theme';
@@ -56,72 +51,66 @@ const Component = () => {
   });
 
   return (
-    <Dialog
+    <Modal
+      title={'Chỉnh sửa nhân viên'}
+      preventOutsideClick={true}
       open={open}
-      onOpenChange={open => {
+      setOpen={open => {
         setOpen(open);
         history.back();
       }}
     >
-      <DialogContent className="w-1/4">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa nhân viên</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Chỉnh sửa thông tin nhân viên đang được lựa chọn.
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+      <Form
+        schema={schema}
+        onSubmit={values =>
+          updateEmployee.mutate({
+            ...values,
+            id: employeeId,
+            role: values.role ? 1 : 0
+          })
+        }
+        defaultValues={{
+          ...employee.data,
+          role: employee.data.role === 1
+        }}
+        loading={updateEmployee.isPending}
+        className={'mt-4 flex flex-col gap-3'}
+      >
+        <TextField
           schema={schema}
-          onSubmit={values =>
-            updateEmployee.mutate({
-              ...values,
-              id: employeeId,
-              role: values.role ? 1 : 0
-            })
-          }
-          defaultValues={{
-            ...employee.data,
-            role: employee.data.role === 1
+          name={'name'}
+          title={'Họ tên'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'email'}
+          title={'Email'}
+          options={{
+            disabled: true
           }}
-          loading={updateEmployee.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Họ tên'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'email'}
-            title={'Email'}
-            options={{
-              disabled: true
-            }}
-          />
-          <DepartmentDropdownField
-            schema={schema}
-            name={'department'}
-            title={'Phòng ban'}
-            options={{
-              placeholder: 'Hãy chọn phòng ban'
-            }}
-          />
-          <TextField schema={schema} name={'title'} title={'Chức danh'} />
-          <CheckField
-            schema={schema}
-            name={'role'}
-            options={{
-              label: 'Quyền duyệt'
-            }}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
-    </Dialog>
+        />
+        <DepartmentDropdownField
+          schema={schema}
+          name={'department'}
+          title={'Phòng ban'}
+          options={{
+            placeholder: 'Hãy chọn phòng ban'
+          }}
+        />
+        <TextField schema={schema} name={'title'} title={'Chức danh'} />
+        <CheckField
+          schema={schema}
+          name={'role'}
+          options={{
+            label: 'Quyền duyệt'
+          }}
+        />
+        <div className={'mt-6 flex justify-end'}>
+          <Button type="submit">Chấp nhận</Button>
+        </div>
+      </Form>
+    </Modal>
   );
 };
 

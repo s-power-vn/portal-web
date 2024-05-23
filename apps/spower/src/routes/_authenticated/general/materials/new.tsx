@@ -6,13 +6,9 @@ import { useState } from 'react';
 
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Form,
+  Modal,
   TextField,
   success
 } from '@storeo/theme';
@@ -48,62 +44,56 @@ const Component = () => {
   });
 
   return (
-    <Dialog
+    <Modal
+      title={'Thêm vật tư'}
+      preventOutsideClick={true}
       open={open}
-      onOpenChange={open => {
+      setOpen={open => {
         setOpen(open);
         history.back();
       }}
     >
-      <DialogContent className="w-1/4">
-        <DialogHeader>
-          <DialogTitle>Thêm vật tư</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Thêm danh mục vật tư mới
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+      <Form
+        schema={schema}
+        onSubmit={values => createMaterial.mutate(values)}
+        defaultValues={{
+          code: '',
+          name: '',
+          unit: '',
+          note: ''
+        }}
+        loading={createMaterial.isPending}
+        className={'mt-4 flex flex-col gap-3'}
+      >
+        <TextField
           schema={schema}
-          onSubmit={values => createMaterial.mutate(values)}
-          defaultValues={{
-            code: '',
-            name: '',
-            unit: '',
-            note: ''
-          }}
-          loading={createMaterial.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'code'}
-            title={'Mã vật tư'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Tên vật tư'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'unit'}
-            title={'Đơn vị'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'note'}
-            title={'Ghi chú'}
-            options={{}}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
-    </Dialog>
+          name={'code'}
+          title={'Mã vật tư'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'name'}
+          title={'Tên vật tư'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'unit'}
+          title={'Đơn vị'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'note'}
+          title={'Ghi chú'}
+          options={{}}
+        />
+        <DialogFooter className={'mt-4'}>
+          <Button type="submit">Chấp nhận</Button>
+        </DialogFooter>
+      </Form>
+    </Modal>
   );
 };
 

@@ -102,9 +102,9 @@ const Component = () => {
           title={'Ghi chú'}
           options={{}}
         />
-        <DialogFooter className={'mt-4'}>
+        <div className={'mt-6 flex justify-end'}>
           <Button type="submit">Chấp nhận</Button>
-        </DialogFooter>
+        </div>
       </Form>
     </Modal>
   );

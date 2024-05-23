@@ -4,26 +4,16 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Form,
-  TextField,
-  success
-} from '@storeo/theme';
+import { Button, Form, Modal, TextField, success } from '@storeo/theme';
 
 import { materialApi } from '../../../../../api';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập tên chủ đầu tư'),
-  email: string().email('Sai định dạng email'),
-  phone: string(),
-  address: string(),
+  code: string()
+    .required('Hãy nhập mã vật tư')
+    .max(10, 'Mã vật tư không vượt quá 10 ký tự'),
+  name: string().required('Hãy nhập tên vật tư'),
+  unit: string().required('Hãy nhập đơn vị'),
   note: string()
 });
 
@@ -55,68 +45,56 @@ const Component = () => {
   });
 
   return (
-    <Dialog
+    <Modal
+      title={'Chỉnh sửa vật tư'}
+      preventOutsideClick={true}
       open={open}
-      onOpenChange={open => {
+      setOpen={open => {
         setOpen(open);
         history.back();
       }}
     >
-      <DialogContent className="w-1/4">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa nhà cung cấp</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Chỉnh sửa thông tin nhà cung cấp đang được lựa chọn.
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+      <Form
+        schema={schema}
+        onSubmit={values =>
+          updateMaterial.mutate({
+            id: materialId,
+            ...values
+          })
+        }
+        defaultValues={materialById.data}
+        loading={updateMaterial.isPending}
+        className={'mt-4 flex flex-col gap-3'}
+      >
+        <TextField
           schema={schema}
-          onSubmit={values =>
-            updateMaterial.mutate({
-              id: materialId,
-              ...values
-            })
-          }
-          defaultValues={materialById.data}
-          loading={updateMaterial.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Tên nhà cung cấp'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'email'}
-            title={'Email'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'phone'}
-            title={'Số điện thoại'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'address'}
-            title={'Địa chỉ'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'note'}
-            title={'Ghi chú'}
-            options={{}}
-          />
-          <DialogFooter className={'mt-4'}>
-            <Button type="submit">Chấp nhận</Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
-    </Dialog>
+          name={'code'}
+          title={'Mã vật tư'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'name'}
+          title={'Tên vật tư'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'unit'}
+          title={'Đơn vị'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'note'}
+          title={'Ghi chú'}
+          options={{}}
+        />
+        <div className={'mt-6 flex justify-end'}>
+          <Button type="submit">Chấp nhận</Button>
+        </div>
+      </Form>
+    </Modal>
   );
 };
 
