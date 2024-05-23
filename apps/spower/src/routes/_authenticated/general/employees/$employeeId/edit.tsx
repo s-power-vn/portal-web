@@ -46,10 +46,10 @@ const Component = () => {
       history.back();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: employeeApi.list.getKey(search)
+          queryKey: employeeApi.byId.getKey(employeeId)
         }),
         queryClient.invalidateQueries({
-          queryKey: employeeApi.byId.getKey(employeeId)
+          queryKey: employeeApi.list.getKey(search)
         })
       ]);
     }

@@ -46,6 +46,9 @@ const Component = () => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: materialApi.list.getKey(search)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: materialApi.byId.getKey(materialId)
         })
       ]);
     }

@@ -4,17 +4,7 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  Form,
-  TextField,
-  success
-} from '@storeo/theme';
+import { Button, Form, Modal, TextField, success } from '@storeo/theme';
 
 import { customerApi } from '../../../../api';
 
@@ -46,67 +36,63 @@ const Component = () => {
   });
 
   return (
-    <Dialog
+    <Modal
+      title={'Thêm chủ đầu tư'}
+      preventOutsideClick={true}
       open={open}
-      onOpenChange={open => {
+      setOpen={open => {
         setOpen(open);
         history.back();
       }}
     >
-      <DialogContent className="w-1/4">
-        <DialogHeader>
-          <DialogTitle>Thêm chủ đầu tư</DialogTitle>
-          <DialogDescription className={'italic'}>
-            Tạo chủ đầu tư mới.
-          </DialogDescription>
-        </DialogHeader>
-        <Form
+      <Form
+        schema={schema}
+        onSubmit={values => createCustomer.mutate(values)}
+        defaultValues={{
+          name: '',
+          email: '',
+          phone: '',
+          address: '',
+          note: ''
+        }}
+        loading={createCustomer.isPending}
+        className={'mt-4 flex flex-col gap-3'}
+      >
+        <TextField
           schema={schema}
-          onSubmit={values => createCustomer.mutate(values)}
-          defaultValues={{
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            note: ''
-          }}
-          loading={createCustomer.isPending}
-          className={'mt-4 flex flex-col gap-3'}
-        >
-          <TextField
-            schema={schema}
-            name={'name'}
-            title={'Tên chủ đầu tư'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'email'}
-            title={'Email'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'phone'}
-            title={'Số điện thoại'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'address'}
-            title={'Địa chỉ'}
-            options={{}}
-          />
-          <TextField
-            schema={schema}
-            name={'note'}
-            title={'Ghi chú'}
-            options={{}}
-          />
+          name={'name'}
+          title={'Tên chủ đầu tư'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'email'}
+          title={'Email'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'phone'}
+          title={'Số điện thoại'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'address'}
+          title={'Địa chỉ'}
+          options={{}}
+        />
+        <TextField
+          schema={schema}
+          name={'note'}
+          title={'Ghi chú'}
+          options={{}}
+        />
+        <div className={'mt-6 flex justify-end'}>
           <Button type="submit">Chấp nhận</Button>
-        </Form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </Form>
+    </Modal>
   );
 };
 
