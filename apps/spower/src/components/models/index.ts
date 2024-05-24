@@ -24,3 +24,5 @@ export * from './issue/issue-title';
 export * from './issue/new-issue-button';
 export * from './supplier/new-supplier-form';
 export * from './supplier/edit-supplier-form';
+export * from './material/new-material-form';
+export * from './material/edit-material-form';
