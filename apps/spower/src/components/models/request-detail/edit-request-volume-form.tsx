@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import React, { FC } from 'react';
 
 import {
@@ -8,7 +10,11 @@ import {
   success
 } from '@storeo/theme';
 
-import { UpdateRequestDetailSchema, requestDetailApi } from '../../../api';
+import {
+  UpdateRequestDetailSchema,
+  requestApi,
+  requestDetailApi
+} from '../../../api';
 
 export type EditRequestVolumeFormProps = {
   requestDetailId: string;
@@ -16,6 +22,7 @@ export type EditRequestVolumeFormProps = {
 };
 
 export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
+  const queryClient = useQueryClient();
   const requestDetail = requestDetailApi.byId.useSuspenseQuery({
     variables: props.requestDetailId
   });
@@ -24,6 +31,11 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
     onSuccess: async () => {
       success('Chỉnh sửa khối lượng thành công');
       props.onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestApi.byId.getKey(requestDetail.data.request)
+        })
+      ]);
     }
   });
 
