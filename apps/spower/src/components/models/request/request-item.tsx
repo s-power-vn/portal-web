@@ -21,7 +21,7 @@ import {
   StoreIcon
 } from 'lucide-react';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   RequestStatusOptions,
@@ -39,17 +39,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  closeModal,
+  showModal,
   useConfirm
 } from '@storeo/theme';
 
-import { RequestDetailData, requestApi } from '../../../api';
+import { RequestDetailData, requestApi, requestDetailApi } from '../../../api';
 import {
   TreeData,
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
+import { EditRequestVolumeForm } from '../request-detail/edit-request-volume-form';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
-import { EditRequestDetailDialog } from './edit-request-detail-dialog';
 
 export type RequestItemProps = {
   requestId: string;
@@ -61,7 +63,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const [openRequestDetailEdit, setOpenRequestDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<RequestDetailData>>>();
 
@@ -342,6 +343,35 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
 
   const { confirm } = useConfirm();
 
+  const modalId = useRef<string | undefined>();
+
+  const onSuccessHandler = useCallback(async () => {
+    if (selectedRow) {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestDetailApi.byId.getKey(selectedRow.original.id)
+        })
+      ]);
+    }
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, [queryClient, selectedRow]);
+
+  const handleEditRequestVolume = useCallback(() => {
+    if (selectedRow) {
+      modalId.current = showModal({
+        title: 'Sửa khối lượng',
+        children: (
+          <EditRequestVolumeForm
+            requestDetailId={selectedRow.original.id}
+            onSuccess={onSuccessHandler}
+          />
+        )
+      });
+    }
+  }, [onSuccessHandler, selectedRow]);
+
   return (
     <>
       {table.getSelectedRowModel() &&
@@ -350,13 +380,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           requestDetail={table.getSelectedRowModel().flatRows[0].original}
           open={openListSupplier}
           setOpen={setOpenListSupplier}
-        />
-      ) : null}
-      {selectedRow ? (
-        <EditRequestDetailDialog
-          open={openRequestDetailEdit}
-          setOpen={setOpenRequestDetailEdit}
-          requestDetailId={selectedRow.original.id}
         />
       ) : null}
       <div className={'bg-appWhite flex flex-col gap-3'}>
@@ -387,7 +410,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 className={'text-appWhite'}
                 size="icon"
                 disabled={!selectedRow}
-                onClick={() => setOpenRequestDetailEdit(true)}
+                onClick={handleEditRequestVolume}
               >
                 <EditIcon className={'h-4 w-4'} />
               </Button>

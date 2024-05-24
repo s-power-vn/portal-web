@@ -6,8 +6,6 @@ import {
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
-import { useState } from 'react';
-
 import {
   IssueResponse,
   IssueTypeOptions,
@@ -21,12 +19,10 @@ import { IssuesSearchSchema, issueApi } from '../../../../../../api/issue';
 import {
   EmployeeDisplay,
   NewIssueButton,
-  NewRequestDialog,
   RequestStatus
 } from '../../../../../../components';
 
 const Component = () => {
-  const [openRequestNew, setOpenRequestNew] = useState(false);
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -108,11 +104,6 @@ const Component = () => {
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>
-      <NewRequestDialog
-        projectId={projectId}
-        open={openRequestNew}
-        setOpen={setOpenRequestNew}
-      />
       <div className={'flex items-center justify-between gap-2'}>
         <NewIssueButton projectId={projectId} />
         <DebouncedInput

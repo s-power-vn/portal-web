@@ -5,7 +5,7 @@ import { FC, Suspense } from 'react';
 import { IssueTypeOptions, Match, Switch } from '@storeo/core';
 
 import { issueApi } from '../../../api/issue';
-import { RequestDetail } from '../request/request-detail';
+import { RequestDetail } from '../request-detail/request-detail';
 
 export type IssueDetailProps = {
   issueId: string;

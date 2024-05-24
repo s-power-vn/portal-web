@@ -1,8 +1,9 @@
 import { signal } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
+import { Loader } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 
 import { DialogProps, For } from '@storeo/core';
 
@@ -52,16 +53,26 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     <>
       <For each={modals.value}>
         {dialog => (
-          <Modal
-            {...dialog}
-            preventOutsideClick={true}
-            open={true}
-            setOpen={() => {
-              modals.value = modals.value.filter(d => d.id !== dialog.id);
-            }}
+          <Suspense
+            key={dialog.id}
+            fallback={
+              <div className={`p-2`}>
+                <Loader className={'h-6 w-6 animate-spin'} />
+              </div>
+            }
           >
-            {dialog.children}
-          </Modal>
+            <Modal
+              {...dialog}
+              className={dialog.className}
+              preventOutsideClick={true}
+              open={true}
+              setOpen={() => {
+                modals.value = modals.value.filter(d => d.id !== dialog.id);
+              }}
+            >
+              {dialog.children}
+            </Modal>
+          </Suspense>
         )}
       </For>
       {children}
@@ -72,6 +83,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 type ShowModalParams = {
   title: string;
   description?: string;
+  className?: string;
   children: ReactNode;
 };
 
@@ -85,7 +97,9 @@ export function showModal(modal: ShowModalParams) {
     ...modals.value
   ];
 
-  return () => {
-    modals.value = modals.value.filter(d => d.id !== uid);
-  };
+  return uid;
+}
+
+export function closeModal(id: string) {
+  modals.value = modals.value.filter(d => d.id !== id);
 }

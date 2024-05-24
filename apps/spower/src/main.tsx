@@ -4,7 +4,6 @@ import * as ReactDOM from 'react-dom/client';
 import {
   ConfirmProvider,
   LoadingProvider,
-  ModalProvider,
   Toaster,
   TooltipProvider
 } from '@storeo/theme';
@@ -20,12 +19,10 @@ root.render(
   <StrictMode>
     <LoadingProvider>
       <ConfirmProvider>
-        <ModalProvider>
-          <TooltipProvider>
-            <App />
-            <Toaster />
-          </TooltipProvider>
-        </ModalProvider>
+        <TooltipProvider>
+          <App />
+          <Toaster />
+        </TooltipProvider>
       </ConfirmProvider>
     </LoadingProvider>
   </StrictMode>

@@ -28,8 +28,8 @@ import { requestApi } from '../../../api';
 import { commentApi } from '../../../api/comment';
 import { IssueAssignee } from '../issue/issue-assignee';
 import { IssueTitle } from '../issue/issue-title';
-import { RequestItem } from './request-item';
-import { RequestStatus } from './request-status';
+import { RequestItem } from '../request/request-item';
+import { RequestStatus } from '../request/request-status';
 
 export type RequestDetailProps = {
   issueId: string;

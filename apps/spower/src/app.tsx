@@ -8,6 +8,8 @@ import {
 import { Loader } from 'lucide-react';
 import { parse, stringify } from 'zipson';
 
+import { ModalProvider } from '@storeo/theme';
+
 import { routeTree } from './routes.gen';
 
 export function decodeFromBinary(str: string): string {
@@ -58,7 +60,9 @@ declare module '@tanstack/react-router' {
 export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </QueryClientProvider>
   );
 };
