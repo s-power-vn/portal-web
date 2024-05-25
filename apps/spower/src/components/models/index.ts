@@ -25,3 +25,5 @@ export * from './supplier/new-supplier-form';
 export * from './supplier/edit-supplier-form';
 export * from './material/new-material-form';
 export * from './material/edit-material-form';
+export * from './settings/add-confirmer-form';
+export * from './settings/add-approver-form';

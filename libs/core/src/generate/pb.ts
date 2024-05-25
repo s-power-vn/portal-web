@@ -24,6 +24,7 @@ export enum Collections {
 	RequestDetailInfo = "requestDetailInfo",
 	RequestDetailSupplier = "requestDetailSupplier",
 	RequestDetailSupplierInfo = "requestDetailSupplierInfo",
+	Setting = "setting",
 	Supplier = "supplier",
 	Template = "template",
 	User = "user",
@@ -215,6 +216,15 @@ export type RequestDetailSupplierInfoRecord = {
 	volume?: number
 }
 
+export enum SettingTypeOptions {
+	"Approver" = "Approver",
+	"Confirmer" = "Confirmer",
+}
+export type SettingRecord = {
+	type?: SettingTypeOptions
+	user?: RecordIdString
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -256,6 +266,7 @@ export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRec
 export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierInfoResponse<Texpand = unknown> = Required<RequestDetailSupplierInfoRecord> & BaseSystemFields<Texpand>
+export type SettingResponse<Texpand = unknown> = Required<SettingRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type TemplateResponse<Texpand = unknown> = Required<TemplateRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -281,6 +292,7 @@ export type CollectionRecords = {
 	requestDetailInfo: RequestDetailInfoRecord
 	requestDetailSupplier: RequestDetailSupplierRecord
 	requestDetailSupplierInfo: RequestDetailSupplierInfoRecord
+	setting: SettingRecord
 	supplier: SupplierRecord
 	template: TemplateRecord
 	user: UserRecord
@@ -305,6 +317,7 @@ export type CollectionResponses = {
 	requestDetailInfo: RequestDetailInfoResponse
 	requestDetailSupplier: RequestDetailSupplierResponse
 	requestDetailSupplierInfo: RequestDetailSupplierInfoResponse
+	setting: SettingResponse
 	supplier: SupplierResponse
 	template: TemplateResponse
 	user: UserResponse
@@ -332,6 +345,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
 	collection(idOrName: 'requestDetailSupplier'): RecordService<RequestDetailSupplierResponse>
 	collection(idOrName: 'requestDetailSupplierInfo'): RecordService<RequestDetailSupplierInfoResponse>
+	collection(idOrName: 'setting'): RecordService<SettingResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
 	collection(idOrName: 'template'): RecordService<TemplateResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>
