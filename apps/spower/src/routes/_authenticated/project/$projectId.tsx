@@ -31,13 +31,15 @@ const Component = () => {
       <div
         className={'flex h-[50px] items-center justify-between border-b p-1'}
       >
-        <div className={'flex flex-col'}>
-          <span className={'text-appBlack font-semibold'}>
+        <div className={'flex w-full flex-col'}>
+          <span className={'text-appBlack truncate font-semibold'}>
             {project.data?.bidding}
           </span>
-          <span className={'text-muted-foreground text-sm'}>
-            {project.data?.name} - {project.data?.expand.customer.name}
-          </span>
+          <div className={'flex items-center'}>
+            <span className={'text-muted-foreground truncate text-sm'}>
+              {project.data?.name} - {project.data?.expand.customer.name}
+            </span>
+          </div>
         </div>
         <div className={'p-2'}>
           <Button
