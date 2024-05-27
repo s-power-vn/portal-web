@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { InferType, array, boolean, number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
@@ -16,6 +17,7 @@ import {
 } from '@storeo/core';
 
 import { UserData } from './employee';
+import { SettingData } from './setting';
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
@@ -244,6 +246,100 @@ export const requestApi = router('request', {
           lastAssignee: client.authStore.model?.id
         })
       ]);
+    }
+  }),
+  listConfirmer: router.query({
+    fetcher: (requestId: string) =>
+      client.collection(Collections.RequestConfirm).getFullList({
+        filter: `request = "${requestId}"`
+      })
+  }),
+  checkConfirmer: router.query({
+    fetcher: async (requestId: string) => {
+      const confirmers = await client
+        .collection<SettingData>(Collections.Setting)
+        .getFullList({
+          filter: `type = "Confirmer"`,
+          expand: 'user'
+        });
+
+      if (
+        _.filter(confirmers, it => {
+          return it.expand.user.id === client.authStore.model?.id;
+        }).length > 0
+      ) {
+        try {
+          await client
+            .collection(Collections.RequestConfirm)
+            .getFirstListItem(
+              `request = "${requestId}" && confirmer = "${client.authStore.model?.id}"`
+            );
+          return 2;
+        } catch (e) {
+          return 1;
+        }
+      }
+
+      return 0;
+    }
+  }),
+  checkApprover: router.query({
+    fetcher: () => null
+  }),
+  checkEnableApprove: router.query({
+    fetcher: async (requestId: string) => {
+      const confirmers = await client
+        .collection<SettingData>(Collections.Setting)
+        .getFullList({
+          filter: `type = "Confirmer"`
+        });
+
+      const requestConfirmers = await client
+        .collection(Collections.RequestConfirm)
+        .getFullList({
+          filter: `request = "${requestId}"`
+        });
+
+      return confirmers.length === requestConfirmers.length;
+    }
+  }),
+  sendToApprover: router.mutation({
+    mutationFn: async (requestId: string) => {
+      const approvers = await client
+        .collection<SettingData>(Collections.Setting)
+        .getFullList({
+          filter: `type = "Approver"`,
+          expand: 'user'
+        });
+
+      if (approvers.length > 0) {
+        const request = await client
+          .collection(Collections.Request)
+          .getOne(requestId);
+
+        await client.collection(Collections.Issue).update(request.issue, {
+          assignee: approvers[0].expand.user.id,
+          lastAssignee: client.authStore.model?.id
+        });
+      }
+    }
+  }),
+  confirm: router.mutation({
+    mutationFn: async (requestId: string) => {
+      await client.collection(Collections.RequestConfirm).create({
+        request: requestId,
+        confirmer: client.authStore.model?.id
+      });
+    }
+  }),
+  unConfirm: router.mutation({
+    mutationFn: async (requestId: string) => {
+      const deleteItem = await client
+        .collection(Collections.RequestConfirm)
+        .getFirstListItem(
+          `request = "${requestId}" && confirmer = "${client.authStore.model?.id}"`
+        );
+      await client.collection(Collections.RequestConfirm).delete(deleteItem.id);
     }
   })
 });

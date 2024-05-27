@@ -20,6 +20,7 @@ export enum Collections {
 	PriceRequestDetail = "priceRequestDetail",
 	Project = "project",
 	Request = "request",
+	RequestConfirm = "requestConfirm",
 	RequestDetail = "requestDetail",
 	RequestDetailInfo = "requestDetailInfo",
 	RequestDetailSupplier = "requestDetailSupplier",
@@ -189,6 +190,11 @@ export type RequestRecord = {
 	status?: RequestStatusOptions
 }
 
+export type RequestConfirmRecord = {
+	confirmer?: RecordIdString
+	request?: RecordIdString
+}
+
 export type RequestDetailRecord = {
 	detail?: RecordIdString
 	request: RecordIdString
@@ -262,6 +268,7 @@ export type PriceRequestResponse<Texpand = unknown> = Required<PriceRequestRecor
 export type PriceRequestDetailResponse<Texpand = unknown> = Required<PriceRequestDetailRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
+export type RequestConfirmResponse<Texpand = unknown> = Required<RequestConfirmRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
 export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
@@ -288,6 +295,7 @@ export type CollectionRecords = {
 	priceRequestDetail: PriceRequestDetailRecord
 	project: ProjectRecord
 	request: RequestRecord
+	requestConfirm: RequestConfirmRecord
 	requestDetail: RequestDetailRecord
 	requestDetailInfo: RequestDetailInfoRecord
 	requestDetailSupplier: RequestDetailSupplierRecord
@@ -313,6 +321,7 @@ export type CollectionResponses = {
 	priceRequestDetail: PriceRequestDetailResponse
 	project: ProjectResponse
 	request: RequestResponse
+	requestConfirm: RequestConfirmResponse
 	requestDetail: RequestDetailResponse
 	requestDetailInfo: RequestDetailInfoResponse
 	requestDetailSupplier: RequestDetailSupplierResponse
@@ -341,6 +350,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'priceRequestDetail'): RecordService<PriceRequestDetailResponse>
 	collection(idOrName: 'project'): RecordService<ProjectResponse>
 	collection(idOrName: 'request'): RecordService<RequestResponse>
+	collection(idOrName: 'requestConfirm'): RecordService<RequestConfirmResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>
 	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
 	collection(idOrName: 'requestDetailSupplier'): RecordService<RequestDetailSupplierResponse>
