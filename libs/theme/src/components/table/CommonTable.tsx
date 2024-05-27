@@ -64,7 +64,7 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className={'text-appWhite'}
+                    className={'text-appWhite whitespace-nowrap'}
                     style={
                       table.getRowModel().rows.length
                         ? {
