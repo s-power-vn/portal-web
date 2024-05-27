@@ -29,9 +29,11 @@ const Component = () => {
   return (
     <div className={'flex h-full flex-col'}>
       <div
-        className={'flex h-[50px] items-center justify-between border-b p-1'}
+        className={
+          'flex h-[50px] w-full items-center justify-between border-b p-1'
+        }
       >
-        <div className={'flex w-full flex-col'}>
+        <div className={'flex flex-1 flex-col truncate'}>
           <span className={'text-appBlack truncate font-semibold'}>
             {project.data?.bidding}
           </span>
