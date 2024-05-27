@@ -362,6 +362,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
     if (selectedRow) {
       modalId.current = showModal({
         title: 'Sửa khối lượng',
+        className: 'w-80',
         children: (
           <EditRequestVolumeForm
             requestDetailId={selectedRow.original.id}
@@ -505,7 +506,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                               className={cn(
                                 `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
                                  after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                                row.getIsSelected()
+                                selectedRow?.original.id === row.original.id
                                   ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
                                   : null
                               )}
