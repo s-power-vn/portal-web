@@ -79,21 +79,17 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         align="start"
         sideOffset={2}
       >
-        <DropdownMenuItem>
-          <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
-          Yêu cầu duyệt giá
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleNewRequestClick}>
           <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
           Yêu cầu mua hàng
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
-          Hợp đồng
+          <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
+          Yêu cầu duyệt giá
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <NotebookPenIcon className="mr-2 h-4 w-4 text-orange-500" />
-          Biên bản bàn giao
+          <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
+          Hợp đồng
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
