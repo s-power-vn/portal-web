@@ -99,7 +99,9 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={'whitespace-nowrap text-left'}
+                      className={
+                        'max-w-60 truncate whitespace-nowrap text-left'
+                      }
                       style={
                         table.getRowModel().rows.length
                           ? {
