@@ -1,5 +1,6 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
   ExpandedState,
   Row,
@@ -58,6 +59,7 @@ import {
   getCommonPinningStyles
 } from '../../../commons/utils';
 import { useDetailImportStatus } from '../../../hooks';
+import { Route } from '../../../routes/_authenticated/project/$projectId';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
@@ -69,6 +71,8 @@ export type DocumentOverviewProps = {
 export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
   projectId
 }) => {
+  const navigate = useNavigate({ from: Route.fullPath });
+
   const queryClient = useQueryClient();
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
   const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
@@ -94,8 +98,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       ]);
     }
   });
-
-  console.log(listDetailInfos.data);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -262,6 +264,34 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         size: 150,
         meta: {
           hasRowSpan: 'levelRowSpan'
+        }
+      }),
+      columnHelper.display({
+        id: 'requestTitle',
+        cell: ({ row }) => (
+          <Show when={row.original.issue}>
+            <button
+              className={'w-full cursor-pointer text-left underline'}
+              onClick={e => {
+                e.stopPropagation();
+                e.preventDefault();
+                navigate({
+                  to: '/project/$projectId/issues/all/$issueId',
+                  params: {
+                    issueId: row.original.issue
+                  }
+                });
+              }}
+            >
+              {row.original.issueTitle}
+            </button>
+          </Show>
+        ),
+        header: () => 'Yêu cầu mua hàng',
+        footer: info => info.column.id,
+        size: 150,
+        meta: {
+          hasRowSpan: 'requestRowSpan'
         }
       }),
       columnHelper.display({
@@ -652,7 +682,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                               width: cell.column.getSize()
                             }}
                             className={cn(
-                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs
+                              ` bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative max-w-60 truncate p-1 text-xs
                               after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
                               selectedRow?.id === row.id
                                 ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'

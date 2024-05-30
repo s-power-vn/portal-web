@@ -109,6 +109,8 @@ export type DetailImportRecord = {
 
 export type DetailInfoRecord = {
 	group?: RecordIdString
+	issue?: RecordIdString
+	issueTitle?: string
 	level: string
 	note?: string
 	parent?: string
