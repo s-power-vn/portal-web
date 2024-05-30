@@ -152,13 +152,21 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
           <div className={'flex gap-2'}>
             <Button
               className={'bg-blue-500 hover:bg-blue-600'}
-              onClick={() => approveRequest.mutate(request.data)}
+              onClick={() =>
+                confirm('Bạn có chắc chắn muốn duyệt yêu cầu này?', () =>
+                  approveRequest.mutate(request.data)
+                )
+              }
             >
               Phê duyệt
             </Button>
             <Button
               className={'bg-red-500 hover:bg-red-600'}
-              onClick={() => rejectRequest.mutate(request.data)}
+              onClick={() =>
+                confirm('Bạn có chắc chắn muốn từ chối yêu cầu này?', () =>
+                  rejectRequest.mutate(request.data)
+                )
+              }
             >
               Từ chối
             </Button>
