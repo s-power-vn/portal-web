@@ -118,6 +118,18 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
 
   const { confirm } = useConfirm();
 
+  const handleGotoIssue = useCallback(
+    (issueId: string) => {
+      return navigate({
+        to: '/project/$projectId/issues/all/$issueId',
+        params: {
+          issueId
+        }
+      });
+    },
+    [navigate]
+  );
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
@@ -275,12 +287,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
               onClick={e => {
                 e.stopPropagation();
                 e.preventDefault();
-                navigate({
-                  to: '/project/$projectId/issues/all/$issueId',
-                  params: {
-                    issueId: row.original.issue
-                  }
-                });
+                return handleGotoIssue(row.original.issue);
               }}
             >
               {row.original.issueTitle}
