@@ -46,7 +46,12 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { RequestDetailData, requestApi, requestDetailApi } from '../../../api';
+import {
+  RequestDetailData,
+  requestApi,
+  requestDetailApi,
+  settingApi
+} from '../../../api';
 import {
   TreeData,
   arrayToTree,
@@ -73,6 +78,13 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
     variables: requestId
   });
 
+  const listApprovers = settingApi.listApprover.useSuspenseQuery();
+
+  console.log(
+    request.data.expand.requestDetail_via_request.filter(it => it.price > 0)
+      .length
+  );
+
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -97,44 +109,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           ...it,
           group: it.expand.detail.id,
           level: it.expand.detail.level,
-          parent: it.expand.detail.parent,
-          suppliers: it.expand.requestDetailSupplier_via_requestDetail?.map(
-            st => {
-              return {
-                id: st.expand.supplier.id,
-                name: st.expand.supplier.name,
-                price: st.price,
-                volume: st.volume
-              };
-            }
-          )
+          parent: it.expand.detail.parent
         };
       })
       .value();
 
-    const list = [];
-    for (const vi of v) {
-      if (vi.suppliers?.length > 0) {
-        let index = 0;
-        for (const s of vi.suppliers) {
-          list.push({
-            ..._.omit(vi, ['suppliers']),
-            supplier: s.id,
-            supplierUnitPrice: s.price,
-            supplierName: s.name,
-            supplierVolume: s.volume,
-            rowSpan: index === 0 ? vi.suppliers.length : 0
-          });
-          index++;
-        }
-      } else {
-        list.push({ ..._.omit(vi, ['suppliers']) });
-      }
-    }
-
-    console.log(list);
-
-    return arrayToTree(list, `${request.data.project}-root`);
+    return arrayToTree(v, `${request.data.project}-root`);
   }, [request.data]);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
@@ -480,7 +460,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
               >
                 <Cross2Icon className={'h-4 w-4'} />
               </Button>
-              <Show when={!confirmStatus.isPending}>
+              <Show
+                when={
+                  !confirmStatus.isPending &&
+                  request.data.status === RequestStatusOptions.ToDo
+                }
+              >
                 <Switch fallback={<div></div>}>
                   <Match when={confirmStatus.data === 1}>
                     <Button
@@ -514,8 +499,14 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 when={
                   !checkEnableApprove.isPending &&
                   checkEnableApprove.data &&
-                  request.data.expand.issue.assignee !==
-                    client.authStore.model?.id
+                  ((request.data.status === RequestStatusOptions.ToDo &&
+                    !listApprovers.data
+                      .map(it => it.user)
+                      .includes(client.authStore.model?.id)) ||
+                    (request.data.status === RequestStatusOptions.VolumeDone &&
+                      request.data.expand.requestDetail_via_request.filter(
+                        it => it.price > 0
+                      ).length > 0))
                 }
               >
                 <Button

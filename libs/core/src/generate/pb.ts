@@ -112,12 +112,12 @@ export type DetailInfoRecord = {
 	level: string
 	note?: string
 	parent?: string
+	price?: number
 	project?: RecordIdString
 	request: RecordIdString
 	requestVolume?: number
+	supplier?: RecordIdString
 	supplierName: string
-	supplierPrice?: number
-	supplierVolume?: number
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -219,9 +219,8 @@ export type RequestDetailSupplierRecord = {
 
 export type RequestDetailSupplierInfoRecord = {
 	price?: number
-	requestDetail?: RecordIdString
-	supplier: RecordIdString
-	volume?: number
+	request?: RecordIdString
+	supplier?: RecordIdString
 }
 
 export enum SettingTypeOptions {

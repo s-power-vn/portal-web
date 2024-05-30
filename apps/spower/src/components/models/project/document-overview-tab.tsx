@@ -95,6 +95,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     }
   });
 
+  console.log(listDetailInfos.data);
+
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -331,7 +333,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.accessor('supplierPrice', {
+      columnHelper.accessor('price', {
         cell: info => (
           <Show when={info.getValue()}>
             <div className={'flex justify-end gap-1'}>
@@ -349,8 +351,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
       columnHelper.display({
         id: 'exceedUnitPrice',
         cell: ({ row }) => {
-          if (row.original.supplierPrice) {
-            const exceed = row.original.supplierPrice - row.original.unitPrice;
+          if (row.original.price) {
+            const exceed = row.original.price - row.original.unitPrice;
             if (exceed > 0) {
               return (
                 <div className={'flex justify-end text-red-500'}>
@@ -373,8 +375,8 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('supplierName', {
-        cell: info => info.getValue(),
+      columnHelper.accessor('supplier', {
+        cell: info => info.row.original.supplierName,
         header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300
