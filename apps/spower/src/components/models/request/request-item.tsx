@@ -511,7 +511,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 </Switch>
               </Show>
               <Show
-                when={!checkEnableApprove.isPending && checkEnableApprove.data}
+                when={
+                  !checkEnableApprove.isPending &&
+                  checkEnableApprove.data &&
+                  request.data.expand.issue.assignee !==
+                    client.authStore.model?.id
+                }
               >
                 <Button
                   className={'text-appWhite'}

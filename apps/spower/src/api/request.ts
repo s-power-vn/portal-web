@@ -299,7 +299,8 @@ export const requestApi = router('request', {
       const requestConfirmers = await client
         .collection(Collections.RequestConfirm)
         .getFullList({
-          filter: `request = "${requestId}"`
+          filter: `request = "${requestId}"`,
+          expand: 'request'
         });
 
       return confirmers.length === requestConfirmers.length;
