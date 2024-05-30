@@ -35,10 +35,12 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
   const { control } = useFormContext<InferType<S>>();
 
   const isRequiredField = useCallback(
-    (name: string) =>
-      !!(schema.describe().fields[name] as SchemaDescription)?.tests.find(
-        test => test.name === 'required'
-      ),
+    (name: string) => {
+      console.log(name, schema.describe().fields[name]);
+      return !!(
+        schema.describe().fields[name] as SchemaDescription
+      )?.tests.find(test => test.name === 'required');
+    },
     [schema]
   );
 

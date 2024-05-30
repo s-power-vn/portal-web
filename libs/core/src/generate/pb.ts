@@ -197,7 +197,9 @@ export type RequestConfirmRecord = {
 
 export type RequestDetailRecord = {
 	detail?: RecordIdString
+	price?: number
 	request: RecordIdString
+	supplier?: RecordIdString
 	volume?: number
 }
 

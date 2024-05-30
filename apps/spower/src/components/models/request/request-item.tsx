@@ -17,8 +17,7 @@ import {
   EditIcon,
   PrinterIcon,
   SquareMinusIcon,
-  SquarePlusIcon,
-  StoreIcon
+  SquarePlusIcon
 } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -53,6 +52,7 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
+import { EditRequestPriceForm } from '../request-detail/edit-request-price-form';
 import { EditRequestVolumeForm } from '../request-detail/edit-request-volume-form';
 import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
 
@@ -131,6 +131,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         list.push({ ..._.omit(vi, ['suppliers']) });
       }
     }
+
+    console.log(list);
 
     return arrayToTree(list, `${request.data.project}-root`);
   }, [request.data]);
@@ -245,13 +247,12 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.accessor('supplierUnitPrice', {
+      columnHelper.accessor('price', {
         cell: ({ row }) => (
-          <Show when={row.original.supplierUnitPrice}>
+          <Show when={row.original.price}>
             <div className={'flex justify-end gap-1'}>
               <span className={'font-semibold'}>
-                {row.original.supplierUnitPrice &&
-                  formatCurrency(row.original.supplierUnitPrice)}
+                {row.original.price && formatCurrency(row.original.price)}
               </span>
               <span>₫</span>
             </div>
@@ -264,10 +265,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       columnHelper.display({
         id: 'exceedUnitPrice',
         cell: ({ row }) => {
-          if (row.original.supplierUnitPrice) {
+          if (row.original.price) {
             const exceed =
-              row.original.supplierUnitPrice -
-              row.original.expand.detail.unitPrice;
+              row.original.price - row.original.expand.detail.unitPrice;
             if (exceed > 0) {
               return (
                 <div className={'flex justify-end text-red-500'}>
@@ -294,22 +294,9 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('supplierVolume', {
-        cell: ({ row }) =>
-          row.original.supplierVolume ? (
-            <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(row.original.supplierVolume)}
-              </span>
-              <span>{row.original.expand.detail.unit}</span>
-            </div>
-          ) : null,
-        header: () => 'Khối lượng NCC',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('supplierName', {
-        cell: info => info.getValue(),
+      columnHelper.display({
+        id: 'supplier',
+        cell: info => info.row.original.expand.supplier?.name,
         header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300
@@ -419,6 +406,21 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
     }
   }, [onSuccessHandler, selectedRow]);
 
+  const handleEditRequestPrice = useCallback(() => {
+    if (selectedRow) {
+      modalId.current = showModal({
+        title: 'Thay đổi đơn giá',
+        className: 'w-80',
+        children: (
+          <EditRequestPriceForm
+            requestDetailId={selectedRow.original.id}
+            onSuccess={onSuccessHandler}
+          />
+        )
+      });
+    }
+  }, [onSuccessHandler, selectedRow]);
+
   return (
     <>
       {table.getSelectedRowModel() &&
@@ -432,23 +434,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
       <div className={'bg-appWhite flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
-            {request.data.status === RequestStatusOptions.VolumeDone &&
-            client.authStore.model?.role !== 1 ? (
-              <Button
-                disabled={
-                  !(
-                    table.getSelectedRowModel().flatRows.length > 0 &&
-                    table.getSelectedRowModel().flatRows[0].original.children
-                      ?.length === 0
-                  )
-                }
-                className={'flex gap-1'}
-                onClick={() => setOpenListSupplier(true)}
-              >
-                <StoreIcon className={'h-5 w-5'} />
-                Nhà cung cấp (NCC)
-              </Button>
-            ) : null}
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
@@ -458,6 +443,21 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 client.authStore.model?.id
               }
             >
+              <Show
+                when={
+                  request.data.status === RequestStatusOptions.VolumeDone &&
+                  client.authStore.model?.role !== 1
+                }
+              >
+                <Button
+                  className={'text-appWhite'}
+                  size="icon"
+                  disabled={!selectedRow}
+                  onClick={handleEditRequestPrice}
+                >
+                  <EditIcon className={'h-4 w-4'} />
+                </Button>
+              </Show>
               <Show when={request.data.status === RequestStatusOptions.ToDo}>
                 <Button
                   className={'text-appWhite'}

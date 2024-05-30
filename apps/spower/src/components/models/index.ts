@@ -12,6 +12,8 @@ export * from './project/document-overview-tab';
 export * from './detail/pick-detail-dialog';
 export * from './request-detail/request-detail-list-field';
 export * from './request-detail/request-detail';
+export * from './request-detail/edit-request-volume-form';
+export * from './request-detail/edit-request-price-form';
 export * from './request/request-item';
 export * from './request/request-status';
 export * from './employee/employee-display';

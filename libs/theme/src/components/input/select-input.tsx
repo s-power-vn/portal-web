@@ -68,13 +68,13 @@ export const SelectInput: FC<SelectInputProps> = ({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            'justify-between text-sm font-normal',
+            'relative justify-between text-sm font-normal',
             placeholder && !value ? 'text-muted-foreground' : 'text-appBlack',
             className
           )}
         >
           {value ? items.find(it => it.value === value)?.label : placeholder}
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <CaretSortIcon className="absolute right-2 ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="popover-content p-0" asChild>

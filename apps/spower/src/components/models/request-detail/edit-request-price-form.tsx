@@ -11,25 +11,26 @@ import {
 } from '@storeo/theme';
 
 import {
-  UpdateRequestDetailVolumeSchema,
+  UpdateRequestDetailPriceSchema,
   requestApi,
   requestDetailApi
 } from '../../../api';
+import { SupplierDropdownField } from '../supplier/supplier-dropdown-field';
 
-export type EditRequestVolumeFormProps = {
+export type EditRequestPriceFormProps = {
   requestDetailId: string;
   onSuccess?: () => void;
 };
 
-export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
+export const EditRequestPriceForm: FC<EditRequestPriceFormProps> = props => {
   const queryClient = useQueryClient();
   const requestDetail = requestDetailApi.byId.useSuspenseQuery({
     variables: props.requestDetailId
   });
 
-  const updateDetail = requestDetailApi.updateVolume.useMutation({
+  const updateDetail = requestDetailApi.updatePrice.useMutation({
     onSuccess: async () => {
-      success('Chỉnh sửa khối lượng thành công');
+      success('Chỉnh sửa đơn giá thành công');
       props.onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
@@ -41,7 +42,7 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
 
   return (
     <Form
-      schema={UpdateRequestDetailVolumeSchema}
+      schema={UpdateRequestDetailPriceSchema}
       onSubmit={values =>
         updateDetail.mutate({
           ...values,
@@ -52,11 +53,15 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
       loading={requestDetail.isPending || updateDetail.isPending}
       className={'mt-4 flex flex-col gap-3'}
     >
+      <SupplierDropdownField
+        schema={UpdateRequestDetailPriceSchema}
+        name={'supplier'}
+        title={'Nhà cung cấp'}
+      />
       <NumericField
-        schema={UpdateRequestDetailVolumeSchema}
-        name={'volume'}
-        title={'Khối lượng yêu cầu'}
-        options={{}}
+        schema={UpdateRequestDetailPriceSchema}
+        name={'price'}
+        title={'Đơn giá'}
       />
       <DialogFooter className={'mt-4'}>
         <Button type="submit">Chấp nhận</Button>

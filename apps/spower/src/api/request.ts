@@ -29,12 +29,9 @@ export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
 export type RequestDetailData = RequestDetailResponse & {
   expand: {
     detail: DetailResponse;
+    supplier: SupplierResponse;
     requestDetailSupplier_via_requestDetail: RequestDetailSupplierData[];
   };
-  supplier?: string;
-  supplierUnitPrice?: number;
-  supplierName?: string;
-  supplierVolume?: number;
 };
 
 export type RequestData = RequestResponse & {
@@ -136,6 +133,7 @@ export const requestApi = router('request', {
       client.collection<RequestData>(Collections.Request).getOne(requestId, {
         expand:
           'requestDetail_via_request.detail,' +
+          'requestDetail_via_request.supplier,' +
           'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
           'contract_via_request.supplier,' +
           'contract_via_request.contractItem_via_contract,' +
@@ -409,7 +407,7 @@ export const requestDetailSupplierApi = router('requestDetailSupplier', {
   })
 });
 
-export const UpdateRequestDetailSchema = object().shape({
+export const UpdateRequestDetailVolumeSchema = object().shape({
   volume: number()
     .required('Hãy nhập khối lượng yêu cầu')
     .transform((_, originalValue) =>
@@ -420,8 +418,24 @@ export const UpdateRequestDetailSchema = object().shape({
     .moreThan(0, 'Khối lượng không thể <= 0')
 });
 
-export type UpdateRequestDetailInput = InferType<
-  typeof UpdateRequestDetailSchema
+export type UpdateRequestDetailVolumeInput = InferType<
+  typeof UpdateRequestDetailVolumeSchema
+>;
+
+export const UpdateRequestDetailPriceSchema = object().shape({
+  supplier: string().required('Hãy chọn nhà cung cấp'),
+  price: number()
+    .required('Hãy nhập đơn giá nhà cung cấp')
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số')
+    .moreThan(0, 'Đơn giá không thể <= 0')
+});
+
+export type UpdateRequestDetailPriceInput = InferType<
+  typeof UpdateRequestDetailPriceSchema
 >;
 
 export const requestDetailApi = router('requestDetail', {
@@ -434,9 +448,19 @@ export const requestDetailApi = router('requestDetail', {
             'detail,requestDetailSupplier_via_requestDetail.supplier,request_via_requestDetail.request'
         })
   }),
-  update: router.mutation({
+  updateVolume: router.mutation({
     mutationFn: (
-      params: UpdateRequestDetailInput & {
+      params: UpdateRequestDetailVolumeInput & {
+        requestDetailId: string;
+      }
+    ) =>
+      client
+        .collection<RequestDetailData>(Collections.RequestDetail)
+        .update(params.requestDetailId, params)
+  }),
+  updatePrice: router.mutation({
+    mutationFn: (
+      params: UpdateRequestDetailPriceInput & {
         requestDetailId: string;
       }
     ) =>
