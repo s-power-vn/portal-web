@@ -420,7 +420,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <Show
               when={
                 request.data.expand.issue.expand.assignee.id ===
-                client.authStore.model?.id
+                  client.authStore.model?.id &&
+                request.data.status !== RequestStatusOptions.Done
               }
             >
               <Show
