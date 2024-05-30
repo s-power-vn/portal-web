@@ -452,67 +452,79 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
-            <Show when={request.data.status === RequestStatusOptions.ToDo}>
-              <Button
-                className={'text-appWhite'}
-                size="icon"
-                disabled={!selectedRow}
-                onClick={handleEditRequestVolume}
-              >
-                <EditIcon className={'h-4 w-4'} />
-              </Button>
-            </Show>
-            <Button
-              className={'text-appWhite bg-red-500 hover:bg-red-600'}
-              size="icon"
-              onClick={() => {
-                confirm?.('Bạn chắc chắn muốn xóa yêu cầu mua hàng này?', () =>
-                  deleteRequest.mutate(requestId)
-                );
-              }}
+            <Show
+              when={
+                request.data.expand.issue.expand.assignee.id ===
+                client.authStore.model?.id
+              }
             >
-              <Cross2Icon className={'h-4 w-4'} />
-            </Button>
-            <Switch fallback={<div></div>}>
-              <Match when={confirmStatus.data === 1}>
+              <Show when={request.data.status === RequestStatusOptions.ToDo}>
+                <Button
+                  className={'text-appWhite'}
+                  size="icon"
+                  disabled={!selectedRow}
+                  onClick={handleEditRequestVolume}
+                >
+                  <EditIcon className={'h-4 w-4'} />
+                </Button>
+              </Show>
+              <Button
+                className={'text-appWhite bg-red-500 hover:bg-red-600'}
+                size="icon"
+                onClick={() => {
+                  confirm?.(
+                    'Bạn chắc chắn muốn xóa yêu cầu mua hàng này?',
+                    () => deleteRequest.mutate(requestId)
+                  );
+                }}
+              >
+                <Cross2Icon className={'h-4 w-4'} />
+              </Button>
+              <Show when={!confirmStatus.isPending}>
+                <Switch fallback={<div></div>}>
+                  <Match when={confirmStatus.data === 1}>
+                    <Button
+                      className={'text-appWhite'}
+                      onClick={() =>
+                        confirm(
+                          'Bạn chắc chắn muốn xác nhận yêu cầu mua hàng này?',
+                          () => confirmRequest.mutate(requestId)
+                        )
+                      }
+                    >
+                      Xác nhận
+                    </Button>
+                  </Match>
+                  <Match when={confirmStatus.data === 2}>
+                    <Button
+                      variant={'outline'}
+                      onClick={() =>
+                        confirm(
+                          'Bạn chắc chắn muốn hủy xác nhận yêu cầu mua hàng này?',
+                          () => unConfirmRequest.mutate(requestId)
+                        )
+                      }
+                    >
+                      Hủy xác nhận
+                    </Button>
+                  </Match>
+                </Switch>
+              </Show>
+              <Show
+                when={!checkEnableApprove.isPending && checkEnableApprove.data}
+              >
                 <Button
                   className={'text-appWhite'}
                   onClick={() =>
                     confirm(
-                      'Bạn chắc chắn muốn xác nhận yêu cầu mua hàng này?',
-                      () => confirmRequest.mutate(requestId)
+                      'Bạn chắc chắn muốn gửi phê duyệt yêu cầu mua hàng này?',
+                      () => sendToApprover.mutate(requestId)
                     )
                   }
                 >
-                  Xác nhận
+                  Gửi phê duyệt
                 </Button>
-              </Match>
-              <Match when={confirmStatus.data === 2}>
-                <Button
-                  variant={'outline'}
-                  onClick={() =>
-                    confirm(
-                      'Bạn chắc chắn muốn hủy xác nhận yêu cầu mua hàng này?',
-                      () => unConfirmRequest.mutate(requestId)
-                    )
-                  }
-                >
-                  Hủy xác nhận
-                </Button>
-              </Match>
-            </Switch>
-            <Show when={checkEnableApprove.data}>
-              <Button
-                className={'text-appWhite'}
-                onClick={() =>
-                  confirm(
-                    'Bạn chắc chắn muốn gửi phê duyệt yêu cầu mua hàng này?',
-                    () => sendToApprover.mutate(requestId)
-                  )
-                }
-              >
-                Gửi phê duyệt
-              </Button>
+              </Show>
             </Show>
           </div>
         </div>

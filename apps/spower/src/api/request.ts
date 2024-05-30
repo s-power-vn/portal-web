@@ -43,6 +43,7 @@ export type RequestData = RequestResponse & {
     issue: IssueResponse & {
       expand: {
         createdBy: UserData;
+        assignee: UserData;
       };
     };
   };
@@ -139,7 +140,8 @@ export const requestApi = router('request', {
           'contract_via_request.supplier,' +
           'contract_via_request.contractItem_via_contract,' +
           'issue.createdBy,' +
-          'issue.createdBy.department'
+          'issue.createdBy.department,' +
+          'issue.assignee'
       })
   }),
   byIssueId: router.query({
