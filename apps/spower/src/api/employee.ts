@@ -32,6 +32,14 @@ export const employeeApi = router('employee', {
         expand: 'department'
       })
   }),
+  listFirst: router.query({
+    fetcher: (name?: string) =>
+      client.collection<UserData>(Collections.User).getList(1, 10, {
+        filter: `name ~ "${name ?? ''}" || email ~ "${name ?? ''}"`,
+        sort: 'department',
+        expand: 'department'
+      })
+  }),
   list: router.query({
     fetcher: (search?: EmployeesSearch) => {
       const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;

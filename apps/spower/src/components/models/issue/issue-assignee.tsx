@@ -1,9 +1,9 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 
-import { SelectInput, SelectInputProps, success } from '@storeo/theme';
+import { SelectInputProps, success } from '@storeo/theme';
 
-import { employeeApi } from '../../../api';
 import { issueApi } from '../../../api/issue';
+import { SelectEmployee } from '../employee/select-employee';
 
 export type IssueAssigneeProps = Omit<
   SelectInputProps,
@@ -19,16 +19,6 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
   ...props
 }) => {
   const [value, setValue] = useState(props.value);
-  const employees = employeeApi.listFull.useQuery();
-  const data = useMemo(
-    () =>
-      (employees.data ?? []).map(it => ({
-        value: it.id,
-        label: it.name,
-        group: it.expand.department.name
-      })),
-    [employees.data]
-  );
 
   const changeAssignee = issueApi.changeAssignee.useMutation({
     onSuccess: () => {
@@ -37,12 +27,8 @@ export const IssueAssignee: FC<IssueAssigneeProps> = ({
   });
 
   return (
-    <SelectInput
-      items={data}
+    <SelectEmployee
       value={value}
-      placeholder={'Chọn nhân viên'}
-      showGroups={true}
-      showSearch={true}
       onChange={value => {
         setValue(value);
         changeAssignee.mutate({
