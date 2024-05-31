@@ -61,7 +61,13 @@ export const SelectInput: FC<SelectInputProps> = ({
   }, [initialValue]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={value => {
+        onFilter?.('');
+        setOpen(value);
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           variant="outline"

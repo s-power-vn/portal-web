@@ -80,11 +80,6 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
 
   const listApprovers = settingApi.listApprover.useSuspenseQuery();
 
-  console.log(
-    request.data.expand.requestDetail_via_request.filter(it => it.price > 0)
-      .length
-  );
-
   const router = useRouter();
 
   const queryClient = useQueryClient();
