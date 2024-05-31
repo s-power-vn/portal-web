@@ -5,6 +5,7 @@ import { FC, useMemo, useState } from 'react';
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
 import { employeeApi } from '../../../api';
+import { EmployeeDisplay } from './employee-display';
 
 export type SelectEmployeeProps = Omit<SelectInputProps, 'items'>;
 
@@ -49,6 +50,8 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
       showGroups={true}
       showSearch={true}
       {...props}
-    />
+    >
+      {it => <EmployeeDisplay employeeId={it.value}></EmployeeDisplay>}
+    </SelectInput>
   );
 };
