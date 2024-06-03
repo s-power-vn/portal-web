@@ -110,9 +110,13 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
           .uniqBy('request')
           .sumBy('requestVolume')
           .value();
+      }).sort((v1, v2) => {
+        return parseInt(v1.level) - parseInt(v2.level);
       }),
     [listDetailInfos.data, projectId]
   );
+
+  console.log(data);
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
 
