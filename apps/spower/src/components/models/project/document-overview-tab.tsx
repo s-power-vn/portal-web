@@ -283,7 +283,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.issue}>
             <button
-              className={'w-full cursor-pointer text-left underline'}
+              className={
+                'w-full max-w-60 cursor-pointer truncate text-left underline'
+              }
               onClick={e => {
                 e.stopPropagation();
                 e.preventDefault();
