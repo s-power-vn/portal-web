@@ -116,8 +116,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     [listDetailInfos.data, projectId]
   );
 
-  console.log(data);
-
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
 
   const { confirm } = useConfirm();
@@ -287,9 +285,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.issue}>
             <button
-              className={
-                'w-full max-w-60 cursor-pointer truncate text-left underline'
-              }
+              className={'max-w-60 cursor-pointer truncate text-left underline'}
               onClick={e => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -302,7 +298,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         ),
         header: () => 'Yêu cầu mua hàng',
         footer: info => info.column.id,
-        size: 150,
+        size: 250,
         meta: {
           hasRowSpan: 'requestRowSpan'
         }
