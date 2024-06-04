@@ -79,7 +79,9 @@ export const SelectInput: FC<SelectInputProps> = ({
             className
           )}
         >
-          {value ? items.find(it => it.value === value)?.label : placeholder}
+          <span className={'truncate'}>
+            {value ? items.find(it => it.value === value)?.label : placeholder}
+          </span>
           <CaretSortIcon className="absolute right-2 ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -100,7 +102,7 @@ export const SelectInput: FC<SelectInputProps> = ({
                   {normalizedItems[key].map(it => (
                     <CommandItem
                       key={it.value}
-                      className={'hover:bg-appGrayLight whitespace-nowrap'}
+                      className={'hover:bg-appGrayLight'}
                       onSelect={() => {
                         setValue(it.value);
                         onChange?.(it.value);
