@@ -13,7 +13,7 @@ const Component = () => {
     <Tabs defaultValue={'overview'}>
       <TabsList className="grid w-full flex-none grid-cols-4 rounded-none">
         <TabsTrigger value="overview" asChild>
-          <Link to={'/project/$projectId/overview'}>Tổng quan</Link>
+          <Link to={'/project/$projectId/overview'}>Dữ liệu hợp đồng</Link>
         </TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
@@ -35,5 +35,5 @@ export const Route = createFileRoute(
   '/_authenticated/project/$projectId/overview'
 )({
   component: Component,
-  beforeLoad: () => ({ title: 'Tổng quan' })
+  beforeLoad: () => ({ title: 'Dữ liệu hợp đồng' })
 });

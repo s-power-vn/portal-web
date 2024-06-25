@@ -233,12 +233,22 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
             <span className={'font-semibold'}>
               {formatNumber(row.original.volume)}
             </span>
-            <span>{row.original.unit}</span>
           </div>
         ),
         header: () => 'Khối lượng HĐ',
         footer: info => info.column.id,
         size: 150,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
+      }),
+      columnHelper.accessor('unit', {
+        cell: ({ row }) => (
+          <div className={'flex justify-end gap-1'}>{row.original.unit}</div>
+        ),
+        header: () => 'Đơn vị',
+        footer: info => info.column.id,
+        size: 100,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -311,7 +321,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
               <span className={'font-semibold'}>
                 {formatNumber(row.original.requestVolume)}
               </span>
-              <span>{row.original.unit}</span>
             </div>
           </Show>
         ),
@@ -330,7 +339,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
               <span className={'font-semibold'}>
                 {formatNumber(row.original.extra as number)}
               </span>
-              <span>{row.original.unit}</span>
             </div>
           </Show>
         ),
@@ -358,7 +366,6 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                   <span className={'font-semibold'}>
                     {formatNumber(exceed < 0 ? -exceed : exceed)}
                   </span>
-                  <span>{row.original.unit}</span>
                 </div>
               </Show>
             );
@@ -432,7 +439,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
         cell: info => (info.getValue() !== 0 ? info.getValue() : ''),
         header: () => 'Trạng thái HĐ',
         footer: info => info.column.id,
-        size: 100
+        size: 150
       })
     ],
     [columnHelper]
@@ -457,7 +464,12 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true
+    manualPagination: true,
+    defaultColumn: {
+      header: v => {
+        return <div>xxxx</div>;
+      }
+    }
   });
 
   const { showLoading, hideLoading } = useLoading();
@@ -646,9 +658,9 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
                           ...getCommonPinningStyles(header.column),
                           width: header.getSize()
                         }}
-                        className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
-                          after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
-                          after:content-[''] last:after:border-r-0`}
+                        className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 text-center after:pointer-events-none
+                          after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b
+                          after:border-r after:content-[''] last:after:border-r-0`}
                       >
                         {header.isPlaceholder ? null : (
                           <>
