@@ -32,7 +32,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isChild,
   badge,
-  padding = 3,
+  padding,
   ...props
 }) => {
   const { flatRoutes } = useRouter();
@@ -48,7 +48,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     () => (
       <div
         className={cn(
-          `flex h-10 w-10 items-center justify-center p-2`,
+          `flex h-10 w-10 items-center justify-center`,
           isChild && `p-3`
         )}
       >
@@ -65,11 +65,14 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     >
       <Link
         className={cn(
-          `flex w-full items-center justify-start truncate whitespace-nowrap pl-[${padding}px] text-sm`,
+          `flex w-full items-center justify-start truncate whitespace-nowrap text-sm`,
           isActive &&
             `bg-appBlueLight text-appWhite after:bg-appBlue after:absolute after:bottom-0 after:left-0 after:top-0 after:z-20 after:w-1`
         )}
         to={to}
+        style={{
+          paddingLeft: padding
+        }}
       >
         {icon &&
           (collapsed ? (
@@ -84,7 +87,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
           ))}
         <div
           className={cn(
-            `duration-default flex w-full justify-between pr-2 transition-opacity`,
+            `duration-default flex-1 justify-between truncate transition-opacity`,
             collapsed && `w-0 opacity-0`
           )}
         >

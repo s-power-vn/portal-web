@@ -64,15 +64,12 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
     [children]
   );
 
-  console.log('to', to);
-  console.log('isActive', isActive);
-
   const link = useMemo(
     () => (
       <Link
         className={cn(
           `hover:bg-appGrayLight flex w-full items-center justify-between
-          truncate whitespace-nowrap border-b px-1 text-sm`
+           border-b text-sm`
         )}
         to={to}
       >
@@ -84,7 +81,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
           </Show>
           <div
             className={cn(
-              `duration-default transition-opacity`,
+              `duration-default truncate transition-opacity`,
               collapsed && `w-0 opacity-0`
             )}
           >
