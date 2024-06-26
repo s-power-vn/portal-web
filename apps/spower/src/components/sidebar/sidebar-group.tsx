@@ -6,6 +6,7 @@ import {
   ToPathOption,
   useRouter
 } from '@tanstack/react-router';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import {
   Children,
@@ -14,6 +15,7 @@ import {
   ReactNode,
   cloneElement,
   isValidElement,
+  useCallback,
   useMemo
 } from 'react';
 
@@ -46,12 +48,13 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
   const { isActive } = useLink({ to });
   const { collapsed } = useSidebar();
 
-  const childrenWithProps = useMemo(
-    () =>
+  const childrenWithProps = useCallback(
+    (padding: number) =>
       Children.map(children, child => {
         if (isValidElement(child)) {
           return cloneElement(child, {
-            isChild: true
+            isChild: true,
+            padding
           } as {
             isChild: boolean;
           });
@@ -61,30 +64,54 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
     [children]
   );
 
+  console.log('to', to);
+  console.log('isActive', isActive);
+
   const link = useMemo(
     () => (
       <Link
         className={cn(
-          `hover:bg-appGrayLight flex w-full items-center justify-start truncate whitespace-nowrap border-b pl-[3px] text-sm`
+          `hover:bg-appGrayLight flex w-full items-center justify-between
+          truncate whitespace-nowrap border-b px-1 text-sm`
         )}
         to={to}
       >
-        <Show when={icon}>
-          <div className={cn(`flex h-10 w-10 items-center justify-center p-2`)}>
-            {icon}
+        <div className={'flex items-center'}>
+          <Show when={icon}>
+            <div className={cn(`flex h-10 w-10 items-center justify-center`)}>
+              {icon}
+            </div>
+          </Show>
+          <div
+            className={cn(
+              `duration-default transition-opacity`,
+              collapsed && `w-0 opacity-0`
+            )}
+          >
+            {routeContext?.title}
           </div>
-        </Show>
-        <div
-          className={cn(
-            `duration-default transition-opacity`,
-            collapsed && `w-0 opacity-0`
-          )}
-        >
-          {routeContext?.title}
         </div>
+        <Show
+          when={isActive}
+          fallback={
+            <ChevronUp
+              className={cn(
+                `duration-default w-4 transition-opacity`,
+                collapsed && `w-0 opacity-0`
+              )}
+            />
+          }
+        >
+          <ChevronDown
+            className={cn(
+              `duration-default w-4 transition-opacity`,
+              collapsed && `w-0 opacity-0`
+            )}
+          />
+        </Show>
       </Link>
     ),
-    [icon, to, isActive, collapsed]
+    [to, icon, collapsed, routeContext?.title, isActive]
   );
 
   return (
@@ -93,12 +120,11 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
       <Show when={isActive}>
         <div
           className={cn(
-            `bg-appGrayLight relative`,
-            isActive &&
-              `after:bg-appGray after:absolute after:bottom-0 after:left-0 after:top-0 after:w-1`
+            `bg-appGrayLight relative after:absolute after:bottom-0 after:left-0 after:top-0 after:w-1`,
+            isActive && `after:bg-appGray`
           )}
         >
-          {childrenWithProps}
+          {childrenWithProps(collapsed ? 3 : 20)}
         </div>
       </Show>
     </div>

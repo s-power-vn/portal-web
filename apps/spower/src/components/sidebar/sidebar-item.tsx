@@ -24,6 +24,7 @@ export type SidebarItemProps<
   icon?: ReactNode;
   isChild?: boolean;
   badge?: ReactNode;
+  padding?: number;
 } & Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'title'>;
 
 export const SidebarItem: FC<SidebarItemProps> = ({
@@ -31,6 +32,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isChild,
   badge,
+  padding = 3,
   ...props
 }) => {
   const { flatRoutes } = useRouter();
@@ -63,7 +65,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     >
       <Link
         className={cn(
-          `flex w-full items-center justify-start truncate whitespace-nowrap pl-[3px] text-sm`,
+          `flex w-full items-center justify-start truncate whitespace-nowrap pl-[${padding}px] text-sm`,
           isActive &&
             `bg-appBlueLight text-appWhite after:bg-appBlue after:absolute after:bottom-0 after:left-0 after:top-0 after:z-20 after:w-1`
         )}

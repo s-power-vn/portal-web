@@ -34,6 +34,7 @@ import {
 import {
   DetailInfoResponse,
   Show,
+  client,
   cn,
   downloadTemplate,
   formatCurrency,
@@ -63,6 +64,8 @@ import { Route } from '../../../routes/_authenticated/project/$projectId';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailDialog } from '../detail/edit-detail-dialog';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
+
+const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
 export type DocumentOverviewProps = {
   projectId: string;
@@ -455,7 +458,11 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     },
     state: {
       expanded,
-      rowSelection
+      rowSelection,
+      columnVisibility: {
+        unitPrice: client.authStore.model?.id === ADMIN_ID,
+        biddingTotal: client.authStore.model?.id === ADMIN_ID
+      }
     },
     enableRowSelection: true,
     onExpandedChange: setExpanded,
@@ -464,12 +471,7 @@ export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true,
-    defaultColumn: {
-      header: v => {
-        return <div>xxxx</div>;
-      }
-    }
+    manualPagination: true
   });
 
   const { showLoading, hideLoading } = useLoading();
