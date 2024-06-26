@@ -93,7 +93,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
           fallback={
             <ChevronUp
               className={cn(
-                `duration-default w-4 transition-opacity`,
+                `duration-default mr-2 w-4 transition-opacity`,
                 collapsed && `w-0 opacity-0`
               )}
             />
@@ -101,7 +101,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
         >
           <ChevronDown
             className={cn(
-              `duration-default w-4 transition-opacity`,
+              `duration-default mr-2 w-4 transition-opacity`,
               collapsed && `w-0 opacity-0`
             )}
           />
