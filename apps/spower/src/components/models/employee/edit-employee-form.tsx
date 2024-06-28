@@ -2,7 +2,13 @@ import { boolean, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, CheckField, Form, TextField, success } from '@storeo/theme';
+import {
+  Button,
+  DatePickerField,
+  Form,
+  TextField,
+  success
+} from '@storeo/theme';
 
 import { employeeApi } from '../../../api';
 import { DepartmentDropdownField } from '../department/department-dropdown-field';

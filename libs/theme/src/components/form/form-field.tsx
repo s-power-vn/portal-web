@@ -20,6 +20,7 @@ export type FormFieldProps<T, S extends ObjectSchema<AnyObject>> = {
   name: Path<InferType<S>>;
   title?: string;
   children?: ReactNode;
+  className?: string;
   options?: {
     [P in keyof T]: T[P];
   };
@@ -29,14 +30,14 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
   schema,
   name,
   title,
-  children
+  children,
+  className
 }: FormFieldProps<T, S>) => {
   const id = useId();
   const { control } = useFormContext<InferType<S>>();
 
   const isRequiredField = useCallback(
     (name: string) => {
-      console.log(name, schema.describe().fields[name]);
       return !!(
         schema.describe().fields[name] as SchemaDescription
       )?.tests.find(test => test.name === 'required');
@@ -83,7 +84,7 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
         });
 
         return (
-          <div className={'flex flex-col gap-1'}>
+          <div className={cn('flex flex-col gap-1', className)}>
             <Show when={title}>
               <Label htmlFor={id}>
                 {title}

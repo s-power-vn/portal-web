@@ -1,4 +1,3 @@
-import { CaretSortIcon } from '@radix-ui/react-icons';
 import {
   ExpandedState,
   RowSelectionState,
@@ -349,7 +348,7 @@ const Content: FC<PickDetailDialogProps> = ({
 };
 
 export type PickDetailDialogProps = DialogProps & {
-  projectId: string;
+  projectId?: string;
   value?: DetailResponse[];
   onChange?: (value: DetailResponse[]) => void;
 };
@@ -361,10 +360,9 @@ export const PickDetailDialog: FC<PickDetailDialogProps> = props => {
         <Button
           variant="outline"
           role="combobox"
-          className={cn('w-64 justify-between text-sm font-normal')}
+          className={cn('justify-between text-sm font-normal')}
         >
-          Chọn hạng mục
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          Chọn
         </Button>
       </DialogTrigger>
       <Suspense>

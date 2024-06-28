@@ -48,6 +48,16 @@ export type RequestData = RequestResponse & {
 
 export const CreateRequestSchema = object().shape({
   name: string().required('Hãy nhập nội dung'),
+  startDate: object().required('Hãy chọn ngày bắt đầu'),
+  endDate: object().required('Hãy chọn ngày kết thúc'),
+  issueType: string().oneOf(
+    Object.values(IssueTypeOptions),
+    'Hãy chọn loại yêu cầu'
+  ),
+  status: string().oneOf(
+    Object.values(RequestStatusOptions),
+    'Hãy chọn trạng thái'
+  ),
   details: array()
     .of(
       object().shape({

@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   DollarSignIcon,
   FileTextIcon,
-  NotebookPenIcon,
   PlusIcon,
   ShoppingCartIcon
 } from 'lucide-react';

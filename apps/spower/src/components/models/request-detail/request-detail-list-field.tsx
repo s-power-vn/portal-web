@@ -5,7 +5,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { FC, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { DetailResponse } from '@storeo/core';
+import { DetailResponse, Show } from '@storeo/core';
 import {
   FormField,
   FormFieldProps,
@@ -55,22 +55,25 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   }, [fields, setValue]);
 
   return (
-    <div className={'flex flex-col gap-2'}>
-      {projectId ? (
-        <PickDetailDialog
-          projectId={projectId}
-          open={openPick}
-          setOpen={setOpenPick}
-          onChange={value => {
-            const items = _.sortBy(value, 'level');
-            setValue('details', []);
-            append(items);
-            items.forEach((_, index) => {
-              setValue(`details[${index}].requestVolume`, 0);
-            });
-          }}
-        ></PickDetailDialog>
-      ) : null}
+    <div className={'flex flex-col gap-1'}>
+      <div className={'flex items-end justify-between'}>
+        <span className={'text-sm font-medium'}>Hạng mục công việc</span>
+        <Show when={!!projectId}>
+          <PickDetailDialog
+            projectId={projectId}
+            open={openPick}
+            setOpen={setOpenPick}
+            onChange={value => {
+              const items = _.sortBy(value, 'level');
+              setValue('details', []);
+              append(items);
+              items.forEach((_, index) => {
+                setValue(`details[${index}].requestVolume`, 0);
+              });
+            }}
+          ></PickDetailDialog>
+        </Show>
+      </div>
       <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
           <TableHeader

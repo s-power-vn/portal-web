@@ -1,7 +1,10 @@
+import { DateTime } from 'luxon';
+
 import { FC } from 'react';
 
 import {
   Button,
+  DatePickerField,
   DialogFooter,
   Form,
   TextareaField,
@@ -28,9 +31,10 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
     <Form
       schema={CreateRequestSchema}
       defaultValues={{
-        name: ''
+        name: '',
+        startDate: DateTime.now()
       }}
-      className={'mt-2 flex flex-col gap-2'}
+      className={'mt-2 flex flex-col gap-4'}
       loading={createRequest.isPending}
       onSubmit={values =>
         createRequest.mutate({
@@ -44,6 +48,26 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         name={'name'}
         title={'Nội dung'}
       />
+      <div className={'flex gap-2'}>
+        <DatePickerField
+          schema={CreateRequestSchema}
+          name={'startDate'}
+          title={'Ngày bắt đầu'}
+          className={'w-full'}
+          options={{
+            showTime: true
+          }}
+        />
+        <DatePickerField
+          schema={CreateRequestSchema}
+          name={'endDate'}
+          title={'Ngày kết thúc'}
+          className={'w-full'}
+          options={{
+            showTime: true
+          }}
+        />
+      </div>
       <RequestDetailListField
         schema={CreateRequestSchema}
         name={'details'}
