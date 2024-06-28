@@ -36,12 +36,15 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       }}
       className={'mt-2 flex flex-col gap-4'}
       loading={createRequest.isPending}
-      onSubmit={values =>
-        createRequest.mutate({
+      onSubmit={values => {
+        console.log(values);
+        return createRequest.mutate({
           ...values,
+          startDate: (values.startDate as DateTime)?.toJSDate(),
+          endDate: (values.endDate as DateTime)?.toJSDate(),
           projectId: props.projectId
-        })
-      }
+        });
+      }}
     >
       <TextareaField
         schema={CreateRequestSchema}

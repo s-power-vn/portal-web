@@ -131,12 +131,21 @@ export enum IssueTypeOptions {
 	"Contract" = "Contract",
 	"Delivery" = "Delivery",
 }
+
+export enum IssueStatusOptions {
+	"Normal" = "Normal",
+	"Warning" = "Warning",
+	"Danger" = "Danger",
+}
 export type IssueRecord = {
 	assignee?: RecordIdString
 	createdBy?: RecordIdString
 	deleted?: boolean
+	endDate?: IsoDateString
 	lastAssignee?: RecordIdString
 	project: RecordIdString
+	startDate?: IsoDateString
+	status?: IssueStatusOptions
 	title?: string
 	type?: IssueTypeOptions
 }

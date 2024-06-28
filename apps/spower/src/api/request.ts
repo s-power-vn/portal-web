@@ -7,6 +7,7 @@ import {
   Collections,
   DetailResponse,
   IssueResponse,
+  IssueStatusOptions,
   IssueTypeOptions,
   RequestDetailResponse,
   RequestDetailSupplierResponse,
@@ -173,7 +174,9 @@ export const requestApi = router('request', {
         title: params.name,
         type: IssueTypeOptions.Request,
         createdBy: client.authStore.model?.id,
-        assignee: client.authStore.model?.id
+        assignee: client.authStore.model?.id,
+        status: IssueStatusOptions.Normal,
+        ...params
       });
 
       const request = await client.collection(Collections.Request).create({
