@@ -49,7 +49,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       <TextareaField
         schema={CreateRequestSchema}
         name={'name'}
-        title={'Nội dung'}
+        title={'Nội dung công việc'}
       />
       <div className={'flex gap-2'}>
         <DatePickerField

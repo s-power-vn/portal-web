@@ -7,8 +7,10 @@ import { FC, useState } from 'react';
 
 import {
   Collections,
+  IssueStatusOptions,
   Show,
   client,
+  cn,
   formatDate,
   getImageUrl,
   timeSince,
@@ -95,23 +97,45 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
   return (
     <>
       <div
-        className={
-          'bg-appGrayLight flex items-start justify-between border-b p-2'
-        }
+        className={cn(
+          'bg-appGrayLight flex items-start justify-between border-b p-2',
+          request.data.expand.issue.status === IssueStatusOptions.Normal
+            ? ''
+            : request.data.expand.issue.status === IssueStatusOptions.Warning
+              ? 'border-t-appWarning border-t-4'
+              : 'border-t-appError border-t-4'
+        )}
       >
         <div className={'flex w-full flex-col gap-1'}>
-          <div className={'flex items-center gap-2'}>
-            <RequestStatus
-              className={'px-3 py-1.5 text-xs font-bold'}
-              issueId={issueId}
-            />
-            <Button
-              className={'h-6'}
-              size={'icon'}
-              onClick={() => router.history.back()}
-            >
-              <Undo2Icon className={'h-4 w-4'} />
-            </Button>
+          <div className={'flex items-center justify-between gap-2'}>
+            <div className={'flex items-center gap-2'}>
+              <RequestStatus
+                className={'px-3 py-1.5 text-xs font-bold'}
+                issueId={issueId}
+              />
+              <Button
+                className={'h-6'}
+                size={'icon'}
+                onClick={() => router.history.back()}
+              >
+                <Undo2Icon className={'h-4 w-4'} />
+              </Button>
+            </div>
+            <div className={'flex items-center gap-2'}>
+              {client.authStore.model?.role !== 1 ? (
+                <>
+                  <span className={'whitespace-nowrap text-sm'}>
+                    Người thực hiện
+                  </span>
+                  <IssueAssignee
+                    projectId={request.data.project}
+                    issueId={request.data.expand.issue.id}
+                    value={request.data.expand.issue.assignee}
+                    className={'w-56'}
+                  ></IssueAssignee>
+                </>
+              ) : null}
+            </div>
           </div>
           <IssueTitle
             issueId={issueId}
@@ -128,21 +152,7 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
             </div>
           </div>
         </div>
-        <div className={'flex items-center gap-2'}>
-          {client.authStore.model?.role !== 1 ? (
-            <>
-              <span className={'whitespace-nowrap text-sm'}>
-                Người thực hiện
-              </span>
-              <IssueAssignee
-                projectId={request.data.project}
-                issueId={request.data.expand.issue.id}
-                value={request.data.expand.issue.assignee}
-                className={'w-56'}
-              ></IssueAssignee>
-            </>
-          ) : null}
-        </div>
+
         <Show
           when={
             client.authStore.model?.role === 1 &&
@@ -173,6 +183,7 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
           </div>
         </Show>
       </div>
+
       <div
         className={
           'flex h-[calc(100vh-200px)] flex-col gap-2 overflow-y-auto p-2'

@@ -51,13 +51,13 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           }
           fallback={
             <span
-              className={cn(style, 'bg-appWarning text-appBlack', className)}
+              className={cn(style, 'text-appBlack bg-appWarning', className)}
             >
               Đang xử lý giá
             </span>
           }
         >
-          <span className={cn(style, 'bg-appWarning text-appBlack', className)}>
+          <span className={cn(style, 'text-appBlack bg-appWarning', className)}>
             Chờ duyệt giá
           </span>
         </Show>
