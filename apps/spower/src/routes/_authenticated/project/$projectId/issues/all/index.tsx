@@ -8,6 +8,7 @@ import { ShoppingCartIcon } from 'lucide-react';
 
 import {
   IssueResponse,
+  IssueStatusOptions,
   IssueTypeOptions,
   Match,
   Switch,
@@ -60,6 +61,37 @@ const Component = () => {
       header: () => 'Nội dung',
       footer: info => info.column.id,
       size: 400
+    }),
+    columnHelper.accessor('status', {
+      cell: ({ row }) =>
+        row.original.status === IssueStatusOptions.Normal ? (
+          <div
+            className={
+              'bg-appSuccess flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white'
+            }
+          >
+            An toàn
+          </div>
+        ) : row.original.status === IssueStatusOptions.Warning ? (
+          <div
+            className={
+              'bg-appWarning flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs'
+            }
+          >
+            Nguy cơ chậm
+          </div>
+        ) : (
+          <div
+            className={
+              'bg-appError flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white'
+            }
+          >
+            Đang chậm
+          </div>
+        ),
+      header: () => 'Tiến độ',
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('assignee', {
       cell: ({ row }) => <EmployeeDisplay employeeId={row.original.assignee} />,
