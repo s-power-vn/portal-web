@@ -541,8 +541,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                             ...getCommonPinningStyles(header.column),
                             width: header.getSize()
                           }}
-                          className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 after:absolute after:right-0
-                          after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
+                          className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 text-center after:absolute
+                          after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
                         >
                           {header.isPlaceholder ? null : (
                             <>
