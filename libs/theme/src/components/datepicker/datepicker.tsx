@@ -1,4 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { vi } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import { DateTime } from 'luxon';
 
@@ -36,7 +37,9 @@ export const DatePicker: FC<DatePickerProps> = props => {
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             <Show when={date} fallback={props.placeholder ?? 'Hãy chọn ngày'}>
-              {date?.toFormat('dd/MM/yyyy')}
+              {props.showTime
+                ? date?.toFormat('dd/MM/yyyy HH:mm')
+                : date?.toFormat('dd/MM/yyyy')}
             </Show>
             <Show when={!!date}>
               <Button
@@ -58,10 +61,16 @@ export const DatePicker: FC<DatePickerProps> = props => {
         <PopoverContent className="w-auto p-0" align={'start'}>
           <Calendar
             mode="single"
+            locale={vi}
             selected={date?.toJSDate()}
             onSelect={v => {
               const date = v ? DateTime.fromJSDate(v) : undefined;
-              setDate(date);
+              setDate(old => {
+                return date?.set({
+                  hour: old?.hour,
+                  minute: old?.minute
+                });
+              });
               setOpen(false);
               props.onChange?.(date);
             }}
