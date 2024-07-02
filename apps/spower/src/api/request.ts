@@ -51,7 +51,23 @@ export type RequestData = RequestResponse & {
 export const CreateRequestSchema = object().shape({
   name: string().required('Hãy nhập nội dung'),
   startDate: object().required('Hãy chọn ngày bắt đầu'),
-  endDate: object().required('Hãy chọn ngày kết thúc'),
+  endDate: object()
+    .required('Hãy chọn ngày kết thúc')
+    .test({
+      name: 'checkEndDate',
+      message: 'Ngày kết thúc phải lớn hơn ngày bắt đầu',
+      test: function (value) {
+        const startDate = this.parent.startDate;
+        const endDate = this.parent.endDate;
+        if (startDate && endDate) {
+          return (
+            new Date(startDate.toJSDate()).getTime() <
+            new Date(endDate.toJSDate()).getTime()
+          );
+        }
+        return true;
+      }
+    }),
   issueType: string().oneOf(
     Object.values(IssueTypeOptions),
     'Hãy chọn loại yêu cầu'

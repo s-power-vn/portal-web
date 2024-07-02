@@ -51,7 +51,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         name={'name'}
         title={'Nội dung công việc'}
       />
-      <div className={'flex gap-2'}>
+      <div className={'flex items-center gap-2'}>
         <DatePickerField
           schema={CreateRequestSchema}
           name={'startDate'}
@@ -61,6 +61,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
             showTime: true
           }}
         />
+        <span className={'px-2 pt-4'}>-</span>
         <DatePickerField
           schema={CreateRequestSchema}
           name={'endDate'}
