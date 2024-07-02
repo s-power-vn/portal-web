@@ -7,8 +7,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
 import {
+  IssueDeadlineStatusOptions,
   IssueResponse,
-  IssueStatusOptions,
   IssueTypeOptions,
   Match,
   Switch,
@@ -60,7 +60,7 @@ const Component = () => {
     }),
     columnHelper.accessor('status', {
       cell: ({ row }) =>
-        row.original.status === IssueStatusOptions.Normal ? (
+        row.original.deadlineStatus === IssueDeadlineStatusOptions.Normal ? (
           <div
             className={
               'bg-appSuccess flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white'
@@ -68,7 +68,8 @@ const Component = () => {
           >
             An toàn
           </div>
-        ) : row.original.status === IssueStatusOptions.Warning ? (
+        ) : row.original.deadlineStatus ===
+          IssueDeadlineStatusOptions.Warning ? (
           <div
             className={
               'bg-appWarning flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs'

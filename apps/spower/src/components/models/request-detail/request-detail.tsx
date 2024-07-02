@@ -7,7 +7,7 @@ import { FC, useState } from 'react';
 
 import {
   Collections,
-  IssueStatusOptions,
+  IssueDeadlineStatusOptions,
   Show,
   client,
   cn,
@@ -99,9 +99,11 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
       <div
         className={cn(
           'bg-appGrayLight flex items-start justify-between border-b p-2',
-          request.data.expand.issue.status === IssueStatusOptions.Normal
+          request.data.expand.issue.deadlineStatus ===
+            IssueDeadlineStatusOptions.Normal
             ? ''
-            : request.data.expand.issue.status === IssueStatusOptions.Warning
+            : request.data.expand.issue.deadlineStatus ===
+                IssueDeadlineStatusOptions.Warning
               ? 'border-t-appWarning border-t-4'
               : 'border-t-appError border-t-4'
         )}

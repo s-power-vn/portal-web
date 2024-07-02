@@ -6,6 +6,7 @@ import { router } from 'react-query-kit';
 import {
   Collections,
   DetailResponse,
+  IssueDeadlineStatusOptions,
   IssueResponse,
   IssueStatusOptions,
   IssueTypeOptions,
@@ -175,7 +176,8 @@ export const requestApi = router('request', {
         type: IssueTypeOptions.Request,
         createdBy: client.authStore.model?.id,
         assignee: client.authStore.model?.id,
-        status: IssueStatusOptions.Normal,
+        deadlineStatus: IssueDeadlineStatusOptions.Normal,
+        status: IssueStatusOptions.Working,
         ...params
       });
 
