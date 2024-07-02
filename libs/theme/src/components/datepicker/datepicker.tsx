@@ -42,10 +42,10 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 : date?.toFormat('dd/MM/yyyy')}
             </Show>
             <Show when={!!date}>
-              <Button
-                variant={'outline'}
+              <div
                 className={cn(
-                  'bg-appError absolute right-2 h-5 w-5 justify-center rounded-full p-0 text-white'
+                  `bg-appError absolute right-2 flex h-5 w-5 items-center
+                  justify-center rounded-full p-0 text-white shadow`
                 )}
                 onClick={e => {
                   e.stopPropagation();
@@ -54,11 +54,11 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 }}
               >
                 <Cross2Icon className="h-2 w-2" />
-              </Button>
+              </div>
             </Show>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align={'start'}>
+        <PopoverContent className={'w-auto'} align={'start'}>
           <Calendar
             mode="single"
             locale={vi}
@@ -76,10 +76,10 @@ export const DatePicker: FC<DatePickerProps> = props => {
             }}
           />
           <Show when={props.showTime}>
-            <div className={'p-2'}>
+            <div className={'flex p-2'}>
               <Timepicker
                 value={date}
-                className={'w-full'}
+                className={'flex-1'}
                 onChange={v => {
                   setDate(v);
                   props.onChange?.(v);

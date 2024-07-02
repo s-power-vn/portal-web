@@ -1,21 +1,10 @@
-import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 
 import { FC, useEffect, useState } from 'react';
 
 import { cn } from '@storeo/core';
 
-import { SelectInput } from '../input';
-
-const hours = _.range(0, 24, 1).map(v => ({
-  label: v.toString(),
-  value: v.toString()
-}));
-
-const minutes = _.range(0, 60, 1).map(v => ({
-  label: v.toString(),
-  value: v.toString()
-}));
+import { MaskedInput } from '../input';
 
 export type TimepickerProps = {
   value?: DateTime;
@@ -40,31 +29,37 @@ export const Timepicker: FC<TimepickerProps> = props => {
   return (
     <div className={cn('flex w-44 gap-2', props.className)}>
       <div className={'flex-1'}>
-        <SelectInput
+        <MaskedInput
           value={hour?.toString()}
-          placeholder={'Giờ'}
-          className={'w-full'}
-          items={hours}
-          onChange={v => {
-            if (v) {
-              setHour(parseInt(v));
-              props.onChange?.(props.value?.set({ hour: parseInt(v), minute }));
+          onChange={(v: any) => {
+            if (v.target.value) {
+              setHour(parseInt(v.target.value));
+              props.onChange?.(
+                props.value?.set({ hour: parseInt(v.target.value), minute })
+              );
             }
           }}
+          mask={Number}
+          min={0}
+          max={23}
+          autofix={true}
         />
       </div>
       <div className={'flex-1'}>
-        <SelectInput
+        <MaskedInput
           value={minute?.toString()}
-          placeholder={'Phút'}
-          className={'w-full'}
-          items={minutes}
-          onChange={v => {
-            if (v) {
-              setMinute(parseInt(v));
-              props.onChange?.(props.value?.set({ hour, minute: parseInt(v) }));
+          onChange={(v: any) => {
+            if (v.target.value) {
+              setMinute(parseInt(v.target.value));
+              props.onChange?.(
+                props.value?.set({ minute: parseInt(v.target.value), hour })
+              );
             }
           }}
+          mask={Number}
+          min={0}
+          max={59}
+          autofix={true}
         />
       </div>
     </div>
