@@ -44,7 +44,7 @@ export const DatePicker: FC<DatePickerProps> = props => {
             <Show when={!!date}>
               <div
                 className={cn(
-                  `bg-appError absolute right-2 flex h-5 w-5 items-center
+                  `bg-appError absolute right-2 flex h-4 w-4 items-center
                   justify-center rounded-full p-0 text-white shadow`
                 )}
                 onClick={e => {
