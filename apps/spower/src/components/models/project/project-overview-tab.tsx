@@ -247,7 +247,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
       }),
       columnHelper.accessor('unit', {
         cell: ({ row }) => (
-          <div className={'flex justify-end gap-1'}>{row.original.unit}</div>
+          <div className={'flex justify-center gap-1'}>{row.original.unit}</div>
         ),
         header: () => 'Đơn vị',
         footer: info => info.column.id,
