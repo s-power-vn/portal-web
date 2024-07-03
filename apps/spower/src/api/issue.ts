@@ -80,7 +80,13 @@ export const issueApi = router('issue', {
     }
   }),
   update: router.mutation({
-    mutationFn: (params: IssueRecord & { issueId: string }) => {
+    mutationFn: (
+      params: Omit<IssueRecord, 'startDate' | 'endDate'> & {
+        issueId: string;
+        startDate?: Date;
+        endDate?: Date;
+      }
+    ) => {
       const { issueId, ...data } = params;
       return client.collection(Collections.Issue).update(issueId, data);
     }

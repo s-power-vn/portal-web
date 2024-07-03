@@ -16,7 +16,7 @@ import {
 import { issueApi } from '../../../api/issue';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập nội dung'),
+  title: string().required('Hãy nhập nội dung'),
   startDate: object().required('Hãy chọn ngày bắt đầu'),
   endDate: object()
     .required('Hãy chọn ngày kết thúc')
@@ -51,7 +51,7 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
 
   const updateIssue = issueApi.update.useMutation({
     onSuccess: async () => {
-      success('Cập nhật thành công');
+      success('Cập nhật công việc thành công');
       props.onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
@@ -66,7 +66,6 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
       schema={schema}
       defaultValues={{
         ...issue.data,
-        name: issue.data.title,
         startDate: DateTime.fromJSDate(
           new Date(Date.parse(issue.data.startDate))
         ),
@@ -77,8 +76,8 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
       onSubmit={values => {
         return updateIssue.mutate({
           ...values,
-          startDate: (values.startDate as DateTime)?.toISODate() ?? undefined,
-          endDate: (values.endDate as DateTime)?.toISODate() ?? undefined,
+          startDate: (values.startDate as DateTime)?.toJSDate() ?? undefined,
+          endDate: (values.endDate as DateTime)?.toJSDate() ?? undefined,
           issueId: props.issueId,
           project: issue.data.project
         });
@@ -86,7 +85,7 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
     >
       <TextareaField
         schema={schema}
-        name={'name'}
+        name={'title'}
         title={'Nội dung công việc'}
       />
       <div className={'flex items-center gap-2'}>
