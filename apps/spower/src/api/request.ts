@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { InferType, array, boolean, number, object, string } from 'yup';
+import { InferType, number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
 
@@ -7,6 +7,7 @@ import {
   Collections,
   DetailResponse,
   IssueDeadlineStatusOptions,
+  IssueRecord,
   IssueResponse,
   IssueStatusOptions,
   IssueTypeOptions,
@@ -47,86 +48,6 @@ export type RequestData = RequestResponse & {
     };
   };
 };
-
-export const CreateRequestSchema = object().shape({
-  name: string().required('Hãy nhập nội dung'),
-  startDate: object().required('Hãy chọn ngày bắt đầu'),
-  endDate: object()
-    .required('Hãy chọn ngày kết thúc')
-    .test({
-      name: 'checkEndDate',
-      message: 'Ngày kết thúc phải lớn hơn ngày bắt đầu',
-      test: function (value) {
-        const startDate = this.parent.startDate;
-        const endDate = this.parent.endDate;
-        if (startDate && endDate) {
-          return (
-            new Date(startDate.toJSDate()).getTime() <
-            new Date(endDate.toJSDate()).getTime()
-          );
-        }
-        return true;
-      }
-    }),
-  issueType: string().oneOf(
-    Object.values(IssueTypeOptions),
-    'Hãy chọn loại yêu cầu'
-  ),
-  status: string().oneOf(
-    Object.values(RequestStatusOptions),
-    'Hãy chọn trạng thái'
-  ),
-  details: array()
-    .of(
-      object().shape({
-        id: string().optional(),
-        hasChild: boolean().optional(),
-        requestVolume: number()
-          .transform((_, originalValue) =>
-            Number(originalValue?.toString().replace(/,/g, '.'))
-          )
-          .typeError('Hãy nhập khối lượng yêu cầu')
-          .when('hasChild', (hasChild, schema) => {
-            return hasChild[0]
-              ? schema
-              : schema
-                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                  .required('Hãy nhập khối lượng yêu cầu');
-          })
-      })
-    )
-    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
-});
-
-export type CreateRequestInput = InferType<typeof CreateRequestSchema>;
-
-export const UpdateRequestSchema = object().shape({
-  name: string().required('Hãy nhập nội dung'),
-  details: array()
-    .of(
-      object().shape({
-        id: string().required(),
-        hasChild: boolean().optional(),
-        requestVolume: number()
-          .transform((_, originalValue) =>
-            Number(originalValue?.toString().replace(/,/g, '.'))
-          )
-          .typeError('Hãy nhập khối lượng yêu cầu')
-          .when('hasChild', (hasChild, schema) => {
-            return hasChild[0]
-              ? schema
-              : schema
-                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                  .required('Hãy nhập khối lượng yêu cầu');
-          })
-      })
-    )
-    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
-});
-
-export type UpdateRequestInput = InferType<typeof UpdateRequestSchema>;
 
 export const CreateRequestDetailSupplierSchema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
@@ -185,20 +106,25 @@ export const requestApi = router('request', {
         })
   }),
   create: router.mutation({
-    mutationFn: async (params: CreateRequestInput & { projectId: string }) => {
+    mutationFn: async (
+      params: IssueRecord & {
+        details: {
+          id?: string;
+          requestVolume?: number;
+        }[];
+      }
+    ) => {
       const issue = await client.collection(Collections.Issue).create({
-        project: params.projectId,
-        title: params.name,
+        ...params,
         type: IssueTypeOptions.Request,
         createdBy: client.authStore.model?.id,
         assignee: client.authStore.model?.id,
         deadlineStatus: IssueDeadlineStatusOptions.Normal,
-        status: IssueStatusOptions.Working,
-        ...params
+        status: IssueStatusOptions.Working
       });
 
       const request = await client.collection(Collections.Request).create({
-        project: params.projectId,
+        ...params,
         issue: issue.id,
         status: RequestStatusOptions.ToDo
       });
@@ -219,22 +145,6 @@ export const requestApi = router('request', {
       );
 
       return request;
-    }
-  }),
-  update: router.mutation({
-    mutationFn: (params: UpdateRequestInput & { requestId: string }) => {
-      const { requestId, ...data } = params;
-
-      return Promise.all([
-        ...params.details
-          .filter(detail => !detail.hasChild)
-          .map(detail =>
-            client.collection(Collections.RequestDetail).update(detail.id, {
-              volume: detail.requestVolume
-            })
-          ),
-        client.collection(Collections.Request).update(requestId, data)
-      ]);
     }
   }),
   delete: router.mutation({

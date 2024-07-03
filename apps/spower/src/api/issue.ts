@@ -2,7 +2,7 @@ import { InferType, number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
 
-import { Collections, IssueResponse, client } from '@storeo/core';
+import { Collections, IssueRecord, IssueResponse, client } from '@storeo/core';
 
 export const IssuesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
@@ -66,6 +66,12 @@ export const issueApi = router('issue', {
       return await client.collection('issue').update(issueId, {
         title
       });
+    }
+  }),
+  update: router.mutation({
+    mutationFn: (params: IssueRecord & { issueId: string }) => {
+      const { issueId, ...data } = params;
+      return client.collection(Collections.Issue).update(issueId, data);
     }
   })
 });

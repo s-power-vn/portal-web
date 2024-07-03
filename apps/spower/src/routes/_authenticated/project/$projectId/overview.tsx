@@ -5,7 +5,7 @@ import React, { Suspense } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
-import { DocumentOverviewTab } from '../../../../components';
+import { ProjectOverviewTab } from '../../../../components';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -24,7 +24,7 @@ const Component = () => {
             </div>
           }
         >
-          <DocumentOverviewTab projectId={projectId} />
+          <ProjectOverviewTab projectId={projectId} />
         </Suspense>
       </TabsContent>
     </Tabs>

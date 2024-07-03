@@ -8,7 +8,7 @@ export * from './detail/edit-detail-dialog';
 export * from './detail/new-detail-dialog';
 export * from './project/edit-project-dialog';
 export * from './project/new-project-dialog';
-export * from './project/document-overview-tab';
+export * from './project/project-overview-tab';
 export * from './detail/pick-detail-dialog';
 export * from './request-detail/request-detail-list-field';
 export * from './request-detail/request-detail';

@@ -1,5 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
-import { array, boolean, number, object, string } from 'yup';
+import { object, string } from 'yup';
 
 import { FC } from 'react';
 
@@ -12,8 +13,7 @@ import {
   success
 } from '@storeo/theme';
 
-import { requestApi } from '../../../api';
-import { RequestDetailListField } from '../request-detail/request-detail-list-field';
+import { issueApi } from '../../../api/issue';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -34,40 +34,30 @@ const schema = object().shape({
         }
         return true;
       }
-    }),
-  details: array()
-    .of(
-      object().shape({
-        id: string().optional(),
-        hasChild: boolean().optional(),
-        requestVolume: number()
-          .transform((_, originalValue) =>
-            Number(originalValue?.toString().replace(/,/g, '.'))
-          )
-          .typeError('Hãy nhập khối lượng yêu cầu')
-          .when('hasChild', (hasChild, schema) => {
-            return hasChild[0]
-              ? schema
-              : schema
-                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                  .required('Hãy nhập khối lượng yêu cầu');
-          })
-      })
-    )
-    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
+    })
 });
 
-export type NewRequestFormProps = {
-  projectId: string;
+export type EditIssueFormProps = {
+  issueId: string;
   onSuccess?: () => void;
 };
 
-export const NewRequestForm: FC<NewRequestFormProps> = props => {
-  const createRequest = requestApi.create.useMutation({
+export const EditIssueForm: FC<EditIssueFormProps> = props => {
+  const queryClient = useQueryClient();
+
+  const issue = issueApi.byId.useSuspenseQuery({
+    variables: props.issueId
+  });
+
+  const updateIssue = issueApi.update.useMutation({
     onSuccess: async () => {
-      success('Tạo yêu cầu mua hàng thành công');
+      success('Cập nhật thành công');
       props.onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: issueApi.byId.getKey(props.issueId)
+        })
+      ]);
     }
   });
 
@@ -75,17 +65,22 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        name: '',
-        startDate: DateTime.now()
+        ...issue.data,
+        name: issue.data.title,
+        startDate: DateTime.fromJSDate(
+          new Date(Date.parse(issue.data.startDate))
+        ),
+        endDate: DateTime.fromJSDate(new Date(Date.parse(issue.data.endDate)))
       }}
       className={'mt-2 flex flex-col gap-4'}
-      loading={createRequest.isPending}
+      loading={updateIssue.isPending}
       onSubmit={values => {
-        return createRequest.mutate({
+        return updateIssue.mutate({
           ...values,
-          startDate: (values.startDate as DateTime)?.toJSDate().toISOString(),
-          endDate: (values.endDate as DateTime)?.toJSDate().toISOString(),
-          project: props.projectId
+          startDate: (values.startDate as DateTime)?.toISODate() ?? undefined,
+          endDate: (values.endDate as DateTime)?.toISODate() ?? undefined,
+          issueId: props.issueId,
+          project: issue.data.project
         });
       }}
     >
@@ -115,11 +110,6 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
           }}
         />
       </div>
-      <RequestDetailListField
-        schema={schema}
-        name={'details'}
-        options={{ projectId: props.projectId }}
-      />
       <DialogFooter className={'mt-4'}>
         <Button type="submit">Chấp nhận</Button>
       </DialogFooter>

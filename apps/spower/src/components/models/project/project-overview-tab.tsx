@@ -67,11 +67,11 @@ import { NewDetailDialog } from '../detail/new-detail-dialog';
 
 const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
-export type DocumentOverviewProps = {
+export type ProjectOverviewTabProps = {
   projectId: string;
 };
 
-export const DocumentOverviewTab: FC<DocumentOverviewProps> = ({
+export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   projectId
 }) => {
   const navigate = useNavigate({ from: Route.fullPath });

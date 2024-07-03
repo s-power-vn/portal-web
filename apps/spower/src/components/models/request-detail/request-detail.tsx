@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { CalendarIcon, Undo2Icon, User2Icon } from 'lucide-react';
 
-import { FC, useState } from 'react';
+import { FC, useCallback, useRef, useState } from 'react';
 
 import {
   Collections,
@@ -22,12 +22,15 @@ import {
   AvatarImage,
   Button,
   Textarea,
+  closeModal,
+  showModal,
   success,
   useConfirm
 } from '@storeo/theme';
 
 import { requestApi } from '../../../api';
 import { commentApi } from '../../../api/comment';
+import { EditIssueForm } from '../issue/edit-issue-form';
 import { IssueAssignee } from '../issue/issue-assignee';
 import { IssueTitle } from '../issue/issue-title';
 import { RequestItem } from '../request/request-item';
@@ -90,6 +93,26 @@ export const RequestDetail: FC<RequestDetailProps> = ({ issueId }) => {
       ]);
     }
   });
+
+  const modalId = useRef<string | undefined>();
+
+  const onSuccessHandler = useCallback(async () => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const handleEditRequest = useCallback(
+    (requestId: string) => {
+      modalId.current = showModal({
+        title: 'Sửa yêu cầu mua hàng',
+        children: (
+          <EditIssueForm requestId={issueId} onSuccess={onSuccessHandler} />
+        )
+      });
+    },
+    [onSuccessHandler]
+  );
 
   const { confirm } = useConfirm();
   const router = useRouter();
