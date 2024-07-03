@@ -21,15 +21,12 @@ import {
 import { TreeData } from '../../../commons/utils';
 import { PickDetailDialog } from '../detail/pick-detail-dialog';
 
-export type DocumentRequestDetailListProps = {
+export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;
   projectId?: string;
 };
 
-export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
-  schema,
-  projectId
-}) => {
+export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   const [openPick, setOpenPick] = useState(false);
 
   const { control, setValue } = useFormContext();
@@ -146,16 +143,16 @@ export const DocumentRequestDetailList: FC<DocumentRequestDetailListProps> = ({
   );
 };
 
-export type RequestDetailListFieldProps<S extends ObjectSchema<AnyObject>> =
-  FormFieldProps<Omit<DocumentRequestDetailListProps, 'schema'>, S>;
+export type RequestInputFieldProps<S extends ObjectSchema<AnyObject>> =
+  FormFieldProps<Omit<RequestInputProps, 'schema'>, S>;
 
-export const RequestDetailListField = <S extends ObjectSchema<AnyObject>>({
+export const RequestInputField = <S extends ObjectSchema<AnyObject>>({
   options,
   ...props
-}: RequestDetailListFieldProps<S>) => {
+}: RequestInputFieldProps<S>) => {
   return (
     <FormField {...props}>
-      <DocumentRequestDetailList schema={props.schema} {...options} />
+      <RequestInput schema={props.schema} {...options} />
     </FormField>
   );
 };

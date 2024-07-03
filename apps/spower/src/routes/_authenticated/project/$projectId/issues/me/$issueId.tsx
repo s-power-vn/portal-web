@@ -3,7 +3,7 @@ import { Loader } from 'lucide-react';
 
 import { Suspense } from 'react';
 
-import { IssueDetail } from '../../../../../../components';
+import { Issue } from '../../../../../../components';
 
 const Component = () => {
   const { issueId } = Route.useParams();
@@ -16,7 +16,7 @@ const Component = () => {
         </div>
       }
     >
-      <IssueDetail issueId={issueId} />
+      <Issue issueId={issueId} />
     </Suspense>
   );
 };

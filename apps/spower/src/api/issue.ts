@@ -4,6 +4,8 @@ import { router } from 'react-query-kit';
 
 import { Collections, IssueRecord, IssueResponse, client } from '@storeo/core';
 
+import { UserData } from './employee';
+
 export const IssuesSearchSchema = object().shape({
   pageIndex: number().optional().default(1),
   pageSize: number().optional().default(10),
@@ -11,6 +13,12 @@ export const IssuesSearchSchema = object().shape({
 });
 
 export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
+
+export type IssueData = IssueResponse & {
+  expand: {
+    createdBy: UserData;
+  };
+};
 
 export const issueApi = router('issue', {
   list: router.query({
@@ -37,7 +45,10 @@ export const issueApi = router('issue', {
         })
   }),
   byId: router.query({
-    fetcher: (id: string) => client.collection(Collections.Issue).getOne(id)
+    fetcher: (id: string) =>
+      client.collection<IssueData>(Collections.Issue).getOne(id, {
+        expand: `createdBy`
+      })
   }),
   changeAssignee: router.mutation({
     mutationFn: async ({

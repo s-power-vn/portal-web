@@ -57,15 +57,16 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
-import { EditRequestPriceForm } from '../request-detail/edit-request-price-form';
-import { EditRequestVolumeForm } from '../request-detail/edit-request-volume-form';
-import { ListRequestSupplierDialog } from '../request-detail/list-request-supplier-dialog';
+import { EditRequestPriceForm } from './edit-request-price-form';
+import { EditRequestVolumeForm } from './edit-request-volume-form';
+import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
+import { RequestStatus } from './request-status';
 
-export type RequestItemProps = {
-  requestId: string;
+export type RequestProps = {
+  issueId: string;
 };
 
-export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
+export const Request: FC<RequestProps> = ({ issueId }) => {
   const [openListSupplier, setOpenListSupplier] = useState(false);
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -74,8 +75,8 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<RequestDetailData>>>();
 
-  const request = requestApi.byId.useSuspenseQuery({
-    variables: requestId
+  const request = requestApi.byIssueId.useSuspenseQuery({
+    variables: issueId
   });
 
   const listApprovers = settingApi.listApprover.useSuspenseQuery();
@@ -309,7 +310,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   const { confirm } = useConfirm();
 
   const confirmStatus = requestApi.checkConfirmer.useSuspenseQuery({
-    variables: requestId
+    variables: request.data.id
   });
 
   const confirmRequest = requestApi.confirm.useMutation({
@@ -341,12 +342,26 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
   });
 
   const checkEnableApprove = requestApi.checkEnableApprove.useSuspenseQuery({
-    variables: requestId
+    variables: request.data.id
   });
 
   const sendToApprover = requestApi.sendToApprover.useMutation({
     onSuccess: async () => {
       success('Gửi yêu cầu phê duyệt thành công');
+      router.history.back();
+    }
+  });
+
+  const approveRequest = requestApi.approve.useMutation({
+    onSuccess: async () => {
+      success('Yêu cầu đã được duyệt');
+      router.history.back();
+    }
+  });
+
+  const rejectRequest = requestApi.reject.useMutation({
+    onSuccess: async () => {
+      success('Yêu cầu đã bị từ chối');
       router.history.back();
     }
   });
@@ -450,7 +465,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 onClick={() => {
                   confirm?.(
                     'Bạn chắc chắn muốn xóa yêu cầu mua hàng này?',
-                    () => deleteRequest.mutate(requestId)
+                    () => deleteRequest.mutate(request.data.id)
                   );
                 }}
               >
@@ -469,7 +484,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                       onClick={() =>
                         confirm(
                           'Bạn chắc chắn muốn xác nhận yêu cầu mua hàng này?',
-                          () => confirmRequest.mutate(requestId)
+                          () => confirmRequest.mutate(request.data.id)
                         )
                       }
                     >
@@ -482,7 +497,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                       onClick={() =>
                         confirm(
                           'Bạn chắc chắn muốn hủy xác nhận yêu cầu mua hàng này?',
-                          () => unConfirmRequest.mutate(requestId)
+                          () => unConfirmRequest.mutate(request.data.id)
                         )
                       }
                     >
@@ -510,7 +525,7 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                   onClick={() =>
                     confirm(
                       'Bạn chắc chắn muốn gửi phê duyệt yêu cầu mua hàng này?',
-                      () => sendToApprover.mutate(requestId)
+                      () => sendToApprover.mutate(request.data.id)
                     )
                   }
                 >
@@ -518,6 +533,42 @@ export const RequestItem: FC<RequestItemProps> = ({ requestId }) => {
                 </Button>
               </Show>
             </Show>
+          </div>
+          <div className={'flex gap-2'}>
+            <Show
+              when={
+                client.authStore.model?.role === 1 &&
+                client.authStore.model?.id ===
+                  request.data.expand.issue.assignee
+              }
+            >
+              <div className={'flex gap-2'}>
+                <Button
+                  className={'bg-blue-500 hover:bg-blue-600'}
+                  onClick={() =>
+                    confirm('Bạn có chắc chắn muốn duyệt yêu cầu này?', () =>
+                      approveRequest.mutate(request.data)
+                    )
+                  }
+                >
+                  Phê duyệt
+                </Button>
+                <Button
+                  className={'bg-red-500 hover:bg-red-600'}
+                  onClick={() =>
+                    confirm('Bạn có chắc chắn muốn từ chối yêu cầu này?', () =>
+                      rejectRequest.mutate(request.data)
+                    )
+                  }
+                >
+                  Từ chối
+                </Button>
+              </div>
+            </Show>
+            <RequestStatus
+              className={'px-3 py-1.5 text-xs font-bold'}
+              issueId={issueId}
+            />
           </div>
         </div>
         <div className={'flex flex-col'}>

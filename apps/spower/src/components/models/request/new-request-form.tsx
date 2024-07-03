@@ -13,7 +13,7 @@ import {
 } from '@storeo/theme';
 
 import { requestApi } from '../../../api';
-import { RequestDetailListField } from '../request-detail/request-detail-list-field';
+import { RequestInputField } from './request-input-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
@@ -115,7 +115,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
           }}
         />
       </div>
-      <RequestDetailListField
+      <RequestInputField
         schema={schema}
         name={'details'}
         options={{ projectId: props.projectId }}
