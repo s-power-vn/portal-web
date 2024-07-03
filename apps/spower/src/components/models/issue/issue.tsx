@@ -1,7 +1,13 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { CalendarIcon, Loader, Undo2Icon } from 'lucide-react';
+import {
+  CalendarIcon,
+  Edit3,
+  Loader,
+  MoreHorizontalIcon,
+  Undo2Icon
+} from 'lucide-react';
 
 import { FC, useCallback, useRef, useState } from 'react';
 
@@ -23,6 +29,10 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Textarea,
   closeModal,
   showModal,
@@ -92,7 +102,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
 
   const handleEditIssue = useCallback(() => {
     modalId.current = showModal({
-      title: 'Sửa',
+      title: 'Sửa công việc',
       children: <EditIssueForm issueId={issueId} onSuccess={onSuccessHandler} />
     });
   }, [issueId, onSuccessHandler]);
@@ -102,7 +112,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
       className={cn(
         ``,
         issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal
-          ? ''
+          ? 'border-t-appSuccess border-t-4'
           : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning
             ? 'border-t-appWarning border-t-4'
             : 'border-t-appError border-t-4'
@@ -111,35 +121,57 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex items-center gap-2'}>
           <Button
-            className={'h-6'}
+            className={'h-6 w-10'}
             size={'icon'}
             onClick={() => router.history.back()}
           >
             <Undo2Icon className={'h-4 w-4'} />
           </Button>
-          <span className={'text-base font-bold'}>{issue.data.title}</span>
+          <span className={'flex-1 text-base font-bold  '}>
+            {issue.data.title}
+          </span>
         </div>
-        <div className={'flex w-[550px] flex-col gap-2'}>
-          <div className={'flex w-full items-center gap-6 text-sm'}>
-            <div className={'flex flex-1 items-center justify-between'}>
-              <span className={'text-appBlue text-xs'}>Ngày tạo</span>
-              {formatDate(issue.data.created)}
+        <div className={'flex justify-between'}>
+          <div className={'flex w-[550px] flex-col gap-2'}>
+            <div className={'flex w-full items-center gap-6 text-sm'}>
+              <div className={'flex flex-1 items-center justify-between'}>
+                <span className={'text-appBlue text-xs'}>Ngày tạo</span>
+                {formatDate(issue.data.created)}
+              </div>
+              <div className={'flex flex-1 items-center justify-between'}>
+                <span className={'text-appBlue text-xs'}>Người tạo</span>
+                {issue.data.expand?.createdBy.name}
+              </div>
             </div>
-            <div className={'flex flex-1 items-center justify-between'}>
-              <span className={'text-appBlue text-xs'}>Người tạo</span>
-              {issue.data.expand?.createdBy.name}
+            <div className={'flex w-full items-center gap-6 text-sm'}>
+              <div className={'flex flex-1 items-center justify-between'}>
+                <span className={'text-appBlue text-xs'}>Ngày bắt đầu</span>
+                {formatDate(issue.data.startDate)}
+              </div>
+              <div className={'flex flex-1 items-center justify-between'}>
+                <span className={'text-appBlue text-xs'}>Ngày kết thúc</span>
+                {formatDate(issue.data.endDate)}
+              </div>
             </div>
           </div>
-          <div className={'flex w-full items-center gap-6 text-sm'}>
-            <div className={'flex flex-1 items-center justify-between'}>
-              <span className={'text-appBlue text-xs'}>Ngày bắt đầu</span>
-              {formatDate(issue.data.startDate)}
-            </div>
-            <div className={'flex flex-1 items-center justify-between'}>
-              <span className={'text-appBlue text-xs'}>Ngày kết thúc</span>
-              {formatDate(issue.data.endDate)}
-            </div>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={'outline'}
+                className={'h-6'}
+                size={'icon'}
+                onClick={() => router.history.back()}
+              >
+                <MoreHorizontalIcon className={'h-4 w-4'} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="end">
+              <DropdownMenuItem onClick={handleEditIssue}>
+                <Edit3 className="mr-2 h-4 w-4 text-red-500" />
+                Sửa công việc
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <div className={'p-2'}>
