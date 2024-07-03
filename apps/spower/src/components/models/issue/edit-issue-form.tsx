@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { DateTime } from 'luxon';
-import { object, string } from 'yup';
+import { date, object, string } from 'yup';
 
 import { FC } from 'react';
 
@@ -17,8 +16,8 @@ import { issueApi } from '../../../api/issue';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
-  startDate: object().required('Hãy chọn ngày bắt đầu'),
-  endDate: object()
+  startDate: date().required('Hãy chọn ngày bắt đầu'),
+  endDate: date()
     .required('Hãy chọn ngày kết thúc')
     .test({
       name: 'checkEndDate',
@@ -66,18 +65,14 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
       schema={schema}
       defaultValues={{
         ...issue.data,
-        startDate: DateTime.fromJSDate(
-          new Date(Date.parse(issue.data.startDate))
-        ),
-        endDate: DateTime.fromJSDate(new Date(Date.parse(issue.data.endDate)))
+        startDate: new Date(Date.parse(issue.data.startDate)),
+        endDate: new Date(Date.parse(issue.data.endDate))
       }}
       className={'mt-2 flex flex-col gap-4'}
       loading={updateIssue.isPending}
       onSubmit={values => {
         return updateIssue.mutate({
           ...values,
-          startDate: (values.startDate as DateTime)?.toJSDate() ?? undefined,
-          endDate: (values.endDate as DateTime)?.toJSDate() ?? undefined,
           issueId: props.issueId,
           project: issue.data.project
         });

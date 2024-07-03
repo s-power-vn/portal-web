@@ -1,5 +1,4 @@
-import { DateTime } from 'luxon';
-import { array, boolean, number, object, string } from 'yup';
+import { array, boolean, date, number, object, string } from 'yup';
 
 import { FC } from 'react';
 
@@ -17,8 +16,8 @@ import { RequestInputField } from './request-input-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập nội dung'),
-  startDate: object().required('Hãy chọn ngày bắt đầu'),
-  endDate: object()
+  startDate: date().required('Hãy chọn ngày bắt đầu'),
+  endDate: date()
     .required('Hãy chọn ngày kết thúc')
     .test({
       name: 'checkEndDate',
@@ -76,15 +75,13 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       schema={schema}
       defaultValues={{
         name: '',
-        startDate: DateTime.now()
+        startDate: new Date()
       }}
       className={'mt-2 flex flex-col gap-4'}
       loading={createRequest.isPending}
       onSubmit={values => {
         return createRequest.mutate({
           ...values,
-          startDate: (values.startDate as DateTime)?.toJSDate().toISOString(),
-          endDate: (values.endDate as DateTime)?.toJSDate().toISOString(),
           project: props.projectId
         });
       }}

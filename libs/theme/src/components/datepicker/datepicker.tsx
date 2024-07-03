@@ -13,15 +13,17 @@ import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export type DatePickerProps = {
-  value?: DateTime;
-  onChange?: (value: DateTime | undefined) => void;
+  value?: Date;
+  onChange?: (value: Date | undefined) => void;
   showTime?: boolean;
   placeholder?: string;
   className?: string;
 };
 
 export const DatePicker: FC<DatePickerProps> = props => {
-  const [date, setDate] = useState<DateTime | undefined>(props.value);
+  const [date, setDate] = useState<DateTime | undefined>(
+    props.value ? DateTime.fromJSDate(props.value) : undefined
+  );
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -72,7 +74,7 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 });
               });
               setOpen(false);
-              props.onChange?.(date);
+              props.onChange?.(date?.toJSDate());
             }}
           />
           <Show when={props.showTime}>
@@ -82,7 +84,7 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 className={'flex-1'}
                 onChange={v => {
                   setDate(v);
-                  props.onChange?.(v);
+                  props.onChange?.(v?.toJSDate());
                 }}
               />
             </div>

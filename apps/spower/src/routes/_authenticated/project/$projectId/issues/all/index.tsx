@@ -101,7 +101,7 @@ const Component = () => {
       size: 200
     }),
     columnHelper.display({
-      id: 'status',
+      id: 'state',
       cell: ({ row }) => (
         <Switch>
           <Match when={row.original.type === IssueTypeOptions.Request}>

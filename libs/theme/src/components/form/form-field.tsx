@@ -38,9 +38,11 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
 
   const isRequiredField = useCallback(
     (name: string) => {
-      return !!(
-        schema.describe().fields[name] as SchemaDescription
-      )?.tests.find(test => test.name === 'required');
+      const fieldDescription = schema.describe().fields[
+        name
+      ] as SchemaDescription;
+
+      return !fieldDescription.nullable && !fieldDescription.optional;
     },
     [schema]
   );

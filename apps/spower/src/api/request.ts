@@ -108,7 +108,9 @@ export const requestApi = router('request', {
   }),
   create: router.mutation({
     mutationFn: async (
-      params: IssueRecord & {
+      params: Omit<IssueRecord, 'startDate' | 'endDate'> & {
+        startDate?: Date;
+        endDate?: Date;
         details: {
           id?: string;
           requestVolume?: number;
