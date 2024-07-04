@@ -1,4 +1,3 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -13,25 +12,11 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import {
-  EditIcon,
-  PrinterIcon,
-  SquareMinusIcon,
-  SquarePlusIcon
-} from 'lucide-react';
+import { PrinterIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  Match,
-  RequestStatusOptions,
-  Show,
-  Switch,
-  client,
-  cn,
-  formatCurrency,
-  formatNumber
-} from '@storeo/core';
+import { Show, client, cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
   Button,
   Table,
@@ -60,6 +45,7 @@ import {
 import { EditRequestPriceForm } from './edit-request-price-form';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
+import { RequestAction } from './request-action';
 import { RequestStatus } from './request-status';
 
 export type RequestProps = {
@@ -309,49 +295,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const { confirm } = useConfirm();
 
-  const confirmStatus = requestApi.checkConfirmer.useSuspenseQuery({
-    variables: request.data.id
-  });
-
-  const confirmRequest = requestApi.confirm.useMutation({
-    onSuccess: async () => {
-      success('Xác nhận thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: requestApi.checkEnableApprove.getKey()
-        }),
-        queryClient.invalidateQueries({
-          queryKey: requestApi.checkConfirmer.getKey()
-        })
-      ]);
-    }
-  });
-
-  const unConfirmRequest = requestApi.unConfirm.useMutation({
-    onSuccess: async () => {
-      success('Hủy xác nhận thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: requestApi.checkEnableApprove.getKey()
-        }),
-        queryClient.invalidateQueries({
-          queryKey: requestApi.checkConfirmer.getKey()
-        })
-      ]);
-    }
-  });
-
-  const checkEnableApprove = requestApi.checkEnableApprove.useSuspenseQuery({
-    variables: request.data.id
-  });
-
-  const sendToApprover = requestApi.sendToApprover.useMutation({
-    onSuccess: async () => {
-      success('Gửi yêu cầu phê duyệt thành công');
-      router.history.back();
-    }
-  });
-
   const approveRequest = requestApi.approve.useMutation({
     onSuccess: async () => {
       success('Yêu cầu đã được duyệt');
@@ -427,112 +370,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
-            <Show
-              when={
-                request.data.expand.issue.expand.assignee.id ===
-                  client.authStore.model?.id &&
-                request.data.status !== RequestStatusOptions.Done
-              }
-            >
-              <Show
-                when={
-                  request.data.status === RequestStatusOptions.VolumeDone &&
-                  client.authStore.model?.role !== 1
-                }
-              >
-                <Button
-                  className={'text-appWhite'}
-                  size="icon"
-                  disabled={!selectedRow}
-                  onClick={handleEditRequestPrice}
-                >
-                  <EditIcon className={'h-4 w-4'} />
-                </Button>
-              </Show>
-              <Show when={request.data.status === RequestStatusOptions.ToDo}>
-                <Button
-                  className={'text-appWhite'}
-                  size="icon"
-                  disabled={!selectedRow}
-                  onClick={handleEditRequestVolume}
-                >
-                  <EditIcon className={'h-4 w-4'} />
-                </Button>
-              </Show>
-              <Button
-                className={'text-appWhite bg-red-500 hover:bg-red-600'}
-                size="icon"
-                onClick={() => {
-                  confirm?.(
-                    'Bạn chắc chắn muốn xóa yêu cầu mua hàng này?',
-                    () => deleteRequest.mutate(request.data.id)
-                  );
-                }}
-              >
-                <Cross2Icon className={'h-4 w-4'} />
-              </Button>
-              <Show
-                when={
-                  !confirmStatus.isPending &&
-                  request.data.status === RequestStatusOptions.ToDo
-                }
-              >
-                <Switch fallback={<div></div>}>
-                  <Match when={confirmStatus.data === 1}>
-                    <Button
-                      className={'text-appWhite'}
-                      onClick={() =>
-                        confirm(
-                          'Bạn chắc chắn muốn xác nhận yêu cầu mua hàng này?',
-                          () => confirmRequest.mutate(request.data.id)
-                        )
-                      }
-                    >
-                      Xác nhận
-                    </Button>
-                  </Match>
-                  <Match when={confirmStatus.data === 2}>
-                    <Button
-                      variant={'outline'}
-                      onClick={() =>
-                        confirm(
-                          'Bạn chắc chắn muốn hủy xác nhận yêu cầu mua hàng này?',
-                          () => unConfirmRequest.mutate(request.data.id)
-                        )
-                      }
-                    >
-                      Hủy xác nhận
-                    </Button>
-                  </Match>
-                </Switch>
-              </Show>
-              <Show
-                when={
-                  !checkEnableApprove.isPending &&
-                  checkEnableApprove.data &&
-                  ((request.data.status === RequestStatusOptions.ToDo &&
-                    !listApprovers.data
-                      .map(it => it.user)
-                      .includes(client.authStore.model?.id)) ||
-                    (request.data.status === RequestStatusOptions.VolumeDone &&
-                      request.data.expand.requestDetail_via_request.filter(
-                        it => it.price > 0
-                      ).length > 0))
-                }
-              >
-                <Button
-                  className={'text-appWhite'}
-                  onClick={() =>
-                    confirm(
-                      'Bạn chắc chắn muốn gửi phê duyệt yêu cầu mua hàng này?',
-                      () => sendToApprover.mutate(request.data.id)
-                    )
-                  }
-                >
-                  Gửi phê duyệt
-                </Button>
-              </Show>
-            </Show>
           </div>
           <div className={'flex gap-2'}>
             <Show
@@ -571,7 +408,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             />
           </div>
         </div>
-        <div className={'flex flex-col'}>
+        <div className={'flex flex-col gap-2'}>
           <div
             className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
           >
@@ -683,6 +520,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
               </TableBody>
             </Table>
           </div>
+          <RequestAction issueId={issueId} />
         </div>
       </div>
     </>

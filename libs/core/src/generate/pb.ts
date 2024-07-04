@@ -196,10 +196,18 @@ export type ProjectRecord = {
 }
 
 export enum RequestStatusOptions {
-	"ToDo" = "ToDo",
-	"VolumeDone" = "VolumeDone",
-	"Done" = "Done",
-	"Canceled" = "Canceled",
+	"A1" = "A1",
+	"A1F" = "A1F",
+	"A1R" = "A1R",
+	"A2F" = "A2F",
+	"A2R" = "A2R",
+	"A3F" = "A3F",
+	"A3R" = "A3R",
+	"A4" = "A4",
+	"A5F" = "A5F",
+	"A5R" = "A5R",
+	"A6F" = "A6F",
+	"A6R" = "A6R",
 }
 export type RequestRecord = {
 	issue: RecordIdString

@@ -17,6 +17,7 @@ export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
 export type IssueData = IssueResponse & {
   expand: {
     createdBy: UserData;
+    assignee: UserData;
   };
 };
 
@@ -47,7 +48,7 @@ export const issueApi = router('issue', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy`
+        expand: `createdBy, assignee`
       })
   }),
   changeAssignee: router.mutation({

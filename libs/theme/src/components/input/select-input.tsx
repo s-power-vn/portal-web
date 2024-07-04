@@ -25,6 +25,8 @@ import {
 } from '../ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
+type Align = 'start' | 'center' | 'end';
+
 export type SelectInputItem = {
   label: string;
   value: string;
@@ -43,6 +45,7 @@ export type SelectInputProps = {
   onFilter?: (value: string) => void;
   children?: ChildrenFunction;
   className?: string;
+  align?: Align;
 };
 
 export const SelectInput: FC<SelectInputProps> = ({
@@ -54,7 +57,8 @@ export const SelectInput: FC<SelectInputProps> = ({
   onChange,
   onFilter,
   children,
-  className
+  className,
+  align = 'center'
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -70,7 +74,7 @@ export const SelectInput: FC<SelectInputProps> = ({
   }, [initialValue]);
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className={'flex-1'}>
       <Popover
         open={open}
         onOpenChange={value => {
@@ -103,6 +107,7 @@ export const SelectInput: FC<SelectInputProps> = ({
             width: containerRef.current?.offsetWidth
           }}
           container={containerRef.current}
+          align={align}
         >
           <Command shouldFilter={!onFilter} value={value}>
             {showSearch ? (

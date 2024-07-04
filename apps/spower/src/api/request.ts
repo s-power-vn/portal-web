@@ -129,7 +129,7 @@ export const requestApi = router('request', {
       const request = await client.collection(Collections.Request).create({
         ...params,
         issue: issue.id,
-        status: RequestStatusOptions.ToDo
+        status: RequestStatusOptions.A1
       });
 
       await Promise.all(
@@ -160,13 +160,9 @@ export const requestApi = router('request', {
   }),
   approve: router.mutation({
     mutationFn: async (params: RequestData) => {
-      const status =
-        params.status === RequestStatusOptions.ToDo
-          ? RequestStatusOptions.VolumeDone
-          : RequestStatusOptions.Done;
       return Promise.all([
         client.collection(Collections.Request).update(params.id, {
-          status
+          status: RequestStatusOptions.A1
         }),
         client.collection(Collections.Issue).update(params.issue, {
           assignee: params.expand.issue.lastAssignee,
@@ -177,13 +173,9 @@ export const requestApi = router('request', {
   }),
   reject: router.mutation({
     mutationFn: async (params: RequestData) => {
-      const status = RequestStatusOptions.VolumeDone
-        ? RequestStatusOptions.ToDo
-        : RequestStatusOptions.VolumeDone;
-
       return Promise.all([
         client.collection(Collections.Request).update(params.id, {
-          status
+          status: RequestStatusOptions.A1
         }),
         client.collection(Collections.Issue).update(params.issue, {
           assignee: params.expand.issue.lastAssignee,
@@ -285,6 +277,32 @@ export const requestApi = router('request', {
           `request = "${requestId}" && confirmer = "${client.authStore.model?.id}"`
         );
       await client.collection(Collections.RequestConfirm).delete(deleteItem.id);
+    }
+  }),
+  update: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      issue: string;
+      assignee: string;
+      status: string;
+      note?: string;
+    }) => {
+      const { assignee, note, ...payload } = params;
+
+      await client.collection(Collections.Issue).update(params.issue, {
+        assignee,
+        lastAssignee: client.authStore.model?.id
+      });
+
+      if (note) {
+        await client.collection(Collections.Comment).create({
+          content: note,
+          issue: params.issue,
+          createdBy: client.authStore.model?.id
+        });
+      }
+
+      return client.collection(Collections.Request).update(params.id, payload);
     }
   })
 });
