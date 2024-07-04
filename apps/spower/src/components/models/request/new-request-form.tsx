@@ -15,7 +15,7 @@ import { requestApi } from '../../../api';
 import { RequestInputField } from './request-input-field';
 
 const schema = object().shape({
-  name: string().required('Hãy nhập nội dung'),
+  title: string().required('Hãy nhập nội dung'),
   startDate: date().required('Hãy chọn ngày bắt đầu'),
   endDate: date()
     .required('Hãy chọn ngày kết thúc')
@@ -71,7 +71,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        name: '',
+        title: '',
         startDate: new Date()
       }}
       className={'mt-2 flex flex-col gap-4'}
@@ -85,7 +85,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
     >
       <TextareaField
         schema={schema}
-        name={'name'}
+        name={'title'}
         title={'Nội dung công việc'}
       />
       <div className={'flex items-center gap-2'}>

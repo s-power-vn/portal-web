@@ -26,10 +26,7 @@ const schema = object().shape({
         const startDate = this.parent.startDate;
         const endDate = this.parent.endDate;
         if (startDate && endDate) {
-          return (
-            new Date(startDate.toJSDate()).getTime() <
-            new Date(endDate.toJSDate()).getTime()
-          );
+          return startDate.getTime() < endDate.getTime();
         }
         return true;
       }
