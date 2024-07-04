@@ -27,7 +27,7 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
           <A1fButton request={request.data}></A1fButton>
         </Match>
         <Match when={request.data.status === RequestStatusOptions.A1F}>
-          <A1rButton></A1rButton>
+          <A1rButton request={request.data}></A1rButton>
         </Match>
       </Switch>
     </div>

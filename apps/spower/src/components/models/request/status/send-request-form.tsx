@@ -14,16 +14,14 @@ const schema = object().shape({
   status: string().required('Hãy chọn status')
 });
 
-export type ChangeRequestStatusFormProps = {
+export type SendRequestFormProps = {
   request: RequestData;
   status: RequestStatusOptions;
   title: string;
   onSuccess?: () => void;
 };
 
-export const ChangeRequestStatusForm: FC<
-  ChangeRequestStatusFormProps
-> = props => {
+export const SendRequestForm: FC<SendRequestFormProps> = props => {
   const updateRequest = requestApi.update.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');

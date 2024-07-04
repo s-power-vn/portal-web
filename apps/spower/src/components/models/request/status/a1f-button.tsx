@@ -6,7 +6,7 @@ import { RequestStatusOptions } from '@storeo/core';
 import { Button, closeModal, showModal } from '@storeo/theme';
 
 import { RequestData } from '../../../../api';
-import { ChangeRequestStatusForm } from './change-request-status-form';
+import { SendRequestForm } from './send-request-form';
 
 export type A1fButtonProps = {
   request: RequestData;
@@ -21,7 +21,7 @@ export const A1fButton: FC<A1fButtonProps> = ({ request }) => {
       title: 'Chuyển phó giám đốc',
       className: 'flex min-w-[400px] flex-col',
       children: (
-        <ChangeRequestStatusForm
+        <SendRequestForm
           status={RequestStatusOptions.A1F}
           request={request}
           title={'Phó giám đốc'}
@@ -34,7 +34,7 @@ export const A1fButton: FC<A1fButtonProps> = ({ request }) => {
         />
       )
     });
-  }, [request]);
+  }, [request, router.history]);
 
   return <Button onClick={handleClick}>Chuyển phó giám đốc</Button>;
 };

@@ -304,6 +304,32 @@ export const requestApi = router('request', {
 
       return client.collection(Collections.Request).update(params.id, payload);
     }
+  }),
+  return: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      issue: string;
+      lastAssignee: string;
+      status: string;
+      note?: string;
+    }) => {
+      const { lastAssignee, note, ...payload } = params;
+
+      await client.collection(Collections.Issue).update(params.issue, {
+        assignee: lastAssignee,
+        lastAssignee: client.authStore.model?.id
+      });
+
+      if (note) {
+        await client.collection(Collections.Comment).create({
+          content: note,
+          issue: params.issue,
+          createdBy: client.authStore.model?.id
+        });
+      }
+
+      return client.collection(Collections.Request).update(params.id, payload);
+    }
   })
 });
 
