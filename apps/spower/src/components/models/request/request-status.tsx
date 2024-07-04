@@ -29,6 +29,9 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
       <Match when={request.data.status?.charAt(0) === 'A'}>
         <Button
           variant={'outline'}
+          onClick={e => {
+            e.stopPropagation();
+          }}
           className={cn(style, 'bg-appError', className)}
         >
           {request.data.status}

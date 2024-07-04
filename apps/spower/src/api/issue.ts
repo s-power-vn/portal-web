@@ -30,7 +30,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          sort: '-created'
+          sort: '-updated'
         })
   }),
   listMine: router.query({
@@ -42,7 +42,7 @@ export const issueApi = router('issue', {
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          sort: '-created'
+          sort: '-updated'
         })
   }),
   byId: router.query({
