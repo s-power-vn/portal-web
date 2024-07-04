@@ -42,6 +42,10 @@ export const FormField = <T, S extends ObjectSchema<AnyObject>>({
         name
       ] as SchemaDescription;
 
+      if (!fieldDescription) {
+        return false;
+      }
+
       return !fieldDescription.nullable && !fieldDescription.optional;
     },
     [schema]

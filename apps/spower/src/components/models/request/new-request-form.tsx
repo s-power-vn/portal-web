@@ -22,14 +22,11 @@ const schema = object().shape({
     .test({
       name: 'checkEndDate',
       message: 'Ngày kết thúc phải lớn hơn ngày bắt đầu',
-      test: function (value) {
+      test: function () {
         const startDate = this.parent.startDate;
         const endDate = this.parent.endDate;
         if (startDate && endDate) {
-          return (
-            new Date(startDate.toJSDate()).getTime() <
-            new Date(endDate.toJSDate()).getTime()
-          );
+          return startDate.getTime() < endDate.getTime();
         }
         return true;
       }
