@@ -1,9 +1,10 @@
-import { FC, Suspense } from 'react';
+import React, { FC, Suspense, useCallback, useRef } from 'react';
 
 import { Match, Switch, cn } from '@storeo/core';
-import { Button } from '@storeo/theme';
+import { Button, showModal } from '@storeo/theme';
 
-import { requestApi } from '../../../api';
+import { requestApi } from '../../../../api';
+import { AStateFlow } from './a-state-flow';
 
 export type RequestStatusProps = {
   issueId: string;
@@ -11,9 +12,23 @@ export type RequestStatusProps = {
 };
 
 const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
+  const modalId = useRef<string | undefined>();
+
   const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      modalId.current = showModal({
+        title: '',
+        className: 'flex min-w-[800px] h-[calc(100vh-60px)] flex-col',
+        children: <AStateFlow />
+      });
+    },
+    []
+  );
 
   const style = `text-appWhite flex w-fit h-fit items-center
   justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs shadow`;
@@ -29,9 +44,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
       <Match when={request.data.status?.charAt(0) === 'A'}>
         <Button
           variant={'outline'}
-          onClick={e => {
-            e.stopPropagation();
-          }}
+          onClick={handleClick}
           className={cn(style, 'bg-appError', className)}
         >
           {request.data.status}

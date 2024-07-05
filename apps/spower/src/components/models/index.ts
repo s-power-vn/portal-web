@@ -15,7 +15,7 @@ export * from './request/request';
 export * from './request/edit-request-volume-form';
 export * from './request/edit-request-price-form';
 export * from './request/request';
-export * from './request/request-status';
+export * from './request/status/request-status';
 export * from './employee/employee-display';
 export * from './employee/new-employee-form';
 export * from './employee/edit-employee-form';

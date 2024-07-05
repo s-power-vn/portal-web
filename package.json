@@ -50,6 +50,7 @@
     "react-hook-form": "^7.51.1",
     "react-imask": "^7.5.0",
     "react-query-kit": "^3.2.2",
+    "reactflow": "^11.11.4",
     "sonner": "^1.4.41",
     "uuid": "^9.0.1",
     "vaul": "^0.9.0",

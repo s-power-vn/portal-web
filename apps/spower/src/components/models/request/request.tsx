@@ -46,7 +46,7 @@ import { EditRequestPriceForm } from './edit-request-price-form';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
 import { RequestAction } from './request-action';
-import { RequestStatus } from './request-status';
+import { RequestStatus } from './status/request-status';
 
 export type RequestProps = {
   issueId: string;
