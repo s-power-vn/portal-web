@@ -5,9 +5,9 @@ import { Show, cn } from '@storeo/core';
 
 import { CustomNodeProps } from './node-a1';
 
-const NodeA2: FC<CustomNodeProps> = ({ data, isConnectable }) => {
+const NodeA5: FC<CustomNodeProps> = ({ data, isConnectable }) => {
   const condition =
-    data.status === 'A1F' || data.status === 'A2R' || data.status === 'A6F';
+    data.status === 'A4' || data.status === 'A5R' || data.status === 'A6R';
 
   return (
     <>
@@ -20,52 +20,40 @@ const NodeA2: FC<CustomNodeProps> = ({ data, isConnectable }) => {
         <Show when={condition}>
           <div className={'bg-appError h-3 w-3 rounded-full'}></div>
         </Show>
-        <span>Phó giám đốc</span>
+        <span>T.Phòng kế hoạch</span>
       </div>
       <Handle
         type="target"
-        id={'t1'}
-        position={Position.Left}
-        style={{ top: '30%' }}
-        isConnectable={isConnectable}
+        position={Position.Top}
+        id="t1"
+        style={{ left: '40%' }}
       />
       <Handle
         type="source"
-        position={Position.Left}
-        id={'s1'}
-        style={{ top: '70%' }}
-        isConnectable={isConnectable}
+        position={Position.Top}
+        id="s1"
+        style={{ left: '60%' }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         id="s2"
-        style={{ left: '20%' }}
-        isConnectable={isConnectable}
-      />
-      <Handle
-        type="target"
-        id="t2"
-        position={Position.Bottom}
         style={{ left: '40%' }}
-        isConnectable={isConnectable}
-      />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="s3"
-        style={{ left: '60%' }}
-        isConnectable={isConnectable}
       />
       <Handle
         type="target"
-        id="t3"
         position={Position.Bottom}
-        style={{ left: '80%' }}
-        isConnectable={isConnectable}
+        id="t2"
+        style={{ left: '60%' }}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="t3"
+        style={{ top: '50%' }}
       />
     </>
   );
 };
 
-export default memo(NodeA2);
+export default memo(NodeA5);

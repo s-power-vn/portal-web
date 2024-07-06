@@ -375,7 +375,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           setOpen={setOpenListSupplier}
         />
       ) : null}
-      <div className={'bg-appWhite relative flex flex-col gap-3'}>
+      <div className={'bg-appWhite flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
             <Button className={'text-appWhite'} size="icon">
@@ -419,8 +419,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                 -translate-x-1/2 -translate-y-1/2
                   transform rounded border bg-white shadow-lg`}
               >
-                <div className={'relative h-full w-full'}>
-                  <AStateFlow />
+                <div className={'relative h-[600px] w-[800px]'}>
+                  <AStateFlow status={request.data.status} />
                   <Button
                     className={
                       'absolute right-2 top-2 h-8 w-8 rounded-full p-0'

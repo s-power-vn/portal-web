@@ -22,7 +22,7 @@ export const A1rButton: FC<A1rButtonProps> = ({ request }) => {
       className: 'flex min-w-[400px] flex-col',
       children: (
         <ReturnRequestForm
-          status={RequestStatusOptions.A1}
+          status={RequestStatusOptions.A1R}
           request={request}
           onSuccess={() => {
             if (modalId.current) {
