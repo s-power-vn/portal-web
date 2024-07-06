@@ -1,19 +1,17 @@
-import React, { FC, Suspense, useCallback, useRef } from 'react';
+import React, { FC, Suspense, useCallback } from 'react';
 
 import { Match, Switch, cn } from '@storeo/core';
-import { Button, showModal } from '@storeo/theme';
+import { Button } from '@storeo/theme';
 
 import { requestApi } from '../../../../api';
-import { AStateFlow } from './a-state-flow';
 
 export type RequestStatusProps = {
   issueId: string;
   className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
-const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
-  const modalId = useRef<string | undefined>();
-
+const Component: FC<RequestStatusProps> = ({ issueId, className, onClick }) => {
   const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
@@ -21,13 +19,9 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      modalId.current = showModal({
-        title: '',
-        className: 'flex min-w-[800px] h-[calc(100vh-60px)] flex-col',
-        children: <AStateFlow />
-      });
+      onClick?.(e);
     },
-    []
+    [onClick]
   );
 
   const style = `text-appWhite flex w-fit h-fit items-center

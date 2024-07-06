@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
+import { ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import {
@@ -19,12 +20,14 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <LoadingProvider>
-      <ConfirmProvider>
-        <TooltipProvider>
-          <App />
-          <Toaster />
-        </TooltipProvider>
-      </ConfirmProvider>
+      <ReactFlowProvider>
+        <ConfirmProvider>
+          <TooltipProvider>
+            <App />
+            <Toaster />
+          </TooltipProvider>
+        </ConfirmProvider>
+      </ReactFlowProvider>
     </LoadingProvider>
   </StrictMode>
 );

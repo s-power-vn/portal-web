@@ -1,3 +1,4 @@
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -14,7 +15,14 @@ import {
 import _ from 'lodash';
 import { PrinterIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { Show, client, cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
@@ -46,6 +54,7 @@ import { EditRequestPriceForm } from './edit-request-price-form';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
 import { RequestAction } from './request-action';
+import { AStateFlow } from './status/a-state-flow';
 import { RequestStatus } from './status/request-status';
 
 export type RequestProps = {
@@ -64,6 +73,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
+
+  const [showGraph, setShowGraph] = useState(false);
 
   const listApprovers = settingApi.listApprover.useSuspenseQuery();
 
@@ -364,7 +375,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           setOpen={setOpenListSupplier}
         />
       ) : null}
-      <div className={'bg-appWhite flex flex-col gap-3'}>
+      <div className={'bg-appWhite relative flex flex-col gap-3'}>
         <div className={'flex items-center justify-between'}>
           <div className={'flex gap-2'}>
             <Button className={'text-appWhite'} size="icon">
@@ -402,9 +413,32 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                 </Button>
               </div>
             </Show>
+            <Show when={showGraph}>
+              <div
+                className={`absolute left-1/2 top-1/2 z-50
+                -translate-x-1/2 -translate-y-1/2
+                  transform rounded border bg-white shadow-lg`}
+              >
+                <div className={'relative h-full w-full'}>
+                  <AStateFlow />
+                  <Button
+                    className={
+                      'absolute right-2 top-2 h-8 w-8 rounded-full p-0'
+                    }
+                    onClick={e => {
+                      e.stopPropagation();
+                      setShowGraph(false);
+                    }}
+                  >
+                    <Cross2Icon />
+                  </Button>
+                </div>
+              </div>
+            </Show>
             <RequestStatus
               className={'px-3 py-1.5 text-xs font-bold'}
               issueId={issueId}
+              onClick={() => setShowGraph(true)}
             />
           </div>
         </div>

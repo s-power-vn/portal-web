@@ -1,5 +1,12 @@
-import { FC, useState } from 'react';
-import { Controls, MarkerType, MiniMap, ReactFlow } from 'reactflow';
+import { FC, useEffect } from 'react';
+import {
+  MarkerType,
+  ReactFlow,
+  useEdgesState,
+  useNodesInitialized,
+  useNodesState
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 
 import NodeA1 from '../../../flow/node-a1';
 import NodeA2 from '../../../flow/node-a2';
@@ -82,21 +89,35 @@ const initialEdges = [
   }
 ];
 
+const nodeTypes = {
+  nodeA1: NodeA1,
+  nodeA2: NodeA2,
+  nodeA3: NodeA3,
+  nodeA4: NodeA4
+};
+
 export type AStateFlowProps = {};
 
-export const AStateFlow: FC<AStateFlowProps> = ({}) => {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-  const nodeTypes = {
-    nodeA1: NodeA1,
-    nodeA2: NodeA2,
-    nodeA3: NodeA3,
-    nodeA4: NodeA4
-  };
+export const AStateFlow: FC<AStateFlowProps> = () => {
+  const nodesInitialized = useNodesInitialized();
+  const [nodes] = useNodesState(initialNodes);
+  const [edges, setEdges] = useEdgesState([]);
+
+  useEffect(() => {
+    if (nodesInitialized) {
+      setEdges(initialEdges);
+    }
+  }, [nodesInitialized, setEdges]);
+
   return (
-    <ReactFlow nodeTypes={nodeTypes} nodes={nodes} edges={edges} fitView>
-      <Controls />
-      <MiniMap />
-    </ReactFlow>
+    <div className={'h-[400px] w-[500px]'}>
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        nodes={nodes}
+        edges={edges}
+        fitView
+        nodesDraggable={false}
+      ></ReactFlow>
+    </div>
   );
 };
