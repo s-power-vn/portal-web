@@ -5,26 +5,25 @@ import { FC, useCallback, useRef } from 'react';
 import { RequestStatusOptions } from '@storeo/core';
 import { Button, closeModal, showModal } from '@storeo/theme';
 
-import { RequestData } from '../../../../api';
-import { SendRequestForm } from './send-request-form';
+import { RequestData } from '../../../../../api';
+import { ReturnRequestForm } from '../return-request-form';
 
-export type A1fButtonProps = {
+export type A1rButtonProps = {
   request: RequestData;
 };
 
-export const A1fButton: FC<A1fButtonProps> = ({ request }) => {
+export const A1rButton: FC<A1rButtonProps> = ({ request }) => {
   const router = useRouter();
   const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chuyển phó giám đốc',
+      title: 'Chuyển trả lại',
       className: 'flex min-w-[400px] flex-col',
       children: (
-        <SendRequestForm
-          status={RequestStatusOptions.A1F}
+        <ReturnRequestForm
+          status={RequestStatusOptions.A1R}
           request={request}
-          title={'Phó giám đốc'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);
@@ -36,5 +35,5 @@ export const A1fButton: FC<A1fButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return <Button onClick={handleClick}>Chuyển phó giám đốc</Button>;
+  return <Button onClick={handleClick}>Chuyển trả lại</Button>;
 };

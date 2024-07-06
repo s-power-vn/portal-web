@@ -18,6 +18,7 @@ export type SendRequestFormProps = {
   request: RequestData;
   status: RequestStatusOptions;
   title: string;
+  condition?: string;
   onSuccess?: () => void;
 };
 
@@ -51,7 +52,7 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
         title={props.title}
         options={{
           className: 'w-full',
-          condition: 'role = 2'
+          condition: props.condition
         }}
       />
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />

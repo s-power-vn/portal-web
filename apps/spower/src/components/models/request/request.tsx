@@ -54,7 +54,7 @@ import { EditRequestPriceForm } from './edit-request-price-form';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
 import { RequestAction } from './request-action';
-import { AStateFlow } from './status/a-state-flow';
+import { AStateFlow } from './status/a-state/a-state-flow';
 import { RequestStatus } from './status/request-status';
 
 export type RequestProps = {

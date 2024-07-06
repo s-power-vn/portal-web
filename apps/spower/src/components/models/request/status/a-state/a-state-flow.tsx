@@ -4,12 +4,12 @@ import 'reactflow/dist/style.css';
 
 import { RequestStatusOptions } from '@storeo/core';
 
-import NodeA1 from '../../../flow/node-a1';
-import NodeA2 from '../../../flow/node-a2';
-import NodeA3 from '../../../flow/node-a3';
-import NodeA4 from '../../../flow/node-a4';
-import NodeA5 from '../../../flow/node-a5';
-import NodeA6 from '../../../flow/node-a6';
+import NodeA1 from '../../../../flow/node-a1';
+import NodeA2 from '../../../../flow/node-a2';
+import NodeA3 from '../../../../flow/node-a3';
+import NodeA4 from '../../../../flow/node-a4';
+import NodeA5 from '../../../../flow/node-a5';
+import NodeA6 from '../../../../flow/node-a6';
 
 const initialNodes = [
   {
