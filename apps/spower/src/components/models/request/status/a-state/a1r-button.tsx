@@ -19,6 +19,7 @@ export const A1rButton: FC<A1rButtonProps> = ({ request }) => {
   const handleClick = useCallback(() => {
     modalId.current = showModal({
       title: 'Chuyển trả lại',
+      description: 'Công việc chưa hoàn thành, có vấn đề cần xử lý thêm',
       className: 'flex min-w-[400px] flex-col',
       children: (
         <ReturnRequestForm
