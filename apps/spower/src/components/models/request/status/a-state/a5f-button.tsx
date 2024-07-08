@@ -25,7 +25,7 @@ export const A5fButton: FC<A5fButtonProps> = ({ request }) => {
           status={RequestStatusOptions.A5F}
           request={request}
           title={'NV.Phòng kế hoạch'}
-          condition={'role = 4 && department.id = "zyh62blpjezh4rg"'}
+          condition={'role = 4 && department.code = "KH"'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);

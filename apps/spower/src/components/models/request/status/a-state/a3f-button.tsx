@@ -18,14 +18,14 @@ export const A3fButton: FC<A3fButtonProps> = ({ request }) => {
 
   const handleClick = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chuyển nhân viên kỹ thuật',
+      title: 'Chuyển NV.Phòng kỹ thuật',
       className: 'flex min-w-[400px] flex-col',
       children: (
         <SendRequestForm
           status={RequestStatusOptions.A3F}
           request={request}
-          title={'Nhân viên kỹ thuật'}
-          condition={'role = 4 && department.id = "borwi0hynfjgp8q"'}
+          title={'NV.Phòng kỹ thuật'}
+          condition={'role = 4 && department.code = "KTh"'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);
@@ -37,5 +37,5 @@ export const A3fButton: FC<A3fButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return <Button onClick={handleClick}>Chuyển nhân viên kỹ thuật</Button>;
+  return <Button onClick={handleClick}>Chuyển NV.Phòng kỹ thuật</Button>;
 };

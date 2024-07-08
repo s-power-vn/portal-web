@@ -35,5 +35,9 @@ export const A1rButton: FC<A1rButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return <Button onClick={handleClick}>Chuyển trả lại</Button>;
+  return (
+    <Button variant={'destructive'} onClick={handleClick}>
+      Chuyển trả lại
+    </Button>
+  );
 };

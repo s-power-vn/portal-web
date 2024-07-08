@@ -25,7 +25,7 @@ export const A4Button: FC<A4ButtonProps> = ({ request }) => {
           status={RequestStatusOptions.A4}
           request={request}
           title={'T.Phòng kế hoạch'}
-          condition={'role = 3 && department.id = "zyh62blpjezh4rg"'}
+          condition={'role = 3 && department.code = "KH"'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);

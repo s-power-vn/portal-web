@@ -18,14 +18,14 @@ export const A2fButton: FC<A2fButtonProps> = ({ request }) => {
 
   const handleClick = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chuyển trưởng phòng kỹ thuật',
+      title: 'Chuyển T.Phòng kỹ thuật',
       className: 'flex min-w-[400px] flex-col',
       children: (
         <SendRequestForm
           status={RequestStatusOptions.A2F}
           request={request}
-          title={'Trưởng phòng kỹ thuật'}
-          condition={'role = 3'}
+          title={'T.Phòng kỹ thuật'}
+          condition={'(role = 3 && department.code = "KTh") || (role = 2)'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);
@@ -37,5 +37,5 @@ export const A2fButton: FC<A2fButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return <Button onClick={handleClick}>Chuyển trưởng phòng KT</Button>;
+  return <Button onClick={handleClick}>Chuyển T.Phòng kỹ thuật</Button>;
 };
