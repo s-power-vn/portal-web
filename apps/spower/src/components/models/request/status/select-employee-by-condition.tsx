@@ -21,7 +21,7 @@ export const SelectEmployeeByCondition: FC<
   });
 
   const listEmployees = employeeApi.listByCondition.useQuery({
-    variables: `${props.condition ?? ''}${filter ?? ''}`
+    variables: `${props.condition ?? ''}${filter ? `&& name ~ "${filter}"` : ''}`
   });
 
   const data = useMemo(() => {
