@@ -65,7 +65,7 @@ import { useDetailImportStatus } from '../../../hooks';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailForm } from '../detail/edit-detail-form';
-import { NewDetailDialog } from '../detail/new-detail-dialog';
+import { NewDetailForm } from '../detail/new-detail-form';
 
 const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
@@ -79,7 +79,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   const navigate = useNavigate({ from: Route.fullPath });
 
   const queryClient = useQueryClient();
-  const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
+
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
 
@@ -548,6 +548,35 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     }
   }, []);
 
+  const handleNewDetailParent = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Thêm mới hạng mục cha',
+      children: (
+        <NewDetailForm
+          projectId={projectId}
+          onSuccess={onSuccessHandler}
+          onCancel={onSuccessHandler}
+        />
+      )
+    });
+  }, [onSuccessHandler, projectId]);
+
+  const handleNewDetailChild = useCallback(() => {
+    if (selectedRow) {
+      modalId.current = showModal({
+        title: 'Thêm mới hạng mục cha',
+        children: (
+          <NewDetailForm
+            projectId={projectId}
+            parent={selectedRow.original}
+            onSuccess={onSuccessHandler}
+            onCancel={onSuccessHandler}
+          />
+        )
+      });
+    }
+  }, [onSuccessHandler, projectId, selectedRow]);
+
   const handleEditDetail = useCallback(() => {
     if (selectedRow) {
       modalId.current = showModal({
@@ -564,193 +593,172 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   }, [onSuccessHandler, selectedRow]);
 
   return (
-    <>
-      <NewDetailDialog
-        open={openDocumentDetailNew}
-        setOpen={setOpenDocumentDetailNew}
-        projectId={projectId}
-        parent={selectedRow ? selectedRow.original : undefined}
-      />
-      <div className={'flex flex-col gap-2 p-2'}>
-        <div className={'flex gap-2'}>
-          <input
-            type="file"
-            ref={inputFileRef}
-            multiple={false}
-            className={'hidden'}
-            accept=".xlsx"
-            onChangeCapture={onFileChangeCapture}
-          />
-          <Button
-            variant={'outline'}
-            className={'flex gap-1'}
-            onClick={() => inputFileRef.current?.click()}
-          >
-            <SheetIcon className={'h-5 w-5'} />
-            Nhập từ Excel
-          </Button>
-          <Button
-            variant={'outline'}
-            className={'flex gap-1'}
-            onClick={handleDownloadTemplate}
-          >
-            <DownloadIcon className={'h-5 w-5'} />
-            Tải file mẫu
-          </Button>
-          <Button
-            className={'flex gap-1'}
-            onClick={() => {
-              setSelectedRow(undefined);
-              setOpenDocumentDetailNew(true);
-            }}
-          >
-            <PlusIcon />
-            Thêm mục
-          </Button>
-          <Button
-            disabled={!selectedRow}
-            className={'flex gap-1'}
-            onClick={e => {
-              e.stopPropagation();
-              setOpenDocumentDetailNew(true);
-            }}
-          >
-            <PlusIcon />
-            Thêm mục con
-          </Button>
-          <Button
-            disabled={!selectedRow}
-            size="icon"
-            onClick={handleEditDetail}
-          >
-            <EditIcon className={'h-5 w-5'} />
-          </Button>
-          <Button
-            disabled={_.keys(rowSelection).length === 0}
-            variant="outline"
-            className={'text-appWhite bg-red-500'}
-            size="icon"
-            onClick={() =>
-              confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
-                const selected = table.getSelectedRowModel();
-                deleteDetails
-                  .mutateAsync(selected.flatRows.map(row => row.original.group))
-                  .then(() => setRowSelection({}));
-              })
-            }
-          >
-            <Cross2Icon className={'h-5 w-5'} />
-          </Button>
-        </div>
-        <div
-          ref={parentRef}
-          className={
-            'border-appBlue h-[calc(100vh-214px)] overflow-auto rounded-md border'
+    <div className={'flex flex-col gap-2 p-2'}>
+      <div className={'flex gap-2'}>
+        <input
+          type="file"
+          ref={inputFileRef}
+          multiple={false}
+          className={'hidden'}
+          accept=".xlsx"
+          onChangeCapture={onFileChangeCapture}
+        />
+        <Button
+          variant={'outline'}
+          className={'flex gap-1'}
+          onClick={() => inputFileRef.current?.click()}
+        >
+          <SheetIcon className={'h-5 w-5'} />
+          Nhập từ Excel
+        </Button>
+        <Button
+          variant={'outline'}
+          className={'flex gap-1'}
+          onClick={handleDownloadTemplate}
+        >
+          <DownloadIcon className={'h-5 w-5'} />
+          Tải file mẫu
+        </Button>
+        <Button className={'flex gap-1'} onClick={handleNewDetailParent}>
+          <PlusIcon />
+          Thêm mục
+        </Button>
+        <Button
+          disabled={!selectedRow}
+          className={'flex gap-1'}
+          onClick={handleNewDetailChild}
+        >
+          <PlusIcon />
+          Thêm mục con
+        </Button>
+        <Button disabled={!selectedRow} size="icon" onClick={handleEditDetail}>
+          <EditIcon className={'h-5 w-5'} />
+        </Button>
+        <Button
+          disabled={_.keys(rowSelection).length === 0}
+          variant="outline"
+          className={'text-appWhite bg-red-500'}
+          size="icon"
+          onClick={() =>
+            confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
+              const selected = table.getSelectedRowModel();
+              deleteDetails
+                .mutateAsync(selected.flatRows.map(row => row.original.group))
+                .then(() => setRowSelection({}));
+            })
           }
         >
-          <Table
+          <Cross2Icon className={'h-5 w-5'} />
+        </Button>
+      </div>
+      <div
+        ref={parentRef}
+        className={
+          'border-appBlue h-[calc(100vh-214px)] overflow-auto rounded-md border'
+        }
+      >
+        <Table
+          style={{
+            width: table.getTotalSize()
+          }}
+        >
+          <TableHeader
             style={{
-              width: table.getTotalSize()
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
             }}
           >
-            <TableHeader
-              style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 2
-              }}
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                  {headerGroup.headers.map(header => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{
-                          ...getCommonPinningStyles(header.column),
-                          width: header.getSize()
-                        }}
-                        className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 text-center after:pointer-events-none
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id} className={'!border-b-0'}>
+                {headerGroup.headers.map(header => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        ...getCommonPinningStyles(header.column),
+                        width: header.getSize()
+                      }}
+                      className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 text-center after:pointer-events-none
                           after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b
                           after:border-r after:content-[''] last:after:border-r-0`}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      className={'group w-full cursor-pointer'}
-                      onClick={() => {
-                        if (selectedRow?.id !== row.id) {
-                          setSelectedRow(row);
-                        } else {
-                          setSelectedRow(undefined);
-                        }
-                      }}
                     >
-                      {row.getVisibleCells().map(cell => {
-                        return cell.column.columnDef.meta?.hasRowSpan &&
-                          !cell.row.original[
-                            cell.column.columnDef.meta?.hasRowSpan
-                          ] ? null : (
-                          <TableCell
-                            key={cell.id}
-                            style={{
-                              ...getCommonPinningStyles(cell.column),
-                              width: cell.column.getSize()
-                            }}
-                            className={cn(
-                              ` bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs
-                              after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                              selectedRow?.id === row.id
-                                ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
-                                : null
-                            )}
-                            rowSpan={
-                              cell.column.columnDef.meta?.hasRowSpan
-                                ? cell.row.original[
-                                    cell.column.columnDef.meta?.hasRowSpan
-                                  ]
-                                : undefined
-                            }
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
+                      )}
+                    </TableHead>
                   );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell className={'text-center'} colSpan={columns.length}>
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={'group w-full cursor-pointer'}
+                    onClick={() => {
+                      if (selectedRow?.id !== row.id) {
+                        setSelectedRow(row);
+                      } else {
+                        setSelectedRow(undefined);
+                      }
+                    }}
+                  >
+                    {row.getVisibleCells().map(cell => {
+                      return cell.column.columnDef.meta?.hasRowSpan &&
+                        !cell.row.original[
+                          cell.column.columnDef.meta?.hasRowSpan
+                        ] ? null : (
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            ...getCommonPinningStyles(cell.column),
+                            width: cell.column.getSize()
+                          }}
+                          className={cn(
+                            ` bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs
+                              after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
+                            selectedRow?.id === row.id
+                              ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
+                              : null
+                          )}
+                          rowSpan={
+                            cell.column.columnDef.meta?.hasRowSpan
+                              ? cell.row.original[
+                                  cell.column.columnDef.meta?.hasRowSpan
+                                ]
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell className={'text-center'} colSpan={columns.length}>
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
-    </>
+    </div>
   );
 };
