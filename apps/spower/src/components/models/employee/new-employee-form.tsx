@@ -3,7 +3,6 @@ import { boolean, object, ref, string } from 'yup';
 import { FC } from 'react';
 
 import {
-  Button,
   CheckField,
   Form,
   PasswordField,
@@ -55,7 +54,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         department: ''
       }}
       loading={createEmployee.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
       <TextField schema={schema} name={'email'} title={'Email'} />

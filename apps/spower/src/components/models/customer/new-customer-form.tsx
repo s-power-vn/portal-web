@@ -29,15 +29,8 @@ export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
       schema={schema}
       onSubmit={values => createCustomer.mutate(values)}
       onCancel={props.onCancel}
-      defaultValues={{
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        note: ''
-      }}
       loading={createCustomer.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField
         schema={schema}

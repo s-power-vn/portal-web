@@ -41,7 +41,7 @@ export const Modal = (props: Omit<ModalType, 'id'>) => {
             {props.description}
           </DialogDescription>
         </DialogHeader>
-        {props.children}
+        <div className={'p-4'}>{props.children}</div>
       </DialogContent>
     </Dialog>
   );

@@ -48,6 +48,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  closeModal,
+  showModal,
   success,
   useConfirm,
   useLoading
@@ -62,7 +64,7 @@ import {
 import { useDetailImportStatus } from '../../../hooks';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { EditDetailDialog } from '../detail/edit-detail-dialog';
+import { EditDetailForm } from '../detail/edit-detail-form';
 import { NewDetailDialog } from '../detail/new-detail-dialog';
 
 const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
@@ -78,7 +80,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
 
   const queryClient = useQueryClient();
   const [openDocumentDetailNew, setOpenDocumentDetailNew] = useState(false);
-  const [openDocumentDetailEdit, setOpenDocumentDetailEdit] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
 
@@ -535,19 +536,32 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     });
   }, [rowSelection, table]);
 
-  const editDialog = useMemo(() => {
-    return selectedRow ? (
-      <EditDetailDialog
-        open={openDocumentDetailEdit}
-        setOpen={setOpenDocumentDetailEdit}
-        detailId={selectedRow.original.group}
-      />
-    ) : null;
-  }, [openDocumentDetailEdit, selectedRow]);
-
   const handleDownloadTemplate = useCallback(() => {
     return downloadTemplate('detail', 'application/vnd.ms-excel');
   }, []);
+
+  const modalId = useRef<string | undefined>();
+
+  const onSuccessHandler = useCallback(async () => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const handleEditDetail = useCallback(() => {
+    if (selectedRow) {
+      modalId.current = showModal({
+        title: 'Sửa công việc',
+        children: (
+          <EditDetailForm
+            detailId={selectedRow.original.group}
+            onSuccess={onSuccessHandler}
+            onCancel={onSuccessHandler}
+          />
+        )
+      });
+    }
+  }, [onSuccessHandler, selectedRow]);
 
   return (
     <>
@@ -557,7 +571,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         projectId={projectId}
         parent={selectedRow ? selectedRow.original : undefined}
       />
-      {editDialog}
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
           <input
@@ -608,9 +621,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           <Button
             disabled={!selectedRow}
             size="icon"
-            onClick={() => {
-              setOpenDocumentDetailEdit(true);
-            }}
+            onClick={handleEditDetail}
           >
             <EditIcon className={'h-5 w-5'} />
           </Button>
