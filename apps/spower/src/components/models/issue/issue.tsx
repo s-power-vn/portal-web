@@ -134,33 +134,57 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
         <div className={'flex justify-between'}>
           <div className={'mr-2 flex w-full gap-6'}>
             <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Ngày tạo</span>
-                {formatDate(issue.data.created)}
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Ngày tạo
+                </span>
+                <span className={'truncate'}>
+                  {formatDate(issue.data.created)}
+                </span>
               </div>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Ngày cập nhật</span>
-                {formatDate(issue.data.updated)}
-              </div>
-            </div>
-            <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Người tạo</span>
-                {issue.data.expand?.createdBy.name}
-              </div>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Người xử lý</span>
-                {issue.data.expand?.assignee.name}
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Ngày cập nhật
+                </span>
+                <span className={'truncate'}>
+                  {formatDate(issue.data.updated)}
+                </span>
               </div>
             </div>
             <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Ngày bắt đầu</span>
-                {formatDate(issue.data.startDate)}
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Người tạo
+                </span>
+                <span className={'truncate'}>
+                  {issue.data.expand?.createdBy.name}
+                </span>
               </div>
-              <div className={'flex w-full items-center justify-between'}>
-                <span className={'text-appBlue text-xs'}>Ngày kết thúc</span>
-                {formatDate(issue.data.endDate)}
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Người xử lý
+                </span>
+                <span className={'truncate'}>
+                  {issue.data.expand?.assignee.name}
+                </span>
+              </div>
+            </div>
+            <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Ngày bắt đầu
+                </span>
+                <span className={'truncate'}>
+                  {formatDate(issue.data.startDate)}
+                </span>
+              </div>
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Ngày kết thúc
+                </span>
+                <span className={'truncate'}>
+                  {formatDate(issue.data.endDate)}
+                </span>
               </div>
             </div>
           </div>
