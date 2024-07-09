@@ -88,12 +88,12 @@ export const SelectInput: FC<SelectInputProps> = ({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              'relative justify-between text-sm font-normal',
+              'relative w-full justify-between text-sm font-normal',
               placeholder && !value ? 'text-muted-foreground' : 'text-appBlack',
               className
             )}
           >
-            <span className={'truncate'}>
+            <span className="!truncate">
               {value
                 ? items.find(it => it.value === value)?.label
                 : placeholder}

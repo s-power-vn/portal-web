@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 
-import { Button, Form, TextareaField } from '@storeo/theme';
+import { Button, Form, TextareaField, success } from '@storeo/theme';
 
 import {
   UpdateProjectSchema,
@@ -19,7 +19,7 @@ const Component = () => {
   const project = useGetProjectById(projectId);
 
   const updateProject = useUpdateProject(projectId, async () => {
-    router.history.back();
+    success('Cập nhật dự án thành công');
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey: getProjectByIdKey(projectId)
@@ -40,13 +40,17 @@ const Component = () => {
           schema={UpdateProjectSchema}
           name={'bidding'}
           title={'Tên gói thầu'}
-          options={{}}
+          options={{
+            className: 'h-40'
+          }}
         />
         <TextareaField
           schema={UpdateProjectSchema}
           name={'name'}
           title={'Tên công trình'}
-          options={{}}
+          options={{
+            className: 'h-40'
+          }}
         />
         <CustomerDropdownField
           schema={UpdateProjectSchema}
