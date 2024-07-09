@@ -31,6 +31,7 @@ export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
 
 export type RequestDetailData = RequestDetailResponse & {
   expand: {
+    request: RequestResponse;
     detail: DetailResponse;
     supplier: SupplierResponse;
     requestDetailSupplier_via_requestDetail: RequestDetailSupplierData[];
@@ -433,7 +434,7 @@ export const requestDetailApi = router('requestDetail', {
         .collection<RequestDetailData>(Collections.RequestDetail)
         .getOne(requestDetailId, {
           expand:
-            'detail,requestDetailSupplier_via_requestDetail.supplier,request_via_requestDetail.request'
+            'request,detail,requestDetailSupplier_via_requestDetail.supplier,request_via_requestDetail.request'
         })
   }),
   updateVolume: router.mutation({

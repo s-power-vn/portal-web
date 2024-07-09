@@ -1,3 +1,4 @@
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -12,7 +13,12 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { PrinterIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import {
+  EditIcon,
+  PrinterIcon,
+  SquareMinusIcon,
+  SquarePlusIcon
+} from 'lucide-react';
 
 import React, {
   FC,
@@ -34,16 +40,11 @@ import {
   TableRow,
   closeModal,
   showModal,
-  success,
   useConfirm
 } from '@storeo/theme';
 
-import {
-  RequestDetailData,
-  requestApi,
-  requestDetailApi,
-  settingApi
-} from '../../../api';
+import { RequestDetailData, requestApi, requestDetailApi } from '../../../api';
+import { issueApi } from '../../../api/issue';
 import {
   TreeData,
   arrayToTree,
@@ -72,22 +73,29 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     variables: issueId
   });
 
-  const listApprovers = settingApi.listApprover.useSuspenseQuery();
-
   const router = useRouter();
 
   const queryClient = useQueryClient();
 
-  const deleteRequest = requestApi.delete.useMutation({
+  const deleteIssue = issueApi.delete.useMutation({
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: requestApi.listFull.getKey(request.data.project)
+          queryKey: issueApi.list.getKey({
+            projectId: request.data.project
+          })
+        }),
+        queryClient.invalidateQueries({
+          queryKey: issueApi.listMine.getKey({
+            projectId: request.data.project
+          })
         })
       ]);
       router.history.back();
     }
   });
+
+  const { confirm } = useConfirm();
 
   const requests = useMemo(() => {
     const v = _.chain(
@@ -300,22 +308,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
 
-  const { confirm } = useConfirm();
-
-  const approveRequest = requestApi.approve.useMutation({
-    onSuccess: async () => {
-      success('Yêu cầu đã được duyệt');
-      router.history.back();
-    }
-  });
-
-  const rejectRequest = requestApi.reject.useMutation({
-    onSuccess: async () => {
-      success('Yêu cầu đã bị từ chối');
-      router.history.back();
-    }
-  });
-
   const modalId = useRef<string | undefined>();
 
   const onSuccessHandler = useCallback(async () => {
@@ -377,38 +369,35 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             <Button className={'text-appWhite'} size="icon">
               <PrinterIcon className={'h-4 w-4'} />
             </Button>
-          </div>
-          <div className={'flex gap-2'}>
             <Show
               when={
-                client.authStore.model?.role === 1 &&
-                client.authStore.model?.id ===
-                  request.data.expand.issue.assignee
+                request.data.expand.issue.assignee ===
+                client.authStore.model?.id
               }
             >
-              <div className={'flex gap-2'}>
-                <Button
-                  className={'bg-blue-500 hover:bg-blue-600'}
-                  onClick={() =>
-                    confirm('Bạn có chắc chắn muốn duyệt yêu cầu này?', () =>
-                      approveRequest.mutate(request.data)
-                    )
-                  }
-                >
-                  Phê duyệt
-                </Button>
-                <Button
-                  className={'bg-red-500 hover:bg-red-600'}
-                  onClick={() =>
-                    confirm('Bạn có chắc chắn muốn từ chối yêu cầu này?', () =>
-                      rejectRequest.mutate(request.data)
-                    )
-                  }
-                >
-                  Từ chối
-                </Button>
-              </div>
+              <Button
+                className={'text-appWhite'}
+                size="icon"
+                disabled={!selectedRow}
+                onClick={handleEditRequestVolume}
+              >
+                <EditIcon className={'h-4 w-4'} />
+              </Button>
+              <Button
+                variant={'destructive'}
+                size="icon"
+                onClick={() => {
+                  confirm?.(
+                    'Bạn chắc chắn muốn xóa yêu cầu mua hàng này?',
+                    () => deleteIssue.mutate(issueId)
+                  );
+                }}
+              >
+                <Cross2Icon className={'h-4 w-4'} />
+              </Button>
             </Show>
+          </div>
+          <div className={'flex gap-2'}>
             <RequestStatus
               className={'px-3 py-1.5 text-xs font-bold'}
               issueId={issueId}

@@ -91,5 +91,11 @@ export const issueApi = router('issue', {
       const { issueId, ...data } = params;
       return client.collection(Collections.Issue).update(issueId, data);
     }
+  }),
+  delete: router.mutation({
+    mutationFn: (issueId: string) =>
+      client.collection(Collections.Issue).update(issueId, {
+        deleted: true
+      })
   })
 });

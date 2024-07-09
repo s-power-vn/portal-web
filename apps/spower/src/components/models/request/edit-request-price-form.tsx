@@ -34,7 +34,9 @@ export const EditRequestPriceForm: FC<EditRequestPriceFormProps> = props => {
       props.onSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: requestApi.byId.getKey(requestDetail.data.request)
+          queryKey: requestApi.byIssueId.getKey(
+            requestDetail.data.expand.request.issue
+          )
         })
       ]);
     }
