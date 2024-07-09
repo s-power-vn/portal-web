@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { customerApi } from '../../../api';
 
@@ -14,15 +14,13 @@ const schema = object().shape({
   note: string()
 });
 
-export type NewCustomerFormProps = {
-  onSuccess: () => void;
-};
+export type NewCustomerFormProps = BusinessFormProps;
 
 export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
   const createCustomer = customerApi.create.useMutation({
     onSuccess: async () => {
       success('Thêm chủ đầu tư thành công');
-      props.onSuccess();
+      props.onSuccess?.();
     }
   });
 
@@ -30,6 +28,7 @@ export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => createCustomer.mutate(values)}
+      onCancel={props.onCancel}
       defaultValues={{
         name: '',
         email: '',
@@ -60,9 +59,6 @@ export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
         options={{}}
       />
       <TextField schema={schema} name={'note'} title={'Ghi chú'} options={{}} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

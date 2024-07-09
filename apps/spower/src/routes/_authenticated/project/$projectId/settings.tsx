@@ -70,7 +70,6 @@ const Component = () => {
           >
             Bỏ qua
           </Button>
-          <Button type="submit">Chấp nhận</Button>
         </div>
       </Form>
     </div>

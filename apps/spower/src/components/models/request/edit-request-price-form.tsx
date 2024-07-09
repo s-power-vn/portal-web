@@ -65,9 +65,6 @@ export const EditRequestPriceForm: FC<EditRequestPriceFormProps> = props => {
         name={'price'}
         title={'Đơn giá'}
       />
-      <DialogFooter className={'mt-4'}>
-        <Button type="submit">Chấp nhận</Button>
-      </DialogFooter>
     </Form>
   );
 };

@@ -5,11 +5,9 @@ import React, { FC, Suspense } from 'react';
 
 import { DialogProps } from '@storeo/core';
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   Form,
@@ -113,9 +111,6 @@ const Content: FC<EditDetailDialogProps> = ({ setOpen, detailId }) => {
           title={'Đơn giá thầu'}
           options={{}}
         />
-        <DialogFooter className={'mt-4'}>
-          <Button type="submit">Chấp nhận</Button>
-        </DialogFooter>
       </Form>
     </DialogContent>
   );

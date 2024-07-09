@@ -79,9 +79,6 @@ const Content: FC<NewRequestSupplierDialogProps> = ({
           name={'volume'}
           title={'Khối lượng'}
         />
-        <DialogFooter className={'mt-4'}>
-          <Button type="submit">Chấp nhận</Button>
-        </DialogFooter>
       </Form>
     </DialogContent>
   );

@@ -60,9 +60,6 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
         options={{}}
       />
       <TextField schema={schema} name={'note'} title={'Ghi chú'} options={{}} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

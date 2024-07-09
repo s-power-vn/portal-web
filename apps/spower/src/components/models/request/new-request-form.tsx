@@ -114,9 +114,6 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         name={'details'}
         options={{ projectId: props.projectId }}
       />
-      <DialogFooter className={'mt-4'}>
-        <Button type="submit">Chấp nhận</Button>
-      </DialogFooter>
     </Form>
   );
 };

@@ -74,9 +74,6 @@ const Content: FC<ProjectNewProps> = ({ setOpen, search }) => {
             placeholder: 'Hãy chọn chủ đầu tư'
           }}
         />
-        <DialogFooter className={'mt-4'}>
-          <Button type="submit">Chấp nhận</Button>
-        </DialogFooter>
       </Form>
     </DialogContent>
   );

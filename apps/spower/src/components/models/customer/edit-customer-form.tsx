@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { customerApi } from '../../../api';
 
@@ -14,9 +14,8 @@ const schema = object().shape({
   note: string()
 });
 
-export type EditCustomerFormProps = {
+export type EditCustomerFormProps = BusinessFormProps & {
   customerId: string;
-  onSuccess: () => void;
 };
 
 export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
@@ -27,7 +26,7 @@ export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
   const updateCustomer = customerApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa chủ đầu tư thành công');
-      props.onSuccess();
+      props.onSuccess?.();
     }
   });
 
@@ -40,6 +39,7 @@ export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
           ...values
         })
       }
+      onCancel={props.onCancel}
       defaultValues={customerById.data}
       loading={updateCustomer.isPending}
       className={'mt-4 flex flex-col gap-3'}
@@ -64,9 +64,6 @@ export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
         options={{}}
       />
       <TextField schema={schema} name={'note'} title={'Ghi chú'} options={{}} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

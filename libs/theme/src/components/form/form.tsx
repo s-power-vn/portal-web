@@ -9,6 +9,13 @@ import {
   useForm
 } from 'react-hook-form';
 
+import { Button } from '../ui/button';
+
+export type BusinessFormProps = {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+};
+
 export type FormProps<S extends ObjectSchema<AnyObject>> = Omit<
   FormHTMLAttributes<HTMLFormElement>,
   'onSubmit'
@@ -16,6 +23,7 @@ export type FormProps<S extends ObjectSchema<AnyObject>> = Omit<
   loading?: boolean;
   defaultValues?: DefaultValues<InferType<S>>;
   onSubmit?: (formData: InferType<S>) => void;
+  onCancel?: () => void;
   schema: S;
 };
 
@@ -25,6 +33,7 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   defaultValues,
   children,
   onSubmit,
+  onCancel,
   ...props
 }: FormProps<S>) => {
   const methods = useForm({
@@ -39,6 +48,14 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   return (
     <form onSubmit={methods.handleSubmit(onSubmitData)} {...props}>
       <FormProvider {...methods}>{children}</FormProvider>
+      <div className={'mt-6 flex justify-end gap-2'}>
+        <Button type="reset" onClick={onCancel} variant="secondary">
+          Bỏ qua
+        </Button>
+        <Button disabled={!methods.formState.isDirty} type="submit">
+          Chấp nhận
+        </Button>
+      </div>
     </form>
   );
 };

@@ -56,9 +56,6 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
         }}
       />
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

@@ -34,9 +34,6 @@ export const AddConfirmerForm: FC<AddConfirmerFormProps> = props => {
       className={'mt-4 flex flex-col gap-3'}
     >
       <SelectEmployeeField schema={schema} name={'user'} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

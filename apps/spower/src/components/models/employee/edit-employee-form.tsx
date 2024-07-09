@@ -3,8 +3,8 @@ import { boolean, object, string } from 'yup';
 import { FC } from 'react';
 
 import {
-  Button,
-  DatePickerField,
+  BusinessFormProps,
+  CheckField,
   Form,
   TextField,
   success
@@ -21,9 +21,8 @@ const schema = object().shape({
   role: boolean()
 });
 
-export type EditEmployeeFormProps = {
+export type EditEmployeeFormProps = BusinessFormProps & {
   employeeId: string;
-  onSuccess?: () => void;
 };
 
 export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
@@ -48,6 +47,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
           role: values.role ? 1 : 0
         })
       }
+      onCancel={props.onCancel}
       defaultValues={{
         ...employee.data,
         role: employee.data.role === 1
@@ -80,9 +80,6 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
           label: 'Quyền duyệt'
         }}
       />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

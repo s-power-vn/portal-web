@@ -45,9 +45,6 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
       loading={returnRequest.isPending}
     >
       <TextareaField schema={schema} name={'note'} title={'Phản hồi'} />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

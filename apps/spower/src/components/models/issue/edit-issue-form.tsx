@@ -101,9 +101,6 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
           }}
         />
       </div>
-      <DialogFooter className={'mt-4'}>
-        <Button type="submit">Chấp nhận</Button>
-      </DialogFooter>
     </Form>
   );
 };

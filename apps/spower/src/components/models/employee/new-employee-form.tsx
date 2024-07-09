@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 import {
   Button,
-  DatePickerField,
+  CheckField,
   Form,
   PasswordField,
   TextField,
@@ -81,9 +81,6 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         name={'passwordConfirmation'}
         title={'Xác nhận mật khẩu'}
       />
-      <div className={'mt-6 flex justify-end'}>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };

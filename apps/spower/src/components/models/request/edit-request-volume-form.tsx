@@ -60,9 +60,6 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
         title={'Khối lượng yêu cầu'}
         options={{}}
       />
-      <DialogFooter className={'mt-4'}>
-        <Button type="submit">Chấp nhận</Button>
-      </DialogFooter>
     </Form>
   );
 };

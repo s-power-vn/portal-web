@@ -124,9 +124,6 @@ const Content: FC<NewDetailDialogProps> = ({ setOpen, projectId, parent }) => {
             />
           </>
         ) : null}
-        <DialogFooter className={'mt-4'}>
-          <Button type="submit">Chấp nhận</Button>
-        </DialogFooter>
       </Form>
     </DialogContent>
   );
