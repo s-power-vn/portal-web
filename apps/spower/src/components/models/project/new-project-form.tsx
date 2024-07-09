@@ -33,6 +33,11 @@ export const NewProjectForm: FC<NewProjectFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => createProject.mutate(values)}
+      defaultValues={{
+        name: '',
+        bidding: '',
+        customer: ''
+      }}
       onCancel={props.onCancel}
       loading={createProject.isPending}
       className={'flex w-[480px] flex-col gap-3'}
