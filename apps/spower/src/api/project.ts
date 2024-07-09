@@ -67,18 +67,10 @@ export function useGetProjectById(projectId: string) {
   return useQuery(getProjectById(projectId));
 }
 
-export const CreateProjectSchema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
-});
-
-export type CreateProjectInput = InferType<typeof CreateProjectSchema>;
-
 export function useCreateProject(onSuccess?: () => void) {
   return useMutation({
     mutationKey: ['createProject'],
-    mutationFn: (params: CreateProjectInput) =>
+    mutationFn: (params: any) =>
       client.collection('project').create<ProjectResponse>({
         ...params,
         createdBy: client.authStore.model?.id

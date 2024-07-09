@@ -6,17 +6,13 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import { useState } from 'react';
-
-import { ProjectResponse, formatDate } from '@storeo/core';
+import { formatDate } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
 import { ProjectData, ProjectSearchSchema, getAllProjects } from '../../../api';
-import { EditProjectDialog, EmployeeDisplay } from '../../../components';
+import { EmployeeDisplay } from '../../../components';
 
 const Component = () => {
-  const [open, setOpen] = useState(false);
-  const [project, setProject] = useState<ProjectResponse>();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
@@ -80,74 +76,64 @@ const Component = () => {
   ];
 
   return (
-    <>
-      {project ? (
-        <EditProjectDialog
-          search={search}
-          project={project}
-          open={open}
-          setOpen={setOpen}
-        />
-      ) : null}
-      <div className={'flex flex-col gap-2 p-2'}>
-        <DebouncedInput
-          value={search.filter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                filter: value ?? ''
-              }
-            })
-          }
-        />
-        <CommonTable
-          data={projects.data?.items ?? []}
-          columns={columns}
-          rowCount={projects.data?.totalItems}
-          pageCount={projects.data?.totalPages}
-          pageIndex={search.pageIndex}
-          pageSize={search.pageSize}
-          fixedWidth={true}
-          onRowClick={row =>
-            navigate({
-              to: './$projectId',
-              params: {
-                projectId: row.original.id
-              }
-            })
-          }
-          onPageNext={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex + 1 };
-              }
-            })
-          }
-          onPagePrev={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex - 1 };
-              }
-            })
-          }
-          onPageSizeChange={pageSize =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                pageSize
-              }
-            })
-          }
-        ></CommonTable>
-      </div>
-    </>
+    <div className={'flex flex-col gap-2 p-2'}>
+      <DebouncedInput
+        value={search.filter}
+        className={'h-8 w-56'}
+        placeholder={'Tìm kiếm...'}
+        onChange={value =>
+          navigate({
+            to: './',
+            search: {
+              ...search,
+              filter: value ?? ''
+            }
+          })
+        }
+      />
+      <CommonTable
+        data={projects.data?.items ?? []}
+        columns={columns}
+        rowCount={projects.data?.totalItems}
+        pageCount={projects.data?.totalPages}
+        pageIndex={search.pageIndex}
+        pageSize={search.pageSize}
+        fixedWidth={true}
+        onRowClick={row =>
+          navigate({
+            to: './$projectId',
+            params: {
+              projectId: row.original.id
+            }
+          })
+        }
+        onPageNext={() =>
+          navigate({
+            to: './',
+            search: prev => {
+              return { ...prev, pageIndex: prev.pageIndex + 1 };
+            }
+          })
+        }
+        onPagePrev={() =>
+          navigate({
+            to: './',
+            search: prev => {
+              return { ...prev, pageIndex: prev.pageIndex - 1 };
+            }
+          })
+        }
+        onPageSizeChange={pageSize =>
+          navigate({
+            to: './',
+            search: {
+              ...search,
+              pageSize
+            }
+          })
+        }
+      ></CommonTable>
+    </div>
   );
 };
 

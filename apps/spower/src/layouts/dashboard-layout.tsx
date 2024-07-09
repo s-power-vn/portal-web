@@ -11,23 +11,42 @@ import {
   Users2Icon
 } from 'lucide-react';
 
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useCallback, useRef } from 'react';
 
 import { cn } from '@storeo/core';
-import { Button } from '@storeo/theme';
+import { Button, closeModal, showModal } from '@storeo/theme';
 
 import {
   Header,
-  NewProjectDialog,
   Sidebar,
   SidebarGroup,
   SidebarItem,
   useSidebar
 } from '../components';
+import { NewProjectForm } from '../components/models/project/new-project-form';
 
 const SidebarHeader = () => {
-  const [openProjectNew, setOpenProjectNew] = useState(false);
   const { collapsed } = useSidebar();
+
+  const modalId = useRef<string | undefined>();
+
+  const onSuccessHandler = useCallback(async () => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const handleNewProject = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Thêm dự án mới',
+      children: (
+        <NewProjectForm
+          onSuccess={onSuccessHandler}
+          onCancel={onSuccessHandler}
+        />
+      )
+    });
+  }, [onSuccessHandler]);
 
   return (
     <div
@@ -35,21 +54,12 @@ const SidebarHeader = () => {
         'flex h-[50px] w-full items-center justify-center border-b p-2'
       }
     >
-      <NewProjectDialog
-        open={openProjectNew}
-        setOpen={setOpenProjectNew}
-        search={{
-          pageIndex: 1,
-          pageSize: 10,
-          filter: ''
-        }}
-      />
       <Button
         className={cn(
           'flex w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
           collapsed && 'gap-0'
         )}
-        onClick={() => setOpenProjectNew(true)}
+        onClick={handleNewProject}
       >
         <PackagePlusIcon />
         <span

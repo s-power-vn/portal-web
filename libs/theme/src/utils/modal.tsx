@@ -37,9 +37,6 @@ export const Modal = (props: Omit<ModalType, 'id'>) => {
       >
         <DialogHeader>
           <DialogTitle>{props.title}</DialogTitle>
-          <DialogDescription className={'italic'}>
-            {props.description}
-          </DialogDescription>
         </DialogHeader>
         <div className={'p-4'}>{props.children}</div>
       </DialogContent>
