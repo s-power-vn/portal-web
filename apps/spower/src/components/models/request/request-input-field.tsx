@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
+import { PlusIcon } from 'lucide-react';
 import { AnyObject, ObjectSchema } from 'yup';
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { DetailResponse, Show } from '@storeo/core';
+import { DetailResponse, cn } from '@storeo/core';
 import {
+  Button,
   FormField,
   FormFieldProps,
   NumericField,
@@ -15,11 +17,13 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  closeModal,
+  showModal
 } from '@storeo/theme';
 
 import { TreeData } from '../../../commons/utils';
-import { PickDetailDialog } from '../detail/pick-detail-dialog';
+import { PickDetailInput } from '../detail/pick-detail-input';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;
@@ -27,10 +31,8 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const [openPick, setOpenPick] = useState(false);
-
   const { control, setValue } = useFormContext();
-
+  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
   const { fields, append } = useFieldArray({
     control,
     name: 'details',
@@ -51,25 +53,53 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       });
   }, [fields, setValue]);
 
-  return (
-    <div className={'flex flex-col gap-1'}>
-      <div className={'flex items-end justify-between'}>
-        <span className={'text-sm font-medium'}>Hạng mục công việc</span>
-        <Show when={!!projectId}>
-          <PickDetailDialog
+  const modalId = useRef<string | undefined>();
+
+  const handlePick = useCallback(() => {
+    if (projectId) {
+      modalId.current = showModal({
+        title: 'Chọn hạng mục',
+        className: 'flex min-w-[400px] flex-col',
+        children: (
+          <PickDetailInput
             projectId={projectId}
-            open={openPick}
-            setOpen={setOpenPick}
+            value={selectedDetails}
             onChange={value => {
+              setSelectedDetails(value);
               const items = _.sortBy(value, 'level');
               setValue('details', []);
               append(items);
               items.forEach((_, index) => {
                 setValue(`details[${index}].requestVolume`, 0);
               });
+              if (modalId.current) {
+                closeModal(modalId.current);
+              }
             }}
-          ></PickDetailDialog>
-        </Show>
+          />
+        )
+      });
+    }
+  }, [append, projectId, selectedDetails, setValue]);
+
+  return (
+    <div className={'flex flex-col gap-2'}>
+      <div className={'flex items-end justify-between'}>
+        <span className={'text-sm font-medium'}>Hạng mục công việc</span>
+        <div className={'flex gap-2'}>
+          <Button className={'text-sm'} type={'reset'}>
+            <PlusIcon className={'mr-2 h-4 w-4'} />
+            Thêm hạng mục ngoài HĐ
+          </Button>
+          <Button
+            variant="outline"
+            type={'reset'}
+            className={cn('text-sm')}
+            onClick={handlePick}
+          >
+            Chọn
+          </Button>
+        </div>
       </div>
       <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>

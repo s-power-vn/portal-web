@@ -15,19 +15,12 @@ import {
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import { FC, Suspense, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
-import { DetailResponse, DialogProps, For, Show, cn } from '@storeo/core';
+import { DetailResponse, For, Show, cn } from '@storeo/core';
 import {
   Button,
   DebouncedInput,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Table,
   TableBody,
   TableCell,
@@ -40,18 +33,31 @@ import { detailApi } from '../../../api';
 import { TreeData, arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
-const Content: FC<PickDetailDialogProps> = ({
-  projectId,
-  setOpen,
-  value = [],
-  onChange
-}) => {
+export type PickDetailInputProps = {
+  projectId: string;
+  value?: DetailResponse[];
+  onChange: (value: DetailResponse[]) => void;
+};
+
+export const PickDetailInput: FC<PickDetailInputProps> = props => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
+  useEffect(() => {
+    setRowSelection(
+      _.chain(props.value)
+        .map(item => ({
+          id: item.id
+        }))
+        .keyBy('id')
+        .mapValues(() => true)
+        .value()
+    );
+  }, [props.value]);
+
   const listDetails = detailApi.listFull.useSuspenseQuery({
-    variables: projectId
+    variables: props.projectId
   });
 
   const data = useMemo(() => {
@@ -61,8 +67,8 @@ const Content: FC<PickDetailDialogProps> = ({
         group: it.id
       };
     });
-    return arrayToTree(v, `${projectId}-root`);
-  }, [listDetails.data, projectId]);
+    return arrayToTree(v, `${props.projectId}-root`);
+  }, [listDetails.data, props.projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
 
@@ -160,15 +166,6 @@ const Content: FC<PickDetailDialogProps> = ({
   const table = useReactTable({
     data,
     columns,
-    initialState: {
-      rowSelection: _.chain(value)
-        .map(item => ({
-          id: item.id
-        }))
-        .keyBy('id')
-        .mapValues(() => true)
-        .value()
-    },
     state: {
       expanded,
       rowSelection,
@@ -190,7 +187,8 @@ const Content: FC<PickDetailDialogProps> = ({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    manualPagination: true
+    manualPagination: true,
+    getRowId: row => row.id
   });
 
   useEffect(() => {
@@ -214,160 +212,126 @@ const Content: FC<PickDetailDialogProps> = ({
   }, [table]);
 
   return (
-    <DialogContent className="min-w-[800px]">
-      <DialogHeader>
-        <DialogTitle>Chọn hạng mục</DialogTitle>
-        <DialogDescription className={'italic'}>
-          Chọn hạng mục yêu cầu.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="flex flex-col gap-2">
-        <DebouncedInput
-          value={globalFilter}
-          className={'h-8 w-56'}
-          placeholder={'Tìm kiếm...'}
-          onChange={value => setGlobalFilter(String(value))}
-        />
-        <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
-          <Table
+    <div className="flex flex-col gap-2">
+      <DebouncedInput
+        value={globalFilter}
+        className={'h-8 w-56'}
+        placeholder={'Tìm kiếm...'}
+        onChange={value => setGlobalFilter(String(value))}
+      />
+      <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
+        <Table
+          style={{
+            width: table.getTotalSize() + 10
+          }}
+        >
+          <TableHeader
+            className={'items-center whitespace-nowrap border-r p-1'}
             style={{
-              width: table.getTotalSize() + 10
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
             }}
           >
-            <TableHeader
-              className={'items-center whitespace-nowrap border-r p-1'}
-              style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 2
-              }}
-            >
-              <For each={table.getHeaderGroups()}>
-                {headerGroup => (
-                  <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                    <For each={headerGroup.headers}>
-                      {header => (
-                        <TableHead
-                          key={header.id}
-                          className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+            <For each={table.getHeaderGroups()}>
+              {headerGroup => (
+                <TableRow key={headerGroup.id} className={'!border-b-0'}>
+                  <For each={headerGroup.headers}>
+                    {header => (
+                      <TableHead
+                        key={header.id}
+                        className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
                           after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
                           after:content-[''] last:after:border-r-0`}
-                          style={{
-                            width: header.column.getSize()
-                          }}
-                        >
-                          <Show when={!header.isPlaceholder}>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </Show>
-                        </TableHead>
-                      )}
-                    </For>
-                  </TableRow>
-                )}
-              </For>
-            </TableHeader>
-            <TableBody>
-              <For
-                each={table.getRowModel().rows}
-                fallback={
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 border-r text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                }
-              >
-                {row => (
-                  <TableRow
-                    key={row.id}
-                    className={cn(
-                      'cursor-pointer',
-                      row.getIsSelected() ||
-                        row.getIsSomeSelected() ||
-                        row.getIsAllSubRowsSelected()
-                        ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
-                        : null
-                    )}
-                  >
-                    <For each={row.getVisibleCells()}>
-                      {cell => (
-                        <TableCell
-                          key={cell.id}
-                          style={{
-                            width: cell.column.getSize()
-                          }}
-                          className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                            after:border-r after:content-['']`}
-                        >
+                        style={{
+                          width: header.column.getSize()
+                        }}
+                      >
+                        <Show when={!header.isPlaceholder}>
                           {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                            header.column.columnDef.header,
+                            header.getContext()
                           )}
-                        </TableCell>
-                      )}
-                    </For>
-                  </TableRow>
-                )}
-              </For>
-            </TableBody>
-          </Table>
-        </div>
-        <DialogFooter className={'mt-4'}>
-          <Button
-            type="submit"
-            onClick={() => {
-              onChange?.(
-                _.uniqBy(
-                  [
-                    ...table
-                      .getRowModel()
-                      .flatRows.filter(row => row.getIsSomeSelected())
-                      .map(it => it.original),
-                    ...table
-                      .getSelectedRowModel()
-                      .flatRows.map(item => item.original)
-                  ],
-                  'id'
-                )
-              );
-              setOpen(false);
-            }}
-          >
-            Chấp nhận
-          </Button>
-        </DialogFooter>
+                        </Show>
+                      </TableHead>
+                    )}
+                  </For>
+                </TableRow>
+              )}
+            </For>
+          </TableHeader>
+          <TableBody>
+            <For
+              each={table.getRowModel().rows}
+              fallback={
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 border-r text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              }
+            >
+              {row => (
+                <TableRow
+                  key={row.id}
+                  className={cn(
+                    'cursor-pointer',
+                    row.getIsSelected() ||
+                      row.getIsSomeSelected() ||
+                      row.getIsAllSubRowsSelected()
+                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
+                      : null
+                  )}
+                >
+                  <For each={row.getVisibleCells()}>
+                    {cell => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
+                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                            after:border-r after:content-['']`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    )}
+                  </For>
+                </TableRow>
+              )}
+            </For>
+          </TableBody>
+        </Table>
       </div>
-    </DialogContent>
-  );
-};
-
-export type PickDetailDialogProps = DialogProps & {
-  projectId?: string;
-  value?: DetailResponse[];
-  onChange?: (value: DetailResponse[]) => void;
-};
-
-export const PickDetailDialog: FC<PickDetailDialogProps> = props => {
-  return (
-    <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogTrigger asChild>
+      <div className={'mt-4'}>
         <Button
-          variant="outline"
-          role="combobox"
-          className={cn('justify-between text-sm font-normal')}
+          type="submit"
+          onClick={() => {
+            props.onChange?.(
+              _.uniqBy(
+                [
+                  ...table
+                    .getRowModel()
+                    .flatRows.filter(row => row.getIsSomeSelected())
+                    .map(it => it.original),
+                  ...table
+                    .getSelectedRowModel()
+                    .flatRows.map(item => item.original)
+                ],
+                'id'
+              )
+            );
+          }}
         >
-          Chọn
+          Chấp nhận
         </Button>
-      </DialogTrigger>
-      <Suspense>
-        <Content {...props} />
-      </Suspense>
-    </Dialog>
+      </div>
+    </div>
   );
 };

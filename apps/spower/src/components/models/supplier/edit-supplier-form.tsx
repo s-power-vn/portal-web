@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { supplierApi } from '../../../api';
 
@@ -14,9 +14,8 @@ const schema = object().shape({
   note: string()
 });
 
-export type EditSupplierFormProps = {
+export type EditSupplierFormProps = BusinessFormProps & {
   supplierId: string;
-  onSuccess?: () => void;
 };
 
 export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
@@ -40,6 +39,7 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
           ...values
         })
       }
+      onCancel={props.onCancel}
       defaultValues={supplierById.data}
       loading={updateSupplier.isPending}
       className={'mt-4 flex flex-col gap-3'}

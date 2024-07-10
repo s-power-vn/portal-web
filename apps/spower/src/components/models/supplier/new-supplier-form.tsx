@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { supplierApi } from '../../../api';
 
@@ -14,9 +14,7 @@ const schema = object().shape({
   note: string()
 });
 
-export type NewSupplierFormProps = {
-  onSuccess?: () => void;
-};
+export type NewSupplierFormProps = BusinessFormProps;
 
 export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
   const createSupplier = supplierApi.create.useMutation({
@@ -30,6 +28,7 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => createSupplier.mutate(values)}
+      onCancel={props.onCancel}
       defaultValues={{
         name: '',
         email: '',

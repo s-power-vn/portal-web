@@ -5,7 +5,6 @@ export * from './customer/customer-dropdown-field';
 export * from './customer/new-customer-form';
 export * from './customer/edit-customer-form';
 export * from './project/project-overview-tab';
-export * from './detail/pick-detail-dialog';
 export * from './request/request-input-field';
 export * from './request/request';
 export * from './request/edit-request-volume-form';
