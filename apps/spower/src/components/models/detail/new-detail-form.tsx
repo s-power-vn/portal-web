@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { number, object, string } from 'yup';
 
 import React, { FC } from 'react';
@@ -13,7 +12,7 @@ import {
   success
 } from '@storeo/theme';
 
-import { detailApi, detailInfoApi } from '../../../api';
+import { detailApi } from '../../../api';
 import { TreeData } from '../../../commons/utils';
 
 const schema = object().shape({
@@ -40,19 +39,10 @@ export type NewDetailFormProps = BusinessFormProps & {
 };
 
 export const NewDetailForm: FC<NewDetailFormProps> = props => {
-  const queryClient = useQueryClient();
   const createDetail = detailApi.create.useMutation({
     onSuccess: async () => {
       success('Tạo hạng mục công việc thành công');
       props.onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(props.projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(props.projectId)
-        })
-      ]);
     }
   });
 

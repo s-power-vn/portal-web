@@ -28,6 +28,11 @@ const Component = () => {
     ]);
   }, [history, queryClient, search, supplierId]);
 
+  const onCancelHandler = useCallback(() => {
+    setOpen(false);
+    history.back();
+  }, [history]);
+
   return (
     <Modal
       title={'Chỉnh sửa nhà cung cấp'}
@@ -38,7 +43,11 @@ const Component = () => {
         history.back();
       }}
     >
-      <EditSupplierForm supplierId={supplierId} onSuccess={onSuccessHandler} />
+      <EditSupplierForm
+        supplierId={supplierId}
+        onSuccess={onSuccessHandler}
+        onCancel={onCancelHandler}
+      />
     </Modal>
   );
 };

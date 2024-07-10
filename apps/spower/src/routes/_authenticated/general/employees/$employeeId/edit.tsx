@@ -28,6 +28,11 @@ const Component = () => {
     ]);
   }, [employeeId, history, queryClient, search]);
 
+  const onCancelHandler = useCallback(() => {
+    setOpen(false);
+    history.back();
+  }, [history]);
+
   return (
     <Modal
       title={'Chỉnh sửa nhân viên'}
@@ -38,7 +43,11 @@ const Component = () => {
         history.back();
       }}
     >
-      <EditEmployeeForm employeeId={employeeId} onSuccess={onSuccessHandler} />
+      <EditEmployeeForm
+        employeeId={employeeId}
+        onSuccess={onSuccessHandler}
+        onCancel={onCancelHandler}
+      />
     </Modal>
   );
 };

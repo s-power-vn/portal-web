@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, TextField, success } from '@storeo/theme';
+import { Form, TextField, success } from '@storeo/theme';
 
 import { supplierApi } from '../../../api';
 

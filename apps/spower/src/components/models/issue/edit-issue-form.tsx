@@ -1,12 +1,10 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { date, object, string } from 'yup';
 
 import { FC } from 'react';
 
 import {
-  Button,
+  BusinessFormProps,
   DatePickerField,
-  DialogFooter,
   Form,
   TextareaField,
   success
@@ -33,14 +31,11 @@ const schema = object().shape({
     })
 });
 
-export type EditIssueFormProps = {
+export type EditIssueFormProps = BusinessFormProps & {
   issueId: string;
-  onSuccess?: () => void;
 };
 
 export const EditIssueForm: FC<EditIssueFormProps> = props => {
-  const queryClient = useQueryClient();
-
   const issue = issueApi.byId.useSuspenseQuery({
     variables: props.issueId
   });
@@ -49,11 +44,6 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
     onSuccess: async () => {
       success('Cập nhật công việc thành công');
       props.onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: issueApi.byId.getKey(props.issueId)
-        })
-      ]);
     }
   });
 
@@ -74,6 +64,7 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
           project: issue.data.project
         });
       }}
+      onCancel={props.onCancel}
     >
       <TextareaField
         schema={schema}

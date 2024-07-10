@@ -53,7 +53,7 @@ const Component = () => {
 
   const { confirm } = useConfirm();
 
-  const onAddConfirmer = useCallback(async () => {
+  const onSuccessConfirmerHandler = useCallback(async () => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
@@ -64,15 +64,7 @@ const Component = () => {
     ]);
   }, [queryClient]);
 
-  const handleAddConfirmer = useCallback(() => {
-    modalId.current = showModal({
-      title: 'Thêm người xác nhận',
-      className: 'w-80',
-      children: <AddConfirmerForm onSuccess={onAddConfirmer} />
-    });
-  }, [onAddConfirmer]);
-
-  const onAddApprover = useCallback(async () => {
+  const onSuccessApproverHandler = useCallback(async () => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
@@ -83,13 +75,37 @@ const Component = () => {
     ]);
   }, [queryClient]);
 
+  const onCancelHandler = useCallback(() => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const handleAddConfirmer = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Thêm người xác nhận',
+      className: 'w-80',
+      children: (
+        <AddConfirmerForm
+          onSuccess={onSuccessConfirmerHandler}
+          onCancel={onCancelHandler}
+        />
+      )
+    });
+  }, [onCancelHandler, onSuccessConfirmerHandler]);
+
   const handleAddApprover = useCallback(() => {
     modalId.current = showModal({
       title: 'Thêm người phê duyệt',
       className: 'w-80',
-      children: <AddApproverForm onSuccess={onAddApprover} />
+      children: (
+        <AddApproverForm
+          onSuccess={onSuccessApproverHandler}
+          onCancel={onCancelHandler}
+        />
+      )
     });
-  }, [onAddApprover]);
+  }, [onCancelHandler, onSuccessApproverHandler]);
 
   return (
     <>

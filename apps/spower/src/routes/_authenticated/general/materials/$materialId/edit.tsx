@@ -28,6 +28,11 @@ const Component = () => {
     ]);
   }, [history, materialId, queryClient, search]);
 
+  const onCancelHandler = useCallback(() => {
+    setOpen(false);
+    history.back();
+  }, [history]);
+
   return (
     <Modal
       title={'Chỉnh sửa vật tư'}
@@ -38,7 +43,11 @@ const Component = () => {
         history.back();
       }}
     >
-      <EditMaterialForm materialId={materialId} onSuccess={onSuccessHandler} />
+      <EditMaterialForm
+        materialId={materialId}
+        onSuccess={onSuccessHandler}
+        onCancel={onCancelHandler}
+      />
     </Modal>
   );
 };

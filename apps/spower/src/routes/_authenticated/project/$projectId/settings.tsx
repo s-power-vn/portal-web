@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 
-import { Button, Form, TextareaField, success } from '@storeo/theme';
+import { Form, TextareaField, success } from '@storeo/theme';
 
 import {
   UpdateProjectSchema,
@@ -32,6 +32,7 @@ const Component = () => {
       <Form
         schema={UpdateProjectSchema}
         onSubmit={values => updateProject.mutate(values)}
+        onCancel={() => router.history.back()}
         defaultValues={project.data}
         loading={updateProject.isPending || project.isLoading}
         className={'mt-4 flex flex-col gap-3'}
@@ -60,17 +61,6 @@ const Component = () => {
             placeholder: 'Hãy chọn chủ đầu tư'
           }}
         />
-        <div className={'flex gap-2'}>
-          <Button
-            type={'button'}
-            variant={'outline'}
-            onClick={() => {
-              router.history.back();
-            }}
-          >
-            Bỏ qua
-          </Button>
-        </div>
       </Form>
     </div>
   );

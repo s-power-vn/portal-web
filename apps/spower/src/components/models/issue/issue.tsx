@@ -95,6 +95,17 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
   const modalId = useRef<string | undefined>();
 
   const onSuccessHandler = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: issueApi.byId.getKey(issueId)
+      })
+    ]);
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, [issueId, queryClient]);
+
+  const onCancelHandler = useCallback(() => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
@@ -103,9 +114,15 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
   const handleEditIssue = useCallback(() => {
     modalId.current = showModal({
       title: 'Sửa công việc',
-      children: <EditIssueForm issueId={issueId} onSuccess={onSuccessHandler} />
+      children: (
+        <EditIssueForm
+          issueId={issueId}
+          onSuccess={onSuccessHandler}
+          onCancel={onCancelHandler}
+        />
+      )
     });
-  }, [issueId, onSuccessHandler]);
+  }, [issueId, onCancelHandler, onSuccessHandler]);
 
   return (
     <div

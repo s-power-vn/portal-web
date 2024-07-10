@@ -9,7 +9,6 @@ export * from './detail/pick-detail-dialog';
 export * from './request/request-input-field';
 export * from './request/request';
 export * from './request/edit-request-volume-form';
-export * from './request/edit-request-price-form';
 export * from './request/request';
 export * from './request/status/request-status';
 export * from './employee/employee-display';

@@ -3,9 +3,8 @@ import { array, boolean, date, number, object, string } from 'yup';
 import { FC } from 'react';
 
 import {
-  Button,
+  BusinessFormProps,
   DatePickerField,
-  DialogFooter,
   Form,
   TextareaField,
   success
@@ -54,9 +53,8 @@ const schema = object().shape({
     .required('Hãy chọn ít nhất 1 hạng mục')
 });
 
-export type NewRequestFormProps = {
+export type NewRequestFormProps = BusinessFormProps & {
   projectId: string;
-  onSuccess?: () => void;
 };
 
 export const NewRequestForm: FC<NewRequestFormProps> = props => {
@@ -74,7 +72,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         title: '',
         startDate: new Date()
       }}
-      className={'mt-2 flex flex-col gap-4'}
+      className={'flex flex-col gap-4'}
       loading={createRequest.isPending}
       onSubmit={values => {
         return createRequest.mutate({
@@ -82,6 +80,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
           project: props.projectId
         });
       }}
+      onCancel={props.onCancel}
     >
       <TextareaField
         schema={schema}

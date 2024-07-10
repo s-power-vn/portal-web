@@ -53,7 +53,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
         role: employee.data.role === 1
       }}
       loading={updateEmployee.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
       <TextField

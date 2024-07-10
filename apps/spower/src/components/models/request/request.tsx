@@ -50,9 +50,7 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
-import { EditRequestPriceForm } from './edit-request-price-form';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
-import { ListRequestSupplierDialog } from './list-request-supplier-dialog';
 import { RequestAction } from './request-action';
 import { RequestStatus } from './status/request-status';
 
@@ -61,8 +59,6 @@ export type RequestProps = {
 };
 
 export const Request: FC<RequestProps> = ({ issueId }) => {
-  const [openListSupplier, setOpenListSupplier] = useState(false);
-
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -314,6 +310,9 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     if (selectedRow) {
       await Promise.all([
         queryClient.invalidateQueries({
+          queryKey: requestApi.byIssueId.getKey(issueId)
+        }),
+        queryClient.invalidateQueries({
           queryKey: requestDetailApi.byId.getKey(selectedRow.original.id)
         })
       ]);
@@ -321,7 +320,13 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
-  }, [queryClient, selectedRow]);
+  }, [issueId, queryClient, selectedRow]);
+
+  const onCancelHandler = useCallback(() => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
 
   const handleEditRequestVolume = useCallback(() => {
     if (selectedRow) {
@@ -332,193 +337,164 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           <EditRequestVolumeForm
             requestDetailId={selectedRow.original.id}
             onSuccess={onSuccessHandler}
+            onCancel={onCancelHandler}
           />
         )
       });
     }
-  }, [onSuccessHandler, selectedRow]);
-
-  const handleEditRequestPrice = useCallback(() => {
-    if (selectedRow) {
-      modalId.current = showModal({
-        title: 'Thay đổi đơn giá',
-        className: 'w-80',
-        children: (
-          <EditRequestPriceForm
-            requestDetailId={selectedRow.original.id}
-            onSuccess={onSuccessHandler}
-          />
-        )
-      });
-    }
-  }, [onSuccessHandler, selectedRow]);
+  }, [onCancelHandler, onSuccessHandler, selectedRow]);
 
   return (
-    <>
-      {table.getSelectedRowModel() &&
-      table.getSelectedRowModel().flatRows.length > 0 ? (
-        <ListRequestSupplierDialog
-          requestDetail={table.getSelectedRowModel().flatRows[0].original}
-          open={openListSupplier}
-          setOpen={setOpenListSupplier}
-        />
-      ) : null}
-      <div className={'bg-appWhite flex flex-col gap-3'}>
-        <div className={'flex items-center justify-between'}>
-          <div className={'flex gap-2'}>
-            <Button className={'text-appWhite'} size="icon">
-              <PrinterIcon className={'h-4 w-4'} />
-            </Button>
-            <Show
-              when={
-                request.data.expand.issue.assignee ===
-                client.authStore.model?.id
-              }
-            >
-              <Button
-                className={'text-appWhite'}
-                size="icon"
-                disabled={!selectedRow}
-                onClick={handleEditRequestVolume}
-              >
-                <EditIcon className={'h-4 w-4'} />
-              </Button>
-              <Button
-                variant={'destructive'}
-                size="icon"
-                onClick={() => {
-                  confirm?.(
-                    'Bạn chắc chắn muốn xóa yêu cầu mua hàng này?',
-                    () => deleteIssue.mutate(issueId)
-                  );
-                }}
-              >
-                <Cross2Icon className={'h-4 w-4'} />
-              </Button>
-            </Show>
-          </div>
-          <div className={'flex gap-2'}>
-            <RequestStatus
-              className={'px-3 py-1.5 text-xs font-bold'}
-              issueId={issueId}
-            />
-          </div>
-        </div>
-        <div className={'flex flex-col gap-2'}>
-          <div
-            className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
+    <div className={'bg-appWhite flex flex-col gap-3'}>
+      <div className={'flex items-center justify-between'}>
+        <div className={'flex gap-2'}>
+          <Button className={'text-appWhite'} size="icon">
+            <PrinterIcon className={'h-4 w-4'} />
+          </Button>
+          <Show
+            when={
+              request.data.expand.issue.assignee === client.authStore.model?.id
+            }
           >
-            <Table
-              style={{
-                width: table.getTotalSize()
+            <Button
+              className={'text-appWhite'}
+              size="icon"
+              disabled={!selectedRow}
+              onClick={handleEditRequestVolume}
+            >
+              <EditIcon className={'h-4 w-4'} />
+            </Button>
+            <Button
+              variant={'destructive'}
+              size="icon"
+              onClick={() => {
+                confirm?.('Bạn chắc chắn muốn xóa yêu cầu mua hàng này?', () =>
+                  deleteIssue.mutate(issueId)
+                );
               }}
             >
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => {
-                      return (
-                        <TableHead
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          style={{
-                            ...getCommonPinningStyles(header.column),
-                            width: header.getSize()
-                          }}
-                          className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 text-center after:absolute
-                          after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <>
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </>
-                          )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map(row => {
-                    return (
-                      <TableRow
-                        key={row.id}
-                        className={'group w-full cursor-pointer'}
-                        onClick={() => {
-                          setRowSelection(() => {
-                            const object: Record<string, boolean> = {};
-                            object[row.id] = true;
-                            return object;
-                          });
-
-                          if (
-                            selectedRow?.id !== row.id &&
-                            row.original.children &&
-                            row.original.children.length === 0
-                          ) {
-                            setSelectedRow(row);
-                          } else {
-                            setSelectedRow(undefined);
-                          }
-                        }}
-                      >
-                        {row.getVisibleCells().map(cell => {
-                          return cell.column.columnDef.meta?.hasRowSpan &&
-                            !cell.row.original[
-                              cell.column.columnDef.meta?.hasRowSpan
-                            ] ? null : (
-                            <TableCell
-                              key={cell.id}
-                              style={{
-                                ...getCommonPinningStyles(cell.column),
-                                width: cell.column.getSize()
-                              }}
-                              className={cn(
-                                `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
-                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                                selectedRow?.original.id === row.original.id
-                                  ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
-                                  : null
-                              )}
-                              rowSpan={
-                                cell.column.columnDef.meta?.hasRowSpan
-                                  ? cell.row.original[
-                                      cell.column.columnDef.meta?.hasRowSpan
-                                    ]
-                                  : undefined
-                              }
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className={'text-center'}
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <RequestAction issueId={issueId} />
+              <Cross2Icon className={'h-4 w-4'} />
+            </Button>
+          </Show>
+        </div>
+        <div className={'flex gap-2'}>
+          <RequestStatus
+            className={'px-3 py-1.5 text-xs font-bold'}
+            issueId={issueId}
+          />
         </div>
       </div>
-    </>
+      <div className={'flex flex-col gap-2'}>
+        <div
+          className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
+        >
+          <Table
+            style={{
+              width: table.getTotalSize()
+            }}
+          >
+            <TableHeader>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        style={{
+                          ...getCommonPinningStyles(header.column),
+                          width: header.getSize()
+                        }}
+                        className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 text-center after:absolute
+                          after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </>
+                        )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => {
+                  return (
+                    <TableRow
+                      key={row.id}
+                      className={'group w-full cursor-pointer'}
+                      onClick={() => {
+                        setRowSelection(() => {
+                          const object: Record<string, boolean> = {};
+                          object[row.id] = true;
+                          return object;
+                        });
+
+                        if (
+                          selectedRow?.id !== row.id &&
+                          row.original.children &&
+                          row.original.children.length === 0
+                        ) {
+                          setSelectedRow(row);
+                        } else {
+                          setSelectedRow(undefined);
+                        }
+                      }}
+                    >
+                      {row.getVisibleCells().map(cell => {
+                        return cell.column.columnDef.meta?.hasRowSpan &&
+                          !cell.row.original[
+                            cell.column.columnDef.meta?.hasRowSpan
+                          ] ? null : (
+                          <TableCell
+                            key={cell.id}
+                            style={{
+                              ...getCommonPinningStyles(cell.column),
+                              width: cell.column.getSize()
+                            }}
+                            className={cn(
+                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
+                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
+                              selectedRow?.original.id === row.original.id
+                                ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
+                                : null
+                            )}
+                            rowSpan={
+                              cell.column.columnDef.meta?.hasRowSpan
+                                ? cell.row.original[
+                                    cell.column.columnDef.meta?.hasRowSpan
+                                  ]
+                                : undefined
+                            }
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className={'text-center'}>
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <RequestAction issueId={issueId} />
+      </div>
+    </div>
   );
 };

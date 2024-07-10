@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, DialogFooter, Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { materialApi } from '../../../api';
 
@@ -15,9 +15,7 @@ const schema = object().shape({
   note: string()
 });
 
-export type NewMaterialFormProps = {
-  onSuccess?: () => void;
-};
+export type NewMaterialFormProps = BusinessFormProps;
 
 export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
   const createMaterial = materialApi.create.useMutation({
@@ -31,6 +29,7 @@ export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => createMaterial.mutate(values)}
+      onCancel={props.onCancel}
       defaultValues={{
         code: '',
         name: '',

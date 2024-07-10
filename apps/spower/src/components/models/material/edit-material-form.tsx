@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, TextField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
 import { materialApi } from '../../../api';
 
@@ -15,9 +15,8 @@ const schema = object().shape({
   note: string()
 });
 
-export type EditMaterialFormProps = {
+export type EditMaterialFormProps = BusinessFormProps & {
   materialId: string;
-  onSuccess?: () => void;
 };
 
 export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
@@ -41,9 +40,10 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
           ...values
         })
       }
+      onCancel={props.onCancel}
       defaultValues={materialById.data}
       loading={updateMaterial.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={' flex flex-col gap-3'}
     >
       <TextField
         schema={schema}

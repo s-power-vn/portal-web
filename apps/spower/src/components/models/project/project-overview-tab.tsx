@@ -543,6 +543,25 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   const modalId = useRef<string | undefined>();
 
   const onSuccessHandler = useCallback(async () => {
+    if (selectedRow) {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: detailApi.listFull.getKey(projectId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailInfoApi.listFull.getKey(projectId)
+        }),
+        queryClient.invalidateQueries({
+          queryKey: detailApi.byId.getKey(selectedRow.original.group)
+        })
+      ]);
+    }
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, [projectId, queryClient, selectedRow]);
+
+  const onCancelHandler = useCallback(() => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
@@ -550,32 +569,32 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
 
   const handleNewDetailParent = useCallback(() => {
     modalId.current = showModal({
-      title: 'Thêm mới hạng mục cha',
+      title: 'Thêm mục cha',
       children: (
         <NewDetailForm
           projectId={projectId}
           onSuccess={onSuccessHandler}
-          onCancel={onSuccessHandler}
+          onCancel={onCancelHandler}
         />
       )
     });
-  }, [onSuccessHandler, projectId]);
+  }, [onCancelHandler, onSuccessHandler, projectId]);
 
   const handleNewDetailChild = useCallback(() => {
     if (selectedRow) {
       modalId.current = showModal({
-        title: 'Thêm mới hạng mục cha',
+        title: 'Thêm mục con',
         children: (
           <NewDetailForm
             projectId={projectId}
             parent={selectedRow.original}
             onSuccess={onSuccessHandler}
-            onCancel={onSuccessHandler}
+            onCancel={onCancelHandler}
           />
         )
       });
     }
-  }, [onSuccessHandler, projectId, selectedRow]);
+  }, [onCancelHandler, onSuccessHandler, projectId, selectedRow]);
 
   const handleEditDetail = useCallback(() => {
     if (selectedRow) {
@@ -585,12 +604,12 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           <EditDetailForm
             detailId={selectedRow.original.group}
             onSuccess={onSuccessHandler}
-            onCancel={onSuccessHandler}
+            onCancel={onCancelHandler}
           />
         )
       });
     }
-  }, [onSuccessHandler, selectedRow]);
+  }, [onCancelHandler, onSuccessHandler, selectedRow]);
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>

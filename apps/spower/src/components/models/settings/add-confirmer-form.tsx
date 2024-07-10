@@ -1,8 +1,9 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, success } from '@storeo/theme';
+import { BusinessFormProps, Form, success } from '@storeo/theme';
 
 import { settingApi } from '../../../api';
 import { SelectEmployeeField } from '../employee/select-employee-field';
@@ -11,9 +12,7 @@ const schema = object().shape({
   user: string().required('Hãy chọn nhân viên')
 });
 
-export type AddConfirmerFormProps = {
-  onSuccess?: () => void;
-};
+export type AddConfirmerFormProps = BusinessFormProps;
 
 export const AddConfirmerForm: FC<AddConfirmerFormProps> = props => {
   const addConfirmer = settingApi.addConfirmer.useMutation({
@@ -27,6 +26,7 @@ export const AddConfirmerForm: FC<AddConfirmerFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => addConfirmer.mutate(values)}
+      onCancel={props.onCancel}
       defaultValues={{
         user: ''
       }}

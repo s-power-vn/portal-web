@@ -30,11 +30,10 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const modalId = useRef<string | undefined>();
   const queryClient = useQueryClient();
 
-  const onNewRequest = useCallback(async () => {
+  const onSuccessHandler = useCallback(async () => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
-
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey: requestApi.listFull.getKey(projectId)
@@ -52,6 +51,12 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     ]);
   }, [queryClient, projectId]);
 
+  const onCancelHandler = useCallback(() => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
   const handleNewRequestClick = useCallback(() => {
     modalId.current = showModal({
       title: 'Tạo yêu cầu mua hàng',
@@ -59,10 +64,14 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
       description:
         'Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục',
       children: (
-        <NewRequestForm projectId={projectId} onSuccess={onNewRequest} />
+        <NewRequestForm
+          projectId={projectId}
+          onSuccess={onSuccessHandler}
+          onCancel={onCancelHandler}
+        />
       )
     });
-  }, [onNewRequest, projectId]);
+  }, [onCancelHandler, onSuccessHandler, projectId]);
 
   return (
     <DropdownMenu>

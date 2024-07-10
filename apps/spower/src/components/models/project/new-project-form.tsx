@@ -5,7 +5,7 @@ import { FC } from 'react';
 
 import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
-import { getAllProjectsKey, useCreateProject } from '../../../api';
+import { useCreateProject } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
 const schema = object().shape({
@@ -17,16 +17,10 @@ const schema = object().shape({
 export type NewProjectFormProps = BusinessFormProps;
 
 export const NewProjectForm: FC<NewProjectFormProps> = props => {
-  const queryClient = useQueryClient();
-
+  useQueryClient();
   const createProject = useCreateProject(async () => {
     success('Tạo dự án thành công');
     props.onSuccess?.();
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: getAllProjectsKey()
-      })
-    ]);
   });
 
   return (

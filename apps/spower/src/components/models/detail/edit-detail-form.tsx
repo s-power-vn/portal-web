@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { number, object, string } from 'yup';
 
 import React, { FC } from 'react';
@@ -12,7 +11,7 @@ import {
   success
 } from '@storeo/theme';
 
-import { detailApi, detailInfoApi } from '../../../api';
+import { detailApi } from '../../../api';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),
@@ -37,27 +36,14 @@ export type EditDetailFormProps = BusinessFormProps & {
 };
 
 export const EditDetailForm: FC<EditDetailFormProps> = props => {
-  const queryClient = useQueryClient();
-
   const detailById = detailApi.byId.useSuspenseQuery({
     variables: props.detailId
   });
 
   const updateDetail = detailApi.update.useMutation({
-    onSuccess: async record => {
+    onSuccess: async () => {
       success('Chỉnh sửa hạng mục công việc thành công');
       props.onSuccess?.();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(record.project)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(record.project)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailApi.byId.getKey(props.detailId)
-        })
-      ]);
     }
   });
 

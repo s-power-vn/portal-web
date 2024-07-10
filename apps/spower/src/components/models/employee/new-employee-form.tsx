@@ -3,6 +3,7 @@ import { boolean, object, ref, string } from 'yup';
 import { FC } from 'react';
 
 import {
+  BusinessFormProps,
   CheckField,
   Form,
   PasswordField,
@@ -27,9 +28,7 @@ const schema = object().shape({
   role: boolean()
 });
 
-export type NewEmployeeFormProps = {
-  onSuccess?: () => void;
-};
+export type NewEmployeeFormProps = BusinessFormProps;
 
 export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
   const createEmployee = employeeApi.create.useMutation({
@@ -48,6 +47,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
           role: values.role ? 1 : 0
         })
       }
+      onCancel={props.onCancel}
       defaultValues={{
         name: '',
         email: '',

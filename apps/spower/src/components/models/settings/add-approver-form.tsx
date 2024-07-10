@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { Button, Form, success } from '@storeo/theme';
+import { BusinessFormProps, Form, success } from '@storeo/theme';
 
 import { settingApi } from '../../../api';
 import { SelectEmployeeField } from '../employee/select-employee-field';
@@ -11,9 +11,7 @@ const schema = object().shape({
   user: string().required('Hãy chọn nhân viên')
 });
 
-export type AddApproverFormProps = {
-  onSuccess?: () => void;
-};
+export type AddApproverFormProps = BusinessFormProps;
 
 export const AddApproverForm: FC<AddApproverFormProps> = props => {
   const addApprover = settingApi.addApprover.useMutation({
@@ -27,6 +25,7 @@ export const AddApproverForm: FC<AddApproverFormProps> = props => {
     <Form
       schema={schema}
       onSubmit={values => addApprover.mutate(values)}
+      onCancel={props.onCancel}
       defaultValues={{
         user: ''
       }}

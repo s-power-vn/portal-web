@@ -1,4 +1,5 @@
 import { GearIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   AnvilIcon,
   AreaChartIcon,
@@ -16,6 +17,7 @@ import { FC, ReactNode, useCallback, useRef } from 'react';
 import { cn } from '@storeo/core';
 import { Button, closeModal, showModal } from '@storeo/theme';
 
+import { getAllProjectsKey } from '../api';
 import {
   Header,
   Sidebar,
@@ -26,11 +28,23 @@ import {
 import { NewProjectForm } from '../components/models/project/new-project-form';
 
 const SidebarHeader = () => {
+  const queryClient = useQueryClient();
   const { collapsed } = useSidebar();
 
   const modalId = useRef<string | undefined>();
 
   const onSuccessHandler = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: getAllProjectsKey()
+      })
+    ]);
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, [queryClient]);
+
+  const onCancelHandler = useCallback(() => {
     if (modalId.current) {
       closeModal(modalId.current);
     }
@@ -42,11 +56,11 @@ const SidebarHeader = () => {
       children: (
         <NewProjectForm
           onSuccess={onSuccessHandler}
-          onCancel={onSuccessHandler}
+          onCancel={onCancelHandler}
         />
       )
     });
-  }, [onSuccessHandler]);
+  }, [onCancelHandler, onSuccessHandler]);
 
   return (
     <div
