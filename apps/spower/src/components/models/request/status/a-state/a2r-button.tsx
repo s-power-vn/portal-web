@@ -31,6 +31,11 @@ export const A2rButton: FC<A2rButtonProps> = ({ request }) => {
             }
             router.history.back();
           }}
+          onCancel={() => {
+            if (modalId.current) {
+              closeModal(modalId.current);
+            }
+          }}
         />
       )
     });

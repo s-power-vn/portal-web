@@ -30,6 +30,11 @@ export const A3rButton: FC<A3rButtonProps> = ({ request }) => {
             }
             router.history.back();
           }}
+          onCancel={() => {
+            if (modalId.current) {
+              closeModal(modalId.current);
+            }
+          }}
         />
       )
     });

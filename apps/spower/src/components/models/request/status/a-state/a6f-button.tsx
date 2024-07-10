@@ -32,6 +32,11 @@ export const A6fButton: FC<A6fButtonProps> = ({ request }) => {
             }
             router.history.back();
           }}
+          onCancel={() => {
+            if (modalId.current) {
+              closeModal(modalId.current);
+            }
+          }}
         />
       )
     });

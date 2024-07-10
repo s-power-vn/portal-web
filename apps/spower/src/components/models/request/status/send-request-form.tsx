@@ -3,7 +3,7 @@ import { object, string } from 'yup';
 import { FC } from 'react';
 
 import { RequestStatusOptions } from '@storeo/core';
-import { Button, Form, TextareaField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextareaField, success } from '@storeo/theme';
 
 import { RequestData, requestApi } from '../../../../api';
 import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
@@ -14,12 +14,11 @@ const schema = object().shape({
   status: string().required('Hãy chọn status')
 });
 
-export type SendRequestFormProps = {
+export type SendRequestFormProps = BusinessFormProps & {
   request: RequestData;
   status: RequestStatusOptions;
   title: string;
   condition?: string;
-  onSuccess?: () => void;
 };
 
 export const SendRequestForm: FC<SendRequestFormProps> = props => {
@@ -44,6 +43,7 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
           issue: props.request.issue
         })
       }
+      onCancel={props.onCancel}
       loading={updateRequest.isPending}
     >
       <SelectEmployeeByConditionField

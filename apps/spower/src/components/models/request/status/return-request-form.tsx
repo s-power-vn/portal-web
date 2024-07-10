@@ -3,7 +3,7 @@ import { object, string } from 'yup';
 import { FC } from 'react';
 
 import { RequestStatusOptions } from '@storeo/core';
-import { Button, Form, TextareaField, success } from '@storeo/theme';
+import { BusinessFormProps, Form, TextareaField, success } from '@storeo/theme';
 
 import { RequestData, requestApi } from '../../../../api';
 
@@ -13,10 +13,9 @@ const schema = object().shape({
   status: string().required('Hãy chọn status')
 });
 
-export type ReturnRequestFormProps = {
+export type ReturnRequestFormProps = BusinessFormProps & {
   request: RequestData;
   status: RequestStatusOptions;
-  onSuccess?: () => void;
 };
 
 export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
@@ -42,6 +41,7 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
           issue: props.request.issue
         })
       }
+      onCancel={props.onCancel}
       loading={returnRequest.isPending}
     >
       <TextareaField schema={schema} name={'note'} title={'Phản hồi'} />
