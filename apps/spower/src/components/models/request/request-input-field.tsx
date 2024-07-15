@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon } from 'lucide-react';
 import { v4 } from 'uuid';
 import { AnyObject, ObjectSchema } from 'yup';
 
@@ -60,7 +60,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   const handlePick = useCallback(() => {
     if (projectId) {
       modalId.current = showModal({
-        title: 'Chọn hạng mục',
+        title: 'Chọn hạng mục trong hợp đồng',
         className: 'flex min-w-[600px] flex-col',
         children: (
           <PickDetailInput
@@ -68,8 +68,16 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             value={selectedDetails}
             onChange={value => {
               setSelectedDetails(value);
-              const items = _.sortBy(value, 'level');
-              setValue('details', []);
+              const items = _.chain(value)
+                .sortBy('level')
+                .filter(
+                  it =>
+                    _.findIndex(
+                      fields as { id?: string }[],
+                      v => v.id === it.id
+                    ) === -1
+                )
+                .value();
               append(items);
               items.forEach((_, index) => {
                 setValue(`details[${index}].requestVolume`, 0);
@@ -82,12 +90,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
         )
       });
     }
-  }, [append, projectId, selectedDetails, setValue]);
+  }, [append, fields, projectId, selectedDetails, setValue]);
 
   const handleCustomRequest = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chọn hạng mục',
-      className: 'flex min-w-[600px] flex-col',
+      title: 'Thêm hạng mục ngoài hợp đồng',
+      className: 'flex min-w-[500px] flex-col',
       children: (
         <NewCustomRequestDetailForm
           onSubmit={values => {
@@ -113,11 +121,24 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     });
   }, [append, fields.length]);
 
+  const handleClear = useCallback(() => {
+    setValue('details', []);
+  }, [setValue]);
+
   return (
     <div className={'flex flex-col gap-2'}>
       <div className={'flex items-end justify-between'}>
         <span className={'text-sm font-medium'}>Hạng mục công việc</span>
         <div className={'flex gap-2'}>
+          <Button
+            className={' text-sm '}
+            variant={'destructive'}
+            type={'reset'}
+            onClick={handleClear}
+          >
+            <TrashIcon className={'mr-2 h-4 w-4'} />
+            Xóa tất cả
+          </Button>
           <Button
             className={'bg-orange-500 text-sm hover:bg-orange-400'}
             type={'reset'}
@@ -127,6 +148,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             Thêm hạng mục ngoài HĐ
           </Button>
           <Button type={'reset'} className={cn('text-sm')} onClick={handlePick}>
+            <PlusIcon className={'mr-2 h-4 w-4'} />
             Chọn hạng mục trong HĐ
           </Button>
         </div>
