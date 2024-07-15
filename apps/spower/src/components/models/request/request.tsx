@@ -50,6 +50,7 @@ import {
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
+import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestAction } from './request-action';
 import { RequestStatus } from './status/request-status';
@@ -303,7 +304,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     },
     state: {
       expanded,
-      rowSelection
+      rowSelection,
+      columnVisibility: {
+        unitPrice: client.authStore.model?.id === ADMIN_ID
+      }
     },
     enableRowSelection: true,
     onExpandedChange: setExpanded,

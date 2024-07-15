@@ -67,7 +67,7 @@ import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 import { EditDetailForm } from '../detail/edit-detail-form';
 import { NewDetailForm } from '../detail/new-detail-form';
 
-const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
+export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
 export type ProjectOverviewTabProps = {
   projectId: string;
