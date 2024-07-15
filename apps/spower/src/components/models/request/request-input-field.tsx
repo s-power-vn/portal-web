@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
+import { v4 } from 'uuid';
 import { AnyObject, ObjectSchema } from 'yup';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -24,6 +25,7 @@ import {
 
 import { TreeData } from '../../../commons/utils';
 import { PickDetailInput } from '../detail/pick-detail-input';
+import { NewCustomRequestDetailForm } from './new-custom-request-detail-form';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;
@@ -59,7 +61,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     if (projectId) {
       modalId.current = showModal({
         title: 'Chọn hạng mục',
-        className: 'flex min-w-[400px] flex-col',
+        className: 'flex min-w-[600px] flex-col',
         children: (
           <PickDetailInput
             projectId={projectId}
@@ -82,22 +84,50 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     }
   }, [append, projectId, selectedDetails, setValue]);
 
+  const handleCustomRequest = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Chọn hạng mục',
+      className: 'flex min-w-[600px] flex-col',
+      children: (
+        <NewCustomRequestDetailForm
+          onSubmit={values => {
+            append({
+              level: `e${fields.length}`,
+              title: values.title,
+              unit: values.unit,
+              hasChild: false,
+              children: [],
+              id: v4()
+            });
+            if (modalId.current) {
+              closeModal(modalId.current);
+            }
+          }}
+          onCancel={() => {
+            if (modalId.current) {
+              closeModal(modalId.current);
+            }
+          }}
+        />
+      )
+    });
+  }, [append, fields.length]);
+
   return (
     <div className={'flex flex-col gap-2'}>
       <div className={'flex items-end justify-between'}>
         <span className={'text-sm font-medium'}>Hạng mục công việc</span>
         <div className={'flex gap-2'}>
-          <Button className={'text-sm'} type={'reset'}>
+          <Button
+            className={'bg-orange-500 text-sm hover:bg-orange-400'}
+            type={'reset'}
+            onClick={handleCustomRequest}
+          >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Thêm hạng mục ngoài HĐ
           </Button>
-          <Button
-            variant="outline"
-            type={'reset'}
-            className={cn('text-sm')}
-            onClick={handlePick}
-          >
-            Chọn
+          <Button type={'reset'} className={cn('text-sm')} onClick={handlePick}>
+            Chọn hạng mục trong HĐ
           </Button>
         </div>
       </div>

@@ -113,8 +113,11 @@ export const requestApi = router('request', {
         startDate?: Date;
         endDate?: Date;
         details: {
+          level?: string;
           id?: string;
           requestVolume?: number;
+          title?: string;
+          unit?: string;
         }[];
       }
     ) => {
@@ -135,16 +138,31 @@ export const requestApi = router('request', {
 
       await Promise.all(
         params.details.map(it => {
-          return client.collection(Collections.RequestDetail).create(
-            {
-              request: request.id,
-              detail: it.id,
-              volume: it.requestVolume
-            },
-            {
-              requestKey: null
-            }
-          );
+          if (it.level?.indexOf('e') !== -1) {
+            return client.collection(Collections.RequestDetail).create(
+              {
+                request: request.id,
+                detail: null,
+                volume: it.requestVolume,
+                customTitle: it.title,
+                customUnit: it.unit
+              },
+              {
+                requestKey: null
+              }
+            );
+          } else {
+            return client.collection(Collections.RequestDetail).create(
+              {
+                request: request.id,
+                detail: it.id,
+                volume: it.requestVolume
+              },
+              {
+                requestKey: null
+              }
+            );
+          }
         })
       );
 
