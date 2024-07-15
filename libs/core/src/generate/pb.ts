@@ -221,6 +221,7 @@ export type RequestConfirmRecord = {
 }
 
 export type RequestDetailRecord = {
+	customLevel?: string
 	customTitle?: string
 	customUnit?: string
 	detail?: RecordIdString

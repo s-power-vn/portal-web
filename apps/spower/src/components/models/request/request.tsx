@@ -100,9 +100,9 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       .map(it => {
         return {
           ...it,
-          group: it.expand.detail.id,
-          level: it.expand.detail.level,
-          parent: it.expand.detail.parent
+          group: it.expand?.detail.id ?? it.customLevel,
+          level: it.expand?.detail.level ?? it.customLevel,
+          parent: it.expand?.detail.parent ?? `${request.data.project}-root`
         };
       })
       .value();
@@ -159,7 +159,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       }),
       columnHelper.display({
         id: 'title',
-        cell: ({ row }) => row.original.expand.detail.title,
+        cell: ({ row }) =>
+          row.original.expand?.detail.title ?? row.original.customTitle,
         header: () => 'Mô tả công việc',
         footer: info => info.column.id,
         size: 300,
@@ -170,12 +171,13 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       columnHelper.display({
         id: 'volume',
         cell: ({ row }) => (
-          <div className={'flex justify-end gap-1'}>
-            <span className={'font-semibold'}>
-              {formatNumber(row.original.expand.detail.volume)}
-            </span>
-            <span>{row.original.expand.detail.unit}</span>
-          </div>
+          <Show when={row.original.expand?.detail.volume}>
+            <div className={'flex justify-end gap-1'}>
+              <span className={'font-semibold'}>
+                {formatNumber(row.original.expand?.detail.volume)}
+              </span>
+            </div>
+          </Show>
         ),
         header: () => 'Khối lượng HĐ',
         footer: info => info.column.id,
@@ -185,12 +187,26 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         }
       }),
       columnHelper.display({
+        id: 'unit',
+        cell: ({ row }) => (
+          <div className={'flex justify-center gap-1'}>
+            {row.original.expand?.detail.unit ?? row.original.customUnit}
+          </div>
+        ),
+        header: () => 'Đơn vị',
+        footer: info => info.column.id,
+        size: 100,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
+      }),
+      columnHelper.display({
         id: 'unitPrice',
         cell: ({ row }) => (
-          <Show when={row.original.expand.detail.unitPrice}>
+          <Show when={row.original.expand?.detail.unitPrice}>
             <div className={'flex justify-end'}>
               <span className={'font-semibold'}>
-                {formatCurrency(row.original.expand.detail.unitPrice)}
+                {formatCurrency(row.original.expand?.detail.unitPrice)}
               </span>
               <span>₫</span>
             </div>
@@ -210,7 +226,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             <span className={'font-semibold'}>
               {formatNumber(row.original.volume)}
             </span>
-            <span>{row.original.expand.detail.unit}</span>
           </div>
         ),
         header: () => 'Khối lượng yêu cầu',
@@ -269,7 +284,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       }),
       columnHelper.display({
         id: 'supplier',
-        cell: info => info.row.original.expand.supplier?.name,
+        cell: info => info.row.original.expand?.supplier?.name,
         header: () => 'Nhà cung cấp',
         footer: info => info.column.id,
         size: 300
