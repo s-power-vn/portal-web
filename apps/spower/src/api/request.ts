@@ -144,6 +144,7 @@ export const requestApi = router('request', {
                 request: request.id,
                 detail: null,
                 volume: it.requestVolume,
+                customLevel: it.level,
                 customTitle: it.title,
                 customUnit: it.unit
               },
