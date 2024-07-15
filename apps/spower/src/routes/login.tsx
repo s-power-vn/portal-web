@@ -48,6 +48,7 @@ const Login = () => {
             }}
             loading={login.isPending}
             className={'flex flex-col gap-4'}
+            showButtons={false}
           >
             <Logo />
             <div className={'flex w-full items-center justify-center'}>

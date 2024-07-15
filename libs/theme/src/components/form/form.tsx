@@ -9,6 +9,8 @@ import {
   useForm
 } from 'react-hook-form';
 
+import { Show } from '@storeo/core';
+
 import { Button } from '../ui/button';
 
 export type BusinessFormProps = {
@@ -25,6 +27,7 @@ export type FormProps<S extends ObjectSchema<AnyObject>> = Omit<
   onSubmit?: (formData: InferType<S>) => void;
   onCancel?: () => void;
   schema: S;
+  showButtons?: boolean;
 };
 
 export const Form = <S extends ObjectSchema<AnyObject>>({
@@ -34,6 +37,7 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   children,
   onSubmit,
   onCancel,
+  showButtons = true,
   ...props
 }: FormProps<S>) => {
   const methods = useForm({
@@ -48,14 +52,16 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   return (
     <form onSubmit={methods.handleSubmit(onSubmitData)} {...props}>
       <FormProvider {...methods}>{children}</FormProvider>
-      <div className={'mt-6 flex justify-end gap-2'}>
-        <Button type="reset" onClick={onCancel} variant="secondary">
-          Bỏ qua
-        </Button>
-        <Button disabled={!methods.formState.isDirty} type="submit">
-          Chấp nhận
-        </Button>
-      </div>
+      <Show when={showButtons}>
+        <div className={'mt-6 flex justify-end gap-2'}>
+          <Button type="reset" onClick={onCancel} variant="secondary">
+            Bỏ qua
+          </Button>
+          <Button disabled={!methods.formState.isDirty} type="submit">
+            Chấp nhận
+          </Button>
+        </div>
+      </Show>
     </form>
   );
 };
