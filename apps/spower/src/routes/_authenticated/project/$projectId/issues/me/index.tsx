@@ -7,7 +7,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 
 import {
-  IssueDeadlineStatusOptions,
   IssueResponse,
   IssueTypeOptions,
   Match,
@@ -22,6 +21,7 @@ import {
   NewIssueButton,
   RequestStatus
 } from '../../../../../../components';
+import { DeadlineStatus } from '../../../../../../components/models/request/status/deadline-status';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -58,34 +58,10 @@ const Component = () => {
       footer: info => info.column.id,
       size: 400
     }),
-    columnHelper.accessor('status', {
-      cell: ({ row }) =>
-        row.original.deadlineStatus === IssueDeadlineStatusOptions.Normal ? (
-          <div
-            className={
-              'bg-appSuccess flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white'
-            }
-          >
-            An toàn
-          </div>
-        ) : row.original.deadlineStatus ===
-          IssueDeadlineStatusOptions.Warning ? (
-          <div
-            className={
-              'bg-appWarning flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs'
-            }
-          >
-            Nguy cơ chậm
-          </div>
-        ) : (
-          <div
-            className={
-              'bg-appError flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white'
-            }
-          >
-            Đang chậm
-          </div>
-        ),
+    columnHelper.accessor('deadlineStatus', {
+      cell: ({ row }) => (
+        <DeadlineStatus status={row.original.deadlineStatus} />
+      ),
       header: () => 'Tiến độ',
       footer: info => info.column.id,
       size: 200

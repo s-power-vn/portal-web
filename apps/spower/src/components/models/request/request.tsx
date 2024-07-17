@@ -53,6 +53,7 @@ import {
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestAction } from './request-action';
+import { DeadlineStatus } from './status/deadline-status';
 import { RequestStatus } from './status/request-status';
 
 export type RequestProps = {
@@ -397,6 +398,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           </Show>
         </div>
         <div className={'flex gap-2'}>
+          <DeadlineStatus
+            className={'font-bold'}
+            status={request.data.expand.issue.deadlineStatus}
+          />
           <RequestStatus
             className={'px-3 py-1.5 text-xs font-bold'}
             issueId={issueId}
