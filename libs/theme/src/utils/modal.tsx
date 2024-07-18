@@ -38,7 +38,7 @@ export const Modal = (props: Omit<ModalType, 'id'>) => {
         <DialogHeader>
           <DialogTitle>{props.title}</DialogTitle>
         </DialogHeader>
-        <div className={'p-4'}>{props.children}</div>
+        <div className={'overflow-auto p-4'}>{props.children}</div>
       </DialogContent>
     </Dialog>
   );

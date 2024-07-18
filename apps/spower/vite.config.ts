@@ -2,9 +2,25 @@
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
 import react from '@vitejs/plugin-react';
+import { createRequire } from 'node:module';
+import * as path from 'node:path';
 import { join } from 'path';
 import Unfonts from 'unplugin-fonts/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+const require = createRequire(import.meta.url);
+
+const cMapsDir = normalizePath(
+  path.join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'cmaps')
+);
+
+const standardFontsDir = normalizePath(
+  path.join(
+    path.dirname(require.resolve('pdfjs-dist/package.json')),
+    'standard_fonts'
+  )
+);
 
 export default defineConfig({
   root: __dirname,
@@ -36,6 +52,12 @@ export default defineConfig({
     TanStackRouterVite({
       routesDirectory: join(__dirname, 'src/routes'),
       generatedRouteTree: join(__dirname, 'src/routes.gen.ts')
+    }),
+    viteStaticCopy({
+      targets: [
+        { src: cMapsDir, dest: '' },
+        { src: standardFontsDir, dest: '' }
+      ]
     })
   ],
 

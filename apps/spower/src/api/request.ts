@@ -11,6 +11,7 @@ import {
   IssueResponse,
   IssueStatusOptions,
   IssueTypeOptions,
+  ProjectResponse,
   RequestDetailResponse,
   RequestDetailSupplierResponse,
   RequestResponse,
@@ -40,6 +41,7 @@ export type RequestDetailData = RequestDetailResponse & {
 
 export type RequestData = RequestResponse & {
   expand: {
+    project: ProjectResponse;
     requestDetail_via_request: RequestDetailData[];
     issue: IssueResponse & {
       expand: {
@@ -104,7 +106,8 @@ export const requestApi = router('request', {
             'contract_via_request.contractItem_via_contract,' +
             'issue.createdBy,' +
             'issue.createdBy.department,' +
-            'issue.assignee'
+            'issue.assignee,' +
+            'project'
         })
   }),
   create: router.mutation({

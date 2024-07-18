@@ -1,3 +1,4 @@
+import { compile } from '@fileforge/react-print';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -28,6 +29,8 @@ import React, {
   useRef,
   useState
 } from 'react';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 import { Show, client, cn, formatCurrency, formatNumber } from '@storeo/core';
 import {
@@ -52,7 +55,9 @@ import {
 } from '../../../commons/utils';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
+import { PdfView } from './pdf-view';
 import { RequestAction } from './request-action';
+import { RequestDocument } from './request-document';
 import { DeadlineStatus } from './status/deadline-status';
 import { RequestStatus } from './status/request-status';
 
@@ -95,8 +100,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const { confirm } = useConfirm();
 
-  const requests = useMemo(() => {
-    const v = _.chain(
+  const v = useMemo(() => {
+    return _.chain(
       request.data ? request.data.expand.requestDetail_via_request : []
     )
       .map(it => {
@@ -107,10 +112,13 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           parent: it.expand?.detail.parent ?? `${request.data.project}-root`
         };
       })
+      .orderBy('level')
       .value();
-
-    return arrayToTree(v, `${request.data.project}-root`);
   }, [request.data]);
+
+  const requests = useMemo(() => {
+    return arrayToTree(v, `${request.data.project}-root`);
+  }, [request.data.project, v]);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
 
@@ -364,11 +372,32 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     }
   }, [onCancelHandler, onSuccessHandler, selectedRow]);
 
+  const handlePrint = useCallback(async () => {
+    await import('react-dom/server');
+    const html = await compile(
+      <RequestDocument
+        project={request.data.expand.project.name}
+        bidding={request.data.expand.project.bidding}
+        requester={request.data.expand.issue.expand.createdBy.name}
+        department={
+          request.data.expand.issue.expand.createdBy.expand.department.name
+        }
+        content={request.data.expand.issue.title}
+        data={v}
+      />
+    );
+    showModal({
+      title: 'In phiếu yêu cầu',
+      className: 'min-w-[500px]',
+      children: <PdfView content={html} />
+    });
+  }, [request.data, v]);
+
   return (
     <div className={'bg-appWhite flex flex-col gap-3'}>
       <div className={'flex items-center justify-between'}>
         <div className={'flex gap-2'}>
-          <Button className={'text-appWhite'} size="icon">
+          <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
           </Button>
           <Show
@@ -407,6 +436,31 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             issueId={issueId}
           />
         </div>
+      </div>
+      <div>
+        {/*<RequestDocument*/}
+        {/*  project={request.data.expand.project.name}*/}
+        {/*  bidding={request.data.expand.project.bidding}*/}
+        {/*  requester={request.data.expand.issue.expand.createdBy.name}*/}
+        {/*  department={*/}
+        {/*    request.data.expand.issue.expand.createdBy.expand.department.name*/}
+        {/*  }*/}
+        {/*  content={request.data.expand.issue.title}*/}
+        {/*  data={_.chain(*/}
+        {/*    request.data ? request.data.expand.requestDetail_via_request : []*/}
+        {/*  )*/}
+        {/*    .map(it => {*/}
+        {/*      return {*/}
+        {/*        ...it,*/}
+        {/*        group: it.expand?.detail.id ?? it.customLevel,*/}
+        {/*        level: it.expand?.detail.level ?? it.customLevel,*/}
+        {/*        parent:*/}
+        {/*          it.expand?.detail.parent ?? `${request.data.project}-root`*/}
+        {/*      };*/}
+        {/*    })*/}
+        {/*    .orderBy('level')*/}
+        {/*    .value()}*/}
+        {/*/>*/}
       </div>
       <div className={'flex flex-col gap-2'}>
         <div
