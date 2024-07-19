@@ -297,7 +297,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           <thead>
             <tr className={'border-b'}>
               <th className={'border-r p-2'}>STT</th>
-              <th className={'border-r p-2'}>Mã hạng mục</th>
+              <th className={'border-r p-2'}>ID</th>
               <th className={'border-r p-2'}>Tên hạng mục</th>
               <th className={'border-r p-2'}>Đơn vị</th>
               <th className={'border-r p-2'}>Khối lượng</th>
@@ -308,7 +308,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             {props.data.map((it, index) => (
               <tr key={index} className={'border-b text-sm'}>
                 <td className={'w-10 border-r p-2 text-center'}>{index + 1}</td>
-                <td className={'w-28 border-r p-2'}>
+                <td className={'w-20 border-r p-2'}>
                   {it.expand.detail.level ?? it.customLevel}
                 </td>
                 <td className={'border-r p-2'}>
