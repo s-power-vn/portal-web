@@ -33,7 +33,14 @@ import React, {
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-import { Show, client, cn, formatCurrency, formatNumber } from '@storeo/core';
+import {
+  RequestStatusOptions,
+  Show,
+  client,
+  cn,
+  formatCurrency,
+  formatNumber
+} from '@storeo/core';
 import {
   Button,
   Table,
@@ -387,6 +394,14 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           request.data.expand.issue.expand.createdBy.expand.department.name
         }
         content={request.data.expand.issue.title}
+        confirm1={
+          request.data.status === RequestStatusOptions.A4 ||
+          request.data.status === RequestStatusOptions.A5F ||
+          request.data.status === RequestStatusOptions.A5R ||
+          request.data.status === RequestStatusOptions.A6F ||
+          request.data.status === RequestStatusOptions.A6R
+        }
+        confirm2={request.data.status === RequestStatusOptions.A6F}
         data={v}
       />
     );
@@ -408,10 +423,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           printable: URL.createObjectURL(blob),
           type: 'pdf'
         });
-        // const link = document.createElement('a');
-        // link.href = URL.createObjectURL(blob);
-        // link.download = 'test.pdf';
-        // link.click();
       })
       .finally(() => hideLoading());
   }, [request.data, v, showLoading, hideLoading]);

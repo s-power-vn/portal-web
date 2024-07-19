@@ -1,8 +1,12 @@
 import { CSS, Tailwind } from '@fileforge/react-print';
+import { CheckCircle2Icon } from 'lucide-react';
+import { DateTime } from 'luxon';
 import colors from 'tailwindcss/colors';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import React, { FC } from 'react';
+
+import { Show } from '@storeo/core';
 
 import { RequestDetailData } from '../../../api';
 
@@ -12,6 +16,8 @@ export type RequestDocumentProps = {
   requester?: string;
   department?: string;
   content?: string;
+  confirm1?: boolean;
+  confirm2?: boolean;
   data: RequestDetailData[];
 };
 
@@ -250,16 +256,21 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
               <path d="M4.91,19.78c1.4,1.26,3.03,2.12,4.9,2.48v-6.32L4.91,19.78z" />
             </g>
           </svg>
-          <div>
-            Công ty cổ phần{' '}
-            <a
-              href="https://s-power.vn"
-              target="_blank"
-              className="underline underline-offset-2 "
-              rel="noreferrer"
-            >
-              S-Power
-            </a>
+          <div className={'flex flex-col items-center gap-2'}>
+            <div className={'whitespace-nowrap'}>
+              Công ty cổ phần{' '}
+              <a
+                href="https://s-power.vn"
+                target="_blank"
+                className="underline underline-offset-2 "
+                rel="noreferrer"
+              >
+                S-Power
+              </a>
+            </div>
+            <span
+              className={'text-xs italic'}
+            >{`Ngày ${DateTime.now().day} tháng ${DateTime.now().month} năm ${DateTime.now().year}`}</span>
           </div>
         </div>
         <div className={'flex w-full items-center justify-center'}>
@@ -323,22 +334,32 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             ))}
           </tbody>
         </table>
-        <div className={'mt-8 flex items-start justify-end gap-12'}>
-          <div className={'flex flex-col items-center'}>
+        <div className={'mt-8 flex items-start justify-between'}>
+          <div className={'flex flex-col items-center px-8'}>
             <div className={'font-bold'}>Giám đốc</div>
             <div className={'mt-16 font-bold'}></div>
           </div>
-          <div className={'flex flex-col'}>
-            <div></div>
-            <div></div>
-          </div>
-          <div className={'flex flex-col'}>
-            <div></div>
-            <div></div>
-          </div>
-          <div className={'flex flex-col items-center'}>
-            <div className={'font-bold'}>Người đề nghị</div>
-            <div className={'mt-16 font-bold'}>{props.requester}</div>
+          <div className={'flex  gap-8'}>
+            <div className={'flex flex-col items-center'}>
+              <div className={'font-bold'}>Phòng kỹ thuật</div>
+              <Show when={props.confirm1}>
+                <div className={'mt-4'}>
+                  <CheckCircle2Icon className={'h-10 w-10 text-orange-500'} />
+                </div>
+              </Show>
+            </div>
+            <div className={'flex flex-col items-center'}>
+              <div className={'font-bold'}>Phòng kế hoạch</div>
+              <Show when={props.confirm2}>
+                <div className={'mt-4'}>
+                  <CheckCircle2Icon className={'h-10 w-10 text-green-500'} />
+                </div>
+              </Show>
+            </div>
+            <div className={'flex flex-col items-center'}>
+              <div className={'font-bold'}>Người đề nghị</div>
+              <div className={'mt-16 font-bold'}>{props.requester}</div>
+            </div>
           </div>
         </div>
       </div>
