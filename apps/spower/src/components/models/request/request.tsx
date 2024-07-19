@@ -408,7 +408,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     );
     fetch(`${BASE_URL}/create-pdf`, {
       method: 'POST',
-      mode: 'no-cors',
+      mode: 'cors',
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer ' + client.authStore.token,
