@@ -34,6 +34,7 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 import {
+  BASE_URL,
   RequestStatusOptions,
   Show,
   client,
@@ -405,7 +406,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         data={v}
       />
     );
-    fetch('http://localhost:8090/create-pdf', {
+    fetch(`${BASE_URL}/create-pdf`, {
       method: 'POST',
       mode: 'cors',
       headers: {
