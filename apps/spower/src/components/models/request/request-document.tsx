@@ -1,4 +1,4 @@
-import { CSS, PageBottom, Tailwind } from '@fileforge/react-print';
+import { CSS, Tailwind } from '@fileforge/react-print';
 import colors from 'tailwindcss/colors';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
@@ -228,42 +228,72 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         {`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
           @page {
             size: a4;
-            margin: .75in .75in 1in .75in;
           }`}
       </CSS>
-      <div className="w-full p-4 font-[inter] text-sm">
-        <div className={'flex w-full items-center justify-center p-4'}>
+      <div className="w-full font-[inter] text-sm">
+        <div className=" flex w-full items-start justify-between gap-4">
+          <svg
+            version="1.1"
+            id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 24 24"
+            className="w-16 fill-slate-800"
+          >
+            <g>
+              <path
+                d="M22.45,12.12c0-2.91-0.99-5.33-3.03-7.34C17.42,2.76,14.96,1.74,12,1.74c-2.93,0-5.4,1.02-7.43,3.05
+            C2.56,6.8,1.55,9.26,1.55,12.15c0,0.84,0.11,1.63,0.27,2.37l9.71-7.65h5.01v14.58c1.06-0.5,2.03-1.13,2.91-1.99
+            C21.46,17.45,22.45,15.01,22.45,12.12z"
+              />
+              <path d="M4.91,19.78c1.4,1.26,3.03,2.12,4.9,2.48v-6.32L4.91,19.78z" />
+            </g>
+          </svg>
+          <div>
+            Công ty cổ phần{' '}
+            <a
+              href="https://s-power.vn"
+              target="_blank"
+              className="underline underline-offset-2 "
+              rel="noreferrer"
+            >
+              S-Power
+            </a>
+          </div>
+        </div>
+        <div className={'flex w-full items-center justify-center'}>
           <span className={'text-xl font-bold uppercase'}>
             Phiếu đề nghị mua hàng
           </span>
         </div>
-        <div className={'flex w-full flex-col gap-1 p-4'}>
-          <div className={'flex items-center gap-2'}>
+        <div className={'mt-8 flex w-full flex-col gap-1'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Số phiếu</div>
             <div className={'basis-3/4'}>-</div>
           </div>
-          <div className={'flex items-center gap-2'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Dự án</div>
             <div className={'basis-3/4'}>{props.project}</div>
           </div>
-          <div className={'flex items-center gap-2'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Gói thầu</div>
             <div className={'basis-3/4'}>{props.bidding}</div>
           </div>
-          <div className={'flex items-center gap-2'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Người đề nghị</div>
             <div className={'basis-3/4'}>{props.requester}</div>
           </div>
-          <div className={'flex items-center gap-2'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Bộ phận</div>
             <div className={'basis-3/4'}>{props.department}</div>
           </div>
-          <div className={'flex items-center gap-2'}>
+          <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Nội dung</div>
             <div className={'basis-3/4'}>{props.content}</div>
           </div>
         </div>
-        <table className={'w-full border'}>
+        <table className={'mt-8 w-full border'}>
           <thead>
             <tr className={'border-b'}>
               <th className={'border-r p-2'}>STT</th>
@@ -293,22 +323,24 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             ))}
           </tbody>
         </table>
-        <PageBottom>
-          <div className="mt-4 flex py-4 text-xs text-slate-400">
-            <div className="flex-grow" />
-            <div>
-              Công ty cổ phần{' '}
-              <a
-                href="https://s-power.vn"
-                target="_blank"
-                className="underline underline-offset-2 "
-                rel="noreferrer"
-              >
-                S-Power
-              </a>
-            </div>
+        <div className={'mt-8 flex items-start justify-end gap-12'}>
+          <div className={'flex flex-col items-center'}>
+            <div className={'font-bold'}>Giám đốc</div>
+            <div className={'mt-16 font-bold'}></div>
           </div>
-        </PageBottom>
+          <div className={'flex flex-col'}>
+            <div></div>
+            <div></div>
+          </div>
+          <div className={'flex flex-col'}>
+            <div></div>
+            <div></div>
+          </div>
+          <div className={'flex flex-col items-center'}>
+            <div className={'font-bold'}>Người đề nghị</div>
+            <div className={'mt-16 font-bold'}>{props.requester}</div>
+          </div>
+        </div>
       </div>
     </Tailwind>
   );

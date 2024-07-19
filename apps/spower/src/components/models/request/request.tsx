@@ -20,6 +20,7 @@ import {
   SquareMinusIcon,
   SquarePlusIcon
 } from 'lucide-react';
+import printJS from 'print-js';
 
 import React, {
   FC,
@@ -43,7 +44,8 @@ import {
   TableRow,
   closeModal,
   showModal,
-  useConfirm
+  useConfirm,
+  useLoading
 } from '@storeo/theme';
 
 import { RequestDetailData, requestApi, requestDetailApi } from '../../../api';
@@ -55,7 +57,6 @@ import {
 } from '../../../commons/utils';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
-import { PdfView } from './pdf-view';
 import { RequestAction } from './request-action';
 import { RequestDocument } from './request-document';
 import { DeadlineStatus } from './status/deadline-status';
@@ -372,8 +373,11 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     }
   }, [onCancelHandler, onSuccessHandler, selectedRow]);
 
+  const { showLoading, hideLoading } = useLoading();
+
   const handlePrint = useCallback(async () => {
     await import('react-dom/server');
+    showLoading();
     const html = await compile(
       <RequestDocument
         project={request.data.expand.project.name}
@@ -386,12 +390,31 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         data={v}
       />
     );
-    showModal({
-      title: 'In phiếu yêu cầu',
-      className: 'min-w-[500px]',
-      children: <PdfView content={html} />
-    });
-  }, [request.data, v]);
+    fetch('http://localhost:8090/create-pdf', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + client.authStore.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        content: html
+      })
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        printJS({
+          printable: URL.createObjectURL(blob),
+          type: 'pdf'
+        });
+        // const link = document.createElement('a');
+        // link.href = URL.createObjectURL(blob);
+        // link.download = 'test.pdf';
+        // link.click();
+      })
+      .finally(() => hideLoading());
+  }, [request.data, v, showLoading, hideLoading]);
 
   return (
     <div className={'bg-appWhite flex flex-col gap-3'}>
@@ -446,20 +469,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         {/*    request.data.expand.issue.expand.createdBy.expand.department.name*/}
         {/*  }*/}
         {/*  content={request.data.expand.issue.title}*/}
-        {/*  data={_.chain(*/}
-        {/*    request.data ? request.data.expand.requestDetail_via_request : []*/}
-        {/*  )*/}
-        {/*    .map(it => {*/}
-        {/*      return {*/}
-        {/*        ...it,*/}
-        {/*        group: it.expand?.detail.id ?? it.customLevel,*/}
-        {/*        level: it.expand?.detail.level ?? it.customLevel,*/}
-        {/*        parent:*/}
-        {/*          it.expand?.detail.parent ?? `${request.data.project}-root`*/}
-        {/*      };*/}
-        {/*    })*/}
-        {/*    .orderBy('level')*/}
-        {/*    .value()}*/}
+        {/*  data={v}*/}
         {/*/>*/}
       </div>
       <div className={'flex flex-col gap-2'}>
