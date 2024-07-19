@@ -317,8 +317,8 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
                 <td className={'w-20 border-r p-2'}>
                   {it.expand.detail.unit ?? it.customUnit}
                 </td>
-                <td className={'w-40 border-r p-2 text-right'}>{it.volume}</td>
-                <td className={'p-2'}></td>
+                <td className={'w-30 border-r p-2 text-right'}>{it.volume}</td>
+                <td className={'w-40'}></td>
               </tr>
             ))}
           </tbody>
