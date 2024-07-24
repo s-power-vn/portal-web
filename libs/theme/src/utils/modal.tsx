@@ -50,6 +50,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
       <For each={modals.value}>
         {dialog => (
           <Modal
+            key={dialog.id}
             {...dialog}
             className={dialog.className}
             preventOutsideClick={true}
@@ -59,7 +60,6 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
             }}
           >
             <Suspense
-              key={dialog.id}
               fallback={
                 <div className={`p-2`}>
                   <Loader className={'h-6 w-6 animate-spin'} />
