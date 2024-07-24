@@ -10,7 +10,6 @@ import { DialogProps, For } from '@storeo/core';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle
 } from '../components/ui/dialog';
@@ -50,26 +49,26 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     <>
       <For each={modals.value}>
         {dialog => (
-          <Suspense
-            key={dialog.id}
-            fallback={
-              <div className={`p-2`}>
-                <Loader className={'h-6 w-6 animate-spin'} />
-              </div>
-            }
+          <Modal
+            {...dialog}
+            className={dialog.className}
+            preventOutsideClick={true}
+            open={true}
+            setOpen={() => {
+              modals.value = modals.value.filter(d => d.id !== dialog.id);
+            }}
           >
-            <Modal
-              {...dialog}
-              className={dialog.className}
-              preventOutsideClick={true}
-              open={true}
-              setOpen={() => {
-                modals.value = modals.value.filter(d => d.id !== dialog.id);
-              }}
+            <Suspense
+              key={dialog.id}
+              fallback={
+                <div className={`p-2`}>
+                  <Loader className={'h-6 w-6 animate-spin'} />
+                </div>
+              }
             >
               {dialog.children}
-            </Modal>
-          </Suspense>
+            </Suspense>
+          </Modal>
         )}
       </For>
       {children}
