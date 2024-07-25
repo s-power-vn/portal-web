@@ -6,6 +6,7 @@ import {
   DefaultValues,
   FormProvider,
   SubmitHandler,
+  UseFormReturn,
   useForm
 } from 'react-hook-form';
 
@@ -27,7 +28,7 @@ export type FormProps<S extends ObjectSchema<AnyObject>> = Omit<
   onSubmit?: (formData: InferType<S>) => void;
   onCancel?: () => void;
   schema: S;
-  actions?: ReactNode;
+  actions?: ((methods: UseFormReturn) => ReactNode) | ReactNode;
 };
 
 export const Form = <S extends ObjectSchema<AnyObject>>({
@@ -52,7 +53,14 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   return (
     <form onSubmit={methods.handleSubmit(onSubmitData)} {...props}>
       <FormProvider {...methods}>{children}</FormProvider>
-      <Show when={!actions} fallback={actions}>
+      <Show
+        when={!actions}
+        fallback={
+          actions && typeof actions === 'function'
+            ? actions?.(methods)
+            : actions
+        }
+      >
         <div className={'mt-6 flex justify-end gap-2'}>
           <Button type="reset" onClick={onCancel} variant="secondary">
             Bỏ qua

@@ -58,7 +58,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
         />
       )
     });
-  }, []);
+  }, [onCancelHandler, onSuccessHandler]);
 
   return (
     <Form
@@ -74,7 +74,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           id: client.authStore.model?.id
         })
       }
-      actions={
+      actions={methods => (
         <div className={'mt-6 flex justify-end gap-2'}>
           <Button
             type="reset"
@@ -90,9 +90,11 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           >
             Bỏ qua
           </Button>
-          <Button type="submit">Chấp nhận</Button>
+          <Button type="submit" disabled={!methods.formState.isDirty}>
+            Chấp nhận
+          </Button>
         </div>
-      }
+      )}
     >
       <TextField schema={schema} name="name" title="Họ tên" />
       <TextField
