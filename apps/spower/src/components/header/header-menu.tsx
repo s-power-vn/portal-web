@@ -1,3 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
+
+import { useCallback } from 'react';
+
 import { Collections, getImageUrl, getUser } from '@storeo/core';
 import {
   Avatar,
@@ -17,6 +21,15 @@ import { useLogout } from '../../api';
 export const HeaderMenu = () => {
   const logout = useLogout();
   const user = getUser();
+  const navigate = useNavigate();
+
+  const handleProfile = useCallback(
+    () =>
+      navigate({
+        to: '/user/profile'
+      }),
+    [navigate]
+  );
 
   return (
     <DropdownMenu>
@@ -40,7 +53,7 @@ export const HeaderMenu = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Cài đặt</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleProfile}>Cài đặt</DropdownMenuItem>
         <DropdownMenuItem onClick={() => logout.mutate()}>
           Đăng xuất
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

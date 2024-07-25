@@ -21,6 +21,7 @@ import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
 import { Route as AuthenticatedProjectIndexImport } from './routes/_authenticated/project/index'
 import { Route as AuthenticatedGeneralIndexImport } from './routes/_authenticated/general/index'
+import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated/user/profile'
 import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
 import { Route as AuthenticatedGeneralSuppliersImport } from './routes/_authenticated/general/suppliers'
 import { Route as AuthenticatedGeneralMaterialsImport } from './routes/_authenticated/general/materials'
@@ -96,6 +97,11 @@ const AuthenticatedProjectIndexRoute = AuthenticatedProjectIndexImport.update({
 const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedGeneralRoute,
+} as any)
+
+const AuthenticatedUserProfileRoute = AuthenticatedUserProfileImport.update({
+  path: '/user/profile',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedProjectProjectIdRoute =
@@ -298,6 +304,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdImport
       parentRoute: typeof AuthenticatedProjectImport
     }
+    '/_authenticated/user/profile': {
+      preLoaderRoute: typeof AuthenticatedUserProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/general/': {
       preLoaderRoute: typeof AuthenticatedGeneralIndexImport
       parentRoute: typeof AuthenticatedGeneralImport
@@ -431,6 +441,7 @@ export const routeTree = rootRoute.addChildren([
       AuthenticatedProjectIndexRoute,
     ]),
     AuthenticatedSettingsRoute,
+    AuthenticatedUserProfileRoute,
   ]),
   LoginRoute,
 ])
