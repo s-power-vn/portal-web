@@ -8,5 +8,9 @@ export const departmentApi = router('department', {
       client.collection(Collections.Department).getFullList({
         sort: '-created'
       })
+  }),
+  byId: router.query({
+    fetcher: (id: string) =>
+      client.collection(Collections.Department).getOne(id)
   })
 });

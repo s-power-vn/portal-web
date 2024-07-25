@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { SelectInput, SelectInputProps } from '@storeo/theme';
 
@@ -13,10 +13,14 @@ export const DepartmentDropdown: FC<DepartmentDropdownProps> = ({
 }) => {
   const listDepartments = departmentApi.listFull.useQuery();
 
-  const items = _.map(listDepartments.data, ({ id, name }) => ({
-    value: id,
-    label: name
-  }));
+  const items = useMemo(
+    () =>
+      _.map(listDepartments.data, ({ id, name }) => ({
+        value: id,
+        label: name
+      })),
+    [listDepartments.data]
+  );
 
   return <SelectInput items={items} {...props} />;
 };

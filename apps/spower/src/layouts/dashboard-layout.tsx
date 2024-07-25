@@ -130,10 +130,6 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             to={'/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
           ></SidebarItem>
-          <SidebarItem
-            to={'/settings'}
-            icon={<GearIcon width={22} height={22} />}
-          ></SidebarItem>
         </Sidebar>
         <div className={'h-full grow overflow-hidden'}>{children}</div>
       </div>

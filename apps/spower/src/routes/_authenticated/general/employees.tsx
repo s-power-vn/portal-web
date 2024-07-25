@@ -93,17 +93,6 @@ const Component = () => {
       header: () => 'Chức danh',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('role', {
-      cell: ({ row }) => {
-        return row.original.role === 1 ? (
-          <div className={'flex w-full justify-center'}>
-            <CircleCheckIcon className={'text-appBlue'} />
-          </div>
-        ) : null;
-      },
-      header: () => 'Quyền duyệt',
-      footer: info => info.column.id
-    }),
     columnHelper.display({
       id: 'actions',
       cell: ({ row }) => {

@@ -1,18 +1,19 @@
-import { boolean, object, ref, string } from 'yup';
+import _ from 'lodash';
+import { number, object, ref, string } from 'yup';
 
-import { FC } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import {
   BusinessFormProps,
-  CheckField,
   Form,
   PasswordField,
   TextField,
   success
 } from '@storeo/theme';
 
-import { employeeApi } from '../../../api';
+import { departmentApi, employeeApi } from '../../../api';
 import { DepartmentDropdownField } from '../department/department-dropdown-field';
+import { RoleDropdownField } from '../role/role-dropdown-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
@@ -25,7 +26,7 @@ const schema = object().shape({
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
     .required('Hãy xác nhận mật khẩu'),
   title: string(),
-  role: boolean()
+  role: number()
 });
 
 export type NewEmployeeFormProps = BusinessFormProps;
@@ -38,15 +39,53 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
     }
   });
 
+  const [selectedDepartment, setSelectedDepartment] = useState<
+    string | undefined
+  >();
+
+  const department = departmentApi.byId.useQuery({
+    variables: selectedDepartment,
+    enabled: selectedDepartment !== undefined
+  });
+
+  const roleItems = useMemo(() => {
+    if (department.data) {
+      const code = department.data.code;
+      return code === 'BGD'
+        ? [
+            {
+              label: 'Giám đốc',
+              value: '1'
+            },
+            {
+              label: 'Phó giám đốc',
+              value: '2'
+            }
+          ]
+        : [
+            {
+              label: 'Trưởng phòng',
+              value: '3'
+            },
+            {
+              label: 'Chuyên viên',
+              value: '4'
+            }
+          ];
+    }
+  }, [department]);
+
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSubmit={values => {
         createEmployee.mutate({
           ...values,
-          role: values.role ? 1 : 0
-        })
-      }
+          title:
+            _.find(roleItems, it => it.value === values.role?.toString())
+              ?.label ?? ''
+        });
+      }}
       onCancel={props.onCancel}
       defaultValues={{
         name: '',
@@ -63,15 +102,19 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         name={'department'}
         title={'Phòng ban'}
         options={{
-          placeholder: 'Hãy chọn phòng ban'
+          placeholder: 'Hãy chọn phòng ban',
+          onChange: value => {
+            setSelectedDepartment(value);
+          }
         }}
       />
-      <TextField schema={schema} name={'title'} title={'Chức danh'} />
-      <CheckField
+      <RoleDropdownField
         schema={schema}
         name={'role'}
+        title={'Chức danh'}
         options={{
-          label: 'Quyền duyệt'
+          placeholder: 'Hãy chọn chức danh',
+          items: roleItems
         }}
       />
       <PasswordField schema={schema} name={'password'} title={'Mật khẩu'} />
