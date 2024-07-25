@@ -134,6 +134,9 @@ importers:
       react-hook-form:
         specifier: ^7.51.1
         version: 7.51.1(react@18.3.1)
+      react-image-crop:
+        specifier: ^11.0.6
+        version: 11.0.6(react@18.3.1)
       react-imask:
         specifier: ^7.5.0
         version: 7.5.0(react@18.3.1)
@@ -5313,6 +5316,11 @@ packages:
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
+
+  react-image-crop@11.0.6:
+    resolution: {integrity: sha512-T+/RPBhwFxdf8PjD/uoWk+tBkS0Xf2XW0lY5mnsmClvnAujO81EEjDwj0M2pcHX3seXVgKOr/yIiL+Sx4evMNw==}
+    peerDependencies:
+      react: '>=16.13.1'
 
   react-imask@7.5.0:
     resolution: {integrity: sha512-yWExhHphDmNaHvmOsYR+5QcludeBdYk6bXyo8kouIJFAub5sF+O0kLPVupg2yhd7EfTqjLswFZ/tqY1AhKnd9Q==}
@@ -12377,6 +12385,10 @@ snapshots:
       scheduler: 0.23.2
 
   react-hook-form@7.51.1(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  react-image-crop@11.0.6(react@18.3.1):
     dependencies:
       react: 18.3.1
 

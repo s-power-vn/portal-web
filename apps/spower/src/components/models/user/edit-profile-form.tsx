@@ -1,9 +1,9 @@
 import { useRouter } from '@tanstack/react-router';
-import { object, string } from 'yup';
+import { mixed, object, string } from 'yup';
 
 import { FC, useCallback, useRef } from 'react';
 
-import { client } from '@storeo/core';
+import { Collections, client, getImageUrl, getUser } from '@storeo/core';
 import {
   BusinessFormProps,
   Button,
@@ -15,11 +15,13 @@ import {
 } from '@storeo/theme';
 
 import { userApi } from '../../../api/user';
+import { ImageSelectField } from '../../image/image-select-field';
 import { ChangePasswordForm } from './change-password-form';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email')
+  email: string().email('Sai định dạng email').required('Hãy nhập email'),
+  avatar: mixed()
 });
 
 export type EditProfileFormProps = BusinessFormProps;
@@ -27,6 +29,7 @@ export type EditProfileFormProps = BusinessFormProps;
 export const EditProfileForm: FC<EditProfileFormProps> = props => {
   const modalId = useRef<string | undefined>();
   const router = useRouter();
+  const user = getUser();
 
   const updateProfile = userApi.update.useMutation({
     onSuccess: async () => {
@@ -65,8 +68,9 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
       schema={schema}
       className={'flex flex-col gap-3'}
       defaultValues={{
-        name: client.authStore.model?.name,
-        email: client.authStore.model?.email
+        name: user?.name,
+        email: user?.email,
+        avatar: getImageUrl(Collections.User, user?.id, user?.avatar)
       }}
       onSubmit={values =>
         updateProfile.mutate({
@@ -96,6 +100,11 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
         </div>
       )}
     >
+      <ImageSelectField
+        schema={schema}
+        name={'avatar'}
+        title={'Ảnh đại diện'}
+      />
       <TextField schema={schema} name="name" title="Họ tên" />
       <TextField
         schema={schema}
