@@ -14,7 +14,7 @@ import {
 import { userApi } from '../../../api/user';
 
 const schema = object().shape({
-  oldPassword: string().required('Hãy nhập mật khẩu cũ'),
+  oldPassword: string().required('Hãy nhập mật khẩu hiện tại'),
   newPassword: string()
     .required('Hãy nhập mật khẩu mới')
     .min(8, 'Mật khẩu dài ít nhất 8 ký tự'),
@@ -56,7 +56,7 @@ export const ChangePasswordForm: FC<ChangePasswordFormProps> = props => {
       <TextField
         schema={schema}
         name="oldPassword"
-        title="Mật khẩu cũ"
+        title="Mật khẩu hiện tại"
         options={{
           type: 'password',
           autoComplete: 'new-password'
