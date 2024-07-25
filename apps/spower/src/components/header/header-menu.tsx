@@ -33,7 +33,7 @@ export const HeaderMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Avatar className="h-8 w-8">
           <AvatarImage
             src={getImageUrl(Collections.User, user?.id, user?.avatar)}
@@ -43,7 +43,7 @@ export const HeaderMenu = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className={'w-56'}>
+      <DropdownMenuContent className={'w-56'} sideOffset={12}>
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user?.name}</p>
