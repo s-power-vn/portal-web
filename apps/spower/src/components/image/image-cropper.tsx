@@ -109,8 +109,8 @@ export const ImageCropper: FC<ImageCropperProps> = props => {
             const file = await getCroppedImage(
               image,
               cropped,
-              `${v4()}.jpeg`,
-              'image/jpeg'
+              `${v4()}.png`,
+              'image/png'
             );
             setOutput(file);
           }
