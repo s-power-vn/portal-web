@@ -23,21 +23,24 @@ export const ImageSelect: FC<ImageSelectProps> = props => {
     setImage(props.value);
   }, [props.value]);
 
-  const onSuccessHandler = useCallback(async (file: File) => {
-    props.onChange?.(file);
+  const onSuccessHandler = useCallback(
+    async (file: File) => {
+      props.onChange?.(file);
 
-    const reader = new FileReader();
+      const reader = new FileReader();
 
-    reader.onload = function (e) {
-      setImage(e.target?.result as string);
-    };
+      reader.onload = function (e) {
+        setImage(e.target?.result as string);
+      };
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
 
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
+      if (modalId.current) {
+        closeModal(modalId.current);
+      }
+    },
+    [props]
+  );
 
   const onCancelHandler = useCallback(() => {
     if (modalId.current) {
