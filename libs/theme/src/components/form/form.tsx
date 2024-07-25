@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AnyObject, InferType, ObjectSchema } from 'yup';
 
-import { FormHTMLAttributes } from 'react';
+import { FormHTMLAttributes, ReactNode } from 'react';
 import {
   DefaultValues,
   FormProvider,
@@ -27,7 +27,7 @@ export type FormProps<S extends ObjectSchema<AnyObject>> = Omit<
   onSubmit?: (formData: InferType<S>) => void;
   onCancel?: () => void;
   schema: S;
-  showButtons?: boolean;
+  actions?: ReactNode;
 };
 
 export const Form = <S extends ObjectSchema<AnyObject>>({
@@ -37,7 +37,7 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   children,
   onSubmit,
   onCancel,
-  showButtons = true,
+  actions,
   ...props
 }: FormProps<S>) => {
   const methods = useForm({
@@ -52,7 +52,7 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
   return (
     <form onSubmit={methods.handleSubmit(onSubmitData)} {...props}>
       <FormProvider {...methods}>{children}</FormProvider>
-      <Show when={showButtons}>
+      <Show when={!actions} fallback={actions}>
         <div className={'mt-6 flex justify-end gap-2'}>
           <Button type="reset" onClick={onCancel} variant="secondary">
             Bỏ qua

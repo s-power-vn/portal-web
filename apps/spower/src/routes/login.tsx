@@ -48,7 +48,15 @@ const Login = () => {
             }}
             loading={login.isPending}
             className={'flex flex-col gap-4'}
-            showButtons={false}
+            actions={
+              <div
+                className={'flex w-full items-center justify-center px-12 pt-4'}
+              >
+                <Button className={'w-full'} type={'submit'}>
+                  Đăng nhập
+                </Button>
+              </div>
+            }
           >
             <Logo />
             <div className={'flex w-full items-center justify-center'}>
@@ -60,13 +68,6 @@ const Login = () => {
               name={'password'}
               title={'Mật khẩu'}
             />
-            <div
-              className={'flex w-full items-center justify-center px-12 pt-4'}
-            >
-              <Button className={'w-full'} type={'submit'}>
-                Đăng nhập
-              </Button>
-            </div>
           </Form>
         </CardContent>
       </Card>

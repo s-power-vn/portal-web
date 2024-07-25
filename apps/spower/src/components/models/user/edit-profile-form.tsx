@@ -68,12 +68,30 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
         name: client.authStore.model?.name,
         email: client.authStore.model?.email
       }}
-      showButtons={false}
       onSubmit={values =>
         updateProfile.mutate({
           ...values,
           id: client.authStore.model?.id
         })
+      }
+      actions={
+        <div className={'mt-6 flex justify-end gap-2'}>
+          <Button
+            type="reset"
+            variant="destructive"
+            onClick={handleChangePassword}
+          >
+            Đổi mật khẩu
+          </Button>
+          <Button
+            type="reset"
+            variant="secondary"
+            onClick={() => router.history.back()}
+          >
+            Bỏ qua
+          </Button>
+          <Button type="submit">Chấp nhận</Button>
+        </div>
       }
     >
       <TextField schema={schema} name="name" title="Họ tên" />
@@ -85,23 +103,6 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           disabled: true
         }}
       />
-      <div className={'mt-6 flex justify-end gap-2'}>
-        <Button
-          type="reset"
-          variant="destructive"
-          onClick={handleChangePassword}
-        >
-          Đổi mật khẩu
-        </Button>
-        <Button
-          type="reset"
-          variant="secondary"
-          onClick={() => router.history.back()}
-        >
-          Bỏ qua
-        </Button>
-        <Button type="submit">Chấp nhận</Button>
-      </div>
     </Form>
   );
 };
