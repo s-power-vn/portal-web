@@ -70,7 +70,9 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
       defaultValues={{
         name: user?.name,
         email: user?.email,
-        avatar: getImageUrl(Collections.User, user?.id, user?.avatar)
+        avatar: user?.avatar
+          ? getImageUrl(Collections.User, user?.id, user?.avatar)
+          : ''
       }}
       onSubmit={values =>
         updateProfile.mutate({

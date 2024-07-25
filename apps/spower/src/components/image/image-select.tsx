@@ -86,7 +86,7 @@ export const ImageSelect: FC<ImageSelectProps> = props => {
       type={'reset'}
     >
       <Show when={image} fallback={<ImageIcon className={'h-10 w-10'} />}>
-        <img src={image} width={width} height={height} alt="" />
+        <img src={image} width={width} height={height} alt="avatar" />
       </Show>
     </button>
   );
