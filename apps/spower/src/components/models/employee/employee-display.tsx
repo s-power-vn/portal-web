@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { UserIcon } from 'lucide-react';
+import { Loader, UserIcon } from 'lucide-react';
 
 import { FC, Suspense } from 'react';
 
@@ -33,7 +33,7 @@ export type EmployeeDisplayProps = {
 
 export const EmployeeDisplay: FC<EmployeeDisplayProps> = ({ employeeId }) => {
   return (
-    <Suspense fallback={'...'}>
+    <Suspense fallback={<Loader className={'h-4 w-4 animate-spin'} />}>
       {employeeId ? <Component employeeId={employeeId} /> : null}
     </Suspense>
   );
