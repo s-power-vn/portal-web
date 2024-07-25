@@ -1,6 +1,7 @@
+import { useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
 
-import { FC } from 'react';
+import { FC, useCallback, useRef } from 'react';
 
 import { client } from '@storeo/core';
 import {
@@ -8,10 +9,13 @@ import {
   Button,
   Form,
   TextField,
+  closeModal,
+  showModal,
   success
 } from '@storeo/theme';
 
 import { userApi } from '../../../api/user';
+import { ChangePasswordForm } from './change-password-form';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
@@ -21,12 +25,40 @@ const schema = object().shape({
 export type EditProfileFormProps = BusinessFormProps;
 
 export const EditProfileForm: FC<EditProfileFormProps> = props => {
+  const modalId = useRef<string | undefined>();
+  const router = useRouter();
+
   const updateProfile = userApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa người dùng thành công');
       props.onSuccess?.();
     }
   });
+
+  const onSuccessHandler = useCallback(async () => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const onCancelHandler = useCallback(() => {
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, []);
+
+  const handleChangePassword = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Đổi mật khẩu',
+      className: 'w-[400px]',
+      children: (
+        <ChangePasswordForm
+          onSuccess={onSuccessHandler}
+          onCancel={onCancelHandler}
+        />
+      )
+    });
+  }, []);
 
   return (
     <Form
@@ -54,10 +86,18 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
         }}
       />
       <div className={'mt-6 flex justify-end gap-2'}>
-        <Button type="reset" variant="destructive">
+        <Button
+          type="reset"
+          variant="destructive"
+          onClick={handleChangePassword}
+        >
           Đổi mật khẩu
         </Button>
-        <Button type="reset" variant="secondary">
+        <Button
+          type="reset"
+          variant="secondary"
+          onClick={() => router.history.back()}
+        >
           Bỏ qua
         </Button>
         <Button type="submit">Chấp nhận</Button>

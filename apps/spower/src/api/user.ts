@@ -7,5 +7,17 @@ export const userApi = router('user', {
     mutationFn: (params: { id: string; name?: string }) => {
       return client.collection('user').update(params.id, params);
     }
+  }),
+  changePassword: router.mutation({
+    mutationFn: (params: {
+      id: string;
+      oldPassword: string;
+      newPassword: string;
+    }) => {
+      return client.send('/change-password', {
+        method: 'PUT',
+        body: params
+      });
+    }
   })
 });
