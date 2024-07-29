@@ -9,7 +9,7 @@ import { RequestData, requestApi } from '../../../../api';
 import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
 
 const schema = object().shape({
-  note: string(),
+  note: string().required('Hãy nhập ghi chú'),
   assignee: string().required('Hãy chọn nhân viên'),
   status: string().required('Hãy chọn status')
 });

@@ -321,6 +321,7 @@ export const requestApi = router('request', {
         await client.collection(Collections.Comment).create({
           content: note,
           issue: params.issue,
+          status: params.status,
           createdBy: client.authStore.model?.id
         });
       }
@@ -347,6 +348,7 @@ export const requestApi = router('request', {
         await client.collection(Collections.Comment).create({
           content: note,
           issue: params.issue,
+          status: params.status,
           createdBy: client.authStore.model?.id
         });
       }

@@ -40,6 +40,7 @@ import {
 import { commentApi } from '../../../api';
 import { issueApi } from '../../../api/issue';
 import { Request } from '../request/request';
+import { RequestStatusText } from '../request/status/request-status-text';
 import { EditIssueForm } from './edit-issue-form';
 
 export type IssueProps = {
@@ -236,15 +237,20 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                   </div>
                   <div className={'flex flex-col gap-1'}>
                     <div className={'flex items-center gap-2'}>
-                      <div className={'text-sm font-bold text-gray-500'}>
+                      <div className={'text-sm font-bold'}>
                         {it.expand.createdBy.name}
                       </div>
-                      <div className={'flex items-center gap-1 text-xs'}>
+                      <div
+                        className={
+                          'flex items-center gap-1 text-xs text-gray-500'
+                        }
+                      >
                         <CalendarIcon className={'h-3 w-3'} />
                         {timeSince(new Date(Date.parse(it.created)))}
                       </div>
+                      <RequestStatusText status={it.status} />
                     </div>
-                    <div className={'text-sm italic'}>{it.content}</div>
+                    <div className={'text-sm'}>{it.content}</div>
                   </div>
                   {client.authStore.model?.id === it.expand.createdBy.id ? (
                     <Button

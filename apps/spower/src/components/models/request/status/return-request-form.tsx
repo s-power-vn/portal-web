@@ -8,7 +8,7 @@ import { BusinessFormProps, Form, TextareaField, success } from '@storeo/theme';
 import { RequestData, requestApi } from '../../../../api';
 
 const schema = object().shape({
-  note: string(),
+  note: string().required('Hãy nhập ghi chú'),
   lastAssignee: string().required('Hãy chọn nhân viên'),
   status: string().required('Hãy chọn status')
 });
@@ -44,7 +44,7 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
       onCancel={props.onCancel}
       loading={returnRequest.isPending}
     >
-      <TextareaField schema={schema} name={'note'} title={'Phản hồi'} />
+      <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
     </Form>
   );
 };

@@ -59,6 +59,7 @@ export type CommentRecord = {
 	content?: string
 	createdBy: RecordIdString
 	issue: RecordIdString
+	status?: string
 }
 
 export type ContractRecord = {
