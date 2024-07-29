@@ -9,7 +9,7 @@ import {
   Undo2Icon
 } from 'lucide-react';
 
-import { FC, useCallback, useRef, useState } from 'react';
+import { FC, useCallback, useRef } from 'react';
 
 import {
   Collections,
@@ -21,8 +21,7 @@ import {
   cn,
   formatDate,
   getImageUrl,
-  timeSince,
-  useOutsideClick
+  timeSince
 } from '@storeo/core';
 import {
   Avatar,
@@ -33,7 +32,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Textarea,
   closeModal,
   showModal,
   useConfirm
@@ -49,12 +47,6 @@ export type IssueProps = {
 };
 
 export const Issue: FC<IssueProps> = ({ issueId }) => {
-  const [comment, setComment] = useState('');
-  const [showCommentButton, setShowCommentButton] = useState(false);
-  const ref = useOutsideClick(() => {
-    setShowCommentButton(false);
-  });
-
   const router = useRouter();
 
   const issue = issueApi.byId.useSuspenseQuery({
@@ -69,21 +61,8 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
 
   const queryClient = useQueryClient();
 
-  const createComment = commentApi.create.useMutation({
-    onSuccess: async () => {
-      setShowCommentButton(false);
-      setComment('');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: commentApi.list.getKey(issueId)
-        })
-      ]);
-    }
-  });
-
   const deleteComment = commentApi.delete.useMutation({
     onSuccess: async () => {
-      setShowCommentButton(false);
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: commentApi.list.getKey(issueId)
@@ -236,30 +215,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           </Match>
         </Switch>
       </div>
-      <div className={'flex flex-col gap-2 px-2'} ref={ref}>
-        <Textarea
-          placeholder={'Ghi chú'}
-          value={comment}
-          onChange={e => {
-            setComment(e.target.value);
-          }}
-          onFocus={() => setShowCommentButton(true)}
-        />
-        {showCommentButton ? (
-          <div className={'flex items-center justify-end'}>
-            <Button
-              className={'h-4 p-4 text-xs'}
-              onClick={() =>
-                createComment.mutate({
-                  comment,
-                  issueId
-                })
-              }
-            >
-              Nhập
-            </Button>
-          </div>
-        ) : null}
+      <div className={'flex flex-col gap-2 px-2'}>
         <div className={'flex flex-col gap-2'}>
           {comments.data && comments.data.length > 0
             ? comments.data.map(it => (
