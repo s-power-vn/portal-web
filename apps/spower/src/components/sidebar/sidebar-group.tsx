@@ -121,7 +121,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
             isActive && `after:bg-appGray`
           )}
         >
-          {childrenWithProps(collapsed ? 3 : 20)}
+          {childrenWithProps(collapsed ? 0 : 20)}
         </div>
       </Show>
     </div>

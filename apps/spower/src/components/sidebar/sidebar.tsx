@@ -68,13 +68,13 @@ export const Sidebar: FC<SidebarProps> = ({ children, uid, ...props }) => {
       <div
         className={cn(
           `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
-          collapsed ? `w-12` : `w-60`
+          collapsed ? `w-[2.6rem]` : `w-60`
         )}
         {...props}
       >
         {children}
         <Button
-          className={`absolute bottom-1 right-[0.38rem]`}
+          className={`absolute bottom-1 right-[0.25rem] h-8 w-8 p-0`}
           variant={'outline'}
           size={'icon'}
           onClick={() => setCollapsed(!collapsed)}
