@@ -7,7 +7,7 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { CircleCheckIcon, EditIcon, SheetIcon, UserIcon } from 'lucide-react';
+import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
 import { Collections, getImageUrl } from '@storeo/core';
 import {

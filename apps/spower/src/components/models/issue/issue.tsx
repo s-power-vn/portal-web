@@ -115,7 +115,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
             : 'border-t-appError border-t-4'
       )}
     >
-      <div className={'flex flex-col gap-2 p-2'}>
+      <div className={'flex flex-col gap-2 border-b p-2'}>
         <div className={'flex items-center gap-2'}>
           <Button
             className={'h-6 w-10'}
@@ -216,7 +216,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           </Match>
         </Switch>
       </div>
-      <div className={'flex flex-col gap-2 px-2'}>
+      <div className={'flex flex-col gap-2'}>
         <div className={'flex flex-col gap-2'}>
           {comments.data && comments.data.length > 0
             ? comments.data.map(it => (

@@ -132,7 +132,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<SquareKanbanIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
-        <div className={'overflow-hidden'}>{children}</div>
+        <div className={'w-full overflow-hidden'}>{children}</div>
       </div>
     </div>
   );
