@@ -1,4 +1,3 @@
-import { GearIcon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   AnvilIcon,
@@ -15,16 +14,18 @@ import {
 import { FC, ReactNode, useCallback, useRef } from 'react';
 
 import { cn } from '@storeo/core';
-import { Button, closeModal, showModal } from '@storeo/theme';
-
-import { getAllProjectsKey } from '../api';
 import {
-  Header,
+  Button,
   Sidebar,
   SidebarGroup,
   SidebarItem,
+  closeModal,
+  showModal,
   useSidebar
-} from '../components';
+} from '@storeo/theme';
+
+import { getAllProjectsKey } from '../api';
+import { Header } from '../components';
 import { NewProjectForm } from '../components/models/project/new-project-form';
 
 const SidebarHeader = () => {
