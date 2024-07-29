@@ -2,7 +2,13 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
+import {
+  BusinessFormProps,
+  Form,
+  TextField,
+  TextareaField,
+  success
+} from '@storeo/theme';
 
 import { supplierApi } from '../../../api';
 
@@ -63,7 +69,12 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
         title={'Địa chỉ'}
         options={{}}
       />
-      <TextField schema={schema} name={'note'} title={'Ghi chú'} options={{}} />
+      <TextareaField
+        schema={schema}
+        name={'note'}
+        title={'Ghi chú'}
+        options={{}}
+      />
     </Form>
   );
 };

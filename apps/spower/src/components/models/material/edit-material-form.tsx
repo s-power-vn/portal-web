@@ -2,7 +2,13 @@ import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
+import {
+  BusinessFormProps,
+  Form,
+  TextField,
+  TextareaField,
+  success
+} from '@storeo/theme';
 
 import { materialApi } from '../../../api';
 
@@ -58,7 +64,12 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
         options={{}}
       />
       <TextField schema={schema} name={'unit'} title={'Đơn vị'} options={{}} />
-      <TextField schema={schema} name={'note'} title={'Ghi chú'} options={{}} />
+      <TextareaField
+        schema={schema}
+        name={'note'}
+        title={'Ghi chú'}
+        options={{}}
+      />
     </Form>
   );
 };
