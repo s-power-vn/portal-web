@@ -429,7 +429,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   }, [request.data, v, showLoading, hideLoading]);
 
   return (
-    <div className={'bg-appWhite flex flex-col gap-3'}>
+    <div className={'bg-appWhite flex flex-col gap-2'}>
       <div className={'flex items-center justify-between'}>
         <div className={'flex gap-2'}>
           <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
@@ -471,18 +471,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             issueId={issueId}
           />
         </div>
-      </div>
-      <div>
-        {/*<RequestDocument*/}
-        {/*  project={request.data.expand.project.name}*/}
-        {/*  bidding={request.data.expand.project.bidding}*/}
-        {/*  requester={request.data.expand.issue.expand.createdBy.name}*/}
-        {/*  department={*/}
-        {/*    request.data.expand.issue.expand.createdBy.expand.department.name*/}
-        {/*  }*/}
-        {/*  content={request.data.expand.issue.title}*/}
-        {/*  data={v}*/}
-        {/*/>*/}
       </div>
       <div className={'flex flex-col gap-2'}>
         <div
