@@ -23,31 +23,27 @@ const Component = () => {
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: info => info.row.index + 1,
-      header: () => '#',
-      size: 50
+      cell: info => (
+        <div className={'w-full text-center'}>{info.row.index + 1}</div>
+      ),
+      header: () => <div className={'w-full text-center'}>#</div>,
+      size: 30
     }),
     columnHelper.accessor('name', {
-      cell: info => (
-        <div className={'w-[300px] truncate'}>{info.getValue()}</div>
-      ),
+      cell: info => <div className={'truncate'}>{info.getValue()}</div>,
       header: () => 'Tên công trình',
       footer: info => info.column.id,
       size: 300
     }),
     columnHelper.accessor('bidding', {
-      cell: info => (
-        <div className={'w-[300px] truncate'}>{info.getValue()}</div>
-      ),
+      cell: info => <div className={'truncate'}>{info.getValue()}</div>,
       header: () => 'Tên gói thầu',
       footer: info => info.column.id,
       size: 300
     }),
     columnHelper.accessor('customer', {
       cell: ({ row }) => (
-        <div className={'w-[200px] truncate'}>
-          {row.original.expand.customer.name}
-        </div>
+        <div className={'truncate'}>{row.original.expand.customer.name}</div>
       ),
       header: () => 'Chủ đầu tư',
       footer: info => info.column.id,
