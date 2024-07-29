@@ -68,23 +68,26 @@ export const Sidebar: FC<SidebarProps> = ({ children, uid, ...props }) => {
     <SidebarContext.Provider value={{ collapsed }}>
       <div
         className={cn(
-          `transition-width duration-default shadow-x-0.5 relative h-full flex-none border-r shadow-lg`,
+          `transition-width duration-default
+          flex flex-none flex-col justify-between border-r`,
           collapsed ? `w-[2.6rem]` : `w-60`
         )}
         {...props}
       >
-        {children}
-        <Button
-          className={`absolute bottom-1 right-[0.25rem] h-8 w-8 p-0`}
-          variant={'outline'}
-          size={'icon'}
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          <div className={`h-6 w-6`}>
-            {!collapsed && <CollapseIcon />}
-            {collapsed && <ExpandIcon />}
-          </div>
-        </Button>
+        <div>{children}</div>
+        <div className={'flex justify-end p-1'}>
+          <Button
+            className={`h-8 w-8 p-0`}
+            variant={'outline'}
+            size={'icon'}
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            <div className={`h-6 w-6`}>
+              {!collapsed && <CollapseIcon />}
+              {collapsed && <ExpandIcon />}
+            </div>
+          </Button>
+        </div>
       </div>
     </SidebarContext.Provider>
   );

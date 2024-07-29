@@ -82,7 +82,7 @@ const Component = () => {
                   ></SidebarItem>
                 </SidebarGroup>
               </Sidebar>
-              <div className={'h-full grow overflow-hidden'}>
+              <div className={'max-h-[calc(100vh-6rem)] w-full overflow-auto'}>
                 <Outlet />
               </div>
             </>

@@ -93,7 +93,7 @@ export type DashboardLayoutProps = {
 
 export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <div className={'flex h-screen w-full flex-col'}>
+    <div className={'flex h-screen w-full flex-col overflow-hidden'}>
       <Header />
       <div className={'flex h-full w-full'}>
         <Sidebar uid={'dashboard'}>
@@ -132,7 +132,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<SquareKanbanIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
-        <div className={'h-full grow overflow-hidden'}>{children}</div>
+        <div className={'overflow-hidden'}>{children}</div>
       </div>
     </div>
   );
