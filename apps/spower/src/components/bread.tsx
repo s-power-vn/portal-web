@@ -46,7 +46,7 @@ export const Bread: FC<BreadProps> = () => {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className={'sm:gap-2'}>
         {breadcrumbs.map((it, index) => (
           <Fragment key={it.path}>
             <BreadcrumbItem>
