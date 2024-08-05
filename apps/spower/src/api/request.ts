@@ -52,26 +52,6 @@ export type RequestData = RequestResponse & {
   };
 };
 
-export const CreateRequestDetailSupplierSchema = object().shape({
-  supplier: string().required('Hãy chọn nhà cung cấp'),
-  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
-  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
-});
-
-export type CreateRequestDetailSupplierInput = InferType<
-  typeof CreateRequestDetailSupplierSchema
->;
-
-export const UpdateRequestDetailSupplierSchema = object().shape({
-  supplier: string().required('Hãy chọn nhà cung cấp'),
-  price: number().required('Hãy nhập đơn giá nhà cung cấp'),
-  volume: number().required('Hãy nhập khối lượng nhà cung cấp')
-});
-
-export type UpdateRequestDetailSupplierInput = InferType<
-  typeof UpdateRequestDetailSupplierSchema
->;
-
 export const requestApi = router('request', {
   listFull: router.query({
     fetcher: (projectId: string) =>
@@ -358,83 +338,6 @@ export const requestApi = router('request', {
   })
 });
 
-export const requestDetailSupplierApi = router('requestDetailSupplier', {
-  listFull: router.query({
-    fetcher: (requestDetailId: string) =>
-      client
-        .collection<RequestDetailSupplierData>(
-          Collections.RequestDetailSupplier
-        )
-        .getFullList({
-          filter: `requestDetail = "${requestDetailId}"`,
-          expand: 'supplier,requestDetail.detail'
-        })
-  }),
-  byId: router.query({
-    fetcher: (requestDetailSupplierId: string) =>
-      client
-        .collection<RequestDetailSupplierData>(
-          Collections.RequestDetailSupplier
-        )
-        .getOne(requestDetailSupplierId, {
-          expand: 'supplier,requestDetail.detail'
-        })
-  }),
-  create: router.mutation({
-    mutationFn: (
-      params: CreateRequestDetailSupplierInput & { requestDetailId: string }
-    ) =>
-      client
-        .collection<RequestDetailSupplierData>(
-          Collections.RequestDetailSupplier
-        )
-        .create(
-          {
-            ...params,
-            requestDetail: params.requestDetailId
-          },
-          {
-            expand: 'supplier,requestDetail.detail'
-          }
-        )
-  }),
-  update: router.mutation({
-    mutationFn: (
-      params: UpdateRequestDetailSupplierInput & {
-        requestDetailSupplierId: string;
-      }
-    ) =>
-      client
-        .collection<RequestDetailSupplierData>(
-          Collections.RequestDetailSupplier
-        )
-        .update(params.requestDetailSupplierId, params)
-  }),
-  delete: router.mutation({
-    mutationFn: (requestDetailSupplierId: string) =>
-      client
-        .collection<RequestDetailSupplierData>(
-          Collections.RequestDetailSupplier
-        )
-        .delete(requestDetailSupplierId)
-  })
-});
-
-export const UpdateRequestDetailVolumeSchema = object().shape({
-  volume: number()
-    .required('Hãy nhập khối lượng yêu cầu')
-    .transform((_, originalValue) =>
-      Number(originalValue?.toString().replace(/,/g, '.'))
-    )
-    .transform(value => (Number.isNaN(value) ? undefined : value))
-    .typeError('Sai định dạng số')
-    .moreThan(0, 'Khối lượng không thể <= 0')
-});
-
-export type UpdateRequestDetailVolumeInput = InferType<
-  typeof UpdateRequestDetailVolumeSchema
->;
-
 export const UpdateRequestDetailPriceSchema = object().shape({
   supplier: string().required('Hãy chọn nhà cung cấp'),
   price: number()
@@ -462,11 +365,7 @@ export const requestDetailApi = router('requestDetail', {
         })
   }),
   updateVolume: router.mutation({
-    mutationFn: (
-      params: UpdateRequestDetailVolumeInput & {
-        requestDetailId: string;
-      }
-    ) =>
+    mutationFn: (params: { requestDetailId: string }) =>
       client
         .collection<RequestDetailData>(Collections.RequestDetail)
         .update(params.requestDetailId, params)

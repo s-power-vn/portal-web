@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   SearchSchemaInput,
   createFileRoute,
@@ -9,14 +8,17 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { formatDate } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
-import { ProjectData, ProjectSearchSchema, getAllProjects } from '../../../api';
+import { ProjectData, projectApi } from '../../../api';
+import { SearchSchema } from '../../../api/types';
 import { EmployeeDisplay } from '../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const projects = useSuspenseQuery(getAllProjects(search));
+  const projects = projectApi.list.useSuspenseQuery({
+    variables: search
+  });
 
   const columnHelper = createColumnHelper<ProjectData>();
 
@@ -136,10 +138,10 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/project/')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    ProjectSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(getAllProjects(deps.search))
+    queryClient?.ensureQueryData(projectApi.list.getOptions(deps.search))
 });

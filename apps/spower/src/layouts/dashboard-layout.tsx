@@ -24,20 +24,19 @@ import {
   useSidebar
 } from '@storeo/theme';
 
-import { getAllProjectsKey } from '../api';
+import { projectApi } from '../api';
 import { Header } from '../components';
 import { NewProjectForm } from '../components/models/project/new-project-form';
 
 const SidebarHeader = () => {
   const queryClient = useQueryClient();
   const { collapsed } = useSidebar();
-
   const modalId = useRef<string | undefined>();
 
   const onSuccessHandler = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: getAllProjectsKey()
+        queryKey: projectApi.list.getKey()
       })
     ]);
     if (modalId.current) {

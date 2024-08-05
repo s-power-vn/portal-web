@@ -1,16 +1,8 @@
-import { InferType, number, object, string } from 'yup';
-
 import { router } from 'react-query-kit';
 
 import { Collections, CustomerRecord, client } from '@storeo/core';
 
-export const CustomersSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type CustomersSearch = InferType<typeof CustomersSearchSchema>;
+import { Search } from './types';
 
 export const customerApi = router('customer', {
   listFull: router.query({
@@ -20,7 +12,7 @@ export const customerApi = router('customer', {
       })
   }),
   list: router.query({
-    fetcher: (search?: CustomersSearch) => {
+    fetcher: (search?: Search) => {
       const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
       return client
         .collection(Collections.Customer)

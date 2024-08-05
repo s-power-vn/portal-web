@@ -18,7 +18,8 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { MaterialsSearchSchema, materialApi } from '../../../api';
+import { materialApi } from '../../../api';
+import { SearchSchema } from '../../../api/types';
 import { PageHeader } from '../../../components';
 
 const Component = () => {
@@ -198,7 +199,7 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/materials')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    MaterialsSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

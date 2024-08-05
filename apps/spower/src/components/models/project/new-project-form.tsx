@@ -1,11 +1,10 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
 
 import { BusinessFormProps, Form, TextField, success } from '@storeo/theme';
 
-import { useCreateProject } from '../../../api';
+import { projectApi } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
 
 const schema = object().shape({
@@ -17,10 +16,11 @@ const schema = object().shape({
 export type NewProjectFormProps = BusinessFormProps;
 
 export const NewProjectForm: FC<NewProjectFormProps> = props => {
-  useQueryClient();
-  const createProject = useCreateProject(async () => {
-    success('Tạo dự án thành công');
-    props.onSuccess?.();
+  const createProject = projectApi.create.useMutation({
+    onSuccess: async () => {
+      success('Tạo dự án thành công');
+      props.onSuccess?.();
+    }
   });
 
   return (

@@ -13,7 +13,7 @@ import {
   SelectValue
 } from '../ui/select';
 
-export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_PAGE_SIZE = 15;
 
 export const DOTS = '...';
 
@@ -141,10 +141,11 @@ export const Pagination: FC<PaginationProps> = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="30">30</SelectItem>
-              <SelectItem value="40">40</SelectItem>
-              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="20">11</SelectItem>
+              <SelectItem value="30">12</SelectItem>
+              <SelectItem value="40">13</SelectItem>
+              <SelectItem value="50">14</SelectItem>
+              <SelectItem value="50">15</SelectItem>
             </SelectContent>
           </Select>
         </div>

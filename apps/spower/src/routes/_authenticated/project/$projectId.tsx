@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   Outlet,
   createFileRoute,
@@ -16,13 +15,15 @@ import {
 import { Show } from '@storeo/core';
 import { Button, Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
 
-import { getProjectById } from '../../../api';
+import { projectApi } from '../../../api';
 
 const Component = () => {
   const matchRoute = useMatchRoute();
   const params = matchRoute({ to: '/project/$projectId/settings' });
   const { projectId } = Route.useParams();
-  const project = useSuspenseQuery(getProjectById(projectId));
+  const project = projectApi.byId.useQuery({
+    variables: projectId
+  });
   const navigate = useNavigate({ from: Route.fullPath });
 
   return (
@@ -98,6 +99,6 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/project/$projectId')({
   component: Component,
   loader: ({ context: { queryClient }, params: { projectId } }) =>
-    queryClient?.ensureQueryData(getProjectById(projectId)),
+    queryClient?.ensureQueryData(projectApi.byId.getOptions(projectId)),
   beforeLoad: ({ params }) => ({ title: params.projectId })
 });

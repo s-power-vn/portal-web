@@ -1,18 +1,9 @@
-import { InferType, number, object, string } from 'yup';
-
 import { router } from 'react-query-kit';
 
 import { Collections, IssueRecord, IssueResponse, client } from '@storeo/core';
 
 import { UserData } from './employee';
-
-export const IssuesSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-export type IssuesSearch = InferType<typeof IssuesSearchSchema>;
+import { Search } from './types';
 
 export type IssueData = IssueResponse & {
   expand: {
@@ -23,7 +14,7 @@ export type IssueData = IssueResponse & {
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: (search?: IssuesSearch & { projectId: string }) =>
+    fetcher: (search?: Search & { projectId: string }) =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -34,7 +25,7 @@ export const issueApi = router('issue', {
         })
   }),
   listMine: router.query({
-    fetcher: (search?: IssuesSearch & { projectId: string }) =>
+    fetcher: (search?: Search & { projectId: string }) =>
       client
         .collection<IssueResponse>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {

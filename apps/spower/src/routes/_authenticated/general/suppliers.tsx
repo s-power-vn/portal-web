@@ -18,7 +18,8 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { SuppliersSearchSchema, supplierApi } from '../../../api';
+import { supplierApi } from '../../../api';
+import { SearchSchema } from '../../../api/types';
 import { PageHeader } from '../../../components';
 
 const Component = () => {
@@ -203,7 +204,7 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/suppliers')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SuppliersSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

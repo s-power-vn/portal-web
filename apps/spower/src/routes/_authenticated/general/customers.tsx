@@ -18,7 +18,8 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { CustomersSearchSchema, customerApi } from '../../../api';
+import { customerApi } from '../../../api';
+import { SearchSchema } from '../../../api/types';
 import { PageHeader } from '../../../components';
 
 const Component = () => {
@@ -87,7 +88,7 @@ const Component = () => {
           <div className={'flex gap-1'}>
             <SubmitButton
               className={'h-6 px-3'}
-              onClick={e =>
+              onClick={() =>
                 navigate({
                   to: './$customerId/edit',
                   params: {
@@ -102,7 +103,7 @@ const Component = () => {
             <SubmitButton
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={e => {
+              onClick={() => {
                 confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
                   deleteCustomer.mutate(row.original.id);
                 });
@@ -204,7 +205,7 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/customers')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    CustomersSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

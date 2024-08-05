@@ -1,5 +1,3 @@
-import { InferType, number, object, string } from 'yup';
-
 import { router } from 'react-query-kit';
 
 import {
@@ -10,13 +8,7 @@ import {
   client
 } from '@storeo/core';
 
-export const EmployeesSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type EmployeesSearch = InferType<typeof EmployeesSearchSchema>;
+import { Search } from './types';
 
 export type UserData = UserResponse & {
   expand: {
@@ -49,7 +41,7 @@ export const employeeApi = router('employee', {
       })
   }),
   list: router.query({
-    fetcher: (search?: EmployeesSearch) => {
+    fetcher: (search?: Search) => {
       const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
       return client
         .collection<UserData>(Collections.User)

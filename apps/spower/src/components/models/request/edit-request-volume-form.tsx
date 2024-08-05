@@ -1,11 +1,21 @@
+import { number, object } from 'yup';
+
 import React, { FC } from 'react';
 
 import { BusinessFormProps, Form, NumericField, success } from '@storeo/theme';
 
-import {
-  UpdateRequestDetailVolumeSchema,
-  requestDetailApi
-} from '../../../api';
+import { requestDetailApi } from '../../../api';
+
+const schema = object().shape({
+  volume: number()
+    .required('Hãy nhập khối lượng yêu cầu')
+    .transform((_, originalValue) =>
+      Number(originalValue?.toString().replace(/,/g, '.'))
+    )
+    .transform(value => (Number.isNaN(value) ? undefined : value))
+    .typeError('Sai định dạng số')
+    .moreThan(0, 'Khối lượng không thể <= 0')
+});
 
 export type EditRequestVolumeFormProps = BusinessFormProps & {
   requestDetailId: string;
@@ -25,7 +35,7 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
 
   return (
     <Form
-      schema={UpdateRequestDetailVolumeSchema}
+      schema={schema}
       onSubmit={values =>
         updateDetail.mutate({
           ...values,
@@ -38,7 +48,7 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
       className={'flex flex-col gap-3'}
     >
       <NumericField
-        schema={UpdateRequestDetailVolumeSchema}
+        schema={schema}
         name={'volume'}
         title={'Khối lượng yêu cầu'}
         options={{}}

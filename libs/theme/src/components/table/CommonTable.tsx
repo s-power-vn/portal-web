@@ -136,8 +136,8 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
       <Pagination
         totalItems={props.rowCount}
         totalPages={props.pageCount}
-        pageIndex={props.pageIndex ?? 1}
-        pageSize={props.pageSize ?? 10}
+        pageIndex={props.pageIndex}
+        pageSize={props.pageSize}
         onPageNext={props.onPageNext}
         onPagePrev={props.onPagePrev}
         onPageSizeChange={props.onPageSizeChange}

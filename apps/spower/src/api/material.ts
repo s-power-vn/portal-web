@@ -1,16 +1,8 @@
-import { InferType, number, object, string } from 'yup';
-
 import { router } from 'react-query-kit';
 
 import { Collections, MaterialRecord, client } from '@storeo/core';
 
-export const MaterialsSearchSchema = object().shape({
-  pageIndex: number().optional().default(1),
-  pageSize: number().optional().default(10),
-  filter: string().optional().default('')
-});
-
-type MaterialsSearch = InferType<typeof MaterialsSearchSchema>;
+import { Search } from './types';
 
 export const materialApi = router('material', {
   listFull: router.query({
@@ -20,7 +12,7 @@ export const materialApi = router('material', {
       })
   }),
   list: router.query({
-    fetcher: (search?: MaterialsSearch) => {
+    fetcher: (search?: Search) => {
       const filter = `(name ~ "${search?.filter ?? ''}" || code ~ "${search?.filter ?? ''}")`;
       return client
         .collection(Collections.Material)

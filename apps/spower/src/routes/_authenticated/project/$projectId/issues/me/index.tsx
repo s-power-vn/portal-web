@@ -15,7 +15,8 @@ import {
 } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
-import { IssuesSearchSchema, issueApi } from '../../../../../../api/issue';
+import { issueApi } from '../../../../../../api/issue';
+import { SearchSchema } from '../../../../../../api/types';
 import {
   EmployeeDisplay,
   NewIssueButton,
@@ -177,7 +178,7 @@ export const Route = createFileRoute(
 )({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    IssuesSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

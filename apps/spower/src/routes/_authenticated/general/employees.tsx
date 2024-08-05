@@ -21,7 +21,8 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { EmployeesSearchSchema, UserData, employeeApi } from '../../../api';
+import { UserData, employeeApi } from '../../../api';
+import { SearchSchema } from '../../../api/types';
 import { PageHeader } from '../../../components';
 
 const Component = () => {
@@ -217,7 +218,7 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/general/employees')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    EmployeesSearchSchema.validateSync(input),
+    SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
