@@ -29,15 +29,18 @@ import { Route as AuthenticatedGeneralEmployeesImport } from './routes/_authenti
 import { Route as AuthenticatedGeneralCustomersImport } from './routes/_authenticated/general/customers'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
 import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
-import { Route as AuthenticatedProjectProjectIdOverviewImport } from './routes/_authenticated/project/$projectId/overview'
 import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
+import { Route as AuthenticatedProjectProjectIdContractImport } from './routes/_authenticated/project/$projectId/contract'
 import { Route as AuthenticatedGeneralSuppliersNewImport } from './routes/_authenticated/general/suppliers/new'
 import { Route as AuthenticatedGeneralMaterialsNewImport } from './routes/_authenticated/general/materials/new'
 import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authenticated/general/employees/new'
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
 import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
+import { Route as AuthenticatedProjectProjectIdContractIndexImport } from './routes/_authenticated/project/$projectId/contract/index'
 import { Route as AuthenticatedProjectProjectIdIssuesMeImport } from './routes/_authenticated/project/$projectId/issues/me'
 import { Route as AuthenticatedProjectProjectIdIssuesAllImport } from './routes/_authenticated/project/$projectId/issues/all'
+import { Route as AuthenticatedProjectProjectIdContractMonitoringImport } from './routes/_authenticated/project/$projectId/contract/monitoring'
+import { Route as AuthenticatedProjectProjectIdContractInputImport } from './routes/_authenticated/project/$projectId/contract/input'
 import { Route as AuthenticatedGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/general/suppliers/$supplierId/edit'
 import { Route as AuthenticatedGeneralMaterialsMaterialIdEditImport } from './routes/_authenticated/general/materials/$materialId/edit'
 import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/general/employees/$employeeId/edit'
@@ -146,15 +149,15 @@ const AuthenticatedProjectProjectIdSettingsRoute =
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdOverviewRoute =
-  AuthenticatedProjectProjectIdOverviewImport.update({
-    path: '/overview',
-    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
-  } as any)
-
 const AuthenticatedProjectProjectIdIssuesRoute =
   AuthenticatedProjectProjectIdIssuesImport.update({
     path: '/issues',
+    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdContractRoute =
+  AuthenticatedProjectProjectIdContractImport.update({
+    path: '/contract',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
@@ -188,6 +191,12 @@ const AuthenticatedProjectProjectIdIssuesIndexRoute =
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
+const AuthenticatedProjectProjectIdContractIndexRoute =
+  AuthenticatedProjectProjectIdContractIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
+  } as any)
+
 const AuthenticatedProjectProjectIdIssuesMeRoute =
   AuthenticatedProjectProjectIdIssuesMeImport.update({
     path: '/me',
@@ -198,6 +207,18 @@ const AuthenticatedProjectProjectIdIssuesAllRoute =
   AuthenticatedProjectProjectIdIssuesAllImport.update({
     path: '/all',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdContractMonitoringRoute =
+  AuthenticatedProjectProjectIdContractMonitoringImport.update({
+    path: '/monitoring',
+    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdContractInputRoute =
+  AuthenticatedProjectProjectIdContractInputImport.update({
+    path: '/input',
+    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
   } as any)
 
 const AuthenticatedGeneralSuppliersSupplierIdEditRoute =
@@ -332,12 +353,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersNewImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
-    '/_authenticated/project/$projectId/issues': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+    '/_authenticated/project/$projectId/contract': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
-    '/_authenticated/project/$projectId/overview': {
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdOverviewImport
+    '/_authenticated/project/$projectId/issues': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/project/$projectId/settings': {
@@ -364,6 +385,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersSupplierIdEditImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
+    '/_authenticated/project/$projectId/contract/input': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractInputImport
+      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
+    }
+    '/_authenticated/project/$projectId/contract/monitoring': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractMonitoringImport
+      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
+    }
     '/_authenticated/project/$projectId/issues/all': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
@@ -371,6 +400,10 @@ declare module '@tanstack/react-router' {
     '/_authenticated/project/$projectId/issues/me': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+    }
+    '/_authenticated/project/$projectId/contract/': {
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractIndexImport
+      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
     }
     '/_authenticated/project/$projectId/issues/': {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesIndexImport
@@ -423,6 +456,11 @@ export const routeTree = rootRoute.addChildren([
     AuthenticatedNotificationRoute,
     AuthenticatedProjectRoute.addChildren([
       AuthenticatedProjectProjectIdRoute.addChildren([
+        AuthenticatedProjectProjectIdContractRoute.addChildren([
+          AuthenticatedProjectProjectIdContractInputRoute,
+          AuthenticatedProjectProjectIdContractMonitoringRoute,
+          AuthenticatedProjectProjectIdContractIndexRoute,
+        ]),
         AuthenticatedProjectProjectIdIssuesRoute.addChildren([
           AuthenticatedProjectProjectIdIssuesAllRoute.addChildren([
             AuthenticatedProjectProjectIdIssuesAllIssueIdRoute,
@@ -434,7 +472,6 @@ export const routeTree = rootRoute.addChildren([
           ]),
           AuthenticatedProjectProjectIdIssuesIndexRoute,
         ]),
-        AuthenticatedProjectProjectIdOverviewRoute,
         AuthenticatedProjectProjectIdSettingsRoute,
         AuthenticatedProjectProjectIdIndexRoute,
       ]),

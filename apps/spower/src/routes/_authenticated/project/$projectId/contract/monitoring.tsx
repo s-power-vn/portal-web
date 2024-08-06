@@ -5,7 +5,7 @@ import React, { Suspense } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
-import { ProjectOverviewTab } from '../../../../components';
+import { ProjectOverviewTab } from '../../../../../components';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -30,10 +30,9 @@ const Component = () => {
     </Tabs>
   );
 };
-
 export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/overview'
+  '/_authenticated/project/$projectId/contract/monitoring'
 )({
   component: Component,
-  beforeLoad: () => ({ title: 'Dữ liệu hợp đồng' })
+  beforeLoad: () => ({ title: 'Theo dõi hợp đồng' })
 });

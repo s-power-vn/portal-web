@@ -9,6 +9,8 @@ import {
   BriefcaseBusinessIcon,
   LayoutListIcon,
   ListChecksIcon,
+  NotebookPenIcon,
+  NotebookTextIcon,
   SettingsIcon
 } from 'lucide-react';
 
@@ -65,10 +67,19 @@ const Component = () => {
           fallback={
             <>
               <Sidebar uid={'project'}>
-                <SidebarItem
-                  to={'/project/$projectId/overview'}
-                  icon={<BarChart3Icon width={22} height={22} />}
-                ></SidebarItem>
+                <SidebarGroup
+                  to={'/project/$projectId/contract'}
+                  icon={<NotebookPenIcon width={22} height={22} />}
+                >
+                  <SidebarItem
+                    to={'/project/$projectId/contract/input'}
+                    icon={<NotebookTextIcon width={22} height={22} />}
+                  ></SidebarItem>
+                  <SidebarItem
+                    to={'/project/$projectId/contract/monitoring'}
+                    icon={<BarChart3Icon width={22} height={22} />}
+                  ></SidebarItem>
+                </SidebarGroup>
                 <SidebarGroup
                   to={'/project/$projectId/issues'}
                   icon={<BriefcaseBusinessIcon width={22} height={22} />}
