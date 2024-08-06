@@ -42,8 +42,6 @@ export const Bread: FC<BreadProps> = () => {
       .value();
   }, [matches]);
 
-  console.log(matches);
-
   return (
     <Breadcrumb>
       <BreadcrumbList className={'sm:gap-2'}>

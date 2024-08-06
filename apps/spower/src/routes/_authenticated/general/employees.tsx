@@ -6,17 +6,29 @@ import {
   createFileRoute,
   useNavigate
 } from '@tanstack/react-router';
-import { createColumnHelper } from '@tanstack/react-table';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table';
 import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
 
-import { Collections, getImageUrl } from '@storeo/core';
+import { useState } from 'react';
+
+import { Collections, cn, getImageUrl } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  CommonTable,
   DebouncedInput,
   SubmitButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   success,
   useConfirm
 } from '@storeo/theme';
@@ -27,10 +39,10 @@ import { PageHeader } from '../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
-  const search = Route.useSearch();
+  const [search, setSearch] = useState<string | undefined>();
   const queryClient = useQueryClient();
 
-  const listEmployees = employeeApi.list.useQuery({
+  const listEmployees = employeeApi.listFull.useSuspenseQuery({
     variables: search
   });
 
@@ -39,7 +51,7 @@ const Component = () => {
       success('Xóa nhân viên thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: employeeApi.list.getKey(search)
+          queryKey: employeeApi.listFull.getKey(search)
         })
       ]);
     }
@@ -68,7 +80,8 @@ const Component = () => {
         </div>
       ),
       header: () => <div className={'flex justify-center'}>Ảnh</div>,
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 30
     }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
@@ -127,9 +140,16 @@ const Component = () => {
           </div>
         );
       },
-      header: () => 'Thao tác'
+      header: () => 'Thao tác',
+      size: 50
     })
   ];
+
+  const table = useReactTable({
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    data: listEmployees.data || []
+  });
 
   return (
     <>
@@ -149,67 +169,93 @@ const Component = () => {
             <PlusIcon />
             Thêm nhân viên
           </SubmitButton>
-          <SubmitButton variant={'outline'} className={'flex gap-1'}>
-            <SheetIcon />
-            Nhập từ Excel
-          </SubmitButton>
           <DebouncedInput
-            value={search.filter}
+            value={search}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
-            onChange={value =>
-              navigate({
-                to: './',
-                search: {
-                  ...search,
-                  filter: value ?? ''
-                }
-              })
-            }
+            onChange={value => {
+              setSearch(value);
+            }}
           />
         </div>
-        <CommonTable
-          data={listEmployees.data?.items ?? []}
-          columns={columns}
-          rowCount={listEmployees.data?.totalItems}
-          pageCount={listEmployees.data?.totalPages}
-          pageIndex={search.pageIndex}
-          pageSize={search.pageSize}
-          onRowClick={row =>
-            navigate({
-              to: './$employeeId/edit',
-              params: {
-                employeeId: row.original.id
-              },
-              search
-            })
-          }
-          onPageNext={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex + 1 };
-              }
-            })
-          }
-          onPagePrev={() =>
-            navigate({
-              to: './',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex - 1 };
-              }
-            })
-          }
-          onPageSizeChange={pageSize =>
-            navigate({
-              to: './',
-              search: {
-                ...search,
-                pageSize
-              }
-            })
-          }
-        ></CommonTable>
+        <div
+          className={cn('border-appBlueLight overflow-auto rounded-md border')}
+        >
+          <Table>
+            <TableHeader className={'bg-appBlueLight'}>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className={'text-appWhite whitespace-nowrap'}
+                      style={{
+                        width: table.getRowModel().rows.length
+                          ? header.getSize()
+                          : undefined
+                      }}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow
+                    key={row.id}
+                    className={'cursor-pointer last:border-b-0'}
+                    onClick={() =>
+                      navigate({
+                        to: './$employeeId/edit',
+                        params: {
+                          employeeId: row.original.id
+                        }
+                      })
+                    }
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          'max-w-60 truncate whitespace-nowrap text-left'
+                        }
+                        style={{
+                          width: table.getRowModel().rows.length
+                            ? cell.column.getSize()
+                            : undefined
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow className={'border-b-0'}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </>
   );

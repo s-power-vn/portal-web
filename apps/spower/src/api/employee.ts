@@ -18,16 +18,18 @@ export type UserData = UserResponse & {
 
 export const employeeApi = router('employee', {
   listFull: router.query({
-    fetcher: () =>
-      client.collection<UserData>(Collections.User).getFullList({
+    fetcher: (search?: string) => {
+      return client.collection<UserData>(Collections.User).getFullList({
+        filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
         sort: 'department',
         expand: 'department'
-      })
+      });
+    }
   }),
   listFirst: router.query({
-    fetcher: (name?: string) =>
+    fetcher: (search?: string) =>
       client.collection<UserData>(Collections.User).getList(1, 10, {
-        filter: `name ~ "${name ?? ''}" || email ~ "${name ?? ''}"`,
+        filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
         sort: 'department',
         expand: 'department'
       })

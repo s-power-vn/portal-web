@@ -136,10 +136,6 @@ const Component = () => {
             <PlusIcon />
             Thêm chủ đầu tư
           </SubmitButton>
-          <SubmitButton variant={'outline'} className={'flex gap-1'}>
-            <SheetIcon />
-            Nhập từ Excel
-          </SubmitButton>
           <DebouncedInput
             value={search.filter}
             className={'h-9 w-56'}
