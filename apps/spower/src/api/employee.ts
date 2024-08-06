@@ -69,7 +69,12 @@ export const employeeApi = router('employee', {
   }),
   update: router.mutation({
     mutationFn: (params: UserRecord & { id: string }) =>
-      client.collection(Collections.User).update(params.id, params)
+      client.collection(Collections.User).update(params.id, {
+        name: params.name,
+        department: params.department,
+        role: params.role,
+        title: params.title
+      })
   }),
   delete: router.mutation({
     mutationFn: (id: string) => client.collection(Collections.User).delete(id)

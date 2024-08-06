@@ -8,7 +8,7 @@ import {
 import { Loader } from 'lucide-react';
 import { parse, stringify } from 'zipson';
 
-import { ModalProvider } from '@storeo/theme';
+import { ModalProvider, error } from '@storeo/theme';
 
 import { routeTree } from './routes.gen';
 
@@ -30,7 +30,15 @@ export function encodeToBinary(str: string): string {
   );
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    mutations: {
+      onError: (err: Error) => {
+        error(err.message);
+      }
+    }
+  }
+});
 
 const router = createRouter({
   routeTree,

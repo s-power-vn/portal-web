@@ -1,4 +1,3 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -7,7 +6,7 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, SheetIcon } from 'lucide-react';
+import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 
 import { CustomerResponse } from '@storeo/core';
 import {
@@ -109,7 +108,7 @@ const Component = () => {
                 });
               }}
             >
-              <Cross2Icon className={'h-3 w-3'} />
+              <XIcon className={'h-3 w-3'} />
             </SubmitButton>
           </div>
         );
@@ -133,7 +132,7 @@ const Component = () => {
               })
             }
           >
-            <PlusIcon />
+            <PlusIcon className={'h-5 w-5'} />
             Thêm chủ đầu tư
           </SubmitButton>
           <DebouncedInput

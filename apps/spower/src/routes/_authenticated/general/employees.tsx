@@ -1,4 +1,3 @@
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -12,11 +11,11 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, SheetIcon, UserIcon } from 'lucide-react';
+import { EditIcon, PlusIcon, UserIcon, XIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { Collections, cn, getImageUrl } from '@storeo/core';
+import { Collections, getImageUrl } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -135,7 +134,7 @@ const Component = () => {
                 })
               }
             >
-              <Cross2Icon className={'h-3 w-3'} />
+              <XIcon className={'h-3 w-3'} />
             </SubmitButton>
           </div>
         );
@@ -166,7 +165,7 @@ const Component = () => {
               })
             }
           >
-            <PlusIcon />
+            <PlusIcon className={'h-5 w-5'} />
             Thêm nhân viên
           </SubmitButton>
           <DebouncedInput
@@ -179,10 +178,19 @@ const Component = () => {
           />
         </div>
         <div
-          className={cn('border-appBlueLight overflow-auto rounded-md border')}
+          className={
+            'border-appBlue h-[calc(100vh-10rem)] overflow-auto rounded-md border'
+          }
         >
           <Table>
-            <TableHeader className={'bg-appBlueLight'}>
+            <TableHeader
+              className={'bg-appBlueLight'}
+              style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 2
+              }}
+            >
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
                   {headerGroup.headers.map(header => (
