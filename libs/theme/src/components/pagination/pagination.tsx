@@ -141,11 +141,11 @@ export const Pagination: FC<PaginationProps> = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">11</SelectItem>
-              <SelectItem value="30">12</SelectItem>
-              <SelectItem value="40">13</SelectItem>
-              <SelectItem value="50">14</SelectItem>
-              <SelectItem value="50">15</SelectItem>
+              <SelectItem value="11">11</SelectItem>
+              <SelectItem value="12">12</SelectItem>
+              <SelectItem value="13">13</SelectItem>
+              <SelectItem value="14">14</SelectItem>
+              <SelectItem value="15">15</SelectItem>
             </SelectContent>
           </Select>
         </div>
