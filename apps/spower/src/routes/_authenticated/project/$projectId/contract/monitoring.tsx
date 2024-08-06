@@ -13,7 +13,9 @@ const Component = () => {
     <Tabs defaultValue={'overview'}>
       <TabsList className="grid w-full flex-none grid-cols-4 rounded-none">
         <TabsTrigger value="overview" asChild>
-          <Link to={'/project/$projectId/overview'}>Dữ liệu hợp đồng</Link>
+          <Link to={'/project/$projectId/contract/monitoring'}>
+            Theo dõi hợp đồng
+          </Link>
         </TabsTrigger>
       </TabsList>
       <TabsContent value="overview">

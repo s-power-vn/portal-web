@@ -46,7 +46,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
     title?: string;
   };
   const { isActive } = useLink({ to });
-  const { collapsed } = useSidebar();
+  const { collapsed, expanded } = useSidebar();
 
   const childrenWithProps = useCallback(
     (padding: number) =>
@@ -88,23 +88,25 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
             {routeContext?.title}
           </div>
         </div>
-        <Show
-          when={isActive}
-          fallback={
-            <ChevronUp
+        <Show when={!expanded}>
+          <Show
+            when={isActive}
+            fallback={
+              <ChevronUp
+                className={cn(
+                  `duration-default mr-2 w-4 transition-opacity`,
+                  collapsed && `w-0 opacity-0`
+                )}
+              />
+            }
+          >
+            <ChevronDown
               className={cn(
                 `duration-default mr-2 w-4 transition-opacity`,
                 collapsed && `w-0 opacity-0`
               )}
             />
-          }
-        >
-          <ChevronDown
-            className={cn(
-              `duration-default mr-2 w-4 transition-opacity`,
-              collapsed && `w-0 opacity-0`
-            )}
-          />
+          </Show>
         </Show>
       </Link>
     ),
@@ -114,7 +116,7 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
   return (
     <div {...props}>
       {link}
-      <Show when={isActive}>
+      <Show when={isActive || expanded}>
         <div
           className={cn(
             `bg-appGrayLight relative after:absolute after:bottom-0 after:left-0 after:top-0 after:w-1`,

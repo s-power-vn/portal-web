@@ -66,7 +66,7 @@ const Component = () => {
           when={params}
           fallback={
             <>
-              <Sidebar uid={'project'}>
+              <Sidebar uid={'project'} expanded={true}>
                 <SidebarGroup
                   to={'/project/$projectId/contract'}
                   icon={<NotebookPenIcon width={22} height={22} />}

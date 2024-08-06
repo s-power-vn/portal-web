@@ -52,7 +52,7 @@ const SidebarHeader = () => {
 
   const handleNewProject = useCallback(() => {
     modalId.current = showModal({
-      title: 'Thêm dự án mới',
+      title: 'Tạo dự án mới',
       children: (
         <NewProjectForm
           onSuccess={onSuccessHandler}

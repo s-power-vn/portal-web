@@ -50,22 +50,30 @@ const ExpandIcon = () => {
 
 const SidebarContext = createContext<{
   collapsed: boolean;
+  expanded?: boolean;
 }>({
-  collapsed: false
+  collapsed: false,
+  expanded: false
 });
 
 export type SidebarProps = HTMLAttributes<HTMLDivElement> & {
   uid: string;
+  expanded?: boolean;
 };
 
-export const Sidebar: FC<SidebarProps> = ({ children, uid, ...props }) => {
+export const Sidebar: FC<SidebarProps> = ({
+  children,
+  uid,
+  expanded,
+  ...props
+}) => {
   const [collapsed, setCollapsed] = usePersistedState(
     false,
     `${uid}.sidebar.collapsed`
   );
 
   return (
-    <SidebarContext.Provider value={{ collapsed }}>
+    <SidebarContext.Provider value={{ collapsed, expanded }}>
       <div
         className={cn(
           `transition-width duration-default
