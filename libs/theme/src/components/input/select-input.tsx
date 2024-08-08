@@ -1,4 +1,5 @@
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
+import { TextInput } from '@tremor/react';
 import * as _ from 'lodash';
 
 import {
@@ -157,7 +158,10 @@ const SelectInputComponent: FC<SelectInputProps> = ({
 const withSelectInput = (WrappedComponent: typeof SelectInputComponent) => {
   return (props: SelectInputProps) => {
     return (
-      <Show when={props.items?.length}>
+      <Show
+        when={props.items?.length}
+        fallback={<TextInput placeholder={props.placeholder} />}
+      >
         <WrappedComponent {...props} />
       </Show>
     );
