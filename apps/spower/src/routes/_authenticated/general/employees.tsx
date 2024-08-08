@@ -172,9 +172,7 @@ const Component = () => {
             value={search}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
-            onChange={value => {
-              setSearch(value);
-            }}
+            onChange={value => setSearch(value)}
           />
         </div>
         <div

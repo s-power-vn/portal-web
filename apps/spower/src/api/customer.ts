@@ -6,10 +6,13 @@ import { Search } from './types';
 
 export const customerApi = router('customer', {
   listFull: router.query({
-    fetcher: () =>
-      client.collection(Collections.Customer).getFullList({
+    fetcher: (search?: string) => {
+      const filter = `(name ~ "${search ?? ''}" || email ~ "${search ?? ''}")`;
+      return client.collection(Collections.Customer).getFullList({
+        filter,
         sort: '-created'
-      })
+      });
+    }
   }),
   list: router.query({
     fetcher: (search?: Search) => {
