@@ -95,7 +95,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     <div className={'flex h-screen w-full flex-col overflow-hidden'}>
       <Header />
       <div className={'flex h-full w-full'}>
-        <Sidebar uid={'dashboard'}>
+        <Sidebar uid={'dashboard'} expanded={true}>
           <SidebarHeader />
           <SidebarItem
             to={'/home'}
