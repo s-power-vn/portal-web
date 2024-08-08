@@ -52,7 +52,8 @@ const Component = () => {
           {info.row.index + 1}
         </div>
       ),
-      header: () => '#'
+      header: () => <div className={'flex items-center justify-center'}>#</div>,
+      size: 30
     }),
     columnHelper.accessor('code', {
       cell: info => info.getValue(),

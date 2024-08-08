@@ -96,7 +96,6 @@ const Component = () => {
         pageCount={projects.data?.totalPages}
         pageIndex={search.pageIndex}
         pageSize={search.pageSize}
-        fixedWidth={true}
         onRowClick={row =>
           navigate({
             to: './$projectId',

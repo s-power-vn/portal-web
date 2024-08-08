@@ -138,7 +138,6 @@ const Component = () => {
         pageCount={issues.data?.totalPages}
         pageIndex={search.pageIndex}
         pageSize={search.pageSize}
-        fixedWidth={true}
         onRowClick={row =>
           navigate({
             to: './$issueId',
