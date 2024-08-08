@@ -61,6 +61,16 @@ const Component = () => {
   const columnHelper = createColumnHelper<UserData>();
 
   const columns = [
+    columnHelper.display({
+      id: 'index',
+      cell: info => (
+        <div className={'flex items-center justify-center'}>
+          {info.row.index + 1}
+        </div>
+      ),
+      header: () => <div className={'flex items-center justify-center'}>#</div>,
+      size: 30
+    }),
     columnHelper.accessor('avatar', {
       cell: ({ row }) => (
         <div className={'flex justify-center'}>
@@ -80,7 +90,7 @@ const Component = () => {
       ),
       header: () => <div className={'flex justify-center'}>Ảnh</div>,
       footer: info => info.column.id,
-      size: 30
+      size: 40
     }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
