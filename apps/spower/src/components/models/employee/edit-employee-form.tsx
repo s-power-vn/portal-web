@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { number, object, string } from 'yup';
 
@@ -14,7 +15,7 @@ const schema = object().shape({
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
   title: string(),
-  role: number()
+  role: number().required('Hãy chọn chức danh')
 });
 
 export type EditEmployeeFormProps = BusinessFormProps & {
@@ -22,12 +23,18 @@ export type EditEmployeeFormProps = BusinessFormProps & {
 };
 
 export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
+  const queryClient = useQueryClient();
   const employee = employeeApi.byId.useSuspenseQuery({
     variables: props.employeeId
   });
 
   const updateEmployee = employeeApi.update.useMutation({
     onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.listFull.getKey()
+        })
+      ]);
       success('Chỉnh sửa nhân viên thành công');
       props.onSuccess?.();
     }
@@ -106,7 +113,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
         name={'department'}
         title={'Phòng ban'}
         options={{
-          placeholder: 'Hãy chọn phòng ban',
+          placeholder: 'Chọn phòng ban',
           onChange: value => {
             setSelectedDepartment(value);
           }
@@ -117,7 +124,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
         name={'role'}
         title={'Chức danh'}
         options={{
-          placeholder: 'Hãy chọn chức danh',
+          placeholder: 'Chọn chức danh',
           items: roleItems
         }}
       />

@@ -70,8 +70,14 @@ export const SelectInput: FC<SelectInputProps> = ({
   );
 
   useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+    if (initialValue && !items.find(it => it.value == initialValue)) {
+      setValue(undefined);
+      onChange?.(undefined);
+    } else {
+      setValue(initialValue);
+      onChange?.(initialValue);
+    }
+  }, [items, initialValue]);
 
   return (
     <div ref={containerRef} className={'flex-1'}>
@@ -94,9 +100,7 @@ export const SelectInput: FC<SelectInputProps> = ({
             )}
           >
             <span className="!truncate">
-              {value
-                ? items.find(it => it.value === value)?.label
-                : placeholder}
+              {value ? items.find(it => it.value == value)?.label : placeholder}
             </span>
             <CaretSortIcon className="absolute right-2 ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>

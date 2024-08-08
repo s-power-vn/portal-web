@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { number, object, ref, string } from 'yup';
 
@@ -26,14 +27,20 @@ const schema = object().shape({
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
     .required('Hãy xác nhận mật khẩu'),
   title: string(),
-  role: number()
+  role: number().required('Hãy chọn chức danh')
 });
 
 export type NewEmployeeFormProps = BusinessFormProps;
 
 export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
+  const queryClient = useQueryClient();
   const createEmployee = employeeApi.create.useMutation({
     onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: employeeApi.listFull.getKey()
+        })
+      ]);
       success('Thêm nhân viên thành công');
       props.onSuccess?.();
     }
@@ -102,7 +109,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         name={'department'}
         title={'Phòng ban'}
         options={{
-          placeholder: 'Hãy chọn phòng ban',
+          placeholder: 'Chọn phòng ban',
           onChange: value => {
             setSelectedDepartment(value);
           }
@@ -113,7 +120,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         name={'role'}
         title={'Chức danh'}
         options={{
-          placeholder: 'Hãy chọn chức danh',
+          placeholder: 'Chọn chức danh',
           items: roleItems
         }}
       />
