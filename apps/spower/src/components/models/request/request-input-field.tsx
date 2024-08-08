@@ -19,6 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TextField,
   closeModal,
   showModal
 } from '@storeo/theme';
@@ -165,7 +166,14 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             <TableRow>
               <TableHead
                 className={
-                  'bg-appBlueLight text-appWhite w-[50px] whitespace-nowrap border-r p-2'
+                  'bg-appBlueLight text-appWhite w-[80px] whitespace-nowrap border-r p-2 text-center'
+                }
+              >
+                STT
+              </TableHead>
+              <TableHead
+                className={
+                  'bg-appBlueLight text-appWhite w-[50px] whitespace-nowrap border-r p-2 text-center'
                 }
               >
                 ID
@@ -179,7 +187,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               </TableHead>
               <TableHead
                 className={
-                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap p-2'
+                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap p-2 text-center'
                 }
               >
                 Khối lượng yêu cầu
@@ -193,6 +201,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                 .map((it: TreeData<DetailResponse>, index: number) => {
                   return (
                     <TableRow key={it.id}>
+                      <TableCell className={'border-r px-2 py-1 text-center'}>
+                        <TextField
+                          schema={schema}
+                          name={`details[${index}].index`}
+                        />
+                      </TableCell>
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.level}
                       </TableCell>

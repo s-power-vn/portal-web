@@ -21,7 +21,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          sort: '-updated'
+          sort: '-created'
         })
   }),
   listMine: router.query({

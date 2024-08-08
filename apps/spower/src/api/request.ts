@@ -93,11 +93,13 @@ export const requestApi = router('request', {
   create: router.mutation({
     mutationFn: async (
       params: Omit<IssueRecord, 'startDate' | 'endDate'> & {
+        code: string;
         startDate?: Date;
         endDate?: Date;
         details: {
           level?: string;
           id?: string;
+          index?: string;
           requestVolume?: number;
           title?: string;
           unit?: string;
@@ -126,6 +128,7 @@ export const requestApi = router('request', {
               {
                 request: request.id,
                 detail: null,
+                index: it.index,
                 volume: it.requestVolume,
                 customLevel: it.level,
                 customTitle: it.title,
@@ -140,6 +143,7 @@ export const requestApi = router('request', {
               {
                 request: request.id,
                 detail: it.id,
+                index: it.index,
                 volume: it.requestVolume
               },
               {

@@ -6,6 +6,7 @@ import {
   BusinessFormProps,
   DatePickerField,
   Form,
+  TextField,
   TextareaField,
   success
 } from '@storeo/theme';
@@ -15,6 +16,7 @@ import { RequestInputField } from './request-input-field';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
+  code: string().required('Hãy nhập số phiếu'),
   startDate: date().required('Hãy chọn ngày bắt đầu'),
   endDate: date()
     .required('Hãy chọn ngày kết thúc')
@@ -34,6 +36,7 @@ const schema = object().shape({
     .of(
       object().shape({
         id: string().optional(),
+        index: string().optional(),
         hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
@@ -89,21 +92,30 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         title={'Nội dung công việc'}
       />
       <div className={'flex items-center gap-2'}>
+        <TextField
+          schema={schema}
+          name={'code'}
+          className={'flex-1'}
+          title={'Số phiếu'}
+          options={{
+            maxLength: 20
+          }}
+        />
         <DatePickerField
           schema={schema}
           name={'startDate'}
           title={'Ngày bắt đầu'}
-          className={'w-full'}
+          className={'flex-1'}
           options={{
             showTime: true
           }}
         />
-        <span className={'px-2 pt-4'}>-</span>
+        <span className={'pt-4'}>-</span>
         <DatePickerField
           schema={schema}
           name={'endDate'}
           title={'Ngày kết thúc'}
-          className={'w-full'}
+          className={'flex-1'}
           options={{
             showTime: true
           }}

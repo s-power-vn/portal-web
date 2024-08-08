@@ -77,7 +77,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className={'flex gap-1'}>
-          <PlusIcon />
+          <PlusIcon className={'h-5 w-5'} />
           Thêm công việc
         </Button>
       </DropdownMenuTrigger>

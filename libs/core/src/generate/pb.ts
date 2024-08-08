@@ -15,9 +15,6 @@ export enum Collections {
 	DetailInfo = "detailInfo",
 	Issue = "issue",
 	Material = "material",
-	Price = "price",
-	PriceRequest = "priceRequest",
-	PriceRequestDetail = "priceRequestDetail",
 	Project = "project",
 	Request = "request",
 	RequestConfirm = "requestConfirm",
@@ -164,31 +161,6 @@ export type MaterialRecord = {
 	unit?: string
 }
 
-export type PriceRecord = {
-	approved?: IsoDateString
-	material?: RecordIdString
-	price?: number
-	supplier?: RecordIdString
-}
-
-export enum PriceRequestStatusOptions {
-	"ToDo" = "ToDo",
-	"Approved" = "Approved",
-	"Canceled" = "Canceled",
-}
-export type PriceRequestRecord = {
-	issue?: RecordIdString
-	project?: RecordIdString
-	status?: PriceRequestStatusOptions
-}
-
-export type PriceRequestDetailRecord = {
-	material?: RecordIdString
-	price?: number
-	priceRequest?: RecordIdString
-	supplier?: RecordIdString
-}
-
 export type ProjectRecord = {
 	bidding?: string
 	createdBy?: RecordIdString
@@ -211,6 +183,7 @@ export enum RequestStatusOptions {
 	"A6R" = "A6R",
 }
 export type RequestRecord = {
+	code?: string
 	issue: RecordIdString
 	project: RecordIdString
 	status?: RequestStatusOptions
@@ -226,6 +199,7 @@ export type RequestDetailRecord = {
 	customTitle?: string
 	customUnit?: string
 	detail?: RecordIdString
+	index?: string
 	price?: number
 	request: RecordIdString
 	supplier?: RecordIdString
@@ -253,8 +227,8 @@ export type RequestDetailSupplierInfoRecord = {
 }
 
 export enum SettingTypeOptions {
-	"Approver" = "Approver",
 	"Confirmer" = "Confirmer",
+	"Approver" = "Approver",
 }
 export type SettingRecord = {
 	type?: SettingTypeOptions
@@ -293,9 +267,6 @@ export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecor
 export type DetailInfoResponse<Texpand = unknown> = Required<DetailInfoRecord> & BaseSystemFields<Texpand>
 export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
-export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
-export type PriceRequestResponse<Texpand = unknown> = Required<PriceRequestRecord> & BaseSystemFields<Texpand>
-export type PriceRequestDetailResponse<Texpand = unknown> = Required<PriceRequestDetailRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestConfirmResponse<Texpand = unknown> = Required<RequestConfirmRecord> & BaseSystemFields<Texpand>
@@ -320,9 +291,6 @@ export type CollectionRecords = {
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
 	material: MaterialRecord
-	price: PriceRecord
-	priceRequest: PriceRequestRecord
-	priceRequestDetail: PriceRequestDetailRecord
 	project: ProjectRecord
 	request: RequestRecord
 	requestConfirm: RequestConfirmRecord
@@ -346,9 +314,6 @@ export type CollectionResponses = {
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
 	material: MaterialResponse
-	price: PriceResponse
-	priceRequest: PriceRequestResponse
-	priceRequestDetail: PriceRequestDetailResponse
 	project: ProjectResponse
 	request: RequestResponse
 	requestConfirm: RequestConfirmResponse
@@ -375,9 +340,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
-	collection(idOrName: 'price'): RecordService<PriceResponse>
-	collection(idOrName: 'priceRequest'): RecordService<PriceRequestResponse>
-	collection(idOrName: 'priceRequestDetail'): RecordService<PriceRequestDetailResponse>
 	collection(idOrName: 'project'): RecordService<ProjectResponse>
 	collection(idOrName: 'request'): RecordService<RequestResponse>
 	collection(idOrName: 'requestConfirm'): RecordService<RequestConfirmResponse>

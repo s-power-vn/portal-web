@@ -16,6 +16,7 @@ import {
   IssueDeadlineStatusOptions,
   IssueTypeOptions,
   Match,
+  Show,
   Switch,
   client,
   cn,
@@ -37,7 +38,7 @@ import {
   useConfirm
 } from '@storeo/theme';
 
-import { commentApi } from '../../../api';
+import { commentApi, requestApi } from '../../../api';
 import { issueApi } from '../../../api/issue';
 import { Request } from '../request/request';
 import { RequestStatusText } from '../request/status/request-status-text';
@@ -51,6 +52,10 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
   const router = useRouter();
 
   const issue = issueApi.byId.useSuspenseQuery({
+    variables: issueId
+  });
+
+  const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
 
@@ -158,12 +163,20 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
             </div>
             <div className={'flex w-full items-center justify-between gap-2'}>
               <span className={'text-appBlue whitespace-nowrap text-xs'}>
-                Ngày cập nhật
+                Ngày tạo
               </span>
               <span className={'truncate'}>
-                {formatDate(issue.data.updated)}
+                {formatDate(issue.data.created)}
               </span>
             </div>
+            <Show when={issue.data.type === IssueTypeOptions.Request}>
+              <div className={'flex w-full items-center justify-between gap-2'}>
+                <span className={'text-appBlue whitespace-nowrap text-xs'}>
+                  Số phiếu
+                </span>
+                <span className={'truncate'}>{request.data.code}</span>
+              </div>
+            </Show>
           </div>
           <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
             <div className={'flex w-full items-center justify-between gap-2'}>
@@ -248,7 +261,9 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                         <CalendarIcon className={'h-3 w-3'} />
                         {timeSince(new Date(Date.parse(it.created)))}
                       </div>
-                      <RequestStatusText status={it.status} />
+                      <Show when={issue.data.type === IssueTypeOptions.Request}>
+                        <RequestStatusText status={it.status} />
+                      </Show>
                     </div>
                     <div className={'text-sm'}>{it.content}</div>
                   </div>

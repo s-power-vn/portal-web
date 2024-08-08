@@ -133,10 +133,23 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const columns = useMemo(
     () => [
+      columnHelper.accessor('index', {
+        cell: ({ row }) => {
+          return <div className={'text-center'}>{row.original.index}</div>;
+        },
+        header: () => (
+          <div className={'flex w-full items-center justify-center'}>STT</div>
+        ),
+        footer: info => info.column.id,
+        size: 50,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
+      }),
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
-            <div className={'flex w-full items-center '}>
+            <div className={'flex w-full items-center justify-center' + ''}>
               {row.getCanExpand() ? (
                 <button
                   className={'cursor-pointer'}
@@ -317,7 +330,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     columns,
     initialState: {
       columnPinning: {
-        left: ['id', 'level', 'title']
+        left: ['index', 'id', 'level', 'title']
       }
     },
     state: {
