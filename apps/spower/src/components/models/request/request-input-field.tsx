@@ -7,7 +7,7 @@ import { AnyObject, ObjectSchema } from 'yup';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { DetailResponse, cn } from '@storeo/core';
+import { DetailResponse, Show, cn } from '@storeo/core';
 import {
   Button,
   FormField,
@@ -202,10 +202,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                   return (
                     <TableRow key={it.id}>
                       <TableCell className={'border-r px-2 py-1 text-center'}>
-                        <TextField
-                          schema={schema}
-                          name={`details[${index}].index`}
-                        />
+                        <Show when={it.children?.length === 0}>
+                          <TextField
+                            schema={schema}
+                            name={`details[${index}].index`}
+                          />
+                        </Show>
                       </TableCell>
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.level}
@@ -214,12 +216,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                         {it.title}
                       </TableCell>
                       <TableCell className={'p-1'}>
-                        {it.children?.length === 0 ? (
+                        <Show when={it.children?.length === 0}>
                           <NumericField
                             schema={schema}
                             name={`details[${index}].requestVolume`}
                           ></NumericField>
-                        ) : null}
+                        </Show>
                       </TableCell>
                     </TableRow>
                   );
