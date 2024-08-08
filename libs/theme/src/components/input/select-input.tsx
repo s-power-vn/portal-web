@@ -158,10 +158,7 @@ const SelectInputComponent: FC<SelectInputProps> = ({
 const withSelectInput = (WrappedComponent: typeof SelectInputComponent) => {
   return (props: SelectInputProps) => {
     return (
-      <Show
-        when={props.items?.length}
-        fallback={<TextInput placeholder={props.placeholder} />}
-      >
+      <Show when={props.items?.length} fallback={<div>-</div>}>
         <WrappedComponent {...props} />
       </Show>
     );
