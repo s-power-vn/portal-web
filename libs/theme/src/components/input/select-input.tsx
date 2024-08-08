@@ -11,7 +11,7 @@ import {
   useState
 } from 'react';
 
-import { cn } from '@storeo/core';
+import { Show, cn } from '@storeo/core';
 
 import { Button } from '../ui/button';
 import {
@@ -48,7 +48,7 @@ export type SelectInputProps = {
   align?: Align;
 };
 
-export const SelectInput: FC<SelectInputProps> = ({
+const SelectInputComponent: FC<SelectInputProps> = ({
   items = [],
   value: initialValue,
   placeholder,
@@ -73,9 +73,6 @@ export const SelectInput: FC<SelectInputProps> = ({
     if (initialValue && !items.find(it => it.value == initialValue)) {
       setValue(undefined);
       onChange?.(undefined);
-    } else {
-      setValue(initialValue);
-      onChange?.(initialValue);
     }
   }, [items, initialValue]);
 
@@ -156,3 +153,15 @@ export const SelectInput: FC<SelectInputProps> = ({
     </div>
   );
 };
+
+const withSelectInput = (WrappedComponent: typeof SelectInputComponent) => {
+  return (props: SelectInputProps) => {
+    return (
+      <Show when={props.items?.length}>
+        <WrappedComponent {...props} />
+      </Show>
+    );
+  };
+};
+
+export const SelectInput = withSelectInput(SelectInputComponent);
