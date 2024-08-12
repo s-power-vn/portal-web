@@ -6,18 +6,21 @@ import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import React, { FC } from 'react';
 
-import { Show } from '@storeo/core';
+import { Show, formatDate } from '@storeo/core';
 
 import { RequestDetailData } from '../../../api';
 
 export type RequestDocumentProps = {
   project?: string;
   bidding?: string;
+  code?: string;
   requester?: string;
   department?: string;
   content?: string;
   confirm1?: boolean;
   confirm2?: boolean;
+  leader1?: string;
+  leader2?: string;
   data: RequestDetailData[];
 };
 
@@ -237,7 +240,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           }`}
       </CSS>
       <div className="w-full font-[inter] text-sm">
-        <div className=" flex w-full items-start justify-between gap-4">
+        <div className="flex w-full items-start justify-between">
           <svg
             version="1.1"
             id="Layer_1"
@@ -281,7 +284,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         <div className={'mt-8 flex w-full flex-col gap-1'}>
           <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Số phiếu</div>
-            <div className={'basis-3/4'}>-</div>
+            <div className={'basis-3/4'}>{props.code}</div>
           </div>
           <div className={'flex items-start gap-2'}>
             <div className={'basis-1/4 font-bold'}>Dự án</div>
@@ -308,18 +311,19 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           <thead>
             <tr className={'border-b'}>
               <th className={'border-r p-2'}>STT</th>
-              <th className={'border-r p-2'}>ID</th>
-              <th className={'border-r p-2'}>Tên hạng mục</th>
+              <th className={' border-r p-2'}>ID</th>
+              <th className={'border-r p-2'}>Mô tả công việc</th>
               <th className={'border-r p-2'}>Đơn vị</th>
               <th className={'border-r p-2'}>Khối lượng</th>
+              <th className={'border-r p-2'}>Ngày cấp</th>
               <th className={'p-2'}>Ghi chú</th>
             </tr>
           </thead>
           <tbody>
             {props.data.map((it, index) => (
               <tr key={index} className={'border-b text-sm'}>
-                <td className={'w-10 border-r p-2 text-center'}>{index + 1}</td>
-                <td className={'w-20 border-r p-2'}>
+                <td className={'w-10 border-r p-2 text-center'}>{it.index}</td>
+                <td className={'w-10 border-r p-2'}>
                   {it.expand.detail.level ?? it.customLevel}
                 </td>
                 <td className={'border-r p-2'}>
@@ -328,10 +332,13 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
                 <td className={'w-20 border-r p-2'}>
                   {it.expand.detail.unit ?? it.customUnit}
                 </td>
-                <td className={'w-30 border-r p-2 text-right'}>
+                <td className={'w-20 border-r p-2 text-right'}>
                   {it.volume > 0 ? it.volume : ''}
                 </td>
-                <td className={'w-40'}></td>
+                <td className={'w-20 border-r p-2 text-right'}>
+                  {formatDate(it.deliveryDate)}
+                </td>
+                <td className={'w-40 p-2'}>{it.note}</td>
               </tr>
             ))}
           </tbody>
@@ -346,21 +353,23 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
               <div className={'font-bold'}>Phòng kỹ thuật</div>
               <Show when={props.confirm1}>
                 <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'h-10 w-10 text-orange-500'} />
+                  <CheckCircle2Icon className={'text-appSuccess h-10 w-10'} />
                 </div>
               </Show>
+              <div className={'mt-[1.5rem] font-bold'}>{props.leader1}</div>
             </div>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Phòng kế hoạch</div>
               <Show when={props.confirm2}>
                 <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'h-10 w-10 text-green-500'} />
+                  <CheckCircle2Icon className={'text-appSuccess h-10 w-10'} />
                 </div>
               </Show>
+              <div className={'mt-[1.5rem] font-bold'}>{props.leader2}</div>
             </div>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Người đề nghị</div>
-              <div className={'mt-16 font-bold'}>{props.requester}</div>
+              <div className={'mt-[5rem] font-bold'}>{props.requester}</div>
             </div>
           </div>
         </div>

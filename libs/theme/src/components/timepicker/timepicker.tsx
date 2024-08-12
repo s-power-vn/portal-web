@@ -8,8 +8,8 @@ import { cn } from '@storeo/core';
 import { MaskedInput } from '../input';
 
 export type TimepickerProps = {
-  value?: DateTime;
-  onChange?: (value: DateTime | undefined) => void;
+  value?: DateTime | null;
+  onChange?: (value: DateTime | undefined | null) => void;
   className?: string;
 };
 

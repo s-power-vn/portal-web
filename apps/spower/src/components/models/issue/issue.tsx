@@ -102,6 +102,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
   const handleEditIssue = useCallback(() => {
     modalId.current = showModal({
       title: 'Sửa công việc',
+      className: 'min-w-[40rem]',
       children: (
         <Switch
           fallback={

@@ -315,7 +315,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     if (selectedRow) {
       modalId.current = showModal({
         title: 'Sửa yêu cầu',
-        className: 'w-80',
+        className: 'min-w-60 w-[25rem]',
         children: (
           <EditRequestVolumeForm
             requestDetailId={selectedRow.original.id}
@@ -335,6 +335,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     const html = await compile(
       <RequestDocument
         project={request.data.expand.project.name}
+        code={request.data.code}
         bidding={request.data.expand.project.bidding}
         requester={request.data.expand.issue.expand.createdBy.name}
         department={
