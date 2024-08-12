@@ -31,9 +31,11 @@ export function formatNumber(value: number) {
 }
 
 export function formatDate(value: string) {
-  return DateTime.fromJSDate(new Date(Date.parse(value))).toFormat(
-    'HH:mm dd/MM/yyyy'
-  );
+  return value
+    ? DateTime.fromJSDate(new Date(Date.parse(value))).toFormat(
+        'HH:mm dd/MM/yyyy'
+      )
+    : '';
 }
 
 export function timeSince(timeStamp: Date | number): string | undefined {

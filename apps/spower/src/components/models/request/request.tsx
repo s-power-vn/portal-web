@@ -39,7 +39,7 @@ import {
   Show,
   client,
   cn,
-  formatCurrency,
+  formatDate,
   formatNumber
 } from '@storeo/core';
 import {
@@ -141,7 +141,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           <div className={'flex w-full items-center justify-center'}>STT</div>
         ),
         footer: info => info.column.id,
-        size: 50,
+        size: 30,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -169,7 +169,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           );
         },
         header: () => (
-          <div className={'flex w-full items-center justify-center'}>#</div>
+          <div className={'flex w-full items-center justify-center'}></div>
         ),
         footer: info => info.column.id,
         size: 30,
@@ -184,7 +184,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
-        size: 50,
+        size: 40,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -195,28 +195,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           row.original.expand?.detail.title ?? row.original.customTitle,
         header: () => 'Mô tả công việc',
         footer: info => info.column.id,
-        size: 300,
         meta: {
           hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'volume',
-        cell: ({ row }) => (
-          <Show when={row.original.expand?.detail.volume}>
-            <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(row.original.expand?.detail.volume)}
-              </span>
-            </div>
-          </Show>
-        ),
-        header: () => 'Khối lượng HĐ',
-        footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        },
+        minSize: 300
       }),
       columnHelper.display({
         id: 'unit',
@@ -227,26 +209,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         ),
         header: () => 'Đơn vị',
         footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'unitPrice',
-        cell: ({ row }) => (
-          <Show when={row.original.expand?.detail.unitPrice}>
-            <div className={'flex justify-end'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(row.original.expand?.detail.unitPrice)}
-              </span>
-              <span>₫</span>
-            </div>
-          </Show>
-        ),
-        header: () => 'Đơn giá HĐ',
-        footer: info => info.column.id,
-        size: 150,
+        size: 50,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
@@ -260,66 +223,32 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             </span>
           </div>
         ),
-        header: () => 'Khối lượng yêu cầu',
+        header: () => 'Khối lượng',
         footer: info => info.column.id,
-        size: 150,
+        size: 100,
         meta: {
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.accessor('price', {
+      columnHelper.accessor('deliveryDate', {
+        cell: ({ row }) => formatDate(row.original.deliveryDate),
+        header: () => 'Ngày cấp',
+        footer: info => info.column.id,
+        size: 100,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
+      }),
+      columnHelper.accessor('note', {
         cell: ({ row }) => (
-          <Show when={row.original.price}>
-            <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {row.original.price && formatCurrency(row.original.price)}
-              </span>
-              <span>₫</span>
-            </div>
-          </Show>
+          <div className={'flex justify-start gap-1'}>{row.original.note}</div>
         ),
-        header: () => 'Đơn giá NCC',
+        header: () => 'Ghi chú',
         footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.display({
-        id: 'exceedUnitPrice',
-        cell: ({ row }) => {
-          if (row.original.price) {
-            const exceed =
-              row.original.price - row.original.expand.detail.unitPrice;
-            if (exceed > 0) {
-              return (
-                <div className={'flex justify-end text-red-500'}>
-                  <span className={'font-semibold'}>
-                    {formatCurrency(exceed)}
-                  </span>
-                  <span>₫</span>
-                </div>
-              );
-            } else {
-              return (
-                <div className={'flex justify-end text-green-500'}>
-                  <span className={'font-semibold'}>
-                    {formatCurrency(-exceed)}
-                  </span>
-                  <span>₫</span>
-                </div>
-              );
-            }
-          }
-          return null;
-        },
-        header: () => 'Đơn giá phát sinh',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.display({
-        id: 'supplier',
-        cell: info => info.row.original.expand?.supplier?.name,
-        header: () => 'Nhà cung cấp',
-        footer: info => info.column.id,
-        size: 300
+        size: 120,
+        meta: {
+          hasRowSpan: 'levelRowSpan'
+        }
       })
     ],
     [columnHelper]
@@ -489,11 +418,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         <div
           className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
         >
-          <Table
-            style={{
-              width: table.getTotalSize()
-            }}
-          >
+          <Table>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>

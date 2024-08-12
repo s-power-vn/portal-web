@@ -198,8 +198,10 @@ export type RequestDetailRecord = {
 	customLevel?: string
 	customTitle?: string
 	customUnit?: string
+	deliveryDate?: IsoDateString
 	detail?: RecordIdString
 	index?: string
+	note?: string
 	price?: number
 	request: RecordIdString
 	supplier?: RecordIdString
