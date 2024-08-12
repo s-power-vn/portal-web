@@ -149,7 +149,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
-            <div className={'flex w-full items-center justify-center' + ''}>
+            <div className={'flex w-full items-center justify-center'}>
               {row.getCanExpand() ? (
                 <button
                   className={'cursor-pointer'}
@@ -231,7 +231,11 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         }
       }),
       columnHelper.accessor('deliveryDate', {
-        cell: ({ row }) => formatDate(row.original.deliveryDate),
+        cell: ({ row }) => (
+          <div className={'flex justify-center gap-1'}>
+            {formatDate(row.original.deliveryDate)}
+          </div>
+        ),
         header: () => 'Ngày cấp',
         footer: info => info.column.id,
         size: 100,
@@ -310,7 +314,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   const handleEditRequestVolume = useCallback(() => {
     if (selectedRow) {
       modalId.current = showModal({
-        title: 'Sửa khối lượng',
+        title: 'Sửa yêu cầu',
         className: 'w-80',
         children: (
           <EditRequestVolumeForm

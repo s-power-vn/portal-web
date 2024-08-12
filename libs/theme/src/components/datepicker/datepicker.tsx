@@ -14,14 +14,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export type DatePickerProps = {
   value?: Date;
-  onChange?: (value: Date | undefined) => void;
+  onChange?: (value: Date | undefined | null) => void;
   showTime?: boolean;
   placeholder?: string;
   className?: string;
 };
 
 export const DatePicker: FC<DatePickerProps> = props => {
-  const [date, setDate] = useState<DateTime | undefined>(
+  const [date, setDate] = useState<DateTime | undefined | null>(
     props.value ? DateTime.fromJSDate(props.value) : undefined
   );
   const [open, setOpen] = useState<boolean>(false);
@@ -51,8 +51,8 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 )}
                 onClick={e => {
                   e.stopPropagation();
-                  setDate(undefined);
-                  props.onChange?.(undefined);
+                  setDate(null);
+                  props.onChange?.(null);
                 }}
               >
                 <Cross2Icon className="h-2 w-2" />

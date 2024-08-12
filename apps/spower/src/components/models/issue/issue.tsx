@@ -20,7 +20,7 @@ import {
   Switch,
   client,
   cn,
-  formatDate,
+  formatDateTime,
   getImageUrl,
   timeSince
 } from '@storeo/core';
@@ -171,7 +171,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                 Ngày tạo
               </span>
               <span className={'truncate'}>
-                {formatDate(issue.data.created)}
+                {formatDateTime(issue.data.created)}
               </span>
             </div>
             <div className={'flex w-full items-center justify-between gap-2'}>
@@ -179,7 +179,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                 Ngày tạo
               </span>
               <span className={'truncate'}>
-                {formatDate(issue.data.created)}
+                {formatDateTime(issue.data.created)}
               </span>
             </div>
             <Show when={issue.data.type === IssueTypeOptions.Request}>
@@ -215,7 +215,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                 Ngày bắt đầu
               </span>
               <span className={'truncate'}>
-                {formatDate(issue.data.startDate)}
+                {formatDateTime(issue.data.startDate)}
               </span>
             </div>
             <div className={'flex w-full items-center justify-between gap-2'}>
@@ -223,7 +223,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                 Ngày kết thúc
               </span>
               <span className={'truncate'}>
-                {formatDate(issue.data.endDate)}
+                {formatDateTime(issue.data.endDate)}
               </span>
             </div>
           </div>

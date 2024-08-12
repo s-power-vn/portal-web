@@ -1,8 +1,16 @@
-import { number, object } from 'yup';
+import { date, number, object, string } from 'yup';
 
 import React, { FC } from 'react';
 
-import { BusinessFormProps, Form, NumericField, success } from '@storeo/theme';
+import {
+  BusinessFormProps,
+  DatePickerField,
+  Form,
+  NumericField,
+  TextField,
+  TextareaField,
+  success
+} from '@storeo/theme';
 
 import { requestDetailApi } from '../../../api';
 
@@ -14,7 +22,10 @@ const schema = object().shape({
     )
     .transform(value => (Number.isNaN(value) ? undefined : value))
     .typeError('Sai định dạng số')
-    .moreThan(0, 'Khối lượng không thể <= 0')
+    .moreThan(0, 'Khối lượng không thể <= 0'),
+  index: string(),
+  deliveryDate: date().nullable(),
+  note: string()
 });
 
 export type EditRequestVolumeFormProps = BusinessFormProps & {
@@ -28,7 +39,7 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
 
   const updateDetail = requestDetailApi.updateVolume.useMutation({
     onSuccess: async () => {
-      success('Chỉnh sửa khối lượng thành công');
+      success('Chỉnh sửa yêu cầu thành công');
       props.onSuccess?.();
     }
   });
@@ -43,16 +54,30 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
         })
       }
       onCancel={props.onCancel}
-      defaultValues={requestDetail.data}
+      defaultValues={{
+        ...requestDetail.data,
+        deliveryDate: requestDetail.data.deliveryDate
+          ? new Date(Date.parse(requestDetail.data.deliveryDate))
+          : undefined
+      }}
       loading={requestDetail.isPending || updateDetail.isPending}
       className={'flex flex-col gap-3'}
     >
-      <NumericField
+      <div className={'flex items-center gap-2'}>
+        <div className={'flex-1'}>
+          <NumericField schema={schema} name={'volume'} title={'Khối lượng'} />
+        </div>
+        <div className={'mt-4 text-sm'}>
+          {requestDetail.data.expand.detail.unit}
+        </div>
+      </div>
+      <TextField schema={schema} name={'index'} title={'STT'} />
+      <DatePickerField
         schema={schema}
-        name={'volume'}
-        title={'Khối lượng yêu cầu'}
-        options={{}}
+        name={'deliveryDate'}
+        title={'Ngày cấp'}
       />
+      <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
     </Form>
   );
 };

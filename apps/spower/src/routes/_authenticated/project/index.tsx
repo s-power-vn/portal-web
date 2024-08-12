@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import { formatDate } from '@storeo/core';
+import { formatDateTime } from '@storeo/core';
 import { CommonTable, DebouncedInput } from '@storeo/theme';
 
 import { ProjectData, projectApi } from '../../../api';
@@ -60,13 +60,13 @@ const Component = () => {
       size: 150
     }),
     columnHelper.accessor('created', {
-      cell: ({ row }) => formatDate(row.original.created),
+      cell: ({ row }) => formatDateTime(row.original.created),
       header: () => 'Ngày tạo',
       footer: info => info.column.id,
       size: 170
     }),
     columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDate(row.original.updated),
+      cell: ({ row }) => formatDateTime(row.original.updated),
       header: () => 'Ngày cập nhật',
       footer: info => info.column.id,
       size: 170

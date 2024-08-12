@@ -30,11 +30,17 @@ export function formatNumber(value: number) {
   return value ? new Intl.NumberFormat('vi-VN', {}).format(value) : '';
 }
 
-export function formatDate(value: string) {
+export function formatDateTime(value: string) {
   return value
     ? DateTime.fromJSDate(new Date(Date.parse(value))).toFormat(
         'HH:mm dd/MM/yyyy'
       )
+    : '';
+}
+
+export function formatDate(value: string) {
+  return value
+    ? DateTime.fromJSDate(new Date(Date.parse(value))).toFormat('dd/MM/yyyy')
     : '';
 }
 
