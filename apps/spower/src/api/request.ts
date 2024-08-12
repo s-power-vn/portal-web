@@ -311,9 +311,23 @@ export const requestApi = router('request', {
         });
       }
 
-      return client.collection(Collections.Request).update(params.id, {
-        status: params.status
-      });
+      if (params.status === RequestStatusOptions.A4) {
+        return client.collection(Collections.Request).update(params.id, {
+          confirm1: client.authStore.model?.name,
+          confirm1Date: new Date(),
+          status: params.status
+        });
+      } else if (params.status === RequestStatusOptions.A6F) {
+        return client.collection(Collections.Request).update(params.id, {
+          confirm2: client.authStore.model?.name,
+          confirm2Date: new Date(),
+          status: params.status
+        });
+      } else {
+        return client.collection(Collections.Request).update(params.id, {
+          status: params.status
+        });
+      }
     }
   }),
   updateInfo: router.mutation({

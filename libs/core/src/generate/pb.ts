@@ -184,6 +184,10 @@ export enum RequestStatusOptions {
 }
 export type RequestRecord = {
 	code?: string
+	confirm1?: string
+	confirm1Date?: IsoDateString
+	confirm2?: string
+	confirm2Date?: IsoDateString
 	issue: RecordIdString
 	project: RecordIdString
 	status?: RequestStatusOptions

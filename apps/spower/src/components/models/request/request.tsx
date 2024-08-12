@@ -350,6 +350,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           request.data.status === RequestStatusOptions.A6R
         }
         confirm2={request.data.status === RequestStatusOptions.A6F}
+        leader1={request.data.confirm1}
+        leader2={request.data.confirm2}
         data={v}
       />
     );
