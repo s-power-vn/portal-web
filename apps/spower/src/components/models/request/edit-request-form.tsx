@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { date, object, string } from 'yup';
 
 import { FC } from 'react';
@@ -6,21 +7,23 @@ import {
   BusinessFormProps,
   DatePickerField,
   Form,
+  TextField,
   TextareaField,
   success
 } from '@storeo/theme';
 
-import { issueApi } from '../../../api/issue';
+import { requestApi } from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
+  code: string().required('Hãy nhập số phiếu'),
   startDate: date().required('Hãy chọn ngày bắt đầu'),
   endDate: date()
     .required('Hãy chọn ngày kết thúc')
     .test({
       name: 'checkEndDate',
       message: 'Ngày kết thúc phải lớn hơn ngày bắt đầu',
-      test: function (value) {
+      test: function () {
         const startDate = this.parent.startDate;
         const endDate = this.parent.endDate;
         if (startDate && endDate) {
@@ -31,18 +34,18 @@ const schema = object().shape({
     })
 });
 
-export type EditIssueFormProps = BusinessFormProps & {
+export type EditRequestFormProps = BusinessFormProps & {
   issueId: string;
 };
 
-export const EditIssueForm: FC<EditIssueFormProps> = props => {
-  const issue = issueApi.byId.useSuspenseQuery({
+export const EditRequestForm: FC<EditRequestFormProps> = props => {
+  const request = requestApi.byIssueId.useSuspenseQuery({
     variables: props.issueId
   });
 
-  const updateIssue = issueApi.update.useMutation({
+  const updateRequest = requestApi.updateInfo.useMutation({
     onSuccess: async () => {
-      success('Cập nhật công việc thành công');
+      success('Cập nhật yêu cầu mua hàng thành công');
       props.onSuccess?.();
     }
   });
@@ -51,17 +54,17 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        ...issue.data,
-        startDate: new Date(Date.parse(issue.data.startDate)),
-        endDate: new Date(Date.parse(issue.data.endDate))
+        code: request.data.code,
+        title: request.data.expand.issue.title,
+        startDate: new Date(Date.parse(request.data.expand.issue.startDate)),
+        endDate: new Date(Date.parse(request.data.expand.issue.endDate))
       }}
-      className={'mt-2 flex flex-col gap-4'}
-      loading={updateIssue.isPending}
+      className={'flex flex-col gap-4'}
+      loading={updateRequest.isPending}
       onSubmit={values => {
-        return updateIssue.mutate({
+        return updateRequest.mutate({
           ...values,
-          issueId: props.issueId,
-          project: issue.data.project
+          id: request.data.id
         });
       }}
       onCancel={props.onCancel}
@@ -72,21 +75,30 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
         title={'Nội dung công việc'}
       />
       <div className={'flex items-center gap-2'}>
+        <TextField
+          schema={schema}
+          name={'code'}
+          className={'flex-1'}
+          title={'Số phiếu'}
+          options={{
+            maxLength: 20
+          }}
+        />
         <DatePickerField
           schema={schema}
           name={'startDate'}
           title={'Ngày bắt đầu'}
-          className={'w-full'}
+          className={'flex-1'}
           options={{
             showTime: true
           }}
         />
-        <span className={'px-2 pt-4'}>-</span>
+        <span className={'pt-4'}>-</span>
         <DatePickerField
           schema={schema}
           name={'endDate'}
           title={'Ngày kết thúc'}
-          className={'w-full'}
+          className={'flex-1'}
           options={{
             showTime: true
           }}

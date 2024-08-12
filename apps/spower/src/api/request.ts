@@ -286,31 +286,57 @@ export const requestApi = router('request', {
       await client.collection(Collections.RequestConfirm).delete(deleteItem.id);
     }
   }),
-  update: router.mutation({
+  updateStatus: router.mutation({
     mutationFn: async (params: {
       id: string;
-      issue: string;
       assignee: string;
       status: string;
       note?: string;
     }) => {
-      const { assignee, note, ...payload } = params;
+      const request = await client
+        .collection(Collections.Request)
+        .getOne(params.id);
 
-      await client.collection(Collections.Issue).update(params.issue, {
-        assignee,
+      await client.collection(Collections.Issue).update(request.issue, {
+        assignee: params.assignee,
         lastAssignee: client.authStore.model?.id
       });
 
-      if (note) {
+      if (params.note) {
         await client.collection(Collections.Comment).create({
-          content: note,
-          issue: params.issue,
+          content: params.note,
+          issue: request.issue,
           status: params.status,
           createdBy: client.authStore.model?.id
         });
       }
 
-      return client.collection(Collections.Request).update(params.id, payload);
+      return client.collection(Collections.Request).update(params.id, {
+        status: params.status
+      });
+    }
+  }),
+  updateInfo: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      code: string;
+      title: string;
+      startDate: Date;
+      endDate: Date;
+    }) => {
+      const request = await client
+        .collection(Collections.Request)
+        .getOne(params.id);
+
+      await client.collection(Collections.Issue).update(request.issue, {
+        title: params.title,
+        startDate: params.startDate,
+        endDate: params.endDate
+      });
+
+      return client.collection(Collections.Request).update(params.id, {
+        code: params.code
+      });
     }
   }),
   return: router.mutation({

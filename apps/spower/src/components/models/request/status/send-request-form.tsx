@@ -22,7 +22,7 @@ export type SendRequestFormProps = BusinessFormProps & {
 };
 
 export const SendRequestForm: FC<SendRequestFormProps> = props => {
-  const updateRequest = requestApi.update.useMutation({
+  const updateRequest = requestApi.updateStatus.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
       props.onSuccess?.();
@@ -39,8 +39,7 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
       onSubmit={values =>
         updateRequest.mutate({
           ...values,
-          id: props.request.id,
-          issue: props.request.issue
+          id: props.request.id
         })
       }
       onCancel={props.onCancel}

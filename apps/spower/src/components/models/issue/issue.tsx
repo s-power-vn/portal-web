@@ -40,9 +40,9 @@ import {
 
 import { commentApi, requestApi } from '../../../api';
 import { issueApi } from '../../../api/issue';
+import { EditRequestForm } from '../request/edit-request-form';
 import { Request } from '../request/request';
 import { RequestStatusText } from '../request/status/request-status-text';
-import { EditIssueForm } from './edit-issue-form';
 
 export type IssueProps = {
   issueId: string;
@@ -83,6 +83,9 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey: issueApi.byId.getKey(issueId)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: requestApi.byIssueId.getKey(issueId)
       })
     ]);
     if (modalId.current) {
@@ -100,14 +103,24 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     modalId.current = showModal({
       title: 'Sửa công việc',
       children: (
-        <EditIssueForm
-          issueId={issueId}
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
-        />
+        <Switch
+          fallback={
+            <div className={`p-2`}>
+              <Loader className={'h-6 w-6 animate-spin'} />
+            </div>
+          }
+        >
+          <Match when={issue.data.type === IssueTypeOptions.Request}>
+            <EditRequestForm
+              issueId={issueId}
+              onSuccess={onSuccessHandler}
+              onCancel={onCancelHandler}
+            />
+          </Match>
+        </Switch>
       )
     });
-  }, [issueId, onCancelHandler, onSuccessHandler]);
+  }, [issue.data.type, issueId, onCancelHandler, onSuccessHandler]);
 
   return (
     <div
