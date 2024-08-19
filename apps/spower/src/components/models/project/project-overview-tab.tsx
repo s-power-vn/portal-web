@@ -1,5 +1,3 @@
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
   ExpandedState,
@@ -13,59 +11,35 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import {
-  DownloadIcon,
-  EditIcon,
-  SheetIcon,
-  SquareMinusIcon,
-  SquarePlusIcon
-} from 'lucide-react';
+import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import {
-  ChangeEvent,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   DetailInfoResponse,
   Show,
   client,
   cn,
-  downloadTemplate,
   formatCurrency,
   formatNumber
 } from '@storeo/core';
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-  closeModal,
-  showModal,
-  success,
-  useConfirm,
-  useLoading
+  TableRow
 } from '@storeo/theme';
 
-import { detailApi, detailImportApi, detailInfoApi } from '../../../api';
+import { detailInfoApi } from '../../../api';
 import {
   TreeData,
   arrayToTree,
   getCommonPinningStyles
 } from '../../../commons/utils';
-import { useDetailImportStatus } from '../../../hooks';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { EditDetailForm } from '../detail/edit-detail-form';
-import { NewDetailForm } from '../detail/new-detail-form';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
@@ -78,29 +52,11 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
 }) => {
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const queryClient = useQueryClient();
-
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<DetailInfoResponse>>>();
 
-  const inputFileRef = useRef<HTMLInputElement>(null);
-
   const listDetailInfos = detailInfoApi.listFull.useSuspenseQuery({
     variables: projectId
-  });
-
-  const deleteDetails = detailApi.delete.useMutation({
-    onSuccess: async () => {
-      success('Xóa hạng mục công việc thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
-        })
-      ]);
-    }
   });
 
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -121,8 +77,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   );
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
-
-  const { confirm } = useConfirm();
 
   const handleGotoIssue = useCallback(
     (issueId: string) => {
@@ -446,7 +400,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         size: 150
       })
     ],
-    [columnHelper]
+    [columnHelper, handleGotoIssue]
   );
 
   const table = useReactTable({
@@ -475,47 +429,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     manualPagination: true
   });
 
-  const { showLoading, hideLoading } = useLoading();
-
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  useDetailImportStatus(async (_, status) => {
-    if (status === 'Done') {
-      hideLoading();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
-        })
-      ]);
-    } else if (status === 'Error') {
-      hideLoading();
-    }
-  });
-
-  const uploadFile = detailImportApi.upload.useMutation({
-    onError: () => {
-      hideLoading();
-    },
-    onSettled: () => {
-      if (inputFileRef.current) {
-        inputFileRef.current.value = '';
-      }
-    }
-  });
-
-  const onFileChangeCapture = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        showLoading();
-        uploadFile.mutate({
-          files: e.target.files,
-          projectId
-        });
-      }
-    },
-    [projectId, showLoading, uploadFile]
-  );
-
   useEffect(() => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
@@ -536,144 +449,11 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     });
   }, [rowSelection, table]);
 
-  const handleDownloadTemplate = useCallback(() => {
-    return downloadTemplate('detail', 'application/vnd.ms-excel');
-  }, []);
-
-  const modalId = useRef<string | undefined>();
-
-  const onSuccessHandler = useCallback(async () => {
-    if (selectedRow) {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: detailApi.byId.getKey(selectedRow.original.group)
-        })
-      ]);
-    }
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [projectId, queryClient, selectedRow]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
-  const handleNewDetailParent = useCallback(() => {
-    modalId.current = showModal({
-      title: 'Thêm mục cha',
-      children: (
-        <NewDetailForm
-          projectId={projectId}
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
-        />
-      )
-    });
-  }, [onCancelHandler, onSuccessHandler, projectId]);
-
-  const handleNewDetailChild = useCallback(() => {
-    if (selectedRow) {
-      modalId.current = showModal({
-        title: 'Thêm mục con',
-        children: (
-          <NewDetailForm
-            projectId={projectId}
-            parent={selectedRow.original}
-            onSuccess={onSuccessHandler}
-            onCancel={onCancelHandler}
-          />
-        )
-      });
-    }
-  }, [onCancelHandler, onSuccessHandler, projectId, selectedRow]);
-
-  const handleEditDetail = useCallback(() => {
-    if (selectedRow) {
-      modalId.current = showModal({
-        title: 'Sửa công việc',
-        children: (
-          <EditDetailForm
-            detailId={selectedRow.original.group}
-            onSuccess={onSuccessHandler}
-            onCancel={onCancelHandler}
-          />
-        )
-      });
-    }
-  }, [onCancelHandler, onSuccessHandler, selectedRow]);
-
   return (
-    <div className={'flex flex-col gap-2 p-2'}>
-      <div className={'flex gap-2'}>
-        <input
-          type="file"
-          ref={inputFileRef}
-          multiple={false}
-          className={'hidden'}
-          accept=".xlsx"
-          onChangeCapture={onFileChangeCapture}
-        />
-        <Button
-          variant={'outline'}
-          className={'flex gap-1'}
-          onClick={() => inputFileRef.current?.click()}
-        >
-          <SheetIcon className={'h-5 w-5'} />
-          Nhập từ Excel
-        </Button>
-        <Button
-          variant={'outline'}
-          className={'flex gap-1'}
-          onClick={handleDownloadTemplate}
-        >
-          <DownloadIcon className={'h-5 w-5'} />
-          Tải file mẫu
-        </Button>
-        <Button className={'flex gap-1'} onClick={handleNewDetailParent}>
-          <PlusIcon />
-          Thêm mục
-        </Button>
-        <Button
-          disabled={!selectedRow}
-          className={'flex gap-1'}
-          onClick={handleNewDetailChild}
-        >
-          <PlusIcon />
-          Thêm mục con
-        </Button>
-        <Button disabled={!selectedRow} size="icon" onClick={handleEditDetail}>
-          <EditIcon className={'h-5 w-5'} />
-        </Button>
-        <Button
-          disabled={_.keys(rowSelection).length === 0}
-          variant="outline"
-          className={'text-appWhite bg-red-500'}
-          size="icon"
-          onClick={() =>
-            confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
-              const selected = table.getSelectedRowModel();
-              deleteDetails
-                .mutateAsync(selected.flatRows.map(row => row.original.group))
-                .then(() => setRowSelection({}));
-            })
-          }
-        >
-          <Cross2Icon className={'h-5 w-5'} />
-        </Button>
-      </div>
+    <div className={'flex flex-col p-2'}>
       <div
-        ref={parentRef}
         className={
-          'border-appBlue h-[calc(100vh-214px)] overflow-auto rounded-md border'
+          'border-appBlue h-[calc(100vh-160px)] overflow-auto rounded-md border'
         }
       >
         <Table

@@ -11,6 +11,7 @@ export enum Collections {
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
+	DetailExtend = "detailExtend",
 	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
@@ -81,7 +82,8 @@ export type DepartmentRecord = {
 	name: string
 }
 
-export type DetailRecord = {
+export type DetailRecord<Textend = unknown> = {
+	extend?: null | Textend
 	level: string
 	note?: string
 	parent?: string
@@ -90,6 +92,11 @@ export type DetailRecord = {
 	unit?: string
 	unitPrice?: number
 	volume?: number
+}
+
+export type DetailExtendRecord<Textend = unknown> = {
+	extend?: null | Textend
+	project?: RecordIdString
 }
 
 export enum DetailImportStatusOptions {
@@ -268,7 +275,8 @@ export type CommentResponse<Texpand = unknown> = Required<CommentRecord> & BaseS
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
-export type DetailResponse<Texpand = unknown> = Required<DetailRecord> & BaseSystemFields<Texpand>
+export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<DetailRecord<Textend>> & BaseSystemFields<Texpand>
+export type DetailExtendResponse<Textend = unknown, Texpand = unknown> = Required<DetailExtendRecord<Textend>> & BaseSystemFields<Texpand>
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Texpand = unknown> = Required<DetailInfoRecord> & BaseSystemFields<Texpand>
 export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSystemFields<Texpand>
@@ -293,6 +301,7 @@ export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
+	detailExtend: DetailExtendRecord
 	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
@@ -316,6 +325,7 @@ export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse
+	detailExtend: DetailExtendResponse
 	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
@@ -342,6 +352,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'customer'): RecordService<CustomerResponse>
 	collection(idOrName: 'department'): RecordService<DepartmentResponse>
 	collection(idOrName: 'detail'): RecordService<DetailResponse>
+	collection(idOrName: 'detailExtend'): RecordService<DetailExtendResponse>
 	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
