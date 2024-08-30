@@ -7,17 +7,10 @@
   "tabWidth": 2,
   "useTabs": false,
   "semi": true,
-  "importOrder": [
-    "^react",
-    "^@react",
-    "^@storeo/(.*)$",
-    "^[./]"
-  ],
+  "importOrder": ["^react", "^@react", "^@storeo/(.*)$", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "tailwindFunctions": [
-    "tw"
-  ],
+  "tailwindFunctions": ["tw"],
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss"
