@@ -1,8 +1,9 @@
 import { FC } from 'react';
 
+import { withPreventDoubleClick } from '../../hoc';
 import { Button, ButtonProps } from '../ui/button';
 
-export const SubmitButton: FC<ButtonProps> = props => {
+const CustomSubmitButton: FC<ButtonProps> = props => {
   return (
     <Button
       {...props}
@@ -14,3 +15,5 @@ export const SubmitButton: FC<ButtonProps> = props => {
     ></Button>
   );
 };
+
+export const SubmitButton = withPreventDoubleClick(CustomSubmitButton);

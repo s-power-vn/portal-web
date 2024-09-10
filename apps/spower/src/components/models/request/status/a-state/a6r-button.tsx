@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { FC, useCallback, useRef } from 'react';
 
 import { RequestStatusOptions } from '@storeo/core';
-import { Button, closeModal, showModal } from '@storeo/theme';
+import { SubmitButton, closeModal, showModal } from '@storeo/theme';
 
 import { RequestData } from '../../../../../api';
 import { ReturnRequestForm } from '../return-request-form';
@@ -42,8 +42,8 @@ export const A6rButton: FC<A6rButtonProps> = ({ request }) => {
   }, [request, router.history]);
 
   return (
-    <Button variant={'destructive'} onClick={handleClick}>
+    <SubmitButton variant={'destructive'} onClick={handleClick}>
       Chuyển trả lại
-    </Button>
+    </SubmitButton>
   );
 };

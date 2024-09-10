@@ -19,8 +19,8 @@ import { FC, useEffect, useMemo, useState } from 'react';
 
 import { DetailResponse, For, Show, cn } from '@storeo/core';
 import {
-  Button,
   DebouncedInput,
+  SubmitButton,
   Table,
   TableBody,
   TableCell,
@@ -79,7 +79,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
           return (
             <div className={'flex w-full items-center '}>
               <Show when={row.getCanExpand()}>
-                <button
+                <SubmitButton
                   className={'cursor-pointer'}
                   onClick={e => {
                     e.stopPropagation();
@@ -92,7 +92,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
                   >
                     <SquareMinusIcon width={18} height={18} />
                   </Show>
-                </button>
+                </SubmitButton>
               </Show>
             </div>
           );
@@ -310,7 +310,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
         </Table>
       </div>
       <div className={'mt-4'}>
-        <Button
+        <SubmitButton
           type="submit"
           onClick={() => {
             props.onChange?.(
@@ -330,7 +330,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
           }}
         >
           Chấp nhận
-        </Button>
+        </SubmitButton>
       </div>
     </div>
   );

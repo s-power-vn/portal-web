@@ -9,10 +9,10 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { DetailResponse, Show, cn } from '@storeo/core';
 import {
-  Button,
   FormField,
   FormFieldProps,
   NumericField,
+  SubmitButton,
   Table,
   TableBody,
   TableCell,
@@ -131,7 +131,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       <div className={'flex items-end justify-between'}>
         <span className={'text-sm font-medium'}>Hạng mục công việc</span>
         <div className={'flex gap-2'}>
-          <Button
+          <SubmitButton
             className={' text-sm '}
             variant={'destructive'}
             type={'reset'}
@@ -139,19 +139,23 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
           >
             <TrashIcon className={'mr-2 h-4 w-4'} />
             Xóa tất cả
-          </Button>
-          <Button
+          </SubmitButton>
+          <SubmitButton
             className={'bg-orange-500 text-sm hover:bg-orange-400'}
             type={'reset'}
             onClick={handleCustomRequest}
           >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Thêm hạng mục ngoài HĐ
-          </Button>
-          <Button type={'reset'} className={cn('text-sm')} onClick={handlePick}>
+          </SubmitButton>
+          <SubmitButton
+            type={'reset'}
+            className={cn('text-sm')}
+            onClick={handlePick}
+          >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Chọn hạng mục trong HĐ
-          </Button>
+          </SubmitButton>
         </div>
       </div>
       <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">

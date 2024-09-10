@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';

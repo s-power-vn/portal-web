@@ -6,7 +6,8 @@
     "types": [
       "node",
       "vite/client"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.ts"
