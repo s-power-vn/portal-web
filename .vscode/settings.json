@@ -1,0 +1,9 @@
+{
+    "eslint.format.enable": true,
+    "prettier.configPath": ".prettierrc",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.addMissingImports": "explicit",
+        "source.fixAll": "explicit"
+    },
+}
