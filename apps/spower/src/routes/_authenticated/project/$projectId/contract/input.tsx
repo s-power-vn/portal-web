@@ -21,7 +21,14 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import {
   DetailInfoResponse,
@@ -407,6 +414,10 @@ const Component = () => {
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
+
+  useEffect(() => {
+    table.toggleAllRowsExpanded(true);
+  }, [table]);
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>
