@@ -1,7 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { Loader2 } from 'lucide-react';
 import { object, string } from 'yup';
 
-import { client } from '@storeo/core';
+import { client, cn } from '@storeo/core';
 import {
   Button,
   Card,
@@ -52,9 +53,17 @@ const Login = () => {
               <div
                 className={'flex w-full items-center justify-center px-12 pt-4'}
               >
-                <Button className={'w-full'} type={'submit'}>
-                  Đăng nhập
-                </Button>
+                {login.isPending ? (
+                  <Button className={'w-full'} type={'reset'}>
+                    <Loader2
+                      className={cn('my-1 h-6 w-6 animate-spin text-white')}
+                    />
+                  </Button>
+                ) : (
+                  <Button className={'w-full'} type={'submit'}>
+                    Đăng nhập
+                  </Button>
+                )}
               </div>
             }
           >
@@ -62,11 +71,21 @@ const Login = () => {
             <div className={'flex w-full items-center justify-center'}>
               <span className={'text-lg font-bold uppercase'}>Đăng nhập</span>
             </div>
-            <TextField schema={schema} name={'email'} title={'Email'} />
+            <TextField
+              schema={schema}
+              name={'email'}
+              title={'Email'}
+              options={{
+                disabled: login.isPending
+              }}
+            />
             <PasswordField
               schema={schema}
               name={'password'}
               title={'Mật khẩu'}
+              options={{
+                disabled: login.isPending
+              }}
             />
           </Form>
         </CardContent>
