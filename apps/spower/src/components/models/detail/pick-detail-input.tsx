@@ -79,7 +79,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
           return (
             <div className={'flex w-full items-center '}>
               <Show when={row.getCanExpand()}>
-                <Button
+                <button
                   className={'cursor-pointer'}
                   onClick={e => {
                     e.stopPropagation();
@@ -92,7 +92,7 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
                   >
                     <SquareMinusIcon width={18} height={18} />
                   </Show>
-                </Button>
+                </button>
               </Show>
             </div>
           );

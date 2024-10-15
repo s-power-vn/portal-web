@@ -1,7 +1,11 @@
 import { FC } from 'react';
 
 import { withPreventDoubleClick } from '../../hoc';
-import { ButtonProps, ThemeButton } from '../ui/button';
+import { ThemeButton, ThemeButtonProps } from '../ui/button';
+
+export type ButtonProps = ThemeButtonProps & {
+  tooltip?: string;
+};
 
 const CustomSubmitButton: FC<ButtonProps> = props => {
   return (

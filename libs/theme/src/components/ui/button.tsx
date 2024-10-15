@@ -35,13 +35,13 @@ const buttonVariants = cva(
   }
 );
 
-export interface ButtonProps
+export interface ThemeButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
-const ThemeButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
     return (
