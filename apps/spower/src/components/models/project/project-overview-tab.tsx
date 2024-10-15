@@ -59,7 +59,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     variables: projectId
   });
 
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const data = useMemo(
@@ -428,10 +428,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
-
-  useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
 
   useEffect(() => {
     const { rows } = table.getRowModel();

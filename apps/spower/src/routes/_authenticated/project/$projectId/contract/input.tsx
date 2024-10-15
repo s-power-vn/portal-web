@@ -81,7 +81,7 @@ const Component = () => {
 
   const queryClient = useQueryClient();
 
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const deleteDetails = detailApi.delete.useMutation({
@@ -415,10 +415,6 @@ const Component = () => {
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
-
-  useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>

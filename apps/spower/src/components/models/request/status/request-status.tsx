@@ -1,4 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { Loader } from 'lucide-react';
 
 import React, { FC, Suspense, useCallback, useState } from 'react';
 
@@ -87,7 +88,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
 
 export const RequestStatus: FC<RequestStatusProps> = props => {
   return (
-    <Suspense fallback={<span className={'text-xs'}>Loading...</span>}>
+    <Suspense fallback={<Loader className={'h-4 w-4 animate-spin'} />}>
       <Component {...props}></Component>
     </Suspense>
   );
