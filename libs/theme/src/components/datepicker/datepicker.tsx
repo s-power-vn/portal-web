@@ -6,9 +6,9 @@ import { DateTime } from 'luxon';
 import { FC, useState } from 'react';
 
 import { Show, cn } from '@storeo/core';
+import { ThemeButton } from '@storeo/theme/components/ui/button';
 
 import { Timepicker } from '../timepicker';
-import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
@@ -30,7 +30,7 @@ export const DatePicker: FC<DatePickerProps> = props => {
     <div className={cn('flex items-center gap-2', props.className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
+          <ThemeButton
             variant={'outline'}
             className={cn(
               'relative flex-1 justify-start text-left font-normal',
@@ -58,7 +58,7 @@ export const DatePicker: FC<DatePickerProps> = props => {
                 <Cross2Icon className="h-2 w-2" />
               </div>
             </Show>
-          </Button>
+          </ThemeButton>
         </PopoverTrigger>
         <PopoverContent className={'w-auto'} align={'start'}>
           <Calendar

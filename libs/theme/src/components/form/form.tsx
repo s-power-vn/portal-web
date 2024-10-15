@@ -12,7 +12,7 @@ import {
 
 import { Show } from '@storeo/core';
 
-import { Button } from '../ui/button';
+import { Button } from '../button';
 
 export type BusinessFormProps = {
   onSuccess?: () => void;

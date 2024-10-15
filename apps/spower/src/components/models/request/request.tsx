@@ -44,7 +44,6 @@ import {
 } from '@storeo/core';
 import {
   Button,
-  SubmitButton,
   Table,
   TableBody,
   TableCell,
@@ -382,26 +381,22 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     <div className={'bg-appWhite flex flex-col gap-2'}>
       <div className={'flex items-center justify-between'}>
         <div className={'flex gap-2'}>
-          <SubmitButton
-            className={'text-appWhite'}
-            size="icon"
-            onClick={handlePrint}
-          >
+          <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
-          </SubmitButton>
+          </Button>
           <Show
             when={
               request.data.expand.issue.assignee === client.authStore.model?.id
             }
           >
-            <SubmitButton
+            <Button
               className={'text-appWhite'}
               size="icon"
               disabled={!selectedRow}
               onClick={handleEditRequestVolume}
             >
               <EditIcon className={'h-4 w-4'} />
-            </SubmitButton>
+            </Button>
             <Button
               variant={'destructive'}
               size="icon"

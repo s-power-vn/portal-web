@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
+  Columns3Icon,
   DownloadIcon,
   EditIcon,
   SheetIcon,
@@ -448,7 +449,7 @@ const Component = () => {
         </Button>
         <Button className={'flex gap-1'} onClick={handleNewDetailParent}>
           <PlusIcon />
-          Thêm mục
+          Thêm mục cha
         </Button>
         <Button
           disabled={!selectedRow}
@@ -476,6 +477,9 @@ const Component = () => {
           }
         >
           <Cross2Icon className={'h-5 w-5'} />
+        </Button>
+        <Button size="icon" onClick={handleEditDetail}>
+          <Columns3Icon className={'h-5 w-5'} />
         </Button>
       </div>
       <div

@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { FC, useCallback, useRef } from 'react';
 
 import { RequestStatusOptions } from '@storeo/core';
-import { SubmitButton, closeModal, showModal } from '@storeo/theme';
+import { Button, closeModal, showModal } from '@storeo/theme';
 
 import { RequestData } from '../../../../../api';
 import { SendRequestForm } from '../send-request-form';
@@ -42,7 +42,5 @@ export const A5fButton: FC<A5fButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return (
-    <SubmitButton onClick={handleClick}>Chuyển NV.Phòng kế hoạch</SubmitButton>
-  );
+  return <Button onClick={handleClick}>Chuyển NV.Phòng kế hoạch</Button>;
 };

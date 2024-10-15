@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, createContext, useContext } from 'react';
 
 import { cn, usePersistedState } from '@storeo/core';
 
-import { Button } from '../ui/button';
+import { Button } from '../button';
 
 const CollapseIcon = () => {
   return (

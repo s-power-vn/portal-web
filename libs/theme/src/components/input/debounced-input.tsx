@@ -2,7 +2,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 
 import { FC, InputHTMLAttributes, useEffect, useState } from 'react';
 
-import { Button } from '../ui/button';
+import { Button } from '../button';
 import { Input } from '../ui/input';
 
 export type DebouncedInputProps = Omit<

@@ -3,8 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
 import { FC } from 'react';
 
-import { Button } from '@storeo/theme/components/ui/button';
-
+import { Button } from '../button';
 import {
   Select,
   SelectContent,

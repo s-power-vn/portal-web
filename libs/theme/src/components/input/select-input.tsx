@@ -1,5 +1,4 @@
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { TextInput } from '@tremor/react';
 import * as _ from 'lodash';
 
 import {
@@ -14,7 +13,7 @@ import {
 
 import { Show, cn } from '@storeo/core';
 
-import { Button } from '../ui/button';
+import { Button } from '../button';
 import {
   Command,
   CommandEmpty,

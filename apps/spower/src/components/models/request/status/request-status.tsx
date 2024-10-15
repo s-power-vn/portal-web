@@ -3,7 +3,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import React, { FC, Suspense, useCallback, useState } from 'react';
 
 import { Match, Show, Switch, cn } from '@storeo/core';
-import { SubmitButton } from '@storeo/theme';
+import { Button } from '@storeo/theme';
 
 import { requestApi } from '../../../../api';
 import { AStateFlow } from './a-state/a-state-flow';
@@ -49,7 +49,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
                 className={'text-appWhite text-sm font-bold'}
               >{`Trạng thái công việc - ${request.data.status}`}</span>
             </div>
-            <SubmitButton
+            <Button
               variant={'outline'}
               className={'absolute right-2 top-2 h-6 w-6 rounded-full p-0'}
               onClick={() => {
@@ -57,7 +57,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
               }}
             >
               <Cross2Icon />
-            </SubmitButton>
+            </Button>
             <AStateFlow status={request.data.status} />
           </div>
         </div>
@@ -72,13 +72,13 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
         }
       >
         <Match when={request.data.status?.charAt(0) === 'A'}>
-          <SubmitButton
+          <Button
             variant={'outline'}
             onClick={handleClick}
             className={cn(style, 'bg-appError', className)}
           >
             {request.data.status}
-          </SubmitButton>
+          </Button>
         </Match>
       </Switch>
     </>

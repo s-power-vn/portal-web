@@ -10,9 +10,9 @@ import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 
 import { MaterialResponse } from '@storeo/core';
 import {
+  Button,
   CommonTable,
   DebouncedInput,
-  SubmitButton,
   success,
   useConfirm
 } from '@storeo/theme';
@@ -80,7 +80,7 @@ const Component = () => {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <SubmitButton
+            <Button
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
@@ -93,8 +93,8 @@ const Component = () => {
               }
             >
               <EditIcon className={'h-3 w-3'} />
-            </SubmitButton>
-            <SubmitButton
+            </Button>
+            <Button
               variant={'destructive'}
               className={'h-6 px-3'}
               onClick={() => {
@@ -104,7 +104,7 @@ const Component = () => {
               }}
             >
               <XIcon className={'h-3 w-3'} />
-            </SubmitButton>
+            </Button>
           </div>
         );
       },
@@ -118,7 +118,7 @@ const Component = () => {
       <PageHeader title={'Quản lý danh mục vật tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <SubmitButton
+          <Button
             className={'flex gap-1'}
             onClick={() =>
               navigate({
@@ -129,7 +129,7 @@ const Component = () => {
           >
             <PlusIcon className={'h-5 w-5'} />
             Thêm vật tư
-          </SubmitButton>
+          </Button>
           <DebouncedInput
             value={search.filter}
             className={'h-9 w-56'}

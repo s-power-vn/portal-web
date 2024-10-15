@@ -17,8 +17,8 @@ import { useState } from 'react';
 
 import { CustomerResponse } from '@storeo/core';
 import {
+  Button,
   DebouncedInput,
-  SubmitButton,
   Table,
   TableBody,
   TableCell,
@@ -98,7 +98,7 @@ const Component = () => {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <SubmitButton
+            <Button
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
@@ -111,8 +111,8 @@ const Component = () => {
               }
             >
               <EditIcon className={'h-3 w-3'} />
-            </SubmitButton>
-            <SubmitButton
+            </Button>
+            <Button
               variant={'destructive'}
               className={'h-6 px-3'}
               onClick={() => {
@@ -122,7 +122,7 @@ const Component = () => {
               }}
             >
               <XIcon className={'h-3 w-3'} />
-            </SubmitButton>
+            </Button>
           </div>
         );
       },
@@ -142,7 +142,7 @@ const Component = () => {
       <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <SubmitButton
+          <Button
             className={'flex gap-1'}
             onClick={() =>
               navigate({
@@ -153,7 +153,7 @@ const Component = () => {
           >
             <PlusIcon className={'h-5 w-5'} />
             Thêm chủ đầu tư
-          </SubmitButton>
+          </Button>
           <DebouncedInput
             value={search}
             className={'h-9 w-56'}

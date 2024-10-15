@@ -9,11 +9,11 @@ import {
 import { FC, useCallback, useRef } from 'react';
 
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  ThemeButton,
   closeModal,
   showModal
 } from '@storeo/theme';
@@ -76,10 +76,10 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={'flex gap-1'}>
+        <ThemeButton className={'flex gap-1'}>
           <PlusIcon className={'h-5 w-5'} />
           Thêm công việc
-        </Button>
+        </ThemeButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-56"
