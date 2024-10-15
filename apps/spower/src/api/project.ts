@@ -2,6 +2,7 @@ import { router } from 'react-query-kit';
 
 import {
   Collections,
+  ColumnResponse,
   CustomerResponse,
   ProjectResponse,
   UserResponse,
@@ -35,14 +36,20 @@ export const projectApi = router('project', {
         })
   }),
   create: router.mutation({
-    mutationFn: (params: Partial<ProjectResponse>) =>
+    mutationFn: (params: ProjectResponse) =>
       client.collection(Collections.Project).create({
         ...params,
         createdBy: client.authStore.model?.id
       })
   }),
   update: router.mutation({
-    mutationFn: (params: Partial<ProjectResponse> & { id: string }) =>
+    mutationFn: (params: ProjectResponse) =>
       client.collection(Collections.Project).update(params.id, params)
+  }),
+  addColumn: router.mutation({
+    mutationFn: (params: Partial<ColumnResponse>) =>
+      client.collection(Collections.Column).create({
+        ...params
+      })
   })
 });

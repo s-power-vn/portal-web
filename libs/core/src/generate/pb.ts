@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Column = "column",
 	Comment = "comment",
 	Contract = "contract",
 	Customer = "customer",
@@ -52,6 +53,17 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export enum ColumnTypeOptions {
+	"Numeric" = "Numeric",
+	"Text" = "Text",
+}
+export type ColumnRecord = {
+	project: RecordIdString
+	title: string
+	type: ColumnTypeOptions
+	unit?: string
+}
 
 export type CommentRecord = {
 	content?: string
@@ -271,6 +283,7 @@ export type UserRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ColumnResponse<Texpand = unknown> = Required<ColumnRecord> & BaseSystemFields<Texpand>
 export type CommentResponse<Texpand = unknown> = Required<CommentRecord> & BaseSystemFields<Texpand>
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
@@ -296,6 +309,7 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	column: ColumnRecord
 	comment: CommentRecord
 	contract: ContractRecord
 	customer: CustomerRecord
@@ -320,6 +334,7 @@ export type CollectionRecords = {
 }
 
 export type CollectionResponses = {
+	column: ColumnResponse
 	comment: CommentResponse
 	contract: ContractResponse
 	customer: CustomerResponse
@@ -347,6 +362,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'column'): RecordService<ColumnResponse>
 	collection(idOrName: 'comment'): RecordService<CommentResponse>
 	collection(idOrName: 'contract'): RecordService<ContractResponse>
 	collection(idOrName: 'customer'): RecordService<CustomerResponse>

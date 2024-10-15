@@ -9,14 +9,7 @@ export type ButtonProps = ThemeButtonProps & {
 
 const CustomSubmitButton: FC<ButtonProps> = props => {
   return (
-    <ThemeButton
-      {...props}
-      onClick={e => {
-        e.preventDefault();
-        e.stopPropagation();
-        props.onClick?.(e);
-      }}
-    ></ThemeButton>
+    <ThemeButton {...props} onClick={e => props.onClick?.(e)}></ThemeButton>
   );
 };
 

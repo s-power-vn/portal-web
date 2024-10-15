@@ -15,6 +15,8 @@ import {
 import _ from 'lodash';
 import {
   Columns3Icon,
+  Columns4Icon,
+  ColumnsIcon,
   DownloadIcon,
   EditIcon,
   SheetIcon,
@@ -22,14 +24,7 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 
 import {
   DetailInfoResponse,
@@ -42,12 +37,17 @@ import {
 } from '@storeo/core';
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  ThemeButton,
   closeModal,
   showModal,
   success,
@@ -416,6 +416,8 @@ const Component = () => {
     manualPagination: true
   });
 
+  const handleNewColumn = useCallback(() => {}, []);
+
   return (
     <div className={'flex flex-col gap-2 p-2'}>
       <div className={'flex gap-2'}>
@@ -474,9 +476,28 @@ const Component = () => {
         >
           <Cross2Icon className={'h-5 w-5'} />
         </Button>
-        <Button size="icon" onClick={handleEditDetail}>
-          <Columns3Icon className={'h-5 w-5'} />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <ThemeButton size="icon" onClick={handleEditDetail}>
+              <Columns4Icon className={'h-5 w-5'} />
+            </ThemeButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-40"
+            side="bottom"
+            align="end"
+            sideOffset={2}
+          >
+            <DropdownMenuItem onClick={handleNewColumn}>
+              <Columns3Icon className="mr-2 h-4 w-4 text-red-500" />
+              Thêm cột
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <ColumnsIcon className="mr-2 h-4 w-4 text-blue-500" />
+              Quản lý cột
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div
         className={
