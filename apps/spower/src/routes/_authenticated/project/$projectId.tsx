@@ -23,7 +23,7 @@ const Component = () => {
   const matchRoute = useMatchRoute();
   const params = matchRoute({ to: '/project/$projectId/settings' });
   const { projectId } = Route.useParams();
-  const project = projectApi.byId.useQuery({
+  const project = projectApi.byId.useSuspenseQuery({
     variables: projectId
   });
   const navigate = useNavigate({ from: Route.fullPath });

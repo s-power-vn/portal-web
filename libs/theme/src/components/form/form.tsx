@@ -65,7 +65,10 @@ export const Form = <S extends ObjectSchema<AnyObject>>({
           <Button type="reset" onClick={onCancel} variant="secondary">
             Bỏ qua
           </Button>
-          <Button disabled={!methods.formState.isDirty} type="submit">
+          <Button
+            disabled={!methods.formState.isDirty || loading}
+            type="submit"
+          >
             Chấp nhận
           </Button>
         </div>

@@ -12,7 +12,6 @@ export enum Collections {
 	Customer = "customer",
 	Department = "department",
 	Detail = "detail",
-	DetailExtend = "detailExtend",
 	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
@@ -106,11 +105,6 @@ export type DetailRecord<Textend = unknown> = {
 	volume?: number
 }
 
-export type DetailExtendRecord<Textend = unknown> = {
-	extend?: null | Textend
-	project?: RecordIdString
-}
-
 export enum DetailImportStatusOptions {
 	"Working" = "Working",
 	"Done" = "Done",
@@ -124,7 +118,8 @@ export type DetailImportRecord = {
 	status?: DetailImportStatusOptions
 }
 
-export type DetailInfoRecord = {
+export type DetailInfoRecord<Textend = unknown> = {
+	extend?: null | Textend
 	group?: RecordIdString
 	issue?: RecordIdString
 	issueTitle?: string
@@ -289,9 +284,8 @@ export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & Bas
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
 export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
 export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<DetailRecord<Textend>> & BaseSystemFields<Texpand>
-export type DetailExtendResponse<Textend = unknown, Texpand = unknown> = Required<DetailExtendRecord<Textend>> & BaseSystemFields<Texpand>
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
-export type DetailInfoResponse<Texpand = unknown> = Required<DetailInfoRecord> & BaseSystemFields<Texpand>
+export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
 export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
@@ -315,7 +309,6 @@ export type CollectionRecords = {
 	customer: CustomerRecord
 	department: DepartmentRecord
 	detail: DetailRecord
-	detailExtend: DetailExtendRecord
 	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
@@ -340,7 +333,6 @@ export type CollectionResponses = {
 	customer: CustomerResponse
 	department: DepartmentResponse
 	detail: DetailResponse
-	detailExtend: DetailExtendResponse
 	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
@@ -368,7 +360,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'customer'): RecordService<CustomerResponse>
 	collection(idOrName: 'department'): RecordService<DepartmentResponse>
 	collection(idOrName: 'detail'): RecordService<DetailResponse>
-	collection(idOrName: 'detailExtend'): RecordService<DetailExtendResponse>
 	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>

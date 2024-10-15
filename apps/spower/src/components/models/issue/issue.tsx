@@ -33,6 +33,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  ThemeButton,
   closeModal,
   showModal,
   useConfirm
@@ -148,14 +149,14 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
+              <ThemeButton
                 variant={'outline'}
                 className={'h-6 w-6'}
                 size={'icon'}
                 onClick={() => router.history.back()}
               >
                 <MoreHorizontalIcon className={'h-4 w-4'} />
-              </Button>
+              </ThemeButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="end">
               <DropdownMenuItem onClick={handleEditIssue}>

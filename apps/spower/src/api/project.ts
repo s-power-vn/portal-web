@@ -15,6 +15,7 @@ export type ProjectData = ProjectResponse & {
   expand: {
     customer: CustomerResponse;
     createdBy: UserResponse;
+    column_via_project: ColumnResponse[];
   };
 };
 
@@ -22,7 +23,7 @@ export const projectApi = router('project', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ProjectData>(Collections.Project).getOne(id, {
-        expand: 'customer,createdBy'
+        expand: 'customer,createdBy,column_via_project'
       })
   }),
   list: router.query({
@@ -36,14 +37,14 @@ export const projectApi = router('project', {
         })
   }),
   create: router.mutation({
-    mutationFn: (params: ProjectResponse) =>
+    mutationFn: (params: Partial<ProjectResponse>) =>
       client.collection(Collections.Project).create({
         ...params,
         createdBy: client.authStore.model?.id
       })
   }),
   update: router.mutation({
-    mutationFn: (params: ProjectResponse) =>
+    mutationFn: (params: Partial<ColumnResponse> & { id: string }) =>
       client.collection(Collections.Project).update(params.id, params)
   }),
   addColumn: router.mutation({

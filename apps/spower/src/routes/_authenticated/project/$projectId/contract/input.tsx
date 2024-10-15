@@ -55,7 +55,12 @@ import {
   useLoading
 } from '@storeo/theme';
 
-import { detailApi, detailImportApi, detailInfoApi } from '../../../../../api';
+import {
+  detailApi,
+  detailImportApi,
+  detailInfoApi,
+  projectApi
+} from '../../../../../api';
 import {
   TreeData,
   arrayToTree,
@@ -64,6 +69,7 @@ import {
 import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
 import { EditDetailForm } from '../../../../../components/models/detail/edit-detail-form';
 import { NewDetailForm } from '../../../../../components/models/detail/new-detail-form';
+import { NewColumnForm } from '../../../../../components/models/project/new-column-form';
 import { useDetailImportStatus } from '../../../../../hooks';
 
 const Component = () => {
@@ -126,7 +132,7 @@ const Component = () => {
     return downloadTemplate('detail', 'application/vnd.ms-excel');
   }, []);
 
-  const onSuccessHandler = useCallback(async () => {
+  const onDetailSuccessHandler = useCallback(async () => {
     if (selectedRow) {
       await Promise.all([
         queryClient.invalidateQueries({
@@ -144,6 +150,17 @@ const Component = () => {
       closeModal(modalId.current);
     }
   }, [projectId, queryClient, selectedRow]);
+
+  const onProjectSuccessHandler = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: projectApi.byId.getKey(projectId)
+      })
+    ]);
+    if (modalId.current) {
+      closeModal(modalId.current);
+    }
+  }, [projectId, queryClient]);
 
   const onFileChangeCapture = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -170,12 +187,12 @@ const Component = () => {
       children: (
         <NewDetailForm
           projectId={projectId}
-          onSuccess={onSuccessHandler}
+          onSuccess={onDetailSuccessHandler}
           onCancel={onCancelHandler}
         />
       )
     });
-  }, [onCancelHandler, onSuccessHandler, projectId]);
+  }, [onCancelHandler, onDetailSuccessHandler, projectId]);
 
   const handleNewDetailChild = useCallback(() => {
     if (selectedRow) {
@@ -185,13 +202,13 @@ const Component = () => {
           <NewDetailForm
             projectId={projectId}
             parent={selectedRow.original}
-            onSuccess={onSuccessHandler}
+            onSuccess={onDetailSuccessHandler}
             onCancel={onCancelHandler}
           />
         )
       });
     }
-  }, [onCancelHandler, onSuccessHandler, projectId, selectedRow]);
+  }, [onCancelHandler, onDetailSuccessHandler, projectId, selectedRow]);
 
   const handleEditDetail = useCallback(() => {
     if (selectedRow) {
@@ -200,18 +217,36 @@ const Component = () => {
         children: (
           <EditDetailForm
             detailId={selectedRow.original.group}
-            onSuccess={onSuccessHandler}
+            onSuccess={onDetailSuccessHandler}
             onCancel={onCancelHandler}
           />
         )
       });
     }
-  }, [onCancelHandler, onSuccessHandler, selectedRow]);
+  }, [onCancelHandler, onDetailSuccessHandler, selectedRow]);
+
+  const handleNewColumn = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Thêm cột',
+      className: 'w-[25rem]',
+      children: (
+        <NewColumnForm
+          projectId={projectId}
+          onSuccess={onProjectSuccessHandler}
+          onCancel={onCancelHandler}
+        />
+      )
+    });
+  }, [onCancelHandler, onDetailSuccessHandler, projectId]);
+
+  const project = projectApi.byId.useSuspenseQuery({
+    variables: projectId
+  });
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const value = [
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
@@ -368,9 +403,47 @@ const Component = () => {
           hasRowSpan: 'levelRowSpan'
         }
       })
-    ],
-    [columnHelper]
-  );
+    ];
+
+    if (project.data.expand.column_via_project) {
+      for (const col of project.data.expand.column_via_project) {
+        value.push(
+          columnHelper.display({
+            id: col.id,
+            cell: ({ row }) => {
+              const value = row.original.extend
+                ? (row.original.extend as Record<string, any>)[col.id]
+                : undefined;
+              return (
+                <Show when={value}>
+                  <Show
+                    when={col.type === 'Numeric'}
+                    fallback={
+                      <div className={'flex justify-center gap-1'}>{value}</div>
+                    }
+                  >
+                    <div className={'flex justify-end gap-1'}>
+                      <span className={'font-semibold'}>
+                        {formatNumber(value)}
+                      </span>
+                    </div>
+                  </Show>
+                </Show>
+              );
+            },
+            header: () => col.title,
+            footer: info => info.column.id,
+            size: 100,
+            meta: {
+              hasRowSpan: 'levelRowSpan'
+            }
+          })
+        );
+      }
+    }
+
+    return value;
+  }, [columnHelper, project.data.expand.column_via_project]);
 
   const listDetailInfos = detailInfoApi.listFull.useSuspenseQuery({
     variables: projectId
@@ -415,8 +488,6 @@ const Component = () => {
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
-
-  const handleNewColumn = useCallback(() => {}, []);
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>
