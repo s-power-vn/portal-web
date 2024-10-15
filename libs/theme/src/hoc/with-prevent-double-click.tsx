@@ -11,8 +11,6 @@ export const withPreventDoubleClick = (
 ) => {
   return (props: ButtonProps) => {
     const debouncedOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      console.log(props.onClick);
-
       props.onClick && props.onClick(event);
     };
 
