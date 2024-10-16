@@ -345,13 +345,20 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         </table>
         <div className={'mt-8 flex items-start justify-between'}>
           <div className={'flex flex-col items-center px-8'}>
-            <div className={'font-bold'}>Giám đốc</div>
+            <div className={'font-bold'}>Phó giám đốc</div>
             <div className={'mt-16 font-bold'}></div>
           </div>
           <div className={'flex  gap-8'}>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Phòng kỹ thuật</div>
-              <Show when={props.confirm1}>
+              <Show
+                when={props.confirm1}
+                fallback={
+                  <div className={'mt-4'}>
+                    <div className={'h-10 w-10'}></div>
+                  </div>
+                }
+              >
                 <div className={'mt-4'}>
                   <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
                 </div>
@@ -360,7 +367,14 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             </div>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Phòng kế hoạch</div>
-              <Show when={props.confirm2}>
+              <Show
+                when={props.confirm2}
+                fallback={
+                  <div className={'mt-4'}>
+                    <div className={'h-10 w-10'}></div>
+                  </div>
+                }
+              >
                 <div className={'mt-4'}>
                   <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
                 </div>
@@ -369,7 +383,10 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             </div>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Người đề nghị</div>
-              <div className={'mt-[5rem] font-bold'}>{props.requester}</div>
+              <div className={'mt-4'}>
+                <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
+              </div>
+              <div className={'mt-[1.5rem] font-bold'}>{props.requester}</div>
             </div>
           </div>
         </div>
