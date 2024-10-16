@@ -353,7 +353,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
               <div className={'font-bold'}>Phòng kỹ thuật</div>
               <Show when={props.confirm1}>
                 <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'text-appSuccess h-10 w-10'} />
+                  <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
                 </div>
               </Show>
               <div className={'mt-[1.5rem] font-bold'}>{props.leader1}</div>
@@ -362,7 +362,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
               <div className={'font-bold'}>Phòng kế hoạch</div>
               <Show when={props.confirm2}>
                 <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'text-appSuccess h-10 w-10'} />
+                  <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
                 </div>
               </Show>
               <div className={'mt-[1.5rem] font-bold'}>{props.leader2}</div>
