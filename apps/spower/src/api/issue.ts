@@ -33,7 +33,7 @@ export const issueApi = router('issue', {
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          sort: '-updated'
+          sort: '-created'
         })
   }),
   byId: router.query({
