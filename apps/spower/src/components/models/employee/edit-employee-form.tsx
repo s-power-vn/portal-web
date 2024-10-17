@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { number, object, string } from 'yup';
 
@@ -24,18 +23,12 @@ export type EditEmployeeFormProps = BusinessFormProps & {
 };
 
 export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
-  const queryClient = useQueryClient();
   const employee = employeeApi.byId.useSuspenseQuery({
     variables: props.employeeId
   });
 
   const updateEmployee = employeeApi.update.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: employeeApi.listFull.getKey()
-        })
-      ]);
       success('Chỉnh sửa nhân viên thành công');
       props.onSuccess?.();
     }

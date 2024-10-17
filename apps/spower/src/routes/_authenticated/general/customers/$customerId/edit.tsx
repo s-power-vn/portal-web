@@ -24,6 +24,9 @@ const Component = () => {
       }),
       queryClient.invalidateQueries({
         queryKey: customerApi.list.getKey(search)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: customerApi.listFull.getKey()
       })
     ]);
   }, [customerId, history, queryClient, search]);

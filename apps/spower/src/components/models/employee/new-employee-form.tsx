@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { number, object, ref, string } from 'yup';
 
@@ -34,14 +33,8 @@ const schema = object().shape({
 export type NewEmployeeFormProps = BusinessFormProps;
 
 export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
-  const queryClient = useQueryClient();
   const createEmployee = employeeApi.create.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: employeeApi.listFull.getKey()
-        })
-      ]);
       success('Thêm nhân viên thành công');
       props.onSuccess?.();
     }

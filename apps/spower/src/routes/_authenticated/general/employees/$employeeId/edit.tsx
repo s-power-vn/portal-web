@@ -24,6 +24,9 @@ const Component = () => {
       }),
       queryClient.invalidateQueries({
         queryKey: employeeApi.list.getKey(search)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: employeeApi.listFull.getKey()
       })
     ]);
   }, [employeeId, history, queryClient, search]);
