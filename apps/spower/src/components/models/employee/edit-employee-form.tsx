@@ -14,6 +14,7 @@ const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
+  phone: string(),
   title: string(),
   role: number().required('Hãy chọn chức danh')
 });
@@ -107,6 +108,12 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
         options={{
           disabled: true
         }}
+      />
+      <TextField
+        schema={schema}
+        name={'phone'}
+        title={'Số điện thoại'}
+        options={{}}
       />
       <DepartmentDropdownField
         schema={schema}

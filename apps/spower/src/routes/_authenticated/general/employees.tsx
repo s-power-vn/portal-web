@@ -11,15 +11,11 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, UserIcon, XIcon } from 'lucide-react';
+import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { Collections, getImageUrl } from '@storeo/core';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   DebouncedInput,
   Table,
@@ -71,36 +67,23 @@ const Component = () => {
       header: () => <div className={'flex items-center justify-center'}>#</div>,
       size: 30
     }),
-    columnHelper.accessor('avatar', {
-      cell: ({ row }) => (
-        <div className={'flex justify-center'}>
-          <Avatar className={'h-6 w-6 '}>
-            <AvatarImage
-              src={getImageUrl(
-                Collections.User,
-                row.original.id,
-                row.original.avatar
-              )}
-            />
-            <AvatarFallback className={'text-sm'}>
-              <UserIcon />
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      ),
-      header: () => <div className={'flex justify-center'}>Ảnh</div>,
-      footer: info => info.column.id,
-      size: 40
-    }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
       header: () => 'Họ tên',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 300
+    }),
+    columnHelper.accessor('phone', {
+      cell: info => info.getValue(),
+      header: () => 'Số điện thoại',
+      footer: info => info.column.id,
+      size: 150
     }),
     columnHelper.accessor('email', {
       cell: info => info.getValue(),
       header: () => 'Email',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('department', {
       cell: ({ row }) => {
@@ -151,8 +134,7 @@ const Component = () => {
           </div>
         );
       },
-      header: () => 'Thao tác',
-      size: 50
+      header: () => 'Thao tác'
     })
   ];
 
@@ -192,7 +174,11 @@ const Component = () => {
             'border-appBlue h-[calc(100vh-10rem)] overflow-auto rounded-md border'
           }
         >
-          <Table>
+          <Table
+            style={{
+              tableLayout: 'fixed'
+            }}
+          >
             <TableHeader
               className={'bg-appBlueLight'}
               style={{
@@ -208,9 +194,8 @@ const Component = () => {
                       key={header.id}
                       className={'text-appWhite whitespace-nowrap'}
                       style={{
-                        width: table.getRowModel().rows.length
-                          ? header.getSize()
-                          : undefined
+                        width: header.getSize(),
+                        maxWidth: header.getSize()
                       }}
                     >
                       {header.isPlaceholder ? null : (
@@ -244,13 +229,10 @@ const Component = () => {
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className={
-                          'max-w-60 truncate whitespace-nowrap text-left'
-                        }
+                        className={'truncate text-left'}
                         style={{
-                          width: table.getRowModel().rows.length
-                            ? cell.column.getSize()
-                            : undefined
+                          width: cell.column.getSize(),
+                          maxWidth: cell.column.getSize()
                         }}
                       >
                         {flexRender(

@@ -55,14 +55,15 @@ const Component = () => {
       header: () => <div className={'flex items-center justify-center'}>#</div>,
       size: 30
     }),
-    columnHelper.accessor('code', {
-      cell: info => info.getValue(),
-      header: () => 'Mã vật tư',
-      footer: info => info.column.id
-    }),
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
       header: () => 'Tên vật tư',
+      footer: info => info.column.id,
+      size: 300
+    }),
+    columnHelper.accessor('code', {
+      cell: info => info.getValue(),
+      header: () => 'Mã vật tư',
       footer: info => info.column.id
     }),
     columnHelper.accessor('unit', {
@@ -154,6 +155,7 @@ const Component = () => {
           pageCount={listMaterials.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          fixedWidth={true}
           onRowClick={row =>
             navigate({
               to: './$materialId/edit',

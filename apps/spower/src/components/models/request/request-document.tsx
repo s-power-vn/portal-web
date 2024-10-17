@@ -19,8 +19,10 @@ export type RequestDocumentProps = {
   content?: string;
   confirm1?: boolean;
   confirm2?: boolean;
+  confirm3?: boolean;
   leader1?: string;
   leader2?: string;
+  leader3?: string;
   data: RequestDetailData[];
 };
 
@@ -346,7 +348,19 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         <div className={'mt-8 flex items-start justify-between'}>
           <div className={'flex flex-col items-center px-8'}>
             <div className={'font-bold'}>Phó giám đốc</div>
-            <div className={'mt-16 font-bold'}></div>
+            <Show
+              when={props.confirm3}
+              fallback={
+                <div className={'mt-4'}>
+                  <div className={'h-10 w-10'}></div>
+                </div>
+              }
+            >
+              <div className={'mt-4'}>
+                <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
+              </div>
+            </Show>
+            <div className={'mt-[1.5rem] font-bold'}>{props.leader3}</div>
           </div>
           <div className={'flex  gap-8'}>
             <div className={'flex flex-col items-center'}>

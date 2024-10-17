@@ -27,6 +27,7 @@ const schema = object().shape({
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
     .required('Hãy xác nhận mật khẩu'),
   title: string(),
+  phone: string(),
   role: number().required('Hãy chọn chức danh')
 });
 
@@ -97,13 +98,15 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
       defaultValues={{
         name: '',
         email: '',
-        department: ''
+        department: '',
+        phone: ''
       }}
       loading={createEmployee.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
       <TextField schema={schema} name={'email'} title={'Email'} />
+      <TextField schema={schema} name={'phone'} title={'Số điện thoại'} />
       <DepartmentDropdownField
         schema={schema}
         name={'department'}

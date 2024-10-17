@@ -73,7 +73,8 @@ export const employeeApi = router('employee', {
         name: params.name,
         department: params.department,
         role: params.role,
-        title: params.title
+        title: params.title,
+        phone: params.phone
       })
   }),
   delete: router.mutation({

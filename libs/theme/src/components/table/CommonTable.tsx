@@ -50,13 +50,9 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
         )}
       >
         <Table
-          style={
-            table.getRowModel().rows.length
-              ? {
-                  width: props.fixedWidth ? table.getTotalSize() : undefined
-                }
-              : undefined
-          }
+          style={{
+            tableLayout: props.fixedWidth ? 'fixed' : 'auto'
+          }}
         >
           <TableHeader className={'bg-appBlueLight'}>
             {table.getHeaderGroups().map(headerGroup => (
@@ -65,15 +61,10 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
                   <TableHead
                     key={header.id}
                     className={'text-appWhite whitespace-nowrap'}
-                    style={
-                      table.getRowModel().rows.length
-                        ? {
-                            width: props.fixedWidth
-                              ? header.getSize()
-                              : undefined
-                          }
-                        : undefined
-                    }
+                    style={{
+                      width: header.getSize(),
+                      maxWidth: header.getSize()
+                    }}
                   >
                     {header.isPlaceholder ? null : (
                       <>
@@ -99,18 +90,11 @@ export const CommonTable = <T,>(props: CommonTableProps<T>) => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
-                      className={
-                        'max-w-60 truncate whitespace-nowrap text-left'
-                      }
-                      style={
-                        table.getRowModel().rows.length
-                          ? {
-                              width: props.fixedWidth
-                                ? cell.column.getSize()
-                                : undefined
-                            }
-                          : undefined
-                      }
+                      className={'truncate text-left'}
+                      style={{
+                        width: cell.column.getSize(),
+                        maxWidth: cell.column.getSize()
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

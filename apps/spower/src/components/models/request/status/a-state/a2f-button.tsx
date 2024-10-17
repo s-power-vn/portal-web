@@ -25,7 +25,7 @@ export const A2fButton: FC<A2fButtonProps> = ({ request }) => {
           status={RequestStatusOptions.A2F}
           request={request}
           title={'T.Phòng kỹ thuật'}
-          condition={'(role = 3 && department.code = "KTh") || (role = 2)'}
+          condition={'role = 3 && department.code = "KTh"'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);

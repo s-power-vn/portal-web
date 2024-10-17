@@ -58,17 +58,20 @@ const Component = () => {
     columnHelper.accessor('name', {
       cell: info => info.getValue(),
       header: () => 'Tên nhà cung cấp',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 300
     }),
     columnHelper.accessor('phone', {
       cell: info => info.getValue(),
       header: () => 'Số điện thoại',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 150
     }),
     columnHelper.accessor('email', {
       cell: info => info.getValue(),
       header: () => 'Email',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('address', {
       cell: info => info.getValue(),
@@ -159,6 +162,7 @@ const Component = () => {
           pageCount={listSuppliers.data?.totalPages}
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
+          fixedWidth={true}
           onRowClick={row =>
             navigate({
               to: './$supplierId/edit',

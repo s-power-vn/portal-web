@@ -61,7 +61,6 @@ export type ColumnRecord = {
 	project: RecordIdString
 	title: string
 	type: ColumnTypeOptions
-	unit?: string
 }
 
 export type CommentRecord = {
@@ -195,6 +194,8 @@ export enum RequestStatusOptions {
 	"A5R" = "A5R",
 	"A6F" = "A6F",
 	"A6R" = "A6R",
+	"A7" = "A7",
+	"A7R" = "A7R",
 }
 export type RequestRecord = {
 	code?: string
@@ -202,6 +203,8 @@ export type RequestRecord = {
 	confirm1Date?: IsoDateString
 	confirm2?: string
 	confirm2Date?: IsoDateString
+	confirm3?: string
+	confirm3Date?: IsoDateString
 	issue: RecordIdString
 	project: RecordIdString
 	status?: RequestStatusOptions
@@ -273,6 +276,7 @@ export type UserRecord = {
 	department: RecordIdString
 	displayEmail?: string
 	name: string
+	phone?: string
 	role?: number
 	title?: string
 }

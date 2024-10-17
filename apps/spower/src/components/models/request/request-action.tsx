@@ -1,4 +1,6 @@
-import { FC } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { FC, useCallback } from 'react';
 
 import {
   Match,
@@ -8,7 +10,7 @@ import {
   client
 } from '@storeo/core';
 
-import { requestApi } from '../../../api';
+import { commentApi, requestApi } from '../../../api';
 import { A1fButton } from './status/a-state/a1f-button';
 import { A1rButton } from './status/a-state/a1r-button';
 import { A2fButton } from './status/a-state/a2f-button';
@@ -20,6 +22,8 @@ import { A5fButton } from './status/a-state/a5f-button';
 import { A5rButton } from './status/a-state/a5r-button';
 import { A6fButton } from './status/a-state/a6f-button';
 import { A6rButton } from './status/a-state/a6r-button';
+import { A7Button } from './status/a-state/a7-button';
+import { A7RButton } from './status/a-state/a7r-button';
 
 export type RequestActionProps = {
   issueId: string;
@@ -29,6 +33,19 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
   const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
+
+  const queryClient = useQueryClient();
+
+  const handleSuccess = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: requestApi.byIssueId.getKey(issueId)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: commentApi.list.getKey(issueId)
+      })
+    ]);
+  }, [issueId, queryClient]);
 
   return (
     <Show
@@ -71,12 +88,27 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             <A5fButton request={request.data}></A5fButton>
             <A6fButton request={request.data}></A6fButton>
           </Match>
-          <Match when={request.data.status === RequestStatusOptions.A6F}>
+          <Match
+            when={
+              request.data.status === RequestStatusOptions.A6F ||
+              request.data.status === RequestStatusOptions.A7R
+            }
+          >
             <A6rButton request={request.data}></A6rButton>
+            <A7Button
+              request={request.data}
+              onSuccess={handleSuccess}
+            ></A7Button>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A6R}>
             <A5fButton request={request.data}></A5fButton>
             <A6fButton request={request.data}></A6fButton>
+          </Match>
+          <Match when={request.data.status === RequestStatusOptions.A7}>
+            <A7RButton
+              request={request.data}
+              onSuccess={handleSuccess}
+            ></A7RButton>
           </Match>
         </Switch>
       </div>

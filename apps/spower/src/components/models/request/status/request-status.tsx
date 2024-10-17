@@ -3,7 +3,7 @@ import { Loader } from 'lucide-react';
 
 import React, { FC, Suspense, useCallback, useState } from 'react';
 
-import { Match, Show, Switch, cn } from '@storeo/core';
+import { Match, RequestStatusOptions, Show, Switch, cn } from '@storeo/core';
 import { Button } from '@storeo/theme';
 
 import { requestApi } from '../../../../api';
@@ -78,7 +78,9 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
             onClick={handleClick}
             className={cn(style, 'bg-appError', className)}
           >
-            {request.data.status}
+            {request.data.status === RequestStatusOptions.A7
+              ? 'Kết thúc'
+              : request.data.status}
           </Button>
         </Match>
       </Switch>

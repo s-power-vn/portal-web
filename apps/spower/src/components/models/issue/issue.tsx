@@ -282,21 +282,6 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                     </div>
                     <div className={'text-sm'}>{it.content}</div>
                   </div>
-                  {client.authStore.model?.id === it.expand.createdBy.id ? (
-                    <Button
-                      className={
-                        'text-appWhite bg-appError hover:bg-appErrorLight hover:text-appWhite absolute right-2 top-2 h-4 w-4 rounded-full p-1 shadow-lg'
-                      }
-                      variant={'ghost'}
-                      onClick={() =>
-                        confirm('Bạn chắc chắn muốn xóa ghi chú này?', () =>
-                          deleteComment.mutate(it.id)
-                        )
-                      }
-                    >
-                      <Cross2Icon width={20} height={20}></Cross2Icon>
-                    </Button>
-                  ) : null}
                 </div>
               ))
             : null}

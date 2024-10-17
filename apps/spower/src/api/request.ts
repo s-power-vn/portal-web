@@ -323,6 +323,12 @@ export const requestApi = router('request', {
           confirm2Date: new Date(),
           status: params.status
         });
+      } else if (params.status === RequestStatusOptions.A7) {
+        return client.collection(Collections.Request).update(params.id, {
+          confirm3: client.authStore.model?.name,
+          confirm3Date: new Date(),
+          status: params.status
+        });
       } else {
         return client.collection(Collections.Request).update(params.id, {
           status: params.status
