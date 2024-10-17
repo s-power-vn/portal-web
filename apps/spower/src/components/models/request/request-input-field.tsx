@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
   TextField,
+  TextareaField,
   closeModal,
   showModal
 } from '@storeo/theme';
@@ -192,6 +193,13 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               >
                 Khối lượng yêu cầu
               </TableHead>
+              <TableHead
+                className={
+                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap p-2 text-center'
+                }
+              >
+                Ghi chú
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -215,12 +223,20 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.title}
                       </TableCell>
-                      <TableCell className={'p-1'}>
+                      <TableCell className={'border-r p-1'}>
                         <Show when={it.children?.length === 0}>
                           <NumericField
                             schema={schema}
                             name={`details[${index}].requestVolume`}
                           ></NumericField>
+                        </Show>
+                      </TableCell>
+                      <TableCell className={'w-40 p-1'}>
+                        <Show when={it.children?.length === 0}>
+                          <TextareaField
+                            schema={schema}
+                            name={`details[${index}].note`}
+                          ></TextareaField>
                         </Show>
                       </TableCell>
                     </TableRow>

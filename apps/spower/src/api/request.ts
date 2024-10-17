@@ -102,6 +102,7 @@ export const requestApi = router('request', {
           index?: string;
           requestVolume?: number;
           title?: string;
+          note?: string;
           unit?: string;
         }[];
       }
@@ -132,7 +133,8 @@ export const requestApi = router('request', {
                 volume: it.requestVolume,
                 customLevel: it.level,
                 customTitle: it.title,
-                customUnit: it.unit
+                customUnit: it.unit,
+                note: it.note
               },
               {
                 requestKey: null
@@ -144,7 +146,8 @@ export const requestApi = router('request', {
                 request: request.id,
                 detail: it.id,
                 index: it.index,
-                volume: it.requestVolume
+                volume: it.requestVolume,
+                note: it.note
               },
               {
                 requestKey: null

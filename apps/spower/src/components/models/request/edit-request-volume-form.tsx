@@ -44,6 +44,8 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
     }
   });
 
+  console.log(requestDetail.data);
+
   return (
     <Form
       schema={schema}
@@ -68,7 +70,8 @@ export const EditRequestVolumeForm: FC<EditRequestVolumeFormProps> = props => {
           <NumericField schema={schema} name={'volume'} title={'Khối lượng'} />
         </div>
         <div className={'mt-4 text-sm'}>
-          {requestDetail.data.expand.detail.unit}
+          {requestDetail.data.expand.detail?.unit ??
+            requestDetail.data.customUnit}
         </div>
       </div>
       <TextField schema={schema} name={'index'} title={'STT'} />
