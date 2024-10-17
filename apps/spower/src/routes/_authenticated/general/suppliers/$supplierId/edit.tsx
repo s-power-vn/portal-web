@@ -20,10 +20,10 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: supplierApi.list.getKey(search)
+        queryKey: supplierApi.byId.getKey(supplierId)
       }),
       queryClient.invalidateQueries({
-        queryKey: supplierApi.byId.getKey(supplierId)
+        queryKey: supplierApi.list.getKey(search)
       })
     ]);
   }, [history, queryClient, search, supplierId]);

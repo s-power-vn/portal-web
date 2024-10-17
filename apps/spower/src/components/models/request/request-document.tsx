@@ -328,13 +328,13 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
                 <td className={'w-10 border-r p-2'}>
                   {it.expand.detail.level ?? it.customLevel}
                 </td>
-                <td className={'border-r p-2'}>
+                <td className={'border-r p-2 text-left'}>
                   {it.expand.detail.title ?? it.customTitle}
                 </td>
-                <td className={'w-20 border-r p-2'}>
+                <td className={'w-20 border-r p-2 text-center'}>
                   {it.expand.detail.unit ?? it.customUnit}
                 </td>
-                <td className={'w-20 border-r p-2 text-right'}>
+                <td className={'w-20 border-r p-2 text-center'}>
                   {it.volume > 0 ? it.volume : ''}
                 </td>
                 <td className={'w-20 border-r p-2 text-right'}>
