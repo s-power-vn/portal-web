@@ -138,11 +138,13 @@ const Component = () => {
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={() =>
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
                 confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
                   deleteEmployee.mutate(row.original.id);
-                })
-              }
+                });
+              }}
             >
               <XIcon className={'h-3 w-3'} />
             </Button>
