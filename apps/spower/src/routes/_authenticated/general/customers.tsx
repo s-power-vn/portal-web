@@ -115,7 +115,9 @@ const Component = () => {
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={() => {
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
                 confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
                   deleteCustomer.mutate(row.original.id);
                 });
