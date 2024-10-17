@@ -243,24 +243,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
       </CSS>
       <div className="w-full font-[inter] text-sm">
         <div className="flex w-full items-start justify-between">
-          <svg
-            version="1.1"
-            id="Layer_1"
-            xmlns="http://www.w3.org/2000/svg"
-            x="0px"
-            y="0px"
-            viewBox="0 0 24 24"
-            className="w-16 fill-slate-800"
-          >
-            <g>
-              <path
-                d="M22.45,12.12c0-2.91-0.99-5.33-3.03-7.34C17.42,2.76,14.96,1.74,12,1.74c-2.93,0-5.4,1.02-7.43,3.05
-            C2.56,6.8,1.55,9.26,1.55,12.15c0,0.84,0.11,1.63,0.27,2.37l9.71-7.65h5.01v14.58c1.06-0.5,2.03-1.13,2.91-1.99
-            C21.46,17.45,22.45,15.01,22.45,12.12z"
-              />
-              <path d="M4.91,19.78c1.4,1.26,3.03,2.12,4.9,2.48v-6.32L4.91,19.78z" />
-            </g>
-          </svg>
+          <img src={'https://portal.s-power.vn/logo.png'} width={120} />
           <div className={'flex flex-col items-center gap-2'}>
             <div className={'whitespace-nowrap'}>
               Công ty cổ phần{' '}
