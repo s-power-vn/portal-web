@@ -5,12 +5,12 @@ import { Button, success } from '@storeo/theme';
 
 import { RequestData, requestApi } from '../../../../../api';
 
-export type A7RButtonProps = {
+export type A7rButtonProps = {
   request: RequestData;
   onSuccess?: () => void;
 };
 
-export const A7RButton: FC<A7RButtonProps> = ({ request, onSuccess }) => {
+export const A7rButton: FC<A7rButtonProps> = ({ request, onSuccess }) => {
   const updateRequest = requestApi.updateStatus.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');

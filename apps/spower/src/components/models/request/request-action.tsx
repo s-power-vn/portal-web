@@ -24,7 +24,7 @@ import { A5rButton } from './status/a-state/a5r-button';
 import { A6fButton } from './status/a-state/a6f-button';
 import { A6rButton } from './status/a-state/a6r-button';
 import { A7Button } from './status/a-state/a7-button';
-import { A7RButton } from './status/a-state/a7r-button';
+import { A7rButton } from './status/a-state/a7r-button';
 
 export type RequestActionProps = {
   issueId: string;
@@ -100,12 +100,7 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             <A5fButton request={request.data}></A5fButton>
             <A6fButton request={request.data}></A6fButton>
           </Match>
-          <Match
-            when={
-              request.data.status === RequestStatusOptions.A6F ||
-              request.data.status === RequestStatusOptions.A7R
-            }
-          >
+          <Match when={request.data.status === RequestStatusOptions.A6F}>
             <A6rButton request={request.data}></A6rButton>
             <A7Button
               request={request.data}
@@ -113,14 +108,22 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             ></A7Button>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A6R}>
+            <A4rButton request={request.data}></A4rButton>
             <A5fButton request={request.data}></A5fButton>
             <A6fButton request={request.data}></A6fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A7}>
-            <A7RButton
+            <A7rButton
               request={request.data}
               onSuccess={handleSuccess}
-            ></A7RButton>
+            ></A7rButton>
+          </Match>
+          <Match when={request.data.status === RequestStatusOptions.A7R}>
+            <A6rButton request={request.data}></A6rButton>
+            <A7Button
+              request={request.data}
+              onSuccess={handleSuccess}
+            ></A7Button>
           </Match>
         </Switch>
       </div>

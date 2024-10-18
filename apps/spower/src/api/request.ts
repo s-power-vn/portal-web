@@ -202,11 +202,12 @@ export const requestApi = router('request', {
             .getOne(request.issue)
         ).lastAssignee ?? [];
 
-      console.log('lastAssignee', lastAssignee);
-
       if (
-        !lastAssignee.length ||
-        lastAssignee[lastAssignee.length - 1] !== client.authStore.model?.id
+        (!lastAssignee.length ||
+          lastAssignee[lastAssignee.length - 1] !==
+            client.authStore.model?.id) &&
+        params.status !== RequestStatusOptions.A7 &&
+        params.status !== RequestStatusOptions.A7R
       ) {
         await client.collection(Collections.Issue).update(request.issue, {
           lastAssignee: lastAssignee.concat(client.authStore.model?.id)
@@ -289,6 +290,8 @@ export const requestApi = router('request', {
             .collection<IssueRecord<string[]>>(Collections.Issue)
             .getOne(params.issue)
         ).lastAssignee ?? [];
+
+      console.log(lastAssignee);
 
       if (lastAssignee.length) {
         await client.collection(Collections.Issue).update(params.issue, {
