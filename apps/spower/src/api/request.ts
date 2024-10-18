@@ -324,7 +324,7 @@ export const requestApi = router('request', {
         });
       }
 
-      if (params.status === RequestStatusOptions.A4) {
+      if (params.status === RequestStatusOptions.A4F) {
         return client.collection(Collections.Request).update(params.id, {
           confirm1: client.authStore.model?.name,
           confirm1Date: new Date(),

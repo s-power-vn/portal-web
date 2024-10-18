@@ -17,7 +17,8 @@ import { A2fButton } from './status/a-state/a2f-button';
 import { A2rButton } from './status/a-state/a2r-button';
 import { A3fButton } from './status/a-state/a3f-button';
 import { A3rButton } from './status/a-state/a3r-button';
-import { A4Button } from './status/a-state/a4-button';
+import { A4fButton } from './status/a-state/a4f-button';
+import { A4rButton } from './status/a-state/a4r-button';
 import { A5fButton } from './status/a-state/a5f-button';
 import { A5rButton } from './status/a-state/a5r-button';
 import { A6fButton } from './status/a-state/a6f-button';
@@ -78,11 +79,11 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A3R}>
             <A3fButton request={request.data}></A3fButton>
-            <A4Button request={request.data}></A4Button>
+            <A4fButton request={request.data}></A4fButton>
           </Match>
-          <Match when={request.data.status === RequestStatusOptions.A4}>
+          <Match when={request.data.status === RequestStatusOptions.A4F}>
+            <A4rButton request={request.data}></A4rButton>
             <A5fButton request={request.data}></A5fButton>
-            <A6fButton request={request.data}></A6fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A5F}>
             <A5rButton request={request.data}></A5rButton>

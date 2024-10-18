@@ -6,7 +6,8 @@ import { Show, cn } from '@storeo/core';
 import { CustomNodeProps } from './node-a1';
 
 const NodeA3: FC<CustomNodeProps> = ({ data, isConnectable }) => {
-  const condition = data.status === 'A2F' || data.status === 'A3R';
+  const condition =
+    data.status === 'A2F' || data.status === 'A3R' || data.status === 'A4R';
 
   return (
     <>

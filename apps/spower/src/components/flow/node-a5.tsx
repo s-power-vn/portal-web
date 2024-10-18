@@ -7,7 +7,7 @@ import { CustomNodeProps } from './node-a1';
 
 const NodeA5: FC<CustomNodeProps> = ({ data, isConnectable }) => {
   const condition =
-    data.status === 'A4' || data.status === 'A5R' || data.status === 'A6R';
+    data.status === 'A4F' || data.status === 'A5R' || data.status === 'A6R';
 
   return (
     <>

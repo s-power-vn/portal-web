@@ -6,26 +6,25 @@ import { RequestStatusOptions } from '@storeo/core';
 import { Button, closeModal, showModal } from '@storeo/theme';
 
 import { RequestData } from '../../../../../api';
-import { SendRequestForm } from '../send-request-form';
+import { ReturnRequestForm } from '../return-request-form';
 
-export type A4ButtonProps = {
+export type A4rButtonProps = {
   request: RequestData;
 };
 
-export const A4Button: FC<A4ButtonProps> = ({ request }) => {
+export const A4rButton: FC<A4rButtonProps> = ({ request }) => {
   const router = useRouter();
   const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chuyển T.Phòng kế hoạch',
+      title: 'Chuyển trả lại',
+      description: 'Công việc chưa hoàn thành, có vấn đề cần xử lý thêm',
       className: 'flex min-w-[400px] flex-col',
       children: (
-        <SendRequestForm
-          status={RequestStatusOptions.A4}
+        <ReturnRequestForm
+          status={RequestStatusOptions.A4R}
           request={request}
-          title={'T.Phòng kế hoạch'}
-          condition={'role = 3 && department.code = "KH"'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);
@@ -42,5 +41,9 @@ export const A4Button: FC<A4ButtonProps> = ({ request }) => {
     });
   }, [request, router.history]);
 
-  return <Button onClick={handleClick}>Chuyển TP Kế hoạch</Button>;
+  return (
+    <Button variant={'destructive'} onClick={handleClick}>
+      Chuyển trả lại
+    </Button>
+  );
 };
