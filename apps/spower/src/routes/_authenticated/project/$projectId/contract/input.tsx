@@ -69,6 +69,7 @@ import {
 import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
 import { EditDetailForm } from '../../../../../components/models/detail/edit-detail-form';
 import { NewDetailForm } from '../../../../../components/models/detail/new-detail-form';
+import { ColumnManager } from '../../../../../components/models/project/column-manager';
 import { NewColumnForm } from '../../../../../components/models/project/new-column-form';
 import { useDetailImportStatus } from '../../../../../hooks';
 
@@ -237,7 +238,16 @@ const Component = () => {
         />
       )
     });
-  }, [onCancelHandler, onDetailSuccessHandler, projectId]);
+  }, [onCancelHandler, onProjectSuccessHandler, projectId]);
+
+  const handleManageColumn = useCallback(() => {
+    modalId.current = showModal({
+      title: 'Quản lý cột',
+      children: (
+        <ColumnManager projectId={projectId} onClose={onCancelHandler} />
+      )
+    });
+  }, [onCancelHandler, projectId]);
 
   const project = projectApi.byId.useSuspenseQuery({
     variables: projectId
@@ -563,7 +573,7 @@ const Component = () => {
               <Columns3Icon className="mr-2 h-4 w-4 text-red-500" />
               Thêm cột
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleManageColumn}>
               <ColumnsIcon className="mr-2 h-4 w-4 text-blue-500" />
               Quản lý cột
             </DropdownMenuItem>

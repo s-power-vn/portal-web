@@ -18,8 +18,7 @@ import { projectApi } from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập tên cột'),
-  type: string().required('Hãy chọn loại dữ liệu'),
-  unit: string().required('Hãy nhập đơn vị')
+  type: string().required('Hãy chọn loại dữ liệu')
 });
 
 export type NewColumnFormProps = BusinessFormProps & {
@@ -73,8 +72,7 @@ export const NewColumnForm: FC<NewColumnFormProps> = props => {
       }
       defaultValues={{
         title: '',
-        type: '',
-        unit: ''
+        type: ''
       }}
       onCancel={props.onCancel}
       loading={addColumn.isPending}
@@ -92,7 +90,6 @@ export const NewColumnForm: FC<NewColumnFormProps> = props => {
         title={'Loại dữ liệu'}
         options={{}}
       />
-      <TextField schema={schema} name={'unit'} title={'Đơn vị'} options={{}} />
     </Form>
   );
 };

@@ -52,5 +52,14 @@ export const projectApi = router('project', {
       client.collection(Collections.Column).create({
         ...params
       })
+  }),
+  listColumn: router.query({
+    fetcher: (projectId: string) =>
+      client.collection<ColumnResponse>(Collections.Column).getFullList({
+        filter: `project = "${projectId}"`
+      })
+  }),
+  deleteColumn: router.mutation({
+    mutationFn: (id: string) => client.collection(Collections.Column).delete(id)
   })
 });
