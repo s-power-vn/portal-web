@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { FC, useCallback } from 'react';
 
 import { RequestStatusOptions, client } from '@storeo/core';
@@ -11,9 +13,15 @@ export type A7ButtonProps = {
 };
 
 export const A7Button: FC<A7ButtonProps> = ({ request, onSuccess }) => {
+  const queryClient = useQueryClient();
   const updateRequest = requestApi.updateStatus.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: requestApi.userInfo.getKey()
+        })
+      ]);
       onSuccess?.();
     }
   });

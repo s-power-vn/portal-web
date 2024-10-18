@@ -92,8 +92,8 @@ export const SidebarItem: FC<SidebarItemProps> = ({
           )}
         >
           {routeContext?.title}
-          {badge}
         </div>
+        {badge}
       </Link>
     </div>
   );

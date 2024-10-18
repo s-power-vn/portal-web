@@ -388,6 +388,14 @@ export const requestApi = router('request', {
 
       return client.collection(Collections.Request).update(params.id, payload);
     }
+  }),
+  userInfo: router.query({
+    fetcher: (projectId: string) =>
+      client
+        .collection(Collections.RequestUserInfo)
+        .getFirstListItem(
+          `p = "${projectId}" && assignee = "${client.authStore.model?.id}"`
+        )
   })
 });
 

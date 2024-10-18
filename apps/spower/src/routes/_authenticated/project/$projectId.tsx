@@ -15,9 +15,15 @@ import {
 } from 'lucide-react';
 
 import { Show } from '@storeo/core';
-import { Button, Sidebar, SidebarGroup, SidebarItem } from '@storeo/theme';
+import {
+  Badge,
+  Button,
+  Sidebar,
+  SidebarGroup,
+  SidebarItem
+} from '@storeo/theme';
 
-import { projectApi } from '../../../api';
+import { projectApi, requestApi } from '../../../api';
 
 const Component = () => {
   const matchRoute = useMatchRoute();
@@ -27,6 +33,10 @@ const Component = () => {
     variables: projectId
   });
   const navigate = useNavigate({ from: Route.fullPath });
+
+  const requestUserInfo = requestApi.userInfo.useSuspenseQuery({
+    variables: projectId
+  });
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -87,6 +97,11 @@ const Component = () => {
                   <SidebarItem
                     to={'/project/$projectId/issues/me'}
                     icon={<ListChecksIcon width={22} height={22} />}
+                    badge={
+                      <Badge className={'bg-appErrorLight mr-1'}>
+                        {requestUserInfo.data.count}
+                      </Badge>
+                    }
                   ></SidebarItem>
                   <SidebarItem
                     to={'/project/$projectId/issues/all'}

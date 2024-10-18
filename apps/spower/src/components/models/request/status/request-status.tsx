@@ -76,7 +76,13 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           <Button
             variant={'outline'}
             onClick={handleClick}
-            className={cn(style, 'bg-appError', className)}
+            className={cn(
+              style,
+              request.data.status === RequestStatusOptions.A7
+                ? 'bg-appGrayLight text-appBlack'
+                : 'bg-appError',
+              className
+            )}
           >
             {request.data.status === RequestStatusOptions.A7
               ? 'Kết thúc'
