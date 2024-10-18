@@ -343,16 +343,20 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         }
         content={request.data.expand.issue.title}
         confirm1={
-          request.data.status === RequestStatusOptions.A4 ||
+          request.data.status === RequestStatusOptions.A4F ||
+          request.data.status === RequestStatusOptions.A4R ||
           request.data.status === RequestStatusOptions.A5F ||
           request.data.status === RequestStatusOptions.A5R ||
           request.data.status === RequestStatusOptions.A6F ||
           request.data.status === RequestStatusOptions.A6R ||
-          request.data.status === RequestStatusOptions.A7
+          request.data.status === RequestStatusOptions.A7 ||
+          request.data.status === RequestStatusOptions.A7R
         }
         confirm2={
           request.data.status === RequestStatusOptions.A6F ||
-          request.data.status === RequestStatusOptions.A7
+          request.data.status === RequestStatusOptions.A6R ||
+          request.data.status === RequestStatusOptions.A7 ||
+          request.data.status === RequestStatusOptions.A7R
         }
         confirm3={request.data.status === RequestStatusOptions.A7}
         leader1={request.data.confirm1}
