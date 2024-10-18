@@ -98,9 +98,11 @@ const Component = () => {
                     to={'/project/$projectId/issues/me'}
                     icon={<ListChecksIcon width={22} height={22} />}
                     badge={
-                      <Badge className={'bg-appErrorLight mr-1'}>
-                        {requestUserInfo.data.count}
-                      </Badge>
+                      <Show when={requestUserInfo.data?.count}>
+                        <Badge className={'bg-appErrorLight mr-1'}>
+                          {requestUserInfo.data?.count}
+                        </Badge>
+                      </Show>
                     }
                   ></SidebarItem>
                   <SidebarItem

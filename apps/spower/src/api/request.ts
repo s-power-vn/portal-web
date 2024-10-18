@@ -390,12 +390,20 @@ export const requestApi = router('request', {
     }
   }),
   userInfo: router.query({
-    fetcher: (projectId: string) =>
-      client
-        .collection(Collections.RequestUserInfo)
-        .getFirstListItem(
-          `p = "${projectId}" && assignee = "${client.authStore.model?.id}"`
-        )
+    fetcher: async (projectId: string) => {
+      try {
+        return await client
+          .collection(Collections.RequestUserInfo)
+          .getFirstListItem(
+            `p = "${projectId}" && assignee = "${client.authStore.model?.id}"`,
+            {
+              requestKey: null
+            }
+          );
+      } catch (e) {
+        return null;
+      }
+    }
   })
 });
 
