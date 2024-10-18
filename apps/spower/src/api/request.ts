@@ -300,10 +300,20 @@ export const requestApi = router('request', {
         .collection(Collections.Request)
         .getOne(params.id);
 
-      await client.collection(Collections.Issue).update(request.issue, {
-        assignee: params.assignee,
-        lastAssignee: client.authStore.model?.id
-      });
+      const issueData: {
+        assignee: string;
+        lastAssignee?: string;
+      } = {
+        assignee: params.assignee
+      };
+
+      if (params.assignee !== client.authStore.model?.id) {
+        issueData.lastAssignee = client.authStore.model?.id;
+      }
+
+      await client
+        .collection(Collections.Issue)
+        .update(request.issue, issueData);
 
       if (params.note) {
         await client.collection(Collections.Comment).create({
