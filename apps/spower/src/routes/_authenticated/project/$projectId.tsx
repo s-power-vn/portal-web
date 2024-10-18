@@ -99,7 +99,11 @@ const Component = () => {
                     icon={<ListChecksIcon width={22} height={22} />}
                     badge={
                       <Show when={requestUserInfo.data?.count}>
-                        <Badge className={'bg-appErrorLight mr-1'}>
+                        <Badge
+                          className={
+                            'bg-appErrorLight pointer-events-none mr-1'
+                          }
+                        >
                           {requestUserInfo.data?.count}
                         </Badge>
                       </Show>

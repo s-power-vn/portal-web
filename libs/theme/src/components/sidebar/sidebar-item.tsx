@@ -9,7 +9,7 @@ import {
 
 import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
 
-import { cn } from '@storeo/core';
+import { Show, cn } from '@storeo/core';
 
 import { useLink } from '../../hooks';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -77,7 +77,19 @@ export const SidebarItem: FC<SidebarItemProps> = ({
         {icon &&
           (collapsed ? (
             <Tooltip>
-              <TooltipTrigger>{iconElement}</TooltipTrigger>
+              <TooltipTrigger>
+                <Show when={!!badge}>
+                  <div
+                    className={cn(
+                      `absolute left-2 top-2 transition-opacity`,
+                      collapsed ? `opacity-100` : 'w-0 opacity-0 '
+                    )}
+                  >
+                    {badge}
+                  </div>
+                </Show>
+                {iconElement}
+              </TooltipTrigger>
               <TooltipContent side={'right'} className={'font-normal'}>
                 {routeContext?.title}
               </TooltipContent>
@@ -93,7 +105,13 @@ export const SidebarItem: FC<SidebarItemProps> = ({
         >
           {routeContext?.title}
         </div>
-        {badge}
+        <Show when={!!badge}>
+          <div
+            className={cn(`transition-opacity`, collapsed && `w-0 opacity-0`)}
+          >
+            {badge}
+          </div>
+        </Show>
       </Link>
     </div>
   );
