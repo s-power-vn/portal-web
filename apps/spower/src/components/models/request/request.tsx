@@ -16,6 +16,8 @@ import {
 import _ from 'lodash';
 import {
   EditIcon,
+  PaperclipIcon,
+  PlusIcon,
   PrinterIcon,
   SquareMinusIcon,
   SquarePlusIcon
@@ -50,6 +52,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   closeModal,
   showModal,
   useConfirm,
@@ -388,8 +394,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   }, [request.data, v, showLoading, hideLoading]);
 
   return (
-    <div className={'bg-appWhite flex flex-col gap-2'}>
-      <div className={'flex items-center justify-between'}>
+    <div className={'bg-appWhite flex flex-col'}>
+      <div className={'flex items-center justify-between p-2'}>
         <div className={'flex gap-2'}>
           <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
@@ -433,113 +439,143 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           />
         </div>
       </div>
-      <div className={'flex flex-col gap-2'}>
-        <div
-          className={'border-appBlue overflow-x-auto rounded-md border pb-2'}
-        >
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{
-                          ...getCommonPinningStyles(header.column),
-                          width: header.getSize()
-                        }}
-                        className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 text-center after:absolute
-                          after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      className={'group w-full cursor-pointer'}
-                      onClick={() => {
-                        setRowSelection(() => {
-                          const object: Record<string, boolean> = {};
-                          object[row.id] = true;
-                          return object;
-                        });
-
-                        if (
-                          selectedRow?.id !== row.id &&
-                          row.original.children &&
-                          row.original.children.length === 0
-                        ) {
-                          setSelectedRow(row);
-                        } else {
-                          setSelectedRow(undefined);
-                        }
-                      }}
-                    >
-                      {row.getVisibleCells().map(cell => {
-                        return cell.column.columnDef.meta?.hasRowSpan &&
-                          !cell.row.original[
-                            cell.column.columnDef.meta?.hasRowSpan
-                          ] ? null : (
-                          <TableCell
-                            key={cell.id}
+      <Tabs defaultValue={'detail'}>
+        <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
+          <TabsTrigger value="detail" asChild>
+            <div>Nội dung</div>
+          </TabsTrigger>
+          <TabsTrigger value="attachment" asChild>
+            <div>
+              <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
+            </div>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="detail">
+          <div className={'flex flex-col gap-2 px-2'}>
+            <div
+              className={
+                'border-appBlue overflow-x-auto rounded-md border pb-2'
+              }
+            >
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map(header => {
+                        return (
+                          <TableHead
+                            key={header.id}
+                            colSpan={header.colSpan}
                             style={{
-                              ...getCommonPinningStyles(cell.column),
-                              width: cell.column.getSize()
+                              ...getCommonPinningStyles(header.column),
+                              width: header.getSize()
                             }}
-                            className={cn(
-                              `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
-                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                              selectedRow?.original.id === row.original.id
-                                ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
-                                : null
-                            )}
-                            rowSpan={
-                              cell.column.columnDef.meta?.hasRowSpan
-                                ? cell.row.original[
-                                    cell.column.columnDef.meta?.hasRowSpan
-                                  ]
-                                : undefined
-                            }
+                            className={`bg-appBlueLight text-appWhite whitespace-nowrap p-1 text-center after:absolute
+                          after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`}
                           >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
+                            {header.isPlaceholder ? null : (
+                              <>
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                              </>
                             )}
-                          </TableCell>
+                          </TableHead>
                         );
                       })}
                     </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className={'text-center'}>
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <RequestAction issueId={issueId} />
-      </div>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.length ? (
+                    table.getRowModel().rows.map(row => {
+                      return (
+                        <TableRow
+                          key={row.id}
+                          className={'group w-full cursor-pointer'}
+                          onClick={() => {
+                            setRowSelection(() => {
+                              const object: Record<string, boolean> = {};
+                              object[row.id] = true;
+                              return object;
+                            });
+
+                            if (
+                              selectedRow?.id !== row.id &&
+                              row.original.children &&
+                              row.original.children.length === 0
+                            ) {
+                              setSelectedRow(row);
+                            } else {
+                              setSelectedRow(undefined);
+                            }
+                          }}
+                        >
+                          {row.getVisibleCells().map(cell => {
+                            return cell.column.columnDef.meta?.hasRowSpan &&
+                              !cell.row.original[
+                                cell.column.columnDef.meta?.hasRowSpan
+                              ] ? null : (
+                              <TableCell
+                                key={cell.id}
+                                style={{
+                                  ...getCommonPinningStyles(cell.column),
+                                  width: cell.column.getSize()
+                                }}
+                                className={cn(
+                                  `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
+                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
+                                  selectedRow?.original.id === row.original.id
+                                    ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
+                                    : null
+                                )}
+                                rowSpan={
+                                  cell.column.columnDef.meta?.hasRowSpan
+                                    ? cell.row.original[
+                                        cell.column.columnDef.meta?.hasRowSpan
+                                      ]
+                                    : undefined
+                                }
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className={'text-center'}
+                      >
+                        Không có dữ liệu.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            <RequestAction issueId={issueId} />
+          </div>
+        </TabsContent>
+        <TabsContent value="attachment">
+          <div className={'flex w-full items-center justify-center p-8'}>
+            <div className={'flex flex-col items-center justify-center gap-4'}>
+              <PaperclipIcon className={'h-[2rem] w-[2rem]'}></PaperclipIcon>
+              <Button className={'flex gap-1'}>
+                <PlusIcon className={'h-5 w-5'} />
+                Thêm file đính kèm
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

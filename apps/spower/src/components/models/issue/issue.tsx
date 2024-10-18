@@ -1,4 +1,3 @@
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -18,7 +17,6 @@ import {
   Match,
   Show,
   Switch,
-  client,
   cn,
   formatDateTime,
   getImageUrl,
@@ -231,19 +229,17 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           </div>
         </div>
       </div>
-      <div className={'p-2'}>
-        <Switch
-          fallback={
-            <div className={`p-2`}>
-              <Loader className={'h-6 w-6 animate-spin'} />
-            </div>
-          }
-        >
-          <Match when={issue.data.type === IssueTypeOptions.Request}>
-            <Request issueId={issueId} />
-          </Match>
-        </Switch>
-      </div>
+      <Switch
+        fallback={
+          <div className={`p-2`}>
+            <Loader className={'h-6 w-6 animate-spin'} />
+          </div>
+        }
+      >
+        <Match when={issue.data.type === IssueTypeOptions.Request}>
+          <Request issueId={issueId} />
+        </Match>
+      </Switch>
       <div className={'flex flex-col gap-2'}>
         <div className={'flex flex-col gap-2'}>
           {comments.data && comments.data.length > 0
