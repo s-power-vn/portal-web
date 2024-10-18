@@ -156,6 +156,7 @@ export enum IssueStatusOptions {
 }
 export type IssueRecord = {
 	assignee?: RecordIdString
+	changed?: IsoDateString
 	createdBy?: RecordIdString
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean

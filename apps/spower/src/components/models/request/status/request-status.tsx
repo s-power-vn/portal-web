@@ -30,7 +30,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
   );
 
   const style = `text-appWhite flex w-fit h-fit items-center
-  justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs shadow`;
+  justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs`;
 
   return (
     <>
