@@ -245,17 +245,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         <div className="flex w-full items-start justify-between">
           <img src={'https://portal.s-power.vn/logo.png'} width={120} />
           <div className={'flex flex-col items-center gap-2'}>
-            <div className={'whitespace-nowrap'}>
-              Công ty cổ phần{' '}
-              <a
-                href="https://s-power.vn"
-                target="_blank"
-                className="underline underline-offset-2 "
-                rel="noreferrer"
-              >
-                S-Power
-              </a>
-            </div>
+            <div className={'whitespace-nowrap'}>Công ty Cổ phần S-Power</div>
             <span
               className={'text-xs italic'}
             >{`Ngày ${DateTime.now().day} tháng ${DateTime.now().month} năm ${DateTime.now().year}`}</span>
@@ -329,7 +319,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           </tbody>
         </table>
         <div className={'mt-8 flex items-start justify-between'}>
-          <div className={'flex flex-col items-center px-8'}>
+          <div className={'flex flex-col items-center px-6'}>
             <div className={'font-bold'}>Phó giám đốc</div>
             <Show
               when={props.confirm3}
@@ -345,7 +335,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             </Show>
             <div className={'mt-[1.5rem] font-bold'}>{props.leader3}</div>
           </div>
-          <div className={'flex  gap-8'}>
+          <div className={'flex gap-8'}>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Phòng kỹ thuật</div>
               <Show

@@ -1,6 +1,12 @@
 import { router } from 'react-query-kit';
 
-import { Collections, DetailRecord, client } from '@storeo/core';
+import {
+  Collections,
+  DetailInfoResponse,
+  DetailRecord,
+  RequestResponse,
+  client
+} from '@storeo/core';
 
 export const detailApi = router('detail', {
   listFull: router.query({
@@ -46,10 +52,19 @@ export const detailApi = router('detail', {
 export const detailInfoApi = router('detailInfo', {
   listFull: router.query({
     fetcher: (projectId: string) =>
-      client.collection(Collections.DetailInfo).getFullList({
-        filter: `project = "${projectId}"`,
-        sort: '-created'
-      })
+      client
+        .collection<
+          DetailInfoResponse & {
+            expand: {
+              request: RequestResponse;
+            };
+          }
+        >(Collections.DetailInfo)
+        .getFullList({
+          filter: `project = "${projectId}"`,
+          expand: 'request',
+          sort: '-created'
+        })
   })
 });
 

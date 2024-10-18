@@ -17,6 +17,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   DetailInfoResponse,
+  RequestResponse,
   Show,
   client,
   cn,
@@ -76,7 +77,15 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     [listDetailInfos.data, projectId]
   );
 
-  const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
+  const columnHelper = createColumnHelper<
+    TreeData<
+      DetailInfoResponse & {
+        expand: {
+          request: RequestResponse;
+        };
+      }
+    >
+  >();
 
   const handleGotoIssue = useCallback(
     (issueId: string) => {
@@ -260,7 +269,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
                 return handleGotoIssue(row.original.issue);
               }}
             >
-              {row.original.issueTitle}
+              {row.original.expand?.request.code}
             </button>
           </Show>
         ),
