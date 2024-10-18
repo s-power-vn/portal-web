@@ -50,7 +50,13 @@ const NodeA5: FC<CustomNodeProps> = ({ data, isConnectable }) => {
         type="target"
         position={Position.Left}
         id="t3"
-        style={{ top: '50%' }}
+        style={{ top: '30%' }}
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="s3"
+        style={{ top: '70%' }}
       />
     </>
   );

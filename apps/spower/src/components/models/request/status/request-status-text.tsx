@@ -63,13 +63,22 @@ export const RequestStatusText: FC<RequestStatusTextProps> = props => {
           <span>T.Phòng kỹ thuật ]</span>
         </div>
       </Match>
-      <Match when={props.status === RequestStatusOptions.A4}>
+      <Match when={props.status === RequestStatusOptions.A4F}>
         <div
           className={'text-appBlue flex items-center gap-2 text-xs font-bold'}
         >
           <span>[ T.Phòng kỹ thuật</span>
           <span className={'text-appError'}>{'->'}</span>
           <span>T.Phòng kế hoạch ]</span>
+        </div>
+      </Match>
+      <Match when={props.status === RequestStatusOptions.A4R}>
+        <div
+          className={'text-appBlue flex items-center gap-2 text-xs font-bold'}
+        >
+          <span>[ T.Phòng kế hoạch</span>
+          <span className={'text-appError'}>{'->'}</span>
+          <span>T.Phòng kỹ thuật ]</span>
         </div>
       </Match>
       <Match when={props.status === RequestStatusOptions.A5F}>

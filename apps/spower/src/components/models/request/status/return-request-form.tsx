@@ -10,7 +10,6 @@ import { RequestData, requestApi } from '../../../../api';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
-  lastAssignee: string().required('Hãy chọn nhân viên'),
   status: string().required('Hãy chọn status')
 });
 
@@ -38,8 +37,7 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
       defaultValues={{
-        status: props.status,
-        lastAssignee: props.request.expand.issue.lastAssignee
+        status: props.status
       }}
       onSubmit={values =>
         returnRequest.mutate({

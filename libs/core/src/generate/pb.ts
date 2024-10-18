@@ -154,14 +154,14 @@ export enum IssueStatusOptions {
 	"Working" = "Working",
 	"Done" = "Done",
 }
-export type IssueRecord = {
+export type IssueRecord<TlastAssignee = unknown> = {
 	assignee?: RecordIdString
 	changed?: IsoDateString
 	createdBy?: RecordIdString
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
 	endDate?: IsoDateString
-	lastAssignee?: RecordIdString
+	lastAssignee?: null | TlastAssignee
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: IssueStatusOptions
@@ -299,7 +299,7 @@ export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> &
 export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<DetailRecord<Textend>> & BaseSystemFields<Texpand>
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
-export type IssueResponse<Texpand = unknown> = Required<IssueRecord> & BaseSystemFields<Texpand>
+export type IssueResponse<TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<TlastAssignee>> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>

@@ -72,12 +72,14 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             <A3fButton request={request.data}></A3fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A2R}>
+            <A1rButton request={request.data}></A1rButton>
             <A2fButton request={request.data}></A2fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A3F}>
             <A3rButton request={request.data}></A3rButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A3R}>
+            <A2rButton request={request.data}></A2rButton>
             <A3fButton request={request.data}></A3fButton>
             <A4fButton request={request.data}></A4fButton>
           </Match>
@@ -85,10 +87,16 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             <A4rButton request={request.data}></A4rButton>
             <A5fButton request={request.data}></A5fButton>
           </Match>
+          <Match when={request.data.status === RequestStatusOptions.A4R}>
+            <A2rButton request={request.data}></A2rButton>
+            <A3fButton request={request.data}></A3fButton>
+            <A4fButton request={request.data}></A4fButton>
+          </Match>
           <Match when={request.data.status === RequestStatusOptions.A5F}>
             <A5rButton request={request.data}></A5rButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A5R}>
+            <A4rButton request={request.data}></A4rButton>
             <A5fButton request={request.data}></A5fButton>
             <A6fButton request={request.data}></A6fButton>
           </Match>

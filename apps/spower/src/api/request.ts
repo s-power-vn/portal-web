@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { InferType, number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
@@ -21,7 +20,6 @@ import {
 } from '@storeo/core';
 
 import { UserData } from './employee';
-import { SettingData } from './setting';
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {
@@ -168,109 +166,6 @@ export const requestApi = router('request', {
       await client.collection(Collections.Issue).delete(request.issue);
     }
   }),
-  approve: router.mutation({
-    mutationFn: async (params: RequestData) => {
-      return Promise.all([
-        client.collection(Collections.Request).update(params.id, {
-          status: RequestStatusOptions.A1
-        }),
-        client.collection(Collections.Issue).update(params.issue, {
-          assignee: params.expand.issue.lastAssignee,
-          lastAssignee: client.authStore.model?.id
-        })
-      ]);
-    }
-  }),
-  reject: router.mutation({
-    mutationFn: async (params: RequestData) => {
-      return Promise.all([
-        client.collection(Collections.Request).update(params.id, {
-          status: RequestStatusOptions.A1
-        }),
-        client.collection(Collections.Issue).update(params.issue, {
-          assignee: params.expand.issue.lastAssignee,
-          lastAssignee: client.authStore.model?.id
-        })
-      ]);
-    }
-  }),
-  listConfirmer: router.query({
-    fetcher: (requestId: string) =>
-      client.collection(Collections.RequestConfirm).getFullList({
-        filter: `request = "${requestId}"`
-      })
-  }),
-  checkConfirmer: router.query({
-    fetcher: async (requestId: string) => {
-      const confirmers = await client
-        .collection<SettingData>(Collections.Setting)
-        .getFullList({
-          filter: `type = "Confirmer"`,
-          expand: 'user'
-        });
-
-      if (
-        _.filter(confirmers, it => {
-          return it.expand.user.id === client.authStore.model?.id;
-        }).length > 0
-      ) {
-        try {
-          await client
-            .collection(Collections.RequestConfirm)
-            .getFirstListItem(
-              `request = "${requestId}" && confirmer = "${client.authStore.model?.id}"`
-            );
-          return 2;
-        } catch (e) {
-          return 1;
-        }
-      }
-
-      return 0;
-    }
-  }),
-  checkApprover: router.query({
-    fetcher: () => null
-  }),
-  checkEnableApprove: router.query({
-    fetcher: async (requestId: string) => {
-      const confirmers = await client
-        .collection<SettingData>(Collections.Setting)
-        .getFullList({
-          filter: `type = "Confirmer"`
-        });
-
-      const requestConfirmers = await client
-        .collection(Collections.RequestConfirm)
-        .getFullList({
-          filter: `request = "${requestId}"`,
-          expand: 'request'
-        });
-
-      return confirmers.length === requestConfirmers.length;
-    }
-  }),
-  sendToApprover: router.mutation({
-    mutationFn: async (requestId: string) => {
-      const approvers = await client
-        .collection<SettingData>(Collections.Setting)
-        .getFullList({
-          filter: `type = "Approver"`,
-          expand: 'user'
-        });
-
-      if (approvers.length > 0) {
-        const request = await client
-          .collection(Collections.Request)
-          .getOne(requestId);
-
-        await client.collection(Collections.Issue).update(request.issue, {
-          assignee: approvers[0].expand.user.id,
-          lastAssignee: client.authStore.model?.id
-        });
-      }
-    }
-  }),
   confirm: router.mutation({
     mutationFn: async (requestId: string) => {
       await client.collection(Collections.RequestConfirm).create({
@@ -300,20 +195,27 @@ export const requestApi = router('request', {
         .collection(Collections.Request)
         .getOne(params.id);
 
-      const issueData: {
-        assignee: string;
-        lastAssignee?: string;
-      } = {
-        assignee: params.assignee
-      };
+      const lastAssignee =
+        (
+          await client
+            .collection<IssueRecord<string[]>>(Collections.Issue)
+            .getOne(request.issue)
+        ).lastAssignee ?? [];
 
-      if (params.assignee !== client.authStore.model?.id) {
-        issueData.lastAssignee = client.authStore.model?.id;
+      console.log('lastAssignee', lastAssignee);
+
+      if (
+        !lastAssignee.length ||
+        lastAssignee[lastAssignee.length - 1] !== client.authStore.model?.id
+      ) {
+        await client.collection(Collections.Issue).update(request.issue, {
+          lastAssignee: lastAssignee.concat(client.authStore.model?.id)
+        });
       }
 
-      await client
-        .collection(Collections.Issue)
-        .update(request.issue, issueData);
+      await client.collection(Collections.Issue).update(request.issue, {
+        assignee: params.assignee
+      });
 
       if (params.note) {
         await client.collection(Collections.Comment).create({
@@ -376,16 +278,26 @@ export const requestApi = router('request', {
     mutationFn: async (params: {
       id: string;
       issue: string;
-      lastAssignee: string;
       status: string;
       note?: string;
     }) => {
-      const { lastAssignee, note, ...payload } = params;
+      const { note, ...payload } = params;
 
-      await client.collection(Collections.Issue).update(params.issue, {
-        assignee: lastAssignee,
-        lastAssignee: client.authStore.model?.id
-      });
+      const lastAssignee =
+        (
+          await client
+            .collection<IssueRecord<string[]>>(Collections.Issue)
+            .getOne(params.issue)
+        ).lastAssignee ?? [];
+
+      if (lastAssignee.length) {
+        await client.collection(Collections.Issue).update(params.issue, {
+          assignee: lastAssignee[lastAssignee.length - 1]
+        });
+        await client.collection(Collections.Issue).update(params.issue, {
+          lastAssignee: lastAssignee.slice(0, lastAssignee.length - 1)
+        });
+      }
 
       if (note) {
         await client.collection(Collections.Comment).create({

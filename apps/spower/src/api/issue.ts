@@ -42,22 +42,6 @@ export const issueApi = router('issue', {
         expand: `createdBy, assignee`
       })
   }),
-  changeAssignee: router.mutation({
-    mutationFn: async ({
-      issueId,
-      assigneeId
-    }: {
-      issueId: string;
-      assigneeId?: string;
-    }) => {
-      const issue = await client.collection('issue').getOne(issueId);
-      const lastAssignee = issue.assignee;
-      return await client.collection('issue').update(issueId, {
-        assignee: assigneeId,
-        lastAssignee
-      });
-    }
-  }),
   updateTitle: router.mutation({
     mutationFn: async ({
       title,

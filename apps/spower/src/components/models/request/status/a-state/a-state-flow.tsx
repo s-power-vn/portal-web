@@ -181,6 +181,19 @@ const initialEdges = [
       width: 20,
       height: 20
     }
+  },
+  {
+    id: 'A4R',
+    source: 'A5',
+    target: 'A3',
+    sourceHandle: 's3',
+    targetHandle: 't3',
+    type: 'smoothstep',
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: 20,
+      height: 20
+    }
   }
 ];
 
