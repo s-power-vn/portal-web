@@ -12,6 +12,7 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import {
   Columns3Icon,
@@ -499,6 +500,17 @@ const Component = () => {
     manualPagination: true
   });
 
+  const { rows } = table.getRowModel();
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
   return (
     <div className={'flex flex-col gap-2 p-2'}>
       <div className={'flex gap-2'}>
@@ -588,19 +600,14 @@ const Component = () => {
         className={
           'border-appBlue h-[calc(100vh-160px)] overflow-auto rounded-md border'
         }
+        ref={parentRef}
       >
         <Table
           style={{
             width: table.getTotalSize()
           }}
         >
-          <TableHeader
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2
-            }}
-          >
+          <TableHeader className={'sticky top-0 z-10'}>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className={'!border-b-0'}>
                 {headerGroup.headers.map(header => {
@@ -630,19 +637,30 @@ const Component = () => {
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => {
+          <TableBody
+            className={'relative'}
+            style={{
+              height: `${virtualizer.getTotalSize()}px`
+            }}
+          >
+            {virtualizer.getVirtualItems().length ? (
+              virtualizer.getVirtualItems().map(virtualRow => {
+                const row = rows[virtualRow.index];
                 return (
                   <TableRow
-                    key={row.id}
-                    className={'group w-full cursor-pointer'}
+                    className={'group absolute w-full cursor-pointer'}
                     onClick={() => {
                       if (selectedRow?.id !== row.id) {
                         setSelectedRow(row);
                       } else {
                         setSelectedRow(undefined);
                       }
+                    }}
+                    key={virtualRow.key}
+                    data-index={virtualRow.index}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      transform: `translateY(${virtualRow.start}px)`
                     }}
                   >
                     {row.getVisibleCells().map(cell => {
