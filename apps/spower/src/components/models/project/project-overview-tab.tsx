@@ -144,48 +144,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           hasRowSpan: 'levelRowSpan'
         }
       }),
-      columnHelper.display({
-        id: 'select',
-        cell: ({ row }) => (
-          <div className={'flex h-full w-full items-center justify-center'}>
-            {row.subRows.length > 0 ? (
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsAllSubRowsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler()
-                }}
-              />
-            ) : (
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler()
-                }}
-              />
-            )}
-          </div>
-        ),
-        header: () => (
-          <div className={'text-center'}>
-            <IndeterminateCheckbox
-              {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler()
-              }}
-            />
-          </div>
-        ),
-        footer: info => info.column.id,
-        size: 30,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
-      }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
         header: () => 'Mô tả công việc',
