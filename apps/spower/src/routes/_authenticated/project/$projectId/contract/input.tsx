@@ -549,9 +549,13 @@ const Component = () => {
           onClick={() =>
             confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
               const selected = table.getSelectedRowModel();
+              showLoading();
               deleteDetails
                 .mutateAsync(selected.flatRows.map(row => row.original.group))
-                .then(() => setRowSelection({}));
+                .then(() => {
+                  setRowSelection({});
+                })
+                .finally(() => hideLoading());
             })
           }
         >
