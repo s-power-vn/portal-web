@@ -344,7 +344,7 @@ const Component = () => {
       }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
-        header: () => 'Mô tả công việc',
+        header: () => 'Mô tả công việc mời thầu',
         footer: info => info.column.id,
         size: 300,
         meta: {
@@ -359,7 +359,7 @@ const Component = () => {
             </span>
           </div>
         ),
-        header: () => 'Khối lượng HĐ',
+        header: () => 'Khối lượng mời thầu',
         footer: info => info.column.id,
         size: 150,
         meta: {
@@ -370,7 +370,7 @@ const Component = () => {
         cell: ({ row }) => (
           <div className={'flex justify-center gap-1'}>{row.original.unit}</div>
         ),
-        header: () => 'Đơn vị',
+        header: () => 'Đơn vị tính',
         footer: info => info.column.id,
         size: 100,
         meta: {
@@ -388,7 +388,7 @@ const Component = () => {
             </div>
           </Show>
         ),
-        header: () => 'Đơn giá HĐ',
+        header: () => 'Đơn giá dự thầu',
         footer: info => info.column.id,
         size: 150,
         meta: {
