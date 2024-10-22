@@ -287,8 +287,8 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             <tr className={'border-b'}>
               <th className={'border-r p-2'}>STT</th>
               <th className={' border-r p-2'}>ID</th>
-              <th className={'border-r p-2'}>Mô tả công việc</th>
-              <th className={'border-r p-2'}>Đơn vị</th>
+              <th className={'border-r p-2'}>Mô tả công việc mời thầu</th>
+              <th className={'border-r p-2'}>Đơn vị tính</th>
               <th className={'border-r p-2'}>Khối lượng</th>
               <th className={'border-r p-2'}>Ngày cấp</th>
               <th className={'p-2'}>Ghi chú</th>

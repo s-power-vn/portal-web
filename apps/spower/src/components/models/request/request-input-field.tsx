@@ -184,7 +184,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                   'bg-appBlueLight text-appWhite w-[500px] items-center whitespace-nowrap border-r p-2'
                 }
               >
-                Mô tả công việc
+                Mô tả công việc mời thầu
               </TableHead>
               <TableHead
                 className={

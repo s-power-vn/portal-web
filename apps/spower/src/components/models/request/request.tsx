@@ -199,7 +199,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         id: 'title',
         cell: ({ row }) =>
           row.original.expand?.detail.title ?? row.original.customTitle,
-        header: () => 'Mô tả công việc',
+        header: () => 'Mô tả công việc mời thầu',
         footer: info => info.column.id,
         meta: {
           hasRowSpan: 'levelRowSpan'
@@ -213,7 +213,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             {row.original.expand?.detail.unit ?? row.original.customUnit}
           </div>
         ),
-        header: () => 'Đơn vị',
+        header: () => 'Đơn vị tính',
         footer: info => info.column.id,
         size: 50,
         meta: {
