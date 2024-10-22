@@ -41,7 +41,6 @@ import {
   getCommonPinningStyles
 } from '../../../commons/utils';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
-import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
@@ -156,9 +155,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
-            <span className={'font-semibold'}>
-              {formatNumber(row.original.volume)}
-            </span>
+            {formatNumber(row.original.volume)}
           </div>
         ),
         header: () => 'Khối lượng mời thầu',
@@ -183,9 +180,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(row.original.unitPrice)}
-              </span>
+              {formatCurrency(row.original.unitPrice)}
               <span>₫</span>
             </div>
           </Show>
@@ -202,9 +197,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(row.original.unitPrice * row.original.volume)}
-              </span>
+              {formatCurrency(row.original.unitPrice * row.original.volume)}
               <span>₫</span>
             </div>
           </Show>
@@ -244,9 +237,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.requestVolume}>
             <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(row.original.requestVolume)}
-              </span>
+              {formatNumber(row.original.requestVolume)}
             </div>
           </Show>
         ),
@@ -262,9 +253,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         cell: ({ row }) => (
           <Show when={row.original.extra}>
             <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(row.original.extra as number)}
-              </span>
+              {formatNumber(row.original.extra as number)}
             </div>
           </Show>
         ),
@@ -289,9 +278,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
                     exceed < 0 ? 'text-green-500' : 'text-red-500'
                   )}
                 >
-                  <span className={'font-semibold'}>
-                    {formatNumber(exceed < 0 ? -exceed : exceed)}
-                  </span>
+                  {formatNumber(exceed < 0 ? -exceed : exceed)}
                 </div>
               </Show>
             );
@@ -309,9 +296,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         cell: info => (
           <Show when={info.getValue()}>
             <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(info.getValue())}
-              </span>
+              {formatCurrency(info.getValue())}
               <span>₫</span>
             </div>
           </Show>
@@ -328,14 +313,14 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
             if (exceed > 0) {
               return (
                 <div className={'flex justify-end text-red-500'}>
-                  <span className={'font-bold'}>{formatCurrency(exceed)}</span>
+                  {formatCurrency(exceed)}
                   <span>₫</span>
                 </div>
               );
             } else {
               return (
                 <div className={'flex justify-end text-green-500'}>
-                  <span className={'font-bold'}>{formatCurrency(-exceed)}</span>
+                  {formatCurrency(-exceed)}
                   <span>₫</span>
                 </div>
               );

@@ -354,9 +354,7 @@ const Component = () => {
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
-            <span className={'font-semibold'}>
-              {formatNumber(row.original.volume)}
-            </span>
+            {formatNumber(row.original.volume)}
           </div>
         ),
         header: () => 'Khối lượng mời thầu',
@@ -381,9 +379,7 @@ const Component = () => {
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(row.original.unitPrice)}
-              </span>
+              {formatCurrency(row.original.unitPrice)}
               <span>₫</span>
             </div>
           </Show>
@@ -400,9 +396,7 @@ const Component = () => {
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              <span className={'font-semibold'}>
-                {formatCurrency(row.original.unitPrice * row.original.volume)}
-              </span>
+              {formatCurrency(row.original.unitPrice * row.original.volume)}
               <span>₫</span>
             </div>
           </Show>
@@ -434,9 +428,7 @@ const Component = () => {
                     }
                   >
                     <div className={'flex justify-end gap-1'}>
-                      <span className={'font-semibold'}>
-                        {formatNumber(value)}
-                      </span>
+                      {formatNumber(value)}
                     </div>
                   </Show>
                 </Show>
