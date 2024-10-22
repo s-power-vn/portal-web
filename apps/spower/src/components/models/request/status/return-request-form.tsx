@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
@@ -19,15 +18,9 @@ export type ReturnRequestFormProps = BusinessFormProps & {
 };
 
 export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
-  const queryClient = useQueryClient();
   const returnRequest = requestApi.return.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: requestApi.userInfo.getKey()
-        })
-      ]);
       props.onSuccess?.();
     }
   });

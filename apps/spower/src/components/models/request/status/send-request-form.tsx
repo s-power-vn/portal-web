@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
@@ -23,16 +22,9 @@ export type SendRequestFormProps = BusinessFormProps & {
 };
 
 export const SendRequestForm: FC<SendRequestFormProps> = props => {
-  const queryClient = useQueryClient();
-
   const updateRequest = requestApi.updateStatus.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: requestApi.userInfo.getKey()
-        })
-      ]);
       props.onSuccess?.();
     }
   });

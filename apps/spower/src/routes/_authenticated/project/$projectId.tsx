@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
   createFileRoute,
@@ -14,7 +15,9 @@ import {
   SettingsIcon
 } from 'lucide-react';
 
-import { Show } from '@storeo/core';
+import { useEffect } from 'react';
+
+import { Collections, Show, client } from '@storeo/core';
 import {
   Badge,
   Button,
@@ -32,11 +35,24 @@ const Component = () => {
   const project = projectApi.byId.useSuspenseQuery({
     variables: projectId
   });
+  const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
 
   const requestUserInfo = requestApi.userInfo.useSuspenseQuery({
     variables: projectId
   });
+
+  useEffect(() => {
+    client.collection(Collections.Request).subscribe('*', () =>
+      queryClient.invalidateQueries({
+        queryKey: requestApi.userInfo.getKey(projectId)
+      })
+    );
+
+    return () => {
+      client.collection(Collections.Request).unsubscribe();
+    };
+  }, [projectId, queryClient]);
 
   return (
     <div className={'flex h-full flex-col'}>

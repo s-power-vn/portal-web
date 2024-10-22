@@ -44,9 +44,6 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
       }),
       queryClient.invalidateQueries({
         queryKey: commentApi.list.getKey(issueId)
-      }),
-      queryClient.invalidateQueries({
-        queryKey: requestApi.userInfo.getKey()
       })
     ]);
   }, [issueId, queryClient]);
