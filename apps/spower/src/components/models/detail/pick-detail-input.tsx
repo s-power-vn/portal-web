@@ -12,10 +12,11 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DetailResponse, For, Show, cn } from '@storeo/core';
 import {
@@ -40,7 +41,7 @@ export type PickDetailInputProps = {
 };
 
 export const PickDetailInput: FC<PickDetailInputProps> = props => {
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -191,6 +192,17 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
     getRowId: row => row.id
   });
 
+  const { rows } = table.getRowModel();
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
   useEffect(() => {
     const { rows } = table.getRowModel();
 
@@ -207,10 +219,6 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
     });
   }, [rowSelection, table]);
 
-  useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
-
   return (
     <div className="flex flex-col gap-2">
       <DebouncedInput
@@ -219,20 +227,16 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
         placeholder={'Tìm kiếm...'}
         onChange={value => setGlobalFilter(String(value))}
       />
-      <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
+      <div
+        className="border-appBlue h-[300px] overflow-auto rounded-md border pb-2"
+        ref={parentRef}
+      >
         <Table
           style={{
             width: table.getTotalSize() + 10
           }}
         >
-          <TableHeader
-            className={'items-center whitespace-nowrap border-r p-1'}
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2
-            }}
-          >
+          <TableHeader className={'sticky top-0 z-10'}>
             <For each={table.getHeaderGroups()}>
               {headerGroup => (
                 <TableRow key={headerGroup.id} className={'!border-b-0'}>
@@ -260,9 +264,14 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
               )}
             </For>
           </TableHeader>
-          <TableBody>
+          <TableBody
+            className={'relative'}
+            style={{
+              height: `${virtualizer.getTotalSize()}px`
+            }}
+          >
             <For
-              each={table.getRowModel().rows}
+              each={virtualizer.getVirtualItems()}
               fallback={
                 <TableRow>
                   <TableCell
@@ -274,37 +283,45 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
                 </TableRow>
               }
             >
-              {row => (
-                <TableRow
-                  key={row.id}
-                  className={cn(
-                    'cursor-pointer',
-                    row.getIsSelected() ||
-                      row.getIsSomeSelected() ||
-                      row.getIsAllSubRowsSelected()
-                      ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
-                      : null
-                  )}
-                >
-                  <For each={row.getVisibleCells()}>
-                    {cell => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize()
-                        }}
-                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                            after:border-r after:content-['']`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
+              {virtualRow => {
+                const row = rows[virtualRow.index];
+                return (
+                  <TableRow
+                    className={cn(
+                      'absolute cursor-pointer',
+                      row.getIsSelected() ||
+                        row.getIsSomeSelected() ||
+                        row.getIsAllSubRowsSelected()
+                        ? 'bg-appBlueLight text-appWhite hover:bg-appBlue'
+                        : null
                     )}
-                  </For>
-                </TableRow>
-              )}
+                    key={virtualRow.key}
+                    data-index={virtualRow.index}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      transform: `translateY(${virtualRow.start}px)`
+                    }}
+                  >
+                    <For each={row.getVisibleCells()}>
+                      {cell => (
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            width: cell.column.getSize()
+                          }}
+                          className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                            after:border-r after:content-['']`}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      )}
+                    </For>
+                  </TableRow>
+                );
+              }}
             </For>
           </TableBody>
         </Table>
