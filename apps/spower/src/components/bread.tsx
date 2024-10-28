@@ -25,10 +25,13 @@ export const Bread: FC<BreadProps> = () => {
   const breadcrumbs = useMemo(() => {
     return _.chain(
       matches.map(match => {
-        const { routeContext } = match;
+        const { context, params, loaderData } = match;
+        const title = (context as { title: string }).title;
         return {
-          title: (routeContext as { title: string }).title,
-          path: match.pathname
+          title,
+          path: match.pathname,
+          name: (loaderData as { name: string })?.name,
+          projectId: (params as { projectId: string }).projectId
         };
       })
     )
@@ -52,13 +55,27 @@ export const Bread: FC<BreadProps> = () => {
                 when={index === breadcrumbs.length - 1}
                 fallback={
                   <BreadcrumbLink href={it.path}>
-                    <Show when={it.path === '/'} fallback={it.title}>
+                    <Show
+                      when={it.path === '/'}
+                      fallback={
+                        <Show
+                          when={it.title === it.projectId}
+                          fallback={
+                            <div className={'max-w-40 truncate'}>
+                              {it.title}
+                            </div>
+                          }
+                        >
+                          <div className={'max-w-40 truncate'}>{it.name}</div>
+                        </Show>
+                      }
+                    >
                       <HomeIcon width={20} height={20} />
                     </Show>
                   </BreadcrumbLink>
                 }
               >
-                <BreadcrumbPage className={'font-bold'}>
+                <BreadcrumbPage className={'max-w-40 truncate font-bold'}>
                   {it.title}
                 </BreadcrumbPage>
               </Show>
