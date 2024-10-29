@@ -23,7 +23,8 @@ import {
   client,
   cn,
   formatCurrency,
-  formatNumber
+  formatNumber,
+  maskVolumeString
 } from '@storeo/core';
 import {
   Table,
@@ -155,7 +156,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
-            {formatNumber(row.original.volume)}
+            {maskVolumeString(formatNumber(row.original.volume))}
           </div>
         ),
         header: () => 'Khối lượng mời thầu',

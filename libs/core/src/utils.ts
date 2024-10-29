@@ -249,3 +249,17 @@ export async function downloadTemplate(
       link.parentNode?.removeChild(link);
     });
 }
+
+export function maskVolumeString(value: string) {
+  const index = value.indexOf(',');
+  if (index === -1) {
+    return value;
+  }
+
+  const remainLength = value.length - index - 1;
+  if (remainLength > 2) {
+    return value.slice(0, index + 3);
+  }
+
+  return value;
+}
