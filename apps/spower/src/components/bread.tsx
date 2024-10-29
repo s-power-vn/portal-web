@@ -21,7 +21,6 @@ export type BreadProps = {
 
 export const Bread: FC<BreadProps> = () => {
   const matches = useRouterState({ select: s => s.matches });
-
   const breadcrumbs = useMemo(() => {
     return _.chain(
       matches.map(match => {

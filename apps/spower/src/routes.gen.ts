@@ -53,6 +53,7 @@ import { Route as AuthenticatedProjectProjectIdIssuesAllIssueIdImport } from './
 // Create/Update Routes
 
 const LoginRoute = LoginImport.update({
+  id: '/login',
   path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
@@ -63,208 +64,244 @@ const AuthenticatedRoute = AuthenticatedImport.update({
 } as any)
 
 const IndexRoute = IndexImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
+  id: '/settings',
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
+  id: '/project',
   path: '/project',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedNotificationRoute = AuthenticatedNotificationImport.update({
+  id: '/notification',
   path: '/notification',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
+  id: '/home',
   path: '/home',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedGeneralRoute = AuthenticatedGeneralImport.update({
+  id: '/general',
   path: '/general',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedProjectIndexRoute = AuthenticatedProjectIndexImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedProjectRoute,
 } as any)
 
 const AuthenticatedGeneralIndexRoute = AuthenticatedGeneralIndexImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedGeneralRoute,
 } as any)
 
 const AuthenticatedUserProfileRoute = AuthenticatedUserProfileImport.update({
+  id: '/user/profile',
   path: '/user/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedProjectProjectIdRoute =
   AuthenticatedProjectProjectIdImport.update({
+    id: '/$projectId',
     path: '/$projectId',
     getParentRoute: () => AuthenticatedProjectRoute,
   } as any)
 
 const AuthenticatedGeneralSuppliersRoute =
   AuthenticatedGeneralSuppliersImport.update({
+    id: '/suppliers',
     path: '/suppliers',
     getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedGeneralMaterialsRoute =
   AuthenticatedGeneralMaterialsImport.update({
+    id: '/materials',
     path: '/materials',
     getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesRoute =
   AuthenticatedGeneralEmployeesImport.update({
+    id: '/employees',
     path: '/employees',
     getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedGeneralCustomersRoute =
   AuthenticatedGeneralCustomersImport.update({
+    id: '/customers',
     path: '/customers',
     getParentRoute: () => AuthenticatedGeneralRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIndexRoute =
   AuthenticatedProjectProjectIdIndexImport.update({
+    id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdSettingsRoute =
   AuthenticatedProjectProjectIdSettingsImport.update({
+    id: '/settings',
     path: '/settings',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesRoute =
   AuthenticatedProjectProjectIdIssuesImport.update({
+    id: '/issues',
     path: '/issues',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdContractRoute =
   AuthenticatedProjectProjectIdContractImport.update({
+    id: '/contract',
     path: '/contract',
     getParentRoute: () => AuthenticatedProjectProjectIdRoute,
   } as any)
 
 const AuthenticatedGeneralSuppliersNewRoute =
   AuthenticatedGeneralSuppliersNewImport.update({
+    id: '/new',
     path: '/new',
     getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
   } as any)
 
 const AuthenticatedGeneralMaterialsNewRoute =
   AuthenticatedGeneralMaterialsNewImport.update({
+    id: '/new',
     path: '/new',
     getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesNewRoute =
   AuthenticatedGeneralEmployeesNewImport.update({
+    id: '/new',
     path: '/new',
     getParentRoute: () => AuthenticatedGeneralEmployeesRoute,
   } as any)
 
 const AuthenticatedGeneralCustomersNewRoute =
   AuthenticatedGeneralCustomersNewImport.update({
+    id: '/new',
     path: '/new',
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesIndexRoute =
   AuthenticatedProjectProjectIdIssuesIndexImport.update({
+    id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdContractIndexRoute =
   AuthenticatedProjectProjectIdContractIndexImport.update({
+    id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesMeRoute =
   AuthenticatedProjectProjectIdIssuesMeImport.update({
+    id: '/me',
     path: '/me',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesAllRoute =
   AuthenticatedProjectProjectIdIssuesAllImport.update({
+    id: '/all',
     path: '/all',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdContractMonitoringRoute =
   AuthenticatedProjectProjectIdContractMonitoringImport.update({
+    id: '/monitoring',
     path: '/monitoring',
     getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdContractInputRoute =
   AuthenticatedProjectProjectIdContractInputImport.update({
+    id: '/input',
     path: '/input',
     getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
   } as any)
 
 const AuthenticatedGeneralSuppliersSupplierIdEditRoute =
   AuthenticatedGeneralSuppliersSupplierIdEditImport.update({
+    id: '/$supplierId/edit',
     path: '/$supplierId/edit',
     getParentRoute: () => AuthenticatedGeneralSuppliersRoute,
   } as any)
 
 const AuthenticatedGeneralMaterialsMaterialIdEditRoute =
   AuthenticatedGeneralMaterialsMaterialIdEditImport.update({
+    id: '/$materialId/edit',
     path: '/$materialId/edit',
     getParentRoute: () => AuthenticatedGeneralMaterialsRoute,
   } as any)
 
 const AuthenticatedGeneralEmployeesEmployeeIdEditRoute =
   AuthenticatedGeneralEmployeesEmployeeIdEditImport.update({
+    id: '/$employeeId/edit',
     path: '/$employeeId/edit',
     getParentRoute: () => AuthenticatedGeneralEmployeesRoute,
   } as any)
 
 const AuthenticatedGeneralCustomersCustomerIdEditRoute =
   AuthenticatedGeneralCustomersCustomerIdEditImport.update({
+    id: '/$customerId/edit',
     path: '/$customerId/edit',
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesMeIndexRoute =
   AuthenticatedProjectProjectIdIssuesMeIndexImport.update({
+    id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesAllIndexRoute =
   AuthenticatedProjectProjectIdIssuesAllIndexImport.update({
+    id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesMeIssueIdRoute =
   AuthenticatedProjectProjectIdIssuesMeIssueIdImport.update({
+    id: '/$issueId',
     path: '/$issueId',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesAllIssueIdRoute =
   AuthenticatedProjectProjectIdIssuesAllIssueIdImport.update({
+    id: '/$issueId',
     path: '/$issueId',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
   } as any)
@@ -274,154 +311,268 @@ const AuthenticatedProjectProjectIdIssuesAllIssueIdRoute =
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated/general': {
+      id: '/_authenticated/general'
+      path: '/general'
+      fullPath: '/general'
       preLoaderRoute: typeof AuthenticatedGeneralImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/notification': {
+      id: '/_authenticated/notification'
+      path: '/notification'
+      fullPath: '/notification'
       preLoaderRoute: typeof AuthenticatedNotificationImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/project': {
+      id: '/_authenticated/project'
+      path: '/project'
+      fullPath: '/project'
       preLoaderRoute: typeof AuthenticatedProjectImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/customers': {
+      id: '/_authenticated/general/customers'
+      path: '/customers'
+      fullPath: '/general/customers'
       preLoaderRoute: typeof AuthenticatedGeneralCustomersImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/employees': {
+      id: '/_authenticated/general/employees'
+      path: '/employees'
+      fullPath: '/general/employees'
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/materials': {
+      id: '/_authenticated/general/materials'
+      path: '/materials'
+      fullPath: '/general/materials'
       preLoaderRoute: typeof AuthenticatedGeneralMaterialsImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/general/suppliers': {
+      id: '/_authenticated/general/suppliers'
+      path: '/suppliers'
+      fullPath: '/general/suppliers'
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/project/$projectId': {
+      id: '/_authenticated/project/$projectId'
+      path: '/$projectId'
+      fullPath: '/project/$projectId'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdImport
       parentRoute: typeof AuthenticatedProjectImport
     }
     '/_authenticated/user/profile': {
+      id: '/_authenticated/user/profile'
+      path: '/user/profile'
+      fullPath: '/user/profile'
       preLoaderRoute: typeof AuthenticatedUserProfileImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/': {
+      id: '/_authenticated/general/'
+      path: '/'
+      fullPath: '/general/'
       preLoaderRoute: typeof AuthenticatedGeneralIndexImport
       parentRoute: typeof AuthenticatedGeneralImport
     }
     '/_authenticated/project/': {
+      id: '/_authenticated/project/'
+      path: '/'
+      fullPath: '/project/'
       preLoaderRoute: typeof AuthenticatedProjectIndexImport
       parentRoute: typeof AuthenticatedProjectImport
     }
     '/_authenticated/general/customers/new': {
+      id: '/_authenticated/general/customers/new'
+      path: '/new'
+      fullPath: '/general/customers/new'
       preLoaderRoute: typeof AuthenticatedGeneralCustomersNewImport
       parentRoute: typeof AuthenticatedGeneralCustomersImport
     }
     '/_authenticated/general/employees/new': {
+      id: '/_authenticated/general/employees/new'
+      path: '/new'
+      fullPath: '/general/employees/new'
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesNewImport
       parentRoute: typeof AuthenticatedGeneralEmployeesImport
     }
     '/_authenticated/general/materials/new': {
+      id: '/_authenticated/general/materials/new'
+      path: '/new'
+      fullPath: '/general/materials/new'
       preLoaderRoute: typeof AuthenticatedGeneralMaterialsNewImport
       parentRoute: typeof AuthenticatedGeneralMaterialsImport
     }
     '/_authenticated/general/suppliers/new': {
+      id: '/_authenticated/general/suppliers/new'
+      path: '/new'
+      fullPath: '/general/suppliers/new'
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersNewImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
     '/_authenticated/project/$projectId/contract': {
+      id: '/_authenticated/project/$projectId/contract'
+      path: '/contract'
+      fullPath: '/project/$projectId/contract'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdContractImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/project/$projectId/issues': {
+      id: '/_authenticated/project/$projectId/issues'
+      path: '/issues'
+      fullPath: '/project/$projectId/issues'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/project/$projectId/settings': {
+      id: '/_authenticated/project/$projectId/settings'
+      path: '/settings'
+      fullPath: '/project/$projectId/settings'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdSettingsImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/project/$projectId/': {
+      id: '/_authenticated/project/$projectId/'
+      path: '/'
+      fullPath: '/project/$projectId/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdImport
     }
     '/_authenticated/general/customers/$customerId/edit': {
+      id: '/_authenticated/general/customers/$customerId/edit'
+      path: '/$customerId/edit'
+      fullPath: '/general/customers/$customerId/edit'
       preLoaderRoute: typeof AuthenticatedGeneralCustomersCustomerIdEditImport
       parentRoute: typeof AuthenticatedGeneralCustomersImport
     }
     '/_authenticated/general/employees/$employeeId/edit': {
+      id: '/_authenticated/general/employees/$employeeId/edit'
+      path: '/$employeeId/edit'
+      fullPath: '/general/employees/$employeeId/edit'
       preLoaderRoute: typeof AuthenticatedGeneralEmployeesEmployeeIdEditImport
       parentRoute: typeof AuthenticatedGeneralEmployeesImport
     }
     '/_authenticated/general/materials/$materialId/edit': {
+      id: '/_authenticated/general/materials/$materialId/edit'
+      path: '/$materialId/edit'
+      fullPath: '/general/materials/$materialId/edit'
       preLoaderRoute: typeof AuthenticatedGeneralMaterialsMaterialIdEditImport
       parentRoute: typeof AuthenticatedGeneralMaterialsImport
     }
     '/_authenticated/general/suppliers/$supplierId/edit': {
+      id: '/_authenticated/general/suppliers/$supplierId/edit'
+      path: '/$supplierId/edit'
+      fullPath: '/general/suppliers/$supplierId/edit'
       preLoaderRoute: typeof AuthenticatedGeneralSuppliersSupplierIdEditImport
       parentRoute: typeof AuthenticatedGeneralSuppliersImport
     }
     '/_authenticated/project/$projectId/contract/input': {
+      id: '/_authenticated/project/$projectId/contract/input'
+      path: '/input'
+      fullPath: '/project/$projectId/contract/input'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdContractInputImport
       parentRoute: typeof AuthenticatedProjectProjectIdContractImport
     }
     '/_authenticated/project/$projectId/contract/monitoring': {
+      id: '/_authenticated/project/$projectId/contract/monitoring'
+      path: '/monitoring'
+      fullPath: '/project/$projectId/contract/monitoring'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdContractMonitoringImport
       parentRoute: typeof AuthenticatedProjectProjectIdContractImport
     }
     '/_authenticated/project/$projectId/issues/all': {
+      id: '/_authenticated/project/$projectId/issues/all'
+      path: '/all'
+      fullPath: '/project/$projectId/issues/all'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
     '/_authenticated/project/$projectId/issues/me': {
+      id: '/_authenticated/project/$projectId/issues/me'
+      path: '/me'
+      fullPath: '/project/$projectId/issues/me'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
     '/_authenticated/project/$projectId/contract/': {
+      id: '/_authenticated/project/$projectId/contract/'
+      path: '/'
+      fullPath: '/project/$projectId/contract/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdContractIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdContractImport
     }
     '/_authenticated/project/$projectId/issues/': {
+      id: '/_authenticated/project/$projectId/issues/'
+      path: '/'
+      fullPath: '/project/$projectId/issues/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
     '/_authenticated/project/$projectId/issues/all/$issueId': {
+      id: '/_authenticated/project/$projectId/issues/all/$issueId'
+      path: '/$issueId'
+      fullPath: '/project/$projectId/issues/all/$issueId'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIssueIdImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
     }
     '/_authenticated/project/$projectId/issues/me/$issueId': {
+      id: '/_authenticated/project/$projectId/issues/me/$issueId'
+      path: '/$issueId'
+      fullPath: '/project/$projectId/issues/me/$issueId'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
     }
     '/_authenticated/project/$projectId/issues/all/': {
+      id: '/_authenticated/project/$projectId/issues/all/'
+      path: '/'
+      fullPath: '/project/$projectId/issues/all/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
     }
     '/_authenticated/project/$projectId/issues/me/': {
+      id: '/_authenticated/project/$projectId/issues/me/'
+      path: '/'
+      fullPath: '/project/$projectId/issues/me/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
     }
@@ -430,57 +581,710 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
-  IndexRoute,
-  AuthenticatedRoute.addChildren([
-    AuthenticatedGeneralRoute.addChildren([
-      AuthenticatedGeneralCustomersRoute.addChildren([
-        AuthenticatedGeneralCustomersNewRoute,
-        AuthenticatedGeneralCustomersCustomerIdEditRoute,
-      ]),
-      AuthenticatedGeneralEmployeesRoute.addChildren([
-        AuthenticatedGeneralEmployeesNewRoute,
-        AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
-      ]),
-      AuthenticatedGeneralMaterialsRoute.addChildren([
-        AuthenticatedGeneralMaterialsNewRoute,
-        AuthenticatedGeneralMaterialsMaterialIdEditRoute,
-      ]),
-      AuthenticatedGeneralSuppliersRoute.addChildren([
-        AuthenticatedGeneralSuppliersNewRoute,
-        AuthenticatedGeneralSuppliersSupplierIdEditRoute,
-      ]),
-      AuthenticatedGeneralIndexRoute,
-    ]),
-    AuthenticatedHomeRoute,
-    AuthenticatedNotificationRoute,
-    AuthenticatedProjectRoute.addChildren([
-      AuthenticatedProjectProjectIdRoute.addChildren([
-        AuthenticatedProjectProjectIdContractRoute.addChildren([
-          AuthenticatedProjectProjectIdContractInputRoute,
-          AuthenticatedProjectProjectIdContractMonitoringRoute,
-          AuthenticatedProjectProjectIdContractIndexRoute,
-        ]),
-        AuthenticatedProjectProjectIdIssuesRoute.addChildren([
-          AuthenticatedProjectProjectIdIssuesAllRoute.addChildren([
-            AuthenticatedProjectProjectIdIssuesAllIssueIdRoute,
-            AuthenticatedProjectProjectIdIssuesAllIndexRoute,
-          ]),
-          AuthenticatedProjectProjectIdIssuesMeRoute.addChildren([
-            AuthenticatedProjectProjectIdIssuesMeIssueIdRoute,
-            AuthenticatedProjectProjectIdIssuesMeIndexRoute,
-          ]),
-          AuthenticatedProjectProjectIdIssuesIndexRoute,
-        ]),
-        AuthenticatedProjectProjectIdSettingsRoute,
-        AuthenticatedProjectProjectIdIndexRoute,
-      ]),
-      AuthenticatedProjectIndexRoute,
-    ]),
-    AuthenticatedSettingsRoute,
-    AuthenticatedUserProfileRoute,
-  ]),
-  LoginRoute,
-])
+interface AuthenticatedGeneralCustomersRouteChildren {
+  AuthenticatedGeneralCustomersNewRoute: typeof AuthenticatedGeneralCustomersNewRoute
+  AuthenticatedGeneralCustomersCustomerIdEditRoute: typeof AuthenticatedGeneralCustomersCustomerIdEditRoute
+}
+
+const AuthenticatedGeneralCustomersRouteChildren: AuthenticatedGeneralCustomersRouteChildren =
+  {
+    AuthenticatedGeneralCustomersNewRoute:
+      AuthenticatedGeneralCustomersNewRoute,
+    AuthenticatedGeneralCustomersCustomerIdEditRoute:
+      AuthenticatedGeneralCustomersCustomerIdEditRoute,
+  }
+
+const AuthenticatedGeneralCustomersRouteWithChildren =
+  AuthenticatedGeneralCustomersRoute._addFileChildren(
+    AuthenticatedGeneralCustomersRouteChildren,
+  )
+
+interface AuthenticatedGeneralEmployeesRouteChildren {
+  AuthenticatedGeneralEmployeesNewRoute: typeof AuthenticatedGeneralEmployeesNewRoute
+  AuthenticatedGeneralEmployeesEmployeeIdEditRoute: typeof AuthenticatedGeneralEmployeesEmployeeIdEditRoute
+}
+
+const AuthenticatedGeneralEmployeesRouteChildren: AuthenticatedGeneralEmployeesRouteChildren =
+  {
+    AuthenticatedGeneralEmployeesNewRoute:
+      AuthenticatedGeneralEmployeesNewRoute,
+    AuthenticatedGeneralEmployeesEmployeeIdEditRoute:
+      AuthenticatedGeneralEmployeesEmployeeIdEditRoute,
+  }
+
+const AuthenticatedGeneralEmployeesRouteWithChildren =
+  AuthenticatedGeneralEmployeesRoute._addFileChildren(
+    AuthenticatedGeneralEmployeesRouteChildren,
+  )
+
+interface AuthenticatedGeneralMaterialsRouteChildren {
+  AuthenticatedGeneralMaterialsNewRoute: typeof AuthenticatedGeneralMaterialsNewRoute
+  AuthenticatedGeneralMaterialsMaterialIdEditRoute: typeof AuthenticatedGeneralMaterialsMaterialIdEditRoute
+}
+
+const AuthenticatedGeneralMaterialsRouteChildren: AuthenticatedGeneralMaterialsRouteChildren =
+  {
+    AuthenticatedGeneralMaterialsNewRoute:
+      AuthenticatedGeneralMaterialsNewRoute,
+    AuthenticatedGeneralMaterialsMaterialIdEditRoute:
+      AuthenticatedGeneralMaterialsMaterialIdEditRoute,
+  }
+
+const AuthenticatedGeneralMaterialsRouteWithChildren =
+  AuthenticatedGeneralMaterialsRoute._addFileChildren(
+    AuthenticatedGeneralMaterialsRouteChildren,
+  )
+
+interface AuthenticatedGeneralSuppliersRouteChildren {
+  AuthenticatedGeneralSuppliersNewRoute: typeof AuthenticatedGeneralSuppliersNewRoute
+  AuthenticatedGeneralSuppliersSupplierIdEditRoute: typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
+}
+
+const AuthenticatedGeneralSuppliersRouteChildren: AuthenticatedGeneralSuppliersRouteChildren =
+  {
+    AuthenticatedGeneralSuppliersNewRoute:
+      AuthenticatedGeneralSuppliersNewRoute,
+    AuthenticatedGeneralSuppliersSupplierIdEditRoute:
+      AuthenticatedGeneralSuppliersSupplierIdEditRoute,
+  }
+
+const AuthenticatedGeneralSuppliersRouteWithChildren =
+  AuthenticatedGeneralSuppliersRoute._addFileChildren(
+    AuthenticatedGeneralSuppliersRouteChildren,
+  )
+
+interface AuthenticatedGeneralRouteChildren {
+  AuthenticatedGeneralCustomersRoute: typeof AuthenticatedGeneralCustomersRouteWithChildren
+  AuthenticatedGeneralEmployeesRoute: typeof AuthenticatedGeneralEmployeesRouteWithChildren
+  AuthenticatedGeneralMaterialsRoute: typeof AuthenticatedGeneralMaterialsRouteWithChildren
+  AuthenticatedGeneralSuppliersRoute: typeof AuthenticatedGeneralSuppliersRouteWithChildren
+  AuthenticatedGeneralIndexRoute: typeof AuthenticatedGeneralIndexRoute
+}
+
+const AuthenticatedGeneralRouteChildren: AuthenticatedGeneralRouteChildren = {
+  AuthenticatedGeneralCustomersRoute:
+    AuthenticatedGeneralCustomersRouteWithChildren,
+  AuthenticatedGeneralEmployeesRoute:
+    AuthenticatedGeneralEmployeesRouteWithChildren,
+  AuthenticatedGeneralMaterialsRoute:
+    AuthenticatedGeneralMaterialsRouteWithChildren,
+  AuthenticatedGeneralSuppliersRoute:
+    AuthenticatedGeneralSuppliersRouteWithChildren,
+  AuthenticatedGeneralIndexRoute: AuthenticatedGeneralIndexRoute,
+}
+
+const AuthenticatedGeneralRouteWithChildren =
+  AuthenticatedGeneralRoute._addFileChildren(AuthenticatedGeneralRouteChildren)
+
+interface AuthenticatedProjectProjectIdContractRouteChildren {
+  AuthenticatedProjectProjectIdContractInputRoute: typeof AuthenticatedProjectProjectIdContractInputRoute
+  AuthenticatedProjectProjectIdContractMonitoringRoute: typeof AuthenticatedProjectProjectIdContractMonitoringRoute
+  AuthenticatedProjectProjectIdContractIndexRoute: typeof AuthenticatedProjectProjectIdContractIndexRoute
+}
+
+const AuthenticatedProjectProjectIdContractRouteChildren: AuthenticatedProjectProjectIdContractRouteChildren =
+  {
+    AuthenticatedProjectProjectIdContractInputRoute:
+      AuthenticatedProjectProjectIdContractInputRoute,
+    AuthenticatedProjectProjectIdContractMonitoringRoute:
+      AuthenticatedProjectProjectIdContractMonitoringRoute,
+    AuthenticatedProjectProjectIdContractIndexRoute:
+      AuthenticatedProjectProjectIdContractIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdContractRouteWithChildren =
+  AuthenticatedProjectProjectIdContractRoute._addFileChildren(
+    AuthenticatedProjectProjectIdContractRouteChildren,
+  )
+
+interface AuthenticatedProjectProjectIdIssuesAllRouteChildren {
+  AuthenticatedProjectProjectIdIssuesAllIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
+  AuthenticatedProjectProjectIdIssuesAllIndexRoute: typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+}
+
+const AuthenticatedProjectProjectIdIssuesAllRouteChildren: AuthenticatedProjectProjectIdIssuesAllRouteChildren =
+  {
+    AuthenticatedProjectProjectIdIssuesAllIssueIdRoute:
+      AuthenticatedProjectProjectIdIssuesAllIssueIdRoute,
+    AuthenticatedProjectProjectIdIssuesAllIndexRoute:
+      AuthenticatedProjectProjectIdIssuesAllIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdIssuesAllRouteWithChildren =
+  AuthenticatedProjectProjectIdIssuesAllRoute._addFileChildren(
+    AuthenticatedProjectProjectIdIssuesAllRouteChildren,
+  )
+
+interface AuthenticatedProjectProjectIdIssuesMeRouteChildren {
+  AuthenticatedProjectProjectIdIssuesMeIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
+  AuthenticatedProjectProjectIdIssuesMeIndexRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+}
+
+const AuthenticatedProjectProjectIdIssuesMeRouteChildren: AuthenticatedProjectProjectIdIssuesMeRouteChildren =
+  {
+    AuthenticatedProjectProjectIdIssuesMeIssueIdRoute:
+      AuthenticatedProjectProjectIdIssuesMeIssueIdRoute,
+    AuthenticatedProjectProjectIdIssuesMeIndexRoute:
+      AuthenticatedProjectProjectIdIssuesMeIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdIssuesMeRouteWithChildren =
+  AuthenticatedProjectProjectIdIssuesMeRoute._addFileChildren(
+    AuthenticatedProjectProjectIdIssuesMeRouteChildren,
+  )
+
+interface AuthenticatedProjectProjectIdIssuesRouteChildren {
+  AuthenticatedProjectProjectIdIssuesAllRoute: typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
+  AuthenticatedProjectProjectIdIssuesMeRoute: typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  AuthenticatedProjectProjectIdIssuesIndexRoute: typeof AuthenticatedProjectProjectIdIssuesIndexRoute
+}
+
+const AuthenticatedProjectProjectIdIssuesRouteChildren: AuthenticatedProjectProjectIdIssuesRouteChildren =
+  {
+    AuthenticatedProjectProjectIdIssuesAllRoute:
+      AuthenticatedProjectProjectIdIssuesAllRouteWithChildren,
+    AuthenticatedProjectProjectIdIssuesMeRoute:
+      AuthenticatedProjectProjectIdIssuesMeRouteWithChildren,
+    AuthenticatedProjectProjectIdIssuesIndexRoute:
+      AuthenticatedProjectProjectIdIssuesIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdIssuesRouteWithChildren =
+  AuthenticatedProjectProjectIdIssuesRoute._addFileChildren(
+    AuthenticatedProjectProjectIdIssuesRouteChildren,
+  )
+
+interface AuthenticatedProjectProjectIdRouteChildren {
+  AuthenticatedProjectProjectIdContractRoute: typeof AuthenticatedProjectProjectIdContractRouteWithChildren
+  AuthenticatedProjectProjectIdIssuesRoute: typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
+  AuthenticatedProjectProjectIdSettingsRoute: typeof AuthenticatedProjectProjectIdSettingsRoute
+  AuthenticatedProjectProjectIdIndexRoute: typeof AuthenticatedProjectProjectIdIndexRoute
+}
+
+const AuthenticatedProjectProjectIdRouteChildren: AuthenticatedProjectProjectIdRouteChildren =
+  {
+    AuthenticatedProjectProjectIdContractRoute:
+      AuthenticatedProjectProjectIdContractRouteWithChildren,
+    AuthenticatedProjectProjectIdIssuesRoute:
+      AuthenticatedProjectProjectIdIssuesRouteWithChildren,
+    AuthenticatedProjectProjectIdSettingsRoute:
+      AuthenticatedProjectProjectIdSettingsRoute,
+    AuthenticatedProjectProjectIdIndexRoute:
+      AuthenticatedProjectProjectIdIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdRouteWithChildren =
+  AuthenticatedProjectProjectIdRoute._addFileChildren(
+    AuthenticatedProjectProjectIdRouteChildren,
+  )
+
+interface AuthenticatedProjectRouteChildren {
+  AuthenticatedProjectProjectIdRoute: typeof AuthenticatedProjectProjectIdRouteWithChildren
+  AuthenticatedProjectIndexRoute: typeof AuthenticatedProjectIndexRoute
+}
+
+const AuthenticatedProjectRouteChildren: AuthenticatedProjectRouteChildren = {
+  AuthenticatedProjectProjectIdRoute:
+    AuthenticatedProjectProjectIdRouteWithChildren,
+  AuthenticatedProjectIndexRoute: AuthenticatedProjectIndexRoute,
+}
+
+const AuthenticatedProjectRouteWithChildren =
+  AuthenticatedProjectRoute._addFileChildren(AuthenticatedProjectRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedGeneralRoute: typeof AuthenticatedGeneralRouteWithChildren
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedNotificationRoute: typeof AuthenticatedNotificationRoute
+  AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedGeneralRoute: AuthenticatedGeneralRouteWithChildren,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedNotificationRoute: AuthenticatedNotificationRoute,
+  AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/general': typeof AuthenticatedGeneralRouteWithChildren
+  '/home': typeof AuthenticatedHomeRoute
+  '/notification': typeof AuthenticatedNotificationRoute
+  '/project': typeof AuthenticatedProjectRouteWithChildren
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
+  '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
+  '/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
+  '/general/suppliers': typeof AuthenticatedGeneralSuppliersRouteWithChildren
+  '/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
+  '/user/profile': typeof AuthenticatedUserProfileRoute
+  '/general/': typeof AuthenticatedGeneralIndexRoute
+  '/project/': typeof AuthenticatedProjectIndexRoute
+  '/general/customers/new': typeof AuthenticatedGeneralCustomersNewRoute
+  '/general/employees/new': typeof AuthenticatedGeneralEmployeesNewRoute
+  '/general/materials/new': typeof AuthenticatedGeneralMaterialsNewRoute
+  '/general/suppliers/new': typeof AuthenticatedGeneralSuppliersNewRoute
+  '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractRouteWithChildren
+  '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
+  '/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
+  '/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
+  '/general/customers/$customerId/edit': typeof AuthenticatedGeneralCustomersCustomerIdEditRoute
+  '/general/employees/$employeeId/edit': typeof AuthenticatedGeneralEmployeesEmployeeIdEditRoute
+  '/general/materials/$materialId/edit': typeof AuthenticatedGeneralMaterialsMaterialIdEditRoute
+  '/general/suppliers/$supplierId/edit': typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
+  '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
+  '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
+  '/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
+  '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  '/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
+  '/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
+  '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/all/': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/notification': typeof AuthenticatedNotificationRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
+  '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
+  '/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
+  '/general/suppliers': typeof AuthenticatedGeneralSuppliersRouteWithChildren
+  '/user/profile': typeof AuthenticatedUserProfileRoute
+  '/general': typeof AuthenticatedGeneralIndexRoute
+  '/project': typeof AuthenticatedProjectIndexRoute
+  '/general/customers/new': typeof AuthenticatedGeneralCustomersNewRoute
+  '/general/employees/new': typeof AuthenticatedGeneralEmployeesNewRoute
+  '/general/materials/new': typeof AuthenticatedGeneralMaterialsNewRoute
+  '/general/suppliers/new': typeof AuthenticatedGeneralSuppliersNewRoute
+  '/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
+  '/project/$projectId': typeof AuthenticatedProjectProjectIdIndexRoute
+  '/general/customers/$customerId/edit': typeof AuthenticatedGeneralCustomersCustomerIdEditRoute
+  '/general/employees/$employeeId/edit': typeof AuthenticatedGeneralEmployeesEmployeeIdEditRoute
+  '/general/materials/$materialId/edit': typeof AuthenticatedGeneralMaterialsMaterialIdEditRoute
+  '/general/suppliers/$supplierId/edit': typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
+  '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
+  '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
+  '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractIndexRoute
+  '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
+  '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authenticated/general': typeof AuthenticatedGeneralRouteWithChildren
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/notification': typeof AuthenticatedNotificationRoute
+  '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
+  '/_authenticated/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
+  '/_authenticated/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
+  '/_authenticated/general/suppliers': typeof AuthenticatedGeneralSuppliersRouteWithChildren
+  '/_authenticated/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
+  '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
+  '/_authenticated/general/': typeof AuthenticatedGeneralIndexRoute
+  '/_authenticated/project/': typeof AuthenticatedProjectIndexRoute
+  '/_authenticated/general/customers/new': typeof AuthenticatedGeneralCustomersNewRoute
+  '/_authenticated/general/employees/new': typeof AuthenticatedGeneralEmployeesNewRoute
+  '/_authenticated/general/materials/new': typeof AuthenticatedGeneralMaterialsNewRoute
+  '/_authenticated/general/suppliers/new': typeof AuthenticatedGeneralSuppliersNewRoute
+  '/_authenticated/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractRouteWithChildren
+  '/_authenticated/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
+  '/_authenticated/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
+  '/_authenticated/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
+  '/_authenticated/general/customers/$customerId/edit': typeof AuthenticatedGeneralCustomersCustomerIdEditRoute
+  '/_authenticated/general/employees/$employeeId/edit': typeof AuthenticatedGeneralEmployeesEmployeeIdEditRoute
+  '/_authenticated/general/materials/$materialId/edit': typeof AuthenticatedGeneralMaterialsMaterialIdEditRoute
+  '/_authenticated/general/suppliers/$supplierId/edit': typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
+  '/_authenticated/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
+  '/_authenticated/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
+  '/_authenticated/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
+  '/_authenticated/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  '/_authenticated/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
+  '/_authenticated/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
+  '/_authenticated/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
+  '/_authenticated/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
+  '/_authenticated/project/$projectId/issues/all/': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/_authenticated/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/general'
+    | '/home'
+    | '/notification'
+    | '/project'
+    | '/settings'
+    | '/general/customers'
+    | '/general/employees'
+    | '/general/materials'
+    | '/general/suppliers'
+    | '/project/$projectId'
+    | '/user/profile'
+    | '/general/'
+    | '/project/'
+    | '/general/customers/new'
+    | '/general/employees/new'
+    | '/general/materials/new'
+    | '/general/suppliers/new'
+    | '/project/$projectId/contract'
+    | '/project/$projectId/issues'
+    | '/project/$projectId/settings'
+    | '/project/$projectId/'
+    | '/general/customers/$customerId/edit'
+    | '/general/employees/$employeeId/edit'
+    | '/general/materials/$materialId/edit'
+    | '/general/suppliers/$supplierId/edit'
+    | '/project/$projectId/contract/input'
+    | '/project/$projectId/contract/monitoring'
+    | '/project/$projectId/issues/all'
+    | '/project/$projectId/issues/me'
+    | '/project/$projectId/contract/'
+    | '/project/$projectId/issues/'
+    | '/project/$projectId/issues/all/$issueId'
+    | '/project/$projectId/issues/me/$issueId'
+    | '/project/$projectId/issues/all/'
+    | '/project/$projectId/issues/me/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/home'
+    | '/notification'
+    | '/settings'
+    | '/general/customers'
+    | '/general/employees'
+    | '/general/materials'
+    | '/general/suppliers'
+    | '/user/profile'
+    | '/general'
+    | '/project'
+    | '/general/customers/new'
+    | '/general/employees/new'
+    | '/general/materials/new'
+    | '/general/suppliers/new'
+    | '/project/$projectId/settings'
+    | '/project/$projectId'
+    | '/general/customers/$customerId/edit'
+    | '/general/employees/$employeeId/edit'
+    | '/general/materials/$materialId/edit'
+    | '/general/suppliers/$supplierId/edit'
+    | '/project/$projectId/contract/input'
+    | '/project/$projectId/contract/monitoring'
+    | '/project/$projectId/contract'
+    | '/project/$projectId/issues'
+    | '/project/$projectId/issues/all/$issueId'
+    | '/project/$projectId/issues/me/$issueId'
+    | '/project/$projectId/issues/all'
+    | '/project/$projectId/issues/me'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/login'
+    | '/_authenticated/general'
+    | '/_authenticated/home'
+    | '/_authenticated/notification'
+    | '/_authenticated/project'
+    | '/_authenticated/settings'
+    | '/_authenticated/general/customers'
+    | '/_authenticated/general/employees'
+    | '/_authenticated/general/materials'
+    | '/_authenticated/general/suppliers'
+    | '/_authenticated/project/$projectId'
+    | '/_authenticated/user/profile'
+    | '/_authenticated/general/'
+    | '/_authenticated/project/'
+    | '/_authenticated/general/customers/new'
+    | '/_authenticated/general/employees/new'
+    | '/_authenticated/general/materials/new'
+    | '/_authenticated/general/suppliers/new'
+    | '/_authenticated/project/$projectId/contract'
+    | '/_authenticated/project/$projectId/issues'
+    | '/_authenticated/project/$projectId/settings'
+    | '/_authenticated/project/$projectId/'
+    | '/_authenticated/general/customers/$customerId/edit'
+    | '/_authenticated/general/employees/$employeeId/edit'
+    | '/_authenticated/general/materials/$materialId/edit'
+    | '/_authenticated/general/suppliers/$supplierId/edit'
+    | '/_authenticated/project/$projectId/contract/input'
+    | '/_authenticated/project/$projectId/contract/monitoring'
+    | '/_authenticated/project/$projectId/issues/all'
+    | '/_authenticated/project/$projectId/issues/me'
+    | '/_authenticated/project/$projectId/contract/'
+    | '/_authenticated/project/$projectId/issues/'
+    | '/_authenticated/project/$projectId/issues/all/$issueId'
+    | '/_authenticated/project/$projectId/issues/me/$issueId'
+    | '/_authenticated/project/$projectId/issues/all/'
+    | '/_authenticated/project/$projectId/issues/me/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/_authenticated",
+        "/login"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/general",
+        "/_authenticated/home",
+        "/_authenticated/notification",
+        "/_authenticated/project",
+        "/_authenticated/settings",
+        "/_authenticated/user/profile"
+      ]
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/_authenticated/general": {
+      "filePath": "_authenticated/general.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/general/customers",
+        "/_authenticated/general/employees",
+        "/_authenticated/general/materials",
+        "/_authenticated/general/suppliers",
+        "/_authenticated/general/"
+      ]
+    },
+    "/_authenticated/home": {
+      "filePath": "_authenticated/home.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/notification": {
+      "filePath": "_authenticated/notification.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/project": {
+      "filePath": "_authenticated/project.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/project/$projectId",
+        "/_authenticated/project/"
+      ]
+    },
+    "/_authenticated/settings": {
+      "filePath": "_authenticated/settings.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/general/customers": {
+      "filePath": "_authenticated/general/customers.tsx",
+      "parent": "/_authenticated/general",
+      "children": [
+        "/_authenticated/general/customers/new",
+        "/_authenticated/general/customers/$customerId/edit"
+      ]
+    },
+    "/_authenticated/general/employees": {
+      "filePath": "_authenticated/general/employees.tsx",
+      "parent": "/_authenticated/general",
+      "children": [
+        "/_authenticated/general/employees/new",
+        "/_authenticated/general/employees/$employeeId/edit"
+      ]
+    },
+    "/_authenticated/general/materials": {
+      "filePath": "_authenticated/general/materials.tsx",
+      "parent": "/_authenticated/general",
+      "children": [
+        "/_authenticated/general/materials/new",
+        "/_authenticated/general/materials/$materialId/edit"
+      ]
+    },
+    "/_authenticated/general/suppliers": {
+      "filePath": "_authenticated/general/suppliers.tsx",
+      "parent": "/_authenticated/general",
+      "children": [
+        "/_authenticated/general/suppliers/new",
+        "/_authenticated/general/suppliers/$supplierId/edit"
+      ]
+    },
+    "/_authenticated/project/$projectId": {
+      "filePath": "_authenticated/project/$projectId.tsx",
+      "parent": "/_authenticated/project",
+      "children": [
+        "/_authenticated/project/$projectId/contract",
+        "/_authenticated/project/$projectId/issues",
+        "/_authenticated/project/$projectId/settings",
+        "/_authenticated/project/$projectId/"
+      ]
+    },
+    "/_authenticated/user/profile": {
+      "filePath": "_authenticated/user/profile.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/general/": {
+      "filePath": "_authenticated/general/index.ts",
+      "parent": "/_authenticated/general"
+    },
+    "/_authenticated/project/": {
+      "filePath": "_authenticated/project/index.tsx",
+      "parent": "/_authenticated/project"
+    },
+    "/_authenticated/general/customers/new": {
+      "filePath": "_authenticated/general/customers/new.tsx",
+      "parent": "/_authenticated/general/customers"
+    },
+    "/_authenticated/general/employees/new": {
+      "filePath": "_authenticated/general/employees/new.tsx",
+      "parent": "/_authenticated/general/employees"
+    },
+    "/_authenticated/general/materials/new": {
+      "filePath": "_authenticated/general/materials/new.tsx",
+      "parent": "/_authenticated/general/materials"
+    },
+    "/_authenticated/general/suppliers/new": {
+      "filePath": "_authenticated/general/suppliers/new.tsx",
+      "parent": "/_authenticated/general/suppliers"
+    },
+    "/_authenticated/project/$projectId/contract": {
+      "filePath": "_authenticated/project/$projectId/contract.tsx",
+      "parent": "/_authenticated/project/$projectId",
+      "children": [
+        "/_authenticated/project/$projectId/contract/input",
+        "/_authenticated/project/$projectId/contract/monitoring",
+        "/_authenticated/project/$projectId/contract/"
+      ]
+    },
+    "/_authenticated/project/$projectId/issues": {
+      "filePath": "_authenticated/project/$projectId/issues.tsx",
+      "parent": "/_authenticated/project/$projectId",
+      "children": [
+        "/_authenticated/project/$projectId/issues/all",
+        "/_authenticated/project/$projectId/issues/me",
+        "/_authenticated/project/$projectId/issues/"
+      ]
+    },
+    "/_authenticated/project/$projectId/settings": {
+      "filePath": "_authenticated/project/$projectId/settings.tsx",
+      "parent": "/_authenticated/project/$projectId"
+    },
+    "/_authenticated/project/$projectId/": {
+      "filePath": "_authenticated/project/$projectId/index.tsx",
+      "parent": "/_authenticated/project/$projectId"
+    },
+    "/_authenticated/general/customers/$customerId/edit": {
+      "filePath": "_authenticated/general/customers/$customerId/edit.tsx",
+      "parent": "/_authenticated/general/customers"
+    },
+    "/_authenticated/general/employees/$employeeId/edit": {
+      "filePath": "_authenticated/general/employees/$employeeId/edit.tsx",
+      "parent": "/_authenticated/general/employees"
+    },
+    "/_authenticated/general/materials/$materialId/edit": {
+      "filePath": "_authenticated/general/materials/$materialId/edit.tsx",
+      "parent": "/_authenticated/general/materials"
+    },
+    "/_authenticated/general/suppliers/$supplierId/edit": {
+      "filePath": "_authenticated/general/suppliers/$supplierId/edit.tsx",
+      "parent": "/_authenticated/general/suppliers"
+    },
+    "/_authenticated/project/$projectId/contract/input": {
+      "filePath": "_authenticated/project/$projectId/contract/input.tsx",
+      "parent": "/_authenticated/project/$projectId/contract"
+    },
+    "/_authenticated/project/$projectId/contract/monitoring": {
+      "filePath": "_authenticated/project/$projectId/contract/monitoring.tsx",
+      "parent": "/_authenticated/project/$projectId/contract"
+    },
+    "/_authenticated/project/$projectId/issues/all": {
+      "filePath": "_authenticated/project/$projectId/issues/all.tsx",
+      "parent": "/_authenticated/project/$projectId/issues",
+      "children": [
+        "/_authenticated/project/$projectId/issues/all/$issueId",
+        "/_authenticated/project/$projectId/issues/all/"
+      ]
+    },
+    "/_authenticated/project/$projectId/issues/me": {
+      "filePath": "_authenticated/project/$projectId/issues/me.tsx",
+      "parent": "/_authenticated/project/$projectId/issues",
+      "children": [
+        "/_authenticated/project/$projectId/issues/me/$issueId",
+        "/_authenticated/project/$projectId/issues/me/"
+      ]
+    },
+    "/_authenticated/project/$projectId/contract/": {
+      "filePath": "_authenticated/project/$projectId/contract/index.tsx",
+      "parent": "/_authenticated/project/$projectId/contract"
+    },
+    "/_authenticated/project/$projectId/issues/": {
+      "filePath": "_authenticated/project/$projectId/issues/index.tsx",
+      "parent": "/_authenticated/project/$projectId/issues"
+    },
+    "/_authenticated/project/$projectId/issues/all/$issueId": {
+      "filePath": "_authenticated/project/$projectId/issues/all/$issueId.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/all"
+    },
+    "/_authenticated/project/$projectId/issues/me/$issueId": {
+      "filePath": "_authenticated/project/$projectId/issues/me/$issueId.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/me"
+    },
+    "/_authenticated/project/$projectId/issues/all/": {
+      "filePath": "_authenticated/project/$projectId/issues/all/index.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/all"
+    },
+    "/_authenticated/project/$projectId/issues/me/": {
+      "filePath": "_authenticated/project/$projectId/issues/me/index.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/me"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

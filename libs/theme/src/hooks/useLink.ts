@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  AnyRoute,
   RegisteredRouter,
   RoutePaths,
   UseLinkPropsOptions,
@@ -10,12 +10,12 @@ import {
 } from '@tanstack/react-router';
 
 export function useLink<
-  TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
-  TFrom extends RoutePaths<TRouteTree> | string = string,
+  TRouter extends RegisteredRouter = RegisteredRouter,
+  TFrom extends RoutePaths<TRouter['routeTree']> | string = string,
   TTo extends string = '',
-  TMaskFrom extends RoutePaths<TRouteTree> | string = TFrom,
+  TMaskFrom extends RoutePaths<TRouter['routeTree']> | string = TFrom,
   TMaskTo extends string = ''
->(options: UseLinkPropsOptions<TRouteTree, TFrom, TTo, TMaskFrom, TMaskTo>) {
+>(options: UseLinkPropsOptions<TRouter, TFrom, TTo, TMaskFrom, TMaskTo>) {
   const matchPathname = useMatch({
     strict: false,
     select: s => s.pathname
@@ -49,7 +49,9 @@ export function useLink<
         : true;
       const searchTest =
         activeOptions?.includeSearch ?? true
-          ? deepEqual(s.location.search, next.search, !activeOptions?.exact)
+          ? deepEqual(s.location.search, next.search, {
+              partial: !activeOptions?.exact
+            })
           : true;
 
       // The final "active" test

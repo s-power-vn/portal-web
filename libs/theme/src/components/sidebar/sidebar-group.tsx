@@ -1,8 +1,6 @@
 import {
-  AnyRoute,
   Link,
   RegisteredRouter,
-  RoutePaths,
   ToPathOption,
   useRouter
 } from '@tanstack/react-router';
@@ -25,9 +23,9 @@ import { useLink } from '../../hooks';
 import { useSidebar } from './sidebar';
 
 export type SidebarGroupProps<
-  TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
-  TFrom extends RoutePaths<TRouteTree> | string = string,
-  TTo extends string = ''
+  TRouteTree extends RegisteredRouter = RegisteredRouter,
+  TFrom extends string = string,
+  TTo extends string | undefined = undefined
 > = {
   to?: ToPathOption<TRouteTree, TFrom, TTo>;
   icon?: ReactNode;

@@ -1,8 +1,6 @@
 import {
-  AnyRoute,
   Link,
   RegisteredRouter,
-  RoutePaths,
   ToPathOption,
   useRouter
 } from '@tanstack/react-router';
@@ -16,9 +14,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSidebar } from './sidebar';
 
 export type SidebarItemProps<
-  TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
-  TFrom extends RoutePaths<TRouteTree> | string = string,
-  TTo extends string = ''
+  TRouteTree extends RegisteredRouter = RegisteredRouter,
+  TFrom extends string = string,
+  TTo extends string | undefined = undefined
 > = {
   to?: ToPathOption<TRouteTree, TFrom, TTo>;
   icon?: ReactNode;

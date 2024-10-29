@@ -13,7 +13,12 @@ const Component = () => {
     <Tabs defaultValue={'overview'}>
       <TabsList className="grid w-full flex-none grid-cols-4 rounded-none">
         <TabsTrigger value="overview" asChild>
-          <Link to={'/project/$projectId/contract/monitoring'}>
+          <Link
+            to={'/project/$projectId/contract/monitoring'}
+            params={{
+              projectId
+            }}
+          >
             Theo dõi hợp đồng
           </Link>
         </TabsTrigger>
