@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   RegisteredRouter,
-  RoutePaths,
   UseLinkPropsOptions,
   deepEqual,
   useMatch,
@@ -11,9 +10,9 @@ import {
 
 export function useLink<
   TRouter extends RegisteredRouter = RegisteredRouter,
-  TFrom extends RoutePaths<TRouter['routeTree']> | string = string,
-  TTo extends string = '',
-  TMaskFrom extends RoutePaths<TRouter['routeTree']> | string = TFrom,
+  TFrom extends string = string,
+  TTo extends string | undefined = undefined,
+  TMaskFrom extends string = TFrom,
   TMaskTo extends string = ''
 >(options: UseLinkPropsOptions<TRouter, TFrom, TTo, TMaskFrom, TMaskTo>) {
   const matchPathname = useMatch({
