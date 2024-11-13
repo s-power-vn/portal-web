@@ -60,12 +60,12 @@ export const Bread: FC<BreadProps> = () => {
                         <Show
                           when={it.title === it.projectId}
                           fallback={
-                            <div className={'max-w-40 truncate'}>
+                            <div className={'max-w-60 truncate'}>
                               {it.title}
                             </div>
                           }
                         >
-                          <div className={'max-w-40 truncate'}>{it.name}</div>
+                          <div className={'max-w-80 truncate'}>{it.name}</div>
                         </Show>
                       }
                     >
@@ -74,7 +74,7 @@ export const Bread: FC<BreadProps> = () => {
                   </BreadcrumbLink>
                 }
               >
-                <BreadcrumbPage className={'max-w-40 truncate font-bold'}>
+                <BreadcrumbPage className={'max-w-60 truncate font-bold'}>
                   {it.title}
                 </BreadcrumbPage>
               </Show>

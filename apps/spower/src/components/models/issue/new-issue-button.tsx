@@ -93,7 +93,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         </DropdownMenuItem>
         <DropdownMenuItem>
           <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
-          Yêu cầu duyệt giá
+          Yêu cầu đơn giá
         </DropdownMenuItem>
         <DropdownMenuItem>
           <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />

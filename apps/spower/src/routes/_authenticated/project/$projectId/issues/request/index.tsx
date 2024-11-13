@@ -28,7 +28,7 @@ const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const issues = issueApi.list.useSuspenseQuery({
+  const issues = issueApi.listRequest.useSuspenseQuery({
     variables: {
       ...search,
       projectId
@@ -177,7 +177,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issues/all/'
+  '/_authenticated/project/$projectId/issues/request/'
 )({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>

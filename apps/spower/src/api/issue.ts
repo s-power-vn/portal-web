@@ -36,6 +36,30 @@ export const issueApi = router('issue', {
           sort: '-changed'
         })
   }),
+  listRequest: router.query({
+    fetcher: (search?: Search & { projectId: string }) =>
+      client
+        .collection<IssueResponse>(Collections.Issue)
+        .getList(search?.pageIndex, search?.pageSize, {
+          filter: `project = "${search?.projectId}"
+        && title ~ "${search?.filter ?? ''}"
+        && type = "Request"
+        && deleted = false`,
+          sort: '-changed'
+        })
+  }),
+  listPrice: router.query({
+    fetcher: (search?: Search & { projectId: string }) =>
+      client
+        .collection<IssueResponse>(Collections.Issue)
+        .getList(search?.pageIndex, search?.pageSize, {
+          filter: `project = "${search?.projectId}"
+        && title ~ "${search?.filter ?? ''}"
+        && type = "Price"
+        && deleted = false`,
+          sort: '-changed'
+        })
+  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {

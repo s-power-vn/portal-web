@@ -126,7 +126,11 @@ const Component = () => {
                     }
                   ></SidebarItem>
                   <SidebarItem
-                    to={'/project/$projectId/issues/all'}
+                    to={'/project/$projectId/issues/request'}
+                    icon={<LayoutListIcon width={22} height={22} />}
+                  ></SidebarItem>
+                  <SidebarItem
+                    to={'/project/$projectId/issues/price'}
                     icon={<LayoutListIcon width={22} height={22} />}
                   ></SidebarItem>
                 </SidebarGroup>

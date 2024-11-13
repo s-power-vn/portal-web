@@ -37,18 +37,21 @@ import { Route as AuthenticatedGeneralEmployeesNewImport } from './routes/_authe
 import { Route as AuthenticatedGeneralCustomersNewImport } from './routes/_authenticated/general/customers/new'
 import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
 import { Route as AuthenticatedProjectProjectIdContractIndexImport } from './routes/_authenticated/project/$projectId/contract/index'
+import { Route as AuthenticatedProjectProjectIdIssuesRequestImport } from './routes/_authenticated/project/$projectId/issues/request'
+import { Route as AuthenticatedProjectProjectIdIssuesPriceImport } from './routes/_authenticated/project/$projectId/issues/price'
 import { Route as AuthenticatedProjectProjectIdIssuesMeImport } from './routes/_authenticated/project/$projectId/issues/me'
-import { Route as AuthenticatedProjectProjectIdIssuesAllImport } from './routes/_authenticated/project/$projectId/issues/all'
 import { Route as AuthenticatedProjectProjectIdContractMonitoringImport } from './routes/_authenticated/project/$projectId/contract/monitoring'
 import { Route as AuthenticatedProjectProjectIdContractInputImport } from './routes/_authenticated/project/$projectId/contract/input'
 import { Route as AuthenticatedGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/general/suppliers/$supplierId/edit'
 import { Route as AuthenticatedGeneralMaterialsMaterialIdEditImport } from './routes/_authenticated/general/materials/$materialId/edit'
 import { Route as AuthenticatedGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/general/employees/$employeeId/edit'
 import { Route as AuthenticatedGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/general/customers/$customerId/edit'
+import { Route as AuthenticatedProjectProjectIdIssuesRequestIndexImport } from './routes/_authenticated/project/$projectId/issues/request/index'
+import { Route as AuthenticatedProjectProjectIdIssuesPriceIndexImport } from './routes/_authenticated/project/$projectId/issues/price/index'
 import { Route as AuthenticatedProjectProjectIdIssuesMeIndexImport } from './routes/_authenticated/project/$projectId/issues/me/index'
-import { Route as AuthenticatedProjectProjectIdIssuesAllIndexImport } from './routes/_authenticated/project/$projectId/issues/all/index'
+import { Route as AuthenticatedProjectProjectIdIssuesRequestIssueIdImport } from './routes/_authenticated/project/$projectId/issues/request/$issueId'
+import { Route as AuthenticatedProjectProjectIdIssuesPriceIssueIdImport } from './routes/_authenticated/project/$projectId/issues/price/$issueId'
 import { Route as AuthenticatedProjectProjectIdIssuesMeIssueIdImport } from './routes/_authenticated/project/$projectId/issues/me/$issueId'
-import { Route as AuthenticatedProjectProjectIdIssuesAllIssueIdImport } from './routes/_authenticated/project/$projectId/issues/all/$issueId'
 
 // Create/Update Routes
 
@@ -222,17 +225,24 @@ const AuthenticatedProjectProjectIdContractIndexRoute =
     getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
   } as any)
 
+const AuthenticatedProjectProjectIdIssuesRequestRoute =
+  AuthenticatedProjectProjectIdIssuesRequestImport.update({
+    id: '/request',
+    path: '/request',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdIssuesPriceRoute =
+  AuthenticatedProjectProjectIdIssuesPriceImport.update({
+    id: '/price',
+    path: '/price',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+  } as any)
+
 const AuthenticatedProjectProjectIdIssuesMeRoute =
   AuthenticatedProjectProjectIdIssuesMeImport.update({
     id: '/me',
     path: '/me',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
-  } as any)
-
-const AuthenticatedProjectProjectIdIssuesAllRoute =
-  AuthenticatedProjectProjectIdIssuesAllImport.update({
-    id: '/all',
-    path: '/all',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
   } as any)
 
@@ -278,6 +288,20 @@ const AuthenticatedGeneralCustomersCustomerIdEditRoute =
     getParentRoute: () => AuthenticatedGeneralCustomersRoute,
   } as any)
 
+const AuthenticatedProjectProjectIdIssuesRequestIndexRoute =
+  AuthenticatedProjectProjectIdIssuesRequestIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRequestRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdIssuesPriceIndexRoute =
+  AuthenticatedProjectProjectIdIssuesPriceIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesPriceRoute,
+  } as any)
+
 const AuthenticatedProjectProjectIdIssuesMeIndexRoute =
   AuthenticatedProjectProjectIdIssuesMeIndexImport.update({
     id: '/',
@@ -285,11 +309,18 @@ const AuthenticatedProjectProjectIdIssuesMeIndexRoute =
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesAllIndexRoute =
-  AuthenticatedProjectProjectIdIssuesAllIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
+const AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute =
+  AuthenticatedProjectProjectIdIssuesRequestIssueIdImport.update({
+    id: '/$issueId',
+    path: '/$issueId',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRequestRoute,
+  } as any)
+
+const AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute =
+  AuthenticatedProjectProjectIdIssuesPriceIssueIdImport.update({
+    id: '/$issueId',
+    path: '/$issueId',
+    getParentRoute: () => AuthenticatedProjectProjectIdIssuesPriceRoute,
   } as any)
 
 const AuthenticatedProjectProjectIdIssuesMeIssueIdRoute =
@@ -297,13 +328,6 @@ const AuthenticatedProjectProjectIdIssuesMeIssueIdRoute =
     id: '/$issueId',
     path: '/$issueId',
     getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
-  } as any)
-
-const AuthenticatedProjectProjectIdIssuesAllIssueIdRoute =
-  AuthenticatedProjectProjectIdIssuesAllIssueIdImport.update({
-    id: '/$issueId',
-    path: '/$issueId',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesAllRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -520,18 +544,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdContractMonitoringImport
       parentRoute: typeof AuthenticatedProjectProjectIdContractImport
     }
-    '/_authenticated/project/$projectId/issues/all': {
-      id: '/_authenticated/project/$projectId/issues/all'
-      path: '/all'
-      fullPath: '/project/$projectId/issues/all'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
-    }
     '/_authenticated/project/$projectId/issues/me': {
       id: '/_authenticated/project/$projectId/issues/me'
       path: '/me'
       fullPath: '/project/$projectId/issues/me'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+    }
+    '/_authenticated/project/$projectId/issues/price': {
+      id: '/_authenticated/project/$projectId/issues/price'
+      path: '/price'
+      fullPath: '/project/$projectId/issues/price'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+    }
+    '/_authenticated/project/$projectId/issues/request': {
+      id: '/_authenticated/project/$projectId/issues/request'
+      path: '/request'
+      fullPath: '/project/$projectId/issues/request'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
     '/_authenticated/project/$projectId/contract/': {
@@ -548,13 +579,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issues/all/$issueId': {
-      id: '/_authenticated/project/$projectId/issues/all/$issueId'
-      path: '/$issueId'
-      fullPath: '/project/$projectId/issues/all/$issueId'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIssueIdImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
-    }
     '/_authenticated/project/$projectId/issues/me/$issueId': {
       id: '/_authenticated/project/$projectId/issues/me/$issueId'
       path: '/$issueId'
@@ -562,12 +586,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
     }
-    '/_authenticated/project/$projectId/issues/all/': {
-      id: '/_authenticated/project/$projectId/issues/all/'
-      path: '/'
-      fullPath: '/project/$projectId/issues/all/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesAllIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesAllImport
+    '/_authenticated/project/$projectId/issues/price/$issueId': {
+      id: '/_authenticated/project/$projectId/issues/price/$issueId'
+      path: '/$issueId'
+      fullPath: '/project/$projectId/issues/price/$issueId'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
+    }
+    '/_authenticated/project/$projectId/issues/request/$issueId': {
+      id: '/_authenticated/project/$projectId/issues/request/$issueId'
+      path: '/$issueId'
+      fullPath: '/project/$projectId/issues/request/$issueId'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
     }
     '/_authenticated/project/$projectId/issues/me/': {
       id: '/_authenticated/project/$projectId/issues/me/'
@@ -575,6 +606,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/project/$projectId/issues/me/'
       preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexImport
       parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
+    }
+    '/_authenticated/project/$projectId/issues/price/': {
+      id: '/_authenticated/project/$projectId/issues/price/'
+      path: '/'
+      fullPath: '/project/$projectId/issues/price/'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIndexImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
+    }
+    '/_authenticated/project/$projectId/issues/request/': {
+      id: '/_authenticated/project/$projectId/issues/request/'
+      path: '/'
+      fullPath: '/project/$projectId/issues/request/'
+      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIndexImport
+      parentRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
     }
   }
 }
@@ -697,24 +742,6 @@ const AuthenticatedProjectProjectIdContractRouteWithChildren =
     AuthenticatedProjectProjectIdContractRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdIssuesAllRouteChildren {
-  AuthenticatedProjectProjectIdIssuesAllIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
-  AuthenticatedProjectProjectIdIssuesAllIndexRoute: typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
-}
-
-const AuthenticatedProjectProjectIdIssuesAllRouteChildren: AuthenticatedProjectProjectIdIssuesAllRouteChildren =
-  {
-    AuthenticatedProjectProjectIdIssuesAllIssueIdRoute:
-      AuthenticatedProjectProjectIdIssuesAllIssueIdRoute,
-    AuthenticatedProjectProjectIdIssuesAllIndexRoute:
-      AuthenticatedProjectProjectIdIssuesAllIndexRoute,
-  }
-
-const AuthenticatedProjectProjectIdIssuesAllRouteWithChildren =
-  AuthenticatedProjectProjectIdIssuesAllRoute._addFileChildren(
-    AuthenticatedProjectProjectIdIssuesAllRouteChildren,
-  )
-
 interface AuthenticatedProjectProjectIdIssuesMeRouteChildren {
   AuthenticatedProjectProjectIdIssuesMeIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
   AuthenticatedProjectProjectIdIssuesMeIndexRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
@@ -733,18 +760,57 @@ const AuthenticatedProjectProjectIdIssuesMeRouteWithChildren =
     AuthenticatedProjectProjectIdIssuesMeRouteChildren,
   )
 
+interface AuthenticatedProjectProjectIdIssuesPriceRouteChildren {
+  AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
+  AuthenticatedProjectProjectIdIssuesPriceIndexRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
+}
+
+const AuthenticatedProjectProjectIdIssuesPriceRouteChildren: AuthenticatedProjectProjectIdIssuesPriceRouteChildren =
+  {
+    AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute:
+      AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute,
+    AuthenticatedProjectProjectIdIssuesPriceIndexRoute:
+      AuthenticatedProjectProjectIdIssuesPriceIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren =
+  AuthenticatedProjectProjectIdIssuesPriceRoute._addFileChildren(
+    AuthenticatedProjectProjectIdIssuesPriceRouteChildren,
+  )
+
+interface AuthenticatedProjectProjectIdIssuesRequestRouteChildren {
+  AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
+  AuthenticatedProjectProjectIdIssuesRequestIndexRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
+}
+
+const AuthenticatedProjectProjectIdIssuesRequestRouteChildren: AuthenticatedProjectProjectIdIssuesRequestRouteChildren =
+  {
+    AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute:
+      AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute,
+    AuthenticatedProjectProjectIdIssuesRequestIndexRoute:
+      AuthenticatedProjectProjectIdIssuesRequestIndexRoute,
+  }
+
+const AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren =
+  AuthenticatedProjectProjectIdIssuesRequestRoute._addFileChildren(
+    AuthenticatedProjectProjectIdIssuesRequestRouteChildren,
+  )
+
 interface AuthenticatedProjectProjectIdIssuesRouteChildren {
-  AuthenticatedProjectProjectIdIssuesAllRoute: typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
   AuthenticatedProjectProjectIdIssuesMeRoute: typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  AuthenticatedProjectProjectIdIssuesPriceRoute: typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
+  AuthenticatedProjectProjectIdIssuesRequestRoute: typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
   AuthenticatedProjectProjectIdIssuesIndexRoute: typeof AuthenticatedProjectProjectIdIssuesIndexRoute
 }
 
 const AuthenticatedProjectProjectIdIssuesRouteChildren: AuthenticatedProjectProjectIdIssuesRouteChildren =
   {
-    AuthenticatedProjectProjectIdIssuesAllRoute:
-      AuthenticatedProjectProjectIdIssuesAllRouteWithChildren,
     AuthenticatedProjectProjectIdIssuesMeRoute:
       AuthenticatedProjectProjectIdIssuesMeRouteWithChildren,
+    AuthenticatedProjectProjectIdIssuesPriceRoute:
+      AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren,
+    AuthenticatedProjectProjectIdIssuesRequestRoute:
+      AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren,
     AuthenticatedProjectProjectIdIssuesIndexRoute:
       AuthenticatedProjectProjectIdIssuesIndexRoute,
   }
@@ -845,14 +911,17 @@ export interface FileRoutesByFullPath {
   '/general/suppliers/$supplierId/edit': typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
   '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
   '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  '/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
   '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  '/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
+  '/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
   '/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
   '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/all/': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
   '/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price/': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request/': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -883,10 +952,12 @@ export interface FileRoutesByTo {
   '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
   '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
   '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
   '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesById {
@@ -921,14 +992,17 @@ export interface FileRoutesById {
   '/_authenticated/general/suppliers/$supplierId/edit': typeof AuthenticatedGeneralSuppliersSupplierIdEditRoute
   '/_authenticated/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
   '/_authenticated/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  '/_authenticated/project/$projectId/issues/all': typeof AuthenticatedProjectProjectIdIssuesAllRouteWithChildren
   '/_authenticated/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
+  '/_authenticated/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
+  '/_authenticated/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
   '/_authenticated/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/_authenticated/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/_authenticated/project/$projectId/issues/all/$issueId': typeof AuthenticatedProjectProjectIdIssuesAllIssueIdRoute
   '/_authenticated/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/_authenticated/project/$projectId/issues/all/': typeof AuthenticatedProjectProjectIdIssuesAllIndexRoute
+  '/_authenticated/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
+  '/_authenticated/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
   '/_authenticated/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+  '/_authenticated/project/$projectId/issues/price/': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
+  '/_authenticated/project/$projectId/issues/request/': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -964,14 +1038,17 @@ export interface FileRouteTypes {
     | '/general/suppliers/$supplierId/edit'
     | '/project/$projectId/contract/input'
     | '/project/$projectId/contract/monitoring'
-    | '/project/$projectId/issues/all'
     | '/project/$projectId/issues/me'
+    | '/project/$projectId/issues/price'
+    | '/project/$projectId/issues/request'
     | '/project/$projectId/contract/'
     | '/project/$projectId/issues/'
-    | '/project/$projectId/issues/all/$issueId'
     | '/project/$projectId/issues/me/$issueId'
-    | '/project/$projectId/issues/all/'
+    | '/project/$projectId/issues/price/$issueId'
+    | '/project/$projectId/issues/request/$issueId'
     | '/project/$projectId/issues/me/'
+    | '/project/$projectId/issues/price/'
+    | '/project/$projectId/issues/request/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1001,10 +1078,12 @@ export interface FileRouteTypes {
     | '/project/$projectId/contract/monitoring'
     | '/project/$projectId/contract'
     | '/project/$projectId/issues'
-    | '/project/$projectId/issues/all/$issueId'
     | '/project/$projectId/issues/me/$issueId'
-    | '/project/$projectId/issues/all'
+    | '/project/$projectId/issues/price/$issueId'
+    | '/project/$projectId/issues/request/$issueId'
     | '/project/$projectId/issues/me'
+    | '/project/$projectId/issues/price'
+    | '/project/$projectId/issues/request'
   id:
     | '__root__'
     | '/'
@@ -1037,14 +1116,17 @@ export interface FileRouteTypes {
     | '/_authenticated/general/suppliers/$supplierId/edit'
     | '/_authenticated/project/$projectId/contract/input'
     | '/_authenticated/project/$projectId/contract/monitoring'
-    | '/_authenticated/project/$projectId/issues/all'
     | '/_authenticated/project/$projectId/issues/me'
+    | '/_authenticated/project/$projectId/issues/price'
+    | '/_authenticated/project/$projectId/issues/request'
     | '/_authenticated/project/$projectId/contract/'
     | '/_authenticated/project/$projectId/issues/'
-    | '/_authenticated/project/$projectId/issues/all/$issueId'
     | '/_authenticated/project/$projectId/issues/me/$issueId'
-    | '/_authenticated/project/$projectId/issues/all/'
+    | '/_authenticated/project/$projectId/issues/price/$issueId'
+    | '/_authenticated/project/$projectId/issues/request/$issueId'
     | '/_authenticated/project/$projectId/issues/me/'
+    | '/_authenticated/project/$projectId/issues/price/'
+    | '/_authenticated/project/$projectId/issues/request/'
   fileRoutesById: FileRoutesById
 }
 
@@ -1208,8 +1290,9 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/project/$projectId/issues.tsx",
       "parent": "/_authenticated/project/$projectId",
       "children": [
-        "/_authenticated/project/$projectId/issues/all",
         "/_authenticated/project/$projectId/issues/me",
+        "/_authenticated/project/$projectId/issues/price",
+        "/_authenticated/project/$projectId/issues/request",
         "/_authenticated/project/$projectId/issues/"
       ]
     },
@@ -1245,20 +1328,28 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/project/$projectId/contract/monitoring.tsx",
       "parent": "/_authenticated/project/$projectId/contract"
     },
-    "/_authenticated/project/$projectId/issues/all": {
-      "filePath": "_authenticated/project/$projectId/issues/all.tsx",
-      "parent": "/_authenticated/project/$projectId/issues",
-      "children": [
-        "/_authenticated/project/$projectId/issues/all/$issueId",
-        "/_authenticated/project/$projectId/issues/all/"
-      ]
-    },
     "/_authenticated/project/$projectId/issues/me": {
       "filePath": "_authenticated/project/$projectId/issues/me.tsx",
       "parent": "/_authenticated/project/$projectId/issues",
       "children": [
         "/_authenticated/project/$projectId/issues/me/$issueId",
         "/_authenticated/project/$projectId/issues/me/"
+      ]
+    },
+    "/_authenticated/project/$projectId/issues/price": {
+      "filePath": "_authenticated/project/$projectId/issues/price.tsx",
+      "parent": "/_authenticated/project/$projectId/issues",
+      "children": [
+        "/_authenticated/project/$projectId/issues/price/$issueId",
+        "/_authenticated/project/$projectId/issues/price/"
+      ]
+    },
+    "/_authenticated/project/$projectId/issues/request": {
+      "filePath": "_authenticated/project/$projectId/issues/request.tsx",
+      "parent": "/_authenticated/project/$projectId/issues",
+      "children": [
+        "/_authenticated/project/$projectId/issues/request/$issueId",
+        "/_authenticated/project/$projectId/issues/request/"
       ]
     },
     "/_authenticated/project/$projectId/contract/": {
@@ -1269,21 +1360,29 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/project/$projectId/issues/index.tsx",
       "parent": "/_authenticated/project/$projectId/issues"
     },
-    "/_authenticated/project/$projectId/issues/all/$issueId": {
-      "filePath": "_authenticated/project/$projectId/issues/all/$issueId.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/all"
-    },
     "/_authenticated/project/$projectId/issues/me/$issueId": {
       "filePath": "_authenticated/project/$projectId/issues/me/$issueId.tsx",
       "parent": "/_authenticated/project/$projectId/issues/me"
     },
-    "/_authenticated/project/$projectId/issues/all/": {
-      "filePath": "_authenticated/project/$projectId/issues/all/index.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/all"
+    "/_authenticated/project/$projectId/issues/price/$issueId": {
+      "filePath": "_authenticated/project/$projectId/issues/price/$issueId.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/price"
+    },
+    "/_authenticated/project/$projectId/issues/request/$issueId": {
+      "filePath": "_authenticated/project/$projectId/issues/request/$issueId.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/request"
     },
     "/_authenticated/project/$projectId/issues/me/": {
       "filePath": "_authenticated/project/$projectId/issues/me/index.tsx",
       "parent": "/_authenticated/project/$projectId/issues/me"
+    },
+    "/_authenticated/project/$projectId/issues/price/": {
+      "filePath": "_authenticated/project/$projectId/issues/price/index.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/price"
+    },
+    "/_authenticated/project/$projectId/issues/request/": {
+      "filePath": "_authenticated/project/$projectId/issues/request/index.tsx",
+      "parent": "/_authenticated/project/$projectId/issues/request"
     }
   }
 }
