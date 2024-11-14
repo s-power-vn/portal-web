@@ -140,8 +140,8 @@ export type DetailInfoRecord<Textend = unknown> = {
 
 export enum IssueTypeOptions {
 	"Request" = "Request",
+	"Price" = "Price",
 	"Contract" = "Contract",
-	"Delivery" = "Delivery",
 }
 
 export enum IssueDeadlineStatusOptions {
@@ -197,8 +197,10 @@ export enum RequestStatusOptions {
 	"A5R" = "A5R",
 	"A6F" = "A6F",
 	"A6R" = "A6R",
-	"A7" = "A7",
+	"A7F" = "A7F",
 	"A7R" = "A7R",
+	"A8" = "A8",
+	"A8R" = "A8R",
 }
 export type RequestRecord = {
 	code?: string

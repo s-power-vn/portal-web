@@ -376,16 +376,16 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           request.data.status === RequestStatusOptions.A5R ||
           request.data.status === RequestStatusOptions.A6F ||
           request.data.status === RequestStatusOptions.A6R ||
-          request.data.status === RequestStatusOptions.A7 ||
+          request.data.status === RequestStatusOptions.A7F ||
           request.data.status === RequestStatusOptions.A7R
         }
         confirm2={
           request.data.status === RequestStatusOptions.A6F ||
           request.data.status === RequestStatusOptions.A6R ||
-          request.data.status === RequestStatusOptions.A7 ||
+          request.data.status === RequestStatusOptions.A7F ||
           request.data.status === RequestStatusOptions.A7R
         }
-        confirm3={request.data.status === RequestStatusOptions.A7}
+        confirm3={request.data.status === RequestStatusOptions.A7F}
         leader1={request.data.confirm1}
         leader2={request.data.confirm2}
         leader3={request.data.confirm3}
@@ -425,7 +425,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             when={
               request.data.expand.issue.assignee ===
                 client.authStore.model?.id &&
-              request.data.status !== RequestStatusOptions.A7
+              request.data.status !== RequestStatusOptions.A7F
             }
           >
             <Button

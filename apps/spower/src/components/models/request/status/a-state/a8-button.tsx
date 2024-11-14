@@ -1,5 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
-
 import { FC, useCallback } from 'react';
 
 import { RequestStatusOptions, client } from '@storeo/core';
@@ -7,12 +5,12 @@ import { Button, success, useConfirm } from '@storeo/theme';
 
 import { RequestData, requestApi } from '../../../../../api';
 
-export type A7ButtonProps = {
+export type A8ButtonProps = {
   request: RequestData;
   onSuccess?: () => void;
 };
 
-export const A7Button: FC<A7ButtonProps> = ({ request, onSuccess }) => {
+export const A8Button: FC<A8ButtonProps> = ({ request, onSuccess }) => {
   const updateRequest = requestApi.updateStatus.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
@@ -26,7 +24,7 @@ export const A7Button: FC<A7ButtonProps> = ({ request, onSuccess }) => {
     confirm('Bạn có chắc chắn muốn kết thúc yêu cầu này?', () => {
       updateRequest.mutate({
         note: 'Kết thúc',
-        status: RequestStatusOptions.A7,
+        status: RequestStatusOptions.A8,
         assignee: client.authStore.model?.id,
         id: request.id
       });

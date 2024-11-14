@@ -206,8 +206,8 @@ export const requestApi = router('request', {
         (!lastAssignee.length ||
           lastAssignee[lastAssignee.length - 1] !==
             client.authStore.model?.id) &&
-        params.status !== RequestStatusOptions.A7 &&
-        params.status !== RequestStatusOptions.A7R
+        params.status !== RequestStatusOptions.A8 &&
+        params.status !== RequestStatusOptions.A8R
       ) {
         await client.collection(Collections.Issue).update(request.issue, {
           lastAssignee: lastAssignee.concat(client.authStore.model?.id)
@@ -239,7 +239,7 @@ export const requestApi = router('request', {
           confirm2Date: new Date(),
           status: params.status
         });
-      } else if (params.status === RequestStatusOptions.A7) {
+      } else if (params.status === RequestStatusOptions.A7F) {
         return client.collection(Collections.Request).update(params.id, {
           confirm3: client.authStore.model?.name,
           confirm3Date: new Date(),

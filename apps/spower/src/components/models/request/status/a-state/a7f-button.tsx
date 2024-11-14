@@ -6,26 +6,27 @@ import { RequestStatusOptions } from '@storeo/core';
 import { Button, closeModal, showModal } from '@storeo/theme';
 
 import { RequestData } from '../../../../../api';
-import { ReturnRequestForm } from '../return-request-form';
+import { SendRequestForm } from '../send-request-form';
 
-export type A7rButtonProps = {
+export type A7ButtonProps = {
   request: RequestData;
   onSuccess?: () => void;
 };
 
-export const A7rButton: FC<A7rButtonProps> = ({ request, onSuccess }) => {
+export const A7fButton: FC<A7ButtonProps> = ({ request, onSuccess }) => {
   const router = useRouter();
   const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
     modalId.current = showModal({
-      title: 'Chuyển trả lại',
-      description: 'Công việc chưa hoàn thành, có vấn đề cần xử lý thêm',
+      title: 'Chuyển tiếp',
       className: 'flex min-w-[400px] flex-col',
       children: (
-        <ReturnRequestForm
-          status={RequestStatusOptions.A7R}
+        <SendRequestForm
+          status={RequestStatusOptions.A7F}
           request={request}
+          title={'Chuyển tiếp'}
+          condition={'(role = 3 && department.code = "KH") || role = 1'}
           onSuccess={() => {
             if (modalId.current) {
               closeModal(modalId.current);
@@ -42,9 +43,5 @@ export const A7rButton: FC<A7rButtonProps> = ({ request, onSuccess }) => {
     });
   }, [request, router.history]);
 
-  return (
-    <Button variant={'destructive'} onClick={handleClick}>
-      Chuyển trả lại
-    </Button>
-  );
+  return <Button onClick={handleClick}>Chuyển tiếp</Button>;
 };
