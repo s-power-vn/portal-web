@@ -1,4 +1,4 @@
-import { array, boolean, date, number, object, string } from 'yup';
+import { array, boolean, date, mixed, number, object, string } from 'yup';
 
 import { FC } from 'react';
 
@@ -12,6 +12,7 @@ import {
 } from '@storeo/theme';
 
 import { requestApi } from '../../../api';
+import { MultipleFileSelectField } from '../../file/multiple-file-select-field';
 import { RequestInputField } from './request-input-field';
 
 const schema = object().shape({
@@ -53,7 +54,8 @@ const schema = object().shape({
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
+    .required('Hãy chọn ít nhất 1 hạng mục'),
+  attachments: mixed()
 });
 
 export type NewRequestFormProps = BusinessFormProps & {
@@ -125,6 +127,11 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         schema={schema}
         name={'details'}
         options={{ projectId: props.projectId }}
+      />
+      <MultipleFileSelectField
+        schema={schema}
+        name={'attachments'}
+        title={'File đính kèm'}
       />
     </Form>
   );

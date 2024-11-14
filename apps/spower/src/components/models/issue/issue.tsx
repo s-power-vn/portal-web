@@ -1,31 +1,19 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-  CalendarIcon,
-  Edit3,
-  Loader,
-  MoreHorizontalIcon,
-  Undo2Icon
-} from 'lucide-react';
+import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
 
 import { FC, useCallback, useRef } from 'react';
 
 import {
-  Collections,
   IssueDeadlineStatusOptions,
   IssueTypeOptions,
   Match,
   Show,
   Switch,
   cn,
-  formatDateTime,
-  getImageUrl,
-  timeSince
+  formatDateTime
 } from '@storeo/core';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -33,15 +21,13 @@ import {
   DropdownMenuTrigger,
   ThemeButton,
   closeModal,
-  showModal,
-  useConfirm
+  showModal
 } from '@storeo/theme';
 
-import { commentApi, requestApi } from '../../../api';
+import { requestApi } from '../../../api';
 import { issueApi } from '../../../api/issue';
 import { EditRequestForm } from '../request/edit-request-form';
 import { Request } from '../request/request';
-import { RequestStatusText } from '../request/status/request-status-text';
 
 export type IssueProps = {
   issueId: string;
@@ -58,23 +44,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     variables: issueId
   });
 
-  const { confirm } = useConfirm();
-
-  const comments = commentApi.list.useSuspenseQuery({
-    variables: issueId
-  });
-
   const queryClient = useQueryClient();
-
-  const deleteComment = commentApi.delete.useMutation({
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: commentApi.list.getKey(issueId)
-        })
-      ]);
-    }
-  });
 
   const modalId = useRef<string | undefined>();
 
@@ -240,49 +210,6 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           <Request issueId={issueId} />
         </Match>
       </Switch>
-      <div className={'flex flex-col gap-2'}>
-        <div className={'flex flex-col gap-2'}>
-          {comments.data && comments.data.length > 0
-            ? comments.data.map(it => (
-                <div className={'relative flex border-b p-2'} key={it.id}>
-                  <div className={'flex flex-col pr-3'}>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={getImageUrl(
-                          Collections.User,
-                          it.expand.createdBy.id,
-                          it.expand.createdBy.avatar
-                        )}
-                      />
-                      <AvatarFallback className={'text-sm'}>
-                        {it.expand.createdBy.name.split(' ')[0][0]}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div className={'flex flex-col gap-1'}>
-                    <div className={'flex items-center gap-2'}>
-                      <div className={'text-sm font-bold'}>
-                        {it.expand.createdBy.name}
-                      </div>
-                      <div
-                        className={
-                          'flex items-center gap-1 text-xs text-gray-500'
-                        }
-                      >
-                        <CalendarIcon className={'h-3 w-3'} />
-                        {timeSince(new Date(Date.parse(it.created)))}
-                      </div>
-                      <Show when={issue.data.type === IssueTypeOptions.Request}>
-                        <RequestStatusText status={it.status} />
-                      </Show>
-                    </div>
-                    <div className={'text-sm'}>{it.content}</div>
-                  </div>
-                </div>
-              ))
-            : null}
-        </div>
-      </div>
     </div>
   );
 };

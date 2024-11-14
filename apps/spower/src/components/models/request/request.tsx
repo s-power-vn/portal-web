@@ -15,9 +15,9 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
+  CalendarIcon,
   EditIcon,
   PaperclipIcon,
-  PlusIcon,
   PrinterIcon,
   SquareMinusIcon,
   SquarePlusIcon
@@ -37,14 +37,21 @@ import 'react-pdf/dist/Page/TextLayer.css';
 
 import {
   BASE_URL,
+  Collections,
+  IssueTypeOptions,
   RequestStatusOptions,
   Show,
   client,
   cn,
   formatDate,
-  formatNumber
+  formatNumber,
+  getImageUrl,
+  timeSince
 } from '@storeo/core';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Table,
   TableBody,
@@ -62,7 +69,12 @@ import {
   useLoading
 } from '@storeo/theme';
 
-import { RequestDetailData, requestApi, requestDetailApi } from '../../../api';
+import {
+  RequestDetailData,
+  commentApi,
+  requestApi,
+  requestDetailApi
+} from '../../../api';
 import { issueApi } from '../../../api/issue';
 import {
   TreeData,
@@ -75,6 +87,7 @@ import { RequestAction } from './request-action';
 import { RequestDocument } from './request-document';
 import { DeadlineStatus } from './status/deadline-status';
 import { RequestStatus } from './status/request-status';
+import { RequestStatusText } from './status/request-status-text';
 
 export type RequestProps = {
   issueId: string;
@@ -86,6 +99,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<RequestDetailData>>>();
+
+  const issue = issueApi.byId.useSuspenseQuery({
+    variables: issueId
+  });
 
   const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
@@ -114,6 +131,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   });
 
   const { confirm } = useConfirm();
+
+  const comments = commentApi.list.useSuspenseQuery({
+    variables: issueId
+  });
 
   const v = useMemo(() => {
     return _.chain(
@@ -445,8 +466,9 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             <div>Nội dung</div>
           </TabsTrigger>
           <TabsTrigger value="attachment" asChild>
-            <div>
+            <div className={'flex gap-1'}>
               <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
+              File đính kèm
             </div>
           </TabsTrigger>
         </TabsList>
@@ -563,16 +585,57 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             </div>
             <RequestAction issueId={issueId} />
           </div>
+          <div className={'flex flex-col gap-2 pt-4'}>
+            <div className={'flex flex-col gap-2'}>
+              {comments.data && comments.data.length > 0
+                ? comments.data.map(it => (
+                    <div className={'relative flex border-b p-2'} key={it.id}>
+                      <div className={'flex flex-col pr-3'}>
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={getImageUrl(
+                              Collections.User,
+                              it.expand.createdBy.id,
+                              it.expand.createdBy.avatar
+                            )}
+                          />
+                          <AvatarFallback className={'text-sm'}>
+                            {it.expand.createdBy.name.split(' ')[0][0]}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className={'flex flex-col gap-1'}>
+                        <div className={'flex items-center gap-2'}>
+                          <div className={'text-sm font-bold'}>
+                            {it.expand.createdBy.name}
+                          </div>
+                          <div
+                            className={
+                              'flex items-center gap-1 text-xs text-gray-500'
+                            }
+                          >
+                            <CalendarIcon className={'h-3 w-3'} />
+                            {timeSince(new Date(Date.parse(it.created)))}
+                          </div>
+                          <Show
+                            when={issue.data.type === IssueTypeOptions.Request}
+                          >
+                            <RequestStatusText status={it.status} />
+                          </Show>
+                        </div>
+                        <div className={'text-sm'}>{it.content}</div>
+                      </div>
+                    </div>
+                  ))
+                : null}
+            </div>
+          </div>
         </TabsContent>
         <TabsContent value="attachment">
           <div className={'flex w-full items-center justify-center p-8'}>
-            <div className={'flex flex-col items-center justify-center gap-4'}>
-              <PaperclipIcon className={'h-[2rem] w-[2rem]'}></PaperclipIcon>
-              <Button className={'flex gap-1'}>
-                <PlusIcon className={'h-5 w-5'} />
-                Thêm file đính kèm
-              </Button>
-            </div>
+            <div
+              className={'flex flex-col items-center justify-center gap-4'}
+            ></div>
           </div>
         </TabsContent>
       </Tabs>
