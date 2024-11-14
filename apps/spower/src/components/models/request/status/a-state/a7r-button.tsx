@@ -10,10 +10,9 @@ import { ReturnRequestForm } from '../return-request-form';
 
 export type A7rButtonProps = {
   request: RequestData;
-  onSuccess?: () => void;
 };
 
-export const A7rButton: FC<A7rButtonProps> = ({ request, onSuccess }) => {
+export const A7rButton: FC<A7rButtonProps> = ({ request }) => {
   const router = useRouter();
   const modalId = useRef<string | undefined>();
 

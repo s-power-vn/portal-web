@@ -101,10 +101,7 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A6F}>
             <A6rButton request={request.data}></A6rButton>
-            <A7fButton
-              request={request.data}
-              onSuccess={handleSuccess}
-            ></A7fButton>
+            <A7fButton request={request.data}></A7fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A6R}>
             <A4rButton request={request.data}></A4rButton>
@@ -112,18 +109,15 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             <A6fButton request={request.data}></A6fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A7F}>
-            <A7rButton
+            <A7rButton request={request.data}></A7rButton>
+            <A8Button
               request={request.data}
               onSuccess={handleSuccess}
-            ></A7rButton>
-            <A8Button request={request.data}></A8Button>
+            ></A8Button>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A7R}>
             <A6rButton request={request.data}></A6rButton>
-            <A7fButton
-              request={request.data}
-              onSuccess={handleSuccess}
-            ></A7fButton>
+            <A7fButton request={request.data}></A7fButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A8}>
             <A8rButton
@@ -132,10 +126,7 @@ export const RequestAction: FC<RequestActionProps> = ({ issueId }) => {
             ></A8rButton>
           </Match>
           <Match when={request.data.status === RequestStatusOptions.A8R}>
-            <A7rButton
-              request={request.data}
-              onSuccess={handleSuccess}
-            ></A7rButton>
+            <A7rButton request={request.data}></A7rButton>
             <A8Button
               request={request.data}
               onSuccess={handleSuccess}

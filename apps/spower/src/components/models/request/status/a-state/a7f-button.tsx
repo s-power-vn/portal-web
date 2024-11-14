@@ -10,10 +10,9 @@ import { SendRequestForm } from '../send-request-form';
 
 export type A7ButtonProps = {
   request: RequestData;
-  onSuccess?: () => void;
 };
 
-export const A7fButton: FC<A7ButtonProps> = ({ request, onSuccess }) => {
+export const A7fButton: FC<A7ButtonProps> = ({ request }) => {
   const router = useRouter();
   const modalId = useRef<string | undefined>();
 
