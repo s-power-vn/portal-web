@@ -463,10 +463,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       <Tabs defaultValue={'detail'}>
         <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
           <TabsTrigger value="detail" asChild>
-            <div>Nội dung</div>
+            <div className={'cursor-pointer select-none'}>Nội dung</div>
           </TabsTrigger>
           <TabsTrigger value="attachment" asChild>
-            <div className={'flex gap-1'}>
+            <div className={'flex cursor-pointer select-none gap-1'}>
               <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
               File đính kèm
             </div>
