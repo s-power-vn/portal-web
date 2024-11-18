@@ -1,6 +1,6 @@
 {
-  "name": "@storeo/theme",
-  "version": "0.0.3",
+  "name": "@minhdtb/storeo-theme",
+  "version": "0.0.4",
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
