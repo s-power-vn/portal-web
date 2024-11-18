@@ -1,9 +1,8 @@
 {
   "name": "@storeo/theme",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
-  "typings": "./index.d.ts",
-  "private": true
+  "typings": "./index.d.ts"
 }
