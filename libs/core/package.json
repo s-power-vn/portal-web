@@ -1,6 +1,6 @@
 {
-  "name": "@storeo/core",
-  "version": "1.0.6",
+  "name": "@minhdtb/storeo-core",
+  "version": "1.0.7",
   "dependencies": {
     "@swc/helpers": "~0.5.2"
   },
