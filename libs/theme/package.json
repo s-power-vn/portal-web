@@ -1,8 +1,11 @@
 {
   "name": "@storeo/theme",
-  "version": "1.0.4",
+  "version": "0.0.2",
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
-  "typings": "./index.d.ts"
+  "typings": "./index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
 }
