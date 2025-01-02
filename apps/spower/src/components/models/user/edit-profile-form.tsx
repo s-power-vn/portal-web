@@ -18,7 +18,6 @@ import {
 import { ImageSelectField } from '../../image/image-select-field';
 import { ChangePasswordForm } from './change-password-form';
 
-
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
@@ -81,6 +80,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           id: client.authStore.model?.id
         })
       }
+      hideDefaultActions={true}
       actions={methods => (
         <div className={'mt-6 flex justify-end gap-2'}>
           <Button
