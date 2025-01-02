@@ -1,3 +1,8 @@
+import { projectApi } from 'portal-api';
+import { AnyObject, ObjectSchema, object, string } from 'yup';
+
+import { FC } from 'react';
+
 import { ColumnTypeOptions } from '@minhdtb/storeo-core';
 import {
   BusinessFormProps,
@@ -9,11 +14,6 @@ import {
   TextField,
   success
 } from '@minhdtb/storeo-theme';
-import { AnyObject, ObjectSchema, object, string } from 'yup';
-
-import { FC } from 'react';
-
-import { projectApi } from '../../../api';
 
 const schema = object().shape({
   title: string().required('Hãy nhập tên cột'),

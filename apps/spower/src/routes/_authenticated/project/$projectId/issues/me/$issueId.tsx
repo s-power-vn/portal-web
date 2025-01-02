@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 
 import { Issue } from '../../../../../../components';
 
+
 const Component = () => {
   const { issueId } = Route.useParams();
 

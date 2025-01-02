@@ -1,9 +1,9 @@
-import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 import _ from 'lodash';
+import { supplierApi } from 'portal-api';
 
 import { FC } from 'react';
 
-import { supplierApi } from '../../../api';
+import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 
 export type SupplierDropdownProps = Omit<SelectInputProps, 'items'>;
 

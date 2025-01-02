@@ -1,12 +1,13 @@
-import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
-import { Button } from '@minhdtb/storeo-theme';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Loader } from 'lucide-react';
+import { requestApi } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
 import React, { FC, Suspense, useCallback, useState } from 'react';
 
-import { requestApi } from '../../../../api';
+import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
+import { Button } from '@minhdtb/storeo-theme';
+
 import { AStateFlow } from './a-state/a-state-flow';
 
 export type RequestStatusProps = {

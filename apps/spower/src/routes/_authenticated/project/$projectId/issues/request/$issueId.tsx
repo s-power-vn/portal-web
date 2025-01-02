@@ -1,12 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Loader } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router';
+import { Loader } from 'lucide-react';
 
-import { Suspense } from 'react'
+import { Suspense } from 'react';
 
-import { Issue } from '../../../../../../components'
+import { Issue } from '../../../../../../components';
+
 
 const Component = () => {
-  const { issueId } = Route.useParams()
+  const { issueId } = Route.useParams();
 
   return (
     <Suspense
@@ -18,11 +19,11 @@ const Component = () => {
     >
       <Issue issueId={issueId} />
     </Suspense>
-  )
-}
+  );
+};
 
 export const Route = createFileRoute(
-  '/_authenticated/project/$projectId/issues/request/$issueId',
+  '/_authenticated/project/$projectId/issues/request/$issueId'
 )({
-  component: Component,
-})
+  component: Component
+});

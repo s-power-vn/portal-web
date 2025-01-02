@@ -1,4 +1,3 @@
-import { ModalProvider, error } from '@minhdtb/storeo-theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   RouterProvider,
@@ -8,6 +7,8 @@ import {
 } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
 import { parse, stringify } from 'zipson';
+
+import { ModalProvider, error } from '@minhdtb/storeo-theme';
 
 import { routeTree } from './routes.gen';
 

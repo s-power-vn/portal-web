@@ -1,3 +1,8 @@
+import { requestDetailApi } from 'portal-api';
+import { date, number, object, string } from 'yup';
+
+import React, { FC } from 'react';
+
 import {
   BusinessFormProps,
   DatePickerField,
@@ -7,11 +12,6 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-import { date, number, object, string } from 'yup';
-
-import React, { FC } from 'react';
-
-import { requestDetailApi } from '../../../api';
 
 const schema = object().shape({
   volume: number()

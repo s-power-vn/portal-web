@@ -1,12 +1,13 @@
+import { InferType, object, string } from 'yup';
+
+import React, { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
   TextField,
   TextareaField
 } from '@minhdtb/storeo-theme';
-import { InferType, object, string } from 'yup';
-
-import React, { FC } from 'react';
 
 const schema = object().shape({
   title: string().required('Hãy nhập mô tả công việc'),

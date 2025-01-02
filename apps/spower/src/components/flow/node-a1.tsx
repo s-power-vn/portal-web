@@ -1,7 +1,7 @@
-import { Show, cn } from '@minhdtb/storeo-core';
-
 import { FC, memo } from 'react';
 import { Handle, Position } from 'reactflow';
+
+import { Show, cn } from '@minhdtb/storeo-core';
 
 export type CustomNodeProps = {
   data: {

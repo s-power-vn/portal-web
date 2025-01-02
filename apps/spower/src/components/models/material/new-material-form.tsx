@@ -1,3 +1,8 @@
+import { materialApi } from 'portal-api';
+import { object, string } from 'yup';
+
+import { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
@@ -5,11 +10,6 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-import { object, string } from 'yup';
-
-import { FC } from 'react';
-
-import { materialApi } from '../../../api';
 
 const schema = object().shape({
   code: string()

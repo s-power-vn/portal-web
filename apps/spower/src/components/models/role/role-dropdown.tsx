@@ -1,6 +1,6 @@
-import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
-
 import { FC } from 'react';
+
+import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 
 export type RoleDropdownProps = Partial<SelectInputProps>;
 

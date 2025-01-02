@@ -1,11 +1,13 @@
-import { Modal } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { materialApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
-import { materialApi } from '../../../../../api';
+import { Modal } from '@minhdtb/storeo-theme';
+
 import { EditMaterialForm } from '../../../../../components';
+
 
 const Component = () => {
   const [open, setOpen] = useState(true);

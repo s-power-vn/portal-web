@@ -1,7 +1,8 @@
-import { Match, Switch } from '@minhdtb/storeo-core';
 import { RequestStatusOptions } from 'portal-core';
 
 import { FC } from 'react';
+
+import { Match, Switch } from '@minhdtb/storeo-core';
 
 export type RequestStatusTextProps = {
   status: string;

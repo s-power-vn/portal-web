@@ -1,4 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import _ from 'lodash';
+import { PlusIcon, TrashIcon } from 'lucide-react';
+import { v4 } from 'uuid';
+import { AnyObject, ObjectSchema } from 'yup';
+
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+
 import { DetailResponse, Show, cn } from '@minhdtb/storeo-core';
 import {
   Button,
@@ -16,13 +24,6 @@ import {
   closeModal,
   showModal
 } from '@minhdtb/storeo-theme';
-import _ from 'lodash';
-import { PlusIcon, TrashIcon } from 'lucide-react';
-import { v4 } from 'uuid';
-import { AnyObject, ObjectSchema } from 'yup';
-
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { TreeData } from '../../../commons/utils';
 import { PickDetailInput } from '../detail/pick-detail-input';

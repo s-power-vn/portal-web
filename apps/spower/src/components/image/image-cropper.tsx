@@ -1,9 +1,10 @@
-import { Button } from '@minhdtb/storeo-theme';
 import { v4 } from 'uuid';
 
 import { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Crop, ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+
+import { Button } from '@minhdtb/storeo-theme';
 
 function getCroppedImage(
   image: HTMLImageElement,

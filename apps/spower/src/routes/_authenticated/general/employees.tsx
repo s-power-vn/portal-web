@@ -1,15 +1,3 @@
-import {
-  Button,
-  DebouncedInput,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  success,
-  useConfirm
-} from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -24,11 +12,24 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { UserData, employeeApi } from 'portal-api';
+import { SearchSchema } from 'portal-api';
 
 import { useState } from 'react';
 
-import { UserData, employeeApi } from '../../../api';
-import { SearchSchema } from '../../../api/types';
+import {
+  Button,
+  DebouncedInput,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  success,
+  useConfirm
+} from '@minhdtb/storeo-theme';
+
 import { PageHeader } from '../../../components';
 
 const Component = () => {

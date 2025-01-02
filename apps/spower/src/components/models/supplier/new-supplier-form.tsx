@@ -1,3 +1,8 @@
+import { supplierApi } from 'portal-api';
+import { object, string } from 'yup';
+
+import { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
@@ -5,11 +10,6 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-import { object, string } from 'yup';
-
-import { FC } from 'react';
-
-import { supplierApi } from '../../../api';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên nhà cung cấp'),

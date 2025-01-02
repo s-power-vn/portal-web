@@ -1,5 +1,3 @@
-import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
-import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 import {
   SearchSchemaInput,
   createFileRoute,
@@ -7,10 +5,13 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
+import { issueApi } from 'portal-api';
+import { SearchSchema } from 'portal-api';
 import { IssueResponse, IssueTypeOptions } from 'portal-core';
 
-import { issueApi } from '../../../../../../api/issue';
-import { SearchSchema } from '../../../../../../api/types';
+import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
+import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
+
 import {
   EmployeeDisplay,
   NewIssueButton,

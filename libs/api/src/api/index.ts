@@ -10,3 +10,6 @@ export * from './request';
 export * from './supplier';
 export * from './material';
 export * from './setting';
+export * from './user';
+export * from './issue';
+export * from './types';

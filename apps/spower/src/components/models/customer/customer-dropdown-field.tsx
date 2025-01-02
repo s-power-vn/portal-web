@@ -1,5 +1,6 @@
-import { FormField, FormFieldProps } from '@minhdtb/storeo-theme';
 import { AnyObject, ObjectSchema } from 'yup';
+
+import { FormField, FormFieldProps } from '@minhdtb/storeo-theme';
 
 import { CustomerDropdown, CustomerDropdownProps } from './customer-dropdown';
 

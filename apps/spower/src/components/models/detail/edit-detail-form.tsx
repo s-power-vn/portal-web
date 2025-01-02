@@ -1,3 +1,8 @@
+import { detailApi } from 'portal-api';
+import { number, object, string } from 'yup';
+
+import React, { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
@@ -6,11 +11,7 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-import { number, object, string } from 'yup';
 
-import React, { FC } from 'react';
-
-import { detailApi } from '../../../api';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),

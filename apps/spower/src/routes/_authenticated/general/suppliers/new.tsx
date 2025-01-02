@@ -1,11 +1,13 @@
-import { Modal } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { supplierApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
-import { supplierApi } from '../../../../api';
+import { Modal } from '@minhdtb/storeo-theme';
+
 import { NewSupplierForm } from '../../../../components';
+
 
 const Component = () => {
   const [open, setOpen] = useState(true);

@@ -1,10 +1,12 @@
-import { Show } from '@minhdtb/storeo-core';
-import { closeModal, showModal } from '@minhdtb/storeo-theme';
 import { ImageIcon } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
+import { Show } from '@minhdtb/storeo-core';
+import { closeModal, showModal } from '@minhdtb/storeo-theme';
+
 import { ImageCropper } from './image-cropper';
+
 
 export type ImageSelectProps = {
   value?: string;

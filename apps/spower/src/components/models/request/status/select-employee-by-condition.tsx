@@ -1,9 +1,10 @@
-import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 import _ from 'lodash';
+import { employeeApi } from 'portal-api';
 
 import { FC, useMemo, useState } from 'react';
 
-import { employeeApi } from '../../../../api';
+import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
+
 import { EmployeeDisplay } from '../../employee/employee-display';
 
 export type SelectEmployeeByConditionProps = Omit<SelectInputProps, 'items'> & {

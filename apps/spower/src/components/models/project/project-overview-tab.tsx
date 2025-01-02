@@ -1,12 +1,3 @@
-import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@minhdtb/storeo-theme';
 import { useNavigate } from '@tanstack/react-router';
 import {
   ExpandedState,
@@ -22,6 +13,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import { detailInfoApi } from 'portal-api';
 import {
   DetailInfoResponse,
   RequestResponse,
@@ -31,7 +23,16 @@ import {
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { detailInfoApi } from '../../../api';
+import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@minhdtb/storeo-theme';
+
 import {
   TreeData,
   arrayToTree,

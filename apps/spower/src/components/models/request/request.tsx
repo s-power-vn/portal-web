@@ -1,4 +1,55 @@
 import { compile } from '@fileforge/react-print';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import {
+  ExpandedState,
+  Row,
+  RowSelectionState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+import _ from 'lodash';
+import {
+  CalendarIcon,
+  EditIcon,
+  PaperclipIcon,
+  PrinterIcon,
+  SquareMinusIcon,
+  SquarePlusIcon
+} from 'lucide-react';
+import {
+  RequestDetailData,
+  commentApi,
+  requestApi,
+  requestDetailApi
+} from 'portal-api';
+import { issueApi } from 'portal-api';
+import {
+  BASE_URL,
+  Collections,
+  IssueTypeOptions,
+  RequestStatusOptions,
+  client,
+  getImageUrl
+} from 'portal-core';
+import printJS from 'print-js';
+
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
 import {
   Show,
   cn,
@@ -26,57 +77,7 @@ import {
   useConfirm,
   useLoading
 } from '@minhdtb/storeo-theme';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import {
-  ExpandedState,
-  Row,
-  RowSelectionState,
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getPaginationRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import _ from 'lodash';
-import {
-  CalendarIcon,
-  EditIcon,
-  PaperclipIcon,
-  PrinterIcon,
-  SquareMinusIcon,
-  SquarePlusIcon
-} from 'lucide-react';
-import {
-  BASE_URL,
-  Collections,
-  IssueTypeOptions,
-  RequestStatusOptions,
-  client,
-  getImageUrl
-} from 'portal-core';
-import printJS from 'print-js';
 
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
-
-import {
-  RequestDetailData,
-  commentApi,
-  requestApi,
-  requestDetailApi
-} from '../../../api';
-import { issueApi } from '../../../api/issue';
 import {
   TreeData,
   arrayToTree,

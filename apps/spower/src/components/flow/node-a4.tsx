@@ -1,9 +1,10 @@
-import { Show, cn } from '@minhdtb/storeo-core';
-
 import { FC, memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
+import { Show, cn } from '@minhdtb/storeo-core';
+
 import { CustomNodeProps } from './node-a1';
+
 
 const NodeA4: FC<CustomNodeProps> = ({ data, isConnectable }) => {
   const condition = data.status === 'A3F';

@@ -1,9 +1,10 @@
-import { BusinessFormProps, Form, success } from '@minhdtb/storeo-theme';
+import { settingApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { settingApi } from '../../../api';
+import { BusinessFormProps, Form, success } from '@minhdtb/storeo-theme';
+
 import { SelectEmployeeField } from '../employee/select-employee-field';
 
 const schema = object().shape({

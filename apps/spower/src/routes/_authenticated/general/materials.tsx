@@ -1,11 +1,3 @@
-import { MaterialResponse } from '@minhdtb/storeo-core';
-import {
-  Button,
-  CommonTable,
-  DebouncedInput,
-  success,
-  useConfirm
-} from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -15,9 +7,18 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { materialApi } from 'portal-api';
+import { SearchSchema } from 'portal-api';
 
-import { materialApi } from '../../../api';
-import { SearchSchema } from '../../../api/types';
+import { MaterialResponse } from '@minhdtb/storeo-core';
+import {
+  Button,
+  CommonTable,
+  DebouncedInput,
+  success,
+  useConfirm
+} from '@minhdtb/storeo-theme';
+
 import { PageHeader } from '../../../components';
 
 const Component = () => {

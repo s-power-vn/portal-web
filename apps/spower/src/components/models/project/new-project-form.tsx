@@ -1,15 +1,17 @@
+import { projectApi } from 'portal-api';
+import { object, string } from 'yup';
+
+import { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
   TextField,
   success
 } from '@minhdtb/storeo-theme';
-import { object, string } from 'yup';
 
-import { FC } from 'react';
-
-import { projectApi } from '../../../api';
 import { CustomerDropdownField } from '../customer/customer-dropdown-field';
+
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên công trình'),

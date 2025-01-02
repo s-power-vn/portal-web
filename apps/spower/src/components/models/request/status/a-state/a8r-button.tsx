@@ -1,9 +1,9 @@
-import { Button, success } from '@minhdtb/storeo-theme';
+import { RequestData, requestApi } from 'portal-api';
 import { RequestStatusOptions, client } from 'portal-core';
 
 import { FC, useCallback } from 'react';
 
-import { RequestData, requestApi } from '../../../../../api';
+import { Button, success } from '@minhdtb/storeo-theme';
 
 export type A8rButtonProps = {
   request: RequestData;

@@ -1,3 +1,13 @@
+import {
+  SearchSchemaInput,
+  createFileRoute,
+  redirect
+} from '@tanstack/react-router';
+import { Loader2 } from 'lucide-react';
+import { useLogin } from 'portal-api';
+import { client } from 'portal-core';
+import { object, string } from 'yup';
+
 import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
@@ -8,17 +18,9 @@ import {
   PasswordField,
   TextField
 } from '@minhdtb/storeo-theme';
-import {
-  SearchSchemaInput,
-  createFileRoute,
-  redirect
-} from '@tanstack/react-router';
-import { Loader2 } from 'lucide-react';
-import { client } from 'portal-core';
-import { object, string } from 'yup';
 
-import { useLogin } from '../api';
 import { CommonLayout } from '../layouts';
+
 
 const Logo = () => (
   <img

@@ -1,15 +1,15 @@
+import { RequestData, requestApi } from 'portal-api';
+import { RequestStatusOptions } from 'portal-core';
+import { object, string } from 'yup';
+
+import { FC } from 'react';
+
 import {
   BusinessFormProps,
   Form,
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-import { RequestStatusOptions } from 'portal-core';
-import { object, string } from 'yup';
-
-import { FC } from 'react';
-
-import { RequestData, requestApi } from '../../../../api';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),

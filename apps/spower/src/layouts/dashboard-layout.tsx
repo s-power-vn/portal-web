@@ -1,5 +1,3 @@
-import { cn } from '@minhdtb/storeo-core';
-import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   AnvilIcon,
@@ -12,10 +10,13 @@ import {
   SquareKanbanIcon,
   Users2Icon
 } from 'lucide-react';
+import { projectApi } from 'portal-api';
 
 import { FC, ReactNode, useCallback, useRef } from 'react';
 
-import { projectApi } from '../api';
+import { cn } from '@minhdtb/storeo-core';
+import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
+
 import {
   Header,
   Sidebar,

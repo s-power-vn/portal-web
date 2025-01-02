@@ -21,6 +21,9 @@
     "paths": {
       "portal-core": [
         "libs/core/src/index.ts"
+      ],
+      "portal-api": [
+        "libs/api/src/index.ts"
       ]
     }
   },

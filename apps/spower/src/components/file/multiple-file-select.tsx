@@ -1,6 +1,6 @@
-import { Button } from '@minhdtb/storeo-theme';
-
 import { FC } from 'react';
+
+import { Button } from '@minhdtb/storeo-theme';
 
 export type MultipleFileSelectProps = {
   value?: string[];

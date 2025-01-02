@@ -1,14 +1,15 @@
-import { formatDateTime } from '@minhdtb/storeo-core';
-import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 import {
   SearchSchemaInput,
   createFileRoute,
   useNavigate
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
+import { ProjectData, projectApi } from 'portal-api';
+import { SearchSchema } from 'portal-api';
 
-import { ProjectData, projectApi } from '../../../api';
-import { SearchSchema } from '../../../api/types';
+import { formatDateTime } from '@minhdtb/storeo-core';
+import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
+
 import { EmployeeDisplay } from '../../../components';
 
 const Component = () => {
