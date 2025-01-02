@@ -119,12 +119,17 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: issueApi.list.getKey({
-            projectId: request.data.project
+            projectId: request.data?.project
           })
         }),
         queryClient.invalidateQueries({
           queryKey: issueApi.listMine.getKey({
-            projectId: request.data.project
+            projectId: request.data?.project
+          })
+        }),
+        queryClient.invalidateQueries({
+          queryKey: issueApi.listRequest.getKey({
+            projectId: request.data?.project
           })
         })
       ]);
@@ -140,14 +145,14 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const v = useMemo(() => {
     return _.chain(
-      request.data ? request.data.expand.requestDetail_via_request : []
+      request.data ? request.data?.expand.requestDetail_via_request : []
     )
       .map(it => {
         return {
           ...it,
           group: it.expand?.detail.id ?? it.customLevel,
           level: it.expand?.detail.level ?? it.customLevel,
-          parent: it.expand?.detail.parent ?? `${request.data.project}-root`
+          parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
         };
       })
       .orderBy('level')
@@ -155,8 +160,8 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   }, [request.data]);
 
   const requests = useMemo(() => {
-    return arrayToTree(v, `${request.data.project}-root`);
-  }, [request.data.project, v]);
+    return arrayToTree(v, `${request.data?.project}-root`);
+  }, [request.data?.project, v]);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
 
@@ -363,34 +368,34 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     showLoading();
     const html = await compile(
       <RequestDocument
-        project={request.data.expand.project.name}
-        code={request.data.code}
-        bidding={request.data.expand.project.bidding}
-        requester={request.data.expand.issue.expand.createdBy.name}
+        project={request.data?.expand.project.name}
+        code={request.data?.code}
+        bidding={request.data?.expand.project.bidding}
+        requester={request.data?.expand.issue.expand.createdBy.name}
         department={
-          request.data.expand.issue.expand.createdBy.expand.department.name
+          request.data?.expand.issue.expand.createdBy.expand.department.name
         }
-        content={request.data.expand.issue.title}
+        content={request.data?.expand.issue.title}
         confirm1={
-          request.data.status === RequestStatusOptions.A4F ||
-          request.data.status === RequestStatusOptions.A4R ||
-          request.data.status === RequestStatusOptions.A5F ||
-          request.data.status === RequestStatusOptions.A5R ||
-          request.data.status === RequestStatusOptions.A6F ||
-          request.data.status === RequestStatusOptions.A6R ||
-          request.data.status === RequestStatusOptions.A7F ||
-          request.data.status === RequestStatusOptions.A7R
+          request.data?.status === RequestStatusOptions.A4F ||
+          request.data?.status === RequestStatusOptions.A4R ||
+          request.data?.status === RequestStatusOptions.A5F ||
+          request.data?.status === RequestStatusOptions.A5R ||
+          request.data?.status === RequestStatusOptions.A6F ||
+          request.data?.status === RequestStatusOptions.A6R ||
+          request.data?.status === RequestStatusOptions.A7F ||
+          request.data?.status === RequestStatusOptions.A7R
         }
         confirm2={
-          request.data.status === RequestStatusOptions.A6F ||
-          request.data.status === RequestStatusOptions.A6R ||
-          request.data.status === RequestStatusOptions.A7F ||
-          request.data.status === RequestStatusOptions.A7R
+          request.data?.status === RequestStatusOptions.A6F ||
+          request.data?.status === RequestStatusOptions.A6R ||
+          request.data?.status === RequestStatusOptions.A7F ||
+          request.data?.status === RequestStatusOptions.A7R
         }
-        confirm3={request.data.status === RequestStatusOptions.A7F}
-        leader1={request.data.confirm1}
-        leader2={request.data.confirm2}
-        leader3={request.data.confirm3}
+        confirm3={request.data?.status === RequestStatusOptions.A7F}
+        leader1={request.data?.confirm1}
+        leader2={request.data?.confirm2}
+        leader3={request.data?.confirm3}
         data={v}
       />
     );
@@ -425,9 +430,9 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           </Button>
           <Show
             when={
-              request.data.expand.issue.assignee ===
+              request.data?.expand.issue.assignee ===
                 client.authStore.model?.id &&
-              request.data.status !== RequestStatusOptions.A7F
+              request.data?.status !== RequestStatusOptions.A7F
             }
           >
             <Button
@@ -454,7 +459,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         <div className={'flex gap-2'}>
           <DeadlineStatus
             className={'font-bold'}
-            status={request.data.expand.issue.deadlineStatus}
+            status={request.data?.expand.issue.deadlineStatus}
           />
           <RequestStatus
             className={'px-3 py-1.5 text-xs font-bold'}

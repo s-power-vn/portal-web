@@ -7,7 +7,6 @@ import { closeModal, showModal } from '@minhdtb/storeo-theme';
 
 import { ImageCropper } from './image-cropper';
 
-
 export type ImageSelectProps = {
   value?: string;
   onChange?: (value?: File) => void;
@@ -84,7 +83,7 @@ export const ImageSelect: FC<ImageSelectProps> = props => {
         height
       }}
       onClick={handleSelectImage}
-      type={'reset'}
+      type={'button'}
     >
       <Show when={image} fallback={<ImageIcon className={'h-10 w-10'} />}>
         <img src={image} width={width} height={height} alt="avatar" />

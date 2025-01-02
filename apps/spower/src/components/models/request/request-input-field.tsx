@@ -137,7 +137,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
           <Button
             className={' text-sm '}
             variant={'destructive'}
-            type={'reset'}
+            type={'button'}
             onClick={handleClear}
           >
             <TrashIcon className={'mr-2 h-4 w-4'} />
@@ -145,13 +145,17 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
           </Button>
           <Button
             className={'bg-orange-500 text-sm hover:bg-orange-400'}
-            type={'reset'}
+            type={'button'}
             onClick={handleCustomRequest}
           >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Thêm hạng mục ngoài HĐ
           </Button>
-          <Button type={'reset'} className={cn('text-sm')} onClick={handlePick}>
+          <Button
+            type={'button'}
+            className={cn('text-sm')}
+            onClick={handlePick}
+          >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Chọn hạng mục trong HĐ
           </Button>

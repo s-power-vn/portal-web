@@ -8,9 +8,8 @@ import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
 
 import { SendRequestForm } from '../send-request-form';
 
-
 export type A7ButtonProps = {
-  request: RequestData;
+  request: RequestData | null;
 };
 
 export const A7fButton: FC<A7ButtonProps> = ({ request }) => {

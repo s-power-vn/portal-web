@@ -6,7 +6,7 @@ import { FC, useCallback } from 'react';
 import { Button, success, useConfirm } from '@minhdtb/storeo-theme';
 
 export type A8ButtonProps = {
-  request: RequestData;
+  request: RequestData | null;
   onSuccess?: () => void;
 };
 
@@ -22,14 +22,16 @@ export const A8Button: FC<A8ButtonProps> = ({ request, onSuccess }) => {
 
   const handleClick = useCallback(() => {
     confirm('Bạn có chắc chắn muốn kết thúc yêu cầu này?', () => {
-      updateRequest.mutate({
-        note: 'Kết thúc',
-        status: RequestStatusOptions.A8,
-        assignee: client.authStore.model?.id,
-        id: request.id
-      });
+      if (request) {
+        updateRequest.mutate({
+          note: 'Kết thúc',
+          status: RequestStatusOptions.A8,
+          assignee: client.authStore.model?.id,
+          id: request.id
+        });
+      }
     });
-  }, [confirm, request.id, updateRequest]);
+  }, [confirm, request, updateRequest]);
 
   return <Button onClick={handleClick}>Kết thúc</Button>;
 };

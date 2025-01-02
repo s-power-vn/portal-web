@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { cn } from '@minhdtb/storeo-core';
 
 export type DeadlineStatusProps = {
-  status: IssueDeadlineStatusOptions;
+  status?: IssueDeadlineStatusOptions;
   className?: string;
 };
 

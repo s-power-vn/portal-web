@@ -11,14 +11,13 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
   status: string().required('Hãy chọn status')
 });
 
 export type ReturnRequestFormProps = BusinessFormProps & {
-  request: RequestData;
+  request: RequestData | null;
   status: RequestStatusOptions;
 };
 
@@ -37,13 +36,15 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
       defaultValues={{
         status: props.status
       }}
-      onSubmit={values =>
-        returnRequest.mutate({
-          ...values,
-          id: props.request.id,
-          issue: props.request.issue
-        })
-      }
+      onSubmit={values => {
+        if (props.request) {
+          returnRequest.mutate({
+            ...values,
+            id: props.request.id,
+            issue: props.request.issue
+          });
+        }
+      }}
       onCancel={props.onCancel}
       loading={returnRequest.isPending}
     >

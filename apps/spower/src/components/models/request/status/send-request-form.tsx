@@ -13,7 +13,6 @@ import {
 
 import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
 
-
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
   assignee: string().required('Hãy chọn nhân viên'),
@@ -21,7 +20,7 @@ const schema = object().shape({
 });
 
 export type SendRequestFormProps = BusinessFormProps & {
-  request: RequestData;
+  request: RequestData | null;
   status: RequestStatusOptions;
   title: string;
   condition?: string;
@@ -42,12 +41,14 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
       defaultValues={{
         status: props.status
       }}
-      onSubmit={values =>
-        updateRequest.mutate({
-          ...values,
-          id: props.request.id
-        })
-      }
+      onSubmit={values => {
+        if (props.request) {
+          updateRequest.mutate({
+            ...values,
+            id: props.request?.id
+          });
+        }
+      }}
       onCancel={props.onCancel}
       loading={updateRequest.isPending}
     >

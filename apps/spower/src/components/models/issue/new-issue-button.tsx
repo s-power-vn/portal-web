@@ -46,6 +46,11 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         queryKey: issueApi.listMine.getKey({
           projectId
         })
+      }),
+      queryClient.invalidateQueries({
+        queryKey: issueApi.listRequest.getKey({
+          projectId
+        })
       })
     ]);
   }, [queryClient, projectId]);

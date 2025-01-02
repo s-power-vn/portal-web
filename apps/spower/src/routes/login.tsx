@@ -21,7 +21,6 @@ import {
 
 import { CommonLayout } from '../layouts';
 
-
 const Logo = () => (
   <img
     src={'http://s-power.vn/wp-content/uploads/2021/04/spower-non-bg-1.png'}
@@ -60,7 +59,7 @@ const Login = () => {
                 className={'flex w-full items-center justify-center px-12 pt-4'}
               >
                 {login.isPending ? (
-                  <Button className={'w-full'} type={'reset'}>
+                  <Button className={'w-full'} type={'button'}>
                     <Loader2
                       className={cn('my-1 h-6 w-6 animate-spin text-white')}
                     />

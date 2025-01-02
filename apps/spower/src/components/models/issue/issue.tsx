@@ -149,7 +149,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
                 <span className={'text-appBlue whitespace-nowrap text-xs'}>
                   Số phiếu
                 </span>
-                <span className={'truncate'}>{request.data.code}</span>
+                <span className={'truncate'}>{request.data?.code}</span>
               </div>
             </Show>
           </div>
