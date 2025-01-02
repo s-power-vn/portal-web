@@ -1,3 +1,12 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  ThemeButton,
+  closeModal,
+  showModal
+} from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   DollarSignIcon,
@@ -7,16 +16,6 @@ import {
 } from 'lucide-react';
 
 import { FC, useCallback, useRef } from 'react';
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  ThemeButton,
-  closeModal,
-  showModal
-} from '@storeo/theme';
 
 import { requestApi } from '../../../api';
 import { issueApi } from '../../../api/issue';

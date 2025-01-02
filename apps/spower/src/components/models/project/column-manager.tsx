@@ -1,16 +1,4 @@
-import { PlusIcon } from '@radix-ui/react-icons';
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { XIcon } from 'lucide-react';
-
-import { FC, useCallback, useRef } from 'react';
-
-import { ColumnResponse } from '@storeo/core';
+import { ColumnResponse } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,
@@ -23,7 +11,18 @@ import {
   showModal,
   success,
   useConfirm
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+import { XIcon } from 'lucide-react';
+
+import { FC, useCallback, useRef } from 'react';
 
 import { projectApi } from '../../../api';
 import { NewColumnForm } from './new-column-form';

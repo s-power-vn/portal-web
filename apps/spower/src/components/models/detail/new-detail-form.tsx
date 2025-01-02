@@ -1,8 +1,4 @@
-import { number, object, string } from 'yup';
-
-import React, { FC } from 'react';
-
-import { DetailInfoResponse } from '@storeo/core';
+import { DetailInfoResponse } from '@minhdtb/storeo-core';
 import {
   BusinessFormProps,
   Form,
@@ -10,7 +6,10 @@ import {
   TextField,
   TextareaField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { number, object, string } from 'yup';
+
+import React, { FC } from 'react';
 
 import { detailApi } from '../../../api';
 import { TreeData } from '../../../commons/utils';

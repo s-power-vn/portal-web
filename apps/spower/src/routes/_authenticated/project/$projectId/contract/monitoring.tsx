@@ -1,9 +1,13 @@
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from '@minhdtb/storeo-theme';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
 
 import React, { Suspense } from 'react';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@storeo/theme';
 
 import { ProjectOverviewTab } from '../../../../../components';
 

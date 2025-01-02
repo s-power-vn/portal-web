@@ -1,11 +1,11 @@
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   SettingResponse,
   UserResponse,
   client
-} from '@storeo/core';
+} from 'portal-core';
+
+import { router } from 'react-query-kit';
 
 export type SettingData = SettingResponse & {
   expand: {

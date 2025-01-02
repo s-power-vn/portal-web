@@ -1,14 +1,14 @@
-import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom/client';
-import { ReactFlowProvider } from 'reactflow';
-import 'reactflow/dist/style.css';
-
 import {
   ConfirmProvider,
   LoadingProvider,
   Toaster,
   TooltipProvider
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+
+import { StrictMode } from 'react';
+import * as ReactDOM from 'react-dom/client';
+import { ReactFlowProvider } from 'reactflow';
+import 'reactflow/dist/style.css';
 
 import { App } from './app';
 import './global.css';

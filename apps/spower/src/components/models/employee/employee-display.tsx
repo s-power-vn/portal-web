@@ -1,10 +1,9 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Loader, UserIcon } from 'lucide-react';
+import { Collections, client, getImageUrl } from 'portal-core';
 
 import { FC, Suspense } from 'react';
-
-import { Collections, client, getImageUrl } from '@storeo/core';
-import { Avatar, AvatarFallback, AvatarImage } from '@storeo/theme';
 
 const Component = ({ employeeId }: { employeeId: string }) => {
   const query = useSuspenseQuery({

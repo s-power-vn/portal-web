@@ -1,12 +1,12 @@
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   DetailInfoResponse,
   DetailRecord,
   RequestResponse,
   client
-} from '@storeo/core';
+} from 'portal-core';
+
+import { router } from 'react-query-kit';
 
 export const detailApi = router('detail', {
   listFull: router.query({

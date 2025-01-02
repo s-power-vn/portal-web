@@ -1,8 +1,8 @@
+import { RequestStatusOptions } from 'portal-core';
+
 import { FC, useEffect } from 'react';
 import { MarkerType, ReactFlow, useEdgesState, useNodesState } from 'reactflow';
 import 'reactflow/dist/style.css';
-
-import { RequestStatusOptions } from '@storeo/core';
 
 import NodeA1 from '../../../../flow/node-a1';
 import NodeA2 from '../../../../flow/node-a2';

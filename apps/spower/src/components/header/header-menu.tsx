@@ -1,8 +1,3 @@
-import { useNavigate } from '@tanstack/react-router';
-
-import { useCallback } from 'react';
-
-import { Collections, getImageUrl, getUser } from '@storeo/core';
 import {
   Avatar,
   AvatarFallback,
@@ -14,7 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { useNavigate } from '@tanstack/react-router';
+import { Collections, getImageUrl, getUser } from 'portal-core';
+
+import { useCallback } from 'react';
 
 import { useLogout } from '../../api';
 

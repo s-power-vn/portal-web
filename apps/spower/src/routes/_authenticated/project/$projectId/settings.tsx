@@ -1,8 +1,7 @@
+import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { object, string } from 'yup';
-
-import { Form, TextareaField, success } from '@storeo/theme';
 
 import { projectApi } from '../../../../api';
 import { CustomerDropdownField } from '../../../../components';

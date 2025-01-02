@@ -1,3 +1,5 @@
+import { Show } from '@minhdtb/storeo-core';
+import { Badge, Button } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -14,19 +16,12 @@ import {
   NotebookTextIcon,
   SettingsIcon
 } from 'lucide-react';
+import { Collections, client } from 'portal-core';
 
 import { useEffect } from 'react';
 
-import { Collections, Show, client } from '@storeo/core';
-import {
-  Badge,
-  Button,
-  Sidebar,
-  SidebarGroup,
-  SidebarItem
-} from '@storeo/theme';
-
 import { projectApi, requestApi } from '../../../api';
+import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 
 const Component = () => {
   const matchRoute = useMatchRoute();

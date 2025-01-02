@@ -1,15 +1,14 @@
-import _ from 'lodash';
-import { number, object, ref, string } from 'yup';
-
-import { FC, useMemo, useState } from 'react';
-
 import {
   BusinessFormProps,
   Form,
   PasswordField,
   TextField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import _ from 'lodash';
+import { number, object, ref, string } from 'yup';
+
+import { FC, useMemo, useState } from 'react';
 
 import { departmentApi, employeeApi } from '../../../api';
 import { DepartmentDropdownField } from '../department/department-dropdown-field';

@@ -1,7 +1,3 @@
-import { number, object, string } from 'yup';
-
-import React, { FC } from 'react';
-
 import {
   BusinessFormProps,
   Form,
@@ -9,7 +5,10 @@ import {
   TextField,
   TextareaField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { number, object, string } from 'yup';
+
+import React, { FC } from 'react';
 
 import { detailApi } from '../../../api';
 

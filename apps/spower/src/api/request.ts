@@ -1,7 +1,3 @@
-import { InferType, number, object, string } from 'yup';
-
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   DetailResponse,
@@ -17,7 +13,10 @@ import {
   RequestStatusOptions,
   SupplierResponse,
   client
-} from '@storeo/core';
+} from 'portal-core';
+import { InferType, number, object, string } from 'yup';
+
+import { router } from 'react-query-kit';
 
 import { UserData } from './employee';
 

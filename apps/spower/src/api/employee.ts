@@ -1,12 +1,12 @@
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   DepartmentResponse,
   UserRecord,
   UserResponse,
   client
-} from '@storeo/core';
+} from 'portal-core';
+
+import { router } from 'react-query-kit';
 
 import { Search } from './types';
 

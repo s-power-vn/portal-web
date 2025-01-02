@@ -1,7 +1,3 @@
-import { date, number, object, string } from 'yup';
-
-import React, { FC } from 'react';
-
 import {
   BusinessFormProps,
   DatePickerField,
@@ -10,7 +6,10 @@ import {
   TextField,
   TextareaField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { date, number, object, string } from 'yup';
+
+import React, { FC } from 'react';
 
 import { requestDetailApi } from '../../../api';
 

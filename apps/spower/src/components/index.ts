@@ -6,3 +6,4 @@ export * from './image/image-select-field';
 export * from './image/image-cropper';
 export * from './file/multiple-file-select';
 export * from './file/multiple-file-select-field';
+export * from './sidebar';

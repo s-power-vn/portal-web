@@ -13,6 +13,7 @@ module.exports = {
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     join(__dirname, '../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}'),
+    join(__dirname, '../../node_modules/@minhdtb/**/*.{js,mjs,ts,jsx,tsx}'),
     ...createGlobPatternsForDependencies(__dirname)
   ],
   theme: {

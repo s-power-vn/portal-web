@@ -1,12 +1,11 @@
 import { CSS, Tailwind } from '@fileforge/react-print';
+import { Show, formatDate } from '@minhdtb/storeo-core';
 import { CheckCircle2Icon } from 'lucide-react';
 import { DateTime } from 'luxon';
 import colors from 'tailwindcss/colors';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import React, { FC } from 'react';
-
-import { Show, formatDate } from '@storeo/core';
 
 import { RequestDetailData } from '../../../api';
 

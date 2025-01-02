@@ -1,8 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Loader2 } from 'lucide-react';
-import { object, string } from 'yup';
-
-import { client, cn } from '@storeo/core';
+import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
   Card,
@@ -11,7 +7,15 @@ import {
   Form,
   PasswordField,
   TextField
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import {
+  SearchSchemaInput,
+  createFileRoute,
+  redirect
+} from '@tanstack/react-router';
+import { Loader2 } from 'lucide-react';
+import { client } from 'portal-core';
+import { object, string } from 'yup';
 
 import { useLogin } from '../api';
 import { CommonLayout } from '../layouts';
@@ -94,7 +98,16 @@ const Login = () => {
   );
 };
 
+export const loginSchema = object().shape({
+  redirect: string().optional()
+});
+
 export const Route = createFileRoute('/login')({
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    loginSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return search;
+  },
   component: () => {
     return <Login />;
   },
@@ -107,8 +120,5 @@ export const Route = createFileRoute('/login')({
         }
       });
     }
-  },
-  loaderDeps: ({ search }: { search: { redirect: string } }) => {
-    return search;
   }
 });

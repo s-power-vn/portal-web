@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { cn } from '@minhdtb/storeo-core';
+import { IssueDeadlineStatusOptions } from 'portal-core';
 
-import { IssueDeadlineStatusOptions, cn } from '@storeo/core';
+import { FC } from 'react';
 
 export type DeadlineStatusProps = {
   status: IssueDeadlineStatusOptions;

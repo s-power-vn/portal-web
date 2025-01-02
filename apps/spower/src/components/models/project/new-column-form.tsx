@@ -1,8 +1,4 @@
-import { AnyObject, ObjectSchema, object, string } from 'yup';
-
-import { FC } from 'react';
-
-import { ColumnTypeOptions } from '@storeo/core';
+import { ColumnTypeOptions } from '@minhdtb/storeo-core';
 import {
   BusinessFormProps,
   Form,
@@ -12,7 +8,10 @@ import {
   SelectInputProps,
   TextField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { AnyObject, ObjectSchema, object, string } from 'yup';
+
+import { FC } from 'react';
 
 import { projectApi } from '../../../api';
 

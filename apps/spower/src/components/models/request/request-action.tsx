@@ -1,14 +1,8 @@
+import { Match, Show, Switch } from '@minhdtb/storeo-core';
 import { useQueryClient } from '@tanstack/react-query';
+import { RequestStatusOptions, client } from 'portal-core';
 
 import { FC, useCallback } from 'react';
-
-import {
-  Match,
-  RequestStatusOptions,
-  Show,
-  Switch,
-  client
-} from '@storeo/core';
 
 import { commentApi, requestApi } from '../../../api';
 import { A1fButton } from './status/a-state/a1f-button';

@@ -1,7 +1,7 @@
-import { FC, useCallback } from 'react';
+import { Button, success } from '@minhdtb/storeo-theme';
+import { RequestStatusOptions, client } from 'portal-core';
 
-import { RequestStatusOptions, client } from '@storeo/core';
-import { Button, success } from '@storeo/theme';
+import { FC, useCallback } from 'react';
 
 import { RequestData, requestApi } from '../../../../../api';
 

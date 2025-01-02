@@ -5,8 +5,7 @@ import { DateTime } from 'luxon';
 import { withExtendedShadows } from 'tailwind-extended-shadows-merge';
 import { extendTailwindMerge } from 'tailwind-merge';
 
-import { client } from './client';
-import { Collections, TemplateRecord } from './generate/pb';
+import { Collections, TemplateRecord, client } from './client';
 
 export const twMerge = extendTailwindMerge(withExtendedShadows);
 

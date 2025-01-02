@@ -1,14 +1,13 @@
-import { object, string } from 'yup';
-
-import { FC } from 'react';
-
 import {
   BusinessFormProps,
   Form,
   TextField,
   TextareaField,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { object, string } from 'yup';
+
+import { FC } from 'react';
 
 import { materialApi } from '../../../api';
 

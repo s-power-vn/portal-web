@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { Collections, client } from 'portal-core';
 
-import { Collections, client } from '@storeo/core';
+import { useEffect } from 'react';
 
 export function useDetailImportStatus(
   onStatusChange?: (id: string, status: string) => void

@@ -1,6 +1,6 @@
-import { router } from 'react-query-kit';
+import { client } from 'portal-core';
 
-import { client } from '@storeo/core';
+import { router } from 'react-query-kit';
 
 export const userApi = router('user', {
   update: router.mutation({

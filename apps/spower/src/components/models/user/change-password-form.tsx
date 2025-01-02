@@ -1,15 +1,14 @@
-import { object, ref, string } from 'yup';
-
-import { FC } from 'react';
-
-import { client } from '@storeo/core';
 import {
   BusinessFormProps,
   Form,
   TextField,
   error,
   success
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { client } from 'portal-core';
+import { object, ref, string } from 'yup';
+
+import { FC } from 'react';
 
 import { userApi } from '../../../api/user';
 

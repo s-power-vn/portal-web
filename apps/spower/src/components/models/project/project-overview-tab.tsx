@@ -1,3 +1,12 @@
+import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@minhdtb/storeo-theme';
 import { useNavigate } from '@tanstack/react-router';
 import {
   ExpandedState,
@@ -13,27 +22,14 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
 import {
   DetailInfoResponse,
   RequestResponse,
-  Show,
   client,
-  cn,
-  formatCurrency,
-  formatNumber,
   maskVolumeString
-} from '@storeo/core';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
+} from 'portal-core';
+
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { detailInfoApi } from '../../../api';
 import {
@@ -91,7 +87,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
   const handleGotoIssue = useCallback(
     (issueId: string) => {
       return navigate({
-        to: '/project/$projectId/issues/all/$issueId',
+        to: '/project/$projectId/issues/me/$issueId',
         params: {
           issueId
         }

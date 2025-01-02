@@ -1,8 +1,7 @@
+import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 import _ from 'lodash';
 
 import { FC } from 'react';
-
-import { SelectInput, SelectInputProps } from '@storeo/theme';
 
 import { supplierApi } from '../../../api';
 

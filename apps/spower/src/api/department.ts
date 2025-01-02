@@ -1,6 +1,6 @@
-import { router } from 'react-query-kit';
+import { Collections, client } from 'portal-core';
 
-import { Collections, client } from '@storeo/core';
+import { router } from 'react-query-kit';
 
 export const departmentApi = router('department', {
   listFull: router.query({

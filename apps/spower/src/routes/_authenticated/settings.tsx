@@ -1,17 +1,16 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { MinusIcon, PlusIcon } from 'lucide-react';
-
-import { useCallback, useRef } from 'react';
-
-import { For } from '@storeo/core';
+import { For } from '@minhdtb/storeo-core';
 import {
   Button,
   closeModal,
   showModal,
   success,
   useConfirm
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { useQueryClient } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import { MinusIcon, PlusIcon } from 'lucide-react';
+
+import { useCallback, useRef } from 'react';
 
 import { settingApi } from '../../api';
 import {

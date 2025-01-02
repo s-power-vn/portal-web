@@ -1,18 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
-
-import { FC, useCallback, useRef } from 'react';
-
-import {
-  IssueDeadlineStatusOptions,
-  IssueTypeOptions,
-  Match,
-  Show,
-  Switch,
-  cn,
-  formatDateTime
-} from '@storeo/core';
+import { Match, Show, Switch, cn, formatDateTime } from '@minhdtb/storeo-core';
 import {
   Button,
   DropdownMenu,
@@ -22,7 +8,13 @@ import {
   ThemeButton,
   closeModal,
   showModal
-} from '@storeo/theme';
+} from '@minhdtb/storeo-theme';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
+import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
+
+import { FC, useCallback, useRef } from 'react';
 
 import { requestApi } from '../../../api';
 import { issueApi } from '../../../api/issue';

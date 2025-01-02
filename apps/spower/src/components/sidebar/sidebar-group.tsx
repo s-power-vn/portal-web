@@ -1,3 +1,4 @@
+import { Show, cn } from '@minhdtb/storeo-core';
 import {
   Link,
   RegisteredRouter,
@@ -16,8 +17,6 @@ import {
   useCallback,
   useMemo
 } from 'react';
-
-import { Show, cn } from '@storeo/core';
 
 import { useLink } from '../../hooks';
 import { useSidebar } from './sidebar';

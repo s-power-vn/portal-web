@@ -1,6 +1,6 @@
-import { router } from 'react-query-kit';
+import { Collections, IssueRecord, IssueResponse, client } from 'portal-core';
 
-import { Collections, IssueRecord, IssueResponse, client } from '@storeo/core';
+import { router } from 'react-query-kit';
 
 import { UserData } from './employee';
 import { Search } from './types';

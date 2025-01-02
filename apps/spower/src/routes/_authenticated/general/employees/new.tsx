@@ -1,9 +1,8 @@
+import { Modal } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 
 import { useCallback, useState } from 'react';
-
-import { Modal } from '@storeo/theme';
 
 import { employeeApi } from '../../../../api';
 import { NewEmployeeForm } from '../../../../components';

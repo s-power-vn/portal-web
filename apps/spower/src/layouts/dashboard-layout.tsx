@@ -1,3 +1,5 @@
+import { cn } from '@minhdtb/storeo-core';
+import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   AnvilIcon,
@@ -13,19 +15,14 @@ import {
 
 import { FC, ReactNode, useCallback, useRef } from 'react';
 
-import { cn } from '@storeo/core';
+import { projectApi } from '../api';
 import {
-  Button,
+  Header,
   Sidebar,
   SidebarGroup,
   SidebarItem,
-  closeModal,
-  showModal,
   useSidebar
-} from '@storeo/theme';
-
-import { projectApi } from '../api';
-import { Header } from '../components';
+} from '../components';
 import { NewProjectForm } from '../components/models/project/new-project-form';
 
 const SidebarHeader = () => {

@@ -1,3 +1,5 @@
+import { Show, cn } from '@minhdtb/storeo-core';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@minhdtb/storeo-theme';
 import {
   Link,
   RegisteredRouter,
@@ -7,10 +9,7 @@ import {
 
 import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
 
-import { Show, cn } from '@storeo/core';
-
 import { useLink } from '../../hooks';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSidebar } from './sidebar';
 
 export type SidebarItemProps<

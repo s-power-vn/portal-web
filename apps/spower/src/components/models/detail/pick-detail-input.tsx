@@ -1,3 +1,14 @@
+import { DetailResponse, For, Show, cn } from '@minhdtb/storeo-core';
+import {
+  Button,
+  DebouncedInput,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@minhdtb/storeo-theme';
 import {
   ExpandedState,
   RowSelectionState,
@@ -17,18 +28,6 @@ import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-
-import { DetailResponse, For, Show, cn } from '@storeo/core';
-import {
-  Button,
-  DebouncedInput,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@storeo/theme';
 
 import { detailApi } from '../../../api';
 import { TreeData, arrayToTree } from '../../../commons/utils';

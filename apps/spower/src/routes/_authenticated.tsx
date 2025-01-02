@@ -1,6 +1,5 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-
-import { client } from '@storeo/core';
+import { client } from 'portal-core';
 
 import { DashboardLayout } from '../layouts';
 

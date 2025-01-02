@@ -1,12 +1,12 @@
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   CommentResponse,
   IssueResponse,
   UserResponse,
   client
-} from '@storeo/core';
+} from 'portal-core';
+
+import { router } from 'react-query-kit';
 
 export type CommentData = CommentResponse & {
   expand: {

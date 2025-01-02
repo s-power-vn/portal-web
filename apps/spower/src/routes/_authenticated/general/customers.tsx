@@ -1,3 +1,16 @@
+import { CustomerResponse } from '@minhdtb/storeo-core';
+import {
+  Button,
+  DebouncedInput,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  success,
+  useConfirm
+} from '@minhdtb/storeo-theme';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -14,20 +27,6 @@ import {
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 
 import { useState } from 'react';
-
-import { CustomerResponse } from '@storeo/core';
-import {
-  Button,
-  DebouncedInput,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  success,
-  useConfirm
-} from '@storeo/theme';
 
 import { customerApi } from '../../../api';
 import { SearchSchema } from '../../../api/types';

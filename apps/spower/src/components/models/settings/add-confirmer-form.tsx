@@ -1,8 +1,7 @@
+import { BusinessFormProps, Form, success } from '@minhdtb/storeo-theme';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
-
-import { BusinessFormProps, Form, success } from '@storeo/theme';
 
 import { settingApi } from '../../../api';
 import { SelectEmployeeField } from '../employee/select-employee-field';
