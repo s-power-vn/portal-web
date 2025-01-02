@@ -72,20 +72,26 @@ export const requestApi = router('request', {
       })
   }),
   byIssueId: router.query({
-    fetcher: (issueId: string) =>
-      client
-        .collection<RequestData>(Collections.Request)
-        .getFirstListItem(`issue = "${issueId}"`, {
-          expand:
-            'requestDetail_via_request.detail,' +
-            'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
-            'contract_via_request.supplier,' +
-            'contract_via_request.contractItem_via_contract,' +
-            'issue.createdBy,' +
-            'issue.createdBy.department,' +
-            'issue.assignee,' +
-            'project'
-        })
+    fetcher: async (issueId: string) => {
+      try {
+        return await client
+          .collection<RequestData>(Collections.Request)
+          .getFirstListItem(`issue = "${issueId}"`, {
+            expand:
+              'requestDetail_via_request.detail,' +
+              'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
+              'contract_via_request.supplier,' +
+              'contract_via_request.contractItem_via_contract,' +
+              'issue.createdBy,' +
+              'issue.createdBy.department,' +
+              'issue.assignee,' +
+              'project'
+          });
+      } catch (e) {
+        console.log(e, issueId);
+        return null;
+      }
+    }
   }),
   create: router.mutation({
     mutationFn: async (

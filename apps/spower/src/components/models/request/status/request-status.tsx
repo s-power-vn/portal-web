@@ -10,7 +10,6 @@ import { Button } from '@minhdtb/storeo-theme';
 
 import { AStateFlow } from './a-state/a-state-flow';
 
-
 export type RequestStatusProps = {
   issueId: string;
   className?: string;
@@ -50,7 +49,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
             >
               <span
                 className={'text-appWhite text-sm font-bold'}
-              >{`Trạng thái công việc - ${request.data.status}`}</span>
+              >{`Trạng thái công việc - ${request.data?.status}`}</span>
             </div>
             <Button
               variant={'outline'}
@@ -61,7 +60,7 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
             >
               <Cross2Icon />
             </Button>
-            <AStateFlow status={request.data.status} />
+            <AStateFlow status={request.data?.status} />
           </div>
         </div>
       </Show>
@@ -74,21 +73,21 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
           </span>
         }
       >
-        <Match when={request.data.status?.charAt(0) === 'A'}>
+        <Match when={request.data?.status?.charAt(0) === 'A'}>
           <Button
             variant={'outline'}
             onClick={handleClick}
             className={cn(
               style,
-              request.data.status === RequestStatusOptions.A8
+              request.data?.status === RequestStatusOptions.A8
                 ? 'bg-appGrayLight text-appBlack'
                 : 'bg-appError',
               className
             )}
           >
-            {request.data.status === RequestStatusOptions.A8
+            {request.data?.status === RequestStatusOptions.A8
               ? 'Kết thúc'
-              : request.data.status}
+              : request.data?.status}
           </Button>
         </Match>
       </Switch>

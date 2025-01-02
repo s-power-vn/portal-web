@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
+import { DetailResponse } from 'portal-core';
 import { v4 } from 'uuid';
 import { AnyObject, ObjectSchema } from 'yup';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 
-import { DetailResponse, Show, cn } from '@minhdtb/storeo-core';
+import { Show, cn } from '@minhdtb/storeo-core';
 import {
   Button,
   FormField,
@@ -22,7 +23,8 @@ import {
   TextField,
   TextareaField,
   closeModal,
-  showModal
+  showModal,
+  useStoreoForm
 } from '@minhdtb/storeo-theme';
 
 import { TreeData } from '../../../commons/utils';
@@ -35,7 +37,7 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue } = useFormContext();
+  const { control, setValue } = useStoreoForm();
   const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
   const { fields, append } = useFieldArray({
     control,
