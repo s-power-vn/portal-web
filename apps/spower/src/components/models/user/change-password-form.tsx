@@ -12,6 +12,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+
 const schema = object().shape({
   oldPassword: string().required('Hãy nhập mật khẩu hiện tại'),
   newPassword: string()

@@ -7,6 +7,7 @@ import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
 
 import { EmployeeDisplay } from '../../employee/employee-display';
 
+
 export type SelectEmployeeByConditionProps = Omit<SelectInputProps, 'items'> & {
   condition?: string;
 };

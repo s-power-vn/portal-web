@@ -5,8 +5,7 @@ import {
   PlusIcon,
   ShoppingCartIcon
 } from 'lucide-react';
-import { requestApi } from 'portal-api';
-import { issueApi } from 'portal-api';
+import { issueApi, requestApi } from 'portal-api';
 
 import { FC, useCallback, useRef } from 'react';
 

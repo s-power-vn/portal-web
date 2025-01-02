@@ -12,8 +12,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { UserData, employeeApi } from 'portal-api';
-import { SearchSchema } from 'portal-api';
+import { SearchSchema, UserData, employeeApi } from 'portal-api';
 
 import { useState } from 'react';
 

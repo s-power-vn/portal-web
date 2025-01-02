@@ -1,8 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
-import { requestApi } from 'portal-api';
-import { issueApi } from 'portal-api';
+import { issueApi, requestApi } from 'portal-api';
 import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
 
 import { FC, useCallback, useRef } from 'react';

@@ -25,10 +25,10 @@ import {
 import {
   RequestDetailData,
   commentApi,
+  issueApi,
   requestApi,
   requestDetailApi
 } from 'portal-api';
-import { issueApi } from 'portal-api';
 import {
   BASE_URL,
   Collections,

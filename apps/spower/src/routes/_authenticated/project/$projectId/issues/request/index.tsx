@@ -5,8 +5,7 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
-import { issueApi } from 'portal-api';
-import { SearchSchema } from 'portal-api';
+import { SearchSchema, issueApi } from 'portal-api';
 import { IssueResponse, IssueTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
@@ -18,6 +17,7 @@ import {
   RequestStatus
 } from '../../../../../../components';
 import { DeadlineStatus } from '../../../../../../components/models/request/status/deadline-status';
+
 
 const Component = () => {
   const { projectId } = Route.useParams();
