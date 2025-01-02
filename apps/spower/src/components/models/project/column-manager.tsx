@@ -8,10 +8,10 @@ import {
 } from '@tanstack/react-table';
 import { XIcon } from 'lucide-react';
 import { projectApi } from 'portal-api';
+import { ColumnResponse } from 'portal-core';
 
 import { FC, useCallback, useRef } from 'react';
 
-import { ColumnResponse } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,

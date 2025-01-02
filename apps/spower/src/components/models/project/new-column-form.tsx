@@ -1,9 +1,9 @@
 import { projectApi } from 'portal-api';
+import { ColumnTypeOptions } from 'portal-core';
 import { AnyObject, ObjectSchema, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { ColumnTypeOptions } from '@minhdtb/storeo-core';
 import {
   BusinessFormProps,
   Form,
