@@ -1,9 +1,10 @@
-import { Collections, IssueRecord, IssueResponse, client } from 'portal-core';
+import type { IssueRecord, IssueResponse } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { UserData } from './employee';
-import { Search } from './types';
+import type { UserData } from './employee';
+import type { Search } from './types';
 
 export type IssueData = IssueResponse & {
   expand: {

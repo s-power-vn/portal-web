@@ -1,8 +1,9 @@
-import { Collections, CustomerRecord, client } from 'portal-core';
+import type { CustomerRecord } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { Search } from './types';
+import type { Search } from './types';
 
 export const customerApi = router('customer', {
   listFull: router.query({

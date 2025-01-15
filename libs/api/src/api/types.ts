@@ -1,4 +1,5 @@
-import { InferType, number, object, string } from 'yup';
+import type { InferType } from 'yup';
+import { number, object, string } from 'yup';
 
 export const SearchSchema = object().shape({
   pageIndex: number().optional().default(1),

@@ -1,10 +1,5 @@
-import {
-  Collections,
-  CommentResponse,
-  IssueResponse,
-  UserResponse,
-  client
-} from 'portal-core';
+import type { CommentResponse, IssueResponse, UserResponse } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 

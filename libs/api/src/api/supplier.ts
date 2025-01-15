@@ -1,8 +1,9 @@
-import { Collections, SupplierRecord, client } from 'portal-core';
+import type { SupplierRecord } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { Search } from './types';
+import type { Search } from './types';
 
 export const supplierApi = router('supplier', {
   listFull: router.query({

@@ -1,9 +1,5 @@
-import {
-  Collections,
-  SettingResponse,
-  UserResponse,
-  client
-} from 'portal-core';
+import type { SettingResponse, UserResponse } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 

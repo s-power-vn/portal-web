@@ -1,8 +1,9 @@
-import { Collections, MaterialRecord, client } from 'portal-core';
+import type { MaterialRecord } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { Search } from './types';
+import type { Search } from './types';
 
 export const materialApi = router('material', {
   listFull: router.query({

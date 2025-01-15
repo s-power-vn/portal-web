@@ -1,24 +1,27 @@
-import {
-  Collections,
+import type {
   DetailResponse,
-  IssueDeadlineStatusOptions,
   IssueRecord,
   IssueResponse,
-  IssueStatusOptions,
-  IssueTypeOptions,
   ProjectResponse,
   RequestDetailResponse,
   RequestDetailSupplierResponse,
   RequestResponse,
+  SupplierResponse
+} from 'portal-core';
+import {
+  Collections,
+  IssueDeadlineStatusOptions,
+  IssueStatusOptions,
+  IssueTypeOptions,
   RequestStatusOptions,
-  SupplierResponse,
   client
 } from 'portal-core';
-import { InferType, number, object, string } from 'yup';
+import type { InferType } from 'yup';
+import { number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
 
-import { UserData } from './employee';
+import type { UserData } from './employee';
 
 export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
   expand: {

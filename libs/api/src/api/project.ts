@@ -1,15 +1,14 @@
-import {
-  Collections,
+import type {
   ColumnResponse,
   CustomerResponse,
   ProjectResponse,
-  UserResponse,
-  client
+  UserResponse
 } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { Search } from './types';
+import type { Search } from './types';
 
 export type ProjectData = ProjectResponse & {
   expand: {

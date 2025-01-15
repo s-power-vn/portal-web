@@ -1,14 +1,9 @@
-import {
-  Collections,
-  DepartmentResponse,
-  UserRecord,
-  UserResponse,
-  client
-} from 'portal-core';
+import type { DepartmentResponse, UserRecord, UserResponse } from 'portal-core';
+import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { Search } from './types';
+import type { Search } from './types';
 
 export type UserData = UserResponse & {
   expand: {
