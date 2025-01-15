@@ -1,10 +1,11 @@
 import {
   SearchSchemaInput,
   createFileRoute,
-  redirect
+  redirect,
+  useRouter
 } from '@tanstack/react-router';
 import { Loader2 } from 'lucide-react';
-import { useLogin } from 'portal-api';
+import { api } from 'portal-api';
 import { client } from 'portal-core';
 import { object, string } from 'yup';
 
@@ -16,7 +17,8 @@ import {
   CardHeader,
   Form,
   PasswordField,
-  TextField
+  TextField,
+  error
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../layouts';
@@ -36,7 +38,12 @@ const schema = object().shape({
 
 const Login = () => {
   const { redirect } = Route.useSearch();
-  const login = useLogin(redirect);
+  const router = useRouter();
+
+  const login = api.auth.login.useMutation({
+    onSuccess: () => router.history.push(redirect ?? '/'),
+    onError: () => error('Tên đăng nhập hoặc mật khẩu không đúng')
+  });
 
   return (
     <CommonLayout>
@@ -112,7 +119,7 @@ export const Route = createFileRoute('/login')({
   component: () => {
     return <Login />;
   },
-  beforeLoad: ({ context, location }) => {
+  beforeLoad: ({ location }) => {
     if (client.authStore.isValid) {
       throw redirect({
         to: '/',

@@ -1,13 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { materialApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { EditMaterialForm } from '../../../../../components';
-
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -21,10 +20,10 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: materialApi.byId.getKey(materialId)
+        queryKey: api.material.byId.getKey(materialId)
       }),
       queryClient.invalidateQueries({
-        queryKey: materialApi.list.getKey(search)
+        queryKey: api.material.list.getKey(search)
       })
     ]);
   }, [history, materialId, queryClient, search]);
@@ -58,5 +57,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { materialId } }) =>
-    queryClient?.ensureQueryData(materialApi.byId.getOptions(materialId))
+    queryClient?.ensureQueryData(api.material.byId.getOptions(materialId))
 });

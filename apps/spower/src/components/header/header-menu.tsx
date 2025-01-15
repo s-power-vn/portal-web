@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useLogout } from 'portal-api';
+import { api } from 'portal-api';
 import { Collections, getImageUrl, getUser } from 'portal-core';
 
 import { useCallback } from 'react';
@@ -18,9 +18,12 @@ import {
 } from '@minhdtb/storeo-theme';
 
 export const HeaderMenu = () => {
-  const logout = useLogout();
-  const user = getUser();
   const navigate = useNavigate();
+  const user = getUser();
+
+  const logout = api.auth.logout.useMutation({
+    onSuccess: () => navigate({ to: '/login' })
+  });
 
   const handleProfile = useCallback(
     () =>

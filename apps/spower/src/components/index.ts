@@ -1,6 +1,6 @@
 export * from './checkbox/indeterminate-checkbox';
 export * from './header';
-export * from './models';
+export * from './domains';
 export * from './image/image-select';
 export * from './image/image-select-field';
 export * from './image/image-cropper';

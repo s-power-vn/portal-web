@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
-import { SearchSchema, issueApi } from 'portal-api';
+import { SearchSchema, api } from 'portal-api';
 import { IssueResponse, IssueTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
@@ -16,14 +16,13 @@ import {
   NewIssueButton,
   RequestStatus
 } from '../../../../../../components';
-import { DeadlineStatus } from '../../../../../../components/models/request/status/deadline-status';
-
+import { DeadlineStatus } from '../../../../../../components/domains/request/status/deadline-status';
 
 const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const issues = issueApi.listMine.useSuspenseQuery({
+  const issues = api.issue.listMine.useSuspenseQuery({
     variables: {
       ...search,
       projectId
@@ -182,7 +181,7 @@ export const Route = createFileRoute(
     params: { projectId }
   }) =>
     queryClient?.ensureQueryData(
-      issueApi.listMine.getOptions({
+      api.issue.listMine.getOptions({
         ...search,
         projectId
       })

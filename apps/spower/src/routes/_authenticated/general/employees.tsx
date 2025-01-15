@@ -12,7 +12,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, UserData, employeeApi } from 'portal-api';
+import { SearchSchema, UserData, api } from 'portal-api';
 
 import { useState } from 'react';
 
@@ -36,16 +36,16 @@ const Component = () => {
   const [search, setSearch] = useState<string | undefined>();
   const queryClient = useQueryClient();
 
-  const listEmployees = employeeApi.listFull.useSuspenseQuery({
+  const listEmployees = api.employee.listFull.useSuspenseQuery({
     variables: search
   });
 
-  const deleteEmployee = employeeApi.delete.useMutation({
+  const deleteEmployee = api.employee.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhân viên thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: employeeApi.listFull.getKey(search)
+          queryKey: api.employee.listFull.getKey(search)
         })
       ]);
     }
@@ -268,7 +268,7 @@ export const Route = createFileRoute('/_authenticated/general/employees')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(employeeApi.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(api.employee.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhân viên'

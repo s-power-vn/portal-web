@@ -10,7 +10,7 @@ import {
   SquareKanbanIcon,
   Users2Icon
 } from 'lucide-react';
-import { projectApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { FC, ReactNode, useCallback, useRef } from 'react';
 
@@ -24,7 +24,7 @@ import {
   SidebarItem,
   useSidebar
 } from '../components';
-import { NewProjectForm } from '../components/models/project/new-project-form';
+import { NewProjectForm } from '../components/domains/project/new-project-form';
 
 const SidebarHeader = () => {
   const queryClient = useQueryClient();
@@ -34,7 +34,7 @@ const SidebarHeader = () => {
   const onSuccessHandler = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: projectApi.list.getKey()
+        queryKey: api.project.list.getKey()
       })
     ]);
     if (modalId.current) {

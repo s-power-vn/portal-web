@@ -14,7 +14,7 @@ import {
   NotebookTextIcon,
   SettingsIcon
 } from 'lucide-react';
-import { projectApi, requestApi } from 'portal-api';
+import { api } from 'portal-api';
 import { Collections, client } from 'portal-core';
 
 import { useEffect } from 'react';
@@ -28,20 +28,20 @@ const Component = () => {
   const matchRoute = useMatchRoute();
   const params = matchRoute({ to: '/project/$projectId/settings' });
   const { projectId } = Route.useParams();
-  const project = projectApi.byId.useSuspenseQuery({
+  const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const requestUserInfo = requestApi.userInfo.useSuspenseQuery({
+  const requestUserInfo = api.request.userInfo.useSuspenseQuery({
     variables: projectId
   });
 
   useEffect(() => {
     client.collection(Collections.Request).subscribe('*', () =>
       queryClient.invalidateQueries({
-        queryKey: requestApi.userInfo.getKey(projectId)
+        queryKey: api.request.userInfo.getKey(projectId)
       })
     );
 
@@ -147,6 +147,6 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/project/$projectId')({
   component: Component,
   loader: ({ context: { queryClient }, params: { projectId } }) =>
-    queryClient?.ensureQueryData(projectApi.byId.getOptions(projectId)),
+    queryClient?.ensureQueryData(api.project.byId.getOptions(projectId)),
   beforeLoad: ({ params }) => ({ title: params.projectId })
 });

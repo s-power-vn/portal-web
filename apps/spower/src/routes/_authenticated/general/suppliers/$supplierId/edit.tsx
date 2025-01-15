@@ -1,13 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { supplierApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { EditSupplierForm } from '../../../../../components';
-
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -21,10 +20,10 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: supplierApi.byId.getKey(supplierId)
+        queryKey: api.supplier.byId.getKey(supplierId)
       }),
       queryClient.invalidateQueries({
-        queryKey: supplierApi.list.getKey(search)
+        queryKey: api.supplier.list.getKey(search)
       })
     ]);
   }, [history, queryClient, search, supplierId]);
@@ -58,5 +57,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(supplierApi.byId.getOptions(supplierId))
+    queryClient?.ensureQueryData(api.supplier.byId.getOptions(supplierId))
 });

@@ -12,7 +12,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, customerApi } from 'portal-api';
+import { SearchSchema, api } from 'portal-api';
 import { CustomerResponse } from 'portal-core';
 
 import { useState } from 'react';
@@ -37,18 +37,18 @@ const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const [search, setSearch] = useState<string | undefined>();
 
-  const listCustomers = customerApi.listFull.useSuspenseQuery({
+  const listCustomers = api.customer.listFull.useSuspenseQuery({
     variables: search
   });
 
   const columnHelper = createColumnHelper<CustomerResponse>();
 
-  const deleteCustomer = customerApi.delete.useMutation({
+  const deleteCustomer = api.customer.delete.useMutation({
     onSuccess: async () => {
       success('Xóa chủ đầu tư thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: customerApi.listFull.getKey(search)
+          queryKey: api.customer.listFull.getKey(search)
         })
       ]);
     }
@@ -265,7 +265,7 @@ export const Route = createFileRoute('/_authenticated/general/customers')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(customerApi.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(api.customer.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý chủ đầu tư'

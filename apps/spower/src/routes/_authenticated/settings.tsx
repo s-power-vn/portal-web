@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { MinusIcon, PlusIcon } from 'lucide-react';
-import { settingApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { useCallback, useRef } from 'react';
 
@@ -20,33 +20,32 @@ import {
   PageHeader
 } from '../../components';
 
-
 const Component = () => {
   const modalId = useRef<string | undefined>();
 
   const queryClient = useQueryClient();
 
-  const listConfirmer = settingApi.listConfirmer.useSuspenseQuery();
+  const listConfirmer = api.setting.listConfirmer.useSuspenseQuery();
 
-  const deleteConfirmer = settingApi.deleteConfirmer.useMutation({
+  const deleteConfirmer = api.setting.deleteConfirmer.useMutation({
     onSuccess: async () => {
       success('Xóa người xác nhận thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: settingApi.listConfirmer.getKey()
+          queryKey: api.setting.listConfirmer.getKey()
         })
       ]);
     }
   });
 
-  const listApprover = settingApi.listApprover.useSuspenseQuery();
+  const listApprover = api.setting.listApprover.useSuspenseQuery();
 
-  const deleteApprover = settingApi.deleteApprover.useMutation({
+  const deleteApprover = api.setting.deleteApprover.useMutation({
     onSuccess: async () => {
       success('Xóa người phê duyệt thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: settingApi.listApprover.getKey()
+          queryKey: api.setting.listApprover.getKey()
         })
       ]);
     }
@@ -60,7 +59,7 @@ const Component = () => {
     }
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: settingApi.listConfirmer.getKey()
+        queryKey: api.setting.listConfirmer.getKey()
       })
     ]);
   }, [queryClient]);
@@ -71,7 +70,7 @@ const Component = () => {
     }
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: settingApi.listApprover.getKey()
+        queryKey: api.setting.listApprover.getKey()
       })
     ]);
   }, [queryClient]);
@@ -201,5 +200,5 @@ export const Route = createFileRoute('/_authenticated/settings')({
   component: Component,
   beforeLoad: () => ({ title: 'Cài đặt' }),
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(settingApi.listConfirmer.getOptions())
+    queryClient?.ensureQueryData(api.setting.listConfirmer.getOptions())
 });

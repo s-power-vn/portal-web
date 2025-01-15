@@ -7,9 +7,9 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, materialApi } from 'portal-api';
+import { SearchSchema, api } from 'portal-api';
+import { MaterialResponse } from 'portal-core';
 
-import { MaterialResponse } from '@minhdtb/storeo-core';
 import {
   Button,
   CommonTable,
@@ -20,23 +20,22 @@ import {
 
 import { PageHeader } from '../../../components';
 
-
 const Component = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const listMaterials = materialApi.list.useSuspenseQuery({
+  const listMaterials = api.material.list.useSuspenseQuery({
     variables: search
   });
 
   const columnHelper = createColumnHelper<MaterialResponse>();
 
-  const deleteMaterial = materialApi.delete.useMutation({
+  const deleteMaterial = api.material.delete.useMutation({
     onSuccess: async () => {
       success('Xóa vật tư thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: materialApi.list.getKey(search)
+          queryKey: api.material.list.getKey(search)
         })
       ]);
     }
@@ -139,7 +138,7 @@ const Component = () => {
             placeholder={'Tìm kiếm...'}
             onChange={value =>
               navigate({
-                to: './',
+                to: '.',
                 search: {
                   ...search,
                   filter: value ?? ''
@@ -167,7 +166,7 @@ const Component = () => {
           }
           onPageNext={() =>
             navigate({
-              to: './',
+              to: '.',
               search: prev => {
                 return { ...prev, pageIndex: prev.pageIndex + 1 };
               }
@@ -175,7 +174,7 @@ const Component = () => {
           }
           onPagePrev={() =>
             navigate({
-              to: './',
+              to: '.',
               search: prev => {
                 return { ...prev, pageIndex: prev.pageIndex - 1 };
               }
@@ -183,7 +182,7 @@ const Component = () => {
           }
           onPageSizeChange={pageSize =>
             navigate({
-              to: './',
+              to: '.',
               search: {
                 ...search,
                 pageSize
@@ -204,7 +203,7 @@ export const Route = createFileRoute('/_authenticated/general/materials')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(materialApi.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(api.material.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý danh mục vật tư'

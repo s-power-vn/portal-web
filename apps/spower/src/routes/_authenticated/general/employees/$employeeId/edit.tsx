@@ -1,13 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { employeeApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { EditEmployeeForm } from '../../../../../components';
-
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -21,13 +20,13 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: employeeApi.byId.getKey(employeeId)
+        queryKey: api.employee.byId.getKey(employeeId)
       }),
       queryClient.invalidateQueries({
-        queryKey: employeeApi.list.getKey(search)
+        queryKey: api.employee.list.getKey(search)
       }),
       queryClient.invalidateQueries({
-        queryKey: employeeApi.listFull.getKey()
+        queryKey: api.employee.listFull.getKey()
       })
     ]);
   }, [employeeId, history, queryClient, search]);
@@ -61,5 +60,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { employeeId } }) =>
-    queryClient?.ensureQueryData(employeeApi.byId.getOptions(employeeId))
+    queryClient?.ensureQueryData(api.employee.byId.getOptions(employeeId))
 });

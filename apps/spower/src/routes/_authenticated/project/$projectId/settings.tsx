@@ -1,12 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { projectApi } from 'portal-api';
+import { api } from 'portal-api';
 import { object, string } from 'yup';
 
 import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
 
 import { CustomerDropdownField } from '../../../../components';
-
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên công trình'),
@@ -19,16 +18,16 @@ const Component = () => {
   const router = useRouter();
   const { projectId } = Route.useParams();
 
-  const project = projectApi.byId.useSuspenseQuery({
+  const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
 
-  const updateProject = projectApi.update.useMutation({
+  const updateProject = api.project.update.useMutation({
     onSuccess: async () => {
       success('Cập nhật dự án thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: projectApi.byId.getKey(projectId)
+          queryKey: api.project.byId.getKey(projectId)
         })
       ]);
     }

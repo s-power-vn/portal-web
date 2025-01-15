@@ -1,13 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { customerApi } from 'portal-api';
+import { api } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { NewCustomerForm } from '../../../../components';
-
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -20,10 +19,10 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: customerApi.list.getKey(search)
+        queryKey: api.customer.list.getKey(search)
       }),
       queryClient.invalidateQueries({
-        queryKey: customerApi.listFull.getKey()
+        queryKey: api.customer.listFull.getKey()
       })
     ]);
   }, [history, queryClient, search]);

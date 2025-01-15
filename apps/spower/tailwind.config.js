@@ -220,7 +220,6 @@ module.exports = {
   plugins: [
     require('tailwindcss-animate'),
     require('tailwind-extended-shadows'),
-    require('@headlessui/tailwindcss'),
     require('@tailwindcss/forms')
   ]
 };

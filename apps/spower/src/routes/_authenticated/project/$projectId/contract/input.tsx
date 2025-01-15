@@ -1,33 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { ExpandedState, Row, RowSelectionState, createColumnHelper, flexRender, getCoreRowModel, getExpandedRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  ExpandedState,
+  Row,
+  RowSelectionState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel,
+  useReactTable
+} from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
-import { Columns3Icon, Columns4Icon, ColumnsIcon, DownloadIcon, EditIcon, SheetIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import { detailApi, detailImportApi, detailInfoApi, projectApi } from 'portal-api';
-import { DetailInfoResponse, client, downloadTemplate, maskVolumeString } from 'portal-core';
-
-
+import {
+  Columns3Icon,
+  Columns4Icon,
+  ColumnsIcon,
+  CrossIcon,
+  DownloadIcon,
+  EditIcon,
+  PlusIcon,
+  SheetIcon,
+  SquareMinusIcon,
+  SquarePlusIcon
+} from 'lucide-react';
+import { api } from 'portal-api';
+import {
+  DetailInfoResponse,
+  client,
+  downloadTemplate,
+  maskVolumeString
+} from 'portal-core';
 
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 
-
-
 import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, ThemeButton, closeModal, showModal, success, useConfirm, useLoading } from '@minhdtb/storeo-theme';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  ThemeButton,
+  closeModal,
+  showModal,
+  success,
+  useConfirm,
+  useLoading
+} from '@minhdtb/storeo-theme';
 
-
-
-import { TreeData, arrayToTree, getCommonPinningStyles } from '../../../../../commons/utils';
+import {
+  TreeData,
+  arrayToTree,
+  getCommonPinningStyles
+} from '../../../../../commons/utils';
 import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
-import { EditDetailForm } from '../../../../../components/models/detail/edit-detail-form';
-import { NewDetailForm } from '../../../../../components/models/detail/new-detail-form';
-import { ColumnManager } from '../../../../../components/models/project/column-manager';
-import { NewColumnForm } from '../../../../../components/models/project/new-column-form';
+import { EditDetailForm } from '../../../../../components/domains/detail/edit-detail-form';
+import { NewDetailForm } from '../../../../../components/domains/detail/new-detail-form';
+import { ColumnManager } from '../../../../../components/domains/project/column-manager';
+import { NewColumnForm } from '../../../../../components/domains/project/new-column-form';
 import { useDetailImportStatus } from '../../../../../hooks';
-
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -47,15 +87,15 @@ const Component = () => {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const deleteDetails = detailApi.delete.useMutation({
+  const deleteDetails = api.detail.delete.useMutation({
     onSuccess: async () => {
       success('Xóa hạng mục công việc thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(projectId)
+          queryKey: api.detail.listFull.getKey(projectId)
         }),
         queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
+          queryKey: api.detailInfo.listFull.getKey(projectId)
         })
       ]);
     }
@@ -66,7 +106,7 @@ const Component = () => {
       hideLoading();
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
+          queryKey: api.detailInfo.listFull.getKey(projectId)
         })
       ]);
     } else if (status === 'Error') {
@@ -74,7 +114,7 @@ const Component = () => {
     }
   });
 
-  const uploadFile = detailImportApi.upload.useMutation({
+  const uploadFile = api.detailImport.upload.useMutation({
     onError: () => {
       hideLoading();
     },
@@ -93,13 +133,13 @@ const Component = () => {
     if (selectedRow) {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: detailApi.listFull.getKey(projectId)
+          queryKey: api.detail.listFull.getKey(projectId)
         }),
         queryClient.invalidateQueries({
-          queryKey: detailInfoApi.listFull.getKey(projectId)
+          queryKey: api.detailInfo.listFull.getKey(projectId)
         }),
         queryClient.invalidateQueries({
-          queryKey: detailApi.byId.getKey(selectedRow.original.group)
+          queryKey: api.detail.byId.getKey(selectedRow.original.group)
         })
       ]);
     }
@@ -111,7 +151,7 @@ const Component = () => {
   const onProjectSuccessHandler = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: projectApi.byId.getKey(projectId)
+        queryKey: api.project.byId.getKey(projectId)
       })
     ]);
     if (modalId.current) {
@@ -205,7 +245,7 @@ const Component = () => {
     });
   }, [onCancelHandler, projectId]);
 
-  const project = projectApi.byId.useSuspenseQuery({
+  const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
 
@@ -403,7 +443,7 @@ const Component = () => {
     return value;
   }, [columnHelper, project.data.expand.column_via_project]);
 
-  const listDetailInfos = detailInfoApi.listFull.useSuspenseQuery({
+  const listDetailInfos = api.detailInfo.listFull.useSuspenseQuery({
     variables: projectId
   });
 
@@ -518,7 +558,7 @@ const Component = () => {
             })
           }
         >
-          <Cross2Icon className={'h-5 w-5'} />
+          <CrossIcon className={'h-5 w-5'} />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

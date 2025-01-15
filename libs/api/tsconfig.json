@@ -9,7 +9,9 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "noPropertyAccessFromIndexSignature": false
+    "target": "ESNext",
+    "noPropertyAccessFromIndexSignature": false,
+    "moduleResolution": "Node",
   },
   "files": [],
   "include": [],

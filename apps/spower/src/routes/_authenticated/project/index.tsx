@@ -4,19 +4,18 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProjectData, SearchSchema, projectApi } from 'portal-api';
+import { ProjectData, SearchSchema, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import { EmployeeDisplay } from '../../../components';
 
-
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const projects = projectApi.list.useSuspenseQuery({
+  const projects = api.project.list.useSuspenseQuery({
     variables: search
   });
 
@@ -142,5 +141,5 @@ export const Route = createFileRoute('/_authenticated/project/')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(projectApi.list.getOptions(deps.search))
+    queryClient?.ensureQueryData(api.project.list.getOptions(deps.search))
 });
