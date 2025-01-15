@@ -1,15 +1,12 @@
-import { RequestData, api } from 'portal-api';
-import { RequestStatusOptions } from 'portal-core';
+import type { RequestData } from 'portal-api';
+import { api } from 'portal-api';
+import type { RequestStatusOptions } from 'portal-core';
 import { object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import {
-  BusinessFormProps,
-  Form,
-  TextareaField,
-  success
-} from '@minhdtb/storeo-theme';
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
+import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
 
 import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
 

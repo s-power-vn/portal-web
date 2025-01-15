@@ -4,7 +4,8 @@ import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
 
-import { FC, useCallback, useRef } from 'react';
+import type { FC } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { Match, Show, Switch, cn, formatDateTime } from '@minhdtb/storeo-core';
 import {

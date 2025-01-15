@@ -1,12 +1,10 @@
-import {
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
+import type { SearchSchemaInput } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ShoppingCartIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
-import { IssueResponse, IssueTypeOptions } from 'portal-core';
+import type { IssueResponse } from 'portal-core';
+import { IssueTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';

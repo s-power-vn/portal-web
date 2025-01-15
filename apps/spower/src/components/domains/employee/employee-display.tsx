@@ -2,7 +2,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Loader, UserIcon } from 'lucide-react';
 import { Collections, client, getImageUrl } from 'portal-core';
 
-import { FC, Suspense } from 'react';
+import type { FC } from 'react';
+import { Suspense } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 

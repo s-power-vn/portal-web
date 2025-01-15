@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
-import { DetailResponse } from 'portal-core';
+import type { DetailResponse } from 'portal-core';
 import { v4 } from 'uuid';
-import { AnyObject, ObjectSchema } from 'yup';
+import type { AnyObject, ObjectSchema } from 'yup';
 
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 
 import { Show, cn } from '@minhdtb/storeo-core';
+import type { FormFieldProps } from '@minhdtb/storeo-theme';
 import {
   Button,
   FormField,
-  FormFieldProps,
   NumericField,
   Table,
   TableBody,
@@ -27,7 +28,7 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { TreeData } from '../../../commons/utils';
+import type { TreeData } from '../../../commons/utils';
 import { PickDetailInput } from '../detail/pick-detail-input';
 import { NewCustomRequestDetailForm } from './new-custom-request-detail-form';
 

@@ -1,6 +1,7 @@
-import { RequestStatusOptions } from 'portal-core';
+import type { RequestStatusOptions } from 'portal-core';
 
-import { FC, useEffect } from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { MarkerType, ReactFlow, useEdgesState, useNodesState } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -10,7 +11,6 @@ import NodeA3 from '../../../../flow/node-a3';
 import NodeA4 from '../../../../flow/node-a4';
 import NodeA5 from '../../../../flow/node-a5';
 import NodeA6 from '../../../../flow/node-a6';
-
 
 const initialNodes = [
   {

@@ -1,10 +1,8 @@
-import {
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
+import type { SearchSchemaInput } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProjectData, SearchSchema, api } from 'portal-api';
+import type { ProjectData } from 'portal-api';
+import { SearchSchema, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';

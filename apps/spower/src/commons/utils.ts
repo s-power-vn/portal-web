@@ -1,7 +1,7 @@
-import { Column } from '@tanstack/react-table';
+import type { Column } from '@tanstack/react-table';
 import _ from 'lodash';
 
-import { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
 export type TreeData<T> = T & {
   group: string;

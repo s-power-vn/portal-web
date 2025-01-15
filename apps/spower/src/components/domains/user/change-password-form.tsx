@@ -2,15 +2,10 @@ import { api } from 'portal-api';
 import { client } from 'portal-core';
 import { object, ref, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import {
-  BusinessFormProps,
-  Form,
-  TextField,
-  error,
-  success
-} from '@minhdtb/storeo-theme';
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
+import { Form, TextField, error, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   oldPassword: string().required('Hãy nhập mật khẩu hiện tại'),

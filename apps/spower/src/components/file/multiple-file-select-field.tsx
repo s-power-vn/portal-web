@@ -1,11 +1,10 @@
-import { AnyObject, ObjectSchema } from 'yup';
+import type { AnyObject, ObjectSchema } from 'yup';
 
-import { FormField, FormFieldProps } from '@minhdtb/storeo-theme';
+import type { FormFieldProps } from '@minhdtb/storeo-theme';
+import { FormField } from '@minhdtb/storeo-theme';
 
-import {
-  MultipleFileSelect,
-  MultipleFileSelectProps
-} from './multiple-file-select';
+import type { MultipleFileSelectProps } from './multiple-file-select';
+import { MultipleFileSelect } from './multiple-file-select';
 
 export type MultipleFileSelectFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<MultipleFileSelectProps, S>;

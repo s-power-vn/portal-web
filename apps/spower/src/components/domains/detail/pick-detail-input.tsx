@@ -1,6 +1,5 @@
+import type { ExpandedState, RowSelectionState } from '@tanstack/react-table';
 import {
-  ExpandedState,
-  RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -16,9 +15,10 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { DetailResponse } from 'portal-core';
+import type { DetailResponse } from 'portal-core';
 
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { For, Show, cn } from '@minhdtb/storeo-core';
 import {
@@ -32,7 +32,8 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import { TreeData, arrayToTree } from '../../../commons/utils';
+import type { TreeData } from '../../../commons/utils';
+import { arrayToTree } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
 export type PickDetailInputProps = {

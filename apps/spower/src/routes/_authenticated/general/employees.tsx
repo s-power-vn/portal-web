@@ -1,10 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  Outlet,
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
+import type { SearchSchemaInput } from '@tanstack/react-router';
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
@@ -12,7 +8,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, UserData, api } from 'portal-api';
+import type { UserData } from 'portal-api';
+import { SearchSchema, api } from 'portal-api';
 
 import { useState } from 'react';
 

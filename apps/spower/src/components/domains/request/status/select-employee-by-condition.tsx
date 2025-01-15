@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import { api } from 'portal-api';
 
-import { FC, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useMemo, useState } from 'react';
 
-import { SelectInput, SelectInputProps } from '@minhdtb/storeo-theme';
+import type { SelectInputProps } from '@minhdtb/storeo-theme';
+import { SelectInput } from '@minhdtb/storeo-theme';
 
 import { EmployeeDisplay } from '../../employee/employee-display';
 

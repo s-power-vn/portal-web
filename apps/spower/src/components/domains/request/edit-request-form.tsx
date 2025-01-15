@@ -1,10 +1,10 @@
 import { api } from 'portal-api';
 import { date, object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  BusinessFormProps,
   DatePickerField,
   Form,
   TextField,
@@ -52,17 +52,19 @@ export const EditRequestForm: FC<EditRequestFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        code: request.data.code,
-        title: request.data.expand.issue.title,
-        startDate: new Date(Date.parse(request.data.expand.issue.startDate)),
-        endDate: new Date(Date.parse(request.data.expand.issue.endDate))
+        code: request.data?.code,
+        title: request.data?.expand.issue.title,
+        startDate: new Date(
+          Date.parse(request.data?.expand.issue.startDate ?? '')
+        ),
+        endDate: new Date(Date.parse(request.data?.expand.issue.endDate ?? ''))
       }}
       className={'flex flex-col gap-4'}
       loading={updateRequest.isPending}
       onSubmit={values => {
         return updateRequest.mutate({
           ...values,
-          id: request.data.id
+          id: request.data?.id ?? ''
         });
       }}
       onCancel={props.onCancel}

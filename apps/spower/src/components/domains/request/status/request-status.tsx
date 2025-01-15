@@ -2,7 +2,8 @@ import { CrossIcon, Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
-import React, { FC, Suspense, useCallback, useState } from 'react';
+import type { FC } from 'react';
+import React, { Suspense, useCallback, useState } from 'react';
 
 import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';

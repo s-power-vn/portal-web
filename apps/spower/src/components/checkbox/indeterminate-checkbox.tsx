@@ -1,4 +1,5 @@
-import { HTMLProps, useEffect, useRef } from 'react';
+import type { HTMLProps } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function IndeterminateCheckbox({
   indeterminate,

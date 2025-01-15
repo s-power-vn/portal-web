@@ -1,7 +1,9 @@
 import { v4 } from 'uuid';
 
-import { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { Crop, ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import type { FC, SyntheticEvent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { Crop } from 'react-image-crop';
+import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 import { Button } from '@minhdtb/storeo-theme';

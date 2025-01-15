@@ -1,10 +1,11 @@
 import { api } from 'portal-api';
 import { date, number, object, string } from 'yup';
 
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  BusinessFormProps,
   DatePickerField,
   Form,
   NumericField,

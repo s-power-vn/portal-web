@@ -2,7 +2,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { api } from 'portal-api';
 import { RequestStatusOptions, client } from 'portal-core';
 
-import { FC, useCallback } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 
 import { Match, Show, Switch } from '@minhdtb/storeo-core';
 

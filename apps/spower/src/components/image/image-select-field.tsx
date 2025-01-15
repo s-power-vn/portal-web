@@ -1,8 +1,10 @@
-import { AnyObject, ObjectSchema } from 'yup';
+import type { AnyObject, ObjectSchema } from 'yup';
 
-import { FormField, FormFieldProps } from '@minhdtb/storeo-theme';
+import type { FormFieldProps } from '@minhdtb/storeo-theme';
+import { FormField } from '@minhdtb/storeo-theme';
 
-import { ImageSelect, ImageSelectProps } from './image-select';
+import type { ImageSelectProps } from './image-select';
+import { ImageSelect } from './image-select';
 
 export type ImageSelectFieldProps<S extends ObjectSchema<AnyObject>> =
   FormFieldProps<ImageSelectProps, S>;

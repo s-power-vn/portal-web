@@ -1,8 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
-import {
+import type {
   ExpandedState,
   Row,
-  RowSelectionState,
+  RowSelectionState
+} from '@tanstack/react-table';
+import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -14,14 +16,11 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import {
-  DetailInfoResponse,
-  RequestResponse,
-  client,
-  maskVolumeString
-} from 'portal-core';
+import type { DetailInfoResponse, RequestResponse } from 'portal-core';
+import { client, maskVolumeString } from 'portal-core';
 
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -33,11 +32,8 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import {
-  TreeData,
-  arrayToTree,
-  getCommonPinningStyles
-} from '../../../commons/utils';
+import type { TreeData } from '../../../commons/utils';
+import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */

@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 import { api } from 'portal-api';
 
-import { FC, useCallback, useRef } from 'react';
+import type { FC } from 'react';
+import { useCallback, useRef } from 'react';
 
 import {
   DropdownMenu,

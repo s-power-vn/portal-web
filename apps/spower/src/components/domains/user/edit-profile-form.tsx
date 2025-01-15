@@ -3,10 +3,11 @@ import { api } from 'portal-api';
 import { Collections, client, getImageUrl, getUser } from 'portal-core';
 import { mixed, object, string } from 'yup';
 
-import { FC, useCallback, useRef } from 'react';
+import type { FC } from 'react';
+import { useCallback, useRef } from 'react';
 
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  BusinessFormProps,
   Button,
   Form,
   TextField,

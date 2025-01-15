@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RegisteredRouter, UseLinkPropsOptions, deepEqual, useMatch, useRouter, useRouterState } from '@tanstack/react-router';
-
+import type {
+  RegisteredRouter,
+  UseLinkPropsOptions
+} from '@tanstack/react-router';
+import {
+  deepEqual,
+  useMatch,
+  useRouter,
+  useRouterState
+} from '@tanstack/react-router';
 
 export function useLink<
   TRouter extends RegisteredRouter = RegisteredRouter,

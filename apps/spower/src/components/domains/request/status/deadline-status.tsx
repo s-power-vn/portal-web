@@ -1,6 +1,6 @@
 import { IssueDeadlineStatusOptions } from 'portal-core';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 

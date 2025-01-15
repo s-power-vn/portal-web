@@ -1,9 +1,5 @@
-import {
-  SearchSchemaInput,
-  createFileRoute,
-  redirect,
-  useRouter
-} from '@tanstack/react-router';
+import type { SearchSchemaInput } from '@tanstack/react-router';
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
 import { Loader2 } from 'lucide-react';
 import { api } from 'portal-api';
 import { client } from 'portal-core';

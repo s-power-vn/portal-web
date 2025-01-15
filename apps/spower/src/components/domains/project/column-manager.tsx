@@ -7,9 +7,10 @@ import {
 } from '@tanstack/react-table';
 import { PlusIcon, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { ColumnResponse } from 'portal-core';
+import type { ColumnResponse } from 'portal-core';
 
-import { FC, useCallback, useRef } from 'react';
+import type { FC } from 'react';
+import { useCallback, useRef } from 'react';
 
 import {
   Button,

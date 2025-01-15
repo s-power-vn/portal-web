@@ -1,6 +1,6 @@
 import { RequestStatusOptions } from 'portal-core';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import { Match, Switch } from '@minhdtb/storeo-core';
 

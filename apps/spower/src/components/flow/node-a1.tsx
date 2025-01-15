@@ -1,4 +1,5 @@
-import { FC, memo } from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
 import { Show, cn } from '@minhdtb/storeo-core';

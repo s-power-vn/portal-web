@@ -1,15 +1,10 @@
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import {
-  BusinessFormProps,
-  Form,
-  TextField,
-  TextareaField,
-  success
-} from '@minhdtb/storeo-theme';
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
+import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên chủ đầu tư'),

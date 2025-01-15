@@ -1,9 +1,10 @@
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import { BusinessFormProps, Form, success } from '@minhdtb/storeo-theme';
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
+import { Form, success } from '@minhdtb/storeo-theme';
 
 import { SelectEmployeeField } from '../employee/select-employee-field';
 

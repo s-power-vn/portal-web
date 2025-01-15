@@ -1,4 +1,5 @@
-import { FC, HTMLAttributes, createContext, useContext } from 'react';
+import type { FC, HTMLAttributes } from 'react';
+import { createContext, useContext } from 'react';
 
 import { cn, usePersistedState } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';

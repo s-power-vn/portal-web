@@ -1,6 +1,7 @@
 import { ImageIcon } from 'lucide-react';
 
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
 import { closeModal, showModal } from '@minhdtb/storeo-theme';

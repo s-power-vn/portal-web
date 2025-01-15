@@ -2,14 +2,11 @@ import _ from 'lodash';
 import { api } from 'portal-api';
 import { number, object, string } from 'yup';
 
-import { FC, useEffect, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import {
-  BusinessFormProps,
-  Form,
-  TextField,
-  success
-} from '@minhdtb/storeo-theme';
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
+import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
 import { DepartmentDropdownField } from '../department/department-dropdown-field';
 import { RoleDropdownField } from '../role/role-dropdown-field';

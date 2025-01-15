@@ -1,11 +1,12 @@
 import { api } from 'portal-api';
-import { DetailInfoResponse } from 'portal-core';
+import type { DetailInfoResponse } from 'portal-core';
 import { number, object, string } from 'yup';
 
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  BusinessFormProps,
   Form,
   NumericField,
   TextField,
@@ -13,7 +14,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { TreeData } from '../../../commons/utils';
+import type { TreeData } from '../../../commons/utils';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),

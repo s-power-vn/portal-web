@@ -1,10 +1,12 @@
 import { compile } from '@fileforge/react-print';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
+import type {
   ExpandedState,
   Row,
-  RowSelectionState,
+  RowSelectionState
+} from '@tanstack/react-table';
+import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -22,7 +24,8 @@ import {
   SquareMinusIcon,
   SquarePlusIcon
 } from 'lucide-react';
-import { RequestDetailData, api } from 'portal-api';
+import type { RequestDetailData } from 'portal-api';
+import { api } from 'portal-api';
 import {
   BASE_URL,
   Collections,
@@ -33,8 +36,8 @@ import {
 } from 'portal-core';
 import printJS from 'print-js';
 
+import type { FC } from 'react';
 import React, {
-  FC,
   useCallback,
   useEffect,
   useMemo,
@@ -72,11 +75,8 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import {
-  TreeData,
-  arrayToTree,
-  getCommonPinningStyles
-} from '../../../commons/utils';
+import type { TreeData } from '../../../commons/utils';
+import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestAction } from './request-action';

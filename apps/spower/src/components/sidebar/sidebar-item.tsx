@@ -1,11 +1,8 @@
-import {
-  Link,
-  RegisteredRouter,
-  ToPathOption,
-  useRouter
-} from '@tanstack/react-router';
+import type { RegisteredRouter, ToPathOption } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 
-import { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
+import type { FC, HTMLAttributes, ReactNode } from 'react';
+import { useMemo } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@minhdtb/storeo-theme';

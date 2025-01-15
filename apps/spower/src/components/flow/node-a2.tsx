@@ -1,10 +1,10 @@
-import { FC, memo } from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
-import { CustomNodeProps } from './node-a1';
-
+import type { CustomNodeProps } from './node-a1';
 
 const NodeA2: FC<CustomNodeProps> = ({ data, isConnectable }) => {
   const condition =

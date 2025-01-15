@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { api } from 'portal-api';
 
-import { FC, ReactNode, useCallback, useRef } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';

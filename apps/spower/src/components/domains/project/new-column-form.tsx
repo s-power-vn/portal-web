@@ -1,16 +1,19 @@
 import { api } from 'portal-api';
-import { ColumnTypeOptions } from 'portal-core';
-import { AnyObject, ObjectSchema, object, string } from 'yup';
+import type { ColumnTypeOptions } from 'portal-core';
+import type { AnyObject, ObjectSchema } from 'yup';
+import { object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import {
+import type {
   BusinessFormProps,
+  FormFieldProps,
+  SelectInputProps
+} from '@minhdtb/storeo-theme';
+import {
   Form,
   FormField,
-  FormFieldProps,
   SelectInput,
-  SelectInputProps,
   TextField,
   success
 } from '@minhdtb/storeo-theme';

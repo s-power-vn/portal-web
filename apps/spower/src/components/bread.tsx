@@ -2,7 +2,8 @@ import { useRouterState } from '@tanstack/react-router';
 import _ from 'lodash';
 import { HomeIcon } from 'lucide-react';
 
-import { FC, useMemo } from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { Show } from '@minhdtb/storeo-core';

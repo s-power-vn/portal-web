@@ -1,16 +1,10 @@
-import {
-  Link,
-  RegisteredRouter,
-  ToPathOption,
-  useRouter
-} from '@tanstack/react-router';
+import type { RegisteredRouter, ToPathOption } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import type { FC, HTMLAttributes, ReactNode } from 'react';
 import {
   Children,
-  FC,
-  HTMLAttributes,
-  ReactNode,
   cloneElement,
   isValidElement,
   useCallback,
