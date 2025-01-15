@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import {
   DollarSignIcon,
   FileTextIcon,
@@ -8,7 +7,7 @@ import {
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import {
   DropdownMenu,
@@ -16,10 +15,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   ThemeButton,
-  closeModal,
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../hooks';
 import { NewRequestForm } from '../request/new-request-form';
 
 export type NewIssueButtonProps = {
@@ -27,56 +26,39 @@ export type NewIssueButtonProps = {
 };
 
 export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
-  const modalId = useRef<string | undefined>();
-  const queryClient = useQueryClient();
-
-  const onSuccessHandler = useCallback(async () => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.request.listFull.getKey(projectId)
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.issue.list.getKey({
-          projectId
-        })
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.issue.listMine.getKey({
-          projectId
-        })
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.issue.listRequest.getKey({
-          projectId
-        })
-      })
-    ]);
-  }, [queryClient, projectId]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
+  const invalidates = useInvalidateQueries();
 
   const handleNewRequestClick = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Tạo yêu cầu mua hàng',
       className: 'flex min-w-[800px] flex-col',
       description:
         'Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục',
-      children: (
-        <NewRequestForm
-          projectId={projectId}
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
-        />
-      )
+      children: ({ close }) => {
+        return (
+          <NewRequestForm
+            projectId={projectId}
+            onSuccess={async () => {
+              await invalidates([
+                api.request.listFull.getKey(projectId),
+                api.issue.list.getKey({
+                  projectId
+                }),
+                api.issue.listMine.getKey({
+                  projectId
+                }),
+                api.issue.listRequest.getKey({
+                  projectId
+                })
+              ]);
+              close();
+            }}
+            onCancel={close}
+          />
+        );
+      }
     });
-  }, [onCancelHandler, onSuccessHandler, projectId]);
+  }, [invalidates, projectId]);
 
   return (
     <DropdownMenu>

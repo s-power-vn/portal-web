@@ -104,7 +104,7 @@ const Component = () => {
               className={'h-6 px-3'}
               onClick={() =>
                 navigate({
-                  to: './$employeeId/edit',
+                  to: '/general/employees/$employeeId/edit',
                   params: {
                     employeeId: row.original.id
                   },

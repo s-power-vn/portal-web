@@ -4,14 +4,13 @@ import { Collections, client, getImageUrl, getUser } from 'portal-core';
 import { mixed, object, string } from 'yup';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
   Button,
   Form,
   TextField,
-  closeModal,
   showModal,
   success
 } from '@minhdtb/storeo-theme';
@@ -28,7 +27,6 @@ const schema = object().shape({
 export type EditProfileFormProps = BusinessFormProps;
 
 export const EditProfileForm: FC<EditProfileFormProps> = props => {
-  const modalId = useRef<string | undefined>();
   const router = useRouter();
   const user = getUser();
 
@@ -39,30 +37,15 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
     }
   });
 
-  const onSuccessHandler = useCallback(async () => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleChangePassword = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Đổi mật khẩu',
       className: 'w-[400px]',
-      children: (
-        <ChangePasswordForm
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
-        />
-      )
+      children: ({ close }) => {
+        return <ChangePasswordForm onSuccess={close} onCancel={close} />;
+      }
     });
-  }, [onCancelHandler, onSuccessHandler]);
+  }, []);
 
   return (
     <Form
