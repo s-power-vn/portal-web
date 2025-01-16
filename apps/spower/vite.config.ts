@@ -7,6 +7,7 @@ import * as path from 'node:path';
 import { join } from 'path';
 import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig, normalizePath } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 const require = createRequire(import.meta.url);
@@ -37,6 +38,7 @@ export default defineConfig({
   },
 
   plugins: [
+    nodePolyfills(),
     react(),
     nxViteTsPaths(),
     Unfonts({
@@ -62,6 +64,7 @@ export default defineConfig({
   ],
 
   build: {
+    emptyOutDir: true,
     outDir: '../../dist/apps/spower',
     reportCompressedSize: true,
     commonjsOptions: {
