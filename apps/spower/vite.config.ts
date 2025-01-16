@@ -73,6 +73,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          react: [
+            'react',
+            'react-dom',
+            'react-image-crop',
+            'reactflow',
+            '@preact/signals-react'
+          ],
           lib: [
             'lodash',
             'luxon',
@@ -83,15 +90,7 @@ export default defineConfig({
             'zipson'
           ],
           print: ['@fileforge/react-print'],
-          core: ['@minhdtb/storeo-core'],
-          theme: ['@minhdtb/storeo-theme'],
-          react: [
-            'react',
-            'react-dom',
-            'react-image-crop',
-            'reactflow',
-            '@preact/signals-react'
-          ],
+          core: ['@minhdtb/storeo-core', '@minhdtb/storeo-theme'],
           form: ['react-hook-form', 'yup', '@hookform/resolvers'],
           tanstack: [
             '@tanstack/match-sorter-utils',
