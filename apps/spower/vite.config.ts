@@ -69,6 +69,39 @@ export default defineConfig({
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          lib: [
+            'lodash',
+            'luxon',
+            'pocketbase',
+            'print-js',
+            'react-query-kit',
+            'react-pdf',
+            'zipson'
+          ],
+          print: ['@fileforge/react-print'],
+          core: ['@minhdtb/storeo-core'],
+          theme: ['@minhdtb/storeo-theme'],
+          react: [
+            'react',
+            'react-dom',
+            'react-image-crop',
+            'reactflow',
+            '@preact/signals-react'
+          ],
+          form: ['react-hook-form', 'yup', '@hookform/resolvers'],
+          tanstack: [
+            '@tanstack/match-sorter-utils',
+            '@tanstack/react-query',
+            '@tanstack/react-router',
+            '@tanstack/react-table',
+            '@tanstack/react-virtual'
+          ]
+        }
+      }
     }
   },
 
