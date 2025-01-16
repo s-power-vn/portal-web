@@ -21,8 +21,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       '@minhdtb/storeo-theme':
-        specifier: ^1.0.15
-        version: 1.0.15
+        specifier: ^1.0.16
+        version: 1.0.16
       '@preact/signals-react':
         specifier: ^2.0.0
         version: 2.0.0(react@18.3.1)
@@ -134,7 +134,7 @@ importers:
         version: 20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/helpers@0.5.15)(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(eslint@9.18.0(jiti@1.21.7))(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(webpack@5.88.0(@swc/core@1.10.7(@swc/helpers@0.5.15)))
       '@nx/vite':
         specifier: ^20.3.1
-        version: 20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)(vite@5.4.11(@types/node@18.16.9)(terser@5.37.0))(vitest@1.4.0(@types/node@18.16.9)(@vitest/ui@1.4.0)(jsdom@26.0.0)(terser@5.37.0))
+        version: 20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)(vite@5.4.11(@types/node@18.16.9)(terser@5.37.0))(vitest@1.4.0)
       '@nx/web':
         specifier: ^20.3.1
         version: 20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)
@@ -197,7 +197,7 @@ importers:
         version: 4.2.1(vite@5.4.11(@types/node@18.16.9)(terser@5.37.0))
       '@vitest/coverage-v8':
         specifier: ^1.4.0
-        version: 1.4.0(vitest@1.4.0(@types/node@18.16.9)(@vitest/ui@1.4.0)(jsdom@26.0.0)(terser@5.37.0))
+        version: 1.4.0(vitest@1.4.0)
       '@vitest/ui':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -1618,8 +1618,8 @@ packages:
   '@minhdtb/storeo-core@0.0.4':
     resolution: {integrity: sha512-C+IObzsk8N2PPfSvYR647ATOkHEVytq2U6O9rD8ZMWolkgaOe1w3kPmYWxDROZIu/o+Zd+c70n1jhFDvZSs1xQ==}
 
-  '@minhdtb/storeo-theme@1.0.15':
-    resolution: {integrity: sha512-DTNUbVuyR8OFWIOTv/mjcUXDBw7gBCt5W33/gzdvLxObEGamIinIjg5zR6l5EtiV8H0uoxWh31l24nymj+GxoA==}
+  '@minhdtb/storeo-theme@1.0.16':
+    resolution: {integrity: sha512-C24/pCmKOx8hr7yqOoDAfiFBUucbQOD2dJvXzgzG8VQgmFCJEwyYw/jdDZ2HfLC2TaV68ptm5+oolm8dOLDs8w==}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     resolution: {integrity: sha512-eD1JZDQ+h5WLdA58MmAE1DzLwvFaGJeeam3Tswc/sEUb4QGT86X4Fme+dMTBRYRoAq/tRYql3DlVTFhdmrUVzg==}
@@ -9333,7 +9333,7 @@ snapshots:
 
   '@minhdtb/storeo-core@0.0.4': {}
 
-  '@minhdtb/storeo-theme@1.0.15': {}
+  '@minhdtb/storeo-theme@1.0.16': {}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     dependencies:
@@ -9857,7 +9857,7 @@ snapshots:
       - webpack
       - webpack-cli
 
-  '@nx/vite@20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)(vite@5.4.11(@types/node@18.16.9)(terser@5.37.0))(vitest@1.4.0(@types/node@18.16.9)(@vitest/ui@1.4.0)(jsdom@26.0.0)(terser@5.37.0))':
+  '@nx/vite@20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)(vite@5.4.11(@types/node@18.16.9)(terser@5.37.0))(vitest@1.4.0)':
     dependencies:
       '@nx/devkit': 20.3.1(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))
       '@nx/js': 20.3.1(@babel/traverse@7.26.5)(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@18.16.9)(nx@20.3.1(@swc-node/register@1.10.9(@swc/core@1.10.7(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.10.7(@swc/helpers@0.5.15)))(typescript@5.7.3)
@@ -11133,7 +11133,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@1.4.0(vitest@1.4.0(@types/node@18.16.9)(@vitest/ui@1.4.0)(jsdom@26.0.0)(terser@5.37.0))':
+  '@vitest/coverage-v8@1.4.0(vitest@1.4.0)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
