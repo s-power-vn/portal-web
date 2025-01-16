@@ -102,15 +102,15 @@ const Component = () => {
           <div className={'flex gap-1'}>
             <Button
               className={'h-6 px-3'}
-              onClick={() =>
+              onClick={() => {
                 navigate({
-                  to: '/general/employees/$employeeId/edit',
+                  to: './$employeeId/edit',
                   params: {
                     employeeId: row.original.id
                   },
                   search
-                })
-              }
+                });
+              }}
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
@@ -213,14 +213,14 @@ const Component = () => {
                   <TableRow
                     key={row.id}
                     className={'cursor-pointer last:border-b-0'}
-                    onClick={() =>
+                    onClick={() => {
                       navigate({
                         to: './$employeeId/edit',
                         params: {
                           employeeId: row.original.id
                         }
-                      })
-                    }
+                      });
+                    }}
                   >
                     {row.getVisibleCells().map(cell => (
                       <TableCell
