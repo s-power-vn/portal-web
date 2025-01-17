@@ -1,12 +1,12 @@
-import { Loader, XIcon } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import React, { Suspense, useCallback, useState } from 'react';
+import React, { Suspense, useCallback } from 'react';
 
-import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
-import { Button } from '@minhdtb/storeo-theme';
+import { Match, Switch, cn } from '@minhdtb/storeo-core';
+import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { AStateFlow } from './a-state/a-state-flow';
 
@@ -16,84 +16,51 @@ export type RequestStatusProps = {
 };
 
 const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
-  const [showGraph, setShowGraph] = useState(false);
-
   const request = api.request.byIssueId.useSuspenseQuery({
     variables: issueId
   });
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e.stopPropagation();
-      setShowGraph(true);
-    },
-    []
-  );
+  const handleClick = useCallback(() => {
+    showModal({
+      title: `Trạng thái công việc - ${request.data?.status}`,
+      className: 'min-w-[800px]',
+      children: (
+        <div className={'h-[400px]'}>
+          <AStateFlow status={request.data?.status} />
+        </div>
+      )
+    });
+  }, [request.data?.status]);
 
   const style = `text-appWhite flex w-fit h-fit items-center
   justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs`;
 
   return (
-    <>
-      <Show when={showGraph}>
-        <div
-          className={`absolute left-1/2 top-1/2 z-50
-                -translate-x-1/2 -translate-y-1/2
-                  transform rounded border bg-white shadow-lg`}
+    <Switch
+      fallback={
+        <span className={cn(style, 'bg-appGrayDark text-appBlack', className)}>
+          Không xác định
+        </span>
+      }
+    >
+      <Match when={request.data?.status?.charAt(0) === 'A'}>
+        <Button
+          variant={'outline'}
+          onClick={handleClick}
+          className={cn(
+            style,
+            request.data?.status === RequestStatusOptions.A8
+              ? 'bg-appGrayLight text-appBlack'
+              : 'bg-appError',
+            className
+          )}
         >
-          <div className={'relative flex h-[600px] w-[800px] flex-col'}>
-            <div
-              className={
-                'bg-appBlueLight flex h-11 w-full items-center rounded-t px-2'
-              }
-            >
-              <span
-                className={'text-appWhite text-sm font-bold'}
-              >{`Trạng thái công việc - ${request.data?.status}`}</span>
-            </div>
-            <Button
-              variant={'outline'}
-              className={
-                'bg-appError text-appWhite absolute right-2 top-2 h-6 w-6 rounded-full p-0'
-              }
-              onClick={() => {
-                setShowGraph(false);
-              }}
-            >
-              <XIcon className={'h-4 w-4'} />
-            </Button>
-            <AStateFlow status={request.data?.status} />
-          </div>
-        </div>
-      </Show>
-      <Switch
-        fallback={
-          <span
-            className={cn(style, 'bg-appGrayDark text-appBlack', className)}
-          >
-            Không xác định
-          </span>
-        }
-      >
-        <Match when={request.data?.status?.charAt(0) === 'A'}>
-          <Button
-            variant={'outline'}
-            onClick={handleClick}
-            className={cn(
-              style,
-              request.data?.status === RequestStatusOptions.A8
-                ? 'bg-appGrayLight text-appBlack'
-                : 'bg-appError',
-              className
-            )}
-          >
-            {request.data?.status === RequestStatusOptions.A8
-              ? 'Kết thúc'
-              : request.data?.status}
-          </Button>
-        </Match>
-      </Switch>
-    </>
+          {request.data?.status === RequestStatusOptions.A8
+            ? 'Kết thúc'
+            : request.data?.status}
+        </Button>
+      </Match>
+    </Switch>
   );
 };
 
