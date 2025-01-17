@@ -1,4 +1,4 @@
-import { CrossIcon, Loader } from 'lucide-react';
+import { Loader, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
@@ -53,12 +53,14 @@ const Component: FC<RequestStatusProps> = ({ issueId, className }) => {
             </div>
             <Button
               variant={'outline'}
-              className={'absolute right-2 top-2 h-6 w-6 rounded-full p-0'}
+              className={
+                'bg-appError text-appWhite absolute right-2 top-2 h-6 w-6 rounded-full p-0'
+              }
               onClick={() => {
                 setShowGraph(false);
               }}
             >
-              <CrossIcon />
+              <XIcon className={'h-4 w-4'} />
             </Button>
             <AStateFlow status={request.data?.status} />
           </div>

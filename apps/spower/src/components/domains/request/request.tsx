@@ -17,12 +17,12 @@ import {
 import _ from 'lodash';
 import {
   CalendarIcon,
-  CrossIcon,
   EditIcon,
   PaperclipIcon,
   PrinterIcon,
   SquareMinusIcon,
-  SquarePlusIcon
+  SquarePlusIcon,
+  XIcon
 } from 'lucide-react';
 import type { RequestDetailData } from 'portal-api';
 import { api } from 'portal-api';
@@ -446,7 +446,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                 );
               }}
             >
-              <CrossIcon className={'h-4 w-4'} />
+              <XIcon className={'h-4 w-4'} />
             </Button>
           </Show>
         </div>

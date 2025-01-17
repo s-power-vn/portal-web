@@ -20,13 +20,13 @@ import {
   Columns3Icon,
   Columns4Icon,
   ColumnsIcon,
-  CrossIcon,
   DownloadIcon,
   EditIcon,
   PlusIcon,
   SheetIcon,
   SquareMinusIcon,
-  SquarePlusIcon
+  SquarePlusIcon,
+  XIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
 import type { DetailInfoResponse } from 'portal-core';
@@ -557,7 +557,7 @@ const Component = () => {
             })
           }
         >
-          <CrossIcon className={'h-5 w-5'} />
+          <XIcon className={'h-5 w-5'} />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
