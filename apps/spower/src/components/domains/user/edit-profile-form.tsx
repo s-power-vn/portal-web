@@ -64,7 +64,6 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           id: client.authStore.model?.id
         })
       }
-      hideDefaultActions={true}
       actions={methods => (
         <div className={'mt-6 flex justify-end gap-2'}>
           <Button

@@ -1,11 +1,9 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
-import { Loader2 } from 'lucide-react';
 import { api } from 'portal-api';
 import { client } from 'portal-core';
 import { object, string } from 'yup';
 
-import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
   Card,
@@ -55,23 +53,16 @@ const Login = () => {
               email: '',
               password: ''
             }}
-            loading={login.isPending}
             className={'flex flex-col gap-4'}
             actions={
-              <div
-                className={'flex w-full items-center justify-center px-12 pt-4'}
-              >
-                {login.isPending ? (
-                  <Button className={'w-full'} type={'button'}>
-                    <Loader2
-                      className={cn('my-1 h-6 w-6 animate-spin text-white')}
-                    />
-                  </Button>
-                ) : (
-                  <Button className={'w-full'} type={'submit'}>
-                    Đăng nhập
-                  </Button>
-                )}
+              <div className={'flex w-full items-center justify-center'}>
+                <Button
+                  className={'w-full'}
+                  type={'submit'}
+                  loading={login.isPending}
+                >
+                  Đăng nhập
+                </Button>
               </div>
             }
           >
