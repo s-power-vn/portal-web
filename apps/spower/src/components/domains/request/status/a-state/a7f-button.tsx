@@ -1,12 +1,11 @@
 import { useRouter } from '@tanstack/react-router';
 import type { RequestData } from 'portal-api';
-import { api } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
-import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
+import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { SendRequestForm } from '../send-request-form';
 
@@ -16,29 +15,22 @@ export type A7ButtonProps = {
 
 export const A7fButton: FC<A7ButtonProps> = ({ request }) => {
   const router = useRouter();
-  const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Chuyển tiếp',
       className: 'flex min-w-[400px] flex-col',
-      children: (
+      children: ({ close }) => (
         <SendRequestForm
           status={RequestStatusOptions.A7F}
           request={request}
           title={'Chuyển tiếp'}
           condition={'(role = 3 && department.code = "KH") || role = 1'}
           onSuccess={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
+            close();
             router.history.back();
           }}
-          onCancel={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
-          }}
+          onCancel={close}
         />
       )
     });

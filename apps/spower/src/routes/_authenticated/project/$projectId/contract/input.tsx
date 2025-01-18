@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import type {
   ExpandedState,
@@ -49,7 +48,6 @@ import {
   TableHeader,
   TableRow,
   ThemeButton,
-  closeModal,
   showModal,
   success,
   useConfirm,
@@ -66,7 +64,10 @@ import { EditDetailForm } from '../../../../../components/domains/detail/edit-de
 import { NewDetailForm } from '../../../../../components/domains/detail/new-detail-form';
 import { ColumnManager } from '../../../../../components/domains/project/column-manager';
 import { NewColumnForm } from '../../../../../components/domains/project/new-column-form';
-import { useDetailImportStatus } from '../../../../../hooks';
+import {
+  useDetailImportStatus,
+  useInvalidateQueries
+} from '../../../../../hooks';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -76,12 +77,10 @@ const Component = () => {
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const modalId = useRef<string | undefined>();
-
   const { confirm } = useConfirm();
   const { showLoading, hideLoading } = useLoading();
 
-  const queryClient = useQueryClient();
+  const invalidates = useInvalidateQueries();
 
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -89,13 +88,9 @@ const Component = () => {
   const deleteDetails = api.detail.delete.useMutation({
     onSuccess: async () => {
       success('Xóa hạng mục công việc thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.detail.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: api.detailInfo.listFull.getKey(projectId)
-        })
+      await invalidates([
+        api.detail.listFull.getKey(projectId),
+        api.detailInfo.listFull.getKey(projectId)
       ]);
     }
   });
@@ -103,11 +98,7 @@ const Component = () => {
   useDetailImportStatus(async (_, status) => {
     if (status === 'Done') {
       hideLoading();
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.detailInfo.listFull.getKey(projectId)
-        })
-      ]);
+      await invalidates([api.detailInfo.listFull.getKey(projectId)]);
     } else if (status === 'Error') {
       hideLoading();
     }
@@ -128,36 +119,6 @@ const Component = () => {
     return downloadTemplate('detail', 'application/vnd.ms-excel');
   }, []);
 
-  const onDetailSuccessHandler = useCallback(async () => {
-    if (selectedRow) {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.detail.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: api.detailInfo.listFull.getKey(projectId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: api.detail.byId.getKey(selectedRow.original.group)
-        })
-      ]);
-    }
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [projectId, queryClient, selectedRow]);
-
-  const onProjectSuccessHandler = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.project.byId.getKey(projectId)
-      })
-    ]);
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [projectId, queryClient]);
-
   const onFileChangeCapture = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
@@ -171,78 +132,101 @@ const Component = () => {
     [projectId, showLoading, uploadFile]
   );
 
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleNewDetailParent = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm mục cha',
-      children: (
+      children: ({ close }) => (
         <NewDetailForm
           projectId={projectId}
-          onSuccess={onDetailSuccessHandler}
-          onCancel={onCancelHandler}
+          onSuccess={() => {
+            if (selectedRow) {
+              invalidates([
+                api.detail.listFull.getKey(projectId),
+                api.detailInfo.listFull.getKey(projectId),
+                api.detail.byId.getKey(selectedRow.original.group)
+              ]);
+            }
+            close();
+          }}
+          onCancel={close}
         />
       )
     });
-  }, [onCancelHandler, onDetailSuccessHandler, projectId]);
+  }, [invalidates, projectId, selectedRow]);
 
   const handleNewDetailChild = useCallback(() => {
     if (selectedRow) {
-      modalId.current = showModal({
+      showModal({
         title: 'Thêm mục con',
-        children: (
+        children: ({ close }) => (
           <NewDetailForm
             projectId={projectId}
             parent={selectedRow.original}
-            onSuccess={onDetailSuccessHandler}
-            onCancel={onCancelHandler}
+            onSuccess={() => {
+              if (selectedRow) {
+                invalidates([
+                  api.detail.listFull.getKey(projectId),
+                  api.detailInfo.listFull.getKey(projectId),
+                  api.detail.byId.getKey(selectedRow.original.group)
+                ]);
+              }
+              close();
+            }}
+            onCancel={close}
           />
         )
       });
     }
-  }, [onCancelHandler, onDetailSuccessHandler, projectId, selectedRow]);
+  }, [invalidates, projectId, selectedRow]);
 
   const handleEditDetail = useCallback(() => {
     if (selectedRow) {
-      modalId.current = showModal({
+      showModal({
         title: 'Sửa công việc',
-        children: (
+        children: ({ close }) => (
           <EditDetailForm
             detailId={selectedRow.original.group}
-            onSuccess={onDetailSuccessHandler}
-            onCancel={onCancelHandler}
+            onSuccess={() => {
+              if (selectedRow) {
+                invalidates([
+                  api.detail.listFull.getKey(projectId),
+                  api.detailInfo.listFull.getKey(projectId),
+                  api.detail.byId.getKey(selectedRow.original.group)
+                ]);
+              }
+              close();
+            }}
+            onCancel={close}
           />
         )
       });
     }
-  }, [onCancelHandler, onDetailSuccessHandler, selectedRow]);
+  }, [invalidates, projectId, selectedRow]);
 
   const handleNewColumn = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm cột',
       className: 'w-[25rem]',
-      children: (
+      children: ({ close }) => (
         <NewColumnForm
           projectId={projectId}
-          onSuccess={onProjectSuccessHandler}
-          onCancel={onCancelHandler}
+          onSuccess={() => {
+            invalidates([api.project.byId.getKey(projectId)]);
+          }}
+          onCancel={close}
         />
       )
     });
-  }, [onCancelHandler, onProjectSuccessHandler, projectId]);
+  }, [invalidates, projectId]);
 
   const handleManageColumn = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Quản lý cột',
-      children: (
-        <ColumnManager projectId={projectId} onClose={onCancelHandler} />
+      children: ({ close }) => (
+        <ColumnManager projectId={projectId} onClose={close} />
       )
     });
-  }, [onCancelHandler, projectId]);
+  }, [projectId]);
 
   const project = api.project.byId.useSuspenseQuery({
     variables: projectId

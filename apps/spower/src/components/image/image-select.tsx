@@ -1,10 +1,10 @@
 import { ImageIcon } from 'lucide-react';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
-import { closeModal, showModal } from '@minhdtb/storeo-theme';
+import { showModal } from '@minhdtb/storeo-theme';
 
 import { ImageCropper } from './image-cropper';
 
@@ -18,36 +18,10 @@ export type ImageSelectProps = {
 export const ImageSelect: FC<ImageSelectProps> = props => {
   const [image, setImage] = useState<string | undefined>(props.value);
   const { width = 150, height = 150 } = props;
-  const modalId = useRef<string | undefined>();
 
   useEffect(() => {
     setImage(props.value);
   }, [props.value]);
-
-  const onSuccessHandler = useCallback(
-    async (file: File) => {
-      props.onChange?.(file);
-
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        setImage(e.target?.result as string);
-      };
-
-      reader.readAsDataURL(file);
-
-      if (modalId.current) {
-        closeModal(modalId.current);
-      }
-    },
-    [props]
-  );
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
 
   const handleSelectImage = useCallback(() => {
     const input = document.createElement('input');
@@ -58,14 +32,26 @@ export const ImageSelect: FC<ImageSelectProps> = props => {
       if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-          modalId.current = showModal({
+          showModal({
             title: 'Cắt ảnh',
-            children: (
+            children: ({ close }) => (
               <ImageCropper
                 source={reader.result as string}
                 aspect={1}
-                onSuccess={onSuccessHandler}
-                onCancel={onCancelHandler}
+                onSuccess={(file: File) => {
+                  props.onChange?.(file);
+
+                  const reader = new FileReader();
+
+                  reader.onload = function (e) {
+                    setImage(e.target?.result as string);
+                  };
+
+                  reader.readAsDataURL(file);
+
+                  close();
+                }}
+                onCancel={close}
               />
             )
           });
@@ -74,7 +60,7 @@ export const ImageSelect: FC<ImageSelectProps> = props => {
       }
     };
     input.click();
-  }, [onCancelHandler, onSuccessHandler]);
+  }, [props]);
 
   return (
     <button

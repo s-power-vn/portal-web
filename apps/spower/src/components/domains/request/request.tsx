@@ -1,5 +1,4 @@
 import { compile } from '@fileforge/react-print';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import type {
   ExpandedState,
@@ -37,13 +36,7 @@ import {
 import printJS from 'print-js';
 
 import type { FC } from 'react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -69,7 +62,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  closeModal,
   showModal,
   useConfirm,
   useLoading
@@ -77,6 +69,7 @@ import {
 
 import type { TreeData } from '../../../commons/utils';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
+import { useInvalidateQueries } from '../../../hooks';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestAction } from './request-action';
@@ -106,28 +99,22 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const router = useRouter();
 
-  const queryClient = useQueryClient();
+  const invalidates = useInvalidateQueries();
 
   const deleteIssue = api.issue.delete.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.issue.list.getKey({
-            projectId: request.data?.project
-          })
+      router.history.back();
+      await invalidates([
+        api.issue.list.getKey({
+          projectId: request.data?.project
         }),
-        queryClient.invalidateQueries({
-          queryKey: api.issue.listMine.getKey({
-            projectId: request.data?.project
-          })
+        api.issue.listMine.getKey({
+          projectId: request.data?.project
         }),
-        queryClient.invalidateQueries({
-          queryKey: api.issue.listRequest.getKey({
-            projectId: request.data?.project
-          })
+        api.issue.listRequest.getKey({
+          projectId: request.data?.project
         })
       ]);
-      router.history.back();
     }
   });
 
@@ -315,45 +302,27 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     table.toggleAllRowsExpanded(true);
   }, [table]);
 
-  const modalId = useRef<string | undefined>();
-
-  const onSuccessHandler = useCallback(async () => {
-    if (selectedRow) {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.request.byIssueId.getKey(issueId)
-        }),
-        queryClient.invalidateQueries({
-          queryKey: api.requestDetail.byId.getKey(selectedRow.original.id)
-        })
-      ]);
-    }
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [issueId, queryClient, selectedRow]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleEditRequestVolume = useCallback(() => {
     if (selectedRow) {
-      modalId.current = showModal({
+      showModal({
         title: 'Sửa yêu cầu',
         className: 'min-w-60 w-[25rem]',
-        children: (
+        children: ({ close }) => (
           <EditRequestVolumeForm
             requestDetailId={selectedRow.original.id}
-            onSuccess={onSuccessHandler}
-            onCancel={onCancelHandler}
+            onSuccess={() => {
+              invalidates([
+                api.request.byIssueId.getKey(issueId),
+                api.requestDetail.byId.getKey(selectedRow.original.id)
+              ]);
+              close();
+            }}
+            onCancel={close}
           />
         )
       });
     }
-  }, [onCancelHandler, onSuccessHandler, selectedRow]);
+  }, [invalidates, issueId, selectedRow]);
 
   const { showLoading, hideLoading } = useLoading();
 

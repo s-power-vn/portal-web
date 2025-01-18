@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import {
   createColumnHelper,
   flexRender,
@@ -10,7 +9,7 @@ import { api } from 'portal-api';
 import type { ColumnResponse } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import {
   Button,
@@ -20,12 +19,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  closeModal,
   showModal,
   success,
   useConfirm
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../hooks';
 import { NewColumnForm } from './new-column-form';
 
 export type ColumnManagerProps = {
@@ -37,59 +36,41 @@ export const ColumnManager: FC<ColumnManagerProps> = ({
   projectId,
   onClose
 }) => {
-  const modalId = useRef<string | undefined>();
-
-  const queryClient = useQueryClient();
+  const invalidates = useInvalidateQueries();
   const listColumn = api.project.listColumn.useSuspenseQuery({
     variables: projectId
   });
 
-  const onSuccessHandler = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.project.listColumn.getKey()
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.project.byId.getKey(projectId)
-      })
-    ]);
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [projectId, queryClient]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleNewColumn = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm cột',
       className: 'w-[25rem]',
-      children: (
-        <NewColumnForm
-          projectId={projectId}
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
-        />
-      )
+      children: ({ close }) => {
+        return (
+          <NewColumnForm
+            projectId={projectId}
+            onSuccess={() => {
+              invalidates([
+                api.project.listColumn.getKey(),
+                api.project.byId.getKey(projectId)
+              ]);
+              close();
+            }}
+            onCancel={close}
+          />
+        );
+      }
     });
-  }, [onCancelHandler, onSuccessHandler, projectId]);
+  }, [invalidates, projectId]);
 
   const columnHelper = createColumnHelper<ColumnResponse>();
 
   const deleteColumn = api.project.deleteColumn.useMutation({
     onSuccess: async () => {
       success('Xóa cột thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.project.listColumn.getKey()
-        }),
-        queryClient.invalidateQueries({
-          queryKey: api.project.byId.getKey(projectId)
-        })
+      await invalidates([
+        api.project.listColumn.getKey(),
+        api.project.byId.getKey(projectId)
       ]);
     }
   });

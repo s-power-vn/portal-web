@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import {
   AnvilIcon,
   AreaChartIcon,
@@ -13,10 +12,10 @@ import {
 import { api } from 'portal-api';
 
 import type { FC, ReactNode } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
-import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
+import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import {
   Header,
@@ -26,40 +25,26 @@ import {
   useSidebar
 } from '../components';
 import { NewProjectForm } from '../components/domains/project/new-project-form';
+import { useInvalidateQueries } from '../hooks';
 
 const SidebarHeader = () => {
-  const queryClient = useQueryClient();
   const { collapsed } = useSidebar();
-  const modalId = useRef<string | undefined>();
-
-  const onSuccessHandler = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.project.list.getKey()
-      })
-    ]);
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [queryClient]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
+  const invalidates = useInvalidateQueries();
 
   const handleNewProject = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Tạo dự án mới',
-      children: (
+      children: ({ close }) => (
         <NewProjectForm
-          onSuccess={onSuccessHandler}
-          onCancel={onCancelHandler}
+          onSuccess={() => {
+            invalidates([api.project.list.getKey()]);
+            close();
+          }}
+          onCancel={close}
         />
       )
     });
-  }, [onCancelHandler, onSuccessHandler]);
+  }, [invalidates]);
 
   return (
     <div
