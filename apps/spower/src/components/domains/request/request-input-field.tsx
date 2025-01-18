@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import type { AnyObject, ObjectSchema } from 'yup';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 
 import { Show, cn } from '@minhdtb/storeo-core';
@@ -23,7 +23,6 @@ import {
   TableRow,
   TextField,
   TextareaField,
-  closeModal,
   showModal,
   useStoreoForm
 } from '@minhdtb/storeo-theme';
@@ -60,14 +59,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       });
   }, [fields, setValue]);
 
-  const modalId = useRef<string | undefined>();
-
   const handlePick = useCallback(() => {
     if (projectId) {
-      modalId.current = showModal({
+      showModal({
         title: 'Chọn hạng mục trong hợp đồng',
         className: 'flex min-w-[600px] flex-col',
-        children: (
+        children: ({ close }) => (
           <PickDetailInput
             projectId={projectId}
             value={selectedDetails}
@@ -87,9 +84,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               items.forEach((_, index) => {
                 setValue(`details[${index}].requestVolume`, 0);
               });
-              if (modalId.current) {
-                closeModal(modalId.current);
-              }
+              close();
             }}
           />
         )
@@ -98,10 +93,10 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   }, [append, fields, projectId, selectedDetails, setValue]);
 
   const handleCustomRequest = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm hạng mục ngoài hợp đồng',
       className: 'flex min-w-[500px] flex-col',
-      children: (
+      children: ({ close }) => (
         <NewCustomRequestDetailForm
           onSubmit={values => {
             append({
@@ -112,15 +107,9 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               children: [],
               id: v4()
             });
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
+            close();
           }}
-          onCancel={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
-          }}
+          onCancel={close}
         />
       )
     });

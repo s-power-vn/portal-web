@@ -3,9 +3,9 @@ import type { RequestData } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
-import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
+import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { SendRequestForm } from '../send-request-form';
 
@@ -15,29 +15,22 @@ export type A4fButtonProps = {
 
 export const A4fButton: FC<A4fButtonProps> = ({ request }) => {
   const router = useRouter();
-  const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Chuyển T.Phòng kế hoạch',
       className: 'flex min-w-[400px] flex-col',
-      children: (
+      children: ({ close }) => (
         <SendRequestForm
           status={RequestStatusOptions.A4F}
           request={request}
           title={'T.Phòng kế hoạch'}
           condition={'role = 3 && department.code = "KH"'}
           onSuccess={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
+            close();
             router.history.back();
           }}
-          onCancel={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
-          }}
+          onCancel={close}
         />
       )
     });

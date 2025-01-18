@@ -1,40 +1,27 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
 
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import { For } from '@minhdtb/storeo-core';
-import {
-  Button,
-  closeModal,
-  showModal,
-  success,
-  useConfirm
-} from '@minhdtb/storeo-theme';
+import { Button, showModal, success, useConfirm } from '@minhdtb/storeo-theme';
 
 import {
   AddApproverForm,
   AddConfirmerForm,
   PageHeader
 } from '../../components';
+import { useInvalidateQueries } from '../../hooks';
 
 const Component = () => {
-  const modalId = useRef<string | undefined>();
-
-  const queryClient = useQueryClient();
-
+  const invalidates = useInvalidateQueries();
   const listConfirmer = api.setting.listConfirmer.useSuspenseQuery();
 
   const deleteConfirmer = api.setting.deleteConfirmer.useMutation({
     onSuccess: async () => {
       success('Xóa người xác nhận thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.setting.listConfirmer.getKey()
-        })
-      ]);
+      await invalidates([api.setting.listConfirmer.getKey()]);
     }
   });
 
@@ -43,69 +30,43 @@ const Component = () => {
   const deleteApprover = api.setting.deleteApprover.useMutation({
     onSuccess: async () => {
       success('Xóa người phê duyệt thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.setting.listApprover.getKey()
-        })
-      ]);
+      await invalidates([api.setting.listApprover.getKey()]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const onSuccessConfirmerHandler = useCallback(async () => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.setting.listConfirmer.getKey()
-      })
-    ]);
-  }, [queryClient]);
-
-  const onSuccessApproverHandler = useCallback(async () => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.setting.listApprover.getKey()
-      })
-    ]);
-  }, [queryClient]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleAddConfirmer = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm người xác nhận',
       className: 'w-80',
-      children: (
+      children: ({ close }) => (
         <AddConfirmerForm
-          onSuccess={onSuccessConfirmerHandler}
-          onCancel={onCancelHandler}
+          onSuccess={() => {
+            invalidates([api.setting.listConfirmer.getKey()]);
+            close();
+          }}
+          onCancel={close}
         />
       )
     });
-  }, [onCancelHandler, onSuccessConfirmerHandler]);
+  }, [invalidates]);
 
   const handleAddApprover = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Thêm người phê duyệt',
       className: 'w-80',
-      children: (
+      children: ({ close }) => (
         <AddApproverForm
-          onSuccess={onSuccessApproverHandler}
-          onCancel={onCancelHandler}
+          onSuccess={() => {
+            invalidates([api.setting.listApprover.getKey()]);
+            close();
+          }}
+          onCancel={close}
         />
       )
     });
-  }, [onCancelHandler, onSuccessApproverHandler]);
+  }, [invalidates]);
 
   return (
     <>
@@ -199,6 +160,6 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/settings')({
   component: Component,
   beforeLoad: () => ({ title: 'Cài đặt' }),
-  loader: ({ deps, context: { queryClient } }) =>
+  loader: ({ context: { queryClient } }) =>
     queryClient?.ensureQueryData(api.setting.listConfirmer.getOptions())
 });

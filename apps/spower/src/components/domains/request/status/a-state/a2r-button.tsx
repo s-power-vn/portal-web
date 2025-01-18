@@ -3,9 +3,9 @@ import type { RequestData } from 'portal-api';
 import { RequestStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
-import { Button, closeModal, showModal } from '@minhdtb/storeo-theme';
+import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { ReturnRequestForm } from '../return-request-form';
 
@@ -15,28 +15,21 @@ export type A2rButtonProps = {
 
 export const A2rButton: FC<A2rButtonProps> = ({ request }) => {
   const router = useRouter();
-  const modalId = useRef<string | undefined>();
 
   const handleClick = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Chuyển trả lại',
       description: 'Công việc chưa hoàn thành, có vấn đề cần xử lý thêm',
       className: 'flex min-w-[400px] flex-col',
-      children: (
+      children: ({ close }) => (
         <ReturnRequestForm
           status={RequestStatusOptions.A2R}
           request={request}
           onSuccess={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
+            close();
             router.history.back();
           }}
-          onCancel={() => {
-            if (modalId.current) {
-              closeModal(modalId.current);
-            }
-          }}
+          onCancel={close}
         />
       )
     });
