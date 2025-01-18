@@ -1,11 +1,10 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 import { Match, Show, Switch, cn, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -15,10 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   ThemeButton,
-  closeModal,
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../hooks';
 import { EditRequestForm } from '../request/edit-request-form';
 import { Request } from '../request/request';
 
@@ -28,6 +27,7 @@ export type IssueProps = {
 
 export const Issue: FC<IssueProps> = ({ issueId }) => {
   const router = useRouter();
+  const invalidates = useInvalidateQueries();
 
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
@@ -37,35 +37,11 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     variables: issueId
   });
 
-  const queryClient = useQueryClient();
-
-  const modalId = useRef<string | undefined>();
-
-  const onSuccessHandler = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.issue.byId.getKey(issueId)
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.request.byIssueId.getKey(issueId)
-      })
-    ]);
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, [issueId, queryClient]);
-
-  const onCancelHandler = useCallback(() => {
-    if (modalId.current) {
-      closeModal(modalId.current);
-    }
-  }, []);
-
   const handleEditIssue = useCallback(() => {
-    modalId.current = showModal({
+    showModal({
       title: 'Sửa công việc',
       className: 'min-w-[40rem]',
-      children: (
+      children: ({ close }) => (
         <Switch
           fallback={
             <div className={`p-2`}>
@@ -76,14 +52,20 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           <Match when={issue.data.type === IssueTypeOptions.Request}>
             <EditRequestForm
               issueId={issueId}
-              onSuccess={onSuccessHandler}
-              onCancel={onCancelHandler}
+              onSuccess={() => {
+                invalidates([
+                  api.issue.byId.getKey(issueId),
+                  api.request.byIssueId.getKey(issueId)
+                ]);
+                close();
+              }}
+              onCancel={close}
             />
           </Match>
         </Switch>
       )
     });
-  }, [issue.data.type, issueId, onCancelHandler, onSuccessHandler]);
+  }, [invalidates, issue.data.type, issueId]);
 
   return (
     <div
