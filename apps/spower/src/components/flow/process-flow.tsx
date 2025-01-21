@@ -27,7 +27,7 @@ export const nextTick = async (frames = 1) => {
   }
 };
 
-const extractStatus = (status?: string) => {
+export const extractStatus = (status?: string) => {
   if (!status) {
     return null;
   }
