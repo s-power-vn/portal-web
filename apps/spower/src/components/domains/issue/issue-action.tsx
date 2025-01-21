@@ -22,5 +22,5 @@ export const IssueAction: FC<IssueActionProps> = ({ issueId }) => {
     ]);
   }, [issueId, queryClient]);
 
-  return <div className={'flex items-center gap-2'}></div>;
+  return <div className={'flex items-center gap-2 border-b p-2'}>XXX</div>;
 };

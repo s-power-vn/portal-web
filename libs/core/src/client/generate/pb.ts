@@ -145,6 +145,7 @@ export enum IssueDeadlineStatusOptions {
 export type IssueRecord<TlastAssignee = unknown> = {
 	assignee?: RecordIdString
 	changed?: IsoDateString
+	code?: string
 	createdBy?: RecordIdString
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
@@ -172,7 +173,6 @@ export type ProjectRecord = {
 }
 
 export type RequestRecord = {
-	code?: string
 	confirm1?: string
 	confirm1Date?: IsoDateString
 	confirm2?: string

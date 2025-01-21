@@ -82,10 +82,8 @@ export const issueApi = router('issue', {
   }),
   update: router.mutation({
     mutationFn: (
-      params: Omit<IssueRecord, 'startDate' | 'endDate'> & {
+      params: Partial<IssueRecord> & {
         issueId: string;
-        startDate?: Date;
-        endDate?: Date;
       }
     ) => {
       const { issueId, ...data } = params;
