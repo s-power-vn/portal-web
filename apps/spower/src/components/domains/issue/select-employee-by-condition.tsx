@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
 import type { SelectInputProps } from '@minhdtb/storeo-theme';
 import { SelectInput } from '@minhdtb/storeo-theme';
 
-import { EmployeeDisplay } from '../../employee/employee-display';
+import { EmployeeDisplay } from '../employee/employee-display';
 
 export type SelectEmployeeByConditionProps = Omit<SelectInputProps, 'items'> & {
   condition?: string;

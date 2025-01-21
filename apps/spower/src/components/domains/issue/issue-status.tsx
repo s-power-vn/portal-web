@@ -2,7 +2,7 @@ import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useMemo } from 'react';
 
 import { Match, Switch, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
@@ -35,11 +35,13 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
   const style = `text-appWhite flex w-fit h-fit items-center
   justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs`;
 
-  const node = processData.request.nodes.find(it => {
-    const extracted = extractStatus(issue.data.status);
-    const currentNode = extracted?.to ? extracted.to : extracted?.from;
-    return it.id === currentNode;
-  });
+  const node = useMemo(() => {
+    return processData.request.nodes.find(it => {
+      const extracted = extractStatus(issue.data.status);
+      const currentNode = extracted?.to ? extracted.to : extracted?.from;
+      return it.id === currentNode;
+    });
+  }, [issue.data.status]);
 
   return (
     <Switch

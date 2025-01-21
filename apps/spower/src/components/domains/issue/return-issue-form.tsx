@@ -11,7 +11,10 @@ const schema = object().shape({
   status: string().required('Hãy chọn status')
 });
 
-export type ReturnIssueFormProps = BusinessFormProps;
+export type ReturnIssueFormProps = BusinessFormProps & {
+  issueId: string;
+  status: string;
+};
 
 export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
   const returnRequest = api.request.return.useMutation({

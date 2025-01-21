@@ -300,32 +300,6 @@
           "node": "n5",
           "point": "p2"
         }
-      },
-      {
-        "id": "n2-n5#2",
-        "condition": "",
-        "type": "straight",
-        "from": {
-          "node": "n2",
-          "point": "p3"
-        },
-        "to": {
-          "node": "n5",
-          "point": "p2"
-        }
-      },
-      {
-        "id": "n5-n2#2",
-        "condition": "",
-        "type": "straight",
-        "from": {
-          "node": "n5",
-          "point": "p1"
-        },
-        "to": {
-          "node": "n2",
-          "point": "p4"
-        }
       }
     ]
   }
