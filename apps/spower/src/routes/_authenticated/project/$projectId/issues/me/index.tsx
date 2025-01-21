@@ -14,7 +14,7 @@ import {
   IssueStatus,
   NewIssueButton
 } from '../../../../../../components';
-import { DeadlineStatus } from '../../../../../../components/domains/request/status/deadline-status';
+import { IssueDeadlineStatus } from '../../../../../../components/domains/issue/issue-deadline-status';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -52,9 +52,7 @@ const Component = () => {
       size: 400
     }),
     columnHelper.accessor('deadlineStatus', {
-      cell: ({ row }) => (
-        <DeadlineStatus status={row.original.deadlineStatus} />
-      ),
+      cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
       header: () => 'Tiến độ',
       footer: info => info.column.id,
       size: 200

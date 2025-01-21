@@ -1,6 +1,5 @@
 import type { RequestData } from 'portal-api';
 import { api } from 'portal-api';
-import type { RequestStatusOptions } from 'portal-core';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -18,7 +17,6 @@ const schema = object().shape({
 
 export type SendRequestFormProps = BusinessFormProps & {
   request: RequestData | null;
-  status: RequestStatusOptions;
   title: string;
   condition?: string;
 };
@@ -35,9 +33,6 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
     <Form
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
-      defaultValues={{
-        status: props.status
-      }}
       onSubmit={values => {
         if (props.request) {
           updateRequest.mutate({

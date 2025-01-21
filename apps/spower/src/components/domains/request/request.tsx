@@ -55,7 +55,6 @@ import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { useInvalidateQueries } from '../../../hooks';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
-import { RequestAction } from './request-action';
 import { RequestDocument } from './request-document';
 
 export type RequestProps = {
@@ -68,10 +67,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
 
   const [selectedRow, setSelectedRow] =
     useState<Row<TreeData<RequestDetailData>>>();
-
-  const issue = api.issue.byId.useSuspenseQuery({
-    variables: issueId
-  });
 
   const request = api.request.byIssueId.useSuspenseQuery({
     variables: issueId
@@ -99,10 +94,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
   });
 
   const { confirm } = useConfirm();
-
-  const comments = api.comment.list.useSuspenseQuery({
-    variables: issueId
-  });
 
   const v = useMemo(() => {
     return _.chain(
@@ -504,7 +495,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                 </TableBody>
               </Table>
             </div>
-            <RequestAction issueId={issueId} />
           </div>
         </TabsContent>
         <TabsContent value="attachment">
