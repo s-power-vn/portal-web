@@ -43,7 +43,7 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
 
   const updateIssue = api.issue.update.useMutation({
     onSuccess: async () => {
-      success('Cập nhật yêu cầu mua hàng thành công');
+      success('Cập nhật thành công');
       props.onSuccess?.();
     }
   });
