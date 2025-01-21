@@ -11,7 +11,6 @@ import type { ProjectData } from './project';
 import { projectApi } from './project';
 import type { RequestData, RequestDetailData } from './request';
 import { requestApi, requestDetailApi } from './request';
-import { settingApi } from './setting';
 import { supplierApi } from './supplier';
 import { SearchSchema } from './types';
 import { userApi } from './user';
@@ -30,9 +29,10 @@ export const api = {
   project: projectApi,
   request: requestApi,
   requestDetail: requestDetailApi,
-  setting: settingApi,
   supplier: supplierApi,
   user: userApi
 };
 
-export { RequestData, RequestDetailData, UserData, ProjectData, SearchSchema };
+export type { RequestData, RequestDetailData, UserData, ProjectData };
+
+export { SearchSchema };

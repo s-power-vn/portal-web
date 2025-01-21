@@ -4,16 +4,13 @@ import type {
   IssueResponse,
   ProjectResponse,
   RequestDetailResponse,
-  RequestDetailSupplierResponse,
   RequestResponse,
   SupplierResponse
 } from 'portal-core';
 import {
   Collections,
   IssueDeadlineStatusOptions,
-  IssueStatusOptions,
   IssueTypeOptions,
-  RequestStatusOptions,
   client
 } from 'portal-core';
 import type { InferType } from 'yup';
@@ -23,19 +20,11 @@ import { router } from 'react-query-kit';
 
 import type { UserData } from './employee';
 
-export type RequestDetailSupplierData = RequestDetailSupplierResponse & {
-  expand: {
-    supplier: SupplierResponse;
-    requestDetail: RequestDetailData;
-  };
-};
-
 export type RequestDetailData = RequestDetailResponse & {
   expand: {
     request: RequestResponse;
     detail: DetailResponse;
     supplier: SupplierResponse;
-    requestDetailSupplier_via_requestDetail: RequestDetailSupplierData[];
   };
 };
 
@@ -118,14 +107,12 @@ export const requestApi = router('request', {
         type: IssueTypeOptions.Request,
         createdBy: client.authStore.model?.id,
         assignee: client.authStore.model?.id,
-        deadlineStatus: IssueDeadlineStatusOptions.Normal,
-        status: IssueStatusOptions.Working
+        deadlineStatus: IssueDeadlineStatusOptions.Normal
       });
 
       const request = await client.collection(Collections.Request).create({
         ...params,
-        issue: issue.id,
-        status: RequestStatusOptions.A1
+        issue: issue.id
       });
 
       await Promise.all(
@@ -174,24 +161,6 @@ export const requestApi = router('request', {
       await client.collection(Collections.Issue).delete(request.issue);
     }
   }),
-  confirm: router.mutation({
-    mutationFn: async (requestId: string) => {
-      await client.collection(Collections.RequestConfirm).create({
-        request: requestId,
-        confirmer: client.authStore.model?.id
-      });
-    }
-  }),
-  unConfirm: router.mutation({
-    mutationFn: async (requestId: string) => {
-      const deleteItem = await client
-        .collection(Collections.RequestConfirm)
-        .getFirstListItem(
-          `request = "${requestId}" && confirmer = "${client.authStore.model?.id}"`
-        );
-      await client.collection(Collections.RequestConfirm).delete(deleteItem.id);
-    }
-  }),
   updateStatus: router.mutation({
     mutationFn: async (params: {
       id: string;
@@ -211,11 +180,8 @@ export const requestApi = router('request', {
         ).lastAssignee ?? [];
 
       if (
-        (!lastAssignee.length ||
-          lastAssignee[lastAssignee.length - 1] !==
-            client.authStore.model?.id) &&
-        params.status !== RequestStatusOptions.A8 &&
-        params.status !== RequestStatusOptions.A8R
+        !lastAssignee.length ||
+        lastAssignee[lastAssignee.length - 1] !== client.authStore.model?.id
       ) {
         await client.collection(Collections.Issue).update(request.issue, {
           lastAssignee: lastAssignee.concat(client.authStore.model?.id)
@@ -232,30 +198,6 @@ export const requestApi = router('request', {
           issue: request.issue,
           status: params.status,
           createdBy: client.authStore.model?.id
-        });
-      }
-
-      if (params.status === RequestStatusOptions.A4F) {
-        return client.collection(Collections.Request).update(params.id, {
-          confirm1: client.authStore.model?.name,
-          confirm1Date: new Date(),
-          status: params.status
-        });
-      } else if (params.status === RequestStatusOptions.A6F) {
-        return client.collection(Collections.Request).update(params.id, {
-          confirm2: client.authStore.model?.name,
-          confirm2Date: new Date(),
-          status: params.status
-        });
-      } else if (params.status === RequestStatusOptions.A7F) {
-        return client.collection(Collections.Request).update(params.id, {
-          confirm3: client.authStore.model?.name,
-          confirm3Date: new Date(),
-          status: params.status
-        });
-      } else {
-        return client.collection(Collections.Request).update(params.id, {
-          status: params.status
         });
       }
     }
@@ -334,6 +276,7 @@ export const requestApi = router('request', {
             }
           );
       } catch (e) {
+        console.error(e);
         return null;
       }
     }
@@ -362,8 +305,7 @@ export const requestDetailApi = router('requestDetail', {
       client
         .collection<RequestDetailData>(Collections.RequestDetail)
         .getOne(requestDetailId, {
-          expand:
-            'request,detail,requestDetailSupplier_via_requestDetail.supplier,request_via_requestDetail.request'
+          expand: 'request,detail,request_via_requestDetail.request'
         })
   }),
   updateVolume: router.mutation({

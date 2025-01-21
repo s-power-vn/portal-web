@@ -1,0 +1,332 @@
+{
+  "request": {
+    "nodes": [
+      {
+        "id": "n1",
+        "name": "Người tạo",
+        "description": "",
+        "x": 200,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          }
+        ]
+      },
+      {
+        "id": "n2",
+        "name": "Phó giám đốc",
+        "description": "",
+        "x": 500,
+        "y": 200,
+        "points": [
+          {
+            "id": "p1",
+            "type": "left"
+          },
+          {
+            "id": "p2",
+            "type": "left"
+          },
+          {
+            "id": "p3",
+            "type": "bottom"
+          },
+          {
+            "id": "p4",
+            "type": "bottom"
+          },
+          {
+            "id": "p5",
+            "type": "bottom"
+          },
+          {
+            "id": "p6",
+            "type": "bottom"
+          }
+        ]
+      },
+      {
+        "id": "n3",
+        "name": "T.Phòng kỹ thuật",
+        "description": "",
+        "x": 400,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          },
+          {
+            "id": "p3",
+            "type": "bottom"
+          },
+          {
+            "id": "p4",
+            "type": "bottom"
+          },
+          {
+            "id": "p5",
+            "type": "right"
+          },
+          {
+            "id": "p6",
+            "type": "right"
+          }
+        ]
+      },
+      {
+        "id": "n4",
+        "name": "NV.Phòng kỹ thuật",
+        "description": "",
+        "x": 400,
+        "y": 370,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          }
+        ]
+      },
+      {
+        "id": "n5",
+        "name": "T.Phòng kế hoạch",
+        "description": "",
+        "x": 600,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          },
+          {
+            "id": "p3",
+            "type": "bottom"
+          },
+          {
+            "id": "p4",
+            "type": "bottom"
+          },
+          {
+            "id": "p5",
+            "type": "left"
+          },
+          {
+            "id": "p6",
+            "type": "left"
+          }
+        ]
+      },
+      {
+        "id": "n6",
+        "name": "NV.Phòng kế hoạch",
+        "description": "",
+        "x": 600,
+        "y": 370,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          }
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "id": "n1-n2#1",
+        "condition": "",
+        "from": {
+          "node": "n1",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n2-n1#1",
+        "condition": "",
+        "from": {
+          "node": "n2",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n1",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n2-n3#1",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p5"
+        },
+        "to": {
+          "node": "n3",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n3-n2#1",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n3",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p6"
+        }
+      },
+      {
+        "id": "n3-n4#1",
+        "condition": "",
+        "from": {
+          "node": "n3",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n4",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n4-n3#1",
+        "condition": "",
+        "from": {
+          "node": "n4",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n3",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n3-n5#1",
+        "condition": "",
+        "from": {
+          "node": "n3",
+          "point": "p5"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p6"
+        }
+      },
+      {
+        "id": "n5-n3#1",
+        "condition": "",
+        "from": {
+          "node": "n5",
+          "point": "p5"
+        },
+        "to": {
+          "node": "n3",
+          "point": "p6"
+        }
+      },
+      {
+        "id": "n5-n6#1",
+        "condition": "",
+        "from": {
+          "node": "n5",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n6",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n6-n5#1",
+        "condition": "",
+        "from": {
+          "node": "n6",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n5-n2#1",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n5",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n2-n5#1",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n2-n5#2",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n5-n2#2",
+        "condition": "",
+        "type": "straight",
+        "from": {
+          "node": "n5",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p4"
+        }
+      }
+    ]
+  }
+}
