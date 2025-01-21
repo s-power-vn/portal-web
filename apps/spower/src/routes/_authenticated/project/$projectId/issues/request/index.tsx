@@ -11,8 +11,8 @@ import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
   EmployeeDisplay,
-  NewIssueButton,
-  RequestStatus
+  IssueStatus,
+  NewIssueButton
 } from '../../../../../../components';
 import { DeadlineStatus } from '../../../../../../components/domains/request/status/deadline-status';
 
@@ -74,7 +74,7 @@ const Component = () => {
       cell: ({ row }) => (
         <Switch>
           <Match when={row.original.type === IssueTypeOptions.Request}>
-            <RequestStatus issueId={row.original.id} />
+            <IssueStatus issueId={row.original.id} />
           </Match>
         </Switch>
       ),
@@ -114,7 +114,7 @@ const Component = () => {
           placeholder={'Tìm kiếm...'}
           onChange={value =>
             navigate({
-              to: './',
+              to: '.',
               search: {
                 ...search,
                 filter: value ?? ''
@@ -140,7 +140,7 @@ const Component = () => {
         }
         onPageNext={() =>
           navigate({
-            to: './',
+            to: '.',
             search: prev => {
               return { ...prev, pageIndex: prev.pageIndex + 1 };
             }
@@ -148,7 +148,7 @@ const Component = () => {
         }
         onPagePrev={() =>
           navigate({
-            to: './',
+            to: '.',
             search: prev => {
               return { ...prev, pageIndex: prev.pageIndex - 1 };
             }
@@ -156,7 +156,7 @@ const Component = () => {
         }
         onPageSizeChange={pageSize =>
           navigate({
-            to: './',
+            to: '.',
             search: {
               ...search,
               pageSize

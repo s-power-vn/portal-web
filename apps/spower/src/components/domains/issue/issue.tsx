@@ -3,8 +3,7 @@ import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
 
-import type { FC } from 'react';
-import { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 
 import { Match, Show, Switch, cn, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -20,6 +19,8 @@ import {
 import { useInvalidateQueries } from '../../../hooks';
 import { EditRequestForm } from '../request/edit-request-form';
 import { Request } from '../request/request';
+import { DeadlineStatus } from '../request/status/deadline-status';
+import { IssueStatus } from './issue-status';
 
 export type IssueProps = {
   issueId: string;
@@ -172,6 +173,16 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
               </span>
             </div>
           </div>
+        </div>
+        <div className={'flex gap-2'}>
+          <DeadlineStatus
+            className={'font-bold'}
+            status={request.data?.expand.issue.deadlineStatus}
+          />
+          <IssueStatus
+            className={'px-3 py-1.5 text-xs font-bold'}
+            issueId={issueId}
+          />
         </div>
       </div>
       <Switch

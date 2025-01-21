@@ -2,11 +2,11 @@ import type { FC } from 'react';
 
 import { Switch } from '@minhdtb/storeo-core';
 
-export type RequestStatusTextProps = {
+export type IssueStatusTextProps = {
   status: string;
 };
 
-export const RequestStatusText: FC<RequestStatusTextProps> = props => {
+export const IssueStatusText: FC<IssueStatusTextProps> = props => {
   return (
     <Switch>
       <></>

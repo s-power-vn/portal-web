@@ -15,7 +15,6 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
-  CalendarIcon,
   EditIcon,
   PaperclipIcon,
   PrinterIcon,
@@ -25,13 +24,7 @@ import {
 } from 'lucide-react';
 import type { RequestDetailData } from 'portal-api';
 import { api } from 'portal-api';
-import {
-  BASE_URL,
-  Collections,
-  IssueTypeOptions,
-  client,
-  getImageUrl
-} from 'portal-core';
+import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
 
 import type { FC } from 'react';
@@ -39,17 +32,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
+import { Show, cn, formatDate, formatNumber } from '@minhdtb/storeo-core';
 import {
-  Show,
-  cn,
-  formatDate,
-  formatNumber,
-  timeSince
-} from '@minhdtb/storeo-core';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   Table,
   TableBody,
@@ -73,9 +57,6 @@ import { ADMIN_ID } from '../project/project-overview-tab';
 import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestAction } from './request-action';
 import { RequestDocument } from './request-document';
-import { DeadlineStatus } from './status/deadline-status';
-import { RequestStatus } from './status/request-status';
-import { RequestStatusText } from './status/request-status-text';
 
 export type RequestProps = {
   issueId: string;
@@ -399,16 +380,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
             </Button>
           </Show>
         </div>
-        <div className={'flex gap-2'}>
-          <DeadlineStatus
-            className={'font-bold'}
-            status={request.data?.expand.issue.deadlineStatus}
-          />
-          <RequestStatus
-            className={'px-3 py-1.5 text-xs font-bold'}
-            issueId={issueId}
-          />
-        </div>
       </div>
       <Tabs defaultValue={'detail'}>
         <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
@@ -534,51 +505,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
               </Table>
             </div>
             <RequestAction issueId={issueId} />
-          </div>
-          <div className={'flex flex-col gap-2 pt-4'}>
-            <div className={'flex flex-col gap-2'}>
-              {comments.data && comments.data.length > 0
-                ? comments.data.map(it => (
-                    <div className={'relative flex border-b p-2'} key={it.id}>
-                      <div className={'flex flex-col pr-3'}>
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={getImageUrl(
-                              Collections.User,
-                              it.expand.createdBy.id,
-                              it.expand.createdBy.avatar
-                            )}
-                          />
-                          <AvatarFallback className={'text-sm'}>
-                            {it.expand.createdBy.name.split(' ')[0][0]}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                      <div className={'flex flex-col gap-1'}>
-                        <div className={'flex items-center gap-2'}>
-                          <div className={'text-sm font-bold'}>
-                            {it.expand.createdBy.name}
-                          </div>
-                          <div
-                            className={
-                              'flex items-center gap-1 text-xs text-gray-500'
-                            }
-                          >
-                            <CalendarIcon className={'h-3 w-3'} />
-                            {timeSince(new Date(Date.parse(it.created)))}
-                          </div>
-                          <Show
-                            when={issue.data.type === IssueTypeOptions.Request}
-                          >
-                            <RequestStatusText status={it.status} />
-                          </Show>
-                        </div>
-                        <div className={'text-sm'}>{it.content}</div>
-                      </div>
-                    </div>
-                  ))
-                : null}
-            </div>
           </div>
         </TabsContent>
         <TabsContent value="attachment">

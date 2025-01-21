@@ -55,7 +55,6 @@ export const requestApi = router('request', {
         expand:
           'requestDetail_via_request.detail,' +
           'requestDetail_via_request.supplier,' +
-          'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
           'contract_via_request.supplier,' +
           'contract_via_request.contractItem_via_contract,' +
           'issue.createdBy,' +
@@ -71,7 +70,6 @@ export const requestApi = router('request', {
           .getFirstListItem(`issue = "${issueId}"`, {
             expand:
               'requestDetail_via_request.detail,' +
-              'requestDetail_via_request.requestDetailSupplier_via_requestDetail.supplier,' +
               'contract_via_request.supplier,' +
               'contract_via_request.contractItem_via_contract,' +
               'issue.createdBy,' +
@@ -241,8 +239,6 @@ export const requestApi = router('request', {
             .getOne(params.issue)
         ).lastAssignee ?? [];
 
-      console.log(lastAssignee);
-
       if (lastAssignee.length) {
         await client.collection(Collections.Issue).update(params.issue, {
           assignee: lastAssignee[lastAssignee.length - 1]
@@ -276,7 +272,6 @@ export const requestApi = router('request', {
             }
           );
       } catch (e) {
-        console.error(e);
         return null;
       }
     }
