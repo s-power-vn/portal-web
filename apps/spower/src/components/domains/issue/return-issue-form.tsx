@@ -31,6 +31,9 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
     <Form
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
+      defaultValues={{
+        status: props.status
+      }}
       onSubmit={values => {
         returnIssue.mutate({
           id: props.issueId,

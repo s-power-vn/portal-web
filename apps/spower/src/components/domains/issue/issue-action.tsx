@@ -7,6 +7,7 @@ import { useCallback, useMemo } from 'react';
 import { For, Show } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../hooks';
 import processData from '../../../process.json';
 import { extractStatus } from '../../flow/process-flow';
 import { ForwardIssueForm } from './forward-issue-form';
@@ -17,6 +18,8 @@ export type IssueActionProps = {
 };
 
 export const IssueAction: FC<IssueActionProps> = props => {
+  const invalidates = useInvalidateQueries();
+
   const issue = api.issue.byId.useSuspenseQuery({
     variables: props.issueId
   });
@@ -66,34 +69,43 @@ export const IssueAction: FC<IssueActionProps> = props => {
             issueId={props.issueId}
             status={returnNode?.status}
             onCancel={close}
-            onSuccess={close}
+            onSuccess={() => {
+              invalidates([api.issue.byId.getKey(props.issueId)]);
+              close();
+            }}
           />
         );
       }
     });
-  }, [props.issueId, returnNode]);
+  }, [invalidates, props.issueId, returnNode]);
 
-  const forwardNodeClick = useCallback((node: any) => {
-    if (!node) {
-      return;
-    }
-
-    showModal({
-      title: node.action ?? `Chuyển ${node.toNode?.name}`,
-      children: ({ close }) => {
-        return (
-          <ForwardIssueForm
-            issueId={props.issueId}
-            title={`${node.toNode?.name}`}
-            status={node.status}
-            condition={node.condition}
-            onCancel={close}
-            onSuccess={close}
-          />
-        );
+  const forwardNodeClick = useCallback(
+    (node: any) => {
+      if (!node) {
+        return;
       }
-    });
-  }, []);
+
+      showModal({
+        title: node.action ?? `Chuyển ${node.toNode?.name}`,
+        children: ({ close }) => {
+          return (
+            <ForwardIssueForm
+              issueId={props.issueId}
+              title={`${node.toNode?.name}`}
+              status={node.status}
+              condition={node.condition}
+              onCancel={close}
+              onSuccess={() => {
+                invalidates([api.issue.byId.getKey(props.issueId)]);
+                close();
+              }}
+            />
+          );
+        }
+      });
+    },
+    [invalidates, props.issueId]
+  );
 
   return (
     <div className={'flex items-center gap-2 border-b p-2'}>

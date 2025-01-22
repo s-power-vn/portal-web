@@ -42,6 +42,9 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
           ...values
         });
       }}
+      defaultValues={{
+        status: props.status
+      }}
       onCancel={props.onCancel}
       loading={forwardIssue.isPending}
     >
