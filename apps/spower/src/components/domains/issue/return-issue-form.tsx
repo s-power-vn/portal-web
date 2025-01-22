@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 import type { FC } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
-import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
+import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
@@ -17,10 +17,13 @@ export type ReturnIssueFormProps = BusinessFormProps & {
 };
 
 export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
-  const returnRequest = api.request.return.useMutation({
+  const returnIssue = api.issue.return.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
       props.onSuccess?.();
+    },
+    onError: () => {
+      error('Cập nhật thất bại');
     }
   });
 
@@ -28,8 +31,14 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
     <Form
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
+      onSubmit={values => {
+        returnIssue.mutate({
+          id: props.issueId,
+          ...values
+        });
+      }}
       onCancel={props.onCancel}
-      loading={returnRequest.isPending}
+      loading={returnIssue.isPending}
     >
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
     </Form>

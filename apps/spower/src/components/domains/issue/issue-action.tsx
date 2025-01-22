@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from 'portal-api';
 
-import { FC, useCallback, useMemo } from 'react';
+import type { FC } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { For, Show } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
@@ -39,6 +40,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
         return {
           ...extractStatus(it.id),
           status: it.id,
+          action: it.action,
           toNode: nodeInfo,
           condition: it.condition
         };
@@ -57,7 +59,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
     }
 
     showModal({
-      title: 'Chuyển trả',
+      title: returnNode?.action ?? 'Chuyển trả',
       children: ({ close }) => {
         return (
           <ReturnIssueForm
@@ -77,10 +79,11 @@ export const IssueAction: FC<IssueActionProps> = props => {
     }
 
     showModal({
-      title: `Chuyển ${node.toNode?.name}`,
+      title: node.action ?? `Chuyển ${node.toNode?.name}`,
       children: ({ close }) => {
         return (
           <ForwardIssueForm
+            issueId={props.issueId}
             title={`${node.toNode?.name}`}
             status={node.status}
             condition={node.condition}
@@ -95,7 +98,9 @@ export const IssueAction: FC<IssueActionProps> = props => {
   return (
     <div className={'flex items-center gap-2 border-b p-2'}>
       <Show when={returnNode}>
-        <Button onClick={returnNodeClick}>Chuyển trả</Button>
+        <Button onClick={returnNodeClick}>
+          {returnNode?.action ?? 'Chuyển trả'}
+        </Button>
       </Show>
       <For each={forwardNodes}>
         {item => {
@@ -104,7 +109,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
               key={item.toNode?.id}
               onClick={() => forwardNodeClick(item)}
             >
-              {`Chuyển ${item.toNode?.name}`}
+              {item.action ?? `Chuyển ${item.toNode?.name}`}
             </Button>
           );
         }}

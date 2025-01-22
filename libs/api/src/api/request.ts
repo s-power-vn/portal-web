@@ -159,47 +159,6 @@ export const requestApi = router('request', {
       await client.collection(Collections.Issue).delete(request.issue);
     }
   }),
-  updateStatus: router.mutation({
-    mutationFn: async (params: {
-      id: string;
-      assignee: string;
-      status: string;
-      note?: string;
-    }) => {
-      const request = await client
-        .collection(Collections.Request)
-        .getOne(params.id);
-
-      const lastAssignee =
-        (
-          await client
-            .collection<IssueRecord<string[]>>(Collections.Issue)
-            .getOne(request.issue)
-        ).lastAssignee ?? [];
-
-      if (
-        !lastAssignee.length ||
-        lastAssignee[lastAssignee.length - 1] !== client.authStore.model?.id
-      ) {
-        await client.collection(Collections.Issue).update(request.issue, {
-          lastAssignee: lastAssignee.concat(client.authStore.model?.id)
-        });
-      }
-
-      await client.collection(Collections.Issue).update(request.issue, {
-        assignee: params.assignee
-      });
-
-      if (params.note) {
-        await client.collection(Collections.Comment).create({
-          content: params.note,
-          issue: request.issue,
-          status: params.status,
-          createdBy: client.authStore.model?.id
-        });
-      }
-    }
-  }),
   updateInfo: router.mutation({
     mutationFn: async (params: {
       id: string;
@@ -221,43 +180,6 @@ export const requestApi = router('request', {
       return client.collection(Collections.Request).update(params.id, {
         code: params.code
       });
-    }
-  }),
-  return: router.mutation({
-    mutationFn: async (params: {
-      id: string;
-      issue: string;
-      status: string;
-      note?: string;
-    }) => {
-      const { note, ...payload } = params;
-
-      const lastAssignee =
-        (
-          await client
-            .collection<IssueRecord<string[]>>(Collections.Issue)
-            .getOne(params.issue)
-        ).lastAssignee ?? [];
-
-      if (lastAssignee.length) {
-        await client.collection(Collections.Issue).update(params.issue, {
-          assignee: lastAssignee[lastAssignee.length - 1]
-        });
-        await client.collection(Collections.Issue).update(params.issue, {
-          lastAssignee: lastAssignee.slice(0, lastAssignee.length - 1)
-        });
-      }
-
-      if (note) {
-        await client.collection(Collections.Comment).create({
-          content: note,
-          issue: params.issue,
-          status: params.status,
-          createdBy: client.authStore.model?.id
-        });
-      }
-
-      return client.collection(Collections.Request).update(params.id, payload);
     }
   }),
   userInfo: router.query({

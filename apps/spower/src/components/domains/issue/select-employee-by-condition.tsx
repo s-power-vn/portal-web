@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import type { SelectInputProps } from '@minhdtb/storeo-theme';
 import { SelectInput } from '@minhdtb/storeo-theme';
@@ -16,14 +16,12 @@ export type SelectEmployeeByConditionProps = Omit<SelectInputProps, 'items'> & {
 export const SelectEmployeeByCondition: FC<
   SelectEmployeeByConditionProps
 > = props => {
-  const [filter, setFilter] = useState('');
-
   const selectedEmployee = api.employee.byId.useQuery({
     variables: props.value
   });
 
   const listEmployees = api.employee.listByCondition.useQuery({
-    variables: `${props.condition ?? ''}${filter ? `&& name ~ "${filter}"` : ''}`
+    variables: `${props.condition ?? ''}`
   });
 
   const data = useMemo(() => {
@@ -54,9 +52,6 @@ export const SelectEmployeeByCondition: FC<
       items={data}
       placeholder={'Chọn nhân viên'}
       align={'start'}
-      onFilter={value => {
-        setFilter(value);
-      }}
       showGroups={true}
       showSearch={true}
       {...props}

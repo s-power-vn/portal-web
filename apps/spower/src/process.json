@@ -155,7 +155,7 @@
     "flows": [
       {
         "id": "n1-n2#1",
-        "condition": "",
+        "condition": "role = 2",
         "from": {
           "node": "n1",
           "point": "p1"
@@ -179,7 +179,7 @@
       },
       {
         "id": "n2-n3#1",
-        "condition": "",
+        "condition": "role = 3 && department.code = 'KTh'",
         "type": "straight",
         "from": {
           "node": "n2",
@@ -218,6 +218,7 @@
       {
         "id": "n4-n3#1",
         "condition": "",
+        "action": "Hoàn thành",
         "from": {
           "node": "n4",
           "point": "p1"
@@ -290,7 +291,7 @@
       },
       {
         "id": "n2-n5#1",
-        "condition": "",
+        "condition": "role = 3 && department.code = 'KH'",
         "type": "straight",
         "from": {
           "node": "n2",
