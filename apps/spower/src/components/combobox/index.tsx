@@ -24,6 +24,7 @@ export type ComboboxItem = {
   label: string;
   value: string;
   group?: string;
+  subLabel?: string;
 };
 
 export type ComboboxProps = {
@@ -154,7 +155,14 @@ export function Combobox({
                               }}
                               value={it.value}
                             >
-                              {it.label}
+                              <div className="flex items-center gap-1">
+                                <span>{it.label}</span>
+                                {it.subLabel && (
+                                  <span className="text-xs text-gray-400">
+                                    ({it.subLabel})
+                                  </span>
+                                )}
+                              </div>
                               <CheckIcon
                                 className={cn(
                                   'ml-auto h-4 w-4',

@@ -36,7 +36,8 @@ export const SelectEmployeeByCondition: FC<
           items: result.items.map(it => ({
             label: it.name,
             value: it.id,
-            group: it.expand.department.name
+            group: it.expand.department.name,
+            subLabel: it.email
           })),
           hasMore: result.page < result.totalPages
         };
