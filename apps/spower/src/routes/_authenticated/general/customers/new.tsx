@@ -41,6 +41,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'new-customer-modal'}
     >
       <NewCustomerForm
         onSuccess={onSuccessHandler}

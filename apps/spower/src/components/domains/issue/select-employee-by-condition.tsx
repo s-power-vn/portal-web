@@ -2,61 +2,46 @@ import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useMemo } from 'react';
 
-import type { SelectInputProps } from '@minhdtb/storeo-theme';
-import { SelectInput } from '@minhdtb/storeo-theme';
+import { Combobox } from '../../combobox';
 
-import { EmployeeDisplay } from '../employee/employee-display';
-
-export type SelectEmployeeByConditionProps = Omit<SelectInputProps, 'items'> & {
+export type SelectEmployeeByConditionProps = Omit<
+  React.ComponentProps<typeof Combobox>,
+  'queryKey' | 'queryFn' | 'itemToString' | 'itemToValue'
+> & {
   condition?: string;
 };
 
 export const SelectEmployeeByCondition: FC<
   SelectEmployeeByConditionProps
 > = props => {
-  const selectedEmployee = api.employee.byId.useQuery({
-    variables: props.value
-  });
-
-  const listEmployees = api.employee.listByCondition.useQuery({
-    variables: `${props.condition ?? ''}`
-  });
-
-  const data = useMemo(() => {
-    const list = (listEmployees.data?.items ?? []).map(it => ({
-      value: it.id,
-      label: it.name,
-      group: it.expand.department.name
-    }));
-
-    if (selectedEmployee.data) {
-      if (
-        _.filter(list, it => it.value === selectedEmployee.data?.id).length ===
-        0
-      ) {
-        list.push({
-          value: selectedEmployee.data?.id,
-          label: selectedEmployee.data?.name,
-          group: selectedEmployee.data?.expand.department.name
-        });
-      }
-    }
-
-    return list;
-  }, [listEmployees.data?.items, selectedEmployee.data]);
-
   return (
-    <SelectInput
-      items={data}
-      placeholder={'Chọn nhân viên'}
-      align={'start'}
-      showGroups={true}
-      showSearch={true}
-      {...props}
-    >
-      {it => <EmployeeDisplay employeeId={it.value}></EmployeeDisplay>}
-    </SelectInput>
+    <Combobox
+      value={props.value}
+      onChange={props.onChange}
+      placeholder="Chọn nhân viên"
+      queryKey={['employees', props.condition ?? '']}
+      queryFn={async ({ search, page }) => {
+        const filter = props.condition
+          ? `(${props.condition}) && (name ~ "${search ?? ''}" || email ~ "${search ?? ''}")`
+          : `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`;
+
+        const result = await api.employee.listByCondition.fetcher({
+          filter,
+          pageIndex: page,
+          pageSize: 10
+        });
+
+        return {
+          items: result.items.map(it => ({
+            label: it.name,
+            value: it.id,
+            group: it.expand.department.name
+          })),
+          hasMore: result.page < result.totalPages
+        };
+      }}
+      className={props.className}
+    />
   );
 };

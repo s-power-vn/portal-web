@@ -156,6 +156,7 @@
       {
         "id": "n1-n2#1",
         "condition": "role = 2",
+        "action": "Chuyển Phó giám đốc",
         "from": {
           "node": "n1",
           "point": "p1"

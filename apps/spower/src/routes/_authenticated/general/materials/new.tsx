@@ -38,6 +38,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'new-material-modal'}
     >
       <NewMaterialForm
         onSuccess={onSuccessHandler}

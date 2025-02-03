@@ -45,6 +45,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'edit-employee-modal'}
     >
       <EditEmployeeForm
         employeeId={employeeId}

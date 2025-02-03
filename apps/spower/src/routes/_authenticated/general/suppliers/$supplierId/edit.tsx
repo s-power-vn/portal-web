@@ -42,6 +42,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'edit-supplier-modal'}
     >
       <EditSupplierForm
         supplierId={supplierId}

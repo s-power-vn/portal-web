@@ -42,6 +42,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'edit-material-modal'}
     >
       <EditMaterialForm
         materialId={materialId}

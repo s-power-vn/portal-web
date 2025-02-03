@@ -70,7 +70,10 @@ export const IssueAction: FC<IssueActionProps> = props => {
             status={returnNode?.status}
             onCancel={close}
             onSuccess={() => {
-              invalidates([api.issue.byId.getKey(props.issueId)]);
+              invalidates([
+                api.issue.byId.getKey(props.issueId),
+                api.comment.list.getKey(props.issueId)
+              ]);
               close();
             }}
           />
@@ -96,7 +99,10 @@ export const IssueAction: FC<IssueActionProps> = props => {
               condition={node.condition}
               onCancel={close}
               onSuccess={() => {
-                invalidates([api.issue.byId.getKey(props.issueId)]);
+                invalidates([
+                  api.issue.byId.getKey(props.issueId),
+                  api.comment.list.getKey(props.issueId)
+                ]);
                 close();
               }}
             />
