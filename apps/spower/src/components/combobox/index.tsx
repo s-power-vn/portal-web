@@ -75,9 +75,6 @@ export function Combobox({
     [allItems]
   );
 
-  console.log('normalizedItems', normalizedItems);
-  console.log('isLoading', isLoading);
-
   const handleScroll = React.useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
@@ -124,7 +121,7 @@ export function Combobox({
         >
           <Command shouldFilter={false}>
             <CommandInput
-              placeholder={placeholder}
+              placeholder={'Tìm kiếm...'}
               value={search}
               onValueChange={setSearch}
             />
@@ -147,7 +144,6 @@ export function Combobox({
                     <React.Fragment key={key}>
                       <CommandGroup heading={key}>
                         {normalizedItems[key].map(it => {
-                          console.log('it', it);
                           return (
                             <CommandItem
                               key={it.value}
