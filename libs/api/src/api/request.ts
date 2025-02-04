@@ -103,6 +103,7 @@ export const requestApi = router('request', {
       const issue = await client.collection(Collections.Issue).create({
         ...params,
         type: IssueTypeOptions.Request,
+        status: 'n1',
         createdBy: client.authStore.model?.id,
         assignee: client.authStore.model?.id,
         deadlineStatus: IssueDeadlineStatusOptions.Normal

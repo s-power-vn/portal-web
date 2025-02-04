@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 
-import type { PriceInputData } from './price-table';
-import { PriceTable } from './price-table';
+import type { PriceInputData } from './price-input';
+import { PriceInput } from './price-input';
 
 const defaultData: PriceInputData[] = [
   {
@@ -50,7 +50,7 @@ export const NewPriceRequestForm: FC<NewPriceRequestFormProps> = ({
   };
 
   return (
-    <PriceTable
+    <PriceInput
       initialData={data}
       suppliers={suppliers}
       onChange={handleDataChange}

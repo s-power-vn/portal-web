@@ -6,7 +6,6 @@ import colors from 'tailwindcss/colors';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import type { FC } from 'react';
-import React from 'react';
 
 import { Show, formatDate } from '@minhdtb/storeo-core';
 

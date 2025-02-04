@@ -41,7 +41,6 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
             projectId={projectId}
             onSuccess={async () => {
               await invalidates([
-                api.request.listFull.getKey(projectId),
                 api.issue.list.getKey({
                   projectId
                 }),

@@ -1,10 +1,16 @@
 import { useRouter } from '@tanstack/react-router';
-import { Edit3, Loader, MoreHorizontalIcon, Undo2Icon } from 'lucide-react';
+import {
+  Edit3,
+  Loader,
+  MoreHorizontalIcon,
+  Trash2,
+  Undo2Icon
+} from 'lucide-react';
 import { api } from 'portal-api';
-import { IssueTypeOptions } from 'portal-core';
+import { IssueTypeOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { Match, Show, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -14,7 +20,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   ThemeButton,
-  showModal
+  showModal,
+  useConfirm
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
@@ -33,8 +40,21 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
 
   const router = useRouter();
 
+  const { confirm } = useConfirm();
+
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
+  });
+
+  const deleteIssue = api.issue.delete.useMutation({
+    onSuccess: () => {
+      invalidates([
+        api.issue.listRequest.getKey(),
+        api.issue.listMine.getKey()
+      ]);
+
+      router.history.back();
+    }
   });
 
   const handleEditIssue = useCallback(() => {
@@ -64,6 +84,12 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
     });
   }, [invalidates, issue.data.type, issueId]);
 
+  const handleDeleteIssue = useCallback(() => {
+    confirm('Bạn chắc chắn muốn xóa công việc này?', () =>
+      deleteIssue.mutate(issueId)
+    );
+  }, [confirm, deleteIssue, issueId]);
+
   return (
     <div className={'flex flex-col gap-2 border-b p-2'}>
       <div className={'flex items-center gap-2'}>
@@ -77,24 +103,30 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         <span className={'flex-1 text-base font-bold  '}>
           {issue.data.title}
         </span>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <ThemeButton
-              variant={'outline'}
-              className={'h-6 w-6'}
-              size={'icon'}
-              onClick={() => router.history.back()}
-            >
-              <MoreHorizontalIcon className={'h-4 w-4'} />
-            </ThemeButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem onClick={handleEditIssue}>
-              <Edit3 className="mr-2 h-4 w-4 text-red-500" />
-              Sửa công việc
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Show when={client.authStore.model?.id === issue.data.assignee}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <ThemeButton
+                variant={'outline'}
+                className={'h-6 w-6'}
+                size={'icon'}
+                onClick={() => router.history.back()}
+              >
+                <MoreHorizontalIcon className={'h-4 w-4'} />
+              </ThemeButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="end">
+              <DropdownMenuItem onClick={handleEditIssue}>
+                <Edit3 className="mr-2 h-4 w-4 text-red-500" />
+                Sửa
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteIssue}>
+                <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                Xóa
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Show>
       </div>
       <div className={'mr-2 flex w-full gap-6'}>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>

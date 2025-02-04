@@ -51,7 +51,7 @@ export type { PriceData, PriceInputData };
 
 const columnHelper = createColumnHelper<PriceData>();
 
-type PriceTableProps = {
+export type PriceInputProps = {
   initialData?: PriceInputData[];
   suppliers: string[];
   onChange?: (data: PriceInputData[]) => void;
@@ -152,7 +152,7 @@ const toInternalData = (data: PriceInputData[]): PriceData[] =>
     )
   }));
 
-export const PriceTable: FC<PriceTableProps> = ({
+export const PriceInput: FC<PriceInputProps> = ({
   initialData = [],
   suppliers,
   onChange,

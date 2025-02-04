@@ -2,7 +2,6 @@ import type { InferType } from 'yup';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
-import React from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField } from '@minhdtb/storeo-theme';

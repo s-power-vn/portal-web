@@ -39,7 +39,7 @@ const Component = () => {
   });
 
   useEffect(() => {
-    client.collection(Collections.Request).subscribe('*', () =>
+    client.collection(Collections.Issue).subscribe('*', () =>
       queryClient.invalidateQueries({
         queryKey: api.request.userInfo.getKey(projectId)
       })

@@ -19,8 +19,7 @@ import {
   PaperclipIcon,
   PrinterIcon,
   SquareMinusIcon,
-  SquarePlusIcon,
-  XIcon
+  SquarePlusIcon
 } from 'lucide-react';
 import type { RequestDetailData } from 'portal-api';
 import { api } from 'portal-api';
@@ -347,7 +346,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           </Button>
           <Show
             when={
-              request.data?.expand.issue.assignee === client.authStore.model?.id
+              request.data?.expand.issue.assignee !== client.authStore.model?.id
             }
           >
             <Button
@@ -357,17 +356,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
               onClick={handleEditRequestVolume}
             >
               <EditIcon className={'h-4 w-4'} />
-            </Button>
-            <Button
-              variant={'destructive'}
-              size="icon"
-              onClick={() => {
-                confirm?.('Bạn chắc chắn muốn xóa yêu cầu mua hàng này?', () =>
-                  deleteIssue.mutate(issueId)
-                );
-              }}
-            >
-              <XIcon className={'h-4 w-4'} />
             </Button>
           </Show>
         </div>
