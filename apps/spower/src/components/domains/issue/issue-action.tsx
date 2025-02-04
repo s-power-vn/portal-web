@@ -8,8 +8,7 @@ import { For, Show } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import processData from '../../../process.json';
-import { extractStatus } from '../../flow/process-flow';
+import { extractStatus, getFromFlows, getNode } from '../../flow';
 import { ForwardIssueForm } from './forward-issue-form';
 import { ReturnIssueForm } from './return-issue-form';
 
@@ -25,30 +24,27 @@ export const IssueAction: FC<IssueActionProps> = props => {
   });
 
   const currentNode = useMemo(() => {
-    return processData.request.nodes.find(it => {
-      const extracted = extractStatus(issue.data.status);
-      const currentNode = extracted?.to ? extracted.to : extracted?.from;
-      return it.id === currentNode;
-    });
+    const extracted = extractStatus(issue.data.status);
+    const currentNode = extracted?.to ? extracted.to : extracted?.from;
+    return currentNode ? getNode(currentNode) : undefined;
   }, [issue.data.status]);
 
   const toList = useMemo(() => {
-    return processData.request.flows
-      .filter(it => it.from.node === currentNode?.id)
-      .map(it => {
-        const nodeInfo = processData.request.nodes.find(
-          node => node.id === it.to.node
-        );
+    if (!currentNode) {
+      return [];
+    }
 
-        return {
-          ...extractStatus(it.id),
-          status: it.id,
-          action: it.action,
-          toNode: nodeInfo,
-          condition: it.condition
-        };
-      });
-  }, [currentNode?.id]);
+    return getFromFlows(currentNode.id).map(it => {
+      const nodeInfo = getNode(it.to.node);
+
+      return {
+        ...extractStatus(it.id),
+        status: it.id,
+        action: it.action,
+        toNode: nodeInfo
+      };
+    });
+  }, [currentNode]);
 
   const extracted = extractStatus(issue.data.status);
 
@@ -83,7 +79,15 @@ export const IssueAction: FC<IssueActionProps> = props => {
   }, [invalidates, props.issueId, returnNode]);
 
   const forwardNodeClick = useCallback(
-    (node: any) => {
+    <
+      T extends {
+        action?: string;
+        status: string;
+        toNode?: { name: string; condition?: string };
+      }
+    >(
+      node: T
+    ) => {
       if (!node) {
         return;
       }
@@ -96,7 +100,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
               issueId={props.issueId}
               title={`${node.toNode?.name}`}
               status={node.status}
-              condition={node.condition}
+              condition={node.toNode?.condition}
               onCancel={close}
               onSuccess={() => {
                 invalidates([

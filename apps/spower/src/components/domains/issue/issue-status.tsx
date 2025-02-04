@@ -7,8 +7,8 @@ import React, { Suspense, useCallback, useMemo } from 'react';
 import { Match, Switch, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
-import processData from '../../../process.json';
 import { ProcessFlow, extractStatus } from '../../flow/process-flow';
+import processData from '../../flow/process.json';
 
 export type IssueStatusProps = {
   issueId: string;

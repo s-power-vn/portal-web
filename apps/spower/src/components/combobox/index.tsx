@@ -14,9 +14,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ThemeButton
 } from '@minhdtb/storeo-theme';
-import { Popover, PopoverContent, PopoverTrigger } from '@minhdtb/storeo-theme';
 
 type Align = 'start' | 'center' | 'end';
 

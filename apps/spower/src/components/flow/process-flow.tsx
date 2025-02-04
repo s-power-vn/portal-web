@@ -14,7 +14,7 @@ import {
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
-import processData from '../../process.json';
+import processData from './process.json';
 
 export const nextTick = async (frames = 1) => {
   const _nextTick = async (idx: number) => {
@@ -40,6 +40,14 @@ export const extractStatus = (status?: string) => {
     to,
     index: Number(index)
   };
+};
+
+export const getNode = (id: string) => {
+  return processData.request.nodes.find(it => it.id === id);
+};
+
+export const getFromFlows = (id: string) => {
+  return processData.request.flows.filter(it => it.from.node === id);
 };
 
 const CustomNode = ({

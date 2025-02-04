@@ -5,6 +5,7 @@
         "id": "n1",
         "name": "Người tạo",
         "description": "",
+        "condition": "",
         "x": 200,
         "y": 300,
         "points": [
@@ -22,6 +23,7 @@
         "id": "n2",
         "name": "Phó giám đốc",
         "description": "",
+        "condition": "role = 2",
         "x": 500,
         "y": 200,
         "points": [
@@ -55,6 +57,7 @@
         "id": "n3",
         "name": "T.Phòng kỹ thuật",
         "description": "",
+        "condition": "role = 3 && department.code = 'KTh'",
         "x": 400,
         "y": 300,
         "points": [
@@ -88,6 +91,7 @@
         "id": "n4",
         "name": "NV.Phòng kỹ thuật",
         "description": "",
+        "condition": "role = 4 && department.code = 'KTh'",
         "x": 400,
         "y": 370,
         "points": [
@@ -105,6 +109,7 @@
         "id": "n5",
         "name": "T.Phòng kế hoạch",
         "description": "",
+        "condition": "role = 3 && department.code = 'KH'",
         "x": 600,
         "y": 300,
         "points": [
@@ -138,6 +143,7 @@
         "id": "n6",
         "name": "NV.Phòng kế hoạch",
         "description": "",
+        "condition": "role = 4 && department.code = 'KH'",
         "x": 600,
         "y": 370,
         "points": [
@@ -155,7 +161,6 @@
     "flows": [
       {
         "id": "n1-n2#1",
-        "condition": "role = 2",
         "action": "Chuyển Phó giám đốc",
         "from": {
           "node": "n1",
@@ -180,7 +185,6 @@
       },
       {
         "id": "n2-n3#1",
-        "condition": "role = 3 && department.code = 'KTh'",
         "type": "straight",
         "from": {
           "node": "n2",
@@ -193,7 +197,6 @@
       },
       {
         "id": "n3-n2#1",
-        "condition": "",
         "type": "straight",
         "from": {
           "node": "n3",
@@ -206,7 +209,6 @@
       },
       {
         "id": "n3-n4#1",
-        "condition": "",
         "from": {
           "node": "n3",
           "point": "p3"
@@ -218,7 +220,6 @@
       },
       {
         "id": "n4-n3#1",
-        "condition": "",
         "action": "Hoàn thành",
         "from": {
           "node": "n4",
@@ -231,7 +232,6 @@
       },
       {
         "id": "n3-n5#1",
-        "condition": "",
         "from": {
           "node": "n3",
           "point": "p5"
@@ -243,7 +243,6 @@
       },
       {
         "id": "n5-n3#1",
-        "condition": "",
         "from": {
           "node": "n5",
           "point": "p5"
@@ -255,7 +254,6 @@
       },
       {
         "id": "n5-n6#1",
-        "condition": "",
         "from": {
           "node": "n5",
           "point": "p3"
@@ -267,7 +265,6 @@
       },
       {
         "id": "n6-n5#1",
-        "condition": "",
         "from": {
           "node": "n6",
           "point": "p1"
@@ -279,7 +276,6 @@
       },
       {
         "id": "n5-n2#1",
-        "condition": "",
         "type": "straight",
         "from": {
           "node": "n5",
@@ -292,7 +288,6 @@
       },
       {
         "id": "n2-n5#1",
-        "condition": "role = 3 && department.code = 'KH'",
         "type": "straight",
         "from": {
           "node": "n2",

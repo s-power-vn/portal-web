@@ -1,0 +1,32 @@
+Start all chat with 🤖
+You are a senior frontend developer.
+You are working on a project called spower.
+
+# Project Structure
+
+```
+apps/
+  spower/
+    src/
+libs/
+  api/
+    src/
+  core/
+    src/
+```
+
+# Frameworks and libraries
+
+- React
+- Vite
+- Nx
+- TailwindCSS
+- TypeScript
+- React Hook Form
+- Tanstack Query
+- Tanstack Router
+- Tanstack Table
+- lodash
+- lucide-react
+- react-query-kit
+- react-day-picker
