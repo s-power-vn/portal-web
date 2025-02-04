@@ -40,7 +40,7 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           <Request issueId={issueId} />
         </Match>
       </Switch>
-      <Show when={client.authStore.model?.id !== issue.data.assignee}>
+      <Show when={client.authStore.model?.id === issue.data.assignee}>
         <IssueAction issueId={issueId} />
       </Show>
       <IssueComment issueId={issueId} />
