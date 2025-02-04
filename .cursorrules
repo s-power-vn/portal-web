@@ -30,3 +30,14 @@ libs/
 - lucide-react
 - react-query-kit
 - react-day-picker
+
+# TypeScript
+
+- Use `type` instead of `interface`
+- React component template should be like this:
+
+```tsx
+const Component: FC<ComponentProps> = ({ prop }) => {
+  return <div>Component</div>;
+};
+```

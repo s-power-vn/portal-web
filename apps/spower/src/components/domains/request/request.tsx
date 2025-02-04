@@ -28,7 +28,7 @@ import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
 
 import type { FC } from 'react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -303,7 +303,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     const html = await compile(
       <RequestDocument
         project={request.data?.expand.project.name}
-        code={request.data?.code}
+        code={request.data?.expand.issue.code}
         bidding={request.data?.expand.project.bidding}
         requester={request.data?.expand.issue.expand.createdBy.name}
         department={

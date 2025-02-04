@@ -5,21 +5,28 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import clsx from 'clsx';
+import _ from 'lodash';
+import { PlusIcon, TrashIcon } from 'lucide-react';
+import { DetailResponse } from 'portal-core';
 
-import { useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
+  Button,
   Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  showModal
 } from '@minhdtb/storeo-theme';
 
-// Data structure for input/output
-interface PriceInputData {
+import { PickDetailInput } from '../detail/pick-detail-input';
+
+// Convert interfaces to types
+type PriceInputData = {
   code: string;
   volume: number;
   unit: string;
@@ -27,10 +34,9 @@ interface PriceInputData {
   prices: {
     [key: string]: number | '';
   };
-}
+};
 
-// Internal data structure for display
-interface PriceData extends PriceInputData {
+type PriceData = PriceInputData & {
   stt: number;
   totals: {
     [key: string]: number | '';
@@ -39,19 +45,20 @@ interface PriceData extends PriceInputData {
   isGrandTotal?: boolean;
   isVAT?: boolean;
   isFinalTotal?: boolean;
-}
+};
 
 export type { PriceData, PriceInputData };
 
 const columnHelper = createColumnHelper<PriceData>();
 
-interface PriceTableProps {
-  data: PriceInputData[];
+type PriceTableProps = {
+  initialData?: PriceInputData[];
   suppliers: string[];
   onChange?: (data: PriceInputData[]) => void;
   onAddSupplier?: (newSupplier: string) => void;
   onRemoveSupplier?: (supplier: string) => void;
-}
+  projectId?: string;
+};
 
 const calculateTotals = (data: PriceData[], suppliers: string[]) => {
   const regularRows = data.filter(
@@ -145,48 +152,130 @@ const toInternalData = (data: PriceInputData[]): PriceData[] =>
     )
   }));
 
-export function PriceTable({
-  data,
+export const PriceTable: FC<PriceTableProps> = ({
+  initialData = [],
   suppliers,
   onChange,
   onAddSupplier,
-  onRemoveSupplier
-}: PriceTableProps) {
+  onRemoveSupplier,
+  projectId
+}) => {
+  const [data, setData] = useState<PriceInputData[]>(initialData);
   const [internalData, setInternalData] = useState(() =>
     calculateTotals(toInternalData(data), suppliers)
   );
+  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
 
-  // Sync internal data with external value
   useEffect(() => {
     setInternalData(calculateTotals(toInternalData(data), suppliers));
   }, [data, suppliers]);
 
-  // Handler for internal data changes
   const handleDataChange = (newData: PriceData[]) => {
-    // Filter out summary rows and remove totals before calling onChange
     const regularData = newData
       .filter(row => !row.isSubTotal && !row.isVAT && !row.isFinalTotal)
       .map(({ totals, isSubTotal, isVAT, isFinalTotal, ...rest }) => rest);
 
-    // Calculate totals only for internal display
+    setData(regularData);
+
     const calculatedData = calculateTotals(newData, suppliers);
     setInternalData(calculatedData);
 
-    // Pass only regular data without totals to parent
     onChange?.(regularData);
   };
+
+  const handlePickDetails = useCallback(() => {
+    if (projectId) {
+      showModal({
+        title: 'Chọn hạng mục trong hợp đồng',
+        className: 'flex min-w-[600px] flex-col',
+        children: ({ close }) => (
+          <PickDetailInput
+            projectId={projectId}
+            value={selectedDetails}
+            onChange={value => {
+              setSelectedDetails(value);
+              const newItems = _.chain(value)
+                .filter(detail => {
+                  // Only pick items that have unit (leaf items)
+                  if (!detail.unit) {
+                    return false;
+                  }
+                  // Check for duplicates
+                  return !data.some(
+                    existingItem => existingItem.code === detail.title
+                  );
+                })
+                .sortBy('level')
+                .map(detail => ({
+                  code: detail.title,
+                  volume: 0,
+                  unit: detail.unit || '',
+                  estimate: 0,
+                  prices: suppliers.reduce(
+                    (acc, supplier) => ({
+                      ...acc,
+                      [supplier]: 0
+                    }),
+                    {}
+                  )
+                }))
+                .value();
+
+              if (newItems.length > 0) {
+                setData([...data, ...newItems]);
+              }
+              close();
+            }}
+          />
+        )
+      });
+    }
+  }, [data, projectId, selectedDetails, suppliers]);
 
   const columns = [
     columnHelper.accessor('stt', {
       header: () => (
         <div className="flex h-full items-center justify-center p-1">STT</div>
       ),
-      cell: info =>
-        info.row.original.isSubTotal ||
-        info.row.original.isVAT ||
-        info.row.original.isFinalTotal
-          ? ''
-          : info.getValue()
+      cell: info => {
+        if (
+          info.row.original.isSubTotal ||
+          info.row.original.isVAT ||
+          info.row.original.isFinalTotal
+        ) {
+          return '';
+        }
+        return <span>{info.getValue()}</span>;
+      }
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: () => <div className="p-1"></div>,
+      cell: info => {
+        if (
+          info.row.original.isSubTotal ||
+          info.row.original.isVAT ||
+          info.row.original.isFinalTotal
+        ) {
+          return null;
+        }
+        return (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
+            onClick={e => {
+              e.stopPropagation();
+              const newData = data.filter(
+                (_, index) => index !== info.row.index
+              );
+              setData(newData);
+            }}
+          >
+            <TrashIcon className="h-4 w-4" />
+          </Button>
+        );
+      }
     }),
     columnHelper.accessor('code', {
       header: () => <div className="p-1">Mô tả công việc mới thầu</div>,
@@ -366,7 +455,6 @@ export function PriceTable({
 
     handleDataChange(newData);
 
-    // Scroll to new supplier after render
     setTimeout(() => {
       const newSupplierElement = tableRef.current?.querySelector(
         `[data-supplier="${newSupplier}"]`
@@ -380,25 +468,41 @@ export function PriceTable({
 
   return (
     <div className="space-y-4">
-      <button
-        onClick={addSupplier}
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
-        Thêm nhà cung cấp
-      </button>
+      <div className="flex justify-between">
+        <Button
+          onClick={handlePickDetails}
+          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Chọn hạng mục trong HĐ
+        </Button>
+        <Button
+          onClick={addSupplier}
+          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Thêm nhà cung cấp
+        </Button>
+      </div>
 
       <div
         ref={tableRef}
-        className="border-appBlue overflow-x-auto rounded-md border"
+        className="border-appBlue h-[25rem] overflow-auto rounded-md border"
       >
         <Table>
-          <TableHeader className="sticky top-0 z-10">
+          <TableHeader className="bg-appBlueLight sticky top-0 z-10">
             <TableRow className="!border-b-0">
               <TableHead
                 rowSpan={2}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
                 STT
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+              >
+                {/* Empty header for delete column */}
               </TableHead>
               <TableHead
                 rowSpan={2}
@@ -502,14 +606,14 @@ export function PriceTable({
       </div>
     </div>
   );
-}
+};
 
-interface EditableCellProps {
+type EditableCellProps = {
   value: number | string | '';
   onChange: (value: string) => void;
-}
+};
 
-function EditableCell({ value, onChange }: EditableCellProps) {
+const EditableCell: FC<EditableCellProps> = ({ value, onChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -521,7 +625,6 @@ function EditableCell({ value, onChange }: EditableCellProps) {
     }
   }, [isEditing]);
 
-  // Update localValue when value prop changes
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
@@ -560,4 +663,4 @@ function EditableCell({ value, onChange }: EditableCellProps) {
         : localValue}
     </div>
   );
-}
+};

@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 
-import type { PriceInputData } from '../../table/price-table';
-import { PriceTable } from '../../table/price-table';
+import type { PriceInputData } from './price-table';
+import { PriceTable } from './price-table';
 
 const defaultData: PriceInputData[] = [
   {
@@ -10,11 +10,7 @@ const defaultData: PriceInputData[] = [
     volume: 3935.12,
     unit: 'kg',
     estimate: 23264210,
-    prices: {
-      'Nhật Long 1': 13536,
-      'Nhật Long 2': 13674,
-      'Nam Sài Gòn': 14000
-    }
+    prices: {}
   }
 ];
 
@@ -55,11 +51,12 @@ export const NewPriceRequestForm: FC<NewPriceRequestFormProps> = ({
 
   return (
     <PriceTable
-      data={data}
+      initialData={data}
       suppliers={suppliers}
       onChange={handleDataChange}
       onAddSupplier={handleAddSupplier}
       onRemoveSupplier={handleRemoveSupplier}
+      projectId={projectId}
     />
   );
 };

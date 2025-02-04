@@ -19,7 +19,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { NewPriceRequestForm } from '../request/new-price-request-form';
+import { NewPriceRequestForm } from '../price/new-price-request-form';
 import { NewRequestForm } from '../request/new-request-form';
 
 export type NewIssueButtonProps = {
