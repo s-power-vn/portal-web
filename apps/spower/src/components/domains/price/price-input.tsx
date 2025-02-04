@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import { DetailResponse } from 'portal-core';
+import { AnyObject, ObjectSchema } from 'yup';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -53,14 +54,15 @@ const columnHelper = createColumnHelper<PriceData>();
 
 export type PriceInputProps = {
   initialData?: PriceInputData[];
-  suppliers: string[];
+  suppliers?: string[];
   onChange?: (data: PriceInputData[]) => void;
   onAddSupplier?: (newSupplier: string) => void;
   onRemoveSupplier?: (supplier: string) => void;
   projectId?: string;
+  schema?: ObjectSchema<AnyObject>;
 };
 
-const calculateTotals = (data: PriceData[], suppliers: string[]) => {
+const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
   const regularRows = data.filter(
     row =>
       !row.isSubTotal && !row.isGrandTotal && !row.isVAT && !row.isFinalTotal
@@ -81,13 +83,17 @@ const calculateTotals = (data: PriceData[], suppliers: string[]) => {
     unit: '',
     estimate: calculateSum(regularRows.map(row => row.estimate)),
     prices: {},
-    totals: suppliers.reduce(
-      (acc, supplier) => ({
-        ...acc,
-        [supplier]: calculateSum(regularRows.map(row => row.totals[supplier]))
-      }),
-      {}
-    ),
+    totals: suppliers
+      ? suppliers?.reduce(
+          (acc, supplier) => ({
+            ...acc,
+            [supplier]: calculateSum(
+              regularRows.map(row => row.totals[supplier])
+            )
+          }),
+          {}
+        )
+      : {},
     isSubTotal: true
   };
 
@@ -99,16 +105,17 @@ const calculateTotals = (data: PriceData[], suppliers: string[]) => {
     estimate:
       typeof subTotal.estimate === 'number' ? subTotal.estimate * 0.1 : '',
     prices: {},
-    totals: suppliers.reduce(
-      (acc, supplier) => ({
-        ...acc,
-        [supplier]:
-          typeof subTotal.totals[supplier] === 'number'
-            ? subTotal.totals[supplier] * 0.1
-            : ''
-      }),
-      {}
-    ),
+    totals:
+      suppliers?.reduce(
+        (acc, supplier) => ({
+          ...acc,
+          [supplier]:
+            typeof subTotal.totals[supplier] === 'number'
+              ? subTotal.totals[supplier] * 0.1
+              : ''
+        }),
+        {}
+      ) ?? {},
     isVAT: true
   };
 
@@ -122,17 +129,18 @@ const calculateTotals = (data: PriceData[], suppliers: string[]) => {
         ? subTotal.estimate + vat.estimate
         : '',
     prices: {},
-    totals: suppliers.reduce(
-      (acc, supplier) => ({
-        ...acc,
-        [supplier]:
-          typeof subTotal.totals[supplier] === 'number' &&
-          typeof vat.totals[supplier] === 'number'
-            ? subTotal.totals[supplier] + vat.totals[supplier]
-            : ''
-      }),
-      {}
-    ),
+    totals:
+      suppliers?.reduce(
+        (acc, supplier) => ({
+          ...acc,
+          [supplier]:
+            typeof subTotal.totals[supplier] === 'number' &&
+            typeof vat.totals[supplier] === 'number'
+              ? subTotal.totals[supplier] + vat.totals[supplier]
+              : ''
+        }),
+        {}
+      ) ?? {},
     isFinalTotal: true
   };
 
@@ -211,13 +219,15 @@ export const PriceInput: FC<PriceInputProps> = ({
                   volume: 0,
                   unit: detail.unit || '',
                   estimate: 0,
-                  prices: suppliers.reduce(
-                    (acc, supplier) => ({
-                      ...acc,
-                      [supplier]: 0
-                    }),
-                    {}
-                  )
+                  prices: suppliers
+                    ? suppliers.reduce(
+                        (acc, supplier) => ({
+                          ...acc,
+                          [supplier]: 0
+                        }),
+                        {}
+                      )
+                    : {}
                 }))
                 .value();
 
@@ -358,7 +368,7 @@ export const PriceInput: FC<PriceInputProps> = ({
     columnHelper.group({
       id: 'prices',
       header: () => <div className="p-1 text-center">Đơn giá</div>,
-      columns: suppliers.map(supplier =>
+      columns: suppliers?.map(supplier =>
         columnHelper.accessor(row => row.prices[supplier], {
           id: `price-${supplier}`,
           header: () => <div className="p-1 text-center">{supplier}</div>,
@@ -403,7 +413,7 @@ export const PriceInput: FC<PriceInputProps> = ({
     columnHelper.group({
       id: 'totals',
       header: () => <div className="p-1 text-center">Thành tiền</div>,
-      columns: suppliers.map(supplier =>
+      columns: suppliers?.map(supplier =>
         columnHelper.accessor(row => row.totals[supplier], {
           id: `total-${supplier}`,
           header: () => <div className="p-1 text-center">{supplier}</div>,
@@ -422,7 +432,7 @@ export const PriceInput: FC<PriceInputProps> = ({
   const tableRef = useRef<HTMLDivElement>(null);
 
   const addSupplier = () => {
-    const newSupplier = `Nhà cung cấp ${suppliers.length + 1}`;
+    const newSupplier = `Nhà cung cấp ${(suppliers ?? []).length + 1}`;
     onAddSupplier?.(newSupplier);
 
     const newData = internalData.map(row => {
@@ -529,20 +539,20 @@ export const PriceInput: FC<PriceInputProps> = ({
                 Dự toán
               </TableHead>
               <TableHead
-                colSpan={suppliers.length}
+                colSpan={(suppliers ?? []).length}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
                 Đơn giá
               </TableHead>
               <TableHead
-                colSpan={suppliers.length}
+                colSpan={(suppliers ?? []).length}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
                 Thành tiền
               </TableHead>
             </TableRow>
             <TableRow className="!border-b-0">
-              {suppliers.map(supplier => (
+              {suppliers?.map(supplier => (
                 <TableHead
                   key={`price-${supplier}`}
                   data-supplier={supplier}
@@ -563,7 +573,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                   </div>
                 </TableHead>
               ))}
-              {suppliers.map(supplier => (
+              {suppliers?.map(supplier => (
                 <TableHead
                   key={`total-${supplier}`}
                   className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"

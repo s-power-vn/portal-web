@@ -1,10 +1,5 @@
 import { compile } from '@fileforge/react-print';
-import { useRouter } from '@tanstack/react-router';
-import type {
-  ExpandedState,
-  Row,
-  RowSelectionState
-} from '@tanstack/react-table';
+import type { ExpandedState } from '@tanstack/react-table';
 import {
   createColumnHelper,
   flexRender,
@@ -15,7 +10,6 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import {
-  EditIcon,
   PaperclipIcon,
   PrinterIcon,
   SquareMinusIcon,
@@ -27,11 +21,11 @@ import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-import { Show, cn, formatDate, formatNumber } from '@minhdtb/storeo-core';
+import { cn, formatDate, formatNumber } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,
@@ -44,8 +38,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  showModal,
-  useConfirm,
   useLoading
 } from '@minhdtb/storeo-theme';
 
@@ -53,7 +45,6 @@ import type { TreeData } from '../../../commons/utils';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
 import { useInvalidateQueries } from '../../../hooks';
 import { ADMIN_ID } from '../project/project-overview-tab';
-import { EditRequestVolumeForm } from './edit-request-volume-form';
 import { RequestDocument } from './request-document';
 
 export type RequestProps = {
@@ -61,38 +52,13 @@ export type RequestProps = {
 };
 
 export const Request: FC<RequestProps> = ({ issueId }) => {
-  const [expanded, setExpanded] = useState<ExpandedState>({});
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
-  const [selectedRow, setSelectedRow] =
-    useState<Row<TreeData<RequestDetailData>>>();
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
 
   const request = api.request.byIssueId.useSuspenseQuery({
     variables: issueId
   });
 
-  const router = useRouter();
-
   const invalidates = useInvalidateQueries();
-
-  const deleteIssue = api.issue.delete.useMutation({
-    onSuccess: async () => {
-      router.history.back();
-      await invalidates([
-        api.issue.list.getKey({
-          projectId: request.data?.project
-        }),
-        api.issue.listMine.getKey({
-          projectId: request.data?.project
-        }),
-        api.issue.listRequest.getKey({
-          projectId: request.data?.project
-        })
-      ]);
-    }
-  });
-
-  const { confirm } = useConfirm();
 
   const v = useMemo(() => {
     return _.chain(
@@ -253,46 +219,17 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     },
     state: {
       expanded,
-      rowSelection,
       columnVisibility: {
         unitPrice: client.authStore.model?.id === ADMIN_ID
       }
     },
-    enableRowSelection: true,
     onExpandedChange: setExpanded,
-    onRowSelectionChange: setRowSelection,
     getSubRows: row => row.children,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
-
-  useEffect(() => {
-    table.toggleAllRowsExpanded(true);
-  }, [table]);
-
-  const handleEditRequestVolume = useCallback(() => {
-    if (selectedRow) {
-      showModal({
-        title: 'Sửa yêu cầu',
-        className: 'min-w-60 w-[25rem]',
-        children: ({ close }) => (
-          <EditRequestVolumeForm
-            requestDetailId={selectedRow.original.id}
-            onSuccess={() => {
-              invalidates([
-                api.request.byIssueId.getKey(issueId),
-                api.requestDetail.byId.getKey(selectedRow.original.id)
-              ]);
-              close();
-            }}
-            onCancel={close}
-          />
-        )
-      });
-    }
-  }, [invalidates, issueId, selectedRow]);
 
   const { showLoading, hideLoading } = useLoading();
 
@@ -344,20 +281,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
           <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
           </Button>
-          <Show
-            when={
-              request.data?.expand.issue.assignee !== client.authStore.model?.id
-            }
-          >
-            <Button
-              className={'text-appWhite'}
-              size="icon"
-              disabled={!selectedRow}
-              onClick={handleEditRequestVolume}
-            >
-              <EditIcon className={'h-4 w-4'} />
-            </Button>
-          </Show>
         </div>
       </div>
       <Tabs defaultValue={'detail'}>
@@ -416,23 +339,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                         <TableRow
                           key={row.id}
                           className={'group w-full cursor-pointer'}
-                          onClick={() => {
-                            setRowSelection(() => {
-                              const object: Record<string, boolean> = {};
-                              object[row.id] = true;
-                              return object;
-                            });
-
-                            if (
-                              selectedRow?.id !== row.id &&
-                              row.original.children &&
-                              row.original.children.length === 0
-                            ) {
-                              setSelectedRow(row);
-                            } else {
-                              setSelectedRow(undefined);
-                            }
-                          }}
                         >
                           {row.getVisibleCells().map(cell => {
                             return cell.column.columnDef.meta?.hasRowSpan &&
@@ -447,10 +353,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
                                 }}
                                 className={cn(
                                   `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
-                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
-                                  selectedRow?.original.id === row.original.id
-                                    ? 'bg-appBlueLight text-appWhite hover:bg-appBlue group-hover:bg-appBlue'
-                                    : null
+                                 after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`
                                 )}
                                 rowSpan={
                                   cell.column.columnDef.meta?.hasRowSpan
