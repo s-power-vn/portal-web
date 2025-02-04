@@ -1,10 +1,13 @@
 import { api } from 'portal-api';
-import { IssueDeadlineStatusOptions, IssueTypeOptions } from 'portal-core';
+import {
+  IssueDeadlineStatusOptions,
+  IssueTypeOptions,
+  client
+} from 'portal-core';
 
 import type { FC } from 'react';
-import React from 'react';
 
-import { Match, Switch, cn } from '@minhdtb/storeo-core';
+import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
 
 import { Request } from '../request/request';
 import { IssueAction } from './issue-action';
@@ -37,7 +40,9 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
           <Request issueId={issueId} />
         </Match>
       </Switch>
-      <IssueAction issueId={issueId} />
+      <Show when={client.authStore.model?.id !== issue.data.assignee}>
+        <IssueAction issueId={issueId} />
+      </Show>
       <IssueComment issueId={issueId} />
     </div>
   );
