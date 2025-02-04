@@ -18,13 +18,9 @@ export enum Collections {
 	Material = "material",
 	Project = "project",
 	Request = "request",
-	RequestConfirm = "requestConfirm",
 	RequestDetail = "requestDetail",
 	RequestDetailInfo = "requestDetailInfo",
-	RequestDetailSupplier = "requestDetailSupplier",
-	RequestDetailSupplierInfo = "requestDetailSupplierInfo",
 	RequestUserInfo = "requestUserInfo",
-	Setting = "setting",
 	Supplier = "supplier",
 	Template = "template",
 	User = "user",
@@ -98,7 +94,7 @@ export type DetailRecord<Textend = unknown> = {
 	level: string
 	note?: string
 	parent?: string
-	project?: RecordIdString
+	project: RecordIdString
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -122,16 +118,13 @@ export type DetailInfoRecord<Textend = unknown> = {
 	extend?: null | Textend
 	group?: RecordIdString
 	issue?: RecordIdString
-	issueTitle?: string
+	issueTitle: string
 	level: string
 	note?: string
 	parent?: string
-	price?: number
-	project?: RecordIdString
+	project: RecordIdString
 	request: RecordIdString
 	requestVolume?: number
-	supplier?: RecordIdString
-	supplierName: string
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -140,8 +133,8 @@ export type DetailInfoRecord<Textend = unknown> = {
 
 export enum IssueTypeOptions {
 	"Request" = "Request",
-	"Price" = "Price",
 	"Contract" = "Contract",
+	"Delivery" = "Delivery",
 }
 
 export enum IssueDeadlineStatusOptions {
@@ -149,14 +142,10 @@ export enum IssueDeadlineStatusOptions {
 	"Warning" = "Warning",
 	"Danger" = "Danger",
 }
-
-export enum IssueStatusOptions {
-	"Working" = "Working",
-	"Done" = "Done",
-}
 export type IssueRecord<TlastAssignee = unknown> = {
 	assignee?: RecordIdString
 	changed?: IsoDateString
+	code?: string
 	createdBy?: RecordIdString
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
@@ -164,9 +153,9 @@ export type IssueRecord<TlastAssignee = unknown> = {
 	lastAssignee?: null | TlastAssignee
 	project: RecordIdString
 	startDate?: IsoDateString
-	status?: IssueStatusOptions
-	title?: string
-	type?: IssueTypeOptions
+	status?: string
+	title: string
+	type: IssueTypeOptions
 }
 
 export type MaterialRecord = {
@@ -183,27 +172,7 @@ export type ProjectRecord = {
 	name?: string
 }
 
-export enum RequestStatusOptions {
-	"A1" = "A1",
-	"A1F" = "A1F",
-	"A1R" = "A1R",
-	"A2F" = "A2F",
-	"A2R" = "A2R",
-	"A3F" = "A3F",
-	"A3R" = "A3R",
-	"A4F" = "A4F",
-	"A4R" = "A4R",
-	"A5F" = "A5F",
-	"A5R" = "A5R",
-	"A6F" = "A6F",
-	"A6R" = "A6R",
-	"A7F" = "A7F",
-	"A7R" = "A7R",
-	"A8" = "A8",
-	"A8R" = "A8R",
-}
 export type RequestRecord = {
-	code?: string
 	confirm1?: string
 	confirm1Date?: IsoDateString
 	confirm2?: string
@@ -212,12 +181,6 @@ export type RequestRecord = {
 	confirm3Date?: IsoDateString
 	issue: RecordIdString
 	project: RecordIdString
-	status?: RequestStatusOptions
-}
-
-export type RequestConfirmRecord = {
-	confirmer?: RecordIdString
-	request?: RecordIdString
 }
 
 export type RequestDetailRecord = {
@@ -241,32 +204,10 @@ export type RequestDetailInfoRecord = {
 	volume?: number
 }
 
-export type RequestDetailSupplierRecord = {
-	price?: number
-	requestDetail: RecordIdString
-	supplier: RecordIdString
-	volume?: number
-}
-
-export type RequestDetailSupplierInfoRecord = {
-	price?: number
-	request?: RecordIdString
-	supplier?: RecordIdString
-}
-
 export type RequestUserInfoRecord = {
 	assignee?: RecordIdString
 	count?: number
 	p: RecordIdString
-}
-
-export enum SettingTypeOptions {
-	"Confirmer" = "Confirmer",
-	"Approver" = "Approver",
-}
-export type SettingRecord = {
-	type?: SettingTypeOptions
-	user?: RecordIdString
 }
 
 export type SupplierRecord = {
@@ -305,13 +246,9 @@ export type IssueResponse<TlastAssignee = unknown, Texpand = unknown> = Required
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
-export type RequestConfirmResponse<Texpand = unknown> = Required<RequestConfirmRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
-export type RequestDetailSupplierResponse<Texpand = unknown> = Required<RequestDetailSupplierRecord> & BaseSystemFields<Texpand>
-export type RequestDetailSupplierInfoResponse<Texpand = unknown> = Required<RequestDetailSupplierInfoRecord> & BaseSystemFields<Texpand>
 export type RequestUserInfoResponse<Texpand = unknown> = Required<RequestUserInfoRecord> & BaseSystemFields<Texpand>
-export type SettingResponse<Texpand = unknown> = Required<SettingRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type TemplateResponse<Texpand = unknown> = Required<TemplateRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -331,13 +268,9 @@ export type CollectionRecords = {
 	material: MaterialRecord
 	project: ProjectRecord
 	request: RequestRecord
-	requestConfirm: RequestConfirmRecord
 	requestDetail: RequestDetailRecord
 	requestDetailInfo: RequestDetailInfoRecord
-	requestDetailSupplier: RequestDetailSupplierRecord
-	requestDetailSupplierInfo: RequestDetailSupplierInfoRecord
 	requestUserInfo: RequestUserInfoRecord
-	setting: SettingRecord
 	supplier: SupplierRecord
 	template: TemplateRecord
 	user: UserRecord
@@ -356,13 +289,9 @@ export type CollectionResponses = {
 	material: MaterialResponse
 	project: ProjectResponse
 	request: RequestResponse
-	requestConfirm: RequestConfirmResponse
 	requestDetail: RequestDetailResponse
 	requestDetailInfo: RequestDetailInfoResponse
-	requestDetailSupplier: RequestDetailSupplierResponse
-	requestDetailSupplierInfo: RequestDetailSupplierInfoResponse
 	requestUserInfo: RequestUserInfoResponse
-	setting: SettingResponse
 	supplier: SupplierResponse
 	template: TemplateResponse
 	user: UserResponse
@@ -384,13 +313,9 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
 	collection(idOrName: 'project'): RecordService<ProjectResponse>
 	collection(idOrName: 'request'): RecordService<RequestResponse>
-	collection(idOrName: 'requestConfirm'): RecordService<RequestConfirmResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>
 	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
-	collection(idOrName: 'requestDetailSupplier'): RecordService<RequestDetailSupplierResponse>
-	collection(idOrName: 'requestDetailSupplierInfo'): RecordService<RequestDetailSupplierInfoResponse>
 	collection(idOrName: 'requestUserInfo'): RecordService<RequestUserInfoResponse>
-	collection(idOrName: 'setting'): RecordService<SettingResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
 	collection(idOrName: 'template'): RecordService<TemplateResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>

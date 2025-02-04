@@ -30,12 +30,22 @@ export const employeeApi = router('employee', {
       })
   }),
   listByCondition: router.query({
-    fetcher: (filter?: string) =>
-      client.collection<UserData>(Collections.User).getList(1, 10, {
-        filter,
-        sort: 'department',
-        expand: 'department'
-      })
+    fetcher: ({
+      filter,
+      pageIndex,
+      pageSize
+    }: {
+      filter?: string;
+      pageIndex?: number;
+      pageSize?: number;
+    }) =>
+      client
+        .collection<UserData>(Collections.User)
+        .getList(pageIndex ?? 1, pageSize ?? 10, {
+          filter: filter ?? '',
+          sort: 'department',
+          expand: 'department'
+        })
   }),
   list: router.query({
     fetcher: (search?: Search) => {

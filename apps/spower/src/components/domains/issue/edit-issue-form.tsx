@@ -32,18 +32,18 @@ const schema = object().shape({
     })
 });
 
-export type EditRequestFormProps = BusinessFormProps & {
+export type EditIssueFormProps = BusinessFormProps & {
   issueId: string;
 };
 
-export const EditRequestForm: FC<EditRequestFormProps> = props => {
-  const request = api.request.byIssueId.useSuspenseQuery({
+export const EditIssueForm: FC<EditIssueFormProps> = props => {
+  const issue = api.issue.byId.useSuspenseQuery({
     variables: props.issueId
   });
 
-  const updateRequest = api.request.updateInfo.useMutation({
+  const updateIssue = api.issue.update.useMutation({
     onSuccess: async () => {
-      success('Cập nhật yêu cầu mua hàng thành công');
+      success('Cập nhật thành công');
       props.onSuccess?.();
     }
   });
@@ -52,19 +52,19 @@ export const EditRequestForm: FC<EditRequestFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        code: request.data?.code,
-        title: request.data?.expand.issue.title,
-        startDate: new Date(
-          Date.parse(request.data?.expand.issue.startDate ?? '')
-        ),
-        endDate: new Date(Date.parse(request.data?.expand.issue.endDate ?? ''))
+        code: issue.data?.code,
+        title: issue.data?.title,
+        startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
+        endDate: new Date(Date.parse(issue.data?.endDate ?? ''))
       }}
       className={'flex flex-col gap-4'}
-      loading={updateRequest.isPending}
+      loading={updateIssue.isPending}
       onSubmit={values => {
-        return updateRequest.mutate({
+        return updateIssue.mutate({
           ...values,
-          id: request.data?.id ?? ''
+          issueId: props.issueId,
+          startDate: values.startDate.toISOString(),
+          endDate: values.endDate.toISOString()
         });
       }}
       onCancel={props.onCancel}

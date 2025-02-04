@@ -38,6 +38,7 @@ const Component = () => {
         setOpen(open);
         history.back();
       }}
+      id={'new-supplier-modal'}
     >
       <NewSupplierForm
         onSuccess={onSuccessHandler}

@@ -1,28 +1,29 @@
-import type { RequestData } from 'portal-api';
 import { api } from 'portal-api';
-import type { RequestStatusOptions } from 'portal-core';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
-import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
+import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
   status: string().required('Hãy chọn status')
 });
 
-export type ReturnRequestFormProps = BusinessFormProps & {
-  request: RequestData | null;
-  status: RequestStatusOptions;
+export type ReturnIssueFormProps = BusinessFormProps & {
+  issueId: string;
+  status: string;
 };
 
-export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
-  const returnRequest = api.request.return.useMutation({
+export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
+  const returnIssue = api.issue.return.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
       props.onSuccess?.();
+    },
+    onError: () => {
+      error('Cập nhật thất bại');
     }
   });
 
@@ -34,16 +35,13 @@ export const ReturnRequestForm: FC<ReturnRequestFormProps> = props => {
         status: props.status
       }}
       onSubmit={values => {
-        if (props.request) {
-          returnRequest.mutate({
-            ...values,
-            id: props.request.id,
-            issue: props.request.issue
-          });
-        }
+        returnIssue.mutate({
+          id: props.issueId,
+          ...values
+        });
       }}
       onCancel={props.onCancel}
-      loading={returnRequest.isPending}
+      loading={returnIssue.isPending}
     >
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
     </Form>

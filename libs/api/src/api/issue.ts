@@ -82,10 +82,8 @@ export const issueApi = router('issue', {
   }),
   update: router.mutation({
     mutationFn: (
-      params: Omit<IssueRecord, 'startDate' | 'endDate'> & {
+      params: Partial<IssueRecord> & {
         issueId: string;
-        startDate?: Date;
-        endDate?: Date;
       }
     ) => {
       const { issueId, ...data } = params;
@@ -97,5 +95,30 @@ export const issueApi = router('issue', {
       client.collection(Collections.Issue).update(issueId, {
         deleted: true
       })
+  }),
+  forward: router.mutation({
+    mutationFn: (params: {
+      id: string;
+      assignee: string;
+      status: string;
+      note?: string;
+    }) => {
+      return client.send('/issue-forward', {
+        method: 'POST',
+        body: params
+      });
+    }
+  }),
+  return: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      status: string;
+      note?: string;
+    }) => {
+      return client.send('/issue-return', {
+        method: 'POST',
+        body: params
+      });
+    }
   })
 });

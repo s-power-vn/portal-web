@@ -1,12 +1,10 @@
-import type { RequestData } from 'portal-api';
 import { api } from 'portal-api';
-import type { RequestStatusOptions } from 'portal-core';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
-import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
+import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
 import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
 
@@ -16,18 +14,21 @@ const schema = object().shape({
   status: string().required('Hãy chọn status')
 });
 
-export type SendRequestFormProps = BusinessFormProps & {
-  request: RequestData | null;
-  status: RequestStatusOptions;
+export type ForwardIssueFormProps = BusinessFormProps & {
+  issueId: string;
   title: string;
+  status: string;
   condition?: string;
 };
 
-export const SendRequestForm: FC<SendRequestFormProps> = props => {
-  const updateRequest = api.request.updateStatus.useMutation({
+export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
+  const forwardIssue = api.issue.forward.useMutation({
     onSuccess: async () => {
-      success('Cập nhật thành công');
+      success('Chuyển tiếp thành công');
       props.onSuccess?.();
+    },
+    onError: () => {
+      error('Chuyển tiếp thất bại');
     }
   });
 
@@ -35,19 +36,17 @@ export const SendRequestForm: FC<SendRequestFormProps> = props => {
     <Form
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
+      onSubmit={values => {
+        forwardIssue.mutate({
+          id: props.issueId,
+          ...values
+        });
+      }}
       defaultValues={{
         status: props.status
       }}
-      onSubmit={values => {
-        if (props.request) {
-          updateRequest.mutate({
-            ...values,
-            id: props.request?.id
-          });
-        }
-      }}
       onCancel={props.onCancel}
-      loading={updateRequest.isPending}
+      loading={forwardIssue.isPending}
     >
       <SelectEmployeeByConditionField
         schema={schema}
