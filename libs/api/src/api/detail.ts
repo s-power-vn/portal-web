@@ -1,6 +1,7 @@
 import type {
   DetailInfoResponse,
   DetailRecord,
+  IssueResponse,
   RequestResponse
 } from 'portal-core';
 import { Collections, client } from 'portal-core';
@@ -56,12 +57,13 @@ export const detailInfoApi = router('detailInfo', {
           DetailInfoResponse & {
             expand: {
               request: RequestResponse;
+              issue: IssueResponse;
             };
           }
         >(Collections.DetailInfo)
         .getFullList({
           filter: `project = "${projectId}"`,
-          expand: 'request',
+          expand: 'request,issue',
           sort: '-created'
         })
   })

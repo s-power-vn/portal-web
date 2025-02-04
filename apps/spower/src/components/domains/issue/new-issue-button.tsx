@@ -19,6 +19,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { NewPriceRequestForm } from '../request/new-price-request-form';
 import { NewRequestForm } from '../request/new-request-form';
 
 export type NewIssueButtonProps = {
@@ -60,6 +61,18 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     });
   }, [invalidates, projectId]);
 
+  const handleNewPriceRequestClick = useCallback(() => {
+    showModal({
+      title: 'Tạo yêu cầu đơn giá',
+      className: 'flex min-w-[800px] flex-col',
+      description:
+        'Tạo yêu cầu đơn giá mới. Cho phép chọn từ danh sách hạng mục',
+      children: ({ close }) => {
+        return <NewPriceRequestForm projectId={projectId} onSuccess={close} />;
+      }
+    });
+  }, [projectId]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -78,7 +91,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
           <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
           Yêu cầu mua hàng
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleNewPriceRequestClick}>
           <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
           Yêu cầu đơn giá
         </DropdownMenuItem>
