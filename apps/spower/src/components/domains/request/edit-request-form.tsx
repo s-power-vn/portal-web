@@ -1,21 +1,20 @@
+import _ from 'lodash';
 import { api } from 'portal-api';
 import { array, boolean, date, mixed, number, object, string } from 'yup';
 
-import type { FC } from 'react';
+import { FC, useMemo } from 'react';
 
-import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
+  BusinessFormProps,
   DatePickerField,
   Form,
   TextField,
-  TextareaField,
-  success
+  TextareaField
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../file/multiple-file-select-field';
 import { RequestInputField } from './request-input-field';
 
-const schema = object().shape({
+const schema = object({
   title: string().required('Hãy nhập nội dung'),
   code: string().required('Hãy nhập số phiếu'),
   startDate: date().required('Hãy chọn ngày bắt đầu'),
@@ -58,41 +57,60 @@ const schema = object().shape({
   attachments: mixed().optional()
 });
 
-export type NewRequestFormProps = BusinessFormProps & {
-  projectId: string;
+export type EditRequestFormProps = BusinessFormProps & {
+  issueId: string;
 };
 
-export const NewRequestForm: FC<NewRequestFormProps> = props => {
-  const createRequest = api.request.create.useMutation({
-    onSuccess: async () => {
-      success('Tạo yêu cầu mua hàng thành công');
-      props.onSuccess?.();
-    }
+export const EditRequestForm: FC<EditRequestFormProps> = ({
+  issueId,
+  onCancel
+}) => {
+  const issue = api.issue.byId.useSuspenseQuery({
+    variables: issueId
   });
+
+  const request = api.request.byIssueId.useSuspenseQuery({
+    variables: issueId
+  });
+
+  const listDetails = useMemo(() => {
+    const v = request.data?.expand?.requestDetail_via_request.map(it => {
+      return {
+        ...it.expand.detail,
+        requestVolume: it.volume
+      };
+    });
+
+    return _.chain(v)
+      .sortBy('level')
+      .map(it => {
+        const children = v?.filter(i => i.parent === it.id);
+        return {
+          ...it,
+          children
+        };
+      })
+      .value();
+  }, [request.data]);
 
   return (
     <Form
       schema={schema}
+      onSubmit={values => {
+        console.log(values);
+      }}
       defaultValues={{
-        title: '',
-        startDate: new Date(),
-        details: []
+        code: issue.data?.code,
+        title: issue.data?.title,
+        startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
+        endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
+        details: listDetails
       }}
       className={'flex flex-col gap-4'}
-      loading={createRequest.isPending}
-      onSubmit={values => {
-        return createRequest.mutate({
-          ...values,
-          project: props.projectId
-        });
-      }}
-      onCancel={props.onCancel}
+      loading={issue.isPending || request.isPending}
+      onCancel={onCancel}
     >
-      <TextareaField
-        schema={schema}
-        name={'title'}
-        title={'Nội dung công việc'}
-      />
+      <TextareaField schema={schema} name="title" title="Nội dung công việc" />
       <div className={'flex items-center gap-2'}>
         <TextField
           schema={schema}
@@ -126,12 +144,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       <RequestInputField
         schema={schema}
         name={'details'}
-        options={{ projectId: props.projectId }}
-      />
-      <MultipleFileSelectField
-        schema={schema}
-        name={'attachments'}
-        title={'File đính kèm'}
+        options={{ projectId: issue.data?.project }}
       />
     </Form>
   );

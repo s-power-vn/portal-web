@@ -25,7 +25,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { EditIssueForm } from './edit-issue-form';
+import { EditRequestForm } from '../request/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';
 
@@ -60,7 +60,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
   const handleEditIssue = useCallback(() => {
     showModal({
       title: 'Sửa công việc',
-      className: 'min-w-[40rem]',
+      className: 'flex min-w-[800px] flex-col',
       children: ({ close }) => (
         <Switch
           fallback={
@@ -70,7 +70,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
           }
         >
           <Match when={issue.data.type === IssueTypeOptions.Request}>
-            <EditIssueForm
+            <EditRequestForm
               issueId={issueId}
               onSuccess={() => {
                 invalidates([api.issue.byId.getKey(issueId)]);

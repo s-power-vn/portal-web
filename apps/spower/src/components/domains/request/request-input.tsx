@@ -78,6 +78,8 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                     ) === -1
                 )
                 .value();
+
+              console.log(items);
               append(items);
               items.forEach((_, index) => {
                 setValue(`details[${index}].requestVolume`, 0);
