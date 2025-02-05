@@ -13,7 +13,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { arrayToTree } from '../../../commons/utils';
+import { arrayToTree, compareVersion } from '../../../commons/utils';
 import { RequestDetailItem } from './request';
 import { RequestInputField } from './request-input-field';
 
@@ -105,7 +105,6 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
           parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
         };
       })
-      .orderBy('level')
       .value();
   }, [request.data]);
 
@@ -121,7 +120,9 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
       list.push(node);
       queue.push(...(node?.children || []));
     }
-    return list;
+    return list.sort((v1, v2) =>
+      compareVersion(v1?.level ?? '', v2?.level ?? '')
+    );
   }, [requestDetails]);
 
   return (

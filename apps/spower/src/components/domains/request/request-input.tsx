@@ -24,7 +24,7 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { TreeData } from '../../../commons/utils';
+import { TreeData, compareVersion } from '../../../commons/utils';
 import { PickDetailInput } from '../detail/pick-detail-input';
 import { NewCustomRequestDetailForm } from './new-custom-request-detail-form';
 import { RequestDetailItem } from './request';
@@ -35,7 +35,7 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue, watch } = useStoreoForm();
+  const { control, setValue, watch, getValues } = useStoreoForm();
   const containerRef = useRef<HTMLDivElement>(null);
   const [volumeMap, setVolumeMap] = useState<
     Record<string, { requestVolume: string }>
@@ -120,8 +120,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               if (!value.length) return;
 
               const items = _.chain(value)
-                .sortBy('level')
-                .map(it => ({ ...it, group: it.id }))
+                .map(it => ({ ...it, group: it.id, requestVolume: 0 }))
                 .value();
 
               setSelectedDetails(items);
@@ -142,26 +141,36 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                 remove(index);
               });
 
-              const newItems = items.filter(
-                it => findIndexByLevel(it.level) === -1
-              );
+              let updatedFields = [
+                ...fields
+              ] as unknown as TreeData<RequestDetailItem>[];
 
-              if (newItems.length) {
-                newItems.forEach(item => {
-                  const existingFields =
-                    fields as unknown as TreeData<RequestDetailItem>[];
+              for (const item of items) {
+                if (findIndexByLevel(item.level) !== -1) continue;
 
-                  const insertIndex = existingFields.findIndex(
-                    field => field.level.localeCompare(item.level) > 0
-                  );
+                const insertIndex = updatedFields.findIndex(
+                  field => compareVersion(field.level, item.level) > 0
+                );
 
-                  if (insertIndex === -1) {
-                    append(item);
-                  } else {
-                    insert(insertIndex, item);
-                  }
-                });
+                if (insertIndex === -1) {
+                  append(item);
+                  updatedFields = [...updatedFields, item];
+                } else {
+                  insert(insertIndex, item);
+                  updatedFields = [
+                    ...updatedFields.slice(0, insertIndex),
+                    item,
+                    ...updatedFields.slice(insertIndex)
+                  ];
+                }
               }
+
+              setTimeout(() => {
+                containerRef.current?.scrollTo({
+                  top: containerRef.current.scrollHeight,
+                  behavior: 'smooth'
+                });
+              }, 100);
 
               close();
             }}
@@ -172,13 +181,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   }, [
     projectId,
     selectedDetails,
+    fields,
     setValue,
     findIndexByLevel,
     append,
     insert,
-    fields,
-    remove,
-    volumeMap
+    remove
   ]);
 
   const handleNewItemFromCustom = useCallback(() => {

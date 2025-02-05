@@ -111,17 +111,44 @@ export function getCommonPinningStyles<T>(column: Column<T>): CSSProperties {
 }
 
 export function compareVersion(v1: string, v2: string): number {
-  const v1Parts = v1.split('.').map(Number);
-  const v2Parts = v2.split('.').map(Number);
+  // Validate version format using regex - allow numbers and single letters
+  const isValidVersion = (v: string) => /^[a-zA-Z\d]+(\.[a-zA-Z\d]+)*$/.test(v);
+
+  if (!isValidVersion(v1) || !isValidVersion(v2)) {
+    throw new Error(
+      'Invalid version format. Version should only contain numbers, single letters and dots (e.g. "1.0", "2.a.4", "e.3")'
+    );
+  }
+
+  const v1Parts = v1.split('.');
+  const v2Parts = v2.split('.');
 
   const maxLength = Math.max(v1Parts.length, v2Parts.length);
 
   for (let i = 0; i < maxLength; i++) {
-    const v1Part = v1Parts[i] || 0;
-    const v2Part = v2Parts[i] || 0;
+    const v1Part = v1Parts[i] || '0';
+    const v2Part = v2Parts[i] || '0';
 
-    if (v1Part > v2Part) return 1;
-    if (v1Part < v2Part) return -1;
+    const isV1Letter = /^[a-zA-Z]$/.test(v1Part);
+    const isV2Letter = /^[a-zA-Z]$/.test(v2Part);
+
+    // If one is letter and other is number
+    if (isV1Letter && !isV2Letter) return 1; // letter > number
+    if (!isV1Letter && isV2Letter) return -1; // number < letter
+
+    // If both are letters, compare alphabetically
+    if (isV1Letter && isV2Letter) {
+      if (v1Part > v2Part) return 1;
+      if (v1Part < v2Part) return -1;
+      continue;
+    }
+
+    // Both are numbers
+    const num1 = parseInt(v1Part, 10);
+    const num2 = parseInt(v2Part, 10);
+
+    if (num1 > num2) return 1;
+    if (num1 < num2) return -1;
   }
 
   return 0;
