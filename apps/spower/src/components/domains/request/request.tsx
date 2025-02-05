@@ -46,16 +46,17 @@ import { ADMIN_ID } from '../project/project-overview-tab';
 import { RequestDocument } from './request-document';
 
 export type RequestDetailItem = {
-  id: string;
+  id?: string;
   title: string;
   unit: string;
   group: string;
   level: string;
-  requestVolume: number;
-  deliveryDate: string;
-  note: string;
-  parent: string;
-  index: string;
+  requestVolume?: number;
+  deliveryDate?: string;
+  note?: string;
+  parent?: string;
+  index?: string;
+  isNew?: boolean;
 };
 
 export type RequestProps = {
@@ -74,7 +75,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       request.data ? request.data?.expand.requestDetail_via_request : []
     )
       .map(it => {
-        const { customLevel, customUnit, customTitle, ...rest } = it;
+        const { customLevel, customUnit, customTitle } = it;
 
         return {
           id: it.id,
@@ -184,7 +185,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
             <span className={'font-semibold'}>
-              {formatNumber(row.original.requestVolume)}
+              {formatNumber(row.original.requestVolume ?? 0)}
             </span>
           </div>
         ),
@@ -198,7 +199,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       columnHelper.accessor('deliveryDate', {
         cell: ({ row }) => (
           <div className={'flex justify-center gap-1'}>
-            {formatDate(row.original.deliveryDate)}
+            {formatDate(row.original.deliveryDate ?? '')}
           </div>
         ),
         header: () => 'Ngày cấp',
@@ -222,8 +223,6 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     ],
     [columnHelper]
   );
-
-  console.log(requestDetails);
 
   const table = useReactTable({
     data: requestDetails,

@@ -233,13 +233,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
       }),
       columnHelper.display({
         id: 'requestVolume',
-        cell: ({ row }) => (
-          <Show when={row.original.requestVolume}>
-            <div className={'flex justify-end gap-1'}>
-              {formatNumber(row.original.requestVolume)}
-            </div>
-          </Show>
-        ),
+        cell: ({ row }) => <></>,
         header: () => 'Khối lượng yêu cầu',
         footer: info => info.column.id,
         size: 150,

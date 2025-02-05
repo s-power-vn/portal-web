@@ -305,7 +305,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
                   {it.requestVolume}
                 </td>
                 <td className={'w-20 border-r p-2 text-right'}>
-                  {formatDate(it.deliveryDate)}
+                  {formatDate(it.deliveryDate ?? '')}
                 </td>
                 <td className={'w-40 p-2'}>{it.note}</td>
               </tr>

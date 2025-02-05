@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { PlusIcon, TrashIcon, X } from 'lucide-react';
-import { type DetailResponse, cn } from 'portal-core';
-import { v4 } from 'uuid';
+import { PlusIcon } from 'lucide-react';
+import { DetailResponse, cn } from 'portal-core';
 import type { AnyObject, ObjectSchema } from 'yup';
 
 import type { FC } from 'react';
@@ -28,6 +27,7 @@ import {
 import { TreeData } from '../../../commons/utils';
 import { PickDetailInput } from '../detail/pick-detail-input';
 import { NewCustomRequestDetailForm } from './new-custom-request-detail-form';
+import { RequestDetailItem } from './request';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;
@@ -35,29 +35,26 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue, getValues } = useStoreoForm();
-  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
-  const { fields, append, remove } = useFieldArray({
+  const { control, setValue } = useStoreoForm();
+  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>();
+  const { fields, append } = useFieldArray({
     control,
     name: 'details',
     keyName: 'uid'
   });
 
   useEffect(() => {
-    _.chain(fields)
-      .sortBy('level')
-      .value()
-      .forEach((it, index) => {
-        if ((it as any).children?.length) {
-          setValue(`details[${index}].hasChild`, true);
-          setValue(`details[${index}].requestVolume`, 0);
-        } else {
-          setValue(`details[${index}].hasChild`, false);
-        }
-      });
+    fields.forEach((it, index) => {
+      if ((it as any).children?.length) {
+        setValue(`details[${index}].hasChild`, true);
+        setValue(`details[${index}].requestVolume`, 0);
+      } else {
+        setValue(`details[${index}].hasChild`, false);
+      }
+    });
   }, [fields, setValue]);
 
-  const handlePick = useCallback(() => {
+  const handleNewItemFromPick = useCallback(() => {
     if (projectId) {
       showModal({
         title: 'Chọn hạng mục trong hợp đồng',
@@ -67,42 +64,28 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             projectId={projectId}
             value={selectedDetails}
             onChange={value => {
-              setSelectedDetails(value);
-              const items = _.chain(value)
-                .sortBy('level')
-                .filter(
-                  it =>
-                    _.findIndex(
-                      fields as {
-                        id?: string;
-                        expand?: {
-                          detail: {
-                            id: string;
-                          };
-                        };
-                      }[],
-                      v => v.id === it.id || v.expand?.detail.id === it.id
-                    ) === -1
-                )
-                .map(it => ({
-                  ...it,
-                  isNew: true
-                }))
-                .value();
+              if (!value.length) {
+                return;
+              }
 
-              append(items);
-              items.forEach((_, index) => {
-                setValue(`details[${index}].requestVolume`, 0);
-              });
+              setSelectedDetails(value);
+
+              const newItems = value.map(it => ({
+                ...it,
+                group: it.id,
+                requestVolume: 0
+              }));
+
+              setValue('details', newItems);
               close();
             }}
           />
         )
       });
     }
-  }, [append, fields, projectId, selectedDetails, setValue]);
+  }, [projectId, selectedDetails, setValue]);
 
-  const handleCustomRequest = useCallback(() => {
+  const handleNewItemFromCustom = useCallback(() => {
     showModal({
       title: 'Thêm hạng mục ngoài hợp đồng',
       className: 'flex min-w-[500px] flex-col',
@@ -110,13 +93,12 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
         <NewCustomRequestDetailForm
           onSubmit={values => {
             const newItem = {
-              level: `e.${fields.length}`,
               title: values.title,
               unit: values.unit,
-              hasChild: false,
-              children: [],
-              id: v4(),
-              isNew: true
+              level: `e.${fields.length}`,
+              group: `e.${fields.length}`,
+              requestVolume: 0,
+              children: []
             };
 
             append(newItem);
@@ -128,80 +110,15 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     });
   }, [append, fields.length]);
 
-  const handleClear = useCallback(() => {
-    const currentItems = fields as unknown as TreeData<DetailResponse>[];
-
-    // Add only non-new items to deletedIds
-    const newDeletedIds = currentItems
-      .filter(item => item.id && !item.isNew)
-      .map(item => item.id as string);
-
-    setValue('deletedIds', newDeletedIds);
-    setValue('details', []);
-  }, [setValue, fields]);
-
-  const handleRemoveItem = useCallback(
-    (index: number, item: TreeData<DetailResponse>) => {
-      const currentItems = fields as unknown as TreeData<DetailResponse>[];
-      const currentDeletedIds = getValues('deletedIds') || [];
-      let newDeletedIds = [...currentDeletedIds];
-
-      console.log(currentItems);
-
-      const parentItem = currentItems.find(it =>
-        it.children?.some(child => child.id === item.id)
-      );
-
-      // Add non-new item ID to deletedIds
-      if (item.id && !item.isNew) {
-        newDeletedIds.push(item.id);
-      }
-
-      if (parentItem) {
-        // Check remaining children before removal
-        const remainingChildren = currentItems.filter(
-          it => it.parent === parentItem.id && it.id !== item.id
-        );
-
-        remove(index);
-
-        // Only remove parent if this was the last child
-        if (remainingChildren.length === 0) {
-          const parentIndex = currentItems.findIndex(
-            it => it.id === parentItem.id
-          );
-          if (parentItem.id && !parentItem.isNew) {
-            newDeletedIds.push(parentItem.id);
-          }
-          remove(parentIndex);
-        }
-      } else {
-        remove(index);
-      }
-
-      setValue('deletedIds', Array.from(new Set(newDeletedIds)));
-    },
-    [fields, remove, setValue, getValues]
-  );
-
   return (
     <div className={'flex flex-col gap-2'}>
       <div className={'flex items-end justify-between'}>
         <span className={'text-sm font-medium'}>Hạng mục công việc</span>
         <div className={'flex gap-2'}>
           <Button
-            className={'text-sm'}
-            variant={'destructive'}
-            type={'button'}
-            onClick={handleClear}
-          >
-            <TrashIcon className={'mr-2 h-4 w-4'} />
-            Xóa tất cả
-          </Button>
-          <Button
             className={'bg-orange-500 text-sm hover:bg-orange-400'}
             type={'button'}
-            onClick={handleCustomRequest}
+            onClick={handleNewItemFromCustom}
           >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Thêm hạng mục ngoài HĐ
@@ -209,7 +126,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
           <Button
             type={'button'}
             className={cn('text-sm')}
-            onClick={handlePick}
+            onClick={handleNewItemFromPick}
           >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Chọn hạng mục trong HĐ
@@ -235,17 +152,14 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Ghi chú
               </TableHead>
-              <TableHead className="bg-appBlueLight text-appWhite w-[50px] items-center whitespace-nowrap p-2 text-center">
-                Xóa
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {fields.length ? (
-              _.chain(fields as unknown as TreeData<DetailResponse>[])
+              _.chain(fields as unknown as TreeData<RequestDetailItem>[])
                 .sortBy('level')
                 .value()
-                .map((it: TreeData<DetailResponse>, index: number) => {
+                .map((it: TreeData<RequestDetailItem>, index: number) => {
                   return (
                     <TableRow key={it.id} className="text-xs">
                       <TableCell className={'border-r px-2 py-1 text-center'}>
@@ -267,7 +181,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                           <NumericField
                             schema={schema}
                             name={`details[${index}].requestVolume`}
-                          ></NumericField>
+                          />
                         </Show>
                       </TableCell>
                       <TableCell className={'w-40 p-1'}>
@@ -276,18 +190,6 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                             schema={schema}
                             name={`details[${index}].note`}
                           ></TextareaField>
-                        </Show>
-                      </TableCell>
-                      <TableCell className={'border-r p-1 text-center'}>
-                        <Show when={it.children?.length === 0}>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(index, it)}
-                            className="rounded p-1 text-red-500 hover:bg-red-50"
-                            aria-label="Xóa hạng mục"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
                         </Show>
                       </TableCell>
                     </TableRow>

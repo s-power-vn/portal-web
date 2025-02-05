@@ -6,7 +6,7 @@ import type { CSSProperties } from 'react';
 export type TreeData<T> = T & {
   group: string;
   level: string;
-  parent: string;
+  parent?: string;
   request?: string;
   hasChild?: boolean;
   children?: TreeData<T>[];
