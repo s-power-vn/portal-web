@@ -70,7 +70,9 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
         group: it.id
       };
     });
-    return arrayToTree(v, `${props.projectId}-root`);
+    return arrayToTree(v, `${props.projectId}-root`).sort((v1, v2) => {
+      return parseInt(v1.level) - parseInt(v2.level);
+    });
   }, [listDetails.data, props.projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();

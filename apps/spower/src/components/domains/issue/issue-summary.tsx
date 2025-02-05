@@ -73,7 +73,10 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
             <EditRequestForm
               issueId={issueId}
               onSuccess={() => {
-                invalidates([api.issue.byId.getKey(issueId)]);
+                invalidates([
+                  api.issue.byId.getKey(issueId),
+                  api.request.byIssueId.getKey(issueId)
+                ]);
                 close();
               }}
               onCancel={close}

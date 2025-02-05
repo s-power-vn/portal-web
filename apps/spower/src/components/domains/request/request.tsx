@@ -15,7 +15,6 @@ import {
   SquareMinusIcon,
   SquarePlusIcon
 } from 'lucide-react';
-import type { RequestDetailData } from 'portal-api';
 import { api } from 'portal-api';
 import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
@@ -43,9 +42,21 @@ import {
 
 import type { TreeData } from '../../../commons/utils';
 import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
-import { useInvalidateQueries } from '../../../hooks';
 import { ADMIN_ID } from '../project/project-overview-tab';
 import { RequestDocument } from './request-document';
+
+export type RequestDetailItem = {
+  id: string;
+  title: string;
+  unit: string;
+  group: string;
+  level: string;
+  requestVolume: number;
+  deliveryDate: string;
+  note: string;
+  parent: string;
+  index: string;
+};
 
 export type RequestProps = {
   issueId: string;
@@ -58,17 +69,23 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     variables: issueId
   });
 
-  const invalidates = useInvalidateQueries();
-
-  const v = useMemo(() => {
+  const v = useMemo<RequestDetailItem[]>(() => {
     return _.chain(
       request.data ? request.data?.expand.requestDetail_via_request : []
     )
       .map(it => {
+        const { customLevel, customUnit, customTitle, ...rest } = it;
+
         return {
-          ...it,
-          group: it.expand?.detail.id ?? it.customLevel,
-          level: it.expand?.detail.level ?? it.customLevel,
+          id: it.id,
+          title: it.expand?.detail.title ?? customTitle,
+          unit: it.expand?.detail.unit ?? customUnit,
+          group: it.expand?.detail.id ?? customLevel,
+          level: it.expand?.detail.level ?? customLevel,
+          requestVolume: it.requestVolume,
+          deliveryDate: it.deliveryDate,
+          note: it.note,
+          index: it.index,
           parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
         };
       })
@@ -76,11 +93,11 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       .value();
   }, [request.data]);
 
-  const requests = useMemo(() => {
+  const requestDetails = useMemo(() => {
     return arrayToTree(v, `${request.data?.project}-root`);
   }, [request.data?.project, v]);
 
-  const columnHelper = createColumnHelper<TreeData<RequestDetailData>>();
+  const columnHelper = createColumnHelper<TreeData<RequestDetailItem>>();
 
   const columns = useMemo(
     () => [
@@ -142,8 +159,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       }),
       columnHelper.display({
         id: 'title',
-        cell: ({ row }) =>
-          row.original.expand?.detail.title ?? row.original.customTitle,
+        cell: ({ row }) => row.original.title,
         header: () => 'Mô tả công việc mời thầu',
         footer: info => info.column.id,
         meta: {
@@ -154,9 +170,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
       columnHelper.display({
         id: 'unit',
         cell: ({ row }) => (
-          <div className={'flex justify-center gap-1'}>
-            {row.original.expand?.detail.unit ?? row.original.customUnit}
-          </div>
+          <div className={'flex justify-center gap-1'}>{row.original.unit}</div>
         ),
         header: () => 'Đơn vị tính',
         footer: info => info.column.id,
@@ -170,7 +184,7 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
             <span className={'font-semibold'}>
-              {formatNumber(row.original.volume)}
+              {formatNumber(row.original.requestVolume)}
             </span>
           </div>
         ),
@@ -209,8 +223,10 @@ export const Request: FC<RequestProps> = ({ issueId }) => {
     [columnHelper]
   );
 
+  console.log(requestDetails);
+
   const table = useReactTable({
-    data: requests,
+    data: requestDetails,
     columns,
     initialState: {
       columnPinning: {

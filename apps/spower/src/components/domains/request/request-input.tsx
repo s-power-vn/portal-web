@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { PlusIcon, TrashIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, X } from 'lucide-react';
 import { type DetailResponse, cn } from 'portal-core';
 import { v4 } from 'uuid';
 import type { AnyObject, ObjectSchema } from 'yup';
@@ -35,9 +35,9 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue } = useStoreoForm();
+  const { control, setValue, getValues } = useStoreoForm();
   const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'details',
     keyName: 'uid'
@@ -73,13 +73,23 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                 .filter(
                   it =>
                     _.findIndex(
-                      fields as { id?: string }[],
-                      v => v.id === it.id
+                      fields as {
+                        id?: string;
+                        expand?: {
+                          detail: {
+                            id: string;
+                          };
+                        };
+                      }[],
+                      v => v.id === it.id || v.expand?.detail.id === it.id
                     ) === -1
                 )
+                .map(it => ({
+                  ...it,
+                  isNew: true
+                }))
                 .value();
 
-              console.log(items);
               append(items);
               items.forEach((_, index) => {
                 setValue(`details[${index}].requestVolume`, 0);
@@ -99,14 +109,17 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       children: ({ close }) => (
         <NewCustomRequestDetailForm
           onSubmit={values => {
-            append({
-              level: `e${fields.length}`,
+            const newItem = {
+              level: `e.${fields.length}`,
               title: values.title,
               unit: values.unit,
               hasChild: false,
               children: [],
-              id: v4()
-            });
+              id: v4(),
+              isNew: true
+            };
+
+            append(newItem);
             close();
           }}
           onCancel={close}
@@ -116,8 +129,60 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   }, [append, fields.length]);
 
   const handleClear = useCallback(() => {
+    const currentItems = fields as unknown as TreeData<DetailResponse>[];
+
+    // Add only non-new items to deletedIds
+    const newDeletedIds = currentItems
+      .filter(item => item.id && !item.isNew)
+      .map(item => item.id as string);
+
+    setValue('deletedIds', newDeletedIds);
     setValue('details', []);
-  }, [setValue]);
+  }, [setValue, fields]);
+
+  const handleRemoveItem = useCallback(
+    (index: number, item: TreeData<DetailResponse>) => {
+      const currentItems = fields as unknown as TreeData<DetailResponse>[];
+      const currentDeletedIds = getValues('deletedIds') || [];
+      let newDeletedIds = [...currentDeletedIds];
+
+      console.log(currentItems);
+
+      const parentItem = currentItems.find(it =>
+        it.children?.some(child => child.id === item.id)
+      );
+
+      // Add non-new item ID to deletedIds
+      if (item.id && !item.isNew) {
+        newDeletedIds.push(item.id);
+      }
+
+      if (parentItem) {
+        // Check remaining children before removal
+        const remainingChildren = currentItems.filter(
+          it => it.parent === parentItem.id && it.id !== item.id
+        );
+
+        remove(index);
+
+        // Only remove parent if this was the last child
+        if (remainingChildren.length === 0) {
+          const parentIndex = currentItems.findIndex(
+            it => it.id === parentItem.id
+          );
+          if (parentItem.id && !parentItem.isNew) {
+            newDeletedIds.push(parentItem.id);
+          }
+          remove(parentIndex);
+        }
+      } else {
+        remove(index);
+      }
+
+      setValue('deletedIds', Array.from(new Set(newDeletedIds)));
+    },
+    [fields, remove, setValue, getValues]
+  );
 
   return (
     <div className={'flex flex-col gap-2'}>
@@ -153,55 +218,33 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       </div>
       <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
         <Table>
-          <TableHeader
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2
-            }}
-          >
+          <TableHeader>
             <TableRow>
-              <TableHead
-                className={
-                  'bg-appBlueLight text-appWhite w-[80px] whitespace-nowrap border-r p-2 text-center'
-                }
-              >
+              <TableHead className="bg-appBlueLight text-appWhite w-[80px] whitespace-nowrap border-r p-2 text-center">
                 STT
               </TableHead>
-              <TableHead
-                className={
-                  'bg-appBlueLight text-appWhite w-[50px] whitespace-nowrap border-r p-2 text-center'
-                }
-              >
+              <TableHead className="bg-appBlueLight text-appWhite w-[50px] whitespace-nowrap border-r p-2 text-center">
                 ID
               </TableHead>
-              <TableHead
-                className={
-                  'bg-appBlueLight text-appWhite w-[500px] items-center whitespace-nowrap border-r p-2'
-                }
-              >
+              <TableHead className="bg-appBlueLight text-appWhite w-[500px] items-center whitespace-nowrap border-r p-2">
                 Mô tả công việc mời thầu
               </TableHead>
-              <TableHead
-                className={
-                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center'
-                }
-              >
+              <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Khối lượng yêu cầu
               </TableHead>
-              <TableHead
-                className={
-                  'bg-appBlueLight text-appWhite items-center whitespace-nowrap p-2 text-center'
-                }
-              >
+              <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Ghi chú
+              </TableHead>
+              <TableHead className="bg-appBlueLight text-appWhite w-[50px] items-center whitespace-nowrap p-2 text-center">
+                Xóa
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {fields.length ? (
-              _.chain(fields)
+              _.chain(fields as unknown as TreeData<DetailResponse>[])
                 .sortBy('level')
+                .value()
                 .map((it: TreeData<DetailResponse>, index: number) => {
                   return (
                     <TableRow key={it.id} className="text-xs">
@@ -235,14 +278,25 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                           ></TextareaField>
                         </Show>
                       </TableCell>
+                      <TableCell className={'border-r p-1 text-center'}>
+                        <Show when={it.children?.length === 0}>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(index, it)}
+                            className="rounded p-1 text-red-500 hover:bg-red-50"
+                            aria-label="Xóa hạng mục"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </Show>
+                      </TableCell>
                     </TableRow>
                   );
                 })
-                .value()
             ) : (
               <TableRow>
-                <TableCell className="h-16 text-center" colSpan={3}>
-                  Không có dữ liệu.
+                <TableCell colSpan={6} className="text-center">
+                  Không có hạng mục công việc
                 </TableCell>
               </TableRow>
             )}

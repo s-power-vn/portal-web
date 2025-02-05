@@ -9,9 +9,12 @@ import {
   DatePickerField,
   Form,
   TextField,
-  TextareaField
+  TextareaField,
+  success
 } from '@minhdtb/storeo-theme';
 
+import { arrayToTree } from '../../../commons/utils';
+import { RequestDetailItem } from './request';
 import { RequestInputField } from './request-input-field';
 
 const schema = object({
@@ -54,6 +57,7 @@ const schema = object({
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
     .required('Hãy chọn ít nhất 1 hạng mục'),
+  deletedIds: array().of(string()).optional(),
   attachments: mixed().optional()
 });
 
@@ -63,7 +67,8 @@ export type EditRequestFormProps = BusinessFormProps & {
 
 export const EditRequestForm: FC<EditRequestFormProps> = ({
   issueId,
-  onCancel
+  onCancel,
+  onSuccess
 }) => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
@@ -73,31 +78,62 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
     variables: issueId
   });
 
-  const listDetails = useMemo(() => {
-    const v = request.data?.expand?.requestDetail_via_request.map(it => {
-      return {
-        ...it.expand.detail,
-        requestVolume: it.volume
-      };
-    });
+  const update = api.request.update.useMutation({
+    onSuccess: () => {
+      success('Cập nhật yêu cầu thành công');
+      onSuccess?.();
+    }
+  });
 
-    return _.chain(v)
-      .sortBy('level')
+  const v = useMemo<RequestDetailItem[]>(() => {
+    return _.chain(
+      request.data ? request.data?.expand.requestDetail_via_request : []
+    )
       .map(it => {
-        const children = v?.filter(i => i.parent === it.id);
+        const { customLevel, customUnit, customTitle, ...rest } = it;
+
         return {
-          ...it,
-          children
+          id: it.id,
+          title: it.expand?.detail.title ?? customTitle,
+          unit: it.expand?.detail.unit ?? customUnit,
+          group: it.expand?.detail.id ?? customLevel,
+          level: it.expand?.detail.level ?? customLevel,
+          requestVolume: it.requestVolume,
+          deliveryDate: it.deliveryDate,
+          note: it.note,
+          index: it.index,
+          parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
         };
       })
+      .orderBy('level')
       .value();
   }, [request.data]);
+
+  const requestDetails = useMemo(() => {
+    return arrayToTree(v, `${request.data?.project}-root`);
+  }, [request.data?.project, v]);
+
+  const listDetails = useMemo(() => {
+    const list = [];
+    const queue = [...(requestDetails || [])];
+    while (queue.length) {
+      const node = queue.shift();
+      list.push(node);
+      queue.push(...(node?.children || []));
+    }
+    return list;
+  }, [requestDetails]);
 
   return (
     <Form
       schema={schema}
       onSubmit={values => {
-        console.log(values);
+        console.log(values.deletedIds);
+        update.mutate({
+          ...values,
+          id: issueId,
+          project: issue.data?.project
+        });
       }}
       defaultValues={{
         code: issue.data?.code,

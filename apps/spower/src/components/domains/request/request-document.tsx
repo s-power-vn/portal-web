@@ -1,13 +1,14 @@
 import { CSS, Tailwind } from '@fileforge/react-print';
 import { CheckCircle2Icon } from 'lucide-react';
 import { DateTime } from 'luxon';
-import type { RequestDetailData } from 'portal-api';
 import colors from 'tailwindcss/colors';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import type { FC } from 'react';
 
 import { Show, formatDate } from '@minhdtb/storeo-core';
+
+import { RequestDetailItem } from './request';
 
 export type RequestDocumentProps = {
   project?: string;
@@ -22,7 +23,7 @@ export type RequestDocumentProps = {
   leader1?: string;
   leader2?: string;
   leader3?: string;
-  data: RequestDetailData[];
+  data: RequestDetailItem[];
 };
 
 export const RequestDocument: FC<RequestDocumentProps> = props => {
@@ -297,17 +298,11 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
             {props.data.map((it, index) => (
               <tr key={index} className={'border-b text-sm'}>
                 <td className={'w-10 border-r p-2 text-center'}>{it.index}</td>
-                <td className={'w-10 border-r p-2'}>
-                  {it.expand?.detail?.level ?? it.customLevel}
-                </td>
-                <td className={'border-r p-2 text-left'}>
-                  {it.expand?.detail?.title ?? it.customTitle}
-                </td>
+                <td className={'w-10 border-r p-2'}>{it.level}</td>
+                <td className={'border-r p-2 text-left'}>{it.title}</td>
+                <td className={'w-20 border-r p-2 text-center'}>{it.unit}</td>
                 <td className={'w-20 border-r p-2 text-center'}>
-                  {it.expand?.detail?.unit ?? it.customUnit}
-                </td>
-                <td className={'w-20 border-r p-2 text-center'}>
-                  {it.volume > 0 ? it.volume : ''}
+                  {it.requestVolume}
                 </td>
                 <td className={'w-20 border-r p-2 text-right'}>
                   {formatDate(it.deliveryDate)}

@@ -124,7 +124,6 @@ export type DetailInfoRecord<Textend = unknown> = {
 	parent?: string
 	project: RecordIdString
 	request: RecordIdString
-	requestVolume?: number
 	title: string
 	unit?: string
 	unitPrice?: number
@@ -191,17 +190,14 @@ export type RequestDetailRecord = {
 	detail?: RecordIdString
 	index?: string
 	note?: string
-	price?: number
 	request: RecordIdString
-	supplier?: RecordIdString
-	volume?: number
+	requestVolume?: number
 }
 
 export type RequestDetailInfoRecord = {
 	deleted?: boolean
 	detail?: RecordIdString
 	request: RecordIdString
-	volume?: number
 }
 
 export type RequestUserInfoRecord = {
