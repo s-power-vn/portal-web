@@ -60,7 +60,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
   const handleEditIssue = useCallback(() => {
     showModal({
       title: 'Sửa công việc',
-      className: 'flex min-w-[800px] flex-col',
+      className: 'flex min-w-[1000px] flex-col',
       children: ({ close }) => (
         <Switch
           fallback={

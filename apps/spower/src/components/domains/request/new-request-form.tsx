@@ -93,7 +93,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         name={'title'}
         title={'Nội dung công việc'}
       />
-      <div className={'flex items-center gap-2'}>
+      <div className={'flex items-start gap-2'}>
         <TextField
           schema={schema}
           name={'code'}
