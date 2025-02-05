@@ -37,7 +37,11 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import type { TreeData } from '../../../commons/utils';
-import { arrayToTree, getCommonPinningStyles } from '../../../commons/utils';
+import {
+  arrayToTree,
+  compareVersion,
+  getCommonPinningStyles
+} from '../../../commons/utils';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
@@ -69,9 +73,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           .uniqBy('request')
           .sumBy('requestVolume')
           .value();
-      }).sort((v1, v2) => {
-        return parseInt(v1.level) - parseInt(v2.level);
-      }),
+      }).sort((v1, v2) => compareVersion(v1.level, v2.level)),
     [listDetailInfos.data, projectId]
   );
 
@@ -322,7 +324,8 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
     enableRowSelection: true,
     onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
-    getSubRows: row => row.children,
+    getSubRows: row =>
+      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

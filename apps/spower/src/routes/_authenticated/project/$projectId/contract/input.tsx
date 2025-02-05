@@ -57,6 +57,7 @@ import {
 import type { TreeData } from '../../../../../commons/utils';
 import {
   arrayToTree,
+  compareVersion,
   getCommonPinningStyles
 } from '../../../../../commons/utils';
 import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
@@ -438,9 +439,7 @@ const Component = () => {
           .uniqBy('request')
           .sumBy('requestVolume')
           .value();
-      }).sort((v1, v2) => {
-        return parseInt(v1.level) - parseInt(v2.level);
-      }),
+      }).sort((v1, v2) => compareVersion(v1.level, v2.level)),
     [listDetailInfos.data, projectId]
   );
 
@@ -463,7 +462,8 @@ const Component = () => {
     enableRowSelection: true,
     onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
-    getSubRows: row => row.children,
+    getSubRows: row =>
+      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

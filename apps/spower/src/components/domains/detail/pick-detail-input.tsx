@@ -33,7 +33,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import type { TreeData } from '../../../commons/utils';
-import { arrayToTree } from '../../../commons/utils';
+import { arrayToTree, compareVersion } from '../../../commons/utils';
 import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
 
 export type PickDetailInputProps = {
@@ -70,9 +70,9 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
         group: it.id
       };
     });
-    return arrayToTree(v, `${props.projectId}-root`).sort((v1, v2) => {
-      return parseInt(v1.level) - parseInt(v2.level);
-    });
+    return arrayToTree(v, `${props.projectId}-root`).sort((v1, v2) =>
+      compareVersion(v1.level, v2.level)
+    );
   }, [listDetails.data, props.projectId]);
 
   const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
@@ -184,7 +184,8 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
     onGlobalFilterChange: setGlobalFilter,
     onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
-    getSubRows: row => row.children,
+    getSubRows: row =>
+      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -5,7 +5,7 @@ import { DetailResponse, cn } from 'portal-core';
 import type { AnyObject, ObjectSchema } from 'yup';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 
 import { Show } from '@minhdtb/storeo-core';
@@ -36,6 +36,7 @@ export type RequestInputProps = {
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   const { control, setValue, watch } = useStoreoForm();
+  const containerRef = useRef<HTMLDivElement>(null);
   const [volumeMap, setVolumeMap] = useState<
     Record<string, { requestVolume: string }>
   >({});
@@ -46,14 +47,16 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     keyName: 'uid'
   });
 
-  const [selectedDetails, setSelectedDetails] = useState(() =>
-    (fields as unknown as DetailResponse[])
+  const [selectedDetails, setSelectedDetails] = useState(() => {
+    const items = (fields as unknown as (DetailResponse & { group: string })[])
+      .filter(field => !field.level.startsWith('e.'))
       .map(it => ({
         ...it,
-        group: it.id
-      }))
-      .filter(field => !field.level.startsWith('e.'))
-  );
+        id: it.group
+      }));
+
+    return items;
+  });
 
   const findIndexByLevel = useCallback(
     (level: string) => {
@@ -194,6 +197,14 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             };
 
             append(newItem);
+
+            setTimeout(() => {
+              containerRef.current?.scrollTo({
+                top: containerRef.current.scrollHeight,
+                behavior: 'smooth'
+              });
+            }, 100);
+
             close();
           }}
           onCancel={close}
@@ -234,7 +245,10 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
           </Button>
         </div>
       </div>
-      <div className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2">
+      <div
+        ref={containerRef}
+        className="border-appBlue max-h-[300px] overflow-auto rounded-md border pb-2"
+      >
         <Table>
           <TableHeader>
             <TableRow>
