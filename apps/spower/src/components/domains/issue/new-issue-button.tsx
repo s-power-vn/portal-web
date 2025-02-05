@@ -32,7 +32,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const handleNewRequestClick = useCallback(() => {
     showModal({
       title: 'Tạo yêu cầu mua hàng',
-      className: 'flex min-w-[800px] flex-col',
+      className: 'flex min-w-[1000px] flex-col',
       description:
         'Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục',
       children: ({ close }) => {
@@ -63,7 +63,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const handleNewPriceRequestClick = useCallback(() => {
     showModal({
       title: 'Tạo yêu cầu đơn giá',
-      className: 'flex min-w-[800px] flex-col',
+      className: 'flex min-w-[1000px] flex-col',
       description:
         'Tạo yêu cầu đơn giá mới. Cho phép chọn từ danh sách hạng mục',
       children: ({ close }) => {

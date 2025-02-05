@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon } from 'lucide-react';
 import { DetailResponse, cn } from 'portal-core';
 import type { AnyObject, ObjectSchema } from 'yup';
 
@@ -35,13 +35,63 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue } = useStoreoForm();
-  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>();
-  const { fields, append } = useFieldArray({
+  const { control, setValue, watch } = useStoreoForm();
+  const [volumeMap, setVolumeMap] = useState<
+    Record<string, { requestVolume: string }>
+  >({});
+
+  const { fields, append, insert, remove } = useFieldArray({
     control,
     name: 'details',
     keyName: 'uid'
   });
+
+  const [selectedDetails, setSelectedDetails] = useState(() =>
+    (fields as unknown as DetailResponse[])
+      .map(it => ({
+        ...it,
+        group: it.id
+      }))
+      .filter(field => !field.level.startsWith('e.'))
+  );
+
+  const findIndexByLevel = useCallback(
+    (level: string) => {
+      return fields.findIndex(
+        item => (item as unknown as TreeData<RequestDetailItem>).level === level
+      );
+    },
+    [fields]
+  );
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (!name) return;
+
+      const nameString = name as string;
+      const detailIndex = nameString.split('.')[0];
+      const level = _.get(value, `${detailIndex}.level`);
+      const requestVolume = _.get(value, `${nameString}`);
+
+      if (!level) return;
+
+      setVolumeMap(prev => {
+        const newMap = { ...prev };
+
+        if (requestVolume === '') {
+          delete newMap[level];
+        } else {
+          newMap[level] = {
+            requestVolume
+          };
+        }
+
+        return newMap;
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     fields.forEach((it, index) => {
@@ -64,26 +114,69 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
             projectId={projectId}
             value={selectedDetails}
             onChange={value => {
-              if (!value.length) {
-                return;
+              if (!value.length) return;
+
+              const items = _.chain(value)
+                .sortBy('level')
+                .map(it => ({ ...it, group: it.id }))
+                .value();
+
+              setSelectedDetails(items);
+
+              const itemsToRemove = fields
+                .map((field, index) => ({
+                  item: field as unknown as TreeData<RequestDetailItem>,
+                  index
+                }))
+                .filter(
+                  ({ item }) =>
+                    !item.level.startsWith('e.') &&
+                    !items.some(v => v.level === item.level)
+                )
+                .reverse();
+
+              itemsToRemove.forEach(({ index }) => {
+                remove(index);
+              });
+
+              const newItems = items.filter(
+                it => findIndexByLevel(it.level) === -1
+              );
+
+              if (newItems.length) {
+                newItems.forEach(item => {
+                  const existingFields =
+                    fields as unknown as TreeData<RequestDetailItem>[];
+
+                  const insertIndex = existingFields.findIndex(
+                    field => field.level.localeCompare(item.level) > 0
+                  );
+
+                  if (insertIndex === -1) {
+                    append(item);
+                  } else {
+                    insert(insertIndex, item);
+                  }
+                });
               }
 
-              setSelectedDetails(value);
-
-              const newItems = value.map(it => ({
-                ...it,
-                group: it.id,
-                requestVolume: 0
-              }));
-
-              setValue('details', newItems);
               close();
             }}
           />
         )
       });
     }
-  }, [projectId, selectedDetails, setValue]);
+  }, [
+    projectId,
+    selectedDetails,
+    setValue,
+    findIndexByLevel,
+    append,
+    insert,
+    fields,
+    remove,
+    volumeMap
+  ]);
 
   const handleNewItemFromCustom = useCallback(() => {
     showModal({
@@ -97,7 +190,6 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               unit: values.unit,
               level: `e.${fields.length}`,
               group: `e.${fields.length}`,
-              requestVolume: 0,
               children: []
             };
 
@@ -109,6 +201,15 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       )
     });
   }, [append, fields.length]);
+
+  const handleRemoveItem = useCallback(
+    (index: number, level: string) => {
+      if (level.startsWith('e.')) {
+        remove(index);
+      }
+    },
+    [remove]
+  );
 
   return (
     <div className={'flex flex-col gap-2'}>
@@ -146,20 +247,24 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               <TableHead className="bg-appBlueLight text-appWhite w-[500px] items-center whitespace-nowrap border-r p-2">
                 Mô tả công việc mời thầu
               </TableHead>
+              <TableHead className="bg-appBlueLight text-appWhite w-[80px] items-center whitespace-nowrap border-r p-2 text-center">
+                Đơn vị
+              </TableHead>
               <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Khối lượng yêu cầu
               </TableHead>
               <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Ghi chú
               </TableHead>
+              <TableHead className="bg-appBlueLight text-appWhite w-[50px] items-center whitespace-nowrap border-r p-2 text-center">
+                Thao tác
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {fields.length ? (
-              _.chain(fields as unknown as TreeData<RequestDetailItem>[])
-                .sortBy('level')
-                .value()
-                .map((it: TreeData<RequestDetailItem>, index: number) => {
+              (fields as unknown as TreeData<RequestDetailItem>[]).map(
+                (it, index) => {
                   return (
                     <TableRow key={it.id} className="text-xs">
                       <TableCell className={'border-r px-2 py-1 text-center'}>
@@ -176,6 +281,9 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                       <TableCell className={'border-r px-2 py-1'}>
                         {it.title}
                       </TableCell>
+                      <TableCell className={'border-r px-2 py-1 text-center'}>
+                        {it.unit}
+                      </TableCell>
                       <TableCell className={'border-r p-1'}>
                         <Show when={it.children?.length === 0}>
                           <NumericField
@@ -189,12 +297,25 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                           <TextareaField
                             schema={schema}
                             name={`details[${index}].note`}
-                          ></TextareaField>
+                          />
+                        </Show>
+                      </TableCell>
+                      <TableCell className={'border-r p-1 text-center'}>
+                        <Show when={it.level.startsWith('e.')}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-destructive/20 h-6 w-6"
+                            onClick={() => handleRemoveItem(index, it.level)}
+                          >
+                            <TrashIcon className="text-destructive h-4 w-4" />
+                          </Button>
                         </Show>
                       </TableCell>
                     </TableRow>
                   );
-                })
+                }
+              )
             ) : (
               <TableRow>
                 <TableCell colSpan={6} className="text-center">
