@@ -37,9 +37,6 @@ export type RequestInputProps = {
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   const { control, setValue, watch, getValues } = useStoreoForm();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [volumeMap, setVolumeMap] = useState<
-    Record<string, { requestVolume: string }>
-  >({});
 
   const { fields, append, insert, remove } = useFieldArray({
     control,
@@ -68,35 +65,6 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   );
 
   useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (!name) return;
-
-      const nameString = name as string;
-      const detailIndex = nameString.split('.')[0];
-      const level = _.get(value, `${detailIndex}.level`);
-      const requestVolume = _.get(value, `${nameString}`);
-
-      if (!level) return;
-
-      setVolumeMap(prev => {
-        const newMap = { ...prev };
-
-        if (requestVolume === '') {
-          delete newMap[level];
-        } else {
-          newMap[level] = {
-            requestVolume
-          };
-        }
-
-        return newMap;
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
     fields.forEach((it, index) => {
       if ((it as any).children?.length) {
         setValue(`details[${index}].hasChild`, true);
@@ -120,7 +88,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               if (!value.length) return;
 
               const items = _.chain(value)
-                .map(it => ({ ...it, group: it.id, requestVolume: 0 }))
+                .map(it => ({ ...it, group: it.id }))
                 .value();
 
               setSelectedDetails(items);
@@ -137,6 +105,13 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                 )
                 .reverse();
 
+              itemsToRemove.forEach(({ item }) => {
+                if (!item.isNew && item.id) {
+                  const currentDeletedIds = getValues('deletedIds') || [];
+                  setValue('deletedIds', [...currentDeletedIds, item.id]);
+                }
+              });
+
               itemsToRemove.forEach(({ index }) => {
                 remove(index);
               });
@@ -152,14 +127,23 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                   field => compareVersion(field.level, item.level) > 0
                 );
 
+                const newItem = {
+                  ...item,
+                  requestVolume: 0,
+                  deliveryDate: undefined,
+                  index: undefined,
+                  note: undefined,
+                  isNew: true
+                };
+
                 if (insertIndex === -1) {
-                  append(item);
-                  updatedFields = [...updatedFields, item];
+                  append(newItem);
+                  updatedFields = [...updatedFields, newItem];
                 } else {
-                  insert(insertIndex, item);
+                  insert(insertIndex, newItem);
                   updatedFields = [
                     ...updatedFields.slice(0, insertIndex),
-                    item,
+                    newItem,
                     ...updatedFields.slice(insertIndex)
                   ];
                 }
@@ -183,6 +167,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
     selectedDetails,
     fields,
     setValue,
+    getValues,
     findIndexByLevel,
     append,
     insert,
@@ -197,11 +182,17 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
         <NewCustomRequestDetailForm
           onSubmit={values => {
             const newItem = {
+              id: `new-${fields.length}`,
               title: values.title,
               unit: values.unit,
               level: `e.${fields.length}`,
               group: `e.${fields.length}`,
-              children: []
+              children: [],
+              requestVolume: 0,
+              deliveryDate: undefined,
+              index: undefined,
+              note: undefined,
+              isNew: true
             };
 
             append(newItem);
@@ -224,10 +215,19 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
   const handleRemoveItem = useCallback(
     (index: number, level: string) => {
       if (level.startsWith('e.')) {
+        const itemToRemove = fields[
+          index
+        ] as unknown as TreeData<RequestDetailItem>;
+
+        if (!itemToRemove.isNew && itemToRemove.id) {
+          const currentDeletedIds = getValues('deletedIds') || [];
+          setValue('deletedIds', [...currentDeletedIds, itemToRemove.id]);
+        }
+
         remove(index);
       }
     },
-    [remove]
+    [fields, remove, setValue, getValues]
   );
 
   return (
