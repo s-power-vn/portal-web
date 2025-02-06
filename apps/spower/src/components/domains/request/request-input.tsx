@@ -11,6 +11,7 @@ import { useFieldArray } from 'react-hook-form';
 import { Show } from '@minhdtb/storeo-core';
 import {
   Button,
+  DatePickerField,
   NumericField,
   Table,
   TableBody,
@@ -275,6 +276,9 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
               <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Khối lượng yêu cầu
               </TableHead>
+              <TableHead className="bg-appBlueLight text-appWhite w-[150px] items-center whitespace-nowrap border-r p-2 text-center">
+                Ngày cấp
+              </TableHead>
               <TableHead className="bg-appBlueLight text-appWhite items-center whitespace-nowrap border-r p-2 text-center">
                 Ghi chú
               </TableHead>
@@ -311,6 +315,14 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                           <NumericField
                             schema={schema}
                             name={`details[${index}].requestVolume`}
+                          />
+                        </Show>
+                      </TableCell>
+                      <TableCell className={'border-r p-1'}>
+                        <Show when={it.children?.length === 0}>
+                          <DatePickerField
+                            schema={schema}
+                            name={`details[${index}].deliveryDate`}
                           />
                         </Show>
                       </TableCell>

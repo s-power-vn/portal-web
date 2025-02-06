@@ -38,6 +38,8 @@ const schema = object().shape({
       object().shape({
         id: string().optional(),
         index: string().optional(),
+        note: string().optional(),
+        deliveryDate: date().optional().nullable(),
         hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>

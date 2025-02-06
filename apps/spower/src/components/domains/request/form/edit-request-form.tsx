@@ -40,6 +40,8 @@ const schema = object({
       object().shape({
         id: string().optional(),
         index: string().optional(),
+        note: string().optional(),
+        deliveryDate: date().optional().nullable(),
         hasChild: boolean().optional(),
         requestVolume: number()
           .transform((_, originalValue) =>
@@ -129,7 +131,6 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
     <Form
       schema={schema}
       onSubmit={values => {
-        console.log(values.deletedIds);
         update.mutate({
           ...values,
           id: issueId,
@@ -141,7 +142,12 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
         title: issue.data?.title,
         startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
         endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
-        details: listDetails
+        details: listDetails.map(it => ({
+          ...it,
+          deliveryDate: it?.deliveryDate
+            ? new Date(Date.parse(it.deliveryDate ?? ''))
+            : undefined
+        }))
       }}
       className={'flex flex-col gap-4'}
       loading={issue.isPending || request.isPending}
