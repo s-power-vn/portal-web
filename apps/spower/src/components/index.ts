@@ -2,7 +2,6 @@ export * from './bread';
 export * from './checkbox';
 export * from './combobox';
 export * from './domains';
-export { Issue } from './domains/issue/issue';
 export * from './file';
 export * from './flow';
 export * from './header';
