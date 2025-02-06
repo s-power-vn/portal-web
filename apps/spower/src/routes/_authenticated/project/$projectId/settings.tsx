@@ -45,7 +45,7 @@ const Component = () => {
         }
         onCancel={() => router.history.back()}
         defaultValues={project.data}
-        loading={updateProject.isPending || project.isLoading}
+        loading={updateProject.isLoading || project.isLoading}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextareaField

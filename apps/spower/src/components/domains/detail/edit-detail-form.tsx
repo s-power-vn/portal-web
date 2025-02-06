@@ -2,7 +2,6 @@ import { api } from 'portal-api';
 import { number, object, string } from 'yup';
 
 import type { FC } from 'react';
-import React from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -58,7 +57,7 @@ export const EditDetailForm: FC<EditDetailFormProps> = props => {
       }
       onCancel={props.onCancel}
       defaultValues={detailById.data}
-      loading={updateDetail.isPending}
+      loading={updateDetail.isLoading}
       className={'flex flex-col gap-3'}
     >
       <TextField

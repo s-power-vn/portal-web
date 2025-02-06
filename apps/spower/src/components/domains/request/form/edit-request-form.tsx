@@ -150,7 +150,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
         }))
       }}
       className={'flex flex-col gap-4'}
-      loading={issue.isPending || request.isPending}
+      loading={issue.isLoading || request.isLoading}
       onCancel={onCancel}
     >
       <TextareaField schema={schema} name="title" title="Nội dung công việc" />

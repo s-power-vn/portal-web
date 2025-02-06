@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { CheckIcon, ChevronsUpDown, Loader } from 'lucide-react';
+import { CheckIcon, ChevronsUpDown, Loader, X } from 'lucide-react';
 
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
@@ -34,6 +34,7 @@ export type ComboboxProps = {
   onChange?: (value: string) => void;
   placeholder?: string;
   emptyText?: string;
+  searchHint?: string;
   queryKey: string[];
   queryFn: (params: { search?: string; page?: number }) => Promise<{
     items: ComboboxItem[];
@@ -42,22 +43,28 @@ export type ComboboxProps = {
   className?: string;
   showGroups?: boolean;
   align?: Align;
+  showClear?: boolean;
 };
 
 export function Combobox({
   value,
   onChange,
-  placeholder = 'Select an item...',
-  emptyText = 'No results found.',
+  placeholder = 'Chọn...',
+  emptyText = 'Không tìm thấy kết quả',
+  searchHint = 'Tìm kiếm...',
   queryKey,
   queryFn,
   className,
   showGroups = true,
+  showClear = true,
   align = 'start'
 }: ComboboxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
+  const [selectedItem, setSelectedItem] = React.useState<
+    ComboboxItem | undefined
+  >();
 
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
@@ -78,6 +85,16 @@ export function Combobox({
     [allItems]
   );
 
+  // Update selectedItem when value changes or when items are loaded
+  React.useEffect(() => {
+    if (value && allItems.length > 0) {
+      const found = allItems.find(it => it.value === value);
+      if (found) {
+        setSelectedItem(found);
+      }
+    }
+  }, [value, allItems]);
+
   const handleScroll = React.useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
@@ -92,6 +109,15 @@ export function Combobox({
     [fetchNextPage, hasNextPage, isFetching]
   );
 
+  const handleClear = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setSelectedItem(undefined);
+      onChange?.('');
+    },
+    [onChange]
+  );
+
   return (
     <div ref={containerRef} className={'flex-1'}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -102,16 +128,29 @@ export function Combobox({
             aria-expanded={open}
             className={cn(
               'relative w-full justify-between text-sm font-normal',
-              placeholder && !value ? 'text-muted-foreground' : 'text-appBlack',
+              selectedItem
+                ? 'text-appBlack font-medium'
+                : 'text-muted-foreground',
               className
             )}
           >
             <span className="!truncate">
-              {value
-                ? allItems.find(it => it.value == value)?.label
-                : placeholder}
+              {selectedItem?.label ?? placeholder}
             </span>
-            <ChevronsUpDown className="absolute right-2 ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <div className="absolute right-2 flex items-center gap-1">
+              {showClear && selectedItem && (
+                <div
+                  className={cn(
+                    `bg-appError flex h-4 w-4 items-center
+                   justify-center rounded-full p-0 text-white shadow`
+                  )}
+                  onClick={handleClear}
+                >
+                  <X className="h-2 w-2" />
+                </div>
+              )}
+              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+            </div>
           </ThemeButton>
         </PopoverTrigger>
         <PopoverContent
@@ -124,7 +163,7 @@ export function Combobox({
         >
           <Command shouldFilter={false}>
             <CommandInput
-              placeholder={'Tìm kiếm...'}
+              placeholder={searchHint}
               value={search}
               onValueChange={setSearch}
             />
@@ -145,13 +184,14 @@ export function Combobox({
                 _.keys(normalizedItems).map(key => {
                   return (
                     <React.Fragment key={key}>
-                      <CommandGroup heading={key}>
+                      <CommandGroup heading={showGroups ? key : undefined}>
                         {normalizedItems[key].map(it => {
                           return (
                             <CommandItem
                               key={it.value}
                               className={'hover:bg-appGrayLight'}
                               onSelect={() => {
+                                setSelectedItem(it);
                                 onChange?.(it.value);
                                 setOpen(false);
                               }}
@@ -168,7 +208,7 @@ export function Combobox({
                               <CheckIcon
                                 className={cn(
                                   'ml-auto h-4 w-4',
-                                  value === it.value
+                                  selectedItem?.value === it.value
                                     ? 'opacity-100'
                                     : 'opacity-0'
                                 )}

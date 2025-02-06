@@ -41,7 +41,7 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
       }
       onCancel={props.onCancel}
       defaultValues={supplierById.data}
-      loading={updateSupplier.isPending}
+      loading={updateSupplier.isLoading}
       className={'mt-4 flex flex-col gap-3'}
     >
       <TextField

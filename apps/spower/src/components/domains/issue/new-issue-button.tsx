@@ -19,7 +19,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { NewPriceRequestForm } from '../price/form/new-price-request-form';
+import { NewPriceForm } from '../price';
 import { NewRequestForm } from '../request/form/new-request-form';
 
 export type NewIssueButtonProps = {
@@ -67,7 +67,13 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
       description:
         'Tạo yêu cầu đơn giá mới. Cho phép chọn từ danh sách hạng mục',
       children: ({ close }) => {
-        return <NewPriceRequestForm projectId={projectId} onSuccess={close} />;
+        return (
+          <NewPriceForm
+            projectId={projectId}
+            onSuccess={close}
+            onCancel={close}
+          />
+        );
       }
     });
   }, [projectId]);

@@ -3,7 +3,6 @@ import type { DetailInfoResponse } from 'portal-core';
 import { number, object, string } from 'yup';
 
 import type { FC } from 'react';
-import React from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -67,7 +66,7 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
         unit: ''
       }}
       onCancel={props.onCancel}
-      loading={createDetail.isPending}
+      loading={createDetail.isLoading}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'level'} title={'ID (Mã công việc)'} />

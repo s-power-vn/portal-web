@@ -42,7 +42,7 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
       }
       onCancel={props.onCancel}
       defaultValues={materialById.data}
-      loading={updateMaterial.isPending}
+      loading={updateMaterial.isLoading}
       className={' flex flex-col gap-3'}
     >
       <TextField

@@ -1,5 +1,3 @@
-import { log } from 'console';
-import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
@@ -16,6 +14,7 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
       value={props.value}
       onChange={props.onChange}
       placeholder="Chọn nhân viên"
+      emptyText="Không tìm thấy nhân viên"
       queryKey={['employees']}
       queryFn={async ({ search }) => {
         const result = await api.employee.listByCondition.fetcher({

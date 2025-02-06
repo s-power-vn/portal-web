@@ -41,7 +41,7 @@ export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
       }
       onCancel={props.onCancel}
       defaultValues={customerById.data}
-      loading={updateCustomer.isPending}
+      loading={updateCustomer.isLoading}
       className={'flex flex-col gap-3'}
     >
       <TextField

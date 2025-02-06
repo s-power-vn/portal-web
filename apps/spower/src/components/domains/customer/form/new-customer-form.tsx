@@ -29,7 +29,7 @@ export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
       schema={schema}
       onSubmit={values => createCustomer.mutate(values)}
       onCancel={props.onCancel}
-      loading={createCustomer.isPending}
+      loading={createCustomer.isLoading}
       className={'flex flex-col gap-3'}
     >
       <TextField

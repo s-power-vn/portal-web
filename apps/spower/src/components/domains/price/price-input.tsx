@@ -7,7 +7,7 @@ import {
 import clsx from 'clsx';
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
-import { DetailResponse } from 'portal-core';
+import { cn } from 'portal-core';
 import { AnyObject, ObjectSchema } from 'yup';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -24,7 +24,8 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
-import { PickDetailInput } from '../detail/pick-detail-input';
+import { compareVersion } from '../../../commons/utils';
+import { PickRequestInput, RequestDetailItem } from '../request';
 
 // Convert interfaces to types
 type PriceInputData = {
@@ -172,7 +173,9 @@ export const PriceInput: FC<PriceInputProps> = ({
   const [internalData, setInternalData] = useState(() =>
     calculateTotals(toInternalData(data), suppliers)
   );
-  const [selectedDetails, setSelectedDetails] = useState<DetailResponse[]>([]);
+  const [selectedDetails, setSelectedDetails] = useState<RequestDetailItem[]>(
+    []
+  );
 
   useEffect(() => {
     setInternalData(calculateTotals(toInternalData(data), suppliers));
@@ -191,29 +194,25 @@ export const PriceInput: FC<PriceInputProps> = ({
     onChange?.(regularData);
   };
 
-  const handlePickDetails = useCallback(() => {
+  const handlePickRequest = useCallback(() => {
     if (projectId) {
       showModal({
-        title: 'Chọn hạng mục trong hợp đồng',
-        className: 'flex min-w-[600px] flex-col',
+        title: 'Chọn từ yêu cầu mua hàng',
         children: ({ close }) => (
-          <PickDetailInput
-            projectId={projectId}
-            value={selectedDetails}
+          <PickRequestInput
             onChange={value => {
               setSelectedDetails(value);
               const newItems = _.chain(value)
                 .filter(detail => {
-                  // Only pick items that have unit (leaf items)
                   if (!detail.unit) {
                     return false;
                   }
-                  // Check for duplicates
+
                   return !data.some(
                     existingItem => existingItem.code === detail.title
                   );
                 })
-                .sortBy('level')
+                .sort((a, b) => compareVersion(a.level, b.level))
                 .map(detail => ({
                   code: detail.title,
                   volume: 0,
@@ -240,7 +239,7 @@ export const PriceInput: FC<PriceInputProps> = ({
         )
       });
     }
-  }, [data, projectId, selectedDetails, suppliers]);
+  }, [projectId, data, suppliers]);
 
   const columns = [
     columnHelper.accessor('stt', {
@@ -478,21 +477,26 @@ export const PriceInput: FC<PriceInputProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between">
-        <Button
-          onClick={handlePickDetails}
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        >
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Chọn hạng mục trong HĐ
-        </Button>
-        <Button
-          onClick={addSupplier}
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        >
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Thêm nhà cung cấp
-        </Button>
+      <div className={'flex items-end justify-between'}>
+        <span className={'text-sm font-medium'}>Hạng mục công việc</span>
+        <div className={'flex gap-2'}>
+          <Button
+            className={'bg-green-500 text-sm hover:bg-orange-400'}
+            type={'button'}
+            onClick={addSupplier}
+          >
+            <PlusIcon className={'mr-2 h-4 w-4'} />
+            Thêm nhà cung cấp
+          </Button>
+          <Button
+            type={'button'}
+            className={cn('text-sm')}
+            onClick={handlePickRequest}
+          >
+            <PlusIcon className={'mr-2 h-4 w-4'} />
+            Chọn hạng mục từ yêu cầu mua hàng
+          </Button>
+        </div>
       </div>
 
       <div

@@ -1,19 +1,18 @@
-import { api } from 'portal-api';
-import { array, boolean, date, mixed, number, object, string } from 'yup';
+import { array, date, mixed, object, string } from 'yup';
 
 import type { FC } from 'react';
 
-import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
+  BusinessFormProps,
   DatePickerField,
   Form,
   TextField,
-  TextareaField,
-  success
+  TextareaField
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../../file/multiple-file-select-field';
-import { RequestInputField } from '../request-input-field';
+import { MultipleFileSelectField } from '../../../file';
+import { SelectFinishedRequest } from '../../request/select-finished-request';
+import { PriceInputField } from '../price-input-field';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
@@ -33,26 +32,10 @@ const schema = object().shape({
         return true;
       }
     }),
-  details: array()
+  data: array()
     .of(
       object().shape({
-        id: string().optional(),
-        index: string().optional(),
-        note: string().optional(),
-        deliveryDate: date().optional(),
-        hasChild: boolean().optional(),
-        requestVolume: number()
-          .transform((_, originalValue) =>
-            Number(originalValue?.toString().replace(/,/g, '.'))
-          )
-          .typeError('Hãy nhập khối lượng yêu cầu')
-          .when('hasChild', (hasChild, schema) => {
-            return hasChild[0]
-              ? schema
-              : schema
-                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
-                  .required('Hãy nhập khối lượng yêu cầu');
-          })
+        id: string().optional()
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
@@ -60,35 +43,26 @@ const schema = object().shape({
   attachments: mixed().optional()
 });
 
-export type NewRequestFormProps = BusinessFormProps & {
+export type NewPriceFormProps = BusinessFormProps & {
   projectId: string;
 };
 
-export const NewRequestForm: FC<NewRequestFormProps> = props => {
-  const createRequest = api.request.create.useMutation({
-    onSuccess: async () => {
-      success('Tạo yêu cầu mua hàng thành công');
-      props.onSuccess?.();
-    }
-  });
-
+export const NewPriceForm: FC<NewPriceFormProps> = ({
+  projectId,
+  onSuccess,
+  onCancel
+}) => {
   return (
     <Form
       schema={schema}
       defaultValues={{
         title: '',
         startDate: new Date(),
-        details: []
+        data: []
       }}
       className={'flex flex-col gap-4'}
-      loading={createRequest.isLoading}
-      onSubmit={values => {
-        return createRequest.mutate({
-          ...values,
-          project: props.projectId
-        });
-      }}
-      onCancel={props.onCancel}
+      onSubmit={values => {}}
+      onCancel={onCancel}
     >
       <TextareaField
         schema={schema}
@@ -125,10 +99,15 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
           }}
         />
       </div>
-      <RequestInputField
+      <SelectFinishedRequest
+        onChange={value => {
+          console.log(value);
+        }}
+      />
+      <PriceInputField
         schema={schema}
-        name={'details'}
-        options={{ projectId: props.projectId }}
+        name={'data'}
+        options={{ projectId: projectId }}
       />
       <MultipleFileSelectField
         schema={schema}

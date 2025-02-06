@@ -136,6 +136,10 @@
           {
             "id": "p6",
             "type": "left"
+          },
+          {
+            "id": "p7",
+            "type": "right"
           }
         ]
       },
@@ -154,6 +158,20 @@
           {
             "id": "p2",
             "type": "top"
+          }
+        ]
+      },
+      {
+        "id": "n7",
+        "name": "Hoàn thành",
+        "description": "",
+        "condition": "role = 3",
+        "x": 800,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "left"
           }
         ]
       }
@@ -296,6 +314,18 @@
         "to": {
           "node": "n5",
           "point": "p2"
+        }
+      },
+      {
+        "id": "n5-n7#1",
+        "action": "Hoàn thành",
+        "from": {
+          "node": "n5",
+          "point": "p7"
+        },
+        "to": {
+          "node": "n7",
+          "point": "p1"
         }
       }
     ]

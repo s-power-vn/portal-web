@@ -36,6 +36,44 @@ export type RequestData = RequestResponse & {
 };
 
 export const requestApi = router('request', {
+  listFinished: router.query({
+    fetcher: async ({
+      filter,
+      pageIndex,
+      pageSize
+    }: {
+      filter?: string;
+      pageIndex?: number;
+      pageSize?: number;
+    }) => {
+      return await client
+        .collection<RequestData>(Collections.Request)
+        .getList(pageIndex ?? 1, pageSize ?? 10, {
+          filter: `issue.status = "n5-n7#1" && issue.deleted = false && issue.title ~ "${filter ?? ''}"`,
+          sort: 'created',
+          expand:
+            'requestDetail_via_request.detail,' +
+            'issue.createdBy,' +
+            'issue.createdBy.department,' +
+            'issue.assignee,' +
+            'project'
+        });
+    }
+  }),
+  byId: router.query({
+    fetcher: async (requestId: string) => {
+      return await client
+        .collection<RequestData>(Collections.Request)
+        .getOne(requestId, {
+          expand:
+            'requestDetail_via_request.detail,' +
+            'issue.createdBy,' +
+            'issue.createdBy.department,' +
+            'issue.assignee,' +
+            'project'
+        });
+    }
+  }),
   byIssueId: router.query({
     fetcher: async (issueId: string) => {
       try {
@@ -44,8 +82,6 @@ export const requestApi = router('request', {
           .getFirstListItem(`issue = "${issueId}"`, {
             expand:
               'requestDetail_via_request.detail,' +
-              'contract_via_request.supplier,' +
-              'contract_via_request.contractItem_via_contract,' +
               'issue.createdBy,' +
               'issue.createdBy.department,' +
               'issue.assignee,' +

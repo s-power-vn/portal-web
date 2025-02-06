@@ -92,7 +92,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
       defaultValues={{
         ...employee.data
       }}
-      loading={updateEmployee.isPending}
+      loading={updateEmployee.isLoading}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
