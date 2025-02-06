@@ -61,7 +61,9 @@ export const requestApi = router('request', {
     }
   }),
   byId: router.query({
-    fetcher: async (requestId: string) => {
+    fetcher: async (requestId?: string) => {
+      if (!requestId) return null;
+
       return await client
         .collection<RequestData>(Collections.Request)
         .getOne(requestId, {

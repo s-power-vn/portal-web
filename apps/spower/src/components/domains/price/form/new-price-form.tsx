@@ -11,7 +11,6 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { MultipleFileSelectField } from '../../../file';
-import { SelectFinishedRequest } from '../../request/select-finished-request';
 import { PriceInputField } from '../price-input-field';
 
 const schema = object().shape({
@@ -99,11 +98,6 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
           }}
         />
       </div>
-      <SelectFinishedRequest
-        onChange={value => {
-          console.log(value);
-        }}
-      />
       <PriceInputField
         schema={schema}
         name={'data'}

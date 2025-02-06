@@ -55,10 +55,8 @@ const columnHelper = createColumnHelper<PriceData>();
 
 export type PriceInputProps = {
   initialData?: PriceInputData[];
-  suppliers?: string[];
+  initialSuppliers?: string[];
   onChange?: (data: PriceInputData[]) => void;
-  onAddSupplier?: (newSupplier: string) => void;
-  onRemoveSupplier?: (supplier: string) => void;
   projectId?: string;
   schema?: ObjectSchema<AnyObject>;
 };
@@ -163,13 +161,12 @@ const toInternalData = (data: PriceInputData[]): PriceData[] =>
 
 export const PriceInput: FC<PriceInputProps> = ({
   initialData = [],
-  suppliers,
+  initialSuppliers = [],
   onChange,
-  onAddSupplier,
-  onRemoveSupplier,
   projectId
 }) => {
   const [data, setData] = useState<PriceInputData[]>(initialData);
+  const [suppliers, setSuppliers] = useState<string[]>(initialSuppliers);
   const [internalData, setInternalData] = useState(() =>
     calculateTotals(toInternalData(data), suppliers)
   );
@@ -198,6 +195,7 @@ export const PriceInput: FC<PriceInputProps> = ({
     if (projectId) {
       showModal({
         title: 'Chọn từ yêu cầu mua hàng',
+        className: 'min-w-[800px]',
         children: ({ close }) => (
           <PickRequestInput
             onChange={value => {
@@ -431,8 +429,8 @@ export const PriceInput: FC<PriceInputProps> = ({
   const tableRef = useRef<HTMLDivElement>(null);
 
   const addSupplier = () => {
-    const newSupplier = `Nhà cung cấp ${(suppliers ?? []).length + 1}`;
-    onAddSupplier?.(newSupplier);
+    const newSupplier = `Nhà cung cấp ${suppliers.length + 1}`;
+    setSuppliers([...suppliers, newSupplier]);
 
     const newData = internalData.map(row => {
       if (row.isSubTotal || row.isVAT || row.isFinalTotal) {
@@ -473,6 +471,25 @@ export const PriceInput: FC<PriceInputProps> = ({
         block: 'nearest'
       });
     }, 100);
+  };
+
+  const removeSupplier = (supplierToRemove: string) => {
+    setSuppliers(suppliers.filter(s => s !== supplierToRemove));
+
+    const newData = internalData.map(row => {
+      const {
+        prices: { [supplierToRemove]: _, ...remainingPrices },
+        totals: { [supplierToRemove]: __, ...remainingTotals },
+        ...rest
+      } = row;
+      return {
+        ...rest,
+        prices: remainingPrices,
+        totals: remainingTotals
+      };
+    });
+
+    handleDataChange(newData);
   };
 
   return (
@@ -522,7 +539,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                 rowSpan={2}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
-                Mô tả công việc mới thầu
+                Mô tả công việc mời thầu
               </TableHead>
               <TableHead
                 rowSpan={2}
@@ -568,7 +585,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                       onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
-                        onRemoveSupplier?.(supplier);
+                        removeSupplier(supplier);
                       }}
                       className="text-red-300 hover:text-red-100"
                     >

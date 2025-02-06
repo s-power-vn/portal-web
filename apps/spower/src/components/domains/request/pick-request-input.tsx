@@ -46,8 +46,7 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const request = api.request.byId.useQuery({
-    variables: selectedRequestId,
-    enabled: selectedRequestId !== undefined
+    variables: selectedRequestId
   });
 
   const v = useMemo<RequestDetailItem[]>(() => {
@@ -77,8 +76,6 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
   const requestDetails = useMemo(() => {
     return arrayToTree(v, `${request.data?.project}-root`);
   }, [request.data?.project, v]);
-
-  console.log(requestDetails);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailItem>>();
 
@@ -148,6 +145,14 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
         size: 30
       }),
       columnHelper.display({
+        id: 'index',
+        cell: ({ row }) => (
+          <div className={'flex justify-center'}>{row.original.index}</div>
+        ),
+        header: () => 'STT',
+        size: 50
+      }),
+      columnHelper.display({
         id: 'title',
         cell: ({ row }) => row.original.title,
         header: () => 'Mô tả công việc mời thầu',
@@ -179,6 +184,14 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
         ),
         header: () => 'Ngày cấp',
         size: 100
+      }),
+      columnHelper.display({
+        id: 'note',
+        cell: ({ row }) => (
+          <div className={'flex justify-start'}>{row.original.note}</div>
+        ),
+        header: () => 'Ghi chú',
+        size: 150
       })
     ],
     [columnHelper, rowSelection, onChange, v]
@@ -202,6 +215,10 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
     manualPagination: true
   });
 
+  const hasSelectedItems =
+    table.getSelectedRowModel().flatRows.length > 0 ||
+    table.getRowModel().flatRows.some(row => row.getIsSomeSelected());
+
   return (
     <div className={'flex flex-col gap-2'}>
       <SelectFinishedRequest
@@ -213,76 +230,79 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
 
       <div
         className={
-          'border-appBlue h-[300px] overflow-auto rounded-md border pb-2'
+          'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
         }
       >
-        {request.isLoading ? (
-          <div className="flex h-full items-center justify-center">
-            <Loader2Icon className="h-6 w-6 animate-spin" />
+        {request.isLoading && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
+            <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
+              <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />
+              <span className="text-sm">Đang tải...</span>
+            </div>
           </div>
-        ) : (
-          <Table>
-            <TableHeader className={'sticky top-0 z-10'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
+        )}
+        <Table>
+          <TableHeader className={'sticky top-0 z-10'}>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id} className={'!border-b-0'}>
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: header.getSize()
+                    }}
+                    className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                      after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
+                      after:content-[''] last:after:border-r-0`}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow key={row.id} className="hover:bg-appGrayLight">
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell
+                      key={cell.id}
                       style={{
-                        width: header.getSize()
+                        width: cell.column.getSize()
                       }}
-                      className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
-                        after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
-                        after:content-[''] last:after:border-r-0`}
+                      className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                        after:border-r after:content-['']`}
                     >
                       {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                        cell.column.columnDef.cell,
+                        cell.getContext()
                       )}
-                    </TableHead>
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id} className="hover:bg-appGrayLight">
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize()
-                        }}
-                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                          after:border-r after:content-['']`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-16 text-center"
+                >
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       <div className={'mt-4'}>
         <Button
           type="submit"
+          disabled={!hasSelectedItems}
           onClick={() => {
             const selectedItems = _.uniqBy(
               [
