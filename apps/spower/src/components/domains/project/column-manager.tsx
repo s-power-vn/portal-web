@@ -25,7 +25,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { NewColumnForm } from './new-column-form';
+import { NewColumnForm } from './form/new-column-form';
 
 export type ColumnManagerProps = {
   projectId: string;

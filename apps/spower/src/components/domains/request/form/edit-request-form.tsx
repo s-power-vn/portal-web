@@ -13,9 +13,9 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { arrayToTree, compareVersion } from '../../../commons/utils';
-import { RequestDetailItem } from './request';
-import { RequestInputField } from './request-input-field';
+import { arrayToTree, compareVersion } from '../../../../commons/utils';
+import { RequestDetailItem } from '../request';
+import { RequestInputField } from '../request-input-field';
 
 const schema = object({
   title: string().required('Hãy nhập nội dung'),

@@ -1,5 +1,5 @@
 import { api } from 'portal-api';
-import { date, object, string } from 'yup';
+import { array, boolean, date, mixed, number, object, string } from 'yup';
 
 import type { FC } from 'react';
 
@@ -11,6 +11,9 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
+
+import { MultipleFileSelectField } from '../../../file/multiple-file-select-field';
+import { RequestInputField } from '../request-input-field';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
@@ -29,21 +32,40 @@ const schema = object().shape({
         }
         return true;
       }
-    })
+    }),
+  details: array()
+    .of(
+      object().shape({
+        id: string().optional(),
+        index: string().optional(),
+        hasChild: boolean().optional(),
+        requestVolume: number()
+          .transform((_, originalValue) =>
+            Number(originalValue?.toString().replace(/,/g, '.'))
+          )
+          .typeError('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            return hasChild[0]
+              ? schema
+              : schema
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                  .required('Hãy nhập khối lượng yêu cầu');
+          })
+      })
+    )
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
+    .required('Hãy chọn ít nhất 1 hạng mục'),
+  attachments: mixed().optional()
 });
 
-export type EditIssueFormProps = BusinessFormProps & {
-  issueId: string;
+export type NewRequestFormProps = BusinessFormProps & {
+  projectId: string;
 };
 
-export const EditIssueForm: FC<EditIssueFormProps> = props => {
-  const issue = api.issue.byId.useSuspenseQuery({
-    variables: props.issueId
-  });
-
-  const updateIssue = api.issue.update.useMutation({
+export const NewRequestForm: FC<NewRequestFormProps> = props => {
+  const createRequest = api.request.create.useMutation({
     onSuccess: async () => {
-      success('Cập nhật thành công');
+      success('Tạo yêu cầu mua hàng thành công');
       props.onSuccess?.();
     }
   });
@@ -52,19 +74,16 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
     <Form
       schema={schema}
       defaultValues={{
-        code: issue.data?.code,
-        title: issue.data?.title,
-        startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
-        endDate: new Date(Date.parse(issue.data?.endDate ?? ''))
+        title: '',
+        startDate: new Date(),
+        details: []
       }}
       className={'flex flex-col gap-4'}
-      loading={updateIssue.isPending}
+      loading={createRequest.isPending}
       onSubmit={values => {
-        return updateIssue.mutate({
+        return createRequest.mutate({
           ...values,
-          issueId: props.issueId,
-          startDate: values.startDate.toISOString(),
-          endDate: values.endDate.toISOString()
+          project: props.projectId
         });
       }}
       onCancel={props.onCancel}
@@ -74,7 +93,7 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
         name={'title'}
         title={'Nội dung công việc'}
       />
-      <div className={'flex items-center gap-2'}>
+      <div className={'flex items-start gap-2'}>
         <TextField
           schema={schema}
           name={'code'}
@@ -104,6 +123,16 @@ export const EditIssueForm: FC<EditIssueFormProps> = props => {
           }}
         />
       </div>
+      <RequestInputField
+        schema={schema}
+        name={'details'}
+        options={{ projectId: props.projectId }}
+      />
+      <MultipleFileSelectField
+        schema={schema}
+        name={'attachments'}
+        title={'File đính kèm'}
+      />
     </Form>
   );
 };

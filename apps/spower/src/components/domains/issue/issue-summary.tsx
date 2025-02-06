@@ -25,7 +25,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { EditRequestForm } from '../request/edit-request-form';
+import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';
 

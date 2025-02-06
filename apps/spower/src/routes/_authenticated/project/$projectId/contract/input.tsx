@@ -64,7 +64,7 @@ import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
 import { EditDetailForm } from '../../../../../components/domains/detail/edit-detail-form';
 import { NewDetailForm } from '../../../../../components/domains/detail/new-detail-form';
 import { ColumnManager } from '../../../../../components/domains/project/column-manager';
-import { NewColumnForm } from '../../../../../components/domains/project/new-column-form';
+import { NewColumnForm } from '../../../../../components/domains/project/form/new-column-form';
 import {
   useDetailImportStatus,
   useInvalidateQueries

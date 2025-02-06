@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 
-import type { PriceInputData } from './price-input';
-import { PriceInput } from './price-input';
+import type { PriceInputData } from '../price-input';
+import { PriceInput } from '../price-input';
 
 const defaultData: PriceInputData[] = [
   {

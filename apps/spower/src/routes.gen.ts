@@ -14,7 +14,6 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProjectImport } from './routes/_authenticated/project'
 import { Route as AuthenticatedNotificationImport } from './routes/_authenticated/notification'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
@@ -70,12 +69,6 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any)
-
-const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
@@ -381,13 +374,6 @@ declare module '@tanstack/react-router' {
       path: '/project'
       fullPath: '/project'
       preLoaderRoute: typeof AuthenticatedProjectImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/general/customers': {
@@ -863,7 +849,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedNotificationRoute: typeof AuthenticatedNotificationRoute
   AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
 }
 
@@ -872,7 +857,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedNotificationRoute: AuthenticatedNotificationRoute,
   AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
 }
 
@@ -888,7 +872,6 @@ export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedHomeRoute
   '/notification': typeof AuthenticatedNotificationRoute
   '/project': typeof AuthenticatedProjectRouteWithChildren
-  '/settings': typeof AuthenticatedSettingsRoute
   '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
   '/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
@@ -930,7 +913,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
   '/notification': typeof AuthenticatedNotificationRoute
-  '/settings': typeof AuthenticatedSettingsRoute
   '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
   '/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
@@ -969,7 +951,6 @@ export interface FileRoutesById {
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/notification': typeof AuthenticatedNotificationRoute
   '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/_authenticated/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
   '/_authenticated/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
@@ -1015,7 +996,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/notification'
     | '/project'
-    | '/settings'
     | '/general/customers'
     | '/general/employees'
     | '/general/materials'
@@ -1056,7 +1036,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/notification'
-    | '/settings'
     | '/general/customers'
     | '/general/employees'
     | '/general/materials'
@@ -1093,7 +1072,6 @@ export interface FileRouteTypes {
     | '/_authenticated/home'
     | '/_authenticated/notification'
     | '/_authenticated/project'
-    | '/_authenticated/settings'
     | '/_authenticated/general/customers'
     | '/_authenticated/general/employees'
     | '/_authenticated/general/materials'
@@ -1167,7 +1145,6 @@ export const routeTree = rootRoute
         "/_authenticated/home",
         "/_authenticated/notification",
         "/_authenticated/project",
-        "/_authenticated/settings",
         "/_authenticated/user/profile"
       ]
     },
@@ -1200,10 +1177,6 @@ export const routeTree = rootRoute
         "/_authenticated/project/$projectId",
         "/_authenticated/project/"
       ]
-    },
-    "/_authenticated/settings": {
-      "filePath": "_authenticated/settings.tsx",
-      "parent": "/_authenticated"
     },
     "/_authenticated/general/customers": {
       "filePath": "_authenticated/general/customers.tsx",

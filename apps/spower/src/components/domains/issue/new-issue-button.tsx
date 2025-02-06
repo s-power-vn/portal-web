@@ -19,8 +19,8 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { NewPriceRequestForm } from '../price/new-price-request-form';
-import { NewRequestForm } from '../request/new-request-form';
+import { NewPriceRequestForm } from '../price/form/new-price-request-form';
+import { NewRequestForm } from '../request/form/new-request-form';
 
 export type NewIssueButtonProps = {
   projectId: string;

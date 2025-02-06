@@ -24,7 +24,7 @@ import {
   SidebarItem,
   useSidebar
 } from '../components';
-import { NewProjectForm } from '../components/domains/project/new-project-form';
+import { NewProjectForm } from '../components/domains/project/form/new-project-form';
 import { useInvalidateQueries } from '../hooks';
 
 const SidebarHeader = () => {

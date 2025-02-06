@@ -6,7 +6,7 @@ import type { FC } from 'react';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
-import { SelectEmployeeByConditionField } from './select-employee-by-condition-field';
+import { SelectEmployeeByConditionField } from '../../employee/select-employee-by-condition-field';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),

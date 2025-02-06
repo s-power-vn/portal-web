@@ -9,7 +9,7 @@ import type { FC } from 'react';
 
 import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
 
-import { Request } from '../request/request';
+import { Request } from '../request';
 import { IssueAction } from './issue-action';
 import { IssueComment } from './issue-comment';
 import { IssueSummary } from './issue-summary';

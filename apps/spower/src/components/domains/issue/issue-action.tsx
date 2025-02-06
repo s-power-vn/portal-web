@@ -9,8 +9,7 @@ import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
 import { extractStatus, getFromFlows, getNode } from '../../flow';
-import { ForwardIssueForm } from './forward-issue-form';
-import { ReturnIssueForm } from './return-issue-form';
+import { ForwardIssueForm, ReturnIssueForm } from './form';
 
 export type IssueActionProps = {
   issueId: string;

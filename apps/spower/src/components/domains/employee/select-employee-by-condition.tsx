@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
