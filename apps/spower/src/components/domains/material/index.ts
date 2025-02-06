@@ -1,2 +1,2 @@
-export * from './edit-material-form';
-export * from './new-material-form';
+export * from './form/edit-material-form';
+export * from './form/new-material-form';

@@ -15,7 +15,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { ImageSelectField } from '../../image/image-select-field';
+import { ImageSelectField } from '../../../image/image-select-field';
 import { ChangePasswordForm } from './change-password-form';
 
 const schema = object().shape({

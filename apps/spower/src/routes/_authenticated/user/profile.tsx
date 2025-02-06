@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { PageHeader } from '../../../components';
-import { EditProfileForm } from '../../../components/domains/user/edit-profile-form';
+import { EditProfileForm } from '../../../components/domains/user/form/edit-profile-form';
 
 export const Route = createFileRoute('/_authenticated/user/profile')({
   component: () => (

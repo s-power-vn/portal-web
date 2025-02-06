@@ -2,6 +2,7 @@
     "eslint.format.enable": true,
     "prettier.configPath": ".prettierrc",
     "editor.formatOnSave": true,
+    "workbench.tree.indent": 12,
     "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
         "source.fixAll": "explicit",

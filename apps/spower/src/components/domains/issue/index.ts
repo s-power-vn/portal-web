@@ -1,5 +1,5 @@
-export * from './form';
-export * from './issue';
+export * from './form/forward-issue-form';
+export * from './form/return-issue-form';
 export * from './issue-action';
 export * from './issue-comment';
 export * from './issue-deadline-status';

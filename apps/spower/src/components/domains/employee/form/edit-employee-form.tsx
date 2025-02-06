@@ -8,8 +8,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
-import { DepartmentDropdownField } from '../department/department-dropdown-field';
-import { RoleDropdownField } from '../role/role-dropdown-field';
+import { DepartmentDropdownField } from '../../department';
+import { RoleDropdownField } from '../../role/role-dropdown-field';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),
