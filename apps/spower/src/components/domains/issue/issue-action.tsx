@@ -7,9 +7,9 @@ import { useCallback, useMemo } from 'react';
 import { For, Show } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
+import { ForwardIssueForm, ReturnIssueForm } from '.';
 import { useInvalidateQueries } from '../../../hooks';
 import { extractStatus, getFromFlows, getNode } from '../../flow';
-import { ForwardIssueForm, ReturnIssueForm } from './form';
 
 export type IssueActionProps = {
   issueId: string;
