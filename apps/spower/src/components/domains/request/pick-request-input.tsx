@@ -119,6 +119,14 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
         ),
         size: 40
       }),
+      columnHelper.display({
+        id: 'index',
+        cell: ({ row }) => (
+          <div className={'flex justify-center'}>{row.original.index}</div>
+        ),
+        header: () => 'STT',
+        size: 50
+      }),
       columnHelper.accessor('id', {
         cell: ({ row }) => {
           return (
@@ -145,13 +153,14 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
         size: 30
       }),
       columnHelper.display({
-        id: 'index',
+        id: 'level',
         cell: ({ row }) => (
-          <div className={'flex justify-center'}>{row.original.index}</div>
+          <div className={'flex justify-start'}>{row.original.level}</div>
         ),
-        header: () => 'STT',
-        size: 50
+        header: () => 'ID',
+        size: 100
       }),
+
       columnHelper.display({
         id: 'title',
         cell: ({ row }) => row.original.title,

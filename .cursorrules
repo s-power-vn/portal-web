@@ -37,7 +37,13 @@ libs/
 - React component template should be like this:
 
 ```tsx
-const Component: FC<ComponentProps> = ({ prop }) => {
+import { FC } from 'react';
+
+export type ComponentProps = {
+  prop: string;
+};
+
+export const Component: FC<ComponentProps> = props => {
   return <div>Component</div>;
 };
 ```

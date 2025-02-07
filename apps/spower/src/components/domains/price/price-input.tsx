@@ -518,7 +518,7 @@ export const PriceInput: FC<PriceInputProps> = ({
 
       <div
         ref={tableRef}
-        className="border-appBlue h-[25rem] overflow-auto rounded-md border"
+        className="border-appBlue h-[20rem] overflow-auto rounded-md border"
       >
         <Table>
           <TableHeader className="bg-appBlueLight sticky top-0 z-10">
