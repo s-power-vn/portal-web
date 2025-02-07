@@ -13,7 +13,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../commons/utils';
+import { TreeData } from '../../../../commons/utils';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),
@@ -56,8 +56,8 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
       onSubmit={values =>
         createDetail.mutate({
           ...values,
-          projectId: props.projectId,
-          parentId: props.parent?.group
+          project: props.projectId,
+          parent: props.parent?.group
         })
       }
       defaultValues={{
@@ -66,7 +66,7 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
         unit: ''
       }}
       onCancel={props.onCancel}
-      loading={createDetail.isLoading}
+      loading={createDetail.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'level'} title={'ID (Mã công việc)'} />

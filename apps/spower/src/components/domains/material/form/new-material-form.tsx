@@ -36,7 +36,7 @@ export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
         unit: '',
         note: ''
       }}
-      loading={createMaterial.isLoading}
+      loading={createMaterial.isPending}
       className={'mt-4 flex flex-col gap-3'}
     >
       <TextField

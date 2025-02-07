@@ -52,12 +52,13 @@ export const EditDetailForm: FC<EditDetailFormProps> = props => {
       onSubmit={values =>
         updateDetail.mutate({
           ...values,
-          id: props.detailId
+          id: props.detailId,
+          project: detailById.data?.project
         })
       }
       onCancel={props.onCancel}
       defaultValues={detailById.data}
-      loading={updateDetail.isLoading}
+      loading={updateDetail.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField

@@ -34,7 +34,7 @@ export const NewProjectForm: FC<NewProjectFormProps> = props => {
         customer: ''
       }}
       onCancel={props.onCancel}
-      loading={createProject.isLoading}
+      loading={createProject.isPending}
       className={'flex w-[480px] flex-col gap-3'}
     >
       <TextField

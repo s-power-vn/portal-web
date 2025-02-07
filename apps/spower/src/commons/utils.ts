@@ -111,6 +111,10 @@ export function getCommonPinningStyles<T>(column: Column<T>): CSSProperties {
 }
 
 export function compareVersion(v1: string, v2: string): number {
+  if (!v1 || !v2) {
+    throw new Error('Version strings cannot be empty');
+  }
+
   // Validate version format using regex - allow numbers and single letters
   const isValidVersion = (v: string) => /^[a-zA-Z\d]+(\.[a-zA-Z\d]+)*$/.test(v);
 

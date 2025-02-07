@@ -46,6 +46,7 @@ export const ChangePasswordForm: FC<ChangePasswordFormProps> = props => {
           id: client.authStore.model?.id
         })
       }
+      loading={changePassword.isPending}
     >
       <TextField
         schema={schema}

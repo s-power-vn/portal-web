@@ -105,7 +105,7 @@ export function useSidebar() {
   const ctx = useContext(SidebarContext);
 
   if (!ctx) {
-    throw new Error('useToast must be used within a ToastProvider');
+    throw new Error('useSidebar must be used within a SidebarProvider');
   }
 
   return ctx;

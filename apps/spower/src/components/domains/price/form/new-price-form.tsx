@@ -60,7 +60,7 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
         data: []
       }}
       className={'flex flex-col gap-4'}
-      onSubmit={values => {}}
+      onSubmit={data => {}}
       onCancel={onCancel}
     >
       <TextareaField

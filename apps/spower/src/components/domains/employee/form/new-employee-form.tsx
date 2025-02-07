@@ -90,7 +90,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         department: '',
         phone: ''
       }}
-      loading={createEmployee.isLoading}
+      loading={createEmployee.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />

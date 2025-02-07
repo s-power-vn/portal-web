@@ -60,11 +60,14 @@ import {
   compareVersion,
   getCommonPinningStyles
 } from '../../../../../commons/utils';
-import { ADMIN_ID, IndeterminateCheckbox } from '../../../../../components';
-import { EditDetailForm } from '../../../../../components/domains/detail/edit-detail-form';
-import { NewDetailForm } from '../../../../../components/domains/detail/new-detail-form';
-import { ColumnManager } from '../../../../../components/domains/project/column-manager';
-import { NewColumnForm } from '../../../../../components/domains/project/form/new-column-form';
+import {
+  ADMIN_ID,
+  ColumnManager,
+  EditDetailForm,
+  IndeterminateCheckbox,
+  NewColumnForm,
+  NewDetailForm
+} from '../../../../../components';
 import {
   useDetailImportStatus,
   useInvalidateQueries
@@ -140,13 +143,15 @@ const Component = () => {
         <NewDetailForm
           projectId={projectId}
           onSuccess={() => {
+            invalidates([
+              api.detail.listFull.getKey(projectId),
+              api.detailInfo.listFull.getKey(projectId)
+            ]);
+
             if (selectedRow) {
-              invalidates([
-                api.detail.listFull.getKey(projectId),
-                api.detailInfo.listFull.getKey(projectId),
-                api.detail.byId.getKey(selectedRow.original.group)
-              ]);
+              invalidates([api.detail.byId.getKey(selectedRow.original.group)]);
             }
+
             close();
           }}
           onCancel={close}
@@ -164,13 +169,17 @@ const Component = () => {
             projectId={projectId}
             parent={selectedRow.original}
             onSuccess={() => {
+              invalidates([
+                api.detail.listFull.getKey(projectId),
+                api.detailInfo.listFull.getKey(projectId)
+              ]);
+
               if (selectedRow) {
                 invalidates([
-                  api.detail.listFull.getKey(projectId),
-                  api.detailInfo.listFull.getKey(projectId),
                   api.detail.byId.getKey(selectedRow.original.group)
                 ]);
               }
+
               close();
             }}
             onCancel={close}

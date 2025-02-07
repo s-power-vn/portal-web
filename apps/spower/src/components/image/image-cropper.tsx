@@ -14,6 +14,10 @@ function getCroppedImage(
   fileName: string,
   type: string
 ): Promise<File | undefined> {
+  if (!image || !crop || !fileName || !type) {
+    throw new Error('Missing required parameters for image cropping');
+  }
+
   const canvas = document.createElement('canvas');
   const scaleX = image.naturalWidth / image.width;
   const scaleY = image.naturalHeight / image.height;
@@ -21,7 +25,11 @@ function getCroppedImage(
   canvas.height = crop.height;
   const ctx = canvas.getContext('2d');
 
-  ctx?.drawImage(
+  if (!ctx) {
+    throw new Error('Failed to get canvas context');
+  }
+
+  ctx.drawImage(
     image,
     crop.x * scaleX,
     crop.y * scaleY,
@@ -37,7 +45,8 @@ function getCroppedImage(
     try {
       canvas.toBlob(blob => {
         if (!blob) {
-          return resolve(undefined);
+          reject(new Error('Failed to create image blob'));
+          return;
         }
         const file = new File([blob], fileName, {
           lastModified: new Date().getMilliseconds(),

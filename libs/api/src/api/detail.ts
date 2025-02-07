@@ -20,15 +20,11 @@ export const detailApi = router('detail', {
     fetcher: (id: string) => client.collection(Collections.Detail).getOne(id)
   }),
   create: router.mutation({
-    mutationFn: (
-      params: DetailRecord & { projectId: string; parentId?: string }
-    ) => {
-      const parent = params.parentId
-        ? params.parentId
-        : `${params.projectId}-root`;
+    mutationFn: (params: DetailRecord) => {
+      const parent = params.parent ? params.parent : `${params.project}-root`;
       return client.collection(Collections.Detail).create({
         ...params,
-        project: params.projectId,
+        project: params.project,
         parent
       });
     }

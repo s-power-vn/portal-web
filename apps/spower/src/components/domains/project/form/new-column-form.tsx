@@ -77,7 +77,7 @@ export const NewColumnForm: FC<NewColumnFormProps> = props => {
         type: ''
       }}
       onCancel={props.onCancel}
-      loading={addColumn.isLoading}
+      loading={addColumn.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField

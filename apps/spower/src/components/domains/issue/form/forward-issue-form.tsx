@@ -46,7 +46,7 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
         status: props.status
       }}
       onCancel={props.onCancel}
-      loading={forwardIssue.isLoading}
+      loading={forwardIssue.isPending}
     >
       <SelectEmployeeByConditionField
         schema={schema}

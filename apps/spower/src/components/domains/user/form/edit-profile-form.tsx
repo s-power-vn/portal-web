@@ -51,6 +51,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
     <Form
       schema={schema}
       className={'flex flex-col gap-3'}
+      loading={updateProfile.isPending}
       defaultValues={{
         name: user?.name,
         email: user?.email,

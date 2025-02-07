@@ -81,7 +81,7 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
         details: []
       }}
       className={'flex flex-col gap-4'}
-      loading={createRequest.isLoading}
+      loading={createRequest.isPending}
       onSubmit={values => {
         return createRequest.mutate({
           ...values,

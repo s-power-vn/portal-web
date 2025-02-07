@@ -41,7 +41,7 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
         });
       }}
       onCancel={props.onCancel}
-      loading={returnIssue.isLoading}
+      loading={returnIssue.isPending}
     >
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
     </Form>
