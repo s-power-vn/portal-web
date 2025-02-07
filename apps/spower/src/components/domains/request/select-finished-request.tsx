@@ -5,12 +5,14 @@ import { FC } from 'react';
 import { Combobox } from '../../combobox';
 
 export type SelectFinishedRequestProps = {
+  projectId?: string;
   value?: string;
   onChange?: (value: string) => void;
   className?: string;
 };
 
 export const SelectFinishedRequest: FC<SelectFinishedRequestProps> = ({
+  projectId,
   value,
   onChange,
   className
@@ -24,6 +26,7 @@ export const SelectFinishedRequest: FC<SelectFinishedRequestProps> = ({
       queryKey={['request-finished']}
       queryFn={async ({ search, page }) => {
         const result = await api.request.listFinished.fetcher({
+          projectId: projectId ?? '',
           filter: search,
           pageIndex: page,
           pageSize: 10

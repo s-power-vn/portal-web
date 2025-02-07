@@ -31,13 +31,15 @@ import { RequestDetailItem } from './request';
 import { SelectFinishedRequest } from './select-finished-request';
 
 export type PickRequestInputProps = {
+  projectId: string;
   value?: RequestDetailItem[];
   onChange?: (value: RequestDetailItem[]) => void;
 };
 
 export const PickRequestInput: FC<PickRequestInputProps> = ({
   value,
-  onChange
+  onChange,
+  projectId
 }) => {
   const [selectedRequestId, setSelectedRequestId] = useState<
     string | undefined
@@ -231,6 +233,7 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
   return (
     <div className={'flex flex-col gap-2'}>
       <SelectFinishedRequest
+        projectId={projectId}
         onChange={value => {
           setSelectedRequestId(value);
           setRowSelection({});

@@ -38,10 +38,12 @@ export type RequestData = RequestResponse & {
 export const requestApi = router('request', {
   listFinished: router.query({
     fetcher: async ({
+      projectId,
       filter,
       pageIndex,
       pageSize
     }: {
+      projectId: string;
       filter?: string;
       pageIndex?: number;
       pageSize?: number;
@@ -49,7 +51,7 @@ export const requestApi = router('request', {
       return await client
         .collection<RequestData>(Collections.Request)
         .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter: `issue.status = "n5-n7#1" && issue.deleted = false && issue.title ~ "${filter ?? ''}"`,
+          filter: `issue.status = "n5-n7#1" && issue.deleted = false && issue.title ~ "${filter ?? ''}" && project = "${projectId}"`,
           sort: 'created',
           expand:
             'requestDetail_via_request.detail,' +

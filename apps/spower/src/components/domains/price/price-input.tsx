@@ -198,6 +198,7 @@ export const PriceInput: FC<PriceInputProps> = ({
         className: 'min-w-[800px]',
         children: ({ close }) => (
           <PickRequestInput
+            projectId={projectId}
             onChange={value => {
               setSelectedDetails(value);
               const newItems = _.chain(value)
