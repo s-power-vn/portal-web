@@ -10,12 +10,12 @@ import {
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import { Loader2Icon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
+import { api } from 'portal-api';
 
 import { FC, useMemo, useState } from 'react';
 
 import { formatDate, formatNumber } from '@minhdtb/storeo-core';
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -24,14 +24,13 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import { api } from '../../../../../../libs/api/src/api';
-import { TreeData, arrayToTree } from '../../../commons/utils';
-import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
-import { RequestDetailItem } from './request';
+import { TreeData, arrayToTree } from '../../../../commons/utils';
+import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
+import { RequestDetailItem } from '../request';
 import { SelectFinishedRequest } from './select-finished-request';
 
 export type PickRequestInputProps = {
-  projectId: string;
+  projectId?: string;
   value?: RequestDetailItem[];
   onChange?: (value: RequestDetailItem[]) => void;
 };
@@ -217,7 +216,22 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
     },
     enableRowSelection: true,
     enableMultiRowSelection: true,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: updatedSelection => {
+      setRowSelection(updatedSelection);
+
+      // Get selected items and call onChange
+      const selectedItems = _.uniqBy(
+        [
+          ...table
+            .getRowModel()
+            .flatRows.filter(row => row.getIsSomeSelected())
+            .map(it => it.original),
+          ...table.getSelectedRowModel().flatRows.map(item => item.original)
+        ],
+        'id'
+      );
+      onChange?.(selectedItems);
+    },
     onExpandedChange: setExpanded,
     getSubRows: row => row.children,
     getCoreRowModel: getCoreRowModel(),
@@ -226,113 +240,92 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
     manualPagination: true
   });
 
-  const hasSelectedItems =
-    table.getSelectedRowModel().flatRows.length > 0 ||
-    table.getRowModel().flatRows.some(row => row.getIsSomeSelected());
-
   return (
     <div className={'flex flex-col gap-2'}>
-      <SelectFinishedRequest
-        projectId={projectId}
-        onChange={value => {
-          setSelectedRequestId(value);
-          setRowSelection({});
-        }}
-      />
-
-      <div
-        className={
-          'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
-        }
-      >
-        {request.isLoading && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
-            <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
-              <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />
-              <span className="text-sm">Đang tải...</span>
+      <div className={'flex flex-col'}>
+        <span className={'text-sm font-medium'}>
+          Yêu cầu mua hàng đã hoàn thành
+        </span>
+        <SelectFinishedRequest
+          projectId={projectId}
+          onChange={value => {
+            setSelectedRequestId(value);
+            setRowSelection({});
+          }}
+        />
+      </div>
+      <div className={'flex flex-col'}>
+        <span className={'text-sm font-medium'}>Danh sách công việc</span>
+        <div
+          className={
+            'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
+          }
+        >
+          {request.isLoading && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
+              <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
+                <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />
+                <span className="text-sm">Đang tải...</span>
+              </div>
             </div>
-          </div>
-        )}
-        <Table>
-          <TableHeader className={'sticky top-0 z-10'}>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    style={{
-                      width: header.getSize()
-                    }}
-                    className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+          )}
+          <Table>
+            <TableHeader className={'sticky top-0 z-10'}>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className={'!border-b-0'}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      style={{
+                        width: header.getSize()
+                      }}
+                      className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
                       after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
                       after:content-[''] last:after:border-r-0`}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className="hover:bg-appGrayLight">
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        width: cell.column.getSize()
-                      }}
-                      className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                        after:border-r after:content-['']`}
                     >
                       {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                        header.column.columnDef.header,
+                        header.getContext()
                       )}
-                    </TableCell>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 text-center"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className={'mt-4'}>
-        <Button
-          type="submit"
-          disabled={!hasSelectedItems}
-          onClick={() => {
-            const selectedItems = _.uniqBy(
-              [
-                ...table
-                  .getRowModel()
-                  .flatRows.filter(row => row.getIsSomeSelected())
-                  .map(it => it.original),
-                ...table
-                  .getSelectedRowModel()
-                  .flatRows.map(item => item.original)
-              ],
-              'id'
-            );
-            onChange?.(selectedItems);
-          }}
-        >
-          Chấp nhận
-        </Button>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id} className="hover:bg-appGrayLight">
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
+                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                        after:border-r after:content-['']`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

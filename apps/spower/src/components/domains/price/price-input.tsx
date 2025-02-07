@@ -33,6 +33,8 @@ type PriceInputData = {
   volume: number;
   unit: string;
   estimate: number | '';
+  level?: string;
+  index?: string;
   prices: {
     [key: string]: number | '';
   };
@@ -217,6 +219,8 @@ export const PriceInput: FC<PriceInputProps> = ({
                   volume: 0,
                   unit: detail.unit || '',
                   estimate: 0,
+                  level: detail.level,
+                  index: detail.index,
                   prices: suppliers
                     ? suppliers.reduce(
                         (acc, supplier) => ({
@@ -241,21 +245,6 @@ export const PriceInput: FC<PriceInputProps> = ({
   }, [projectId, data, suppliers]);
 
   const columns = [
-    columnHelper.accessor('stt', {
-      header: () => (
-        <div className="flex h-full items-center justify-center p-1">STT</div>
-      ),
-      cell: info => {
-        if (
-          info.row.original.isSubTotal ||
-          info.row.original.isVAT ||
-          info.row.original.isFinalTotal
-        ) {
-          return '';
-        }
-        return <span>{info.getValue()}</span>;
-      }
-    }),
     columnHelper.display({
       id: 'actions',
       header: () => <div className="p-1"></div>,
@@ -283,11 +272,44 @@ export const PriceInput: FC<PriceInputProps> = ({
             <TrashIcon className="h-4 w-4" />
           </Button>
         );
-      }
+      },
+      size: 50
+    }),
+    columnHelper.accessor('level', {
+      header: () => <div className="p-1 text-center">ID</div>,
+      cell: info => {
+        if (
+          info.row.original.isSubTotal ||
+          info.row.original.isVAT ||
+          info.row.original.isFinalTotal
+        ) {
+          return '';
+        }
+        return <span className="text-center">{info.getValue()}</span>;
+      },
+      size: 50
+    }),
+    columnHelper.accessor('index', {
+      header: () => (
+        <div className="flex h-full items-center justify-center p-1">STT</div>
+      ),
+      cell: info => {
+        if (
+          info.row.original.isSubTotal ||
+          info.row.original.isVAT ||
+          info.row.original.isFinalTotal
+        ) {
+          return '';
+        }
+        const value = info.getValue();
+        return <span className="block text-center">{value || ''}</span>;
+      },
+      size: 80
     }),
     columnHelper.accessor('code', {
       header: () => <div className="p-1">Mô tả công việc mới thầu</div>,
-      cell: info => info.getValue()
+      cell: info => info.getValue(),
+      size: 300
     }),
     columnHelper.accessor('volume', {
       header: () => <div className="p-1">Khối lượng</div>,
@@ -327,11 +349,13 @@ export const PriceInput: FC<PriceInputProps> = ({
             }}
           />
         );
-      }
+      },
+      size: 120
     }),
     columnHelper.accessor('unit', {
       header: () => <div className="p-1">Đơn vị</div>,
-      cell: info => info.getValue()
+      cell: info => info.getValue(),
+      size: 100
     }),
     columnHelper.accessor('estimate', {
       header: () => <div className="p-1">Dự toán</div>,
@@ -424,7 +448,9 @@ export const PriceInput: FC<PriceInputProps> = ({
   const table = useReactTable({
     data: internalData,
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange'
   });
 
   const tableRef = useRef<HTMLDivElement>(null);
@@ -523,22 +549,35 @@ export const PriceInput: FC<PriceInputProps> = ({
       >
         <Table>
           <TableHeader className="bg-appBlueLight sticky top-0 z-10">
-            <TableRow className="!border-b-0">
+            <TableRow
+              className="!border-b-0"
+              style={{ width: table.getTotalSize() }}
+            >
               <TableHead
                 rowSpan={2}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-              >
-                STT
-              </TableHead>
-              <TableHead
-                rowSpan={2}
-                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: table.getColumn('actions')?.getSize() }}
               >
                 {/* Empty header for delete column */}
               </TableHead>
               <TableHead
                 rowSpan={2}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: table.getColumn('level')?.getSize() }}
+              >
+                ID
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: table.getColumn('index')?.getSize() }}
+              >
+                STT
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: table.getColumn('code')?.getSize() }}
               >
                 Mô tả công việc mời thầu
               </TableHead>
@@ -627,6 +666,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                         'text-right': typeof cell.getValue() === 'number'
                       }
                     )}
+                    style={{ width: cell.column.getSize() }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

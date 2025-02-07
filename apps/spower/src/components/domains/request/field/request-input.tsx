@@ -25,10 +25,10 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { TreeData, compareVersion } from '../../../commons/utils';
-import { PickDetailInput } from '../detail/pick-detail-input';
-import { NewCustomRequestDetailForm } from './form/new-custom-request-detail-form';
-import { RequestDetailItem } from './request';
+import { TreeData, compareVersion } from '../../../../commons/utils';
+import { PickDetailInput } from '../../detail/pick-detail-input';
+import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
+import { RequestDetailItem } from '../request';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;

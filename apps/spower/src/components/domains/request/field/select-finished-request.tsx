@@ -2,7 +2,7 @@ import { api } from 'portal-api';
 
 import { FC } from 'react';
 
-import { Combobox } from '../../combobox';
+import { Combobox } from '../../../combobox';
 
 export type SelectFinishedRequestProps = {
   projectId?: string;
