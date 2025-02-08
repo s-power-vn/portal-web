@@ -25,7 +25,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { compareVersion } from '../../../commons/utils';
-import { PickRequestInput, RequestDetailItem } from '../request';
+import { PickFinishedRequestDetailForm, RequestDetailItem } from '../request';
 
 // Convert interfaces to types
 type PriceInputData = {
@@ -199,11 +199,11 @@ export const PriceInput: FC<PriceInputProps> = ({
         title: 'Chọn từ yêu cầu mua hàng',
         className: 'min-w-[800px]',
         children: ({ close }) => (
-          <PickRequestInput
+          <PickFinishedRequestDetailForm
             projectId={projectId}
-            onChange={value => {
-              setSelectedDetails(value);
-              const newItems = _.chain(value)
+            onSuccess={value => {
+              setSelectedDetails(value.requestDetails);
+              const newItems = _.chain(value.requestDetails)
                 .filter(detail => {
                   if (!detail.unit) {
                     return false;

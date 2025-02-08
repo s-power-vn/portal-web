@@ -1,5 +1,5 @@
-export * from './field/pick-request-input';
-export * from './field/pick-request-input-field';
+export * from './field/pick-request-detail-input';
+export * from './field/pick-request-detail-input-field';
 export * from './field/request-input';
 export * from './field/request-input-field';
 export * from './field/select-finished-request';
@@ -7,5 +7,6 @@ export * from './field/select-finished-request-field';
 export * from './form/edit-request-form';
 export * from './form/new-custom-request-detail-form';
 export * from './form/new-request-form';
+export * from './form/pick-finished-request-detail-form';
 export * from './request';
 export * from './request-document';

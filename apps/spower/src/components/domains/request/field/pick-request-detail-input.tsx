@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { Loader2Icon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
 
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
 import { formatDate, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -29,13 +29,13 @@ import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox'
 import { RequestDetailItem } from '../request';
 import { SelectFinishedRequest } from './select-finished-request';
 
-export type PickRequestInputProps = {
+export type PickRequestDetailInputProps = {
   projectId?: string;
   value?: RequestDetailItem[];
   onChange?: (value: RequestDetailItem[]) => void;
 };
 
-export const PickRequestInput: FC<PickRequestInputProps> = ({
+export const PickRequestDetailInput: FC<PickRequestDetailInputProps> = ({
   value,
   onChange,
   projectId
@@ -216,22 +216,7 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
     },
     enableRowSelection: true,
     enableMultiRowSelection: true,
-    onRowSelectionChange: updatedSelection => {
-      setRowSelection(updatedSelection);
-
-      // Get selected items and call onChange
-      const selectedItems = _.uniqBy(
-        [
-          ...table
-            .getRowModel()
-            .flatRows.filter(row => row.getIsSomeSelected())
-            .map(it => it.original),
-          ...table.getSelectedRowModel().flatRows.map(item => item.original)
-        ],
-        'id'
-      );
-      onChange?.(selectedItems);
-    },
+    onRowSelectionChange: setRowSelection,
     onExpandedChange: setExpanded,
     getSubRows: row => row.children,
     getCoreRowModel: getCoreRowModel(),
@@ -239,6 +224,17 @@ export const PickRequestInput: FC<PickRequestInputProps> = ({
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true
   });
+
+  useEffect(() => {
+    const selectedItems = table
+      .getRowModel()
+      .flatRows.filter(row => row.getIsSelected() && !row.getCanExpand())
+      .map(row => row.original);
+
+    console.log(selectedItems);
+
+    onChange?.(selectedItems);
+  }, [rowSelection, table]);
 
   return (
     <div className={'flex flex-col gap-2'}>
