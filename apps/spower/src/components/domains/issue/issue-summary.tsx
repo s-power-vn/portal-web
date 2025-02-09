@@ -10,7 +10,7 @@ import { api } from 'portal-api';
 import { IssueTypeOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 
 import { Match, Show, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -70,17 +70,19 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
           }
         >
           <Match when={issue.data.type === IssueTypeOptions.Request}>
-            <EditRequestForm
-              issueId={issueId}
-              onSuccess={() => {
-                invalidates([
-                  api.issue.byId.getKey(issueId),
-                  api.request.byIssueId.getKey(issueId)
-                ]);
-                close();
-              }}
-              onCancel={close}
-            />
+            <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
+              <EditRequestForm
+                issueId={issueId}
+                onSuccess={() => {
+                  invalidates([
+                    api.issue.byId.getKey(issueId),
+                    api.request.byIssueId.getKey(issueId)
+                  ]);
+                  close();
+                }}
+                onCancel={close}
+              />
+            </Suspense>
           </Match>
         </Switch>
       )

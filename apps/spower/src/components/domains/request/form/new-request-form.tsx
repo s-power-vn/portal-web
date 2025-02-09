@@ -77,8 +77,11 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       schema={schema}
       defaultValues={{
         title: '',
+        code: '',
         startDate: new Date(),
-        details: []
+        endDate: undefined,
+        details: [],
+        attachments: []
       }}
       className={'flex flex-col gap-4'}
       loading={createRequest.isPending}

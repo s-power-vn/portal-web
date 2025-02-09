@@ -56,8 +56,11 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
       schema={schema}
       defaultValues={{
         title: '',
+        code: '',
         startDate: new Date(),
-        data: []
+        endDate: undefined,
+        data: [],
+        attachments: []
       }}
       className={'flex flex-col gap-4'}
       onSubmit={data => {}}

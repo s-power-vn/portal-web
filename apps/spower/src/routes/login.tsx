@@ -59,7 +59,7 @@ const Login = () => {
                 <Button
                   className={'w-full'}
                   type={'submit'}
-                  loading={login.isLoading}
+                  loading={login.isPending}
                 >
                   Đăng nhập
                 </Button>
@@ -75,7 +75,7 @@ const Login = () => {
               name={'email'}
               title={'Email'}
               options={{
-                disabled: login.isLoading
+                disabled: login.isPending
               }}
             />
             <PasswordField
@@ -83,7 +83,7 @@ const Login = () => {
               name={'password'}
               title={'Mật khẩu'}
               options={{
-                disabled: login.isLoading
+                disabled: login.isPending
               }}
             />
           </Form>
