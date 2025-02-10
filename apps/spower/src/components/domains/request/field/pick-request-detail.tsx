@@ -226,8 +226,6 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
       .flatRows.filter(row => row.getIsSelected() && !row.getCanExpand())
       .map(row => row.original);
 
-    console.log(selectedItems);
-
     onChange?.(selectedItems);
   }, [rowSelection, table]);
 

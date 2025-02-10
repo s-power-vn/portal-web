@@ -34,11 +34,23 @@ const schema = object().shape({
   data: array()
     .of(
       object().shape({
-        id: string().optional()
+        id: string().optional(),
+        prices: object().optional()
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục'),
+    .required('Hãy chọn ít nhất 1 hạng mục')
+    .test({
+      name: 'checkSuppliers',
+      message: 'Hãy thêm ít nhất 1 nhà cung cấp',
+      test: function (value) {
+        if (!value) return false;
+        const suppliers = value.flatMap(item =>
+          item.prices ? Object.keys(item.prices) : []
+        );
+        return suppliers.length > 0;
+      }
+    }),
   attachments: mixed().optional()
 });
 
@@ -63,7 +75,9 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
         attachments: []
       }}
       className={'flex flex-col gap-4'}
-      onSubmit={data => {}}
+      onSubmit={value => {
+        console.log(value);
+      }}
       onCancel={onCancel}
     >
       <TextareaField

@@ -3,9 +3,10 @@
     "prettier.configPath": ".prettierrc",
     "editor.formatOnSave": true,
     "workbench.tree.indent": 12,
+    "eslint.lintTask.enable": true,
     "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
-        "source.fixAll": "explicit",
-        "source.organizeImports": "explicit"
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
     },
 }

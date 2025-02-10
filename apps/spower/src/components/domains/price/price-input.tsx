@@ -7,6 +7,7 @@ import {
 import clsx from 'clsx';
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
+import { api } from 'portal-api';
 import { cn } from 'portal-core';
 import { AnyObject, ObjectSchema } from 'yup';
 
@@ -25,12 +26,12 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { compareVersion } from '../../../commons/utils';
-import { PickFinishedRequestDetailForm, RequestDetailItem } from '../request';
-import { PickSupplierForm } from '../supplier/form/pick-supplier-form';
+import { PickFinishedRequestDetailForm } from '../request';
+import { PickSuppliersForm } from '../supplier/form/pick-suppliers-form';
 
 // Convert interfaces to types
 type PriceInputData = {
-  code: string;
+  title: string;
   volume: number;
   unit: string;
   estimate: number | '';
@@ -57,8 +58,7 @@ export type { PriceData, PriceInputData };
 const columnHelper = createColumnHelper<PriceData>();
 
 export type PriceInputProps = {
-  initialData?: PriceInputData[];
-  initialSuppliers?: string[];
+  value?: PriceInputData[];
   onChange?: (data: PriceInputData[]) => void;
   projectId?: string;
   schema?: ObjectSchema<AnyObject>;
@@ -80,7 +80,7 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
 
   const subTotal: PriceData = {
     stt: 0,
-    code: 'Tổng cộng trước thuế',
+    title: 'Tổng cộng trước thuế',
     volume: 0,
     unit: '',
     estimate: calculateSum(regularRows.map(row => row.estimate)),
@@ -101,7 +101,7 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
 
   const vat: PriceData = {
     stt: 0,
-    code: 'Thuế VAT 10%',
+    title: 'Thuế VAT 10%',
     volume: 0,
     unit: '',
     estimate:
@@ -123,7 +123,7 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
 
   const finalTotal: PriceData = {
     stt: 0,
-    code: 'Giá trị sau thuế',
+    title: 'Giá trị sau thuế',
     volume: 0,
     unit: '',
     estimate:
@@ -163,23 +163,36 @@ const toInternalData = (data: PriceInputData[]): PriceData[] =>
   }));
 
 export const PriceInput: FC<PriceInputProps> = ({
-  initialData = [],
-  initialSuppliers = [],
+  value,
   onChange,
   projectId
 }) => {
-  const [data, setData] = useState<PriceInputData[]>(initialData);
-  const [suppliers, setSuppliers] = useState<string[]>(initialSuppliers);
+  const [data, setData] = useState<PriceInputData[]>(value ?? []);
+  const [supplierIds, setSupplierIds] = useState<string[]>(() => {
+    if (!value?.length) return [];
+    return _.uniq(value.flatMap(item => Object.keys(item.prices)));
+  });
   const [internalData, setInternalData] = useState(() =>
-    calculateTotals(toInternalData(data), suppliers)
-  );
-  const [selectedDetails, setSelectedDetails] = useState<RequestDetailItem[]>(
-    []
+    calculateTotals(toInternalData(data), supplierIds)
   );
 
   useEffect(() => {
-    setInternalData(calculateTotals(toInternalData(data), suppliers));
-  }, [data, suppliers]);
+    setData(value ?? []);
+    if (value?.length) {
+      const newSupplierIds = _.uniq(
+        value.flatMap(item => Object.keys(item.prices))
+      );
+      setSupplierIds(newSupplierIds);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    setInternalData(calculateTotals(toInternalData(data), supplierIds));
+  }, [data, supplierIds]);
+
+  const { data: suppliers = [] } = api.supplier.listByIds.useSuspenseQuery({
+    variables: supplierIds
+  });
 
   const handleDataChange = (newData: PriceData[]) => {
     const regularData = newData
@@ -187,10 +200,8 @@ export const PriceInput: FC<PriceInputProps> = ({
       .map(({ totals, isSubTotal, isVAT, isFinalTotal, ...rest }) => rest);
 
     setData(regularData);
-
-    const calculatedData = calculateTotals(newData, suppliers);
+    const calculatedData = calculateTotals(newData, supplierIds);
     setInternalData(calculatedData);
-
     onChange?.(regularData);
   };
 
@@ -203,7 +214,6 @@ export const PriceInput: FC<PriceInputProps> = ({
           <PickFinishedRequestDetailForm
             projectId={projectId}
             onSuccess={value => {
-              setSelectedDetails(value.requestDetails);
               const newItems = _.chain(value.requestDetails)
                 .filter(detail => {
                   if (!detail.unit) {
@@ -211,31 +221,31 @@ export const PriceInput: FC<PriceInputProps> = ({
                   }
 
                   return !data.some(
-                    existingItem => existingItem.code === detail.title
+                    existingItem => existingItem.title === detail.title
                   );
                 })
                 .sort((a, b) => compareVersion(a.level, b.level))
                 .map(detail => ({
-                  code: detail.title,
+                  title: detail.title,
                   volume: 0,
                   unit: detail.unit || '',
                   estimate: 0,
                   level: detail.level,
                   index: detail.index,
-                  prices: suppliers
-                    ? suppliers.reduce(
-                        (acc, supplier) => ({
-                          ...acc,
-                          [supplier]: 0
-                        }),
-                        {}
-                      )
-                    : {}
+                  prices: supplierIds.reduce(
+                    (acc, supplier) => ({
+                      ...acc,
+                      [supplier]: 0
+                    }),
+                    {}
+                  )
                 }))
                 .value();
 
               if (newItems.length > 0) {
-                setData([...data, ...newItems]);
+                const newData = [...data, ...newItems];
+                setData(newData);
+                onChange?.(newData);
               }
               close();
             }}
@@ -244,16 +254,37 @@ export const PriceInput: FC<PriceInputProps> = ({
         )
       });
     }
-  }, [projectId, data, suppliers]);
+  }, [projectId, data, supplierIds, onChange]);
 
   const handlePickSupplier = useCallback(() => {
     showModal({
       title: 'Chọn nhà cung cấp',
       children: ({ close }) => (
-        <PickSupplierForm onSuccess={close} onCancel={close} />
+        <PickSuppliersForm
+          initialSuppliers={supplierIds}
+          onSuccess={value => {
+            setSupplierIds(value.suppliers);
+            const newData = data.map(item => ({
+              ...item,
+              prices: {
+                ...value.suppliers.reduce(
+                  (acc: Record<string, number>, supplier: string) => ({
+                    ...acc,
+                    [supplier]: 0
+                  }),
+                  {}
+                )
+              }
+            }));
+            setData(newData);
+            onChange?.(newData);
+            close();
+          }}
+          onCancel={close}
+        />
       )
     });
-  }, []);
+  }, [supplierIds, data, onChange]);
 
   const columns = [
     columnHelper.display({
@@ -278,6 +309,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                 (_, index) => index !== info.row.index
               );
               setData(newData);
+              onChange?.(newData);
             }}
           >
             <TrashIcon className="h-4 w-4" />
@@ -317,7 +349,7 @@ export const PriceInput: FC<PriceInputProps> = ({
       },
       size: 80
     }),
-    columnHelper.accessor('code', {
+    columnHelper.accessor('title', {
       header: () => <div className="p-1">Mô tả công việc mới thầu</div>,
       cell: info => info.getValue(),
       size: 300
@@ -402,9 +434,9 @@ export const PriceInput: FC<PriceInputProps> = ({
       id: 'prices',
       header: () => <div className="p-1 text-center">Đơn giá</div>,
       columns: suppliers?.map(supplier =>
-        columnHelper.accessor(row => row.prices[supplier], {
-          id: `price-${supplier}`,
-          header: () => <div className="p-1 text-center">{supplier}</div>,
+        columnHelper.accessor(row => row.prices[supplier.id], {
+          id: `price-${supplier.id}`,
+          header: () => <div className="p-1 text-center">{supplier.name}</div>,
           cell: info => {
             if (
               info.row.original.isSubTotal ||
@@ -424,11 +456,11 @@ export const PriceInput: FC<PriceInputProps> = ({
                         ...row,
                         prices: {
                           ...row.prices,
-                          [supplier]: newPrice
+                          [supplier.id]: newPrice
                         },
                         totals: {
                           ...row.totals,
-                          [supplier]: row.volume * newPrice
+                          [supplier.id]: row.volume * newPrice
                         }
                       };
                     }
@@ -447,9 +479,9 @@ export const PriceInput: FC<PriceInputProps> = ({
       id: 'totals',
       header: () => <div className="p-1 text-center">Thành tiền</div>,
       columns: suppliers?.map(supplier =>
-        columnHelper.accessor(row => row.totals[supplier], {
-          id: `total-${supplier}`,
-          header: () => <div className="p-1 text-center">{supplier}</div>,
+        columnHelper.accessor(row => row.totals[supplier.id], {
+          id: `total-${supplier.id}`,
+          header: () => <div className="p-1 text-center">{supplier.name}</div>,
           cell: info => info.getValue()?.toLocaleString('vi-VN')
         })
       )
@@ -466,53 +498,8 @@ export const PriceInput: FC<PriceInputProps> = ({
 
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const addSupplier = () => {
-    const newSupplier = `Nhà cung cấp ${suppliers.length + 1}`;
-    setSuppliers([...suppliers, newSupplier]);
-
-    const newData = internalData.map(row => {
-      if (row.isSubTotal || row.isVAT || row.isFinalTotal) {
-        return {
-          ...row,
-          prices: {
-            ...row.prices,
-            [newSupplier]: '' as const
-          },
-          totals: {
-            ...row.totals,
-            [newSupplier]: '' as const
-          }
-        };
-      }
-
-      return {
-        ...row,
-        prices: {
-          ...row.prices,
-          [newSupplier]: 0 as number
-        },
-        totals: {
-          ...row.totals,
-          [newSupplier]: 0 as number
-        }
-      };
-    });
-
-    handleDataChange(newData);
-
-    setTimeout(() => {
-      const newSupplierElement = tableRef.current?.querySelector(
-        `[data-supplier="${newSupplier}"]`
-      );
-      newSupplierElement?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-      });
-    }, 100);
-  };
-
   const removeSupplier = (supplierToRemove: string) => {
-    setSuppliers(suppliers.filter(s => s !== supplierToRemove));
+    setSupplierIds(supplierIds.filter(s => s !== supplierToRemove));
 
     const newData = internalData.map(row => {
       const {
@@ -588,7 +575,7 @@ export const PriceInput: FC<PriceInputProps> = ({
               <TableHead
                 rowSpan={2}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                style={{ width: table.getColumn('code')?.getSize() }}
+                style={{ width: table.getColumn('title')?.getSize() }}
               >
                 Mô tả công việc mời thầu
               </TableHead>
@@ -626,17 +613,17 @@ export const PriceInput: FC<PriceInputProps> = ({
             <TableRow className="!border-b-0">
               {suppliers?.map(supplier => (
                 <TableHead
-                  key={`price-${supplier}`}
-                  data-supplier={supplier}
+                  key={`price-${supplier.id}`}
+                  data-supplier={supplier.id}
                   className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
                 >
                   <div className="flex items-center justify-center gap-2">
-                    <span>{supplier}</span>
+                    <span>{supplier.name}</span>
                     <button
                       onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
-                        removeSupplier(supplier);
+                        removeSupplier(supplier.id);
                       }}
                       className="text-red-300 hover:text-red-100"
                     >
@@ -647,10 +634,10 @@ export const PriceInput: FC<PriceInputProps> = ({
               ))}
               {suppliers?.map(supplier => (
                 <TableHead
-                  key={`total-${supplier}`}
+                  key={`total-${supplier.id}`}
                   className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
                 >
-                  {supplier}
+                  {supplier.name}
                 </TableHead>
               ))}
             </TableRow>
@@ -712,6 +699,11 @@ const EditableCell: FC<EditableCellProps> = ({ value, onChange }) => {
     setLocalValue(value);
   }, [value]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setLocalValue(newValue);
+  };
+
   const handleFinishEdit = () => {
     setIsEditing(false);
     onChange(localValue.toString());
@@ -722,9 +714,7 @@ const EditableCell: FC<EditableCellProps> = ({ value, onChange }) => {
       <Input
         ref={inputRef}
         value={localValue}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setLocalValue(e.target.value)
-        }
+        onChange={handleChange}
         onBlur={handleFinishEdit}
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === 'Enter') {

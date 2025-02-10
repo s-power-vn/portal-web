@@ -7,14 +7,17 @@ import { BusinessFormProps, Form } from '@minhdtb/storeo-theme';
 import { SupplierDropdownField } from '../field/supplier-dropdown-field';
 
 const schema = object({
-  supplier: array().of(string()).min(1, 'Hãy chọn nhà cung cấp')
+  suppliers: array().of(string()).min(1, 'Hãy chọn nhà cung cấp')
 });
 
-export type PickSupplierFormProps = BusinessFormProps;
+export type PickSuppliersFormProps = BusinessFormProps & {
+  initialSuppliers?: string[];
+};
 
-export const PickSupplierForm: FC<PickSupplierFormProps> = ({
+export const PickSuppliersForm: FC<PickSuppliersFormProps> = ({
   onSuccess,
-  onCancel
+  onCancel,
+  initialSuppliers
 }) => {
   return (
     <Form
@@ -23,12 +26,12 @@ export const PickSupplierForm: FC<PickSupplierFormProps> = ({
       onCancel={onCancel}
       className={'flex flex-col gap-3'}
       defaultValues={{
-        supplier: []
+        suppliers: initialSuppliers ?? []
       }}
     >
       <SupplierDropdownField
         schema={schema}
-        name={'supplier'}
+        name={'suppliers'}
         title={'Nhà cung cấp'}
       />
     </Form>
