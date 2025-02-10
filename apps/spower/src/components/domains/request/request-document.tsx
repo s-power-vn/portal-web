@@ -8,7 +8,7 @@ import type { FC } from 'react';
 
 import { Show, formatDate } from '@minhdtb/storeo-core';
 
-import { RequestDetailItem } from './request';
+import { RequestDetailItem } from './request-display';
 
 export type RequestDocumentProps = {
   project?: string;

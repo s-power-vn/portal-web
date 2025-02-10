@@ -1,7 +1,7 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { DollarSignIcon } from 'lucide-react';
+import { CircleDollarSignIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
 import type { IssueResponse } from 'portal-core';
 import { IssueTypeOptions } from 'portal-core';
@@ -41,11 +41,7 @@ const Component = () => {
         <div className={'flex w-full items-center gap-2'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Price}>
-              <DollarSignIcon
-                className={'text-blue-500'}
-                width={20}
-                height={20}
-              />
+              <CircleDollarSignIcon className={'h-5 w-5 text-blue-500'} />
             </Match>
           </Switch>
           <span className={'w-full truncate'}>{info.getValue()}</span>

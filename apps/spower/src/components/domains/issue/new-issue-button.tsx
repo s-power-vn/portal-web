@@ -70,13 +70,26 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         return (
           <NewPriceForm
             projectId={projectId}
-            onSuccess={close}
+            onSuccess={async () => {
+              await invalidates([
+                api.issue.list.getKey({
+                  projectId
+                }),
+                api.issue.listMine.getKey({
+                  projectId
+                }),
+                api.issue.listRequest.getKey({
+                  projectId
+                })
+              ]);
+              close();
+            }}
             onCancel={close}
           />
         );
       }
     });
-  }, [projectId]);
+  }, [invalidates, projectId]);
 
   return (
     <DropdownMenu>

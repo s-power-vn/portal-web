@@ -26,7 +26,7 @@ import {
 
 import { TreeData, arrayToTree } from '../../../../commons/utils';
 import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
-import { RequestDetailItem } from '../request';
+import { RequestDetailItem } from '../request-display';
 
 export type PickRequestDetailProps = {
   requestId?: string;

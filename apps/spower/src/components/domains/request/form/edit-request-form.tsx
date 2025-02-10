@@ -15,7 +15,7 @@ import {
 
 import { arrayToTree, compareVersion } from '../../../../commons/utils';
 import { RequestInputField } from '../field/request-input-field';
-import { RequestDetailItem } from '../request';
+import { RequestDetailItem } from '../request-display';
 
 const schema = object({
   title: string().required('Hãy nhập nội dung'),

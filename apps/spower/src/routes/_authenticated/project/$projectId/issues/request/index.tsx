@@ -41,11 +41,7 @@ const Component = () => {
         <div className={'flex w-full items-center gap-2'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Request}>
-              <ShoppingCartIcon
-                className={'text-red-500'}
-                width={20}
-                height={20}
-              />
+              <ShoppingCartIcon className={'h-5 w-5 text-red-500'} />
             </Match>
           </Switch>
           <span className={'w-full truncate'}>{info.getValue()}</span>

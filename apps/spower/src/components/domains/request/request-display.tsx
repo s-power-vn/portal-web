@@ -59,11 +59,11 @@ export type RequestDetailItem = {
   isNew?: boolean;
 };
 
-export type RequestProps = {
+export type RequestDisplayProps = {
   issueId: string;
 };
 
-export const Request: FC<RequestProps> = ({ issueId }) => {
+export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
 
   const request = api.request.byIssueId.useSuspenseQuery({

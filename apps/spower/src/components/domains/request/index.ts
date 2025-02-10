@@ -8,5 +8,5 @@ export * from './form/edit-request-form';
 export * from './form/new-custom-request-detail-form';
 export * from './form/new-request-form';
 export * from './form/pick-finished-request-detail-form';
-export * from './request';
+export * from './request-display';
 export * from './request-document';

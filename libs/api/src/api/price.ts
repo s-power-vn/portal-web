@@ -1,8 +1,40 @@
-import { client } from 'portal-core';
+import {
+  Collections,
+  PriceDetailResponse,
+  PriceResponse,
+  client
+} from 'portal-core';
 
 import { router } from 'react-query-kit';
 
+export type PriceDetailData = PriceDetailResponse;
+
+export type PriceData = PriceResponse & {
+  expand: {
+    priceDetail_via_price: PriceDetailData[];
+  };
+};
+
 export const priceApi = router('price', {
+  byIssueId: router.query({
+    fetcher: async (issueId: string) => {
+      try {
+        return await client
+          .collection<PriceData>(Collections.Price)
+          .getFirstListItem(`issue = "${issueId}"`, {
+            expand:
+              'priceDetail_via_price,' +
+              'issue.createdBy,' +
+              'issue.createdBy.department,' +
+              'issue.assignee,' +
+              'project'
+          });
+      } catch (e) {
+        console.log(e, issueId);
+        return null;
+      }
+    }
+  }),
   create: router.mutation({
     mutationFn: async (params: {
       title: string;

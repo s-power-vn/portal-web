@@ -13,7 +13,6 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { useInvalidateQueries } from '../../../../hooks';
 import { MultipleFileSelectField } from '../../../file';
 import { PriceInputField } from '../price-input-field';
 
@@ -67,16 +66,13 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const invalidates = useInvalidateQueries();
-
   const createPrice = api.price.create.useMutation({
     onSuccess: () => {
-      success('Tạo phiếu giá thành công');
-      invalidates([]);
+      success('Tạo yêu cầu giá thành công');
       onSuccess?.();
     },
     onError: () => {
-      error('Lỗi khi tạo phiếu giá');
+      error('Lỗi khi tạo yêu cầu giá');
     }
   });
 

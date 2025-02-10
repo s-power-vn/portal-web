@@ -1,8 +1,10 @@
 import { useRouter } from '@tanstack/react-router';
 import {
+  CircleDollarSignIcon,
   Edit3,
   Loader,
   MoreHorizontalIcon,
+  ShoppingCartIcon,
   Trash2,
   Undo2Icon
 } from 'lucide-react';
@@ -105,7 +107,15 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         >
           <Undo2Icon className={'h-4 w-4'} />
         </Button>
-        <span className={'flex-1 text-base font-bold  '}>
+        <span className={'flex flex-1 items-center gap-1 text-base font-bold'}>
+          <Switch fallback={<span></span>}>
+            <Match when={issue.data.type === IssueTypeOptions.Price}>
+              <CircleDollarSignIcon className={'h-4 w-4 text-blue-500'} />
+            </Match>
+            <Match when={issue.data.type === IssueTypeOptions.Request}>
+              <ShoppingCartIcon className={'h-4 w-4 text-red-500'} />
+            </Match>
+          </Switch>
           {issue.data.title}
         </span>
         <Show when={client.authStore.model?.id === issue.data.assignee}>

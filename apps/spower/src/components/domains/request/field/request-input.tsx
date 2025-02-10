@@ -28,7 +28,7 @@ import {
 import { TreeData, compareVersion } from '../../../../commons/utils';
 import { PickDetailForm } from '../../detail/form/pick-detail-form';
 import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
-import { RequestDetailItem } from '../request';
+import { RequestDetailItem } from '../request-display';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;

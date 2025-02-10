@@ -9,7 +9,8 @@ import type { FC } from 'react';
 
 import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
 
-import { Request } from '../request';
+import { PriceDisplay } from '../price';
+import { RequestDisplay } from '../request';
 import { IssueAction } from './issue-action';
 import { IssueComment } from './issue-comment';
 import { IssueSummary } from './issue-summary';
@@ -37,7 +38,10 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
       <IssueSummary issueId={issueId} />
       <Switch fallback={<div className={`p-2`}></div>}>
         <Match when={issue.data.type === IssueTypeOptions.Request}>
-          <Request issueId={issueId} />
+          <RequestDisplay issueId={issueId} />
+        </Match>
+        <Match when={issue.data.type === IssueTypeOptions.Price}>
+          <PriceDisplay issueId={issueId} />
         </Match>
       </Switch>
       <Show when={client.authStore.model?.id === issue.data.assignee}>
