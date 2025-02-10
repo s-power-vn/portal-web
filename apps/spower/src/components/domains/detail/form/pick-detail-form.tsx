@@ -8,11 +8,13 @@ import { BusinessFormProps, Form } from '@minhdtb/storeo-theme';
 import { PickDetailField } from '../field/pick-detail-field';
 
 const schema = object({
-  details: array().of(
-    object({
-      id: string().required()
-    })
-  )
+  details: array()
+    .of(
+      object({
+        id: string().optional().nullable()
+      })
+    )
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
 });
 
 export type PickDetailFormProps = BusinessFormProps & {

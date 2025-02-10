@@ -28,13 +28,13 @@ import { TreeData, arrayToTree } from '../../../../commons/utils';
 import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
 import { RequestDetailItem } from '../request';
 
-export type PickRequestDetailInputProps = {
+export type PickRequestDetailProps = {
   requestId?: string;
   value?: RequestDetailItem[];
   onChange?: (value: RequestDetailItem[]) => void;
 };
 
-export const PickRequestDetailInput: FC<PickRequestDetailInputProps> = ({
+export const PickRequestDetail: FC<PickRequestDetailProps> = ({
   onChange,
   requestId
 }) => {

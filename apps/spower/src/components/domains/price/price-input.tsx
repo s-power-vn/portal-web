@@ -26,6 +26,7 @@ import {
 
 import { compareVersion } from '../../../commons/utils';
 import { PickFinishedRequestDetailForm, RequestDetailItem } from '../request';
+import { PickSupplierForm } from '../supplier/form/pick-supplier-form';
 
 // Convert interfaces to types
 type PriceInputData = {
@@ -244,6 +245,15 @@ export const PriceInput: FC<PriceInputProps> = ({
       });
     }
   }, [projectId, data, suppliers]);
+
+  const handlePickSupplier = useCallback(() => {
+    showModal({
+      title: 'Chọn nhà cung cấp',
+      children: ({ close }) => (
+        <PickSupplierForm onSuccess={close} onCancel={close} />
+      )
+    });
+  }, []);
 
   const columns = [
     columnHelper.display({
@@ -528,7 +538,7 @@ export const PriceInput: FC<PriceInputProps> = ({
           <Button
             className={'bg-green-500 text-sm hover:bg-orange-400'}
             type={'button'}
-            onClick={addSupplier}
+            onClick={handlePickSupplier}
           >
             <PlusIcon className={'mr-2 h-4 w-4'} />
             Thêm nhà cung cấp

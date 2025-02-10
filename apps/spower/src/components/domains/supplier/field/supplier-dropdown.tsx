@@ -16,5 +16,5 @@ export const SupplierDropdown: FC<SupplierDropdownProps> = ({ ...props }) => {
     label: name
   }));
 
-  return <SelectInput items={items} {...props} />;
+  return <SelectInput {...props} items={items} multiple={true} />;
 };

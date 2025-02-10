@@ -14,7 +14,7 @@
     "@fileforge/react-print": "^0.1.142",
     "@hookform/resolvers": "^3.3.4",
     "@minhdtb/storeo-core": "^0.0.4",
-    "@minhdtb/storeo-theme": "^1.0.21",
+    "@minhdtb/storeo-theme": "^1.0.23",
     "@preact/signals-react": "^2.0.0",
     "@react-pdf/renderer": "^3.4.4",
     "@remixicon/react": "^4.2.0",

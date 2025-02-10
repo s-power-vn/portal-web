@@ -4,7 +4,7 @@ import { FC, useState } from 'react';
 
 import { type BusinessFormProps, Form } from '@minhdtb/storeo-theme';
 
-import { PickRequestDetailInputField } from '../field/pick-request-detail-input-field';
+import { PickRequestDetailField } from '../field/pick-request-detail-field';
 import { SelectFinishedRequestField } from '../field/select-finished-request-field';
 
 const schema = object({
@@ -49,7 +49,7 @@ export const PickFinishedRequestDetailForm: FC<
           onChange: setSelectedRequestId
         }}
       />
-      <PickRequestDetailInputField
+      <PickRequestDetailField
         schema={schema}
         name={'requestDetails'}
         title={'Danh sách công việc'}

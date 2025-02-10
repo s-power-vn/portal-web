@@ -1,5 +1,5 @@
-export * from './field/pick-request-detail-input';
-export * from './field/pick-request-detail-input-field';
+export * from './field/pick-request-detail';
+export * from './field/pick-request-detail-field';
 export * from './field/request-input';
 export * from './field/request-input-field';
 export * from './field/select-finished-request';
