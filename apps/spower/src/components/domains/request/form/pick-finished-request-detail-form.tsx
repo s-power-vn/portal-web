@@ -1,19 +1,21 @@
 import { array, object, string } from 'yup';
 
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { type BusinessFormProps, Form } from '@minhdtb/storeo-theme';
 
 import { PickRequestDetailInputField } from '../field/pick-request-detail-input-field';
+import { SelectFinishedRequestField } from '../field/select-finished-request-field';
 
 const schema = object({
+  field: string().required('Hãy chọn yêu cầu đã hoàn thành'),
   requestDetails: array()
     .of(
       object({
         id: string().required()
       })
     )
-    .min(1, 'Hãy chọn ít nhất 1 yêu cầu')
+    .min(1, 'Hãy chọn ít nhất 1 hạng mục')
 });
 
 export type PickFinishedRequestDetailFormProps = BusinessFormProps & {
@@ -23,6 +25,10 @@ export type PickFinishedRequestDetailFormProps = BusinessFormProps & {
 export const PickFinishedRequestDetailForm: FC<
   PickFinishedRequestDetailFormProps
 > = ({ projectId, onSuccess, onCancel }) => {
+  const [selectedRequestId, setSelectedRequestId] = useState<
+    string | undefined
+  >(undefined);
+
   return (
     <Form
       schema={schema}
@@ -30,14 +36,25 @@ export const PickFinishedRequestDetailForm: FC<
       onCancel={onCancel}
       className={'flex flex-col gap-3'}
       defaultValues={{
+        field: '',
         requestDetails: []
       }}
     >
+      <SelectFinishedRequestField
+        schema={schema}
+        name={'field'}
+        title={'Yêu cầu đã hoàn thành'}
+        options={{
+          projectId,
+          onChange: setSelectedRequestId
+        }}
+      />
       <PickRequestDetailInputField
         schema={schema}
         name={'requestDetails'}
+        title={'Danh sách công việc'}
         options={{
-          projectId
+          requestId: selectedRequestId
         }}
       />
     </Form>

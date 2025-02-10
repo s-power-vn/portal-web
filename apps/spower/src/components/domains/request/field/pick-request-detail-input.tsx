@@ -27,27 +27,22 @@ import {
 import { TreeData, arrayToTree } from '../../../../commons/utils';
 import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
 import { RequestDetailItem } from '../request';
-import { SelectFinishedRequest } from './select-finished-request';
 
 export type PickRequestDetailInputProps = {
-  projectId?: string;
+  requestId?: string;
   value?: RequestDetailItem[];
   onChange?: (value: RequestDetailItem[]) => void;
 };
 
 export const PickRequestDetailInput: FC<PickRequestDetailInputProps> = ({
-  value,
   onChange,
-  projectId
+  requestId
 }) => {
-  const [selectedRequestId, setSelectedRequestId] = useState<
-    string | undefined
-  >(undefined);
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const request = api.request.byId.useQuery({
-    variables: selectedRequestId
+    variables: requestId
   });
 
   const v = useMemo<RequestDetailItem[]>(() => {
@@ -237,92 +232,68 @@ export const PickRequestDetailInput: FC<PickRequestDetailInputProps> = ({
   }, [rowSelection, table]);
 
   return (
-    <div className={'flex flex-col gap-2'}>
-      <div className={'flex flex-col'}>
-        <span className={'text-sm font-medium'}>
-          Yêu cầu mua hàng đã hoàn thành
-        </span>
-        <SelectFinishedRequest
-          projectId={projectId}
-          onChange={value => {
-            setSelectedRequestId(value);
-            setRowSelection({});
-          }}
-        />
-      </div>
-      <div className={'flex flex-col'}>
-        <span className={'text-sm font-medium'}>Danh sách công việc</span>
-        <div
-          className={
-            'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
-          }
-        >
-          {request.isLoading && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
-              <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
-                <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />
-                <span className="text-sm">Đang tải...</span>
-              </div>
-            </div>
-          )}
-          <Table>
-            <TableHeader className={'sticky top-0 z-10'}>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className={'!border-b-0'}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      style={{
-                        width: header.getSize()
-                      }}
-                      className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
-                      after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
-                      after:content-[''] last:after:border-r-0`}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow key={row.id} className="hover:bg-appGrayLight">
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize()
-                        }}
-                        className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
-                        after:border-r after:content-['']`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+    <div
+      className={
+        'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
+      }
+    >
+      {request.isLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
+          <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
+            <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />
+          </div>
         </div>
-      </div>
+      )}
+      <Table>
+        <TableHeader className={'sticky top-0 z-10'}>
+          {table.getHeaderGroups().map(headerGroup => (
+            <TableRow key={headerGroup.id} className={'!border-b-0'}>
+              {headerGroup.headers.map(header => (
+                <TableHead
+                  key={header.id}
+                  style={{
+                    width: header.getSize()
+                  }}
+                  className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 after:pointer-events-none after:absolute
+                after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r
+                after:content-[''] last:after:border-r-0`}
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map(row => (
+              <TableRow key={row.id} className="hover:bg-appGrayLight">
+                {row.getVisibleCells().map(cell => (
+                  <TableCell
+                    key={cell.id}
+                    style={{
+                      width: cell.column.getSize()
+                    }}
+                    className={`relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full
+                  after:border-r after:content-['']`}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-16 text-center">
+                Không có dữ liệu.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };

@@ -22,7 +22,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { For, Show, cn } from '@minhdtb/storeo-core';
 import {
-  Button,
   DebouncedInput,
   Table,
   TableBody,
@@ -32,17 +31,17 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../commons/utils';
-import { arrayToTree, compareVersion } from '../../../commons/utils';
-import { IndeterminateCheckbox } from '../../checkbox/indeterminate-checkbox';
+import type { TreeData } from '../../../../commons/utils';
+import { arrayToTree, compareVersion } from '../../../../commons/utils';
+import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
 
-export type PickDetailInputProps = {
-  projectId: string;
+export type PickDetailProps = {
+  projectId?: string;
   value?: DetailResponse[];
-  onChange: (value: DetailResponse[]) => void;
+  onChange?: (value: DetailResponse[]) => void;
 };
 
-export const PickDetailInput: FC<PickDetailInputProps> = props => {
+export const PickDetail: FC<PickDetailProps> = props => {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
@@ -224,6 +223,28 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
     });
   }, [rowSelection, table]);
 
+  useEffect(() => {
+    const selectedItems = _.uniqBy(
+      [
+        ...table
+          .getRowModel()
+          .flatRows.filter(row => row.getIsSomeSelected())
+          .map(it => it.original),
+        ...table.getSelectedRowModel().flatRows.map(item => item.original)
+      ],
+      'id'
+    );
+
+    if (
+      !_.isEqual(
+        _.sortBy(selectedItems, 'id'),
+        _.sortBy(props.value || [], 'id')
+      )
+    ) {
+      props.onChange?.(selectedItems);
+    }
+  }, [rowSelection, table, props.onChange, props.value]);
+
   return (
     <div className="flex flex-col gap-2">
       <DebouncedInput
@@ -330,29 +351,6 @@ export const PickDetailInput: FC<PickDetailInputProps> = props => {
             </For>
           </TableBody>
         </Table>
-      </div>
-      <div className={'mt-4'}>
-        <Button
-          type="submit"
-          onClick={() => {
-            props.onChange?.(
-              _.uniqBy(
-                [
-                  ...table
-                    .getRowModel()
-                    .flatRows.filter(row => row.getIsSomeSelected())
-                    .map(it => it.original),
-                  ...table
-                    .getSelectedRowModel()
-                    .flatRows.map(item => item.original)
-                ],
-                'id'
-              )
-            );
-          }}
-        >
-          Chấp nhận
-        </Button>
       </div>
     </div>
   );

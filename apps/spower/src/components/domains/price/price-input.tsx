@@ -238,6 +238,7 @@ export const PriceInput: FC<PriceInputProps> = ({
               }
               close();
             }}
+            onCancel={close}
           />
         )
       });

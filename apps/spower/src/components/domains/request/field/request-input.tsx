@@ -26,7 +26,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { TreeData, compareVersion } from '../../../../commons/utils';
-import { PickDetailInput } from '../../detail/pick-detail-input';
+import { PickDetailForm } from '../../detail/form/pick-detail-form';
 import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
 import { RequestDetailItem } from '../request';
 
@@ -82,13 +82,13 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
         title: 'Chọn hạng mục trong hợp đồng',
         className: 'flex min-w-[600px] flex-col',
         children: ({ close }) => (
-          <PickDetailInput
+          <PickDetailForm
             projectId={projectId}
-            value={selectedDetails}
-            onChange={value => {
-              if (!value.length) return;
-
-              const items = _.chain(value)
+            initialValues={{
+              details: selectedDetails
+            }}
+            onSuccess={value => {
+              const items = _.chain(value.details)
                 .map(it => ({ ...it, group: it.id }))
                 .value();
 
@@ -159,6 +159,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
 
               close();
             }}
+            onCancel={close}
           />
         )
       });
