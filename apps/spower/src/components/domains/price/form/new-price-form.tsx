@@ -1,3 +1,4 @@
+import { api } from 'portal-api';
 import { array, date, mixed, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -7,9 +8,12 @@ import {
   DatePickerField,
   Form,
   TextField,
-  TextareaField
+  TextareaField,
+  error,
+  success
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../../hooks';
 import { MultipleFileSelectField } from '../../../file';
 import { PriceInputField } from '../price-input-field';
 
@@ -63,6 +67,19 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
   onSuccess,
   onCancel
 }) => {
+  const invalidates = useInvalidateQueries();
+
+  const createPrice = api.price.create.useMutation({
+    onSuccess: () => {
+      success('Tạo phiếu giá thành công');
+      invalidates([]);
+      onSuccess?.();
+    },
+    onError: () => {
+      error('Lỗi khi tạo phiếu giá');
+    }
+  });
+
   return (
     <Form
       schema={schema}
@@ -76,7 +93,13 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
       }}
       className={'flex flex-col gap-4'}
       onSubmit={value => {
-        console.log(value);
+        createPrice.mutate({
+          ...value,
+          project: projectId,
+          details: value.data.map(item => ({
+            ...item
+          }))
+        });
       }}
       onCancel={onCancel}
     >

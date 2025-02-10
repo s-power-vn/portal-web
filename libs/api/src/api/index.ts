@@ -7,6 +7,7 @@ import type { UserData } from './employee';
 import { employeeApi } from './employee';
 import { issueApi } from './issue';
 import { materialApi } from './material';
+import { priceApi } from './price';
 import type { ProjectData } from './project';
 import { projectApi } from './project';
 import type { RequestData, RequestDetailData } from './request';
@@ -26,6 +27,7 @@ export const api = {
   employee: employeeApi,
   issue: issueApi,
   material: materialApi,
+  price: priceApi,
   project: projectApi,
   request: requestApi,
   requestDetail: requestDetailApi,
@@ -33,6 +35,6 @@ export const api = {
   user: userApi
 };
 
-export type { RequestData, RequestDetailData, UserData, ProjectData };
+export type { ProjectData, RequestData, RequestDetailData, UserData };
 
 export { SearchSchema };
