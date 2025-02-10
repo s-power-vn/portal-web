@@ -1,7 +1,7 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ShoppingCartIcon } from 'lucide-react';
+import { DollarSignIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
 import type { IssueResponse } from 'portal-core';
 import { IssueTypeOptions } from 'portal-core';
@@ -11,10 +11,10 @@ import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
   EmployeeDisplay,
+  IssueDeadlineStatus,
   IssueStatus,
   NewIssueButton
 } from '../../../../../../components';
-import { IssueDeadlineStatus } from '../../../../../../components/domains/issue/issue-deadline-status';
 
 const Component = () => {
   const { projectId } = Route.useParams();
@@ -40,9 +40,9 @@ const Component = () => {
       cell: info => (
         <div className={'flex w-full items-center gap-2'}>
           <Switch fallback={<span></span>}>
-            <Match when={info.row.original.type === IssueTypeOptions.Request}>
-              <ShoppingCartIcon
-                className={'text-red-500'}
+            <Match when={info.row.original.type === IssueTypeOptions.Price}>
+              <DollarSignIcon
+                className={'text-blue-500'}
                 width={20}
                 height={20}
               />
