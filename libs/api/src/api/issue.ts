@@ -7,10 +7,11 @@ import type { UserData } from './employee';
 import type { Search } from './types';
 
 export type IssueData = IssueResponse & {
-  expand: {
+  expand?: {
     createdBy: UserData;
     assignee: UserData;
   };
+  approver?: Record<string, string>[];
 };
 
 export const issueApi = router('issue', {
@@ -136,6 +137,28 @@ export const issueApi = router('issue', {
   reset: router.mutation({
     mutationFn: (params: { id: string }) => {
       return client.send('/issue-reset', {
+        method: 'POST',
+        body: params
+      });
+    }
+  }),
+  approve: router.mutation({
+    mutationFn: (params: {
+      id: string;
+      nodeName: string;
+      nodeId: string;
+      userName: string;
+      userId: string;
+    }) => {
+      return client.send('/issue-approve', {
+        method: 'POST',
+        body: params
+      });
+    }
+  }),
+  unApprove: router.mutation({
+    mutationFn: (params: { id: string; nodeId: string }) => {
+      return client.send('/issue-unapprove', {
         method: 'POST',
         body: params
       });

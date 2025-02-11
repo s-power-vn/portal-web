@@ -144,7 +144,8 @@ export enum IssueDeadlineStatusOptions {
 	"Warning" = "Warning",
 	"Danger" = "Danger",
 }
-export type IssueRecord<TlastAssignee = unknown> = {
+export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
+	approver?: null | Tapprover
 	assignee?: RecordIdString
 	changed?: IsoDateString
 	code?: string
@@ -191,12 +192,6 @@ export type ProjectRecord = {
 }
 
 export type RequestRecord = {
-	confirm1?: string
-	confirm1Date?: IsoDateString
-	confirm2?: string
-	confirm2Date?: IsoDateString
-	confirm3?: string
-	confirm3Date?: IsoDateString
 	issue: RecordIdString
 	project: RecordIdString
 }
@@ -258,7 +253,7 @@ export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> &
 export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<DetailRecord<Textend>> & BaseSystemFields<Texpand>
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
-export type IssueResponse<TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<TlastAssignee>> & BaseSystemFields<Texpand>
+export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<Tapprover, TlastAssignee>> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>

@@ -247,6 +247,7 @@
       {
         "id": "n2-n3#1",
         "type": "straight",
+        "approve": true,
         "from": {
           "node": "n2",
           "point": "p5"
@@ -293,6 +294,7 @@
       },
       {
         "id": "n3-n5#1",
+        "approve": true,
         "from": {
           "node": "n3",
           "point": "p5"
@@ -338,6 +340,7 @@
       {
         "id": "n5-n2#1",
         "type": "straight",
+        "approve": true,
         "from": {
           "node": "n5",
           "point": "p1"
@@ -362,6 +365,7 @@
       {
         "id": "n5-n7#1",
         "action": "Hoàn thành",
+        "approve": true,
         "from": {
           "node": "n5",
           "point": "p7"
@@ -733,6 +737,7 @@
       },
       {
         "id": "n7-n2#1",
+        "approve": false,
         "from": {
           "node": "n7",
           "point": "p1"

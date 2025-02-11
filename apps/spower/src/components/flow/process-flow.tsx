@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { CheckCircle2Icon } from 'lucide-react';
 
 import type { FC } from 'react';
 import { useCallback, useEffect } from 'react';
@@ -42,22 +43,35 @@ export const extractStatus = (status?: string) => {
   };
 };
 
-export const getNode = (type: 'request' | 'price', id: string) => {
-  return processData[type].nodes.find(it => it.id === id);
+export const getNode = (type: 'request' | 'price', nodeId: string) => {
+  return processData[type].nodes.find(it => it.id === nodeId);
 };
 
-export const getNodeFromFlows = (type: 'request' | 'price', id: string) => {
-  return processData[type].flows.filter(it => it.from.node === id);
+export const getNodeFromFlows = (type: 'request' | 'price', nodeId: string) => {
+  return processData[type].flows.filter(it => it.from.node === nodeId);
 };
 
-export const isDoneNode = (type: 'request' | 'price', id?: string) => {
-  return id === processData[type].done;
+export const isDoneNode = (type: 'request' | 'price', nodeId: string) => {
+  return nodeId === processData[type].done;
 };
 
 export const getDoneFlows = (type: 'request' | 'price') => {
   return processData[type].flows.filter(
     it => it.to.node === processData[type].done
   );
+};
+
+export const isApproveNode = (
+  type: 'request' | 'price',
+  nodeId?: string
+): boolean => {
+  if (!nodeId) {
+    return false;
+  }
+
+  const approvedFlows = processData[type].flows.filter(it => it.approve);
+  const fromNodeFlow = approvedFlows.find(it => it.from.node === nodeId);
+  return fromNodeFlow ? true : false;
 };
 
 type PointRole = 'source' | 'target' | 'unknown';
@@ -69,6 +83,7 @@ const CustomNode = ({
     name: string;
     description: string;
     active: boolean;
+    isApprove: boolean;
     sources: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
@@ -113,6 +128,9 @@ const CustomNode = ({
           <div className={'bg-appError h-3 w-3 rounded-full'}></div>
         </Show>
         <span>{data.name}</span>
+        <Show when={data.isApprove}>
+          <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
+        </Show>
       </div>
       {leftPoints.reverse().map((point, index) => (
         <Handle
@@ -199,11 +217,14 @@ function getNodes(type: 'request' | 'price', status?: string) {
       .filter(({ isTarget }) => isTarget)
       .map(({ point }) => point);
 
+    const isApprove = isApproveNode(type, id);
+
     return {
       id,
       type: 'customNode',
       data: {
         ...rest,
+        isApprove,
         sources,
         targets,
         active: extract?.to ? id === extract.to : id === extract?.from

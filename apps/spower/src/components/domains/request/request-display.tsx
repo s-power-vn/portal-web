@@ -261,9 +261,6 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
           request.data?.expand.issue.expand.createdBy.expand.department.name
         }
         content={request.data?.expand.issue.title}
-        leader1={request.data?.confirm1}
-        leader2={request.data?.confirm2}
-        leader3={request.data?.confirm3}
         data={v}
       />
     );
