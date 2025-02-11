@@ -6,7 +6,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import type { FC } from 'react';
 
-import { Show, formatDate } from '@minhdtb/storeo-core';
+import { formatDate } from '@minhdtb/storeo-core';
 
 import { RequestDetailItem } from './request-display';
 
@@ -17,12 +17,6 @@ export type RequestDocumentProps = {
   requester?: string;
   department?: string;
   content?: string;
-  confirm1?: boolean;
-  confirm2?: boolean;
-  confirm3?: boolean;
-  leader1?: string;
-  leader2?: string;
-  leader3?: string;
   data: RequestDetailItem[];
 };
 
@@ -313,55 +307,7 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           </tbody>
         </table>
         <div className={'mt-8 flex items-start justify-between'}>
-          <div className={'flex flex-col items-center px-6'}>
-            <div className={'font-bold'}>Phó giám đốc</div>
-            <Show
-              when={props.confirm3}
-              fallback={
-                <div className={'mt-4'}>
-                  <div className={'h-10 w-10'}></div>
-                </div>
-              }
-            >
-              <div className={'mt-4'}>
-                <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
-              </div>
-            </Show>
-            <div className={'mt-[1.5rem] font-bold'}>{props.leader3}</div>
-          </div>
           <div className={'flex gap-8'}>
-            <div className={'flex flex-col items-center'}>
-              <div className={'font-bold'}>Phòng kỹ thuật</div>
-              <Show
-                when={props.confirm1}
-                fallback={
-                  <div className={'mt-4'}>
-                    <div className={'h-10 w-10'}></div>
-                  </div>
-                }
-              >
-                <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
-                </div>
-              </Show>
-              <div className={'mt-[1.5rem] font-bold'}>{props.leader1}</div>
-            </div>
-            <div className={'flex flex-col items-center'}>
-              <div className={'font-bold'}>Phòng kế hoạch</div>
-              <Show
-                when={props.confirm2}
-                fallback={
-                  <div className={'mt-4'}>
-                    <div className={'h-10 w-10'}></div>
-                  </div>
-                }
-              >
-                <div className={'mt-4'}>
-                  <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
-                </div>
-              </Show>
-              <div className={'mt-[1.5rem] font-bold'}>{props.leader2}</div>
-            </div>
             <div className={'flex flex-col items-center'}>
               <div className={'font-bold'}>Người đề nghị</div>
               <div className={'mt-4'}>

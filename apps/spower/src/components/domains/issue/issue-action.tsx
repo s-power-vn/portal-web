@@ -232,7 +232,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
             id="approve-checkbox"
           />
           <label htmlFor="approve-checkbox" className="text-sm">
-            {isApproved ? 'Đã duyệt' : 'Chưa duyệt'}
+            {isApproved ? 'Đã duyệt' : 'Chưa duyệt công việc này'}
           </label>
         </div>
       </Show>
