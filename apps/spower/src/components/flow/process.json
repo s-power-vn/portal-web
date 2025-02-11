@@ -1,5 +1,6 @@
 {
   "request": {
+    "done": "n7",
     "nodes": [
       {
         "id": "n1",
@@ -329,5 +330,20 @@
         }
       }
     ]
+  },
+  "price": {
+    "done": "n7",
+    "nodes": [
+      {
+        "id": "n1",
+        "name": "Người tạo",
+        "description": "",
+        "condition": "",
+        "x": 200,
+        "y": 300,
+        "points": []
+      }
+    ],
+    "flows": []
   }
 }

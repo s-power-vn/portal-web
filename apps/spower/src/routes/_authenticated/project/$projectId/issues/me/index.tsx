@@ -68,13 +68,7 @@ const Component = () => {
     }),
     columnHelper.display({
       id: 'state',
-      cell: ({ row }) => (
-        <Switch>
-          <Match when={row.original.type === IssueTypeOptions.Request}>
-            <IssueStatus issueId={row.original.id} />
-          </Match>
-        </Switch>
-      ),
+      cell: ({ row }) => <IssueStatus issueId={row.original.id} />,
       header: () => 'Trạng thái',
       footer: info => info.column.id,
       size: 200

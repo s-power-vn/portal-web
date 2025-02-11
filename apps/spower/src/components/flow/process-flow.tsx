@@ -42,12 +42,12 @@ export const extractStatus = (status?: string) => {
   };
 };
 
-export const getNode = (id: string) => {
-  return processData.request.nodes.find(it => it.id === id);
+export const getNode = (type: 'request' | 'price', id: string) => {
+  return processData[type].nodes.find(it => it.id === id);
 };
 
-export const getFromFlows = (id: string) => {
-  return processData.request.flows.filter(it => it.from.node === id);
+export const getFromFlows = (type: 'request' | 'price', id: string) => {
+  return processData[type].flows.filter(it => it.from.node === id);
 };
 
 const CustomNode = ({
@@ -140,8 +140,8 @@ const CustomNode = ({
   );
 };
 
-function getNodes(status?: string) {
-  return processData.request.nodes.map(node => {
+function getNodes(type: 'request' | 'price', status?: string) {
+  return processData[type].nodes.map(node => {
     const { id, x, y, ...rest } = node;
 
     const sources = node.points
@@ -152,7 +152,7 @@ function getNodes(status?: string) {
         };
       })
       .filter(point => {
-        return processData.request.flows.some(
+        return processData[type].flows.some(
           flow => `${flow.from.node}#${flow.from.point}` === point.id
         );
       });
@@ -189,8 +189,8 @@ function getNodes(status?: string) {
   });
 }
 
-function getEdges(status?: string) {
-  return processData.request.flows.map(flow => {
+function getEdges(type: 'request' | 'price', status?: string) {
+  return processData[type].flows.map(flow => {
     return {
       id: flow.id,
       source: `${flow.from.node}`,
@@ -219,21 +219,22 @@ function getEdges(status?: string) {
 const nodeTypes = { customNode: CustomNode };
 
 export type ProcessFlowProps = {
+  type: 'request' | 'price';
   status?: string;
 };
 
-export const ProcessFlow: FC<ProcessFlowProps> = ({ status }) => {
+export const ProcessFlow: FC<ProcessFlowProps> = ({ type, status }) => {
   const { fitView } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const onLayout = useCallback(async () => {
-    setEdges(getEdges(status));
+    setEdges(getEdges(type, status));
     await nextTick(10);
-    setNodes(getNodes(status));
+    setNodes(getNodes(type, status));
     fitView();
-  }, [fitView, setEdges, setNodes, status]);
+  }, [fitView, setEdges, setNodes, status, type]);
 
   useEffect(() => {
     onLayout();

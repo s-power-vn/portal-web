@@ -8,6 +8,7 @@ import { For, Show } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { ForwardIssueForm, ReturnIssueForm } from '.';
+import { IssueTypeOptions } from '../../../../../../libs/core/src';
 import { useInvalidateQueries } from '../../../hooks';
 import { extractStatus, getFromFlows, getNode } from '../../flow';
 
@@ -23,18 +24,23 @@ export const IssueAction: FC<IssueActionProps> = props => {
   });
 
   const currentNode = useMemo(() => {
+    const type =
+      issue.data.type === IssueTypeOptions.Request ? 'request' : 'price';
     const extracted = extractStatus(issue.data.status);
     const currentNode = extracted?.to ? extracted.to : extracted?.from;
-    return currentNode ? getNode(currentNode) : undefined;
+    return currentNode ? getNode(type, currentNode) : undefined;
   }, [issue.data.status]);
 
   const toList = useMemo(() => {
+    const type =
+      issue.data.type === IssueTypeOptions.Request ? 'request' : 'price';
+
     if (!currentNode) {
       return [];
     }
 
-    return getFromFlows(currentNode.id).map(it => {
-      const nodeInfo = getNode(it.to.node);
+    return getFromFlows(type, currentNode.id).map(it => {
+      const nodeInfo = getNode(type, it.to.node);
 
       return {
         ...extractStatus(it.id),

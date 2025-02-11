@@ -7,6 +7,7 @@ import { Suspense, useCallback, useMemo } from 'react';
 import { Match, Switch, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
+import { IssueTypeOptions } from '../../../../../../libs/core/src';
 import { ProcessFlow, extractStatus } from '../../flow/process-flow';
 import processData from '../../flow/process.json';
 
@@ -26,7 +27,14 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
       className: 'min-w-[800px]',
       children: (
         <div className={'h-[400px]'}>
-          <ProcessFlow status={issue.data.status} />
+          <Switch>
+            <Match when={issue.data.type === IssueTypeOptions.Request}>
+              <ProcessFlow type={'request'} status={issue.data.status} />
+            </Match>
+            <Match when={issue.data.type === IssueTypeOptions.Price}>
+              <ProcessFlow type={'price'} status={issue.data.status} />
+            </Match>
+          </Switch>
         </div>
       )
     });
