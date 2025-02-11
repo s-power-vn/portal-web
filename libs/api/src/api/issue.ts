@@ -120,5 +120,17 @@ export const issueApi = router('issue', {
         body: params
       });
     }
+  }),
+  finish: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      status: string;
+      note?: string;
+    }) => {
+      return client.send('/issue-finish', {
+        method: 'POST',
+        body: params
+      });
+    }
   })
 });

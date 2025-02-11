@@ -4,13 +4,19 @@ import { api } from 'portal-api';
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 
-import { For, Show } from '@minhdtb/storeo-core';
+import { For, Show, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { ForwardIssueForm, ReturnIssueForm } from '.';
 import { IssueTypeOptions } from '../../../../../../libs/core/src';
 import { useInvalidateQueries } from '../../../hooks';
-import { extractStatus, getNode, getNodeFromFlows } from '../../flow';
+import {
+  extractStatus,
+  getNode,
+  getNodeFromFlows,
+  isDoneNode
+} from '../../flow';
+import { FinishIssueForm } from './form/finish-issue-form';
 
 export type IssueActionProps = {
   issueId: string;
@@ -44,6 +50,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
 
       return {
         ...extractStatus(it.id),
+        to: it.to.node,
         status: it.id,
         action: it.action,
         toNode: nodeInfo
@@ -88,6 +95,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
       T extends {
         action?: string;
         status: string;
+        to: string;
         toNode?: { name: string; condition?: string };
       }
     >(
@@ -97,27 +105,54 @@ export const IssueAction: FC<IssueActionProps> = props => {
         return;
       }
 
-      showModal({
-        title: node.action ?? `Chuyển ${node.toNode?.name}`,
-        children: ({ close }) => {
-          return (
-            <ForwardIssueForm
-              issueId={props.issueId}
-              title={`${node.toNode?.name}`}
-              status={node.status}
-              condition={node.toNode?.condition}
-              onCancel={close}
-              onSuccess={() => {
-                invalidates([
-                  api.issue.byId.getKey(props.issueId),
-                  api.comment.list.getKey(props.issueId)
-                ]);
-                close();
-              }}
-            />
-          );
-        }
-      });
+      if (
+        isDoneNode(
+          issue.data.type === IssueTypeOptions.Request ? 'request' : 'price',
+          node.to
+        )
+      ) {
+        showModal({
+          title: node.action ?? `Hoàn thành`,
+          children: ({ close }) => {
+            return (
+              <FinishIssueForm
+                issueId={props.issueId}
+                status={node.status}
+                onCancel={close}
+                onSuccess={() => {
+                  invalidates([
+                    api.issue.byId.getKey(props.issueId),
+                    api.comment.list.getKey(props.issueId)
+                  ]);
+                  close();
+                }}
+              />
+            );
+          }
+        });
+      } else {
+        showModal({
+          title: node.action ?? `Chuyển ${node.toNode?.name}`,
+          children: ({ close }) => {
+            return (
+              <ForwardIssueForm
+                issueId={props.issueId}
+                title={`${node.toNode?.name}`}
+                status={node.status}
+                condition={node.toNode?.condition}
+                onCancel={close}
+                onSuccess={() => {
+                  invalidates([
+                    api.issue.byId.getKey(props.issueId),
+                    api.comment.list.getKey(props.issueId)
+                  ]);
+                  close();
+                }}
+              />
+            );
+          }
+        });
+      }
     },
     [invalidates, props.issueId]
   );
@@ -125,7 +160,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
   return (
     <div className={'flex items-center gap-2 border-b p-2'}>
       <Show when={returnNode}>
-        <Button onClick={returnNodeClick}>
+        <Button onClick={returnNodeClick} className="bg-appError">
           {returnNode?.action ?? 'Chuyển trả'}
         </Button>
       </Show>
@@ -133,8 +168,16 @@ export const IssueAction: FC<IssueActionProps> = props => {
         {item => {
           return (
             <Button
-              key={item.toNode?.id}
+              key={item.to}
               onClick={() => forwardNodeClick(item)}
+              className={cn(
+                isDoneNode(
+                  issue.data.type === IssueTypeOptions.Request
+                    ? 'request'
+                    : 'price',
+                  item.to
+                ) && 'bg-appSuccess'
+              )}
             >
               {item.action ?? `Chuyển ${item.toNode?.name}`}
             </Button>

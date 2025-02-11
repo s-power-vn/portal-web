@@ -51,6 +51,14 @@
           {
             "id": "p6",
             "type": "bottom"
+          },
+          {
+            "id": "p7",
+            "type": "top"
+          },
+          {
+            "id": "p8",
+            "type": "top"
           }
         ]
       },
@@ -141,6 +149,14 @@
           {
             "id": "p7",
             "type": "right"
+          },
+          {
+            "id": "p8",
+            "type": "right"
+          },
+          {
+            "id": "p9",
+            "type": "top"
           }
         ]
       },
@@ -173,6 +189,32 @@
           {
             "id": "p1",
             "type": "left"
+          },
+          {
+            "id": "p2",
+            "type": "left"
+          }
+        ]
+      },
+      {
+        "id": "n8",
+        "name": "Giám đốc",
+        "description": "",
+        "condition": "role = 1",
+        "x": 600,
+        "y": 100,
+        "points": [
+          {
+            "id": "p1",
+            "type": "bottom"
+          },
+          {
+            "id": "p2",
+            "type": "bottom"
+          },
+          {
+            "id": "p3",
+            "type": "bottom"
           }
         ]
       }
@@ -326,7 +368,54 @@
         },
         "to": {
           "node": "n7",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n7-n5#1",
+        "from": {
+          "node": "n7",
           "point": "p1"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p8"
+        }
+      },
+      {
+        "id": "n2-n8#1",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p7"
+        },
+        "to": {
+          "node": "n8",
+          "point": "p3"
+        }
+      },
+      {
+        "id": "n8-n2#1",
+        "type": "straight",
+        "from": {
+          "node": "n8",
+          "point": "p2"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p8"
+        }
+      },
+      {
+        "id": "n8-n5#1",
+        "type": "straight",
+        "from": {
+          "node": "n8",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p9"
         }
       }
     ]
