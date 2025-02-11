@@ -70,6 +70,10 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     variables: issueId
   });
 
+  const issue = api.issue.byId.useSuspenseQuery({
+    variables: issueId
+  });
+
   const v = useMemo<RequestDetailItem[]>(() => {
     return _.chain(
       request.data ? request.data?.expand.requestDetail_via_request : []
@@ -262,6 +266,12 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         }
         content={request.data?.expand.issue.title}
         data={v}
+        approvers={issue.data?.approver?.map(it => ({
+          userId: it.userId,
+          userName: it.userName,
+          nodeId: it.nodeId,
+          nodeName: it.nodeName
+        }))}
       />
     );
     fetch(`${BASE_URL}/create-pdf`, {
@@ -284,7 +294,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         });
       })
       .finally(() => hideLoading());
-  }, [request.data, v, showLoading, hideLoading]);
+  }, [request.data, v, showLoading, hideLoading, issue.data]);
 
   return (
     <div className={'bg-appWhite flex flex-col'}>

@@ -6,7 +6,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import type { FC } from 'react';
 
-import { formatDate } from '@minhdtb/storeo-core';
+import { For, Show, formatDate } from '@minhdtb/storeo-core';
 
 import { RequestDetailItem } from './request-display';
 
@@ -18,6 +18,12 @@ export type RequestDocumentProps = {
   department?: string;
   content?: string;
   data: RequestDetailItem[];
+  approvers?: Array<{
+    userId: string;
+    userName: string;
+    nodeId: string;
+    nodeName: string;
+  }>;
 };
 
 export const RequestDocument: FC<RequestDocumentProps> = props => {
@@ -307,14 +313,32 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           </tbody>
         </table>
         <div className={'mt-8 flex items-start justify-between'}>
-          <div className={'flex gap-8'}>
-            <div className={'flex flex-col items-center'}>
-              <div className={'font-bold'}>Người đề nghị</div>
-              <div className={'mt-4'}>
-                <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
-              </div>
-              <div className={'mt-[1.5rem] font-bold'}>{props.requester}</div>
+          <Show when={props.approvers?.length}>
+            <div className={'flex gap-2'}>
+              <For each={props.approvers}>
+                {approver => (
+                  <div
+                    key={approver.userId}
+                    className={'flex flex-col items-center'}
+                  >
+                    <div className={'font-bold'}>{approver.nodeName}</div>
+                    <div className={'mt-4'}>
+                      <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
+                    </div>
+                    <div className={'mt-[1.5rem] font-bold'}>
+                      {approver.userName}
+                    </div>
+                  </div>
+                )}
+              </For>
             </div>
+          </Show>
+          <div className={'flex flex-col items-center'}>
+            <div className={'font-bold'}>Người đề nghị</div>
+            <div className={'mt-4'}>
+              <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
+            </div>
+            <div className={'mt-[1.5rem] font-bold'}>{props.requester}</div>
           </div>
         </div>
       </div>
