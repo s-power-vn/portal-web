@@ -341,9 +341,318 @@
         "condition": "",
         "x": 200,
         "y": 300,
-        "points": []
+        "points": [
+          {
+            "id": "p1",
+            "type": "right"
+          },
+          {
+            "id": "p2",
+            "type": "right"
+          }
+        ]
+      },
+      {
+        "id": "n2",
+        "name": "T.Phòng kế hoạch",
+        "description": "",
+        "condition": "role = 3 && department.code = 'KH'",
+        "x": 400,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "left"
+          },
+          {
+            "id": "p2",
+            "type": "left"
+          },
+          {
+            "id": "p3",
+            "type": "top"
+          },
+          {
+            "id": "p4",
+            "type": "top"
+          },
+          {
+            "id": "p5",
+            "type": "right"
+          },
+          {
+            "id": "p6",
+            "type": "right"
+          },
+          {
+            "id": "p7",
+            "type": "bottom"
+          },
+          {
+            "id": "p8",
+            "type": "bottom"
+          },
+          {
+            "id": "p9",
+            "type": "bottom"
+          },
+          {
+            "id": "p10",
+            "type": "bottom"
+          }
+        ]
+      },
+      {
+        "id": "n3",
+        "name": "NV.Phòng kế hoạch",
+        "description": "",
+        "condition": "role = 4 && department.code = 'KH'",
+        "x": 400,
+        "y": 400,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          },
+          {
+            "id": "p3",
+            "type": "top"
+          },
+          {
+            "id": "p4",
+            "type": "top"
+          }
+        ]
+      },
+      {
+        "id": "n4",
+        "name": "T.Phòng kế toán",
+        "description": "",
+        "condition": "role = 3 && department.code = 'KTo'",
+        "x": 600,
+        "y": 300,
+        "points": [
+          {
+            "id": "p1",
+            "type": "left"
+          },
+          {
+            "id": "p2",
+            "type": "left"
+          },
+          {
+            "id": "p3",
+            "type": "bottom"
+          },
+          {
+            "id": "p4",
+            "type": "bottom"
+          }
+        ]
+      },
+      {
+        "id": "n5",
+        "name": "NV.Phòng kế toán",
+        "description": "",
+        "condition": "role = 4 && department.code = 'KTo'",
+        "x": 600,
+        "y": 400,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          }
+        ]
+      },
+      {
+        "id": "n6",
+        "name": "Giám đốc",
+        "description": "",
+        "condition": "role = 1",
+        "x": 400,
+        "y": 200,
+        "points": [
+          {
+            "id": "p1",
+            "type": "bottom"
+          },
+          {
+            "id": "p2",
+            "type": "bottom"
+          }
+        ]
+      },
+      {
+        "id": "n7",
+        "name": "Hoàn thành",
+        "description": "",
+        "x": 200,
+        "y": 400,
+        "points": [
+          {
+            "id": "p1",
+            "type": "top"
+          },
+          {
+            "id": "p2",
+            "type": "top"
+          }
+        ]
       }
     ],
-    "flows": []
+    "flows": [
+      {
+        "id": "n1-n2#1",
+        "type": "straight",
+        "action": "Chuyển T.Phòng kế hoạch",
+        "from": {
+          "node": "n1",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n2-n1#1",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n1",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n2-n3#1",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p7"
+        },
+        "to": {
+          "node": "n3",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n3-n2#1",
+        "type": "straight",
+        "from": {
+          "node": "n3",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p8"
+        }
+      },
+      {
+        "id": "n2-n4#1",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p5"
+        },
+        "to": {
+          "node": "n4",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n4-n2#1",
+        "type": "straight",
+        "from": {
+          "node": "n4",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p6"
+        }
+      },
+      {
+        "id": "n4-n5#1",
+        "type": "straight",
+        "from": {
+          "node": "n4",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n5",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n5-n4#1",
+        "type": "straight",
+        "from": {
+          "node": "n5",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n4",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n2-n6#1",
+        "type": "straight",
+        "from": {
+          "node": "n2",
+          "point": "p3"
+        },
+        "to": {
+          "node": "n6",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n6-n2#1",
+        "type": "straight",
+        "from": {
+          "node": "n6",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p4"
+        }
+      },
+      {
+        "id": "n2-n7#1",
+        "action": "Hoàn thành",
+        "from": {
+          "node": "n2",
+          "point": "p9"
+        },
+        "to": {
+          "node": "n7",
+          "point": "p2"
+        }
+      },
+      {
+        "id": "n7-n2#1",
+        "from": {
+          "node": "n7",
+          "point": "p1"
+        },
+        "to": {
+          "node": "n2",
+          "point": "p10"
+        }
+      }
+    ]
   }
 }

@@ -46,9 +46,11 @@ export const getNode = (type: 'request' | 'price', id: string) => {
   return processData[type].nodes.find(it => it.id === id);
 };
 
-export const getFromFlows = (type: 'request' | 'price', id: string) => {
+export const getNodeFromFlows = (type: 'request' | 'price', id: string) => {
   return processData[type].flows.filter(it => it.from.node === id);
 };
+
+type PointRole = 'source' | 'target' | 'unknown';
 
 const CustomNode = ({
   data
@@ -60,29 +62,33 @@ const CustomNode = ({
     sources: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
+      role: PointRole;
     }[];
     targets: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
+      role: PointRole;
     }[];
   };
 }) => {
   const points = [...data.sources, ...data.targets];
-  const leftPoints = _.sortBy(
-    points.filter(point => point.type === 'left'),
-    'id'
+
+  const sortByPointId = (points: typeof data.sources) => {
+    return _.sortBy(points, point => {
+      const match = point.id.match(/p(\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    });
+  };
+
+  const leftPoints = sortByPointId(
+    points.filter(point => point.type === 'left')
   );
-  const topPoints = _.sortBy(
-    points.filter(point => point.type === 'top'),
-    'id'
+  const topPoints = sortByPointId(points.filter(point => point.type === 'top'));
+  const rightPoints = sortByPointId(
+    points.filter(point => point.type === 'right')
   );
-  const rightPoints = _.sortBy(
-    points.filter(point => point.type === 'right'),
-    'id'
-  );
-  const bottomPoints = _.sortBy(
-    points.filter(point => point.type === 'bottom'),
-    'id'
+  const bottomPoints = sortByPointId(
+    points.filter(point => point.type === 'bottom')
   );
 
   return (
@@ -104,6 +110,7 @@ const CustomNode = ({
           type={data.sources.includes(point) ? 'source' : 'target'}
           position={Position.Left}
           id={point.id}
+          className={cn(point.role === 'unknown' && 'hidden')}
           style={{ top: `${(index + 1) * (100 / (leftPoints.length + 1))}%` }}
         />
       ))}
@@ -113,6 +120,7 @@ const CustomNode = ({
           type={data.sources.includes(point) ? 'source' : 'target'}
           position={Position.Top}
           id={point.id}
+          className={cn(point.role === 'unknown' && 'hidden')}
           style={{ left: `${(index + 1) * (100 / (topPoints.length + 1))}%` }}
         />
       ))}
@@ -122,6 +130,7 @@ const CustomNode = ({
           type={data.sources.includes(point) ? 'source' : 'target'}
           position={Position.Right}
           id={point.id}
+          className={cn(point.role === 'unknown' && 'hidden')}
           style={{ top: `${(index + 1) * (100 / (rightPoints.length + 1))}%` }}
         />
       ))}
@@ -131,6 +140,7 @@ const CustomNode = ({
           type={data.sources.includes(point) ? 'source' : 'target'}
           position={Position.Bottom}
           id={point.id}
+          className={cn(point.role === 'unknown' && 'hidden')}
           style={{
             left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`
           }}
@@ -141,50 +151,54 @@ const CustomNode = ({
 };
 
 function getNodes(type: 'request' | 'price', status?: string) {
-  return processData[type].nodes.map(node => {
-    const { id, x, y, ...rest } = node;
+  const data = processData[type];
+  const extract = extractStatus(status);
 
-    const sources = node.points
-      .map(point => {
-        return {
-          ...point,
-          id: `${id}#${point.id}`
-        };
-      })
-      .filter(point => {
-        return processData[type].flows.some(
-          flow => `${flow.from.node}#${flow.from.point}` === point.id
-        );
-      });
+  return data.nodes.map(node => {
+    const { id, x, y, points, ...rest } = node;
 
-    const targets = node.points
-      .map(point => {
-        return {
-          ...point,
-          id: `${id}#${point.id}`
-        };
-      })
-      .filter(point => {
-        return processData.request.flows.some(
-          flow => `${flow.to.node}#${flow.to.point}` === point.id
-        );
-      });
+    const mappedPoints = points.map(point => ({
+      ...point,
+      id: `${id}#${point.id}`
+    }));
 
-    const extract = extractStatus(status);
+    const pointsWithRoles = mappedPoints.map(point => {
+      const isSource = data.flows.some(
+        flow => `${flow.from.node}#${flow.from.point}` === point.id
+      );
+      const isTarget = data.flows.some(
+        flow => `${flow.to.node}#${flow.to.point}` === point.id
+      );
+
+      let role: PointRole = 'unknown';
+      if (isSource) role = 'source';
+      if (isTarget) role = 'target';
+
+      return {
+        point: { ...point, role },
+        isSource,
+        isTarget
+      };
+    });
+
+    const sources = pointsWithRoles
+      .filter(({ isSource, isTarget }) => isSource || (!isSource && !isTarget))
+      .map(({ point }) => point);
+
+    const targets = pointsWithRoles
+      .filter(({ isTarget }) => isTarget)
+      .map(({ point }) => point);
 
     return {
-      id: id,
+      id,
       type: 'customNode',
       data: {
         ...rest,
         sources,
         targets,
-        active: extract?.to ? id === extract?.to : id === extract?.from
+        active: extract?.to ? id === extract.to : id === extract?.from
       },
-      position: {
-        x,
-        y
-      }
+      position: { x, y }
     };
   });
 }

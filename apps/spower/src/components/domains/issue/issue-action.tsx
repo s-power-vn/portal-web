@@ -10,7 +10,7 @@ import { Button, showModal } from '@minhdtb/storeo-theme';
 import { ForwardIssueForm, ReturnIssueForm } from '.';
 import { IssueTypeOptions } from '../../../../../../libs/core/src';
 import { useInvalidateQueries } from '../../../hooks';
-import { extractStatus, getFromFlows, getNode } from '../../flow';
+import { extractStatus, getNode, getNodeFromFlows } from '../../flow';
 
 export type IssueActionProps = {
   issueId: string;
@@ -39,7 +39,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
       return [];
     }
 
-    return getFromFlows(type, currentNode.id).map(it => {
+    return getNodeFromFlows(type, currentNode.id).map(it => {
       const nodeInfo = getNode(type, it.to.node);
 
       return {

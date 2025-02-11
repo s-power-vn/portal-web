@@ -8,8 +8,7 @@ import { Match, Switch, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
 import { IssueTypeOptions } from '../../../../../../libs/core/src';
-import { ProcessFlow, extractStatus } from '../../flow/process-flow';
-import processData from '../../flow/process.json';
+import { ProcessFlow, extractStatus, getNode } from '../../flow/process-flow';
 
 export type IssueStatusProps = {
   issueId: string;
@@ -43,12 +42,12 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
   const style = `text-appWhite flex w-fit h-fit items-center
   justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs`;
 
-  const node = useMemo(() => {
-    return processData.request.nodes.find(it => {
-      const extracted = extractStatus(issue.data.status);
-      const currentNode = extracted?.to ? extracted.to : extracted?.from;
-      return it.id === currentNode;
-    });
+  const currentNode = useMemo(() => {
+    const type =
+      issue.data.type === IssueTypeOptions.Request ? 'request' : 'price';
+    const extracted = extractStatus(issue.data.status);
+    const currentNode = extracted?.to ? extracted.to : extracted?.from;
+    return currentNode ? getNode(type, currentNode) : undefined;
   }, [issue.data.status]);
 
   return (
@@ -59,13 +58,13 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
         </span>
       }
     >
-      <Match when={!!node}>
+      <Match when={!!currentNode}>
         <Button
           variant={'outline'}
           onClick={handleClick}
           className={cn(style, 'bg-appError', className)}
         >
-          {node?.name}
+          {currentNode?.name}
         </Button>
       </Match>
     </Switch>
