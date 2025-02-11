@@ -1,9 +1,8 @@
 import { CalendarIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, getImageUrl } from 'portal-core';
+import { Collections, IssueTypeOptions, getImageUrl } from 'portal-core';
 
 import type { FC } from 'react';
-import React from 'react';
 
 import { timeSince } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
@@ -52,7 +51,14 @@ export const IssueComment: FC<IssueCommentProps> = props => {
                       <CalendarIcon className={'h-3 w-3'} />
                       {timeSince(new Date(Date.parse(it.created)))}
                     </div>
-                    <IssueStatusText status={it.status} />
+                    <IssueStatusText
+                      status={it.status}
+                      type={
+                        it.expand.issue.type === IssueTypeOptions.Request
+                          ? 'request'
+                          : 'price'
+                      }
+                    />
                   </div>
                   <div className={'text-sm'}>{it.content}</div>
                 </div>

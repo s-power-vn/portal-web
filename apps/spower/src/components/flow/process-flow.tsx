@@ -43,15 +43,18 @@ export const extractStatus = (status?: string) => {
   };
 };
 
-export const getNode = (type: 'request' | 'price', nodeId: string) => {
+export const getNode = (type: 'request' | 'price', nodeId?: string) => {
   return processData[type].nodes.find(it => it.id === nodeId);
 };
 
-export const getNodeFromFlows = (type: 'request' | 'price', nodeId: string) => {
+export const getNodeFromFlows = (
+  type: 'request' | 'price',
+  nodeId?: string
+) => {
   return processData[type].flows.filter(it => it.from.node === nodeId);
 };
 
-export const isDoneNode = (type: 'request' | 'price', nodeId: string) => {
+export const isDoneNode = (type: 'request' | 'price', nodeId?: string) => {
   return nodeId === processData[type].done;
 };
 
