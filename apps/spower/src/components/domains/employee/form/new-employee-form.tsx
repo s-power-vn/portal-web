@@ -103,7 +103,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         options={{
           placeholder: 'Chọn phòng ban',
           onChange: value => {
-            setSelectedDepartment(value);
+            setSelectedDepartment(value as string);
           }
         }}
       />

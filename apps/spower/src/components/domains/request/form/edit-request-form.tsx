@@ -147,7 +147,8 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
           deliveryDate: it?.deliveryDate
             ? new Date(Date.parse(it.deliveryDate ?? ''))
             : undefined
-        }))
+        })),
+        attachments: []
       }}
       className={'flex flex-col gap-4'}
       loading={issue.isLoading || request.isLoading || update.isPending}

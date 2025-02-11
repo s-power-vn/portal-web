@@ -37,7 +37,7 @@ export type PriceDetailItem = {
   estimate?: number;
   index?: string;
   prices?: Record<string, number>;
-  totals?: Record<string, number>;
+  totals: Record<string, number>;
   isSubTotal?: boolean;
   isVAT?: boolean;
   isFinalTotal?: boolean;
@@ -77,7 +77,10 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         estimate: it.estimate,
         index: it.index,
         prices: it.prices as Record<string, number>,
-        totals: {} as Record<string, number>
+        totals: Object.keys(it.prices || {}).reduce(
+          (acc, key) => ({ ...acc, [key]: 0 }),
+          {} as Record<string, number>
+        )
       }))
       .orderBy('level')
       .value();
@@ -85,16 +88,22 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
 
   const calculateTotals = useCallback(
     (data: PriceDetailItem[], suppliers: string[]) => {
-      const regularRows = data.filter(
-        row => !row.isSubTotal && !row.isVAT && !row.isFinalTotal
-      );
+      const regularRows = data
+        .filter(row => !row.isSubTotal && !row.isVAT && !row.isFinalTotal)
+        .map(row => ({
+          ...row,
+          totals: suppliers.reduce<Record<string, number>>(
+            (acc, supplier) => ({
+              ...acc,
+              [supplier]: (row.prices?.[supplier] ?? 0) * (row.volume ?? 0)
+            }),
+            {}
+          )
+        }));
 
-      const calculateSum = (values: (number | undefined)[]) => {
-        const sum = values.reduce(
-          (acc: number, val) => acc + (typeof val === 'number' ? val : 0),
-          0
-        );
-        return isNaN(sum) ? undefined : sum;
+      const calculateSum = (values: number[]) => {
+        const sum = values.reduce((acc, val) => acc + val, 0);
+        return isNaN(sum) ? 0 : sum;
       };
 
       const subTotal: PriceDetailItem = {
@@ -102,13 +111,13 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate: calculateSum(regularRows.map(row => row.estimate)),
+        estimate: calculateSum(regularRows.map(row => row.estimate ?? 0)),
         prices: {},
-        totals: suppliers.reduce(
+        totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
             ...acc,
             [supplier]: calculateSum(
-              regularRows.map(row => row.totals?.[supplier])
+              regularRows.map(row => row.totals[supplier] ?? 0)
             )
           }),
           {}
@@ -121,18 +130,12 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate:
-          typeof subTotal.estimate === 'number'
-            ? subTotal.estimate * 0.1
-            : undefined,
+        estimate: (subTotal.estimate ?? 0) * 0.1,
         prices: {},
-        totals: suppliers.reduce(
+        totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
             ...acc,
-            [supplier]:
-              typeof subTotal.totals?.[supplier] === 'number'
-                ? subTotal.totals[supplier] * 0.1
-                : undefined
+            [supplier]: subTotal.totals[supplier] * 0.1
           }),
           {}
         ),
@@ -144,20 +147,12 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate:
-          typeof subTotal.estimate === 'number' &&
-          typeof vat.estimate === 'number'
-            ? subTotal.estimate + vat.estimate
-            : undefined,
+        estimate: (subTotal.estimate ?? 0) + (vat.estimate ?? 0),
         prices: {},
-        totals: suppliers.reduce(
+        totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
             ...acc,
-            [supplier]:
-              typeof subTotal.totals?.[supplier] === 'number' &&
-              typeof vat.totals?.[supplier] === 'number'
-                ? subTotal.totals[supplier] + vat.totals[supplier]
-                : undefined
+            [supplier]: subTotal.totals[supplier] + vat.totals[supplier]
           }),
           {}
         ),
@@ -208,9 +203,7 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
       columnHelper.accessor('volume', {
         cell: info => (
           <div className={'flex justify-end gap-1'}>
-            <span className={'font-semibold'}>
-              {formatNumber(info.getValue() ?? 0)}
-            </span>
+            {formatNumber(info.getValue() ?? 0)}
           </div>
         ),
         header: () => 'Khối lượng',
@@ -219,9 +212,7 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
       columnHelper.accessor('estimate', {
         cell: info => (
           <div className={'flex justify-end gap-1'}>
-            <span className={'font-semibold'}>
-              {formatNumber(info.getValue() ?? 0)}
-            </span>
+            {formatNumber(info.getValue() ?? 0)}
           </div>
         ),
         header: () => 'Dự toán',
@@ -233,9 +224,7 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
           header: () => supplier.name,
           cell: info => (
             <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(info.getValue() ?? 0)}
-              </span>
+              {formatNumber(info.getValue() ?? 0)}
             </div>
           ),
           size: 120
@@ -245,9 +234,7 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
           header: () => supplier.name,
           cell: info => (
             <div className={'flex justify-end gap-1'}>
-              <span className={'font-semibold'}>
-                {formatNumber(info.getValue() ?? 0)}
-              </span>
+              {formatNumber(info.getValue() ?? 0)}
             </div>
           ),
           size: 120
@@ -387,11 +374,9 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
                         <TableRow
                           key={row.id}
                           className={cn('group w-full cursor-pointer', {
-                            'font-semibold':
-                              row.original.isSubTotal ||
-                              row.original.isFinalTotal,
                             'bg-gray-50':
                               row.original.isSubTotal ||
+                              row.original.isVAT ||
                               row.original.isFinalTotal
                           })}
                         >
@@ -405,7 +390,11 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
                                 'bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[""]',
                                 {
                                   'text-right':
-                                    typeof cell.getValue() === 'number'
+                                    typeof cell.getValue() === 'number',
+                                  'font-semibold':
+                                    row.original.isSubTotal ||
+                                    row.original.isVAT ||
+                                    row.original.isFinalTotal
                                 }
                               )}
                             >

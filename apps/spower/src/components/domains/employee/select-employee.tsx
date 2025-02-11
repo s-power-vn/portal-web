@@ -2,11 +2,9 @@ import { api } from 'portal-api';
 
 import type { FC } from 'react';
 
-import type { SelectInputProps } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../combobox';
 
-import { Combobox } from '../../combobox';
-
-export type SelectEmployeeProps = Omit<SelectInputProps, 'items'>;
+export type SelectEmployeeProps = ComboboxProps;
 
 export const SelectEmployee: FC<SelectEmployeeProps> = props => {
   return (

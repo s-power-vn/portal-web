@@ -2,12 +2,9 @@ import { api } from 'portal-api';
 
 import type { FC } from 'react';
 
-import { Combobox } from '../../combobox';
+import { Combobox, ComboboxProps } from '../../combobox';
 
-export type SelectEmployeeByConditionProps = Omit<
-  React.ComponentProps<typeof Combobox>,
-  'queryKey' | 'queryFn' | 'itemToString' | 'itemToValue'
-> & {
+export type SelectEmployeeByConditionProps = ComboboxProps & {
   condition?: string;
 };
 

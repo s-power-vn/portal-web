@@ -27,6 +27,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';
@@ -79,6 +80,21 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
                   invalidates([
                     api.issue.byId.getKey(issueId),
                     api.request.byIssueId.getKey(issueId)
+                  ]);
+                  close();
+                }}
+                onCancel={close}
+              />
+            </Suspense>
+          </Match>
+          <Match when={issue.data.type === IssueTypeOptions.Price}>
+            <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
+              <EditPriceForm
+                issueId={issueId}
+                onSuccess={() => {
+                  invalidates([
+                    api.issue.byId.getKey(issueId),
+                    api.price.byIssueId.getKey(issueId)
                   ]);
                   close();
                 }}
@@ -161,14 +177,12 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
               {formatDateTime(issue.data.created)}
             </span>
           </div>
-          <Show when={issue.data.type === IssueTypeOptions.Request}>
-            <div className={'flex w-full items-center justify-between gap-2'}>
-              <span className={'text-appBlue whitespace-nowrap text-xs'}>
-                Số phiếu
-              </span>
-              <span className={'truncate'}>{issue.data?.code}</span>
-            </div>
-          </Show>
+          <div className={'flex w-full items-center justify-between gap-2'}>
+            <span className={'text-appBlue whitespace-nowrap text-xs'}>
+              Số phiếu
+            </span>
+            <span className={'truncate'}>{issue.data?.code}</span>
+          </div>
         </div>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
           <div className={'flex w-full items-center justify-between gap-2'}>

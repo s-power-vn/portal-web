@@ -1,7 +1,7 @@
 import { api } from 'portal-api';
 import { array, date, mixed, object, string } from 'yup';
 
-import type { FC } from 'react';
+import { FC } from 'react';
 
 import {
   BusinessFormProps,
@@ -9,7 +9,6 @@ import {
   Form,
   TextField,
   TextareaField,
-  error,
   success
 } from '@minhdtb/storeo-theme';
 
@@ -54,25 +53,31 @@ const schema = object().shape({
         return suppliers.length > 0;
       }
     }),
+  deletedIds: array().of(string()).optional(),
   attachments: mixed().optional()
 });
 
-export type NewPriceFormProps = BusinessFormProps & {
-  projectId: string;
+export type EditPriceFormProps = BusinessFormProps & {
+  issueId: string;
 };
 
-export const NewPriceForm: FC<NewPriceFormProps> = ({
-  projectId,
-  onSuccess,
-  onCancel
+export const EditPriceForm: FC<EditPriceFormProps> = ({
+  issueId,
+  onCancel,
+  onSuccess
 }) => {
-  const createPrice = api.price.create.useMutation({
+  const issue = api.issue.byId.useSuspenseQuery({
+    variables: issueId
+  });
+
+  const price = api.price.byIssueId.useSuspenseQuery({
+    variables: issueId
+  });
+
+  const update = api.price.update.useMutation({
     onSuccess: () => {
-      success('Tạo yêu cầu giá thành công');
+      success('Cập nhật giá thành công');
       onSuccess?.();
-    },
-    onError: () => {
-      error('Lỗi khi tạo yêu cầu giá');
     }
   });
 
@@ -80,21 +85,20 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
     <Form
       schema={schema}
       defaultValues={{
-        title: '',
-        code: '',
-        startDate: new Date(),
-        endDate: undefined,
-        data: [],
+        title: issue.data?.title,
+        code: issue.data?.code,
+        startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
+        endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
+        data: price.data?.expand.priceDetail_via_price,
         attachments: []
       }}
       className={'flex flex-col gap-4'}
       onSubmit={value => {
-        createPrice.mutate({
+        update.mutate({
           ...value,
-          project: projectId,
-          details: value.data.map(item => ({
-            ...item
-          }))
+          id: issueId,
+          project: issue.data?.project ?? '',
+          details: value.data ?? []
         });
       }}
       onCancel={onCancel}
@@ -137,7 +141,7 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
       <PriceInputField
         schema={schema}
         name={'data'}
-        options={{ projectId: projectId }}
+        options={{ projectId: issue.data?.project }}
       />
       <MultipleFileSelectField
         schema={schema}

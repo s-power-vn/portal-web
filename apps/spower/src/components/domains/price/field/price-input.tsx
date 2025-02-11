@@ -22,15 +22,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  showModal
+  showModal,
+  useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { compareVersion } from '../../../commons/utils';
-import { PickFinishedRequestDetailForm } from '../request';
-import { PickSuppliersForm } from '../supplier/form/pick-suppliers-form';
+import { compareVersion } from '../../../../commons/utils';
+import { PickFinishedRequestDetailForm } from '../../request';
+import { PickSuppliersForm } from '../../supplier/form/pick-suppliers-form';
 
 // Convert interfaces to types
 type PriceInputData = {
+  id?: string;
+  isNew?: boolean;
   title: string;
   volume: number;
   unit: string;
@@ -176,6 +179,8 @@ export const PriceInput: FC<PriceInputProps> = ({
     calculateTotals(toInternalData(data), supplierIds)
   );
 
+  const { getValues, setValue } = useStoreoForm();
+
   useEffect(() => {
     setData(value ?? []);
     if (value?.length) {
@@ -232,6 +237,7 @@ export const PriceInput: FC<PriceInputProps> = ({
                   estimate: 0,
                   level: detail.level,
                   index: detail.index,
+                  isNew: true,
                   prices: supplierIds.reduce(
                     (acc, supplier) => ({
                       ...acc,
@@ -305,6 +311,11 @@ export const PriceInput: FC<PriceInputProps> = ({
             className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
             onClick={e => {
               e.stopPropagation();
+              const itemToRemove = data[info.row.index];
+              if (!itemToRemove.isNew && itemToRemove.id) {
+                const currentDeletedIds = getValues('deletedIds') || [];
+                setValue('deletedIds', [...currentDeletedIds, itemToRemove.id]);
+              }
               const newData = data.filter(
                 (_, index) => index !== info.row.index
               );

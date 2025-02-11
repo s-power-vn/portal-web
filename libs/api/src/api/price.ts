@@ -7,7 +7,9 @@ import {
 
 import { router } from 'react-query-kit';
 
-export type PriceDetailData = PriceDetailResponse;
+export type PriceDetailData = PriceDetailResponse & {
+  prices: Record<string, number>;
+};
 
 export type PriceData = PriceResponse & {
   expand: {
@@ -55,6 +57,33 @@ export const priceApi = router('price', {
       }[];
     }) => {
       return client.send('/create-price', {
+        method: 'POST',
+        body: params
+      });
+    }
+  }),
+  update: router.mutation({
+    mutationFn: async (params: {
+      id: string;
+      title: string;
+      project: string;
+      code: string;
+      startDate?: Date;
+      endDate?: Date;
+      details?: {
+        estimate?: number;
+        index?: string;
+        level?: string;
+        title?: string;
+        unit?: string;
+        volume?: number;
+        prices?: {
+          [key: string]: number;
+        };
+      }[];
+      deletedIds?: (string | undefined)[];
+    }) => {
+      return client.send('/update-price', {
         method: 'POST',
         body: params
       });
