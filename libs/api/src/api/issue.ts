@@ -132,5 +132,13 @@ export const issueApi = router('issue', {
         body: params
       });
     }
+  }),
+  reset: router.mutation({
+    mutationFn: (params: { id: string }) => {
+      return client.send('/issue-reset', {
+        method: 'POST',
+        body: params
+      });
+    }
   })
 });

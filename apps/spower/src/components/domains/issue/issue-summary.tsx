@@ -4,6 +4,7 @@ import {
   Edit3,
   Loader,
   MoreHorizontalIcon,
+  RefreshCw,
   ShoppingCartIcon,
   Trash2,
   Undo2Icon
@@ -50,6 +51,17 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
   });
 
   const deleteIssue = api.issue.delete.useMutation({
+    onSuccess: () => {
+      invalidates([
+        api.issue.listRequest.getKey(),
+        api.issue.listMine.getKey()
+      ]);
+
+      router.history.back();
+    }
+  });
+
+  const resetIssue = api.issue.reset.useMutation({
     onSuccess: () => {
       invalidates([
         api.issue.listRequest.getKey(),
@@ -107,6 +119,12 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
     });
   }, [invalidates, issue.data.type, issueId]);
 
+  const handleResetIssue = useCallback(() => {
+    confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () =>
+      resetIssue.mutate({ id: issueId })
+    );
+  }, [confirm, issueId, resetIssue]);
+
   const handleDeleteIssue = useCallback(() => {
     confirm('Bạn chắc chắn muốn xóa công việc này?', () =>
       deleteIssue.mutate(issueId)
@@ -150,6 +168,10 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
               <DropdownMenuItem onClick={handleEditIssue}>
                 <Edit3 className="mr-2 h-4 w-4 text-red-500" />
                 Sửa
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleResetIssue}>
+                <RefreshCw className="mr-2 h-4 w-4 text-blue-500" />
+                Đặt lại trạng thái
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleDeleteIssue}>
                 <Trash2 className="mr-2 h-4 w-4 text-red-500" />
