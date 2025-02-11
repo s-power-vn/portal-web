@@ -3,6 +3,7 @@ import { api } from 'portal-api';
 import { FC } from 'react';
 
 import { Combobox } from '../../../combobox';
+import { getDoneFlows } from '../../../flow';
 
 export type SelectFinishedRequestProps = {
   projectId?: string;
@@ -17,6 +18,8 @@ export const SelectFinishedRequest: FC<SelectFinishedRequestProps> = ({
   onChange,
   className
 }) => {
+  const allDones = getDoneFlows('request');
+
   return (
     <Combobox
       value={value}
@@ -29,7 +32,8 @@ export const SelectFinishedRequest: FC<SelectFinishedRequestProps> = ({
           projectId: projectId ?? '',
           filter: search,
           pageIndex: page,
-          pageSize: 10
+          pageSize: 10,
+          statuses: allDones.map(it => it.id)
         });
 
         return {

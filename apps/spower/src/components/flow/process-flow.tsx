@@ -54,6 +54,12 @@ export const isDoneNode = (type: 'request' | 'price', id?: string) => {
   return id === processData[type].done;
 };
 
+export const getDoneFlows = (type: 'request' | 'price') => {
+  return processData[type].flows.filter(
+    it => it.to.node === processData[type].done
+  );
+};
+
 type PointRole = 'source' | 'target' | 'unknown';
 
 const CustomNode = ({

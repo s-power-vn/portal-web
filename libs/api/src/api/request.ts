@@ -41,17 +41,23 @@ export const requestApi = router('request', {
       projectId,
       filter,
       pageIndex,
-      pageSize
+      pageSize,
+      statuses = []
     }: {
       projectId: string;
+      statuses?: string[];
       filter?: string;
       pageIndex?: number;
       pageSize?: number;
     }) => {
+      const statusFilter = statuses
+        ? statuses?.map(status => `issue.status = "${status}"`).join('||')
+        : '';
+
       return await client
         .collection<RequestData>(Collections.Request)
         .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter: `issue.status = "n5-n7#1" && issue.deleted = false && issue.title ~ "${filter ?? ''}" && project = "${projectId}"`,
+          filter: ` ${statusFilter ? `(${statusFilter}) &&` : ''} issue.deleted = false && issue.title ~ "${filter ?? ''}" && project = "${projectId}"`,
           sort: 'created',
           expand:
             'requestDetail_via_request.detail,' +
