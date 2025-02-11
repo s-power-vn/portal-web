@@ -8,6 +8,8 @@ import type { FC } from 'react';
 
 import { For, Show, formatDate } from '@minhdtb/storeo-core';
 
+import { isApproveNode } from '../../flow/process-flow';
+import processData from '../../flow/process.json';
 import { RequestDetailItem } from './request-display';
 
 export type RequestDocumentProps = {
@@ -313,26 +315,34 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
           </tbody>
         </table>
         <div className={'mt-8 flex items-start justify-between'}>
-          <Show when={props.approvers?.length}>
-            <div className={'flex gap-2'}>
-              <For each={props.approvers}>
-                {approver => (
-                  <div
-                    key={approver.userId}
-                    className={'flex flex-col items-center'}
-                  >
-                    <div className={'font-bold'}>{approver.nodeName}</div>
+          <div className={'flex gap-4'}>
+            <For
+              each={processData.request.nodes.filter(node =>
+                isApproveNode('request', node.id)
+              )}
+            >
+              {node => {
+                const approver = props.approvers?.find(
+                  a => a.nodeId === node.id
+                );
+                return (
+                  <div key={node.id} className={'flex flex-col items-center'}>
+                    <div className={'font-bold'}>{node.name}</div>
                     <div className={'mt-4'}>
-                      <CheckCircle2Icon className={'h-10 w-10 text-blue-700'} />
+                      <Show when={approver}>
+                        <CheckCircle2Icon
+                          className={'h-10 w-10 text-blue-700'}
+                        />
+                      </Show>
                     </div>
                     <div className={'mt-[1.5rem] font-bold'}>
-                      {approver.userName}
+                      {approver?.userName ?? ''}
                     </div>
                   </div>
-                )}
-              </For>
-            </div>
-          </Show>
+                );
+              }}
+            </For>
+          </div>
           <div className={'flex flex-col items-center'}>
             <div className={'font-bold'}>Người đề nghị</div>
             <div className={'mt-4'}>
