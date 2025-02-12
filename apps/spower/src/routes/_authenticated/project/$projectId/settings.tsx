@@ -5,8 +5,10 @@ import { object, string } from 'yup';
 
 import { useState } from 'react';
 
+import { Show } from '@minhdtb/storeo-core';
 import { Button, Form, TextareaField, success } from '@minhdtb/storeo-theme';
 
+import { client } from '../../../../../../../libs/core/src';
 import { CustomerDropdownField } from '../../../../components';
 
 const schema = object().shape({
@@ -83,38 +85,39 @@ const Component = () => {
           }}
         />
       </Form>
-
-      <div className="mt-8 rounded-md border border-red-200 bg-red-50 p-4">
-        <h3 className="text-lg font-medium text-red-800">Vùng nguy hiểm</h3>
-        <p className="mt-2 text-sm text-red-700">
-          Một khi dự án bị xóa, tất cả dữ liệu liên quan sẽ bị mất và không thể
-          khôi phục.
-        </p>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-red-700">
-            Để xác nhận, hãy nhập tên công trình: {project.data?.name}
-          </label>
-          <input
-            type="text"
-            className="mt-1 block w-full rounded-md border border-red-300 bg-white px-3 py-2 text-sm placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-            value={deleteConfirm}
-            onChange={e => setDeleteConfirm(e.target.value)}
-            placeholder="Nhập tên công trình để xác nhận"
-          />
-          <Button
-            variant="destructive"
-            className="mt-4"
-            disabled={deleteConfirm.trim() !== project.data?.name.trim()}
-            onClick={() => {
-              if (deleteConfirm.trim() === project.data?.name.trim()) {
-                deleteProject.mutate(projectId);
-              }
-            }}
-          >
-            Tôi hiểu hậu quả, xóa dự án này
-          </Button>
+      <Show when={client.authStore?.record?.id === project.data?.createdBy}>
+        <div className="mt-8 rounded-md border border-red-200 bg-red-50 p-4">
+          <h3 className="text-lg font-medium text-red-800">Vùng nguy hiểm</h3>
+          <p className="mt-2 text-sm text-red-700">
+            Một khi dự án bị xóa, tất cả dữ liệu liên quan sẽ bị mất và không
+            thể khôi phục.
+          </p>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-red-700">
+              Để xác nhận, hãy nhập tên công trình: {project.data?.name}
+            </label>
+            <input
+              type="text"
+              className="mt-1 block w-full rounded-md border border-red-300 bg-white px-3 py-2 text-sm placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              value={deleteConfirm}
+              onChange={e => setDeleteConfirm(e.target.value)}
+              placeholder="Nhập tên công trình để xác nhận"
+            />
+            <Button
+              variant="destructive"
+              className="mt-4"
+              disabled={deleteConfirm.trim() !== project.data?.name.trim()}
+              onClick={() => {
+                if (deleteConfirm.trim() === project.data?.name.trim()) {
+                  deleteProject.mutate(projectId);
+                }
+              }}
+            >
+              Tôi hiểu hậu quả, xóa dự án này
+            </Button>
+          </div>
         </div>
-      </div>
+      </Show>
     </div>
   );
 };
