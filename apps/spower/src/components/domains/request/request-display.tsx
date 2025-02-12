@@ -283,7 +283,9 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        content: html
+        content: html,
+        pageFormat: 'A4',
+        pageOrientation: 'portrait'
       })
     })
       .then(response => response.blob())

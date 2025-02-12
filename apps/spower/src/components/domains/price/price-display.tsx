@@ -362,7 +362,9 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        content: html
+        content: html,
+        pageFormat: 'A4',
+        pageOrientation: 'landscape'
       })
     })
       .then(response => response.blob())
