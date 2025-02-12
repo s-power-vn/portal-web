@@ -83,6 +83,8 @@ const CustomNode = ({
   data
 }: {
   data: {
+    nodeId: string;
+    type: 'request' | 'price';
     name: string;
     description: string;
     active: boolean;
@@ -119,6 +121,8 @@ const CustomNode = ({
     points.filter(point => point.type === 'bottom')
   );
 
+  const isDoneNode = data.nodeId === processData[data.type].done;
+
   return (
     <>
       <div
@@ -133,6 +137,9 @@ const CustomNode = ({
         <span>{data.name}</span>
         <Show when={data.isApprove}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
+        </Show>
+        <Show when={isDoneNode}>
+          <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
         </Show>
       </div>
       {leftPoints.reverse().map((point, index) => (
@@ -227,6 +234,8 @@ function getNodes(type: 'request' | 'price', status?: string) {
       type: 'customNode',
       data: {
         ...rest,
+        nodeId: id,
+        type,
         isApprove,
         sources,
         targets,
