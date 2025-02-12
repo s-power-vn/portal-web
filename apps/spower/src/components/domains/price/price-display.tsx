@@ -1,3 +1,4 @@
+import { compile } from '@fileforge/react-print';
 import {
   createColumnHelper,
   flexRender,
@@ -8,6 +9,14 @@ import {
 import _ from 'lodash';
 import { PaperclipIcon, PrinterIcon } from 'lucide-react';
 import { api } from 'portal-api';
+import type {
+  IssueResponse,
+  PriceResponse,
+  ProjectResponse,
+  UserResponse
+} from 'portal-core';
+import { BASE_URL, client } from 'portal-core';
+import printJS from 'print-js';
 
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
@@ -28,13 +37,16 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
+import { PriceDocument } from './price-document';
+
 export type PriceDetailItem = {
   id?: string;
   title: string;
   unit: string;
   level: string;
   volume?: number;
-  estimate?: number;
+  estimatePrice?: number | '';
+  estimateAmount?: number | '';
   index?: string;
   prices?: Record<string, number>;
   totals: Record<string, number>;
@@ -43,12 +55,34 @@ export type PriceDetailItem = {
   isFinalTotal?: boolean;
 };
 
+export type PriceData = PriceResponse & {
+  expand: {
+    project: ProjectResponse;
+    issue: IssueResponse & {
+      expand: {
+        createdBy: UserResponse & {
+          expand: {
+            department: {
+              name: string;
+            };
+          };
+        };
+      };
+    };
+    priceDetail_via_price: PriceDetailItem[];
+  };
+};
+
 export type PriceDisplayProps = {
   issueId: string;
 };
 
 export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
   const price = api.price.byIssueId.useSuspenseQuery({
+    variables: issueId
+  }) as { data: PriceData | null };
+
+  const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
 
@@ -74,7 +108,8 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: it.unit,
         level: it.level,
         volume: it.volume,
-        estimate: it.estimate,
+        estimatePrice: it.estimatePrice,
+        estimateAmount: it.estimateAmount,
         index: it.index,
         prices: it.prices as Record<string, number>,
         totals: Object.keys(it.prices || {}).reduce(
@@ -111,7 +146,13 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate: calculateSum(regularRows.map(row => row.estimate ?? 0)),
+        estimatePrice: '',
+        estimateAmount: calculateSum(
+          regularRows.map(row => {
+            const amount = row.estimateAmount;
+            return typeof amount === 'number' ? amount : 0;
+          })
+        ),
         prices: {},
         totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
@@ -130,7 +171,11 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate: (subTotal.estimate ?? 0) * 0.1,
+        estimatePrice: '',
+        estimateAmount:
+          typeof subTotal.estimateAmount === 'number'
+            ? subTotal.estimateAmount * 0.1
+            : 0,
         prices: {},
         totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
@@ -147,7 +192,12 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         unit: '',
         level: '',
         volume: 0,
-        estimate: (subTotal.estimate ?? 0) + (vat.estimate ?? 0),
+        estimatePrice: '',
+        estimateAmount:
+          typeof subTotal.estimateAmount === 'number' &&
+          typeof vat.estimateAmount === 'number'
+            ? subTotal.estimateAmount + vat.estimateAmount
+            : 0,
         prices: {},
         totals: suppliers.reduce<Record<string, number>>(
           (acc, supplier) => ({
@@ -193,13 +243,6 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         header: () => 'Mô tả công việc mời thầu',
         minSize: 300
       }),
-      columnHelper.accessor('unit', {
-        cell: info => (
-          <div className={'flex justify-center gap-1'}>{info.getValue()}</div>
-        ),
-        header: () => 'Đơn vị tính',
-        size: 50
-      }),
       columnHelper.accessor('volume', {
         cell: info => (
           <div className={'flex justify-end gap-1'}>
@@ -209,37 +252,67 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         header: () => 'Khối lượng',
         size: 100
       }),
-      columnHelper.accessor('estimate', {
+      columnHelper.accessor('unit', {
         cell: info => (
-          <div className={'flex justify-end gap-1'}>
-            {formatNumber(info.getValue() ?? 0)}
-          </div>
+          <div className={'flex justify-center gap-1'}>{info.getValue()}</div>
         ),
-        header: () => 'Dự toán',
-        size: 100
+        header: () => 'Đơn vị tính',
+        size: 50
       }),
-      ...suppliers!.flatMap(supplier => [
-        columnHelper.accessor(row => row.prices?.[supplier.id], {
-          id: `price-${supplier.id}`,
-          header: () => supplier.name,
-          cell: info => (
-            <div className={'flex justify-end gap-1'}>
-              {formatNumber(info.getValue() ?? 0)}
-            </div>
-          ),
-          size: 120
-        }),
-        columnHelper.accessor(row => row.totals?.[supplier.id], {
-          id: `total-${supplier.id}`,
-          header: () => supplier.name,
-          cell: info => (
-            <div className={'flex justify-end gap-1'}>
-              {formatNumber(info.getValue() ?? 0)}
-            </div>
-          ),
-          size: 120
-        })
-      ])
+      columnHelper.group({
+        id: 'prices',
+        header: () => 'Đơn giá',
+        columns: [
+          columnHelper.accessor('estimatePrice', {
+            header: () => 'Dự toán',
+            cell: info => (
+              <div className={'flex justify-end gap-1'}>
+                {formatNumber(info.getValue() ?? 0)}
+              </div>
+            ),
+            size: 100
+          }),
+          ...suppliers!.map(supplier =>
+            columnHelper.accessor(row => row.prices?.[supplier.id], {
+              id: `price-${supplier.id}`,
+              header: () => supplier.name,
+              cell: info => (
+                <div className={'flex justify-end gap-1'}>
+                  {formatNumber(info.getValue() ?? 0)}
+                </div>
+              ),
+              size: 120
+            })
+          )
+        ]
+      }),
+      columnHelper.group({
+        id: 'totals',
+        header: () => 'Thành tiền',
+        columns: [
+          columnHelper.accessor('estimateAmount', {
+            header: () => 'Dự toán',
+            cell: info => (
+              <div className={'flex justify-end gap-1'}>
+                {formatNumber(info.getValue() ?? 0)}
+              </div>
+            ),
+            size: 100
+          }),
+          ...suppliers!.map(supplier =>
+            columnHelper.accessor(row => row.totals?.[supplier.id], {
+              id: `total-${supplier.id}`,
+              header: () => supplier.name,
+              cell: info => (
+                <div className={'flex justify-end gap-1'}>
+                  {formatNumber(info.getValue() ?? 0)}
+                </div>
+              ),
+              size: 120
+            })
+          )
+        ]
+      })
     ],
     [columnHelper, suppliers]
   );
@@ -255,10 +328,59 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
   const { showLoading, hideLoading } = useLoading();
 
   const handlePrint = useCallback(async () => {
-    // TODO: Implement price document printing
+    await import('react-dom/server');
     showLoading();
-    hideLoading();
-  }, [showLoading, hideLoading]);
+    const html = await compile(
+      <PriceDocument
+        project={price.data?.expand?.project?.name}
+        code={price.data?.expand?.issue?.code}
+        bidding={price.data?.expand?.project?.bidding}
+        requester={price.data?.expand?.issue?.expand?.createdBy?.name}
+        department={
+          price.data?.expand?.issue?.expand?.createdBy?.expand?.department?.name
+        }
+        content={price.data?.expand?.issue?.title}
+        data={priceDetails}
+        suppliers={suppliers?.map(s => ({
+          id: s.id,
+          name: s.name
+        }))}
+        approvers={issue.data?.approver?.map(it => ({
+          userId: it.userId,
+          userName: it.userName,
+          nodeId: it.nodeId,
+          nodeName: it.nodeName
+        }))}
+      />
+    );
+    fetch(`${BASE_URL}/create-pdf`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + client.authStore.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        content: html
+      })
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        printJS({
+          printable: URL.createObjectURL(blob),
+          type: 'pdf'
+        });
+      })
+      .finally(() => hideLoading());
+  }, [
+    price.data,
+    priceDetails,
+    suppliers,
+    showLoading,
+    hideLoading,
+    issue.data
+  ]);
 
   return (
     <div className={'bg-appWhite flex flex-col'}>
@@ -315,13 +437,6 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
                     <TableHead
                       rowSpan={2}
                       className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 50 }}
-                    >
-                      Đơn vị tính
-                    </TableHead>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
                       style={{ width: 100 }}
                     >
                       Khối lượng
@@ -329,24 +444,30 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
                     <TableHead
                       rowSpan={2}
                       className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 100 }}
+                      style={{ width: 50 }}
                     >
-                      Dự toán
+                      Đơn vị tính
                     </TableHead>
                     <TableHead
-                      colSpan={suppliers!.length}
+                      colSpan={1 + suppliers!.length}
                       className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
                     >
                       Đơn giá
                     </TableHead>
                     <TableHead
-                      colSpan={suppliers!.length}
+                      colSpan={1 + suppliers!.length}
                       className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
                     >
                       Thành tiền
                     </TableHead>
                   </TableRow>
                   <TableRow>
+                    <TableHead
+                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                      style={{ width: 100 }}
+                    >
+                      Dự toán
+                    </TableHead>
                     {suppliers!.map(supplier => (
                       <TableHead
                         key={`price-${supplier.id}`}
@@ -356,6 +477,12 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
                         {supplier.name}
                       </TableHead>
                     ))}
+                    <TableHead
+                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                      style={{ width: 100 }}
+                    >
+                      Dự toán
+                    </TableHead>
                     {suppliers!.map(supplier => (
                       <TableHead
                         key={`total-${supplier.id}`}

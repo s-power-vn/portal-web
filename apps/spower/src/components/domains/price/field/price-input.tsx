@@ -37,7 +37,8 @@ type PriceInputData = {
   title: string;
   volume: number;
   unit: string;
-  estimate: number | '';
+  estimatePrice: number | '';
+  estimateAmount: number | '';
   level?: string;
   index?: string;
   prices: {
@@ -86,7 +87,8 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
     title: 'Tổng cộng trước thuế',
     volume: 0,
     unit: '',
-    estimate: calculateSum(regularRows.map(row => row.estimate)),
+    estimatePrice: '',
+    estimateAmount: calculateSum(regularRows.map(row => row.estimateAmount)),
     prices: {},
     totals: suppliers
       ? suppliers?.reduce(
@@ -107,8 +109,11 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
     title: 'Thuế VAT 10%',
     volume: 0,
     unit: '',
-    estimate:
-      typeof subTotal.estimate === 'number' ? subTotal.estimate * 0.1 : '',
+    estimatePrice: '',
+    estimateAmount:
+      typeof subTotal.estimateAmount === 'number'
+        ? subTotal.estimateAmount * 0.1
+        : '',
     prices: {},
     totals:
       suppliers?.reduce(
@@ -129,9 +134,11 @@ const calculateTotals = (data: PriceData[], suppliers?: string[]) => {
     title: 'Giá trị sau thuế',
     volume: 0,
     unit: '',
-    estimate:
-      typeof subTotal.estimate === 'number' && typeof vat.estimate === 'number'
-        ? subTotal.estimate + vat.estimate
+    estimatePrice: '',
+    estimateAmount:
+      typeof subTotal.estimateAmount === 'number' &&
+      typeof vat.estimateAmount === 'number'
+        ? subTotal.estimateAmount + vat.estimateAmount
         : '',
     prices: {},
     totals:
@@ -234,7 +241,8 @@ export const PriceInput: FC<PriceInputProps> = ({
                   title: detail.title,
                   volume: 0,
                   unit: detail.unit || '',
-                  estimate: 0,
+                  estimatePrice: 0,
+                  estimateAmount: 0,
                   level: detail.level,
                   index: detail.index,
                   isNew: true,
@@ -411,68 +419,31 @@ export const PriceInput: FC<PriceInputProps> = ({
       cell: info => info.getValue(),
       size: 100
     }),
-    columnHelper.accessor('estimate', {
-      header: () => <div className="p-1">Dự toán</div>,
-      cell: info => {
-        if (
-          info.row.original.isSubTotal ||
-          info.row.original.isVAT ||
-          info.row.original.isFinalTotal
-        ) {
-          return info.getValue()?.toLocaleString('vi-VN');
-        }
-        return (
-          <EditableCell
-            value={info.getValue()}
-            onChange={value => {
-              const newData = internalData.map((row, index) => {
-                if (index === info.row.index) {
-                  return {
-                    ...row,
-                    estimate: Number(value)
-                  };
-                }
-                return row;
-              });
-
-              handleDataChange(newData);
-            }}
-          />
-        );
-      }
-    }),
     columnHelper.group({
       id: 'prices',
       header: () => <div className="p-1 text-center">Đơn giá</div>,
-      columns: suppliers?.map(supplier =>
-        columnHelper.accessor(row => row.prices[supplier.id], {
-          id: `price-${supplier.id}`,
-          header: () => <div className="p-1 text-center">{supplier.name}</div>,
+      columns: [
+        columnHelper.accessor('estimatePrice', {
+          header: () => <div className="p-1 text-center">Dự toán</div>,
           cell: info => {
             if (
               info.row.original.isSubTotal ||
               info.row.original.isVAT ||
               info.row.original.isFinalTotal
             ) {
-              return info.getValue()?.toLocaleString('vi-VN') ?? '';
+              return info.getValue()?.toLocaleString('vi-VN');
             }
             return (
               <EditableCell
-                value={info.getValue() ?? 0}
+                value={info.getValue()}
                 onChange={value => {
                   const newData = internalData.map((row, index) => {
                     if (index === info.row.index) {
                       const newPrice = Number(value);
                       return {
                         ...row,
-                        prices: {
-                          ...row.prices,
-                          [supplier.id]: newPrice
-                        },
-                        totals: {
-                          ...row.totals,
-                          [supplier.id]: row.volume * newPrice
-                        }
+                        estimatePrice: newPrice,
+                        estimateAmount: row.volume * newPrice
                       };
                     }
                     return row;
@@ -483,19 +454,70 @@ export const PriceInput: FC<PriceInputProps> = ({
               />
             );
           }
-        })
-      )
+        }),
+        ...(suppliers ?? []).map(supplier =>
+          columnHelper.accessor(row => row.prices[supplier.id], {
+            id: `price-${supplier.id}`,
+            header: () => (
+              <div className="p-1 text-center">{supplier.name}</div>
+            ),
+            cell: info => {
+              if (
+                info.row.original.isSubTotal ||
+                info.row.original.isVAT ||
+                info.row.original.isFinalTotal
+              ) {
+                return info.getValue()?.toLocaleString('vi-VN') ?? '';
+              }
+              return (
+                <EditableCell
+                  value={info.getValue() ?? 0}
+                  onChange={value => {
+                    const newData = internalData.map((row, index) => {
+                      if (index === info.row.index) {
+                        const newPrice = Number(value);
+                        return {
+                          ...row,
+                          prices: {
+                            ...row.prices,
+                            [supplier.id]: newPrice
+                          },
+                          totals: {
+                            ...row.totals,
+                            [supplier.id]: row.volume * newPrice
+                          }
+                        };
+                      }
+                      return row;
+                    });
+
+                    handleDataChange(newData);
+                  }}
+                />
+              );
+            }
+          })
+        )
+      ]
     }),
     columnHelper.group({
       id: 'totals',
       header: () => <div className="p-1 text-center">Thành tiền</div>,
-      columns: suppliers?.map(supplier =>
-        columnHelper.accessor(row => row.totals[supplier.id], {
-          id: `total-${supplier.id}`,
-          header: () => <div className="p-1 text-center">{supplier.name}</div>,
+      columns: [
+        columnHelper.accessor('estimateAmount', {
+          header: () => <div className="p-1 text-center">Dự toán</div>,
           cell: info => info.getValue()?.toLocaleString('vi-VN')
-        })
-      )
+        }),
+        ...(suppliers ?? []).map(supplier =>
+          columnHelper.accessor(row => row.totals[supplier.id], {
+            id: `total-${supplier.id}`,
+            header: () => (
+              <div className="p-1 text-center">{supplier.name}</div>
+            ),
+            cell: info => info.getValue()?.toLocaleString('vi-VN')
+          })
+        )
+      ]
     })
   ];
 
@@ -603,25 +625,22 @@ export const PriceInput: FC<PriceInputProps> = ({
                 Đơn vị
               </TableHead>
               <TableHead
-                rowSpan={2}
-                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-              >
-                Dự toán
-              </TableHead>
-              <TableHead
-                colSpan={(suppliers ?? []).length}
+                colSpan={1 + (suppliers ?? []).length}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
                 Đơn giá
               </TableHead>
               <TableHead
-                colSpan={(suppliers ?? []).length}
+                colSpan={1 + (suppliers ?? []).length}
                 className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
               >
                 Thành tiền
               </TableHead>
             </TableRow>
             <TableRow className="!border-b-0">
+              <TableHead className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']">
+                Dự toán
+              </TableHead>
               {suppliers?.map(supplier => (
                 <TableHead
                   key={`price-${supplier.id}`}
@@ -643,6 +662,9 @@ export const PriceInput: FC<PriceInputProps> = ({
                   </div>
                 </TableHead>
               ))}
+              <TableHead className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']">
+                Dự toán
+              </TableHead>
               {suppliers?.map(supplier => (
                 <TableHead
                   key={`total-${supplier.id}`}

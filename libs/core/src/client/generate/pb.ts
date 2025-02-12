@@ -174,7 +174,8 @@ export type PriceRecord = {
 }
 
 export type PriceDetailRecord<Tprices = unknown> = {
-	estimate?: number
+	estimateAmount?: number
+	estimatePrice?: number
 	index?: string
 	level?: string
 	price?: RecordIdString
