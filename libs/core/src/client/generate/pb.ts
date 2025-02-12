@@ -15,6 +15,7 @@ export enum Collections {
 	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
+	IssueFile = "issueFile",
 	Material = "material",
 	Price = "price",
 	PriceDetail = "priceDetail",
@@ -153,12 +154,21 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
 	endDate?: IsoDateString
+	files?: string[]
 	lastAssignee?: null | TlastAssignee
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: string
 	title: string
 	type: IssueTypeOptions
+}
+
+export type IssueFileRecord = {
+	issue?: RecordIdString
+	name?: string
+	size?: number
+	type?: string
+	upload?: string
 }
 
 export type MaterialRecord = {
@@ -255,6 +265,7 @@ export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<Deta
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
 export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<Tapprover, TlastAssignee>> & BaseSystemFields<Texpand>
+export type IssueFileResponse<Texpand = unknown> = Required<IssueFileRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
@@ -279,6 +290,7 @@ export type CollectionRecords = {
 	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
+	issueFile: IssueFileRecord
 	material: MaterialRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
@@ -302,6 +314,7 @@ export type CollectionResponses = {
 	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
+	issueFile: IssueFileResponse
 	material: MaterialResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
@@ -328,6 +341,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
+	collection(idOrName: 'issueFile'): RecordService<IssueFileResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>

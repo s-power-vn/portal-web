@@ -21,8 +21,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       '@minhdtb/storeo-theme':
-        specifier: ^1.0.23
-        version: 1.0.23
+        specifier: ^1.0.24
+        version: 1.0.24
       '@preact/signals-react':
         specifier: ^2.0.0
         version: 2.0.0(react@18.3.1)
@@ -60,8 +60,8 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
       pocketbase:
-        specifier: ^0.21.5
-        version: 0.21.5
+        specifier: ^0.22.1
+        version: 0.22.1
       print-js:
         specifier: ^1.6.0
         version: 1.6.0
@@ -1593,8 +1593,8 @@ packages:
   '@minhdtb/storeo-core@0.0.4':
     resolution: {integrity: sha512-C+IObzsk8N2PPfSvYR647ATOkHEVytq2U6O9rD8ZMWolkgaOe1w3kPmYWxDROZIu/o+Zd+c70n1jhFDvZSs1xQ==}
 
-  '@minhdtb/storeo-theme@1.0.23':
-    resolution: {integrity: sha512-2K4Wo5t494kld1NdJ4VNRk6YrBNhwALgqFnKbq7nXBS6DFNeNY8Hy+udgBvTZawGYCX3VUugxNMjifnFjMTOqA==}
+  '@minhdtb/storeo-theme@1.0.24':
+    resolution: {integrity: sha512-KA4niZUBIycPTkm4dEpFwGqZFd1JUFyAufs8616CDIsWLjcjRmBwCCIS0LBMO9zOPvYIRpwfj4iy6InOvLIACw==}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     resolution: {integrity: sha512-eD1JZDQ+h5WLdA58MmAE1DzLwvFaGJeeam3Tswc/sEUb4QGT86X4Fme+dMTBRYRoAq/tRYql3DlVTFhdmrUVzg==}
@@ -5953,8 +5953,8 @@ packages:
     resolution: {integrity: sha512-gxWcFh0XoksgKw+aEN5W+exGQC3WndmhXQSK7iSvMyEsx2PpO1M4QaYksqkDf+ruBfTDOm8/ZaTO9jvdS6a78A==}
     hasBin: true
 
-  pocketbase@0.21.5:
-    resolution: {integrity: sha512-bnI/uinnQps+ElSlzxkc4yvwuSFfKcoszDtXH/4QT2FhGq2mJVUvDlxn+rjRXVntUjPfmMG5LEPZ1eGqV6ssog==}
+  pocketbase@0.22.1:
+    resolution: {integrity: sha512-hnzpDcIx5kbkUJXz6IkiTox6R4nb706u4rPSMy2FYCaI2OqBnFxbY0qwWBSqx1ERz/Xi61Uguf17Gb9bWZ8+kw==}
 
   portfinder@1.0.32:
     resolution: {integrity: sha512-on2ZJVVDXRADWE6jnQaX0ioEylzgBpQk8r55NE4wjXW1ZxO+BgDlY6DXwj20i0V8eB4SenDQ00WEaxfiIQPcxg==}
@@ -9044,7 +9044,7 @@ snapshots:
 
   '@minhdtb/storeo-core@0.0.4': {}
 
-  '@minhdtb/storeo-theme@1.0.23': {}
+  '@minhdtb/storeo-theme@1.0.24': {}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     dependencies:
@@ -14513,7 +14513,7 @@ snapshots:
       - encoding
       - supports-color
 
-  pocketbase@0.21.5: {}
+  pocketbase@0.22.1: {}
 
   portfinder@1.0.32:
     dependencies:

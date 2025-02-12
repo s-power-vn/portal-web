@@ -579,7 +579,7 @@ export const PriceInput: FC<PriceInputProps> = ({
         className="border-appBlue h-[20rem] overflow-auto rounded-md border"
       >
         <Table>
-          <TableHeader className="bg-appBlueLight sticky top-0 z-10">
+          <TableHeader className="bg-appBlueLight sticky top-0">
             <TableRow
               className="!border-b-0"
               style={{ width: table.getTotalSize() }}

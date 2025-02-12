@@ -1,5 +1,5 @@
 import { api } from 'portal-api';
-import { array, boolean, date, mixed, number, object, string } from 'yup';
+import { array, boolean, date, number, object, string } from 'yup';
 
 import type { FC } from 'react';
 
@@ -57,7 +57,14 @@ const schema = object().shape({
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
     .required('Hãy chọn ít nhất 1 hạng mục'),
-  attachments: mixed().optional()
+  attachments: array()
+    .of(
+      object().shape({
+        id: string().optional()
+      })
+    )
+    .max(10, 'Giới hạn tải lên tối đa 10 file')
+    .optional()
 });
 
 export type NewRequestFormProps = BusinessFormProps & {

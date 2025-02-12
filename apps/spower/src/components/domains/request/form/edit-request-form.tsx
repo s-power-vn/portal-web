@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { api } from 'portal-api';
-import { array, boolean, date, mixed, number, object, string } from 'yup';
+import { array, boolean, date, number, object, string } from 'yup';
 
 import { FC, useMemo } from 'react';
 
@@ -14,6 +14,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { arrayToTree, compareVersion } from '../../../../commons/utils';
+import { MultipleFileSelectField } from '../../../file';
 import { RequestInputField } from '../field/request-input-field';
 import { RequestDetailItem } from '../request-display';
 
@@ -60,7 +61,14 @@ const schema = object({
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
     .required('Hãy chọn ít nhất 1 hạng mục'),
   deletedIds: array().of(string()).optional(),
-  attachments: mixed().optional()
+  attachments: array()
+    .of(
+      object().shape({
+        id: string().optional()
+      })
+    )
+    .max(10, 'Giới hạn tải lên tối đa 10 file')
+    .optional()
 });
 
 export type EditRequestFormProps = BusinessFormProps & {
@@ -131,6 +139,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
     <Form
       schema={schema}
       onSubmit={values => {
+        console.log(values);
         update.mutate({
           ...values,
           id: issueId,
@@ -148,7 +157,12 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
             ? new Date(Date.parse(it.deliveryDate ?? ''))
             : undefined
         })),
-        attachments: []
+        attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
+          id: it.id,
+          name: it.name,
+          size: it.size,
+          type: it.type
+        }))
       }}
       className={'flex flex-col gap-4'}
       loading={issue.isLoading || request.isLoading || update.isPending}
@@ -189,6 +203,11 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
         schema={schema}
         name={'details'}
         options={{ projectId: issue.data?.project }}
+      />
+      <MultipleFileSelectField
+        schema={schema}
+        name={'attachments'}
+        title={'File đính kèm'}
       />
     </Form>
   );

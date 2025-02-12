@@ -1,4 +1,5 @@
 import { compile } from '@fileforge/react-print';
+import type { ExpandedState } from '@tanstack/react-table';
 import {
   createColumnHelper,
   flexRender,
@@ -7,7 +8,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { PaperclipIcon, PrinterIcon } from 'lucide-react';
+import { DownloadIcon, PaperclipIcon, PrinterIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type {
   IssueResponse,
@@ -18,8 +19,7 @@ import type {
 import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
 
-import type { FC } from 'react';
-import { useCallback, useMemo } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { cn, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -37,6 +37,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
+import { formatFileSize, getFileIcon } from '../../../commons';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {
@@ -78,6 +79,8 @@ export type PriceDisplayProps = {
 };
 
 export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
+
   const price = api.price.byIssueId.useSuspenseQuery({
     variables: issueId
   }) as { data: PriceData | null };
@@ -384,6 +387,26 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
     issue.data
   ]);
 
+  const handleDownload = useCallback(
+    async (fileId: string, fileName: string) => {
+      const response = await fetch(`${BASE_URL}/api/files/${fileId}`, {
+        headers: {
+          Authorization: 'Bearer ' + client.authStore.token
+        }
+      });
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    []
+  );
+
   return (
     <div className={'bg-appWhite flex flex-col'}>
       <div className={'flex items-center justify-between p-2'}>
@@ -552,10 +575,47 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
           </div>
         </TabsContent>
         <TabsContent value="attachment">
-          <div className={'flex w-full items-center justify-center p-8'}>
-            <div
-              className={'flex flex-col items-center justify-center gap-4'}
-            ></div>
+          <div className={'flex w-full flex-col gap-4 p-4'}>
+            {issue.data?.expand?.issueFile_via_issue?.length ? (
+              <div
+                className={
+                  'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4'
+                }
+              >
+                {issue.data.expand.issueFile_via_issue.map(file => (
+                  <div
+                    key={file.id}
+                    className={
+                      'flex items-center justify-between rounded-lg border p-3'
+                    }
+                  >
+                    <div className={'flex min-w-0 flex-1 items-center gap-2'}>
+                      {getFileIcon(file.type)}
+                      <div className={'flex min-w-0 flex-1 flex-col'}>
+                        <span className={'truncate text-sm font-medium'}>
+                          {file.name}
+                        </span>
+                        <span className={'text-xs text-gray-500'}>
+                          {formatFileSize(file.size)}
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="ml-2 flex-shrink-0"
+                      onClick={() => handleDownload(file.id, file.name)}
+                    >
+                      <DownloadIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={'flex h-40 items-center justify-center'}>
+                <span className={'text-gray-500'}>Không có file đính kèm</span>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

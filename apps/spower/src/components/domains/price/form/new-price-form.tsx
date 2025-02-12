@@ -1,5 +1,5 @@
 import { api } from 'portal-api';
-import { array, date, mixed, object, string } from 'yup';
+import { array, date, object, string } from 'yup';
 
 import type { FC } from 'react';
 
@@ -54,7 +54,14 @@ const schema = object().shape({
         return suppliers.length > 0;
       }
     }),
-  attachments: mixed().optional()
+  attachments: array()
+    .of(
+      object().shape({
+        id: string().optional()
+      })
+    )
+    .max(10, 'Giới hạn tải lên tối đa 10 file')
+    .optional()
 });
 
 export type NewPriceFormProps = BusinessFormProps & {
@@ -98,6 +105,7 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
         });
       }}
       onCancel={onCancel}
+      loading={createPrice.isPending}
     >
       <TextareaField
         schema={schema}

@@ -1,4 +1,8 @@
-import type { IssueRecord, IssueResponse } from 'portal-core';
+import type {
+  IssueFileResponse,
+  IssueRecord,
+  IssueResponse
+} from 'portal-core';
 import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
@@ -10,6 +14,7 @@ export type IssueData = IssueResponse & {
   expand?: {
     createdBy: UserData;
     assignee: UserData;
+    issueFile_via_issue: IssueFileResponse[];
   };
   approver?: Record<string, string>[];
 };
@@ -65,7 +70,7 @@ export const issueApi = router('issue', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, assignee`
+        expand: `createdBy, assignee, issueFile_via_issue`
       })
   }),
   updateTitle: router.mutation({

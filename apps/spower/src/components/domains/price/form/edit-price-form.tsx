@@ -1,5 +1,5 @@
 import { api } from 'portal-api';
-import { array, date, mixed, object, string } from 'yup';
+import { array, date, object, string } from 'yup';
 
 import { FC } from 'react';
 
@@ -54,7 +54,14 @@ const schema = object().shape({
       }
     }),
   deletedIds: array().of(string()).optional(),
-  attachments: mixed().optional()
+  attachments: array()
+    .of(
+      object().shape({
+        id: string().optional()
+      })
+    )
+    .max(10, 'Giới hạn tải lên tối đa 10 file')
+    .optional()
 });
 
 export type EditPriceFormProps = BusinessFormProps & {
@@ -90,7 +97,12 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
         startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
         endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
         data: price.data?.expand.priceDetail_via_price,
-        attachments: []
+        attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
+          id: it.id,
+          name: it.name,
+          size: it.size,
+          type: it.type
+        }))
       }}
       className={'flex flex-col gap-4'}
       onSubmit={value => {
@@ -102,6 +114,7 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
         });
       }}
       onCancel={onCancel}
+      loading={issue.isLoading || price.isLoading || update.isPending}
     >
       <TextareaField
         schema={schema}
