@@ -3,7 +3,9 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import { Form, TextareaField, success } from '@minhdtb/storeo-theme';
+import { useState } from 'react';
+
+import { Button, Form, TextareaField, success } from '@minhdtb/storeo-theme';
 
 import { CustomerDropdownField } from '../../../../components';
 
@@ -17,6 +19,7 @@ const Component = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { projectId } = Route.useParams();
+  const [deleteConfirm, setDeleteConfirm] = useState('');
 
   const project = api.project.byId.useSuspenseQuery({
     variables: projectId
@@ -33,6 +36,13 @@ const Component = () => {
     }
   });
 
+  const deleteProject = api.project.delete.useMutation({
+    onSuccess: () => {
+      success('Xóa dự án thành công');
+      router.navigate({ to: '/' });
+    }
+  });
+
   return (
     <div className={'w-1/2 p-2'}>
       <Form
@@ -45,7 +55,7 @@ const Component = () => {
         }
         onCancel={() => router.history.back()}
         defaultValues={project.data}
-        loading={updateProject.isLoading || project.isLoading}
+        loading={updateProject.isPending || project.isLoading}
         className={'mt-4 flex flex-col gap-3'}
       >
         <TextareaField
@@ -73,6 +83,38 @@ const Component = () => {
           }}
         />
       </Form>
+
+      <div className="mt-8 rounded-md border border-red-200 bg-red-50 p-4">
+        <h3 className="text-lg font-medium text-red-800">Vùng nguy hiểm</h3>
+        <p className="mt-2 text-sm text-red-700">
+          Một khi dự án bị xóa, tất cả dữ liệu liên quan sẽ bị mất và không thể
+          khôi phục.
+        </p>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-red-700">
+            Để xác nhận, hãy nhập tên công trình: {project.data?.name}
+          </label>
+          <input
+            type="text"
+            className="mt-1 block w-full rounded-md border border-red-300 bg-white px-3 py-2 text-sm placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+            value={deleteConfirm}
+            onChange={e => setDeleteConfirm(e.target.value)}
+            placeholder="Nhập tên công trình để xác nhận"
+          />
+          <Button
+            variant="destructive"
+            className="mt-4"
+            disabled={deleteConfirm.trim() !== project.data?.name.trim()}
+            onClick={() => {
+              if (deleteConfirm.trim() === project.data?.name.trim()) {
+                deleteProject.mutate(projectId);
+              }
+            }}
+          >
+            Tôi hiểu hậu quả, xóa dự án này
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

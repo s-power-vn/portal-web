@@ -42,6 +42,10 @@ export const projectApi = router('project', {
         createdBy: client.authStore.model?.id
       })
   }),
+  delete: router.mutation({
+    mutationFn: (id: string) =>
+      client.collection(Collections.Project).delete(id)
+  }),
   update: router.mutation({
     mutationFn: (params: Partial<ColumnResponse> & { id: string }) =>
       client.collection(Collections.Project).update(params.id, params)
