@@ -1,5 +1,4 @@
 import { compile } from '@fileforge/react-print';
-import type { ExpandedState } from '@tanstack/react-table';
 import {
   createColumnHelper,
   flexRender,
@@ -11,15 +10,16 @@ import _ from 'lodash';
 import { DownloadIcon, PaperclipIcon, PrinterIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type {
+  IssueFileResponse,
   IssueResponse,
   PriceResponse,
   ProjectResponse,
   UserResponse
 } from 'portal-core';
-import { BASE_URL, client } from 'portal-core';
+import { BASE_URL, Collections, client } from 'portal-core';
 import printJS from 'print-js';
 
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 
 import { cn, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -79,8 +79,6 @@ export type PriceDisplayProps = {
 };
 
 export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
-  const [expanded, setExpanded] = useState<ExpandedState>(true);
-
   const price = api.price.byIssueId.useSuspenseQuery({
     variables: issueId
   }) as { data: PriceData | null };
@@ -389,7 +387,13 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
 
   const handleDownload = useCallback(
     async (fileId: string, fileName: string) => {
-      const response = await fetch(`${BASE_URL}/api/files/${fileId}`, {
+      const file = await client
+        .collection<IssueFileResponse>(Collections.IssueFile)
+        .getOne(fileId);
+
+      const fileUrl = client.files.getURL(file, file.upload);
+
+      const response = await fetch(fileUrl, {
         headers: {
           Authorization: 'Bearer ' + client.authStore.token
         }

@@ -22,7 +22,7 @@ import { IssueDeadlineStatus } from '../../../../../../components/';
 
 type IssueWithExpand = IssueResponse & {
   expand?: {
-    issueFile_via_issue: IssueFileResponse[];
+    issueFile_via_issue?: IssueFileResponse[];
   };
 };
 
@@ -80,9 +80,10 @@ const Component = () => {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('expand.issueFile_via_issue', {
+    columnHelper.display({
+      id: 'expand.issueFile_via_issue',
       cell: info => {
-        const files = info.getValue();
+        const files = info.row.original.expand?.issueFile_via_issue;
         return files && files.length > 0 ? (
           <FilesIcon className="h-4 w-4 text-gray-500" />
         ) : null;

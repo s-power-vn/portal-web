@@ -17,7 +17,7 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { BASE_URL, client } from 'portal-core';
+import { BASE_URL, Collections, IssueFileResponse, client } from 'portal-core';
 import printJS from 'print-js';
 
 import type { FC } from 'react';
@@ -306,11 +306,18 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
 
   const handleDownload = useCallback(
     async (fileId: string, fileName: string) => {
-      const response = await fetch(`${BASE_URL}/api/files/${fileId}`, {
+      const file = await client
+        .collection<IssueFileResponse>(Collections.IssueFile)
+        .getOne(fileId);
+
+      const fileUrl = client.files.getURL(file, file.upload);
+
+      const response = await fetch(fileUrl, {
         headers: {
           Authorization: 'Bearer ' + client.authStore.token
         }
       });
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
