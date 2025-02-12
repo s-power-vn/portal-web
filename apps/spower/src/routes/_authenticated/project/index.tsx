@@ -8,6 +8,7 @@ import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import { EmployeeDisplay } from '../../../components';
+import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
@@ -34,6 +35,12 @@ const Component = () => {
       footer: info => info.column.id,
       size: 300
     }),
+    columnHelper.display({
+      id: 'badge',
+      cell: info => <IssueBadge projectId={info.row.original.id} />,
+      header: () => '',
+      footer: info => info.column.id
+    }),
     columnHelper.accessor('bidding', {
       cell: info => <div className={'truncate'}>{info.getValue()}</div>,
       header: () => 'Tên gói thầu',
@@ -54,7 +61,7 @@ const Component = () => {
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id,
-      size: 150
+      size: 200
     }),
     columnHelper.accessor('created', {
       cell: ({ row }) => formatDateTime(row.original.created),
@@ -78,7 +85,7 @@ const Component = () => {
         placeholder={'Tìm kiếm...'}
         onChange={value =>
           navigate({
-            to: './',
+            to: '.',
             search: {
               ...search,
               filter: value ?? ''
@@ -103,7 +110,7 @@ const Component = () => {
         }
         onPageNext={() =>
           navigate({
-            to: './',
+            to: '.',
             search: prev => {
               return { ...prev, pageIndex: prev.pageIndex + 1 };
             }
@@ -111,7 +118,7 @@ const Component = () => {
         }
         onPagePrev={() =>
           navigate({
-            to: './',
+            to: '.',
             search: prev => {
               return { ...prev, pageIndex: prev.pageIndex - 1 };
             }
@@ -119,7 +126,7 @@ const Component = () => {
         }
         onPageSizeChange={pageSize =>
           navigate({
-            to: './',
+            to: '.',
             search: {
               ...search,
               pageSize

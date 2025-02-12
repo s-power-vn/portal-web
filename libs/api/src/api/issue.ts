@@ -172,5 +172,21 @@ export const issueApi = router('issue', {
         body: params
       });
     }
+  }),
+  userInfo: router.query({
+    fetcher: async (projectId: string) => {
+      try {
+        return await client
+          .collection(Collections.IssueUserInfo)
+          .getFirstListItem(
+            `project = "${projectId}" && user = "${client.authStore.record?.id}"`,
+            {
+              requestKey: null
+            }
+          );
+      } catch (e) {
+        return null;
+      }
+    }
   })
 });

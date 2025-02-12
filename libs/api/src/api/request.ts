@@ -196,22 +196,6 @@ export const requestApi = router('request', {
         body: params
       });
     }
-  }),
-  userInfo: router.query({
-    fetcher: async (projectId: string) => {
-      try {
-        return await client
-          .collection(Collections.RequestUserInfo)
-          .getFirstListItem(
-            `p = "${projectId}" && assignee = "${client.authStore.model?.id}"`,
-            {
-              requestKey: null
-            }
-          );
-      } catch (e) {
-        return null;
-      }
-    }
   })
 });
 

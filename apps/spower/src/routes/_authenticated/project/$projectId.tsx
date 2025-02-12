@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Outlet,
   createFileRoute,
@@ -15,14 +14,12 @@ import {
   SettingsIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, client } from 'portal-core';
-
-import { useEffect } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
-import { Badge, Button } from '@minhdtb/storeo-theme';
+import { Button } from '@minhdtb/storeo-theme';
 
 import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
+import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
 const Component = () => {
   const matchRoute = useMatchRoute();
@@ -31,24 +28,7 @@ const Component = () => {
   const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
-  const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
-
-  const requestUserInfo = api.request.userInfo.useSuspenseQuery({
-    variables: projectId
-  });
-
-  useEffect(() => {
-    client.collection(Collections.Issue).subscribe('*', () =>
-      queryClient.invalidateQueries({
-        queryKey: api.request.userInfo.getKey(projectId)
-      })
-    );
-
-    return () => {
-      client.collection(Collections.Request).unsubscribe();
-    };
-  }, [projectId, queryClient]);
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -109,17 +89,7 @@ const Component = () => {
                   <SidebarItem
                     to={'/project/$projectId/issues/me'}
                     icon={<ListChecksIcon width={22} height={22} />}
-                    badge={
-                      <Show when={requestUserInfo.data?.count}>
-                        <Badge
-                          className={
-                            'bg-appErrorLight pointer-events-none mr-1'
-                          }
-                        >
-                          {requestUserInfo.data?.count}
-                        </Badge>
-                      </Show>
-                    }
+                    badge={<IssueBadge projectId={projectId} />}
                   ></SidebarItem>
                   <SidebarItem
                     to={'/project/$projectId/issues/request'}

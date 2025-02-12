@@ -23,7 +23,7 @@ const Component = ({ employeeId }: { employeeId: string }) => {
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span>{query.data.name}</span>
+      <span className={'truncate'}>{query.data.name}</span>
     </div>
   ) : null;
 };

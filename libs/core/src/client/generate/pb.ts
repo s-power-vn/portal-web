@@ -16,6 +16,7 @@ export enum Collections {
 	DetailInfo = "detailInfo",
 	Issue = "issue",
 	IssueFile = "issueFile",
+	IssueUserInfo = "issueUserInfo",
 	Material = "material",
 	Price = "price",
 	PriceDetail = "priceDetail",
@@ -23,7 +24,6 @@ export enum Collections {
 	Request = "request",
 	RequestDetail = "requestDetail",
 	RequestDetailInfo = "requestDetailInfo",
-	RequestUserInfo = "requestUserInfo",
 	Supplier = "supplier",
 	Template = "template",
 	User = "user",
@@ -170,6 +170,12 @@ export type IssueFileRecord = {
 	upload?: string
 }
 
+export type IssueUserInfoRecord = {
+	count?: number
+	project: RecordIdString
+	user?: RecordIdString
+}
+
 export type MaterialRecord = {
 	code?: string
 	name?: string
@@ -225,12 +231,6 @@ export type RequestDetailInfoRecord = {
 	requestVolume?: number
 }
 
-export type RequestUserInfoRecord = {
-	assignee?: RecordIdString
-	count?: number
-	p: RecordIdString
-}
-
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -265,6 +265,7 @@ export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecor
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
 export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<Tapprover, TlastAssignee>> & BaseSystemFields<Texpand>
 export type IssueFileResponse<Texpand = unknown> = Required<IssueFileRecord> & BaseSystemFields<Texpand>
+export type IssueUserInfoResponse<Texpand = unknown> = Required<IssueUserInfoRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
@@ -272,7 +273,6 @@ export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseS
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
-export type RequestUserInfoResponse<Texpand = unknown> = Required<RequestUserInfoRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type TemplateResponse<Texpand = unknown> = Required<TemplateRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -290,6 +290,7 @@ export type CollectionRecords = {
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
 	issueFile: IssueFileRecord
+	issueUserInfo: IssueUserInfoRecord
 	material: MaterialRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
@@ -297,7 +298,6 @@ export type CollectionRecords = {
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
 	requestDetailInfo: RequestDetailInfoRecord
-	requestUserInfo: RequestUserInfoRecord
 	supplier: SupplierRecord
 	template: TemplateRecord
 	user: UserRecord
@@ -314,6 +314,7 @@ export type CollectionResponses = {
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
 	issueFile: IssueFileResponse
+	issueUserInfo: IssueUserInfoResponse
 	material: MaterialResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
@@ -321,7 +322,6 @@ export type CollectionResponses = {
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
 	requestDetailInfo: RequestDetailInfoResponse
-	requestUserInfo: RequestUserInfoResponse
 	supplier: SupplierResponse
 	template: TemplateResponse
 	user: UserResponse
@@ -341,6 +341,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
 	collection(idOrName: 'issueFile'): RecordService<IssueFileResponse>
+	collection(idOrName: 'issueUserInfo'): RecordService<IssueUserInfoResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>
@@ -348,7 +349,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'request'): RecordService<RequestResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>
 	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
-	collection(idOrName: 'requestUserInfo'): RecordService<RequestUserInfoResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
 	collection(idOrName: 'template'): RecordService<TemplateResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>
