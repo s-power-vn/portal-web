@@ -1,9 +1,9 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { CircleDollarSignIcon } from 'lucide-react';
+import { CircleDollarSignIcon, FilesIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
-import type { IssueResponse } from 'portal-core';
+import type { IssueFileResponse, IssueResponse } from 'portal-core';
 import { IssueTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
@@ -16,6 +16,12 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
+type IssueWithExpand = IssueResponse & {
+  expand?: {
+    issueFile_via_issue: IssueFileResponse[];
+  };
+};
+
 const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -27,7 +33,7 @@ const Component = () => {
     }
   });
 
-  const columnHelper = createColumnHelper<IssueResponse>();
+  const columnHelper = createColumnHelper<IssueWithExpand>();
 
   const columns = [
     columnHelper.display({
@@ -38,13 +44,15 @@ const Component = () => {
     }),
     columnHelper.accessor('title', {
       cell: info => (
-        <div className={'flex w-full items-center gap-2'}>
+        <div className={'flex w-full min-w-0 items-center gap-2'}>
           <Switch fallback={<span></span>}>
             <Match when={info.row.original.type === IssueTypeOptions.Price}>
-              <CircleDollarSignIcon className={'h-5 w-5 text-blue-500'} />
+              <CircleDollarSignIcon
+                className={'h-5 w-5 flex-shrink-0 text-blue-500'}
+              />
             </Match>
           </Switch>
-          <span className={'w-full truncate'}>{info.getValue()}</span>
+          <span className={'truncate'}>{info.getValue()}</span>
         </div>
       ),
       header: () => 'Nội dung',
@@ -62,6 +70,17 @@ const Component = () => {
       header: () => 'Người thực hiện',
       footer: info => info.column.id,
       size: 200
+    }),
+    columnHelper.accessor('expand.issueFile_via_issue', {
+      cell: info => {
+        const files = info.getValue();
+        return files && files.length > 0 ? (
+          <FilesIcon className="h-4 w-4 text-gray-500" />
+        ) : null;
+      },
+      header: () => '',
+      footer: info => info.column.id,
+      size: 100
     }),
     columnHelper.display({
       id: 'state',
@@ -112,7 +131,7 @@ const Component = () => {
         />
       </div>
       <CommonTable
-        data={issues.data?.items ?? []}
+        data={(issues.data?.items ?? []) as IssueWithExpand[]}
         columns={columns}
         rowCount={issues.data?.totalItems}
         pageCount={issues.data?.totalPages}

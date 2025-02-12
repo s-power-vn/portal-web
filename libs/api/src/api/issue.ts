@@ -23,47 +23,51 @@ export const issueApi = router('issue', {
   list: router.query({
     fetcher: (search?: Search & { projectId: string }) =>
       client
-        .collection<IssueResponse>(Collections.Issue)
+        .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
+          expand: `issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   listMine: router.query({
     fetcher: (search?: Search & { projectId: string }) =>
       client
-        .collection<IssueResponse>(Collections.Issue)
+        .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
+          expand: `issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   listRequest: router.query({
     fetcher: (search?: Search & { projectId: string }) =>
       client
-        .collection<IssueResponse>(Collections.Issue)
+        .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && title ~ "${search?.filter ?? ''}"
         && type = "Request"
         && deleted = false`,
+          expand: `issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   listPrice: router.query({
     fetcher: (search?: Search & { projectId: string }) =>
       client
-        .collection<IssueResponse>(Collections.Issue)
+        .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && title ~ "${search?.filter ?? ''}"
         && type = "Price"
         && deleted = false`,
+          expand: `issueFile_via_issue`,
           sort: '-changed'
         })
   }),

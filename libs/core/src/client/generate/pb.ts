@@ -154,7 +154,6 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
 	endDate?: IsoDateString
-	files?: string[]
 	lastAssignee?: null | TlastAssignee
 	project: RecordIdString
 	startDate?: IsoDateString
