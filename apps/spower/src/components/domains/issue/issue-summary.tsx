@@ -1,7 +1,9 @@
 import { useRouter } from '@tanstack/react-router';
 import {
   CircleDollarSignIcon,
+  CopyIcon,
   Edit3,
+  LinkIcon,
   Loader,
   MoreHorizontalIcon,
   RefreshCw,
@@ -24,6 +26,7 @@ import {
   DropdownMenuTrigger,
   ThemeButton,
   showModal,
+  success,
   useConfirm
 } from '@minhdtb/storeo-theme';
 
@@ -131,6 +134,18 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
     );
   }, [confirm, deleteIssue, issueId]);
 
+  const handleCopyTitle = useCallback(() => {
+    navigator.clipboard.writeText(issue.data.title).then(() => {
+      success('Đã sao chép tiêu đề');
+    });
+  }, [issue.data.title]);
+
+  const handleCopyUrl = useCallback(() => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      success('Đã sao chép đường dẫn');
+    });
+  }, []);
+
   return (
     <div className={'flex flex-col gap-2 border-b p-2'}>
       <div className={'flex items-center gap-2'}>
@@ -152,6 +167,24 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
           </Switch>
           {issue.data.title}
         </span>
+        <ThemeButton
+          variant={'outline'}
+          className={'h-6 w-6'}
+          size={'icon'}
+          onClick={handleCopyTitle}
+          title="Sao chép tiêu đề"
+        >
+          <CopyIcon className={'h-4 w-4'} />
+        </ThemeButton>
+        <ThemeButton
+          variant={'outline'}
+          className={'h-6 w-6'}
+          size={'icon'}
+          onClick={handleCopyUrl}
+          title="Sao chép đường dẫn"
+        >
+          <LinkIcon className={'h-4 w-4'} />
+        </ThemeButton>
         <Show when={client.authStore.model?.id === issue.data.assignee}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

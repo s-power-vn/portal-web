@@ -174,16 +174,34 @@ export const issueApi = router('issue', {
     }
   }),
   userInfo: router.query({
-    fetcher: async (projectId: string) => {
+    fetcher: async ({
+      projectId = '',
+      isAll = false
+    }: {
+      projectId?: string;
+      isAll?: boolean;
+    }) => {
       try {
-        return await client
-          .collection(Collections.IssueUserInfo)
-          .getFirstListItem(
-            `project = "${projectId}" && user = "${client.authStore.record?.id}"`,
-            {
-              requestKey: null
-            }
-          );
+        if (isAll) {
+          const infos = await client
+            .collection(Collections.IssueUserInfo)
+            .getFullList({
+              filter: `user = "${client.authStore.record?.id}"`
+            });
+
+          return infos.reduce((acc, item) => acc + item.count, 0);
+        } else {
+          const info = await client
+            .collection(Collections.IssueUserInfo)
+            .getFirstListItem(
+              `project = "${projectId}" && user = "${client.authStore.record?.id}"`,
+              {
+                requestKey: null
+              }
+            );
+
+          return info?.count;
+        }
       } catch (e) {
         return null;
       }

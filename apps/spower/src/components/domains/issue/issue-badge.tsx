@@ -8,19 +8,23 @@ import { Show } from '@minhdtb/storeo-core';
 import { Badge } from '@minhdtb/storeo-theme';
 
 export type IssueBadgeProps = {
-  projectId: string;
+  projectId?: string;
+  isAll?: boolean;
 };
 
-export const IssueBadge: FC<IssueBadgeProps> = ({ projectId }) => {
+export const IssueBadge: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
   const queryClient = useQueryClient();
   const issueUserInfo = api.issue.userInfo.useSuspenseQuery({
-    variables: projectId
+    variables: {
+      projectId,
+      isAll: isAll ?? false
+    }
   });
 
   useEffect(() => {
     client.collection(Collections.Issue).subscribe('*', () =>
       queryClient.invalidateQueries({
-        queryKey: api.issue.userInfo.getKey(projectId)
+        queryKey: api.issue.userInfo.getKey()
       })
     );
 
@@ -30,12 +34,9 @@ export const IssueBadge: FC<IssueBadgeProps> = ({ projectId }) => {
   }, [projectId]);
 
   return (
-    <Show
-      fallback=""
-      when={issueUserInfo.data && issueUserInfo.data?.count > 0}
-    >
+    <Show fallback="" when={issueUserInfo.data && issueUserInfo.data > 0}>
       <Badge className={'bg-appErrorLight pointer-events-none mr-1'}>
-        {issueUserInfo.data?.count}
+        {issueUserInfo.data}
       </Badge>
     </Show>
   );

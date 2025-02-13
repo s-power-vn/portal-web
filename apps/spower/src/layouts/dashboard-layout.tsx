@@ -24,6 +24,7 @@ import {
   SidebarItem,
   useSidebar
 } from '../components';
+import { IssueBadge } from '../components/domains/issue/issue-badge';
 import { NewProjectForm } from '../components/domains/project/form/new-project-form';
 import { useInvalidateQueries } from '../hooks';
 
@@ -113,6 +114,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           <SidebarItem
             to={'/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
+            badge={<IssueBadge isAll={true} />}
           ></SidebarItem>
         </Sidebar>
         <div className={'w-full overflow-hidden'}>{children}</div>
