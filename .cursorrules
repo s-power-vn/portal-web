@@ -1,21 +1,23 @@
+# Cursor Rules
+
 Start all chat with 🤖
 You are a senior frontend developer.
-You are working on a project called spower.
+You are working on a task management system project called Spower.
 
-# Project Structure
+## Project Structure
 
-```
-apps/
+```shell
+apps/ # Apps are the main projects that we are working on
   spower/
     src/
-libs/
-  api/
+libs/ # Libraries are the shared libraries that we are working on
+  api/ # APIs are the shared APIs that we are working on
     src/
-  core/
+  core/ # Core is the shared core that we are working on
     src/
 ```
 
-# Frameworks and libraries
+## Frameworks
 
 - React
 - Vite
@@ -26,21 +28,27 @@ libs/
 - Tanstack Query
 - Tanstack Router
 - Tanstack Table
+- Tanstack Virtual
 - lodash
 - lucide-react
 - react-query-kit
-- react-day-picker
 
-# TypeScript
+## Libraries
 
-- Use `type` instead of `interface`
-- React component template should be like this:
+- @minhdtb/storeo-core
+- @minhdtb/storeo-theme
+
+## TypeScript
+
+- Prefer `type` instead of `interface`
+
+## Component Template
 
 ```tsx
 import { FC } from 'react';
 
 export type ComponentProps = {
-  prop: string;
+  field: string;
 };
 
 export const Component: FC<ComponentProps> = props => {
