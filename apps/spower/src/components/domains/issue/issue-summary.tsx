@@ -31,6 +31,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { extractStatus, isDoneNode } from '../../flow/process-flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';
@@ -52,6 +53,12 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
+
+  const statusInfo = extractStatus(issue.data.status);
+  const isInDoneState = isDoneNode(
+    issue.data.type === IssueTypeOptions.Price ? 'price' : 'request',
+    statusInfo?.to
+  );
 
   const deleteIssue = api.issue.delete.useMutation({
     onSuccess: () => {
@@ -185,7 +192,11 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         >
           <LinkIcon className={'h-4 w-4'} />
         </ThemeButton>
-        <Show when={client.authStore.model?.id === issue.data.assignee}>
+        <Show
+          when={
+            client.authStore.model?.id === issue.data.assignee && !isInDoneState
+          }
+        >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <ThemeButton

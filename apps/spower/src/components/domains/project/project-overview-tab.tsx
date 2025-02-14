@@ -191,21 +191,30 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
               {typeof row.original.issueCode === 'string' ? (
                 <div
                   className="bg-appBlueLight text-appWhite hover:bg-appBlue cursor-pointer rounded px-2 py-0.5 text-xs"
-                  onClick={() => handleGotoIssue(row.original.issue as string)}
+                  onClick={() =>
+                    row.original.issue &&
+                    handleGotoIssue(row.original.issue as string)
+                  }
                 >
                   {row.original.issueCode}
                 </div>
-              ) : (
-                (row.original.issueCode as string[]).map((code, index) => (
-                  <div
-                    key={code}
-                    className="bg-appBlueLight text-appWhite hover:bg-appBlue cursor-pointer rounded px-2 py-0.5 text-xs"
-                    onClick={() => handleGotoIssue(row.original.issue[index])}
-                  >
-                    {code}
-                  </div>
-                ))
-              )}
+              ) : Array.isArray(row.original.issueCode) ? (
+                (row.original.issueCode as string[]).map(
+                  (code: string, index: number) => (
+                    <div
+                      key={code}
+                      className="bg-appBlueLight text-appWhite hover:bg-appBlue cursor-pointer rounded px-2 py-0.5 text-xs"
+                      onClick={() =>
+                        Array.isArray(row.original.issue) &&
+                        row.original.issue[index] &&
+                        handleGotoIssue(row.original.issue[index])
+                      }
+                    >
+                      {code}
+                    </div>
+                  )
+                )
+              ) : null}
             </div>
           </Show>
         ),
@@ -219,10 +228,10 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           <div className={'flex justify-end gap-1 font-medium'}>
             {typeof row.original.requestVolume === 'number'
               ? formatNumber(row.original.requestVolume)
-              : (row.original.requestVolume as number[]).reduce(
+              : (row.original.requestVolume as number[])?.reduce(
                   (acc, curr) => acc + curr,
                   0
-                )}
+                ) || 0}
           </div>
         ),
         header: () => 'Tổng KL yêu cầu',
@@ -236,10 +245,10 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
             (row.original.volume as number) -
             (typeof row.original.requestVolume === 'number'
               ? row.original.requestVolume
-              : (row.original.requestVolume as number[]).reduce(
+              : (row.original.requestVolume as number[])?.reduce(
                   (acc, curr) => acc + curr,
                   0
-                ));
+                ) || 0);
 
           return (
             <Show when={row.original.requestVolume}>
@@ -247,7 +256,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
                 className={cn(
                   'absolute inset-0 flex items-center justify-end px-2 font-medium',
                   exceed === 0
-                    ? 'text-gray-700'
+                    ? 'bg-gray-100 text-gray-700'
                     : exceed < 0
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'

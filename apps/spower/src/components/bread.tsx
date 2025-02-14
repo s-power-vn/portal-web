@@ -1,6 +1,5 @@
 import { useRouterState } from '@tanstack/react-router';
 import _ from 'lodash';
-import { HomeIcon } from 'lucide-react';
 
 import type { FC } from 'react';
 import { useMemo } from 'react';
@@ -70,7 +69,7 @@ export const Bread: FC<BreadProps> = () => {
                         </Show>
                       }
                     >
-                      <HomeIcon width={20} height={20} />
+                      <></>
                     </Show>
                   </BreadcrumbLink>
                 }
