@@ -3,6 +3,7 @@ import {
   AreaChartIcon,
   BellDotIcon,
   FactoryIcon,
+  GitBranchIcon,
   HandshakeIcon,
   HexagonIcon,
   PackagePlusIcon,
@@ -115,6 +116,10 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             to={'/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
             badge={<IssueBadge isAll={true} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/process'}
+            icon={<GitBranchIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
         <div className={'w-full overflow-hidden'}>{children}</div>

@@ -15,6 +15,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedProjectImport } from './routes/_authenticated/project'
+import { Route as AuthenticatedProcessImport } from './routes/_authenticated/process'
 import { Route as AuthenticatedNotificationImport } from './routes/_authenticated/notification'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGeneralImport } from './routes/_authenticated/general'
@@ -74,6 +75,12 @@ const IndexRoute = IndexImport.update({
 const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
   id: '/project',
   path: '/project',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedProcessRoute = AuthenticatedProcessImport.update({
+  id: '/process',
+  path: '/process',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -367,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/notification'
       fullPath: '/notification'
       preLoaderRoute: typeof AuthenticatedNotificationImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/process': {
+      id: '/_authenticated/process'
+      path: '/process'
+      fullPath: '/process'
+      preLoaderRoute: typeof AuthenticatedProcessImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/project': {
@@ -848,6 +862,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedGeneralRoute: typeof AuthenticatedGeneralRouteWithChildren
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedNotificationRoute: typeof AuthenticatedNotificationRoute
+  AuthenticatedProcessRoute: typeof AuthenticatedProcessRoute
   AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
 }
@@ -856,6 +871,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGeneralRoute: AuthenticatedGeneralRouteWithChildren,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedNotificationRoute: AuthenticatedNotificationRoute,
+  AuthenticatedProcessRoute: AuthenticatedProcessRoute,
   AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
   AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
 }
@@ -871,6 +887,7 @@ export interface FileRoutesByFullPath {
   '/general': typeof AuthenticatedGeneralRouteWithChildren
   '/home': typeof AuthenticatedHomeRoute
   '/notification': typeof AuthenticatedNotificationRoute
+  '/process': typeof AuthenticatedProcessRoute
   '/project': typeof AuthenticatedProjectRouteWithChildren
   '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
@@ -913,6 +930,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
   '/notification': typeof AuthenticatedNotificationRoute
+  '/process': typeof AuthenticatedProcessRoute
   '/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
   '/general/materials': typeof AuthenticatedGeneralMaterialsRouteWithChildren
@@ -950,6 +968,7 @@ export interface FileRoutesById {
   '/_authenticated/general': typeof AuthenticatedGeneralRouteWithChildren
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/notification': typeof AuthenticatedNotificationRoute
+  '/_authenticated/process': typeof AuthenticatedProcessRoute
   '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
   '/_authenticated/general/customers': typeof AuthenticatedGeneralCustomersRouteWithChildren
   '/_authenticated/general/employees': typeof AuthenticatedGeneralEmployeesRouteWithChildren
@@ -995,6 +1014,7 @@ export interface FileRouteTypes {
     | '/general'
     | '/home'
     | '/notification'
+    | '/process'
     | '/project'
     | '/general/customers'
     | '/general/employees'
@@ -1036,6 +1056,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/notification'
+    | '/process'
     | '/general/customers'
     | '/general/employees'
     | '/general/materials'
@@ -1071,6 +1092,7 @@ export interface FileRouteTypes {
     | '/_authenticated/general'
     | '/_authenticated/home'
     | '/_authenticated/notification'
+    | '/_authenticated/process'
     | '/_authenticated/project'
     | '/_authenticated/general/customers'
     | '/_authenticated/general/employees'
@@ -1144,6 +1166,7 @@ export const routeTree = rootRoute
         "/_authenticated/general",
         "/_authenticated/home",
         "/_authenticated/notification",
+        "/_authenticated/process",
         "/_authenticated/project",
         "/_authenticated/user/profile"
       ]
@@ -1168,6 +1191,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/notification": {
       "filePath": "_authenticated/notification.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/process": {
+      "filePath": "_authenticated/process.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/project": {
