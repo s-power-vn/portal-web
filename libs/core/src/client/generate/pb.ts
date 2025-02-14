@@ -227,6 +227,7 @@ export type RequestDetailRecord = {
 export type RequestDetailInfoRecord = {
 	deleted?: boolean
 	detail?: RecordIdString
+	level: string
 	request: RecordIdString
 	requestVolume?: number
 }
