@@ -312,7 +312,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                         {it.unit}
                       </TableCell>
                       <TableCell className={'border-r p-1'}>
-                        <Show when={it.children?.length === 0}>
+                        <Show when={!it.children || it.children?.length === 0}>
                           <NumericField
                             schema={schema}
                             name={`details[${index}].requestVolume`}
@@ -320,7 +320,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                         </Show>
                       </TableCell>
                       <TableCell className={'border-r p-1'}>
-                        <Show when={it.children?.length === 0}>
+                        <Show when={!it.children || it.children?.length === 0}>
                           <DatePickerField
                             schema={schema}
                             name={`details[${index}].deliveryDate`}
@@ -328,7 +328,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
                         </Show>
                       </TableCell>
                       <TableCell className={'w-40 p-1'}>
-                        <Show when={it.children?.length === 0}>
+                        <Show when={!it.children || it.children?.length === 0}>
                           <TextareaField
                             schema={schema}
                             name={`details[${index}].note`}

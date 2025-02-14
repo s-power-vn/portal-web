@@ -10,70 +10,86 @@ export type TreeData<T> = T & {
   request?: string;
   hasChild?: boolean;
   children?: TreeData<T>[];
-  extra?: number | string;
-  levelRowSpan?: number;
-  requestRowSpan?: number;
 };
 
-function makeLevelSpans<T>(data: TreeData<T>[]) {
-  const spans: { [key: string]: number } = {};
-  data.forEach(d => {
-    if (d.level) {
-      spans[d.level] = (spans[d.level] || 0) + 1;
-    }
-  });
-  return spans;
-}
+function mergeNodes<T>(
+  items: TreeData<T>[],
+  arrayFields: string[] = []
+): TreeData<T>[] {
+  return _.chain(items)
+    .groupBy('level')
+    .map(group => {
+      const first = group[0];
+      if (group.length === 1) return first;
 
-function makeRequestSpans<T>(data: TreeData<T>[]) {
-  const spans: { [key: string]: number } = {};
-  data.forEach(d => {
-    if (d.request) {
-      spans[`${d.request}${d.level}`] =
-        (spans[`${d.request}${d.level}`] || 0) + 1;
-    }
-  });
-  return spans;
+      // Create a merged node starting with the first item
+      const mergedNode = { ...first };
+      const commonFields = ['group', 'level', 'parent', 'hasChild', 'children'];
+
+      // Process each field that should be an array
+      arrayFields.forEach(field => {
+        const parts = field.split('.');
+
+        // Collect all values for this field
+        const values = group
+          .map(item => {
+            const value = parts.reduce((acc, part) => acc?.[part], item as any);
+            return value;
+          })
+          .filter(v => v !== undefined);
+
+        if (values.length > 0) {
+          if (parts.length === 1) {
+            // Root level field - use uniq for primitive values
+            (mergedNode as any)[field] = _.uniq(values);
+          } else {
+            // Nested field
+            const lastPart = parts.pop()!;
+            const target = parts.reduce((acc, part) => {
+              if (!acc[part]) acc[part] = {};
+              return acc[part];
+            }, mergedNode as any);
+
+            // For nested objects, use uniqBy with all fields
+            if (values.every(v => typeof v === 'object' && !Array.isArray(v))) {
+              const allKeys = _.uniq(values.flatMap(obj => Object.keys(obj)));
+              target[lastPart] = _.uniqBy(values, item =>
+                allKeys.map(key => item[key]).join('|')
+              );
+            } else {
+              // For mixed values or arrays, flatten and remove duplicates
+              target[lastPart] = _.uniq(_.flattenDeep(values));
+            }
+          }
+        }
+      });
+
+      return mergedNode;
+    })
+    .value();
 }
 
 export function arrayToTree<T>(
   arr: TreeData<T>[],
   parent: string,
-  extraFunction?: (arr: TreeData<T>[], it: TreeData<T>) => string | number
+  arrayFields: string[] = []
 ): TreeData<T>[] {
-  const data = _.chain(arr)
+  // First merge nodes with same level
+  const mergedArr = mergeNodes(arr, arrayFields);
+
+  // Then build tree from merged nodes
+  return _.chain(mergedArr)
     .filter(item => item.parent === parent)
     .map(child => {
-      const children = arrayToTree(arr, child.group, extraFunction);
+      const children = arrayToTree(mergedArr, child.group, arrayFields);
       return {
         ...child,
-        children
+        children: children.length > 0 ? children : undefined,
+        hasChild: children.length > 0
       };
     })
     .sortBy('level')
     .value();
-  const levelSpans = makeLevelSpans(data);
-  const requestSpans = makeRequestSpans(data);
-  return data.map(it => {
-    const lspans = levelSpans[it.level] || 0;
-    const rspans = it.request
-      ? requestSpans[`${it.request}${it.level}`] || 0
-      : 1;
-    if (lspans > 0 || rspans > 0) {
-      delete levelSpans[it.level];
-      if (it.request) {
-        delete requestSpans[`${it.request}${it.level}`];
-      }
-      return {
-        ...it,
-        levelRowSpan: lspans,
-        requestRowSpan: rspans,
-        extra: extraFunction?.(data, it)
-      };
-    } else {
-      return it;
-    }
-  });
 }
 
 export function flatTree<T>(arr: TreeData<T>[]): TreeData<T>[] {

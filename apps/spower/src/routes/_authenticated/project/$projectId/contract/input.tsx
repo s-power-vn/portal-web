@@ -14,6 +14,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import console from 'console';
 import _ from 'lodash';
 import {
   Columns3Icon,
@@ -32,7 +33,7 @@ import type { DetailInfoResponse } from 'portal-core';
 import { client, downloadTemplate, maskVolumeString } from 'portal-core';
 
 import type { ChangeEvent } from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -244,6 +245,20 @@ const Component = () => {
 
   const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
 
+  const resetDetails = useCallback(async () => {
+    const details = await api.detail.listFull.fetcher(projectId);
+    for (const detail of details) {
+      console.log(detail);
+      // await api.detail.delete.mutationFn([detail.id]);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      // resetDetails();
+    }, 5000);
+  }, [invalidates, projectId]);
+
   const columns = useMemo(() => {
     const value = [
       columnHelper.accessor('id', {
@@ -272,10 +287,7 @@ const Component = () => {
           <div className={'flex w-full items-center justify-center'}>#</div>
         ),
         footer: info => info.column.id,
-        size: 30,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 30
       }),
       columnHelper.accessor('level', {
         cell: info => info.getValue(),
@@ -283,10 +295,7 @@ const Component = () => {
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
-        size: 50,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 50
       }),
       columnHelper.display({
         id: 'select',
@@ -325,19 +334,13 @@ const Component = () => {
           </div>
         ),
         footer: info => info.column.id,
-        size: 30,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 30
       }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
         header: () => 'Mô tả công việc mời thầu',
         footer: info => info.column.id,
-        size: 300,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 300
       }),
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
@@ -347,10 +350,7 @@ const Component = () => {
         ),
         header: () => 'Khối lượng mời thầu',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.accessor('unit', {
         cell: ({ row }) => (
@@ -358,10 +358,7 @@ const Component = () => {
         ),
         header: () => 'Đơn vị tính',
         footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 100
       }),
       columnHelper.accessor('unitPrice', {
         cell: ({ row }) => (
@@ -442,13 +439,11 @@ const Component = () => {
 
   const data = useMemo(
     () =>
-      arrayToTree(listDetailInfos.data, `${projectId}-root`, (value, item) => {
-        return _.chain(value)
-          .filter(it => it.group === item.group)
-          .uniqBy('request')
-          .sumBy('requestVolume')
-          .value();
-      }).sort((v1, v2) => compareVersion(v1.level, v2.level)),
+      arrayToTree(listDetailInfos.data, `${projectId}-root`, [
+        'requestVolume',
+        'issueCode',
+        'issueTitle'
+      ]).sort((v1, v2) => compareVersion(v1.level, v2.level)),
     [listDetailInfos.data, projectId]
   );
 
@@ -643,10 +638,7 @@ const Component = () => {
                     }}
                   >
                     {row.getVisibleCells().map(cell => {
-                      return cell.column.columnDef.meta?.hasRowSpan &&
-                        !cell.row.original[
-                          cell.column.columnDef.meta?.hasRowSpan
-                        ] ? null : (
+                      return (
                         <TableCell
                           key={cell.id}
                           style={{
@@ -660,13 +652,6 @@ const Component = () => {
                               ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
                               : null
                           )}
-                          rowSpan={
-                            cell.column.columnDef.meta?.hasRowSpan
-                              ? cell.row.original[
-                                  cell.column.columnDef.meta?.hasRowSpan
-                                ]
-                              : undefined
-                          }
                         >
                           {flexRender(
                             cell.column.columnDef.cell,

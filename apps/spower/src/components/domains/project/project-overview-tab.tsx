@@ -13,14 +13,9 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import type {
-  DetailInfoResponse,
-  IssueResponse,
-  RequestResponse
-} from 'portal-core';
+import type { DetailInfoResponse } from 'portal-core';
 import { client, maskVolumeString } from 'portal-core';
 
 import type { FC } from 'react';
@@ -67,23 +62,22 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
 
   const data = useMemo(
     () =>
-      arrayToTree(listDetailInfos.data, `${projectId}-root`, (value, item) => {
-        return _.chain(value)
-          .filter(it => it.group === item.group)
-          .uniqBy('request')
-          .sumBy('requestVolume')
-          .value();
-      }).sort((v1, v2) => compareVersion(v1.level, v2.level)),
+      arrayToTree(listDetailInfos.data, `${projectId}-root`, [
+        'issue',
+        'issueCode',
+        'issueTitle',
+        'requestVolume'
+      ]).sort((v1, v2) => compareVersion(v1.level, v2.level)),
     [listDetailInfos.data, projectId]
   );
 
   const columnHelper = createColumnHelper<
     TreeData<
       DetailInfoResponse & {
-        expand: {
-          request: RequestResponse;
-          issue: IssueResponse;
-        };
+        issue: string | string[];
+        issueCode: string | string[];
+        issueTitle: string | string[];
+        requestVolume: number | number[];
       }
     >
   >();
@@ -128,10 +122,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           <div className={'flex w-full items-center justify-center'}>#</div>
         ),
         footer: info => info.column.id,
-        size: 30,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 30
       }),
       columnHelper.accessor('level', {
         cell: info => info.getValue(),
@@ -139,19 +130,13 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
           <div className={'flex w-full items-center justify-center'}>ID</div>
         ),
         footer: info => info.column.id,
-        size: 50,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 50
       }),
       columnHelper.accessor('title', {
         cell: info => info.getValue(),
         header: () => 'Mô tả công việc mời thầu',
         footer: info => info.column.id,
-        size: 300,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 300
       }),
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
@@ -161,10 +146,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         ),
         header: () => 'Khối lượng mời thầu',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.accessor('unit', {
         cell: ({ row }) => (
@@ -172,10 +154,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         ),
         header: () => 'Đơn vị tính',
         footer: info => info.column.id,
-        size: 100,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 100
       }),
       columnHelper.accessor('unitPrice', {
         cell: ({ row }) => (
@@ -188,10 +167,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         ),
         header: () => 'Đơn giá dự thầu',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.display({
         id: 'biddingTotal',
@@ -205,87 +181,86 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
         ),
         header: () => 'Thành tiền',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.display({
         id: 'requestTitle',
         cell: ({ row }) => (
-          <Show when={row.original.issue}>
-            <button
-              className={'max-w-60 cursor-pointer truncate text-left underline'}
-              onClick={e => {
-                e.stopPropagation();
-                e.preventDefault();
-                return handleGotoIssue(row.original.issue);
-              }}
-            >
-              {row.original.expand?.issue.code}
-            </button>
+          <Show when={row.original.issueCode}>
+            <div className="flex flex-wrap gap-1">
+              {typeof row.original.issueCode === 'string' ? (
+                <div
+                  className="bg-appBlueLight text-appWhite hover:bg-appBlue cursor-pointer rounded px-2 py-0.5 text-xs"
+                  onClick={() => handleGotoIssue(row.original.issue as string)}
+                >
+                  {row.original.issueCode}
+                </div>
+              ) : (
+                (row.original.issueCode as string[]).map((code, index) => (
+                  <div
+                    key={code}
+                    className="bg-appBlueLight text-appWhite hover:bg-appBlue cursor-pointer rounded px-2 py-0.5 text-xs"
+                    onClick={() => handleGotoIssue(row.original.issue[index])}
+                  >
+                    {code}
+                  </div>
+                ))
+              )}
+            </div>
           </Show>
         ),
         header: () => 'Yêu cầu mua hàng',
         footer: info => info.column.id,
-        size: 250,
-        meta: {
-          hasRowSpan: 'requestRowSpan'
-        }
-      }),
-      columnHelper.display({
-        id: 'requestVolume',
-        cell: ({ row }) => <></>,
-        header: () => 'Khối lượng yêu cầu',
-        footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'requestRowSpan'
-        }
+        size: 250
       }),
       columnHelper.display({
         id: 'totalRequestVolume',
         cell: ({ row }) => (
-          <Show when={row.original.extra}>
-            <div className={'flex justify-end gap-1'}>
-              {formatNumber(row.original.extra as number)}
-            </div>
-          </Show>
+          <div className={'flex justify-end gap-1 font-medium'}>
+            {typeof row.original.requestVolume === 'number'
+              ? formatNumber(row.original.requestVolume)
+              : (row.original.requestVolume as number[]).reduce(
+                  (acc, curr) => acc + curr,
+                  0
+                )}
+          </div>
         ),
         header: () => 'Tổng KL yêu cầu',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.display({
         id: 'exceedVolume',
         cell: ({ row }) => {
-          if (row.original.extra) {
-            const exceed = (row.original.extra as number) - row.original.volume;
+          const exceed =
+            (row.original.volume as number) -
+            (typeof row.original.requestVolume === 'number'
+              ? row.original.requestVolume
+              : (row.original.requestVolume as number[]).reduce(
+                  (acc, curr) => acc + curr,
+                  0
+                ));
 
-            return (
-              <Show when={exceed}>
-                <div
-                  className={cn(
-                    'flex w-full justify-end gap-1',
-                    exceed < 0 ? 'text-green-500' : 'text-red-500'
-                  )}
-                >
-                  {formatNumber(exceed < 0 ? -exceed : exceed)}
-                </div>
-              </Show>
-            );
-          }
-          return null;
+          return (
+            <Show when={row.original.requestVolume}>
+              <div
+                className={cn(
+                  'absolute inset-0 flex items-center justify-end px-2 font-medium',
+                  exceed === 0
+                    ? 'text-gray-700'
+                    : exceed < 0
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                )}
+              >
+                {formatNumber(exceed < 0 ? -exceed : exceed)}
+              </div>
+            </Show>
+          );
         },
         header: () => 'Khối lượng phát sinh',
         footer: info => info.column.id,
-        size: 150,
-        meta: {
-          hasRowSpan: 'levelRowSpan'
-        }
+        size: 150
       }),
       columnHelper.display({
         id: 'supplierStatus',
@@ -317,8 +292,8 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
       expanded,
       rowSelection,
       columnVisibility: {
-        unitPrice: client.authStore.model?.id === ADMIN_ID,
-        biddingTotal: client.authStore.model?.id === ADMIN_ID
+        unitPrice: client.authStore.record?.id === ADMIN_ID,
+        biddingTotal: client.authStore.record?.id === ADMIN_ID
       }
     },
     enableRowSelection: true,
@@ -429,10 +404,7 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
                     }}
                   >
                     {row.getVisibleCells().map(cell => {
-                      return cell.column.columnDef.meta?.hasRowSpan &&
-                        !cell.row.original[
-                          cell.column.columnDef.meta?.hasRowSpan
-                        ] ? null : (
+                      return (
                         <TableCell
                           key={cell.id}
                           style={{
@@ -446,13 +418,6 @@ export const ProjectOverviewTab: FC<ProjectOverviewTabProps> = ({
                               ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
                               : null
                           )}
-                          rowSpan={
-                            cell.column.columnDef.meta?.hasRowSpan
-                              ? cell.row.original[
-                                  cell.column.columnDef.meta?.hasRowSpan
-                                ]
-                              : undefined
-                          }
                         >
                           {flexRender(
                             cell.column.columnDef.cell,

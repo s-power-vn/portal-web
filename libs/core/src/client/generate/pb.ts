@@ -121,6 +121,7 @@ export type DetailInfoRecord<Textend = unknown> = {
 	extend?: null | Textend
 	group?: RecordIdString
 	issue?: RecordIdString
+	issueCode?: string
 	issueTitle: string
 	level: string
 	note?: string

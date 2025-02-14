@@ -398,10 +398,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
                           className={'group w-full cursor-pointer'}
                         >
                           {row.getVisibleCells().map(cell => {
-                            return cell.column.columnDef.meta?.hasRowSpan &&
-                              !cell.row.original[
-                                cell.column.columnDef.meta?.hasRowSpan
-                              ] ? null : (
+                            return (
                               <TableCell
                                 key={cell.id}
                                 style={{
@@ -412,13 +409,6 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
                                   `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
                                  after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`
                                 )}
-                                rowSpan={
-                                  cell.column.columnDef.meta?.hasRowSpan
-                                    ? cell.row.original[
-                                        cell.column.columnDef.meta?.hasRowSpan
-                                      ]
-                                    : undefined
-                                }
                               >
                                 {flexRender(
                                   cell.column.columnDef.cell,
