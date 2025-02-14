@@ -1,7 +1,8 @@
 import _ from 'lodash';
-import { CheckCircle2Icon, GripVertical } from 'lucide-react';
+import { CheckCircle2Icon } from 'lucide-react';
+import * as yup from 'yup';
 
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Handle,
   MarkerType,
@@ -13,49 +14,12 @@ import {
 } from 'reactflow';
 
 import { Show, cn } from '@minhdtb/storeo-core';
-import { Button, Input } from '@minhdtb/storeo-theme';
 
-type Point = {
-  id: string;
-  type: 'top' | 'bottom' | 'right' | 'left';
-};
+import { NodeProperty } from './node-property';
+import { PropertySidebar } from './property-sidebar';
+import type { Node, PointRole, ProcessData } from './types';
 
-type Node = {
-  id: string;
-  name: string;
-  description: string;
-  condition: string;
-  x: number;
-  y: number;
-  points: Point[];
-};
-
-type Flow = {
-  id: string;
-  action?: string;
-  approve?: boolean;
-  type?: string;
-  from: {
-    node: string;
-    point: string;
-  };
-  to: {
-    node: string;
-    point: string;
-  };
-};
-
-export type ProcessData = {
-  done: string;
-  nodes: Node[];
-  flows: Flow[];
-};
-
-type PointRole = 'source' | 'target' | 'unknown';
-
-const CustomNode = ({
-  data
-}: {
+type CustomNodeProps = {
   data: {
     nodeId: string;
     name: string;
@@ -73,7 +37,9 @@ const CustomNode = ({
       role: PointRole;
     }[];
   };
-}) => {
+};
+
+const CustomNode: FC<CustomNodeProps> = ({ data }) => {
   const points = useMemo(
     () => [...data.sources, ...data.targets],
     [data.sources, data.targets]
@@ -245,129 +211,42 @@ export type FlowEditorProps = {
   onChange?: (data: { request: ProcessData }) => void;
 };
 
-type NodeSidebarProps = {
-  selectedNode: Node | null;
-  onNodeUpdate?: (nodeId: string, updates: Partial<Node>) => void;
+type NodeFormValues = {
+  name: string;
+  description: string;
+  condition: string;
 };
 
-const NodeSidebar: FC<NodeSidebarProps> = ({ selectedNode, onNodeUpdate }) => {
-  const [width, setWidth] = useState(300);
-  const [isResizing, setIsResizing] = useState(false);
-  const [nodeName, setNodeName] = useState('');
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const startXRef = useRef<number>(0);
-  const startWidthRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (selectedNode) {
-      setNodeName(selectedNode.name);
-    }
-  }, [selectedNode]);
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNodeName(e.target.value);
-  };
-
-  const handleAccept = () => {
-    if (selectedNode && nodeName !== selectedNode.name) {
-      onNodeUpdate?.(selectedNode.id, { name: nodeName });
-    }
-  };
-
-  const startResizing = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    startXRef.current = e.pageX;
-    startWidthRef.current = sidebarRef.current?.offsetWidth ?? 300;
-    setIsResizing(true);
-  }, []);
-
-  const handleResize = useCallback(
-    (e: MouseEvent) => {
-      if (!isResizing) return;
-
-      const diff = startXRef.current - e.pageX;
-      const newWidth = Math.min(
-        Math.max(startWidthRef.current + diff, 200),
-        300
-      );
-      setWidth(newWidth);
-    },
-    [isResizing, startXRef, startWidthRef]
-  );
-
-  const stopResizing = useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  useEffect(() => {
-    if (isResizing) {
-      document.addEventListener('mousemove', handleResize);
-      document.addEventListener('mouseup', stopResizing);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleResize);
-      document.removeEventListener('mouseup', stopResizing);
-    };
-  }, [isResizing, handleResize, stopResizing]);
-
-  return (
-    <>
-      <div
-        ref={sidebarRef}
-        className="border-border bg-background relative flex flex-none flex-col border-l"
-        style={{ width: `${width}px` }}
-      >
-        <div className="border-border bg-appBlue flex items-center justify-between border-b p-2">
-          <h3 className="text-appWhite text-lg font-medium">Thuộc tính node</h3>
-        </div>
-        <div
-          className={cn(
-            'hover:bg-appBlue/5 group absolute -left-2 top-0 z-50 flex h-full w-4 cursor-col-resize items-center justify-center',
-            isResizing && 'bg-appBlue/10'
-          )}
-          onMouseDown={startResizing}
-        >
-          <GripVertical className="text-muted-foreground/50 h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
-        </div>
-        <div className="p-4">
-          {selectedNode ? (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Tên node</label>
-                <div className="flex gap-2">
-                  <Input
-                    value={nodeName}
-                    onChange={handleNameChange}
-                    placeholder="Nhập tên node"
-                  />
-                  <Button
-                    onClick={handleAccept}
-                    disabled={!nodeName || nodeName === selectedNode.name}
-                  >
-                    Chấp nhận
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-muted-foreground text-center text-sm">
-              Chọn một node để xem thông tin
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
+const schema = yup
+  .object({
+    name: yup.string().required('Tên node là bắt buộc'),
+    description: yup.string().default(''),
+    condition: yup.string().default('')
+  })
+  .required();
 
 export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const { fitView } = useReactFlow();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [flowData, setFlowData] = useState(data);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const fitViewOptions = useMemo(
+    () => ({
+      duration: 200,
+      padding: 0.2
+    }),
+    []
+  );
+
+  const handleFitView = useCallback(() => {
+    requestAnimationFrame(() => {
+      fitView(fitViewOptions);
+    });
+  }, [fitView, fitViewOptions]);
 
   const nodesById = useMemo(
     () =>
@@ -375,17 +254,27 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request.nodes]
   );
 
-  console.log(nodesById);
-
   const handleNodeClick = useCallback(
     (_: any, node: { id: string }) => {
       const foundNode = nodesById[node.id];
       if (foundNode) {
         setSelectedNode(foundNode);
+        setShowSidebar(true);
+        setTimeout(() => {
+          handleFitView();
+        }, 100);
       }
     },
-    [nodesById]
+    [nodesById, handleFitView]
   );
+
+  const handleCloseSidebar = useCallback(() => {
+    setShowSidebar(false);
+    setSelectedNode(null);
+    setTimeout(() => {
+      handleFitView();
+    }, 100);
+  }, [handleFitView]);
 
   const updateFlowData = useCallback(
     (updatedData: typeof flowData) => {
@@ -452,14 +341,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request, updateFlowData, onLayout]
   );
 
-  // Only run layout when data changes
   useEffect(() => {
     onLayout();
-    // Use RAF to avoid layout thrashing
-    requestAnimationFrame(() => {
-      fitView();
-    });
-  }, [onLayout, fitView]);
+    handleFitView();
+  }, [onLayout, handleFitView, showSidebar]);
 
   const memoizedNodeTypes = useMemo(() => nodeTypes, []);
 
@@ -474,12 +359,17 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           fitView
+          fitViewOptions={fitViewOptions}
         />
       </div>
-      <NodeSidebar
-        selectedNode={selectedNode}
-        onNodeUpdate={handleNodeUpdate}
-      />
+      {showSidebar && (
+        <PropertySidebar title="Thuộc tính node" onClose={handleCloseSidebar}>
+          <NodeProperty
+            selectedNode={selectedNode}
+            onNodeUpdate={handleNodeUpdate}
+          />
+        </PropertySidebar>
+      )}
     </div>
   );
 };
