@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import { GripVertical } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Background,
   MarkerType,
   ReactFlow,
   useEdgesState,
@@ -9,7 +11,7 @@ import {
   useReactFlow
 } from 'reactflow';
 
-import { Show } from '@minhdtb/storeo-core';
+import { Show, cn } from '@minhdtb/storeo-core';
 
 import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
@@ -118,6 +120,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState(data);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
 
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -485,6 +491,44 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request, updateFlowData, onLayout]
   );
 
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    startXRef.current = e.pageX;
+    startWidthRef.current = sidebarWidth;
+    setIsResizing(true);
+  }, []);
+
+  const handleResize = useCallback(
+    (e: MouseEvent) => {
+      if (!isResizing) return;
+
+      const diff = startXRef.current - e.pageX;
+      const newWidth = Math.min(
+        Math.max(startWidthRef.current + diff, 200),
+        500
+      );
+      setSidebarWidth(newWidth);
+    },
+    [isResizing]
+  );
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+    handleFitView();
+  }, [handleFitView]);
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResize);
+      document.addEventListener('mouseup', stopResizing);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', stopResizing);
+    };
+  }, [isResizing, handleResize, stopResizing]);
+
   useEffect(() => {
     onLayout();
     handleFitView();
@@ -502,8 +546,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   }, [handleFitView]);
 
   return (
-    <div className="flex h-full">
-      <div className="flex-1" ref={ref}>
+    <div className="flex h-full overflow-hidden rounded-lg border">
+      <div className="flex-1 overflow-hidden border-r" ref={ref}>
         <ReactFlow
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
@@ -517,28 +561,55 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           snapToGrid
           fitView
           fitViewOptions={fitViewOptions}
-        />
+          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+          minZoom={0.1}
+          maxZoom={4}
+          snapGrid={[15, 15]}
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 'inherit'
+          }}
+          defaultEdgeOptions={{
+            style: { strokeWidth: 1, stroke: '#9CA3AF' }
+          }}
+        >
+          <Background color="#CBD5E1" gap={15} size={2} />
+          <div className="absolute bottom-2 left-2 rounded bg-white/50 p-2 text-xs text-gray-500">
+            Sử dụng chuột để phóng to • Kéo để di chuyển
+          </div>
+        </ReactFlow>
       </div>
       <Show when={showSidebar}>
-        <PropertySidebar
-          title={selectedNode ? 'Thuộc tính node' : 'Thuộc tính flow'}
-          onClose={handleCloseSidebar}
-          onResizeEnd={handleFitView}
-        >
-          {selectedNode ? (
-            <NodeProperty
-              selectedNode={selectedNode}
-              onNodeUpdate={handleNodeUpdate}
-              onNodeDelete={handleNodeDelete}
-            />
-          ) : (
-            <FlowProperty
-              selectedFlow={selectedFlow}
-              onFlowUpdate={handleFlowUpdate}
-              onFlowDelete={handleFlowDelete}
-            />
-          )}
-        </PropertySidebar>
+        <div className="relative overflow-hidden">
+          <div
+            className={cn(
+              'hover:bg-appBlue/5 group absolute -left-2 top-0 z-50 flex h-full w-4 cursor-col-resize items-center justify-center',
+              isResizing && 'bg-appBlue/10'
+            )}
+            onMouseDown={startResizing}
+          >
+            <GripVertical className="text-muted-foreground/50 h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
+          </div>
+          <PropertySidebar
+            title={selectedNode ? 'Thuộc tính node' : 'Thuộc tính flow'}
+            onClose={handleCloseSidebar}
+            width={sidebarWidth}
+          >
+            {selectedNode ? (
+              <NodeProperty
+                selectedNode={selectedNode}
+                onNodeUpdate={handleNodeUpdate}
+                onNodeDelete={handleNodeDelete}
+              />
+            ) : (
+              <FlowProperty
+                selectedFlow={selectedFlow}
+                onFlowUpdate={handleFlowUpdate}
+                onFlowDelete={handleFlowDelete}
+              />
+            )}
+          </PropertySidebar>
+        </div>
       </Show>
     </div>
   );

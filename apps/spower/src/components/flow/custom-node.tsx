@@ -65,16 +65,20 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
   }, [points]);
 
   const handlePointClick = (pointId: string) => {
-    data.onPointClick(pointId, data.nodeId);
+    const point = points.find(p => p.id === pointId);
+    if (point && point.role === 'unknown') {
+      data.onPointClick(pointId, data.nodeId);
+    }
   };
 
   return (
     <>
       <div
         className={cn(
-          'flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs shadow-sm transition-all',
+          'flex w-40 items-center justify-center gap-2 rounded border bg-white p-2 text-xs shadow-sm transition-all',
           data.active ? 'border-appError' : 'border-gray-200',
-          data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : ''
+          data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
+          data.clicked ? 'ring-2 ring-gray-200' : ''
         )}
       >
         <Show when={data.active}>
@@ -97,14 +101,17 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           id={point.id}
           className={cn(
             'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id
-              ? 'scale-150 !bg-blue-500'
-              : ''
+            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
           )}
           style={{
             top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
             opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563',
+            background:
+              data.sourcePoint?.pointId === point.id
+                ? '#CC313D'
+                : point.role === 'unknown'
+                  ? '#9CA3AF'
+                  : '#4B5563',
             cursor: 'pointer',
             width: '10px',
             height: '10px',
@@ -127,14 +134,17 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           id={point.id}
           className={cn(
             'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id
-              ? 'scale-150 !bg-blue-500'
-              : ''
+            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
           )}
           style={{
             left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
             opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563',
+            background:
+              data.sourcePoint?.pointId === point.id
+                ? '#CC313D'
+                : point.role === 'unknown'
+                  ? '#9CA3AF'
+                  : '#4B5563',
             cursor: 'pointer',
             width: '10px',
             height: '10px',
@@ -157,14 +167,17 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           id={point.id}
           className={cn(
             'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id
-              ? 'scale-150 !bg-blue-500'
-              : ''
+            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
           )}
           style={{
             top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
             opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563',
+            background:
+              data.sourcePoint?.pointId === point.id
+                ? '#CC313D'
+                : point.role === 'unknown'
+                  ? '#9CA3AF'
+                  : '#4B5563',
             cursor: 'pointer',
             width: '10px',
             height: '10px',
@@ -187,14 +200,17 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           id={point.id}
           className={cn(
             'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id
-              ? 'scale-150 !bg-blue-500'
-              : ''
+            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
           )}
           style={{
             left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
             opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563',
+            background:
+              data.sourcePoint?.pointId === point.id
+                ? '#CC313D'
+                : point.role === 'unknown'
+                  ? '#9CA3AF'
+                  : '#4B5563',
             cursor: 'pointer',
             width: '10px',
             height: '10px',

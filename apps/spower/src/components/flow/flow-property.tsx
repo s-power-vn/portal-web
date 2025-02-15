@@ -77,7 +77,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="overflow-y-auto p-4">
         {selectedFlow ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>

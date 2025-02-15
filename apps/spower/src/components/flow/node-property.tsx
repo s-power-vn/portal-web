@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Plus, Trash2 } from 'lucide-react';
 import * as yup from 'yup';
 
 import { FC, useEffect } from 'react';
@@ -7,19 +8,35 @@ import { useForm } from 'react-hook-form';
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
-import type { Node } from '.';
+import type { Node, Point, PointRole } from './types';
 
 type NodeFormValues = {
+  id: string;
   name: string;
   description: string;
   condition: string;
+  points: Point[];
 };
 
 const schema = yup
   .object({
+    id: yup.string().required(),
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
-    condition: yup.string().default('')
+    condition: yup.string().default(''),
+    points: yup
+      .array()
+      .of(
+        yup.object({
+          id: yup.string().required(),
+          type: yup
+            .string()
+            .oneOf(['top', 'bottom', 'right', 'left'])
+            .required('Loại point là bắt buộc'),
+          role: yup.mixed<PointRole>().optional()
+        })
+      )
+      .default([])
   })
   .required();
 
@@ -38,23 +55,33 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { isDirty, errors, dirtyFields }
   } = useForm<NodeFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
+      id: '',
       name: '',
       description: '',
-      condition: ''
+      condition: '',
+      points: []
     }
   });
 
+  const points = watch('points');
+
   useEffect(() => {
     if (selectedNode) {
-      reset({
-        name: selectedNode.name,
-        description: selectedNode.description,
-        condition: selectedNode.condition
-      });
+      const { x, y, ...rest } = selectedNode;
+      const formValues: NodeFormValues = {
+        id: rest.id,
+        name: rest.name,
+        description: rest.description || '',
+        condition: rest.condition || '',
+        points: Array.isArray(rest.points) ? rest.points : []
+      };
+      reset(formValues);
     }
   }, [selectedNode, reset]);
 
@@ -62,7 +89,13 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     if (selectedNode) {
       const updates: Partial<Node> = {};
       (Object.keys(dirtyFields) as Array<keyof NodeFormValues>).forEach(key => {
-        updates[key] = values[key];
+        if (key !== 'id') {
+          if (key === 'points') {
+            updates.points = values.points;
+          } else {
+            updates[key as 'name' | 'description' | 'condition'] = values[key];
+          }
+        }
       });
 
       onNodeUpdate?.(selectedNode.id, updates);
@@ -73,9 +106,22 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     }
   };
 
+  const addPoint = () => {
+    const newPoints = [...points];
+    const newId = `p${newPoints.length + 1}`;
+    newPoints.push({ id: newId, type: 'right' });
+    setValue('points', newPoints, { shouldDirty: true });
+  };
+
+  const removePoint = (index: number) => {
+    const newPoints = [...points];
+    newPoints.splice(index, 1);
+    setValue('points', newPoints, { shouldDirty: true });
+  };
+
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="overflow-y-auto p-4">
         {selectedNode ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
@@ -120,6 +166,45 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   {errors.condition.message}
                 </p>
               )}
+            </div>
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-sm font-medium">Points</label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addPoint}
+                  className="h-8"
+                >
+                  <Plus className="mr-1 h-4 w-4" />
+                  Thêm point
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {points.map((point, index) => (
+                  <div key={point.id} className="flex items-center gap-2">
+                    <select
+                      {...register(`points.${index}.type`)}
+                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="top">Top</option>
+                      <option value="bottom">Bottom</option>
+                      <option value="right">Right</option>
+                      <option value="left">Left</option>
+                    </select>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removePoint(index)}
+                      className="h-10 w-10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           </form>
         ) : (

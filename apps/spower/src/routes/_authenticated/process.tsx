@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { FlowEditor } from '../../components/flow';
-import { ProcessData } from '../../components/flow/flow-editor';
+import { FlowEditor, ProcessData } from '../../components/flow';
 import processData from '../../components/flow/process.json';
 
 export const Route = createFileRoute('/_authenticated/process')({
@@ -11,7 +10,7 @@ export const Route = createFileRoute('/_authenticated/process')({
 
 function RouteComponent() {
   return (
-    <div className="h-full">
+    <div className="h-full p-2">
       <FlowEditor data={{ request: processData.price as ProcessData }} />
     </div>
   );
