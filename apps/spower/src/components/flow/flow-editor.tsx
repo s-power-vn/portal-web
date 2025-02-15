@@ -343,26 +343,33 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     (changes: any[]) => {
       onNodesChangeInternal(changes);
 
-      const updatedNodes = flowData.request.nodes.map(node => {
-        const updatedNode = nodes.find(n => n.id === node.id);
-        if (updatedNode) {
-          return {
-            ...node,
-            x: updatedNode.position.x,
-            y: updatedNode.position.y
-          };
-        }
-        return node;
-      });
+      // Only update flow data when the change is a position change and it's done
+      const positionChange = changes.find(
+        change => change.type === 'position' && change.dragging === false
+      );
 
-      const updatedData = {
-        request: {
-          ...flowData.request,
-          nodes: updatedNodes
-        }
-      };
+      if (positionChange) {
+        const updatedNodes = flowData.request.nodes.map(node => {
+          const updatedNode = nodes.find(n => n.id === node.id);
+          if (updatedNode) {
+            return {
+              ...node,
+              x: updatedNode.position.x,
+              y: updatedNode.position.y
+            };
+          }
+          return node;
+        });
 
-      updateFlowData(updatedData);
+        const updatedData = {
+          request: {
+            ...flowData.request,
+            nodes: updatedNodes
+          }
+        };
+
+        updateFlowData(updatedData);
+      }
     },
     [flowData.request, nodes, onNodesChangeInternal, updateFlowData]
   );
