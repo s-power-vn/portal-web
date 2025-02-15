@@ -1,6 +1,9 @@
+export type PointRole = 'source' | 'target' | 'unknown';
+
 export type Point = {
   id: string;
   type: 'top' | 'bottom' | 'right' | 'left';
+  role?: PointRole;
 };
 
 export type Node = {
@@ -15,9 +18,6 @@ export type Node = {
 
 export type Flow = {
   id: string;
-  action?: string;
-  approve?: boolean;
-  type?: string;
   from: {
     node: string;
     point: string;
@@ -26,12 +26,13 @@ export type Flow = {
     node: string;
     point: string;
   };
+  type?: string;
+  action?: string;
+  approve?: boolean;
 };
 
 export type ProcessData = {
-  done: string;
   nodes: Node[];
   flows: Flow[];
+  done?: string;
 };
-
-export type PointRole = 'source' | 'target' | 'unknown';

@@ -7,65 +7,67 @@ import { useForm } from 'react-hook-form';
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
-import type { Node } from '.';
+import type { Flow } from '.';
 
-type NodeFormValues = {
-  name: string;
-  description: string;
-  condition: string;
+type FlowFormValues = {
+  id: string;
+  action: string;
+  approve: boolean;
 };
 
 const schema = yup
   .object({
-    name: yup.string().required('Tên node là bắt buộc'),
-    description: yup.string().default(''),
-    condition: yup.string().default('')
+    id: yup.string().required('ID flow là bắt buộc'),
+    action: yup.string().default(''),
+    approve: yup.boolean().default(false)
   })
   .required();
 
-export type NodePropertyProps = {
-  selectedNode: Node | null;
-  onNodeUpdate?: (nodeId: string, updates: Partial<Node>) => void;
-  onNodeDelete?: (nodeId: string) => void;
+export type FlowPropertyProps = {
+  selectedFlow: Flow | null;
+  onFlowUpdate?: (flowId: string, updates: Partial<Flow>) => void;
+  onFlowDelete?: (flowId: string) => void;
 };
 
-export const NodeProperty: FC<NodePropertyProps> = ({
-  selectedNode,
-  onNodeUpdate,
-  onNodeDelete
+export const FlowProperty: FC<FlowPropertyProps> = ({
+  selectedFlow,
+  onFlowUpdate,
+  onFlowDelete
 }) => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { isDirty, errors, dirtyFields }
-  } = useForm<NodeFormValues>({
+  } = useForm<FlowFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: '',
-      description: '',
-      condition: ''
+      id: '',
+      action: '',
+      approve: false
     }
   });
 
   useEffect(() => {
-    if (selectedNode) {
+    if (selectedFlow) {
       reset({
-        name: selectedNode.name,
-        description: selectedNode.description,
-        condition: selectedNode.condition
+        id: selectedFlow.id,
+        action: selectedFlow.action,
+        approve: selectedFlow.approve ?? false
       });
     }
-  }, [selectedNode, reset]);
+  }, [selectedFlow, reset]);
 
-  const onSubmit = (values: NodeFormValues) => {
-    if (selectedNode) {
-      const updates: Partial<Node> = {};
-      (Object.keys(dirtyFields) as Array<keyof NodeFormValues>).forEach(key => {
-        updates[key] = values[key];
-      });
+  const onSubmit = (values: FlowFormValues) => {
+    if (selectedFlow) {
+      const updates: Partial<Flow> = {};
+      const dirtyKeys = Object.keys(dirtyFields) as Array<keyof FlowFormValues>;
 
-      onNodeUpdate?.(selectedNode.id, updates);
+      if (dirtyKeys.includes('id')) updates.id = values.id;
+      if (dirtyKeys.includes('action')) updates.action = values.action;
+      if (dirtyKeys.includes('approve')) updates.approve = values.approve;
+
+      onFlowUpdate?.(selectedFlow.id, updates);
 
       reset(values, {
         keepValues: true
@@ -76,64 +78,59 @@ export const NodeProperty: FC<NodePropertyProps> = ({
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto p-4">
-        {selectedNode ? (
+        {selectedFlow ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="text-sm font-medium">
-                Tên node
+                ID Flow
                 <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
-                {...register('name')}
-                placeholder="Nhập tên node"
+                {...register('id')}
+                placeholder="Nhập ID flow"
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
-              {errors.name && (
+              {errors.id && (
                 <p className="text-destructive mt-1 text-sm">
-                  {errors.name.message}
+                  {errors.id.message}
                 </p>
               )}
             </div>
             <div>
-              <label className="text-sm font-medium">Mô tả</label>
+              <label className="text-sm font-medium">Action</label>
               <textarea
-                {...register('description')}
-                placeholder="Nhập mô tả"
+                {...register('action')}
+                placeholder="Nhập action"
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
-              {errors.description && (
+              {errors.action && (
                 <p className="text-destructive mt-1 text-sm">
-                  {errors.description.message}
+                  {errors.action.message}
                 </p>
               )}
             </div>
-            <div>
-              <label className="text-sm font-medium">Điều kiện</label>
-              <textarea
-                {...register('condition')}
-                placeholder="Nhập điều kiện"
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                {...register('approve')}
+                className="border-input bg-background ring-offset-background focus-visible:ring-ring h-4 w-4 rounded border focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
-              {errors.condition && (
-                <p className="text-destructive mt-1 text-sm">
-                  {errors.condition.message}
-                </p>
-              )}
+              <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
             </div>
           </form>
         ) : (
           <div className="text-muted-foreground text-center text-sm">
-            Chọn một node để xem thông tin
+            Chọn một flow để xem thông tin
           </div>
         )}
       </div>
-      <Show when={selectedNode}>
+      <Show when={selectedFlow}>
         <div className="border-border flex items-center justify-between border-t p-4">
           <Button
             type="button"
             variant="destructive"
-            onClick={() => selectedNode && onNodeDelete?.(selectedNode.id)}
+            onClick={() => selectedFlow && onFlowDelete?.(selectedFlow.id)}
           >
             Xóa
           </Button>

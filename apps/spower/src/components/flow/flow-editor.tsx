@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import { CheckCircle2Icon } from 'lucide-react';
-import * as yup from 'yup';
 
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Handle,
   MarkerType,
@@ -15,9 +14,11 @@ import {
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
+import { FlowProperty } from './flow-property';
 import { NodeProperty } from './node-property';
+import { nextTick } from './process-flow';
 import { PropertySidebar } from './property-sidebar';
-import type { Node, PointRole, ProcessData } from './types';
+import type { Flow, Node, PointRole, ProcessData } from './types';
 
 type CustomNodeProps = {
   data: {
@@ -26,6 +27,7 @@ type CustomNodeProps = {
     description: string;
     active: boolean;
     isApprove: boolean;
+    selected: boolean;
     sources: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
@@ -40,10 +42,16 @@ type CustomNodeProps = {
 };
 
 const CustomNode: FC<CustomNodeProps> = ({ data }) => {
-  const points = useMemo(
-    () => [...data.sources, ...data.targets],
-    [data.sources, data.targets]
-  );
+  const points = useMemo(() => {
+    const pointMap = new Map();
+    data.sources.forEach(point => pointMap.set(point.id, point));
+    data.targets.forEach(point => {
+      if (!pointMap.has(point.id)) {
+        pointMap.set(point.id, point);
+      }
+    });
+    return Array.from(pointMap.values());
+  }, [data.sources, data.targets]);
 
   const { leftPoints, topPoints, rightPoints, bottomPoints } = useMemo(() => {
     const sortByPointId = (points: typeof data.sources) => {
@@ -69,8 +77,9 @@ const CustomNode: FC<CustomNodeProps> = ({ data }) => {
     <>
       <div
         className={cn(
-          'flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs',
-          data.active ? 'border-appError' : ''
+          'flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs shadow-sm transition-all',
+          data.active ? 'border-appError' : 'border-gray-200',
+          data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : ''
         )}
       >
         <Show when={data.active}>
@@ -84,42 +93,68 @@ const CustomNode: FC<CustomNodeProps> = ({ data }) => {
       {leftPoints.reverse().map((point, index) => (
         <Handle
           key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
+          type={
+            point.role === 'source' || point.role === 'unknown'
+              ? 'source'
+              : 'target'
+          }
           position={Position.Left}
           id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (leftPoints.length + 1))}%` }}
+          style={{
+            top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
+            opacity: point.role === 'unknown' ? 0.3 : 1,
+            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
+          }}
         />
       ))}
       {topPoints.map((point, index) => (
         <Handle
           key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
+          type={
+            point.role === 'source' || point.role === 'unknown'
+              ? 'source'
+              : 'target'
+          }
           position={Position.Top}
           id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ left: `${(index + 1) * (100 / (topPoints.length + 1))}%` }}
+          style={{
+            left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
+            opacity: point.role === 'unknown' ? 0.3 : 1,
+            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
+          }}
         />
       ))}
       {rightPoints.map((point, index) => (
         <Handle
           key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
+          type={
+            point.role === 'source' || point.role === 'unknown'
+              ? 'source'
+              : 'target'
+          }
           position={Position.Right}
           id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (rightPoints.length + 1))}%` }}
+          style={{
+            top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
+            opacity: point.role === 'unknown' ? 0.3 : 1,
+            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
+          }}
         />
       ))}
       {bottomPoints.reverse().map((point, index) => (
         <Handle
           key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
+          type={
+            point.role === 'source' || point.role === 'unknown'
+              ? 'source'
+              : 'target'
+          }
           position={Position.Bottom}
           id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
           style={{
-            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`
+            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
+            opacity: point.role === 'unknown' ? 0.3 : 1,
+            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
           }}
         />
       ))}
@@ -127,21 +162,18 @@ const CustomNode: FC<CustomNodeProps> = ({ data }) => {
   );
 };
 
-function getNodes(data: ProcessData) {
+function getNodes(data: ProcessData, selectedNode: Node | null) {
   return data.nodes.map(node => {
     const { id, x, y, points, ...rest } = node;
 
-    const mappedPoints = points.map(point => ({
-      ...point,
-      id: `${id}#${point.id}`
-    }));
-
-    const pointsWithRoles = mappedPoints.map(point => {
+    // Map all points and initialize their roles based on flows
+    const mappedPoints = points.map(point => {
+      const pointId = `${id}#${point.id}`;
       const isSource = data.flows.some(
-        flow => `${flow.from.node}#${flow.from.point}` === point.id
+        flow => `${flow.from.node}#${flow.from.point}` === pointId
       );
       const isTarget = data.flows.some(
-        flow => `${flow.to.node}#${flow.to.point}` === point.id
+        flow => `${flow.to.node}#${flow.to.point}` === pointId
       );
 
       let role: PointRole = 'unknown';
@@ -149,19 +181,18 @@ function getNodes(data: ProcessData) {
       if (isTarget) role = 'target';
 
       return {
-        point: { ...point, role },
-        isSource,
-        isTarget
+        ...point,
+        id: pointId,
+        role
       };
     });
 
-    const sources = pointsWithRoles
-      .filter(({ isSource, isTarget }) => isSource || (!isSource && !isTarget))
-      .map(({ point }) => point);
-
-    const targets = pointsWithRoles
-      .filter(({ isTarget }) => isTarget)
-      .map(({ point }) => point);
+    // Split points into sources and targets
+    const sources = mappedPoints.filter(point => point.role === 'source');
+    const targets = mappedPoints.filter(point => point.role === 'target');
+    const unknownPoints = mappedPoints.filter(
+      point => point.role === 'unknown'
+    );
 
     const isApprove = data.flows.some(
       flow => flow.from.node === id && flow.approve
@@ -174,9 +205,10 @@ function getNodes(data: ProcessData) {
         ...rest,
         nodeId: id,
         isApprove,
-        sources,
-        targets,
-        active: false
+        sources: [...sources],
+        targets: [...targets, ...unknownPoints],
+        active: false,
+        selected: selectedNode?.id === id
       },
       position: { x, y },
       draggable: true
@@ -184,8 +216,9 @@ function getNodes(data: ProcessData) {
   });
 }
 
-function getEdges(data: ProcessData) {
+function getEdges(data: ProcessData, selectedFlow: Flow | null) {
   return data.flows.map(flow => {
+    const isSelected = selectedFlow?.id === flow.id;
     return {
       id: flow.id,
       source: `${flow.from.node}`,
@@ -193,10 +226,15 @@ function getEdges(data: ProcessData) {
       sourceHandle: `${flow.from.node}#${flow.from.point}`,
       targetHandle: `${flow.to.node}#${flow.to.point}`,
       type: flow.type ? flow.type : 'smoothstep',
+      style: {
+        strokeWidth: isSelected ? 2 : 1,
+        stroke: isSelected ? '#4B5563' : '#9CA3AF'
+      },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20
+        width: 10,
+        height: 10,
+        color: isSelected ? '#4B5563' : '#9CA3AF'
       }
     };
   });
@@ -211,28 +249,20 @@ export type FlowEditorProps = {
   onChange?: (data: { request: ProcessData }) => void;
 };
 
-type NodeFormValues = {
-  name: string;
-  description: string;
-  condition: string;
-};
-
-const schema = yup
-  .object({
-    name: yup.string().required('Tên node là bắt buộc'),
-    description: yup.string().default(''),
-    condition: yup.string().default('')
-  })
-  .required();
-
 export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const { fitView } = useReactFlow();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState(data);
   const [showSidebar, setShowSidebar] = useState(true);
 
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const [sourcePoint, setSourcePoint] = useState<{
+    nodeId: string;
+    pointId: string;
+  } | null>(null);
 
   const fitViewOptions = useMemo(
     () => ({
@@ -254,11 +284,18 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request.nodes]
   );
 
+  const flowsById = useMemo(
+    () =>
+      Object.fromEntries(flowData.request.flows.map(flow => [flow.id, flow])),
+    [flowData.request.flows]
+  );
+
   const handleNodeClick = useCallback(
     (_: any, node: { id: string }) => {
       const foundNode = nodesById[node.id];
       if (foundNode) {
         setSelectedNode(foundNode);
+        setSelectedFlow(null);
         setShowSidebar(true);
         setTimeout(() => {
           handleFitView();
@@ -268,9 +305,25 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [nodesById, handleFitView]
   );
 
+  const handleEdgeClick = useCallback(
+    (_: any, edge: { id: string }) => {
+      const foundFlow = flowsById[edge.id];
+      if (foundFlow) {
+        setSelectedFlow(foundFlow);
+        setSelectedNode(null);
+        setShowSidebar(true);
+        setTimeout(() => {
+          handleFitView();
+        }, 100);
+      }
+    },
+    [flowsById, handleFitView]
+  );
+
   const handleCloseSidebar = useCallback(() => {
     setShowSidebar(false);
     setSelectedNode(null);
+    setSelectedFlow(null);
     setTimeout(() => {
       handleFitView();
     }, 100);
@@ -314,13 +367,33 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request, nodes, onNodesChangeInternal, updateFlowData]
   );
 
-  const onLayout = useCallback(() => {
-    const newEdges = getEdges(flowData.request);
-    const newNodes = getNodes(flowData.request);
+  const onLayout = useCallback(async () => {
+    const newEdges = getEdges(flowData.request, selectedFlow);
+    const newNodes = getNodes(flowData.request, selectedNode);
 
     setEdges(newEdges);
+    await nextTick(10);
     setNodes(newNodes);
-  }, [flowData.request, setEdges, setNodes]);
+  }, [flowData.request, selectedFlow, selectedNode, setEdges, setNodes]);
+
+  const handleFlowUpdate = useCallback(
+    (flowId: string, updates: Partial<Flow>) => {
+      const updatedFlows = flowData.request.flows.map(flow =>
+        flow.id === flowId ? { ...flow, ...updates } : flow
+      );
+
+      const updatedData = {
+        request: {
+          ...flowData.request,
+          flows: updatedFlows
+        }
+      };
+
+      updateFlowData(updatedData);
+      onLayout();
+    },
+    [flowData.request, updateFlowData, onLayout]
+  );
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
@@ -341,6 +414,153 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData.request, updateFlowData, onLayout]
   );
 
+  const handleFlowDelete = useCallback(
+    async (flowId: string) => {
+      const flowToDelete = flowData.request.flows.find(
+        flow => flow.id === flowId
+      );
+      const updatedFlows = flowData.request.flows.filter(
+        flow => flow.id !== flowId
+      );
+
+      // Reset roles for points involved in the deleted flow
+      const updatedNodes = flowData.request.nodes.map(node => {
+        if (
+          flowToDelete &&
+          (node.id === flowToDelete.from.node ||
+            node.id === flowToDelete.to.node)
+        ) {
+          return {
+            ...node,
+            points: node.points.map(point => {
+              const pointId = `${node.id}#${point.id}`;
+              const isStillSource = updatedFlows.some(
+                flow => `${flow.from.node}#${flow.from.point}` === pointId
+              );
+              const isStillTarget = updatedFlows.some(
+                flow => `${flow.to.node}#${flow.to.point}` === pointId
+              );
+
+              let role: PointRole = 'unknown';
+              if (isStillSource) role = 'source';
+              if (isStillTarget) role = 'target';
+
+              return {
+                ...point,
+                role
+              };
+            })
+          };
+        }
+        return node;
+      });
+
+      const updatedData = {
+        request: {
+          ...flowData.request,
+          nodes: updatedNodes,
+          flows: updatedFlows
+        }
+      };
+
+      updateFlowData(updatedData);
+      setSelectedFlow(null);
+      await onLayout();
+    },
+    [flowData.request, updateFlowData, onLayout]
+  );
+
+  const handleNodeDelete = useCallback(
+    async (nodeId: string) => {
+      const updatedNodes = flowData.request.nodes.filter(
+        node => node.id !== nodeId
+      );
+      const updatedFlows = flowData.request.flows.filter(
+        flow => flow.from.node !== nodeId && flow.to.node !== nodeId
+      );
+
+      const updatedData = {
+        request: {
+          ...flowData.request,
+          nodes: updatedNodes,
+          flows: updatedFlows
+        }
+      };
+
+      updateFlowData(updatedData);
+      setSelectedNode(null);
+      await onLayout();
+    },
+    [flowData.request, updateFlowData, onLayout]
+  );
+
+  const handleConnect = useCallback(
+    (params: {
+      source: string | null;
+      sourceHandle: string | null;
+      target: string | null;
+      targetHandle: string | null;
+    }) => {
+      if (
+        !params.source ||
+        !params.target ||
+        !params.sourceHandle ||
+        !params.targetHandle
+      ) {
+        return;
+      }
+
+      const sourceNodeId = params.source;
+      const targetNodeId = params.target;
+      const sourcePointId = params.sourceHandle.split('#')[1];
+      const targetPointId = params.targetHandle.split('#')[1];
+
+      // Check if flow already exists
+      const flowExists = flowData.request.flows.some(
+        flow =>
+          flow.from.node === sourceNodeId &&
+          flow.from.point === sourcePointId &&
+          flow.to.node === targetNodeId &&
+          flow.to.point === targetPointId
+      );
+
+      if (flowExists) {
+        return;
+      }
+
+      // Generate flow ID
+      const baseId = `${sourceNodeId}-${targetNodeId}`;
+      const existingFlows = flowData.request.flows.filter(flow =>
+        flow.id.startsWith(baseId)
+      );
+      const newFlowNumber = existingFlows.length + 1;
+      const newFlowId = `${baseId}#${newFlowNumber}`;
+
+      const newFlow: Flow = {
+        id: newFlowId,
+        from: {
+          node: sourceNodeId,
+          point: sourcePointId
+        },
+        to: {
+          node: targetNodeId,
+          point: targetPointId
+        }
+      };
+
+      const updatedData = {
+        request: {
+          ...flowData.request,
+          flows: [...flowData.request.flows, newFlow]
+        }
+      };
+
+      updateFlowData(updatedData);
+      onLayout();
+    },
+    [flowData.request, updateFlowData, onLayout]
+  );
+
   useEffect(() => {
     onLayout();
     handleFitView();
@@ -348,9 +568,18 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
 
   const memoizedNodeTypes = useMemo(() => nodeTypes, []);
 
+  const ref = useRef(null);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleFitView);
+    return () => {
+      window.removeEventListener('resize', handleFitView);
+    };
+  }, [handleFitView]);
+
   return (
     <div className="flex h-full">
-      <div className="flex-1">
+      <div className="flex-1" ref={ref}>
         <ReactFlow
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
@@ -358,18 +587,34 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           onNodesChange={handleNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
+          onEdgeClick={handleEdgeClick}
+          onConnect={handleConnect}
+          connectOnClick={false}
+          snapToGrid
           fitView
           fitViewOptions={fitViewOptions}
         />
       </div>
-      {showSidebar && (
-        <PropertySidebar title="Thuộc tính node" onClose={handleCloseSidebar}>
-          <NodeProperty
-            selectedNode={selectedNode}
-            onNodeUpdate={handleNodeUpdate}
-          />
+      <Show when={showSidebar}>
+        <PropertySidebar
+          title={selectedNode ? 'Thuộc tính node' : 'Thuộc tính flow'}
+          onClose={handleCloseSidebar}
+        >
+          {selectedNode ? (
+            <NodeProperty
+              selectedNode={selectedNode}
+              onNodeUpdate={handleNodeUpdate}
+              onNodeDelete={handleNodeDelete}
+            />
+          ) : (
+            <FlowProperty
+              selectedFlow={selectedFlow}
+              onFlowUpdate={handleFlowUpdate}
+              onFlowDelete={handleFlowDelete}
+            />
+          )}
         </PropertySidebar>
-      )}
+      </Show>
     </div>
   );
 };
