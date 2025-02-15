@@ -1,168 +1,28 @@
 import _ from 'lodash';
-import { CheckCircle2Icon } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Handle,
   MarkerType,
-  Position,
   ReactFlow,
   useEdgesState,
   useNodesState,
   useReactFlow
 } from 'reactflow';
 
-import { Show, cn } from '@minhdtb/storeo-core';
+import { Show } from '@minhdtb/storeo-core';
 
+import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
 import { NodeProperty } from './node-property';
 import { nextTick } from './process-flow';
 import { PropertySidebar } from './property-sidebar';
 import type { Flow, Node, PointRole, ProcessData } from './types';
 
-type CustomNodeProps = {
-  data: {
-    nodeId: string;
-    name: string;
-    description: string;
-    active: boolean;
-    isApprove: boolean;
-    selected: boolean;
-    sources: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-    targets: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-  };
-};
-
-const CustomNode: FC<CustomNodeProps> = ({ data }) => {
-  const points = useMemo(() => {
-    const pointMap = new Map();
-    data.sources.forEach(point => pointMap.set(point.id, point));
-    data.targets.forEach(point => {
-      if (!pointMap.has(point.id)) {
-        pointMap.set(point.id, point);
-      }
-    });
-    return Array.from(pointMap.values());
-  }, [data.sources, data.targets]);
-
-  const { leftPoints, topPoints, rightPoints, bottomPoints } = useMemo(() => {
-    const sortByPointId = (points: typeof data.sources) => {
-      return _.sortBy(points, point => {
-        const match = point.id.match(/p(\d+)/);
-        return match ? parseInt(match[1]) : 0;
-      });
-    };
-
-    return {
-      leftPoints: sortByPointId(points.filter(point => point.type === 'left')),
-      topPoints: sortByPointId(points.filter(point => point.type === 'top')),
-      rightPoints: sortByPointId(
-        points.filter(point => point.type === 'right')
-      ),
-      bottomPoints: sortByPointId(
-        points.filter(point => point.type === 'bottom')
-      )
-    };
-  }, [points]);
-
-  return (
-    <>
-      <div
-        className={cn(
-          'flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs shadow-sm transition-all',
-          data.active ? 'border-appError' : 'border-gray-200',
-          data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : ''
-        )}
-      >
-        <Show when={data.active}>
-          <div className={'bg-appError h-3 w-3 rounded-full'}></div>
-        </Show>
-        <span>{data.name}</span>
-        <Show when={data.isApprove}>
-          <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
-        </Show>
-      </div>
-      {leftPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Left}
-          id={point.id}
-          style={{
-            top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
-          }}
-        />
-      ))}
-      {topPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Top}
-          id={point.id}
-          style={{
-            left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
-          }}
-        />
-      ))}
-      {rightPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Right}
-          id={point.id}
-          style={{
-            top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
-          }}
-        />
-      ))}
-      {bottomPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Bottom}
-          id={point.id}
-          style={{
-            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background: point.role === 'unknown' ? '#9CA3AF' : '#4B5563'
-          }}
-        />
-      ))}
-    </>
-  );
-};
-
-function getNodes(data: ProcessData, selectedNode: Node | null) {
+function getNodes(
+  data: ProcessData,
+  selectedNode: Node | null,
+  sourcePoint: { nodeId: string; pointId: string } | null
+) {
   return data.nodes.map(node => {
     const { id, x, y, points, ...rest } = node;
 
@@ -208,7 +68,10 @@ function getNodes(data: ProcessData, selectedNode: Node | null) {
         sources: [...sources],
         targets: [...targets, ...unknownPoints],
         active: false,
-        selected: selectedNode?.id === id
+        selected: selectedNode?.id === id,
+        clicked: sourcePoint?.nodeId === id,
+        onPointClick: () => {},
+        sourcePoint
       },
       position: { x, y },
       draggable: true
@@ -339,49 +202,103 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     [flowData, onChange]
   );
 
-  const handleNodesChange = useCallback(
-    (changes: any[]) => {
-      onNodesChangeInternal(changes);
-
-      // Only update flow data when the change is a position change and it's done
-      const positionChange = changes.find(
-        change => change.type === 'position' && change.dragging === false
-      );
-
-      if (positionChange) {
-        const updatedNodes = flowData.request.nodes.map(node => {
-          const updatedNode = nodes.find(n => n.id === node.id);
-          if (updatedNode) {
-            return {
-              ...node,
-              x: updatedNode.position.x,
-              y: updatedNode.position.y
-            };
-          }
-          return node;
-        });
-
-        const updatedData = {
-          request: {
-            ...flowData.request,
-            nodes: updatedNodes
-          }
-        };
-
-        updateFlowData(updatedData);
-      }
-    },
-    [flowData.request, nodes, onNodesChangeInternal, updateFlowData]
-  );
-
   const onLayout = useCallback(async () => {
     const newEdges = getEdges(flowData.request, selectedFlow);
-    const newNodes = getNodes(flowData.request, selectedNode);
+    const newNodes = getNodes(flowData.request, selectedNode, sourcePoint).map(
+      node => {
+        // Preserve existing node position if it exists
+        const existingNode = nodes.find(n => n.id === node.id);
+        const position = existingNode?.position || {
+          x: node.position.x,
+          y: node.position.y
+        };
+
+        return {
+          ...node,
+          position,
+          data: {
+            ...node.data,
+            clicked: sourcePoint?.nodeId === node.id,
+            onPointClick: (pointId: string, nodeId: string) => {
+              if (!sourcePoint) {
+                setSourcePoint({ nodeId, pointId });
+              } else {
+                // Check if clicking the same point
+                if (
+                  sourcePoint.nodeId === nodeId &&
+                  sourcePoint.pointId === pointId
+                ) {
+                  setSourcePoint(null);
+                  return;
+                }
+
+                // Check if flow already exists
+                const flowExists = flowData.request.flows.some(
+                  flow =>
+                    (flow.from.node === sourcePoint.nodeId &&
+                      flow.from.point === sourcePoint.pointId.split('#')[1] &&
+                      flow.to.node === nodeId &&
+                      flow.to.point === pointId.split('#')[1]) ||
+                    (flow.from.node === nodeId &&
+                      flow.from.point === pointId.split('#')[1] &&
+                      flow.to.node === sourcePoint.nodeId &&
+                      flow.to.point === sourcePoint.pointId.split('#')[1])
+                );
+
+                if (flowExists) {
+                  setSourcePoint(null);
+                  return;
+                }
+
+                // Generate flow ID
+                const baseId = `${sourcePoint.nodeId}-${nodeId}`;
+                const existingFlows = flowData.request.flows.filter(flow =>
+                  flow.id.startsWith(baseId)
+                );
+                const newFlowNumber = existingFlows.length + 1;
+                const newFlowId = `${baseId}#${newFlowNumber}`;
+
+                const newFlow: Flow = {
+                  id: newFlowId,
+                  from: {
+                    node: sourcePoint.nodeId,
+                    point: sourcePoint.pointId.split('#')[1]
+                  },
+                  to: {
+                    node: nodeId,
+                    point: pointId.split('#')[1]
+                  }
+                };
+
+                const updatedData = {
+                  request: {
+                    ...flowData.request,
+                    flows: [...flowData.request.flows, newFlow]
+                  }
+                };
+
+                updateFlowData(updatedData);
+                setSourcePoint(null);
+                onLayout();
+              }
+            }
+          }
+        };
+      }
+    );
 
     setEdges(newEdges);
     await nextTick(10);
     setNodes(newNodes);
-  }, [flowData.request, selectedFlow, selectedNode, setEdges, setNodes]);
+  }, [
+    flowData.request,
+    selectedFlow,
+    selectedNode,
+    setEdges,
+    setNodes,
+    sourcePoint,
+    updateFlowData
+  ]);
 
   const handleFlowUpdate = useCallback(
     (flowId: string, updates: Partial<Flow>) => {
@@ -591,7 +508,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
           edges={edges}
-          onNodesChange={handleNodesChange}
+          onNodesChange={onNodesChangeInternal}
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           onEdgeClick={handleEdgeClick}
@@ -606,6 +523,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         <PropertySidebar
           title={selectedNode ? 'Thuộc tính node' : 'Thuộc tính flow'}
           onClose={handleCloseSidebar}
+          onResizeEnd={handleFitView}
         >
           {selectedNode ? (
             <NodeProperty

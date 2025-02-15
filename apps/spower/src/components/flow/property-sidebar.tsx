@@ -8,12 +8,14 @@ export type PropertySidebarProps = {
   title: string;
   children: React.ReactNode;
   onClose?: () => void;
+  onResizeEnd?: () => void;
 };
 
 export const PropertySidebar: FC<PropertySidebarProps> = ({
   title,
   children,
-  onClose
+  onClose,
+  onResizeEnd
 }) => {
   const [width, setWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
@@ -44,7 +46,8 @@ export const PropertySidebar: FC<PropertySidebarProps> = ({
 
   const stopResizing = useCallback(() => {
     setIsResizing(false);
-  }, []);
+    onResizeEnd?.();
+  }, [onResizeEnd]);
 
   useEffect(() => {
     if (isResizing) {
@@ -65,7 +68,7 @@ export const PropertySidebar: FC<PropertySidebarProps> = ({
       style={{ width: `${width}px` }}
     >
       <div className="border-border bg-appBlue flex items-center justify-between border-b p-2">
-        <h3 className="text-appWhite text-lg font-medium">{title}</h3>
+        <h3 className="text-appWhite font-medium">{title}</h3>
         <button
           onClick={onClose}
           className="text-appWhite hover:text-appWhite/80 rounded p-1 transition-colors"
