@@ -1,6 +1,7 @@
 import {
   Background,
   MarkerType,
+  NodeTypes,
   ReactFlow,
   Edge as XYFlowEdge,
   Node as XYFlowNode,
@@ -19,7 +20,6 @@ import { Show, cn } from '@minhdtb/storeo-core';
 import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
 import { NodeProperty } from './node-property';
-import { nextTick } from './process-flow';
 import { PropertySidebar } from './property-sidebar';
 import type { Flow, Node, PointRole, ProcessData } from './types';
 
@@ -100,7 +100,9 @@ function getEdges(data: ProcessData, selectedFlow: Flow | null) {
   });
 }
 
-const nodeTypes = { customNode: CustomNode };
+const nodeTypes: NodeTypes = {
+  customNode: CustomNode
+};
 
 export type FlowEditorProps = {
   data: {
@@ -120,9 +122,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
 
-  const [nodes, setNodes, onNodesChangeInternal] = useNodesState<XYFlowNode>(
-    []
-  );
+  const [nodes, setNodes, onNodesChange] = useNodesState<XYFlowNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<XYFlowEdge>([]);
 
   const [sourcePoint, setSourcePoint] = useState<{
@@ -192,7 +192,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const updateFlowData = useCallback(
     (updatedData: typeof flowData) => {
       if (!_.isEqual(flowData, updatedData)) {
-        console.log('updatedData', updatedData);
         setFlowData(updatedData);
         onChange?.(updatedData);
       }
@@ -204,7 +203,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     const newEdges = getEdges(flowData.request, selectedFlow);
     const newNodes = getNodes(flowData.request, selectedNode, sourcePoint).map(
       node => {
-        // Preserve existing node position if it exists
         const existingNode = nodes.find(n => n.id === node.id);
         const position = existingNode?.position || {
           x: node.position.x,
@@ -285,10 +283,18 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       }
     );
 
-    setEdges(newEdges);
-    await nextTick(10);
-    setNodes(newNodes);
-    updateNodeInternals('n7');
+    // Batch update nodes and edges together
+    requestAnimationFrame(() => {
+      setNodes(newNodes);
+      setEdges(newEdges);
+    });
+
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        setNodes(newNodes);
+        setEdges(newEdges);
+      });
+    }, 200);
   }, [
     flowData.request,
     selectedFlow,
@@ -329,7 +335,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
 
       let updatedFlows = flowData.request.flows;
 
-      // If points are updated, we need to check and remove any flows connected to removed points
       if (updates.points) {
         const node = updatedNodes.find(n => n.id === nodeId);
         if (node) {
@@ -346,6 +351,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
             }
             return true;
           });
+
+          requestAnimationFrame(() => {
+            updateNodeInternals(nodeId);
+          });
         }
       }
 
@@ -356,6 +365,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           flows: updatedFlows
         }
       };
+
+      console.log('updatedData', updatedData);
 
       updateFlowData(updatedData);
       onLayout();
@@ -571,7 +582,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChangeInternal}
+          onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           onEdgeClick={handleEdgeClick}

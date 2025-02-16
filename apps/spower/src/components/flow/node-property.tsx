@@ -98,8 +98,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         }
       });
 
-      console.log('values', values);
-      console.log('updates', updates);
       onNodeUpdate?.(selectedNode.id, updates);
 
       reset(values, {

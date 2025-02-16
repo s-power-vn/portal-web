@@ -1,4 +1,4 @@
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import _ from 'lodash';
 import { CheckCircle2Icon } from 'lucide-react';
 
@@ -8,8 +8,8 @@ import { Show, cn } from '@minhdtb/storeo-core';
 
 import type { PointRole } from './types';
 
-export type CustomNodeProps = {
-  data: {
+export type CustomNodeProps = NodeProps<
+  Node<{
     nodeId: string;
     name: string;
     description: string;
@@ -24,8 +24,8 @@ export type CustomNodeProps = {
     }[];
     onPointClick: (pointId: string, nodeId: string) => void;
     sourcePoint: { nodeId: string; pointId: string } | null;
-  };
-};
+  }>
+>;
 
 export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
   const { leftPoints, topPoints, rightPoints, bottomPoints } = useMemo(() => {
