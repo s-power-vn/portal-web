@@ -14,7 +14,6 @@ export type Node = {
   x: number;
   y: number;
   points: Point[];
-  flows?: Flow[];
 };
 
 export type Flow = {

@@ -353,13 +353,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         }
       }
 
-      // If flows are explicitly provided in updates, use those instead
-      if (updates.flows) {
-        updatedFlows = flowData.request.flows
-          .filter(flow => flow.from.node !== nodeId && flow.to.node !== nodeId)
-          .concat(updates.flows);
-      }
-
       const updatedData = {
         request: {
           ...flowData.request,
