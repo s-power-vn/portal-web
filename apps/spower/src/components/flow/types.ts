@@ -9,11 +9,12 @@ export type Point = {
 export type Node = {
   id: string;
   name: string;
-  description: string;
-  condition: string;
+  description?: string;
+  condition?: string;
   x: number;
   y: number;
   points: Point[];
+  flows?: Flow[];
 };
 
 export type Flow = {

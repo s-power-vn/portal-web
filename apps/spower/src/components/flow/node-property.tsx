@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
-import type { Node, Point, PointRole } from './types';
+import type { Flow, Node, Point, PointRole } from './types';
 
 type NodeFormValues = {
   id: string;
@@ -87,6 +87,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
 
   const onSubmit = (values: NodeFormValues) => {
     if (selectedNode) {
+      console.log('values', values);
       const updates: Partial<Node> = {};
       (Object.keys(dirtyFields) as Array<keyof NodeFormValues>).forEach(key => {
         if (key !== 'id') {
@@ -115,8 +116,28 @@ export const NodeProperty: FC<NodePropertyProps> = ({
 
   const removePoint = (index: number) => {
     const newPoints = [...points];
-    newPoints.splice(index, 1);
-    setValue('points', newPoints, { shouldDirty: true });
+    const pointToRemove = newPoints[index];
+    const nodeId = selectedNode?.id;
+
+    if (nodeId) {
+      // Find and remove any flows connected to this point
+      const existingFlows = selectedNode.flows || [];
+      const updatedFlows = existingFlows.filter((flow: Flow) => {
+        const isConnectedToPoint =
+          (flow.from.node === nodeId && flow.from.point === pointToRemove.id) ||
+          (flow.to.node === nodeId && flow.to.point === pointToRemove.id);
+        return !isConnectedToPoint;
+      });
+
+      // Remove the point
+      newPoints.splice(index, 1);
+      setValue('points', newPoints, { shouldDirty: true });
+
+      // Update flows if they changed
+      if (existingFlows.length !== updatedFlows.length) {
+        onNodeUpdate?.(nodeId, { points: newPoints, flows: updatedFlows });
+      }
+    }
   };
 
   return (

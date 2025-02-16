@@ -331,10 +331,40 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         node.id === nodeId ? { ...node, ...updates } : node
       );
 
+      let updatedFlows = flowData.request.flows;
+
+      // If points are updated, we need to check and remove any flows connected to removed points
+      if (updates.points) {
+        const node = updatedNodes.find(n => n.id === nodeId);
+        if (node) {
+          const currentPointIds = new Set(node.points.map(p => p.id));
+          updatedFlows = flowData.request.flows.filter(flow => {
+            const isSourcePoint = flow.from.node === nodeId;
+            const isTargetPoint = flow.to.node === nodeId;
+
+            if (isSourcePoint && !currentPointIds.has(flow.from.point)) {
+              return false;
+            }
+            if (isTargetPoint && !currentPointIds.has(flow.to.point)) {
+              return false;
+            }
+            return true;
+          });
+        }
+      }
+
+      // If flows are explicitly provided in updates, use those instead
+      if (updates.flows) {
+        updatedFlows = flowData.request.flows
+          .filter(flow => flow.from.node !== nodeId && flow.to.node !== nodeId)
+          .concat(updates.flows);
+      }
+
       const updatedData = {
         request: {
           ...flowData.request,
-          nodes: updatedNodes
+          nodes: updatedNodes,
+          flows: updatedFlows
         }
       };
 
