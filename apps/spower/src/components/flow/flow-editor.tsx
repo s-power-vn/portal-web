@@ -1,15 +1,18 @@
-import _ from 'lodash';
-import { GripVertical } from 'lucide-react';
-
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Background,
   MarkerType,
   ReactFlow,
+  Edge as XYFlowEdge,
+  Node as XYFlowNode,
   useEdgesState,
   useNodesState,
-  useReactFlow
-} from 'reactflow';
+  useReactFlow,
+  useUpdateNodeInternals
+} from '@xyflow/react';
+import _ from 'lodash';
+import { GripVertical } from 'lucide-react';
+
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
@@ -49,13 +52,6 @@ function getNodes(
       };
     });
 
-    // Split points into sources and targets
-    const sources = mappedPoints.filter(point => point.role === 'source');
-    const targets = mappedPoints.filter(point => point.role === 'target');
-    const unknownPoints = mappedPoints.filter(
-      point => point.role === 'unknown'
-    );
-
     const isApprove = data.flows.some(
       flow => flow.from.node === id && flow.approve
     );
@@ -67,8 +63,7 @@ function getNodes(
         ...rest,
         nodeId: id,
         isApprove,
-        sources: [...sources],
-        targets: [...targets, ...unknownPoints],
+        points: mappedPoints,
         active: false,
         selected: selectedNode?.id === id,
         clicked: sourcePoint?.nodeId === id,
@@ -125,8 +120,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
 
-  const [nodes, setNodes, onNodesChangeInternal] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChangeInternal] = useNodesState<XYFlowNode>(
+    []
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState<XYFlowEdge>([]);
 
   const [sourcePoint, setSourcePoint] = useState<{
     nodeId: string;
@@ -166,9 +163,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         setSelectedNode(foundNode);
         setSelectedFlow(null);
         setShowSidebar(true);
-        setTimeout(() => {
-          handleFitView();
-        }, 100);
       }
     },
     [nodesById, handleFitView]
@@ -181,12 +175,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         setSelectedFlow(foundFlow);
         setSelectedNode(null);
         setShowSidebar(true);
-        setTimeout(() => {
-          handleFitView();
-        }, 100);
       }
     },
-    [flowsById, handleFitView]
+    [flowsById]
   );
 
   const handleCloseSidebar = useCallback(() => {
@@ -201,6 +192,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   const updateFlowData = useCallback(
     (updatedData: typeof flowData) => {
       if (!_.isEqual(flowData, updatedData)) {
+        console.log('updatedData', updatedData);
         setFlowData(updatedData);
         onChange?.(updatedData);
       }
@@ -296,6 +288,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     setEdges(newEdges);
     await nextTick(10);
     setNodes(newNodes);
+    updateNodeInternals('n7');
   }, [
     flowData.request,
     selectedFlow,
@@ -303,7 +296,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     setEdges,
     setNodes,
     sourcePoint,
-    updateFlowData
+    updateFlowData,
+    handleFitView
   ]);
 
   const handleFlowUpdate = useCallback(
@@ -324,6 +318,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
     },
     [flowData.request, updateFlowData, onLayout]
   );
+
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
@@ -364,7 +360,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       updateFlowData(updatedData);
       onLayout();
     },
-    [flowData.request, updateFlowData, onLayout]
+    [flowData.request, updateFlowData, onLayout, updateNodeInternals]
   );
 
   const handleFlowDelete = useCallback(

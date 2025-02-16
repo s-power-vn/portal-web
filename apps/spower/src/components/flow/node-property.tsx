@@ -87,7 +87,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
 
   const onSubmit = (values: NodeFormValues) => {
     if (selectedNode) {
-      console.log('values', values);
       const updates: Partial<Node> = {};
       (Object.keys(dirtyFields) as Array<keyof NodeFormValues>).forEach(key => {
         if (key !== 'id') {
@@ -99,6 +98,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         }
       });
 
+      console.log('values', values);
+      console.log('updates', updates);
       onNodeUpdate?.(selectedNode.id, updates);
 
       reset(values, {

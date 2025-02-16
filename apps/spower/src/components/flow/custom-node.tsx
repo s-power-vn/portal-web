@@ -1,8 +1,8 @@
+import { Handle, Position } from '@xyflow/react';
 import _ from 'lodash';
 import { CheckCircle2Icon } from 'lucide-react';
 
 import { FC, useMemo } from 'react';
-import { Handle, Position } from 'reactflow';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
@@ -17,12 +17,7 @@ export type CustomNodeProps = {
     isApprove: boolean;
     selected: boolean;
     clicked: boolean;
-    sources: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-    targets: {
+    points: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
       role: PointRole;
@@ -33,19 +28,8 @@ export type CustomNodeProps = {
 };
 
 export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
-  const points = useMemo(() => {
-    const pointMap = new Map();
-    data.sources.forEach(point => pointMap.set(point.id, point));
-    data.targets.forEach(point => {
-      if (!pointMap.has(point.id)) {
-        pointMap.set(point.id, point);
-      }
-    });
-    return Array.from(pointMap.values());
-  }, [data.sources, data.targets]);
-
   const { leftPoints, topPoints, rightPoints, bottomPoints } = useMemo(() => {
-    const sortByPointId = (points: typeof data.sources) => {
+    const sortByPointId = (points: typeof data.points) => {
       return _.sortBy(points, point => {
         const match = point.id.match(/p(\d+)/);
         return match ? parseInt(match[1]) : 0;
@@ -53,19 +37,23 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
     };
 
     return {
-      leftPoints: sortByPointId(points.filter(point => point.type === 'left')),
-      topPoints: sortByPointId(points.filter(point => point.type === 'top')),
+      leftPoints: sortByPointId(
+        data.points.filter(point => point.type === 'left')
+      ),
+      topPoints: sortByPointId(
+        data.points.filter(point => point.type === 'top')
+      ),
       rightPoints: sortByPointId(
-        points.filter(point => point.type === 'right')
+        data.points.filter(point => point.type === 'right')
       ),
       bottomPoints: sortByPointId(
-        points.filter(point => point.type === 'bottom')
+        data.points.filter(point => point.type === 'bottom')
       )
     };
-  }, [points]);
+  }, [data.points]);
 
   const handlePointClick = (pointId: string) => {
-    const point = points.find(p => p.id === pointId);
+    const point = data.points.find(p => p.id === pointId);
     if (point && point.role === 'unknown') {
       data.onPointClick(pointId, data.nodeId);
     }

@@ -1,7 +1,8 @@
+import { ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { ReactFlowProvider } from 'reactflow';
-import 'reactflow/dist/style.css';
 
 import {
   ConfirmProvider,
@@ -12,7 +13,6 @@ import {
 
 import { App } from './app';
 import './global.css';
-
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
