@@ -17,10 +17,10 @@ export const PropertySidebar: FC<PropertySidebarProps> = ({
 }) => {
   return (
     <div
-      className="bg-background relative flex flex-none flex-col"
+      className="bg-background relative flex h-full flex-none flex-col"
       style={{ width: `${width}px` }}
     >
-      <div className="border-border bg-appBlue flex items-center justify-between border-b p-4">
+      <div className="border-border bg-appBlue flex h-16 shrink-0 items-center justify-between border-b p-4">
         <h3 className="text-appWhite text-lg font-semibold leading-none">
           {title}
         </h3>
@@ -31,7 +31,7 @@ export const PropertySidebar: FC<PropertySidebarProps> = ({
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div>{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </div>
   );
 };

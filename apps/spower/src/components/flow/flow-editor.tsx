@@ -614,7 +614,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
             <GripVertical className="text-muted-foreground/50 h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
           <PropertySidebar
-            title={selectedNode ? 'Thuộc tính node' : 'Thuộc tính flow'}
+            title={selectedNode ? 'Thuộc tính nút' : 'Thuộc tính quy trình'}
             onClose={handleCloseSidebar}
             width={sidebarWidth}
           >
