@@ -3,7 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import * as yup from 'yup';
 
 import { FC, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
@@ -57,7 +57,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     reset,
     watch,
     setValue,
-    formState: { isDirty, errors, dirtyFields }
+    control,
+    formState: { isDirty, errors }
   } = useForm<NodeFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -87,17 +88,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
 
   const onSubmit = (values: NodeFormValues) => {
     if (selectedNode) {
-      const updates: Partial<Node> = {};
-      (Object.keys(dirtyFields) as Array<keyof NodeFormValues>).forEach(key => {
-        if (key !== 'id') {
-          if (key === 'points') {
-            updates.points = values.points;
-          } else {
-            updates[key as 'name' | 'description' | 'condition'] = values[key];
-          }
-        }
-      });
-
+      const { id, ...updates } = values;
       onNodeUpdate?.(selectedNode.id, updates);
 
       reset(values, {
@@ -113,13 +104,22 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     setValue('points', newPoints, { shouldDirty: true });
   };
 
+  const { replace } = useFieldArray({
+    control,
+    name: 'points'
+  });
+
   const removePoint = (index: number) => {
     const newPoints = [...points];
     const nodeId = selectedNode?.id;
 
     if (nodeId) {
-      newPoints.splice(index, 1);
-      setValue('points', newPoints, { shouldDirty: true });
+      if (newPoints.length === 1) {
+        replace([]);
+      } else {
+        newPoints.splice(index, 1);
+        setValue('points', newPoints, { shouldDirty: true });
+      }
     }
   };
 
@@ -186,7 +186,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 </Button>
               </div>
               <div className="space-y-2">
-                {points.map((point, index) => (
+                {points?.map((point, index) => (
                   <div key={point.id} className="flex items-center gap-2">
                     <select
                       {...register(`points.${index}.type`)}

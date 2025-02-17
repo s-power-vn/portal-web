@@ -344,10 +344,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
             }
             return true;
           });
-
-          requestAnimationFrame(() => {
-            updateNodeInternals(nodeId);
-          });
         }
       }
 
@@ -359,10 +355,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         }
       };
 
-      console.log('updatedData', updatedData);
-
       updateFlowData(updatedData);
       onLayout();
+
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          updateNodeInternals(nodeId);
+        });
+      }, 200);
     },
     [flowData.request, updateFlowData, onLayout, updateNodeInternals]
   );
