@@ -50,11 +50,27 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
 
   useEffect(() => {
     if (selectedFlow) {
-      reset({
-        id: selectedFlow.id,
-        action: selectedFlow.action,
-        approve: selectedFlow.approve ?? false
-      });
+      reset(
+        {
+          id: selectedFlow.id,
+          action: selectedFlow.action ?? '',
+          approve: selectedFlow.approve ?? false
+        },
+        {
+          keepDefaultValues: false
+        }
+      );
+    } else {
+      reset(
+        {
+          id: '',
+          action: '',
+          approve: false
+        },
+        {
+          keepDefaultValues: false
+        }
+      );
     }
   }, [selectedFlow, reset]);
 
@@ -101,7 +117,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
               <label className="text-sm font-medium">Hành động</label>
               <textarea
                 {...register('action')}
-                placeholder="Nhập hành động nếu muốn thay đổi"
+                placeholder="Nhập hành động"
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
               {errors.action && (
