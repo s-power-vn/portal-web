@@ -288,13 +288,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       setNodes(newNodes);
       setEdges(newEdges);
     });
-
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        setNodes(newNodes);
-        setEdges(newEdges);
-      });
-    }, 200);
   }, [
     flowData.request,
     selectedFlow,
