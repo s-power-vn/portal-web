@@ -581,6 +581,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
           onEdgeClick={handleEdgeClick}
           onConnect={handleConnect}
           connectOnClick={false}
+          nodesConnectable={false}
+          edgesFocusable={false}
           snapToGrid
           fitView
           fitViewOptions={fitViewOptions}
