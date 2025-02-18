@@ -11,7 +11,12 @@ export const Route = createFileRoute('/_authenticated/process')({
 function RouteComponent() {
   return (
     <div className="h-full p-2">
-      <FlowEditor data={{ request: processData.price as ProcessData }} />
+      <FlowEditor
+        value={processData.price as ProcessData}
+        onChange={value => {
+          console.log('value', value);
+        }}
+      />
     </div>
   );
 }

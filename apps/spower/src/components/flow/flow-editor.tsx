@@ -105,17 +105,15 @@ const nodeTypes: NodeTypes = {
 };
 
 export type FlowEditorProps = {
-  data: {
-    request: ProcessData;
-  };
-  onChange?: (data: { request: ProcessData }) => void;
+  value: ProcessData;
+  onChange?: (value: ProcessData) => void;
 };
 
-export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
+export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const { fitView } = useReactFlow();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
-  const [flowData, setFlowData] = useState(data);
+  const [flowData, setFlowData] = useState(value);
   const [showSidebar, setShowSidebar] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
@@ -145,15 +143,13 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   }, [fitView, fitViewOptions]);
 
   const nodesById = useMemo(
-    () =>
-      Object.fromEntries(flowData.request.nodes.map(node => [node.id, node])),
-    [flowData.request.nodes]
+    () => Object.fromEntries(flowData.nodes.map(node => [node.id, node])),
+    [flowData.nodes]
   );
 
   const flowsById = useMemo(
-    () =>
-      Object.fromEntries(flowData.request.flows.map(flow => [flow.id, flow])),
-    [flowData.request.flows]
+    () => Object.fromEntries(flowData.flows.map(flow => [flow.id, flow])),
+    [flowData.flows]
   );
 
   const handleNodeClick = useCallback(
@@ -200,88 +196,84 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
   );
 
   const onLayout = useCallback(async () => {
-    const newEdges = getEdges(flowData.request, selectedFlow);
-    const newNodes = getNodes(flowData.request, selectedNode, sourcePoint).map(
-      node => {
-        const existingNode = nodes.find(n => n.id === node.id);
-        const position = existingNode?.position || {
-          x: node.position.x,
-          y: node.position.y
-        };
+    const newEdges = getEdges(flowData, selectedFlow);
+    const newNodes = getNodes(flowData, selectedNode, sourcePoint).map(node => {
+      const existingNode = nodes.find(n => n.id === node.id);
+      const position = existingNode?.position || {
+        x: node.position.x,
+        y: node.position.y
+      };
 
-        return {
-          ...node,
-          position,
-          data: {
-            ...node.data,
-            clicked: sourcePoint?.nodeId === node.id,
-            onPointClick: (pointId: string, nodeId: string) => {
-              if (!sourcePoint) {
-                setSourcePoint({ nodeId, pointId });
-              } else {
-                // Check if clicking the same point
-                if (
-                  sourcePoint.nodeId === nodeId &&
-                  sourcePoint.pointId === pointId
-                ) {
-                  setSourcePoint(null);
-                  return;
-                }
-
-                // Check if flow already exists
-                const flowExists = flowData.request.flows.some(
-                  flow =>
-                    (flow.from.node === sourcePoint.nodeId &&
-                      flow.from.point === sourcePoint.pointId.split('#')[1] &&
-                      flow.to.node === nodeId &&
-                      flow.to.point === pointId.split('#')[1]) ||
-                    (flow.from.node === nodeId &&
-                      flow.from.point === pointId.split('#')[1] &&
-                      flow.to.node === sourcePoint.nodeId &&
-                      flow.to.point === sourcePoint.pointId.split('#')[1])
-                );
-
-                if (flowExists) {
-                  setSourcePoint(null);
-                  return;
-                }
-
-                // Generate flow ID
-                const baseId = `${sourcePoint.nodeId}-${nodeId}`;
-                const existingFlows = flowData.request.flows.filter(flow =>
-                  flow.id.startsWith(baseId)
-                );
-                const newFlowNumber = existingFlows.length + 1;
-                const newFlowId = `${baseId}#${newFlowNumber}`;
-
-                const newFlow: Flow = {
-                  id: newFlowId,
-                  from: {
-                    node: sourcePoint.nodeId,
-                    point: sourcePoint.pointId.split('#')[1]
-                  },
-                  to: {
-                    node: nodeId,
-                    point: pointId.split('#')[1]
-                  }
-                };
-
-                const updatedData = {
-                  request: {
-                    ...flowData.request,
-                    flows: [...flowData.request.flows, newFlow]
-                  }
-                };
-
-                updateFlowData(updatedData);
+      return {
+        ...node,
+        position,
+        data: {
+          ...node.data,
+          clicked: sourcePoint?.nodeId === node.id,
+          onPointClick: (pointId: string, nodeId: string) => {
+            if (!sourcePoint) {
+              setSourcePoint({ nodeId, pointId });
+            } else {
+              // Check if clicking the same point
+              if (
+                sourcePoint.nodeId === nodeId &&
+                sourcePoint.pointId === pointId
+              ) {
                 setSourcePoint(null);
-                onLayout();
+                return;
               }
+
+              // Check if flow already exists
+              const flowExists = flowData.flows.some(
+                flow =>
+                  (flow.from.node === sourcePoint.nodeId &&
+                    flow.from.point === sourcePoint.pointId.split('#')[1] &&
+                    flow.to.node === nodeId &&
+                    flow.to.point === pointId.split('#')[1]) ||
+                  (flow.from.node === nodeId &&
+                    flow.from.point === pointId.split('#')[1] &&
+                    flow.to.node === sourcePoint.nodeId &&
+                    flow.to.point === sourcePoint.pointId.split('#')[1])
+              );
+
+              if (flowExists) {
+                setSourcePoint(null);
+                return;
+              }
+
+              // Generate flow ID
+              const baseId = `${sourcePoint.nodeId}-${nodeId}`;
+              const existingFlows = flowData.flows.filter(flow =>
+                flow.id.startsWith(baseId)
+              );
+              const newFlowNumber = existingFlows.length + 1;
+              const newFlowId = `${baseId}#${newFlowNumber}`;
+
+              const newFlow: Flow = {
+                id: newFlowId,
+                from: {
+                  node: sourcePoint.nodeId,
+                  point: sourcePoint.pointId.split('#')[1]
+                },
+                to: {
+                  node: nodeId,
+                  point: pointId.split('#')[1]
+                }
+              };
+
+              const updatedData = {
+                ...flowData,
+                flows: [...flowData.flows, newFlow]
+              };
+
+              updateFlowData(updatedData);
+              setSourcePoint(null);
+              onLayout();
             }
           }
-        };
-      }
-    );
+        }
+      };
+    });
 
     // Batch update nodes and edges together
     requestAnimationFrame(() => {
@@ -289,7 +281,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       setEdges(newEdges);
     });
   }, [
-    flowData.request,
+    flowData,
     selectedFlow,
     selectedNode,
     setEdges,
@@ -301,38 +293,36 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
 
   const handleFlowUpdate = useCallback(
     (flowId: string, updates: Partial<Flow>) => {
-      const updatedFlows = flowData.request.flows.map(flow =>
+      const updatedFlows = flowData.flows.map(flow =>
         flow.id === flowId ? { ...flow, ...updates } : flow
       );
 
       const updatedData = {
-        request: {
-          ...flowData.request,
-          flows: updatedFlows
-        }
+        ...flowData,
+        flows: updatedFlows
       };
 
       updateFlowData(updatedData);
       onLayout();
     },
-    [flowData.request, updateFlowData, onLayout]
+    [flowData, updateFlowData, onLayout]
   );
 
   const updateNodeInternals = useUpdateNodeInternals();
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
-      const updatedNodes = flowData.request.nodes.map(node =>
+      const updatedNodes = flowData.nodes.map(node =>
         node.id === nodeId ? { ...node, ...updates } : node
       );
 
-      let updatedFlows = flowData.request.flows;
+      let updatedFlows = flowData.flows;
 
       if (updates.points) {
         const node = updatedNodes.find(n => n.id === nodeId);
         if (node) {
           const currentPointIds = new Set(node.points.map(p => p.id));
-          updatedFlows = flowData.request.flows.filter(flow => {
+          updatedFlows = flowData.flows.filter(flow => {
             const isSourcePoint = flow.from.node === nodeId;
             const isTargetPoint = flow.to.node === nodeId;
 
@@ -348,11 +338,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       }
 
       const updatedData = {
-        request: {
-          ...flowData.request,
-          nodes: updatedNodes,
-          flows: updatedFlows
-        }
+        ...flowData,
+        nodes: updatedNodes,
+        flows: updatedFlows
       };
 
       updateFlowData(updatedData);
@@ -364,20 +352,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
         });
       }, 200);
     },
-    [flowData.request, updateFlowData, onLayout, updateNodeInternals]
+    [flowData, updateFlowData, onLayout, updateNodeInternals]
   );
 
   const handleFlowDelete = useCallback(
     async (flowId: string) => {
-      const flowToDelete = flowData.request.flows.find(
-        flow => flow.id === flowId
-      );
-      const updatedFlows = flowData.request.flows.filter(
-        flow => flow.id !== flowId
-      );
+      const flowToDelete = flowData.flows.find(flow => flow.id === flowId);
+      const updatedFlows = flowData.flows.filter(flow => flow.id !== flowId);
 
       // Reset roles for points involved in the deleted flow
-      const updatedNodes = flowData.request.nodes.map(node => {
+      const updatedNodes = flowData.nodes.map(node => {
         if (
           flowToDelete &&
           (node.id === flowToDelete.from.node ||
@@ -409,42 +393,36 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       });
 
       const updatedData = {
-        request: {
-          ...flowData.request,
-          nodes: updatedNodes,
-          flows: updatedFlows
-        }
+        ...flowData,
+        nodes: updatedNodes,
+        flows: updatedFlows
       };
 
       updateFlowData(updatedData);
       setSelectedFlow(null);
       await onLayout();
     },
-    [flowData.request, updateFlowData, onLayout]
+    [flowData, updateFlowData, onLayout]
   );
 
   const handleNodeDelete = useCallback(
     async (nodeId: string) => {
-      const updatedNodes = flowData.request.nodes.filter(
-        node => node.id !== nodeId
-      );
-      const updatedFlows = flowData.request.flows.filter(
+      const updatedNodes = flowData.nodes.filter(node => node.id !== nodeId);
+      const updatedFlows = flowData.flows.filter(
         flow => flow.from.node !== nodeId && flow.to.node !== nodeId
       );
 
       const updatedData = {
-        request: {
-          ...flowData.request,
-          nodes: updatedNodes,
-          flows: updatedFlows
-        }
+        ...flowData,
+        nodes: updatedNodes,
+        flows: updatedFlows
       };
 
       updateFlowData(updatedData);
       setSelectedNode(null);
       await onLayout();
     },
-    [flowData.request, updateFlowData, onLayout]
+    [flowData, updateFlowData, onLayout]
   );
 
   const handleConnect = useCallback(
@@ -469,7 +447,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       const targetPointId = params.targetHandle.split('#')[1];
 
       // Check if flow already exists
-      const flowExists = flowData.request.flows.some(
+      const flowExists = flowData.flows.some(
         flow =>
           flow.from.node === sourceNodeId &&
           flow.from.point === sourcePointId &&
@@ -483,7 +461,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
 
       // Generate flow ID
       const baseId = `${sourceNodeId}-${targetNodeId}`;
-      const existingFlows = flowData.request.flows.filter(flow =>
+      const existingFlows = flowData.flows.filter(flow =>
         flow.id.startsWith(baseId)
       );
       const newFlowNumber = existingFlows.length + 1;
@@ -502,16 +480,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({ data, onChange }) => {
       };
 
       const updatedData = {
-        request: {
-          ...flowData.request,
-          flows: [...flowData.request.flows, newFlow]
-        }
+        ...flowData,
+        flows: [...flowData.flows, newFlow]
       };
 
       updateFlowData(updatedData);
       onLayout();
     },
-    [flowData.request, updateFlowData, onLayout]
+    [flowData, updateFlowData, onLayout]
   );
 
   const startResizing = useCallback((e: React.MouseEvent) => {

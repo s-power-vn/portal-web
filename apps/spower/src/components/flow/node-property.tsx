@@ -71,7 +71,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     watch,
     setValue,
     control,
-    formState: { isDirty, errors }
+    formState: { errors }
   } = useForm<NodeFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -129,9 +129,11 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     if (nodeId) {
       if (newPoints.length === 1) {
         replace([]);
+        handleSubmit(onSubmit)();
       } else {
         newPoints.splice(index, 1);
         setValue('points', newPoints, { shouldDirty: true });
+        handleSubmit(onSubmit)();
       }
     }
   };
@@ -145,12 +147,14 @@ export const NodeProperty: FC<NodePropertyProps> = ({
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                 <div>
                   <label className="text-sm font-medium">
-                    Tên node
+                    Tên nút
                     <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
-                    {...register('name')}
+                    {...register('name', {
+                      onBlur: () => handleSubmit(onSubmit)()
+                    })}
                     placeholder="Nhập tên node"
                     className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
@@ -163,7 +167,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 <div>
                   <label className="text-sm font-medium">Mô tả</label>
                   <textarea
-                    {...register('description')}
+                    {...register('description', {
+                      onBlur: () => handleSubmit(onSubmit)()
+                    })}
                     placeholder="Nhập mô tả"
                     className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
@@ -176,7 +182,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 <div>
                   <label className="text-sm font-medium">Điều kiện</label>
                   <textarea
-                    {...register('condition')}
+                    {...register('condition', {
+                      onBlur: () => handleSubmit(onSubmit)()
+                    })}
                     placeholder="Nhập điều kiện"
                     className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
@@ -213,6 +221,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                             setValue('points', newPoints, {
                               shouldDirty: true
                             });
+                            handleSubmit(onSubmit)();
                           }}
                         >
                           <SelectTrigger>
@@ -274,13 +283,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           onClick={() => selectedNode && onNodeDelete?.(selectedNode.id)}
         >
           Xóa
-        </Button>
-        <Button
-          type="submit"
-          onClick={handleSubmit(onSubmit)}
-          disabled={!isDirty}
-        >
-          Chấp nhận
         </Button>
       </div>
     </div>
