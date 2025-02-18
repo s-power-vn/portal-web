@@ -79,7 +79,7 @@ export default defineConfig({
             'react',
             'react-dom',
             'react-image-crop',
-            'reactflow',
+            '@xyflow/react',
             '@preact/signals-react'
           ],
           lib: [
