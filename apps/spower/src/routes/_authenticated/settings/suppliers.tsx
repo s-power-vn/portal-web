@@ -1,82 +1,82 @@
-import { useQueryClient } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
-import { createColumnHelper } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
-import type { SupplierResponse } from 'portal-core';
+import { useQueryClient } from '@tanstack/react-query'
+import type { SearchSchemaInput } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createColumnHelper } from '@tanstack/react-table'
+import { EditIcon, PlusIcon, XIcon } from 'lucide-react'
+import { SearchSchema, api } from 'portal-api'
+import type { SupplierResponse } from 'portal-core'
 
 import {
   Button,
   CommonTable,
   DebouncedInput,
   success,
-  useConfirm
-} from '@minhdtb/storeo-theme';
+  useConfirm,
+} from '@minhdtb/storeo-theme'
 
-import { PageHeader } from '../../../components';
+import { PageHeader } from '../../../components'
 
 const Component = () => {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate({ from: Route.fullPath });
-  const search = Route.useSearch();
+  const queryClient = useQueryClient()
+  const navigate = useNavigate({ from: Route.fullPath })
+  const search = Route.useSearch()
   const listSuppliers = api.supplier.list.useSuspenseQuery({
-    variables: search
-  });
+    variables: search,
+  })
 
-  const columnHelper = createColumnHelper<SupplierResponse>();
+  const columnHelper = createColumnHelper<SupplierResponse>()
 
   const deleteSupplier = api.supplier.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhà cung cấp thành công');
+      success('Xóa nhà cung cấp thành công')
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: api.supplier.list.getKey(search)
-        })
-      ]);
-    }
-  });
+          queryKey: api.supplier.list.getKey(search),
+        }),
+      ])
+    },
+  })
 
-  const { confirm } = useConfirm();
+  const { confirm } = useConfirm()
 
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: info => (
+      cell: (info) => (
         <div className={'flex items-center justify-center'}>
           {info.row.index + 1}
         </div>
       ),
       header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
+      size: 30,
     }),
     columnHelper.accessor('name', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Tên nhà cung cấp',
-      footer: info => info.column.id,
-      size: 300
+      footer: (info) => info.column.id,
+      size: 300,
     }),
     columnHelper.accessor('phone', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Số điện thoại',
-      footer: info => info.column.id,
-      size: 150
+      footer: (info) => info.column.id,
+      size: 150,
     }),
     columnHelper.accessor('email', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Email',
-      footer: info => info.column.id,
-      size: 200
+      footer: (info) => info.column.id,
+      size: 200,
     }),
     columnHelper.accessor('address', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Địa chỉ',
-      footer: info => info.column.id
+      footer: (info) => info.column.id,
     }),
     columnHelper.accessor('note', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Ghi chú',
-      footer: info => info.column.id
+      footer: (info) => info.column.id,
     }),
     columnHelper.display({
       id: 'actions',
@@ -89,9 +89,9 @@ const Component = () => {
                 navigate({
                   to: './$supplierId/edit',
                   params: {
-                    supplierId: row.original.id
+                    supplierId: row.original.id,
                   },
-                  search
+                  search,
                 })
               }
             >
@@ -100,22 +100,22 @@ const Component = () => {
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 confirm('Bạn chắc chắn muốn xóa nhà cung cấp này?', () => {
-                  deleteSupplier.mutate(row.original.id);
-                });
+                  deleteSupplier.mutate(row.original.id)
+                })
               }}
             >
               <XIcon className={'h-3 w-3'} />
             </Button>
           </div>
-        );
+        )
       },
-      header: () => 'Thao tác'
-    })
-  ];
+      header: () => 'Thao tác',
+    }),
+  ]
 
   return (
     <>
@@ -128,7 +128,7 @@ const Component = () => {
             onClick={() =>
               navigate({
                 to: './new',
-                search
+                search,
               })
             }
           >
@@ -139,13 +139,13 @@ const Component = () => {
             value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
-            onChange={value =>
+            onChange={(value) =>
               navigate({
                 to: '.',
                 search: {
                   ...search,
-                  filter: value ?? ''
-                }
+                  filter: value ?? '',
+                },
               })
             }
           />
@@ -158,58 +158,58 @@ const Component = () => {
           pageIndex={search.pageIndex}
           pageSize={search.pageSize}
           fixedWidth={true}
-          onRowClick={row =>
+          onRowClick={(row) =>
             navigate({
               to: './$supplierId/edit',
               params: {
-                supplierId: row.original.id
+                supplierId: row.original.id,
               },
-              search
+              search,
             })
           }
           onPageNext={() =>
             navigate({
               to: '.',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex + 1 };
-              }
+              search: (prev) => {
+                return { ...prev, pageIndex: prev.pageIndex + 1 }
+              },
             })
           }
           onPagePrev={() =>
             navigate({
               to: '.',
-              search: prev => {
-                return { ...prev, pageIndex: prev.pageIndex - 1 };
-              }
+              search: (prev) => {
+                return { ...prev, pageIndex: prev.pageIndex - 1 }
+              },
             })
           }
-          onPageSizeChange={pageSize =>
+          onPageSizeChange={(pageSize) =>
             navigate({
               to: '.',
               search: {
                 ...search,
-                pageSize
-              }
+                pageSize,
+              },
             })
           }
         ></CommonTable>
       </div>
     </>
-  );
-};
+  )
+}
 
-export const Route = createFileRoute('/_authenticated/general/suppliers')({
+export const Route = createFileRoute('/_authenticated/settings/suppliers')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
-    return { search };
+    return { search }
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhà cung cấp'
-    };
-  }
-});
+      title: 'Quản lý nhà cung cấp',
+    }
+  },
+})

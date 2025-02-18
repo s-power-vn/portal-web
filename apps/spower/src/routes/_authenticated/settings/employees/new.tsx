@@ -51,6 +51,6 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/employees/new')({
+export const Route = createFileRoute('/_authenticated/settings/employees/new')({
   component: Component
 });

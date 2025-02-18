@@ -234,7 +234,6 @@
       },
       {
         "id": "n2-n1#1",
-        "condition": "",
         "from": {
           "node": "n2",
           "point": "p1"

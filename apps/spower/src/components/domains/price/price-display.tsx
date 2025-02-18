@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { DownloadIcon, PaperclipIcon, PrinterIcon } from 'lucide-react';
+import { PaperclipIcon, PrinterIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type {
   IssueFileResponse,
@@ -37,7 +37,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { formatFileSize, getFileIcon } from '../../../commons';
+import { IssueAttachment } from '../issue/issue-attachment';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {
@@ -425,12 +425,14 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
           <TabsTrigger value="detail" asChild>
             <div className={'cursor-pointer select-none'}>Nội dung</div>
           </TabsTrigger>
-          <TabsTrigger value="attachment" asChild>
-            <div className={'flex cursor-pointer select-none gap-1'}>
-              <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
-              File đính kèm
-            </div>
-          </TabsTrigger>
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <TabsTrigger value="attachment" asChild>
+              <div className={'flex cursor-pointer select-none gap-1'}>
+                <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
+                File đính kèm
+              </div>
+            </TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="detail">
           <div className={'flex flex-col gap-2 px-2'}>
@@ -579,48 +581,9 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
           </div>
         </TabsContent>
         <TabsContent value="attachment">
-          <div className={'flex w-full flex-col gap-4 p-4'}>
-            {issue.data?.expand?.issueFile_via_issue?.length ? (
-              <div
-                className={
-                  'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4'
-                }
-              >
-                {issue.data.expand.issueFile_via_issue.map(file => (
-                  <div
-                    key={file.id}
-                    className={
-                      'flex items-center justify-between rounded-lg border p-3'
-                    }
-                  >
-                    <div className={'flex min-w-0 flex-1 items-center gap-2'}>
-                      {getFileIcon(file.type)}
-                      <div className={'flex min-w-0 flex-1 flex-col'}>
-                        <span className={'truncate text-sm font-medium'}>
-                          {file.name}
-                        </span>
-                        <span className={'text-xs text-gray-500'}>
-                          {formatFileSize(file.size)}
-                        </span>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="ml-2 flex-shrink-0"
-                      onClick={() => handleDownload(file.id, file.name)}
-                    >
-                      <DownloadIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className={'flex h-40 items-center justify-center'}>
-                <span className={'text-gray-500'}>Không có file đính kèm</span>
-              </div>
-            )}
-          </div>
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <IssueAttachment issueId={issueId} />
+          )}
         </TabsContent>
       </Tabs>
     </div>

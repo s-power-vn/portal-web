@@ -1,17 +1,19 @@
-import _ from 'lodash';
-import { CheckCircle2Icon } from 'lucide-react';
-
-import type { FC } from 'react';
-import { useCallback, useEffect } from 'react';
 import {
+  Edge,
   Handle,
   MarkerType,
+  Node,
   Position,
   ReactFlow,
   useEdgesState,
   useNodesState,
   useReactFlow
-} from 'reactflow';
+} from '@xyflow/react';
+import _ from 'lodash';
+import { CheckCircle2Icon } from 'lucide-react';
+
+import type { FC } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
@@ -283,8 +285,8 @@ export type ProcessFlowProps = {
 export const ProcessFlow: FC<ProcessFlowProps> = ({ type, status }) => {
   const { fitView } = useReactFlow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   const onLayout = useCallback(async () => {
     setEdges(getEdges(type, status));
