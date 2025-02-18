@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { FlowEditor, ProcessData } from '../../components/flow';
-import processData from '../../components/flow/process.json';
+import { FlowEditor, ProcessData } from '../../../components';
+import processData from '../../../components/flow/process.json';
 
-export const Route = createFileRoute('/_authenticated/process')({
+export const Route = createFileRoute('/_authenticated/settings/process')({
   component: RouteComponent,
-  beforeLoad: () => ({ title: 'Quy trình' })
+  beforeLoad: () => ({ title: 'Quản lý quy trình' })
 });
 
 function RouteComponent() {

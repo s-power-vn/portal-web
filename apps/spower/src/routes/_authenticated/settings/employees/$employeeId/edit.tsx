@@ -6,11 +6,12 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { NewSupplierForm } from '../../../../components';
+import { EditEmployeeForm } from '../../../../../components';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
+  const { employeeId } = Route.useParams();
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
@@ -19,10 +20,16 @@ const Component = () => {
     history.back();
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: api.supplier.list.getKey(search)
+        queryKey: api.employee.byId.getKey(employeeId)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: api.employee.list.getKey(search)
+      }),
+      queryClient.invalidateQueries({
+        queryKey: api.employee.listFull.getKey()
       })
     ]);
-  }, [history, queryClient, search]);
+  }, [employeeId, history, queryClient, search]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -31,16 +38,17 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Chỉnh sửa nhà cung cấp'}
+      title={'Chỉnh sửa nhân viên'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'edit-employee-modal'}
     >
-      <NewSupplierForm
+      <EditEmployeeForm
+        employeeId={employeeId}
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -48,6 +56,10 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/suppliers/new')({
-  component: Component
+export const Route = createFileRoute(
+  '/_authenticated/settings/employees/$employeeId/edit'
+)({
+  component: Component,
+  loader: ({ context: { queryClient }, params: { employeeId } }) =>
+    queryClient?.ensureQueryData(api.employee.byId.getOptions(employeeId))
 });

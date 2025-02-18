@@ -5,8 +5,8 @@ import {
   FactoryIcon,
   GitBranchIcon,
   HandshakeIcon,
-  HexagonIcon,
   PackagePlusIcon,
+  SettingsIcon,
   SquareKanbanIcon,
   Users2Icon
 } from 'lucide-react';
@@ -91,36 +91,36 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             to={'/notification'}
             icon={<BellDotIcon width={22} height={22} />}
           ></SidebarItem>
-          <SidebarGroup
-            to={'/general'}
-            icon={<HexagonIcon width={22} height={22} />}
-          >
-            <SidebarItem
-              to={'/general/employees'}
-              icon={<Users2Icon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/general/customers'}
-              icon={<HandshakeIcon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/general/suppliers'}
-              icon={<FactoryIcon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/general/materials'}
-              icon={<AnvilIcon />}
-            ></SidebarItem>
-          </SidebarGroup>
           <SidebarItem
             to={'/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
             badge={<IssueBadge isAll={true} />}
           ></SidebarItem>
-          <SidebarItem
-            to={'/process'}
-            icon={<GitBranchIcon width={22} height={22} />}
-          ></SidebarItem>
+          <SidebarGroup
+            to={'/settings'}
+            icon={<SettingsIcon width={22} height={22} />}
+          >
+            <SidebarItem
+              to={'/settings/employees'}
+              icon={<Users2Icon />}
+            ></SidebarItem>
+            <SidebarItem
+              to={'/settings/customers'}
+              icon={<HandshakeIcon />}
+            ></SidebarItem>
+            <SidebarItem
+              to={'/settings/suppliers'}
+              icon={<FactoryIcon />}
+            ></SidebarItem>
+            <SidebarItem
+              to={'/settings/materials'}
+              icon={<AnvilIcon />}
+            ></SidebarItem>
+            <SidebarItem
+              to={'/settings/process'}
+              icon={<GitBranchIcon width={22} height={22} />}
+            ></SidebarItem>
+          </SidebarGroup>
         </Sidebar>
         <div className={'w-full overflow-hidden'}>{children}</div>
       </div>

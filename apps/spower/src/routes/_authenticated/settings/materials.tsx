@@ -191,7 +191,7 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_authenticated/general/materials')({
+export const Route = createFileRoute('/_authenticated/settings/materials')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     SearchSchema.validateSync(input),

@@ -1,17 +1,17 @@
-import { useQueryClient } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query'
+import type { SearchSchemaInput } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import type { UserData } from 'portal-api';
-import { SearchSchema, api } from 'portal-api';
+  useReactTable,
+} from '@tanstack/react-table'
+import { EditIcon, PlusIcon, XIcon } from 'lucide-react'
+import type { UserData } from 'portal-api'
+import { SearchSchema, api } from 'portal-api'
 
-import { useState } from 'react';
+import { useState } from 'react'
 
 import {
   Button,
@@ -23,77 +23,77 @@ import {
   TableHeader,
   TableRow,
   success,
-  useConfirm
-} from '@minhdtb/storeo-theme';
+  useConfirm,
+} from '@minhdtb/storeo-theme'
 
-import { PageHeader } from '../../../components';
+import { PageHeader } from '../../../components'
 
 const Component = () => {
-  const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath })
+  const [search, setSearch] = useState<string | undefined>()
+  const queryClient = useQueryClient()
 
   const listEmployees = api.employee.listFull.useSuspenseQuery({
-    variables: search
-  });
+    variables: search,
+  })
 
   const deleteEmployee = api.employee.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhân viên thành công');
+      success('Xóa nhân viên thành công')
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: api.employee.listFull.getKey(search)
-        })
-      ]);
-    }
-  });
+          queryKey: api.employee.listFull.getKey(search),
+        }),
+      ])
+    },
+  })
 
-  const { confirm } = useConfirm();
+  const { confirm } = useConfirm()
 
-  const columnHelper = createColumnHelper<UserData>();
+  const columnHelper = createColumnHelper<UserData>()
 
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: info => (
+      cell: (info) => (
         <div className={'flex items-center justify-center'}>
           {info.row.index + 1}
         </div>
       ),
       header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
+      size: 30,
     }),
     columnHelper.accessor('name', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Họ tên',
-      footer: info => info.column.id,
-      size: 300
+      footer: (info) => info.column.id,
+      size: 300,
     }),
     columnHelper.accessor('phone', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Số điện thoại',
-      footer: info => info.column.id,
-      size: 150
+      footer: (info) => info.column.id,
+      size: 150,
     }),
     columnHelper.accessor('email', {
-      cell: info => info.getValue(),
+      cell: (info) => info.getValue(),
       header: () => 'Email',
-      footer: info => info.column.id,
-      size: 200
+      footer: (info) => info.column.id,
+      size: 200,
     }),
     columnHelper.accessor('department', {
       cell: ({ row }) => {
-        return row.original.expand.department.name;
+        return row.original.expand.department.name
       },
       header: () => 'Phòng ban',
-      footer: info => info.column.id
+      footer: (info) => info.column.id,
     }),
     columnHelper.accessor('title', {
       cell: ({ row }) => {
-        return row.original.title;
+        return row.original.title
       },
       header: () => 'Chức danh',
-      footer: info => info.column.id
+      footer: (info) => info.column.id,
     }),
     columnHelper.display({
       id: 'actions',
@@ -106,10 +106,10 @@ const Component = () => {
                 navigate({
                   to: './$employeeId/edit',
                   params: {
-                    employeeId: row.original.id
+                    employeeId: row.original.id,
                   },
-                  search
-                });
+                  search,
+                })
               }}
             >
               <EditIcon className={'h-3 w-3'} />
@@ -117,28 +117,28 @@ const Component = () => {
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
-                  deleteEmployee.mutate(row.original.id);
-                });
+                  deleteEmployee.mutate(row.original.id)
+                })
               }}
             >
               <XIcon className={'h-3 w-3'} />
             </Button>
           </div>
-        );
+        )
       },
-      header: () => 'Thao tác'
-    })
-  ];
+      header: () => 'Thao tác',
+    }),
+  ]
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: listEmployees.data || []
-  });
+    data: listEmployees.data || [],
+  })
 
   return (
     <>
@@ -151,7 +151,7 @@ const Component = () => {
             onClick={() =>
               navigate({
                 to: './new',
-                search
+                search,
               })
             }
           >
@@ -162,7 +162,7 @@ const Component = () => {
             value={search}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
-            onChange={value => setSearch(value)}
+            onChange={(value) => setSearch(value)}
           />
         </div>
         <div
@@ -172,7 +172,7 @@ const Component = () => {
         >
           <Table
             style={{
-              tableLayout: 'fixed'
+              tableLayout: 'fixed',
             }}
           >
             <TableHeader
@@ -180,25 +180,25 @@ const Component = () => {
               style={{
                 position: 'sticky',
                 top: 0,
-                zIndex: 2
+                zIndex: 2,
               }}
             >
-              {table.getHeaderGroups().map(headerGroup => (
+              {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                  {headerGroup.headers.map(header => (
+                  {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
                       className={'text-appWhite whitespace-nowrap'}
                       style={{
                         width: header.getSize(),
-                        maxWidth: header.getSize()
+                        maxWidth: header.getSize(),
                       }}
                     >
                       {header.isPlaceholder ? null : (
                         <>
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                         </>
                       )}
@@ -209,7 +209,7 @@ const Component = () => {
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map(row => (
+                table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
                     className={'cursor-pointer last:border-b-0'}
@@ -217,23 +217,23 @@ const Component = () => {
                       navigate({
                         to: './$employeeId/edit',
                         params: {
-                          employeeId: row.original.id
-                        }
-                      });
+                          employeeId: row.original.id,
+                        },
+                      })
                     }}
                   >
-                    {row.getVisibleCells().map(cell => (
+                    {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
                         className={'truncate text-left'}
                         style={{
                           width: cell.column.getSize(),
-                          maxWidth: cell.column.getSize()
+                          maxWidth: cell.column.getSize(),
                         }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}
@@ -254,21 +254,21 @@ const Component = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export const Route = createFileRoute('/_authenticated/general/employees')({
+export const Route = createFileRoute('/_authenticated/settings/employees')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     SearchSchema.validateSync(input),
   loaderDeps: ({ search }) => {
-    return { search };
+    return { search }
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(api.employee.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhân viên'
-    };
-  }
-});
+      title: 'Quản lý nhân viên',
+    }
+  },
+})
