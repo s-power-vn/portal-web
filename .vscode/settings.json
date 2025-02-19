@@ -9,4 +9,24 @@
         "source.organizeImports": "explicit",
         "source.fixAll": "explicit"
     },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/coverage": true,
+        "**/logs": true,
+        "**/temp": true,
+        "**/tmp": true,
+        "**/cache": true,
+        "**/backup": true,
+        "**/archive": true,
+        "**/old": true,
+        "**/.nx": true
+    }
 }
