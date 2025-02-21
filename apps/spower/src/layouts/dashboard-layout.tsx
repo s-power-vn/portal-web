@@ -40,17 +40,17 @@ const SidebarHeader = () => {
   return (
     <div
       className={
-        'flex h-[50px] w-full items-center justify-center border-b p-2'
+        'flex h-[2.57rem] w-full items-center justify-center border-b p-[0.3rem]'
       }
     >
       <Button
         className={cn(
-          'flex w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
+          'flex h-full w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
           collapsed && 'gap-0'
         )}
         onClick={handleNewProject}
       >
-        <PackagePlusIcon />
+        <PackagePlusIcon className={'h-5 w-5'} />
         <span
           className={cn('transition-opacity', collapsed && `w-0 opacity-0`)}
         >
@@ -70,7 +70,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     <div className={'flex h-screen w-full flex-col overflow-hidden'}>
       <Header />
       <div className={'flex h-full w-full'}>
-        <Sidebar uid={'dashboard'} expanded={true}>
+        <Sidebar uid={'dashboard'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem
             to={'/home'}

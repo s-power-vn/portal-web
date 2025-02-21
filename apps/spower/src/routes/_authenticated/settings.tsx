@@ -22,19 +22,19 @@ function Settings() {
         <Sidebar uid={'settings'} expanded={true}>
           <SidebarItem
             to={'/settings/employees'}
-            icon={<Users2Icon />}
+            icon={<Users2Icon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/customers'}
-            icon={<HandshakeIcon />}
+            icon={<HandshakeIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/suppliers'}
-            icon={<FactoryIcon />}
+            icon={<FactoryIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/materials'}
-            icon={<AnvilIcon />}
+            icon={<AnvilIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/process'}

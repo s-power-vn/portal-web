@@ -58,17 +58,19 @@ const SidebarContext = createContext<{
 
 export type SidebarProps = HTMLAttributes<HTMLDivElement> & {
   uid: string;
+  collapsed?: boolean;
   expanded?: boolean;
 };
 
 export const Sidebar: FC<SidebarProps> = ({
   children,
   uid,
+  collapsed: collapsedProp,
   expanded,
   ...props
 }) => {
   const [collapsed, setCollapsed] = usePersistedState(
-    false,
+    collapsedProp ?? false,
     `${uid}.sidebar.collapsed`
   );
 

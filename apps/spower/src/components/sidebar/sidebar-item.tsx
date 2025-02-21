@@ -55,12 +55,14 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
   return (
     <div
-      className={cn(`hover:bg-appGrayLight relative w-full border-b`)}
+      className={cn(
+        `hover:bg-appGrayLight relative flex h-[2.57rem] w-full items-center border-b`
+      )}
       {...props}
     >
       <Link
         className={cn(
-          `flex w-full items-center justify-start truncate whitespace-nowrap text-sm`,
+          `flex h-full w-full items-center justify-start  truncate whitespace-nowrap text-sm`,
           isActive &&
             `bg-appBlueLight text-appWhite after:bg-appBlue after:absolute after:bottom-0 after:left-0 after:top-0 after:z-20 after:w-1`
         )}
