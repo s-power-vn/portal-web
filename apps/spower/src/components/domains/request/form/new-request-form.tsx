@@ -12,7 +12,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../../file/multiple-file-select-field';
+import { MultipleFileSelectField } from '../../../file';
 import { RequestInputField } from '../field/request-input-field';
 
 const schema = object().shape({

@@ -8,8 +8,8 @@ import type { FC } from 'react';
 
 import { For, Show, formatDate } from '@minhdtb/storeo-core';
 
-import { isApproveNode } from '../../flow/process-flow';
-import processData from '../../flow/process.json';
+import { isApproveNode } from '../flow';
+import processData from '../flow/process.json';
 import { RequestDetailItem } from './request-display';
 
 export type RequestDocumentProps = {

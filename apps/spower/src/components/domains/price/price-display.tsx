@@ -37,7 +37,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { IssueAttachment } from '../issue/issue-attachment';
+import { IssueAttachment } from '../issue';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {

@@ -15,7 +15,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { ImageSelectField } from '../../../image/image-select-field';
+import { ImageSelectField } from '../../../image';
 import { ChangePasswordForm } from './change-password-form';
 
 const schema = object().shape({
@@ -59,10 +59,10 @@ export const EditProfileForm: FC<EditProfileFormProps> = props => {
           ? getImageUrl(Collections.User, user?.id, user?.avatar)
           : ''
       }}
-      onSubmit={values =>
+      onSuccess={values =>
         updateProfile.mutate({
           ...values,
-          id: client.authStore.model?.id
+          id: client.authStore.record?.id ?? ''
         })
       }
       actions={methods => (

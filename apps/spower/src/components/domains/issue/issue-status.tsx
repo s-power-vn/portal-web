@@ -1,5 +1,6 @@
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
+import { IssueTypeOptions } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, useCallback, useMemo } from 'react';
@@ -7,8 +8,7 @@ import { Suspense, useCallback, useMemo } from 'react';
 import { Match, Switch, cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
-import { IssueTypeOptions } from '../../../../../../libs/core/src';
-import { ProcessFlow, extractStatus, getNode } from '../../flow/process-flow';
+import { ProcessFlow, extractStatus, getNode } from '../flow';
 
 export type IssueStatusProps = {
   issueId: string;

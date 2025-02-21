@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
 
@@ -6,23 +5,19 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { NewSupplierForm } from '../../../../components';
+import { NewProcessForm } from '../../../../components';
+import { useInvalidateQueries } from '../../../../hooks';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const queryClient = useQueryClient();
-  const search = Route.useSearch();
+  const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(async () => {
     setOpen(false);
     history.back();
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.supplier.list.getKey(search)
-      })
-    ]);
-  }, [history, queryClient, search]);
+    invalidates([api.process.listFull.getKey()]);
+  }, [history]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -31,23 +26,20 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
+      title={'Thêm quy trình'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'new-process-modal'}
     >
-      <NewSupplierForm
-        onSuccess={onSuccessHandler}
-        onCancel={onCancelHandler}
-      />
+      <NewProcessForm onSuccess={onSuccessHandler} onCancel={onCancelHandler} />
     </Modal>
   );
 };
 
-export const Route = createFileRoute('/_authenticated/settings/suppliers/new')({
+export const Route = createFileRoute('/_authenticated/settings/process/new')({
   component: Component
 });

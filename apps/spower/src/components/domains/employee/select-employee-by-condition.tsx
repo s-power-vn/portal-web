@@ -4,7 +4,7 @@ import type { FC } from 'react';
 
 import { Combobox, ComboboxProps } from '../../combobox';
 
-export type SelectEmployeeByConditionProps = ComboboxProps & {
+export type SelectEmployeeByConditionProps = Partial<ComboboxProps> & {
   condition?: string;
 };
 

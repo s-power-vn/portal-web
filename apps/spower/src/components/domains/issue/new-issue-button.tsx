@@ -20,7 +20,7 @@ import {
 
 import { useInvalidateQueries } from '../../../hooks';
 import { NewPriceForm } from '../price';
-import { NewRequestForm } from '../request/form/new-request-form';
+import { NewRequestForm } from '../request';
 
 export type NewIssueButtonProps = {
   projectId: string;

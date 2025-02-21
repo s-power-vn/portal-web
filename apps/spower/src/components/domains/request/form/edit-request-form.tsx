@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { api } from 'portal-api';
+import { arrayToTree, compareVersion } from 'portal-core';
 import { array, boolean, date, number, object, string } from 'yup';
 
 import { FC, useMemo } from 'react';
@@ -13,7 +14,6 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { arrayToTree, compareVersion } from '../../../../commons/utils';
 import { MultipleFileSelectField } from '../../../file';
 import { RequestInputField } from '../field/request-input-field';
 import { RequestDetailItem } from '../request-display';

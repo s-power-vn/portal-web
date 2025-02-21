@@ -24,7 +24,10 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import { TreeData, arrayToTree } from '../../../../commons/utils';
+import {
+  TreeData,
+  arrayToTree
+} from '../../../../../../../libs/core/src/commons/utils';
 import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
 import { RequestDetailItem } from '../request-display';
 

@@ -55,12 +55,12 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../../../commons/utils';
+import type { TreeData } from '../../../../../../../../libs/core/src/commons/utils';
 import {
   arrayToTree,
   compareVersion,
   getCommonPinningStyles
-} from '../../../../../commons/utils';
+} from '../../../../../../../../libs/core/src/commons/utils';
 import {
   ADMIN_ID,
   ColumnManager,

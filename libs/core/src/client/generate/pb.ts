@@ -20,6 +20,7 @@ export enum Collections {
 	Material = "material",
 	Price = "price",
 	PriceDetail = "priceDetail",
+	Process = "process",
 	Project = "project",
 	Request = "request",
 	RequestDetail = "requestDetail",
@@ -185,8 +186,8 @@ export type MaterialRecord = {
 }
 
 export type PriceRecord = {
-	issue?: RecordIdString
-	project?: RecordIdString
+	issue: RecordIdString
+	project: RecordIdString
 }
 
 export type PriceDetailRecord<Tprices = unknown> = {
@@ -194,11 +195,21 @@ export type PriceDetailRecord<Tprices = unknown> = {
 	estimatePrice?: number
 	index?: string
 	level?: string
-	price?: RecordIdString
+	price: RecordIdString
 	prices?: null | Tprices
 	title?: string
 	unit?: string
 	volume?: number
+}
+
+export enum ProcessTypeOptions {
+	"Request" = "Request",
+	"Price" = "Price",
+}
+export type ProcessRecord<Tprocess = unknown> = {
+	done: string
+	process?: null | Tprocess
+	type: ProcessTypeOptions
 }
 
 export type ProjectRecord = {
@@ -228,7 +239,6 @@ export type RequestDetailRecord = {
 export type RequestDetailInfoRecord = {
 	deleted?: boolean
 	detail?: RecordIdString
-	level: string
 	request: RecordIdString
 	requestVolume?: number
 }
@@ -271,6 +281,7 @@ export type IssueUserInfoResponse<Texpand = unknown> = Required<IssueUserInfoRec
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
+export type ProcessResponse<Tprocess = unknown, Texpand = unknown> = Required<ProcessRecord<Tprocess>> & BaseSystemFields<Texpand>
 export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
@@ -296,6 +307,7 @@ export type CollectionRecords = {
 	material: MaterialRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
+	process: ProcessRecord
 	project: ProjectRecord
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
@@ -320,6 +332,7 @@ export type CollectionResponses = {
 	material: MaterialResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
+	process: ProcessResponse
 	project: ProjectResponse
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
@@ -347,6 +360,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>
+	collection(idOrName: 'process'): RecordService<ProcessResponse>
 	collection(idOrName: 'project'): RecordService<ProjectResponse>
 	collection(idOrName: 'request'): RecordService<RequestResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>

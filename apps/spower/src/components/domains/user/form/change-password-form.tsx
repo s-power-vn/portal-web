@@ -40,10 +40,10 @@ export const ChangePasswordForm: FC<ChangePasswordFormProps> = props => {
         newPasswordConfirmation: ''
       }}
       onCancel={props.onCancel}
-      onSubmit={values =>
+      onSuccess={values =>
         changePassword.mutate({
           ...values,
-          id: client.authStore.model?.id
+          id: client.authStore.record?.id ?? ''
         })
       }
       loading={changePassword.isPending}

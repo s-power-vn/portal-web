@@ -21,8 +21,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       '@minhdtb/storeo-theme':
-        specifier: ^1.0.24
-        version: 1.0.24
+        specifier: ^1.0.26
+        version: 1.0.26
       '@preact/signals-react':
         specifier: ^2.0.0
         version: 2.0.0(react@18.3.1)
@@ -1596,8 +1596,8 @@ packages:
   '@minhdtb/storeo-core@0.0.4':
     resolution: {integrity: sha512-C+IObzsk8N2PPfSvYR647ATOkHEVytq2U6O9rD8ZMWolkgaOe1w3kPmYWxDROZIu/o+Zd+c70n1jhFDvZSs1xQ==}
 
-  '@minhdtb/storeo-theme@1.0.24':
-    resolution: {integrity: sha512-KA4niZUBIycPTkm4dEpFwGqZFd1JUFyAufs8616CDIsWLjcjRmBwCCIS0LBMO9zOPvYIRpwfj4iy6InOvLIACw==}
+  '@minhdtb/storeo-theme@1.0.26':
+    resolution: {integrity: sha512-A/4NW8/9GwSklILUfhVDAtLbBUzMu/eGapbTtmKdyJcqQjRRkjdhsPv6NfLcRKw25AR1H2j3J8ypjidOFHctNA==}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     resolution: {integrity: sha512-eD1JZDQ+h5WLdA58MmAE1DzLwvFaGJeeam3Tswc/sEUb4QGT86X4Fme+dMTBRYRoAq/tRYql3DlVTFhdmrUVzg==}
@@ -8983,7 +8983,7 @@ snapshots:
 
   '@minhdtb/storeo-core@0.0.4': {}
 
-  '@minhdtb/storeo-theme@1.0.24': {}
+  '@minhdtb/storeo-theme@1.0.26': {}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     dependencies:

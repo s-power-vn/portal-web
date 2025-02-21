@@ -8,6 +8,7 @@ import { employeeApi } from './employee';
 import { issueApi } from './issue';
 import { materialApi } from './material';
 import { priceApi } from './price';
+import { processApi } from './process';
 import type { ProjectData } from './project';
 import { projectApi } from './project';
 import type { RequestData, RequestDetailData } from './request';
@@ -28,6 +29,7 @@ export const api = {
   issue: issueApi,
   material: materialApi,
   price: priceApi,
+  process: processApi,
   project: projectApi,
   request: requestApi,
   requestDetail: requestDetailApi,
