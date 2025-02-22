@@ -27,7 +27,7 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values => createSupplier.mutate(values)}
+      onSuccess={values => createSupplier.mutate(values)}
       onCancel={props.onCancel}
       defaultValues={{
         name: '',

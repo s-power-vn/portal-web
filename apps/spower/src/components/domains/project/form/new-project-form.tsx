@@ -6,7 +6,7 @@ import type { FC } from 'react';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
-import { CustomerDropdownField } from '../../customer/customer-dropdown-field';
+import { CustomerDropdownField } from '../../customer';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên công trình'),

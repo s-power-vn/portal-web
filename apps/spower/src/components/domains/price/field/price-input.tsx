@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { cn } from 'portal-core';
+import { cn, compareVersion } from 'portal-core';
 import { AnyObject, ObjectSchema } from 'yup';
 
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -26,9 +26,8 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { compareVersion } from '../../../../commons/utils';
 import { PickFinishedRequestDetailForm } from '../../request';
-import { PickSuppliersForm } from '../../supplier/form/pick-suppliers-form';
+import { PickSuppliersForm } from '../../supplier';
 
 // Convert interfaces to types
 type PriceInputData = {
@@ -56,8 +55,6 @@ type PriceData = PriceInputData & {
   isVAT?: boolean;
   isFinalTotal?: boolean;
 };
-
-export type { PriceData, PriceInputData };
 
 const columnHelper = createColumnHelper<PriceData>();
 

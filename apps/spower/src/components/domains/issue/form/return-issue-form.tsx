@@ -34,7 +34,7 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
       defaultValues={{
         status: props.status
       }}
-      onSubmit={values => {
+      onSuccess={values => {
         returnIssue.mutate({
           id: props.issueId,
           ...values

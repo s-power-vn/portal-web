@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from 'portal-api';
+import { IssueTypeOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -8,7 +9,6 @@ import { For, Show, cn } from '@minhdtb/storeo-core';
 import { Button, Checkbox, error, showModal } from '@minhdtb/storeo-theme';
 
 import { ForwardIssueForm, ReturnIssueForm } from '.';
-import { IssueTypeOptions, client } from '../../../../../../libs/core/src';
 import { useInvalidateQueries } from '../../../hooks';
 import {
   extractStatus,
@@ -16,7 +16,7 @@ import {
   getNodeFromFlows,
   isApproveNode,
   isDoneNode
-} from '../../flow';
+} from '../flow';
 import { FinishIssueForm } from './form/finish-issue-form';
 
 export type IssueActionProps = {

@@ -1,14 +1,9 @@
 import {
-  AnvilIcon,
   AreaChartIcon,
   BellDotIcon,
-  FactoryIcon,
-  GitBranchIcon,
-  HandshakeIcon,
   PackagePlusIcon,
   SettingsIcon,
-  SquareKanbanIcon,
-  Users2Icon
+  SquareKanbanIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
 
@@ -18,13 +13,7 @@ import { useCallback } from 'react';
 import { cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
-import {
-  Header,
-  Sidebar,
-  SidebarGroup,
-  SidebarItem,
-  useSidebar
-} from '../components';
+import { Header, Sidebar, SidebarItem, useSidebar } from '../components';
 import { IssueBadge } from '../components/domains/issue/issue-badge';
 import { NewProjectForm } from '../components/domains/project/form/new-project-form';
 import { useInvalidateQueries } from '../hooks';
@@ -51,17 +40,17 @@ const SidebarHeader = () => {
   return (
     <div
       className={
-        'flex h-[50px] w-full items-center justify-center border-b p-2'
+        'flex h-[2.57rem] w-full items-center justify-center border-b p-[0.3rem]'
       }
     >
       <Button
         className={cn(
-          'flex w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
+          'flex h-full w-full justify-center gap-2 bg-green-600 p-0 uppercase hover:bg-green-500',
           collapsed && 'gap-0'
         )}
         onClick={handleNewProject}
       >
-        <PackagePlusIcon />
+        <PackagePlusIcon className={'h-5 w-5'} />
         <span
           className={cn('transition-opacity', collapsed && `w-0 opacity-0`)}
         >
@@ -81,7 +70,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     <div className={'flex h-screen w-full flex-col overflow-hidden'}>
       <Header />
       <div className={'flex h-full w-full'}>
-        <Sidebar uid={'dashboard'} expanded={true}>
+        <Sidebar uid={'dashboard'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem
             to={'/home'}
@@ -96,33 +85,12 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<SquareKanbanIcon width={22} height={22} />}
             badge={<IssueBadge isAll={true} />}
           ></SidebarItem>
-          <SidebarGroup
+          <SidebarItem
             to={'/settings'}
             icon={<SettingsIcon width={22} height={22} />}
-          >
-            <SidebarItem
-              to={'/settings/employees'}
-              icon={<Users2Icon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/settings/customers'}
-              icon={<HandshakeIcon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/settings/suppliers'}
-              icon={<FactoryIcon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/settings/materials'}
-              icon={<AnvilIcon />}
-            ></SidebarItem>
-            <SidebarItem
-              to={'/settings/process'}
-              icon={<GitBranchIcon width={22} height={22} />}
-            ></SidebarItem>
-          </SidebarGroup>
+          ></SidebarItem>
         </Sidebar>
-        <div className={'w-full overflow-hidden'}>{children}</div>
+        <div className={'h-full w-full flex-1 overflow-hidden'}>{children}</div>
       </div>
     </div>
   );

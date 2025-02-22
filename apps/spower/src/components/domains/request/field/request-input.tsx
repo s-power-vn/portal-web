@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
-import { DetailResponse, cn } from 'portal-core';
+import { DetailResponse, TreeData, cn, compareVersion } from 'portal-core';
 import type { AnyObject, ObjectSchema } from 'yup';
 
 import type { FC } from 'react';
@@ -25,8 +25,7 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { TreeData, compareVersion } from '../../../../commons/utils';
-import { PickDetailForm } from '../../detail/form/pick-detail-form';
+import { PickDetailForm } from '../../detail';
 import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
 import { RequestDetailItem } from '../request-display';
 

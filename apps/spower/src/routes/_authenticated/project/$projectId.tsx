@@ -101,7 +101,7 @@ const Component = () => {
                   ></SidebarItem>
                 </SidebarGroup>
               </Sidebar>
-              <div className={'max-h-[calc(100vh-6rem)] w-full overflow-auto'}>
+              <div className={'w-full flex-1 overflow-auto'}>
                 <Outlet />
               </div>
             </>

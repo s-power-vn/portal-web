@@ -1,5 +1,6 @@
 import { api } from 'portal-api';
 import type { DetailInfoResponse } from 'portal-core';
+import { TreeData } from 'portal-core';
 import { number, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -12,8 +13,6 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
-
-import { TreeData } from '../../../../commons/utils';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),

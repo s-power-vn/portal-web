@@ -29,6 +29,7 @@ import { Route as AuthenticatedSettingsCustomersImport } from './routes/_authent
 import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
 import { Route as AuthenticatedSettingsSuppliersNewImport } from './routes/_authenticated/settings/suppliers/new'
+import { Route as AuthenticatedSettingsProcessNewImport } from './routes/_authenticated/settings/process/new'
 import { Route as AuthenticatedSettingsMaterialsNewImport } from './routes/_authenticated/settings/materials/new'
 import { Route as AuthenticatedSettingsEmployeesNewImport } from './routes/_authenticated/settings/employees/new'
 import { Route as AuthenticatedSettingsCustomersNewImport } from './routes/_authenticated/settings/customers/new'
@@ -170,6 +171,13 @@ const AuthenticatedSettingsSuppliersNewRoute =
     id: '/new',
     path: '/new',
     getParentRoute: () => AuthenticatedSettingsSuppliersRoute,
+  } as any)
+
+const AuthenticatedSettingsProcessNewRoute =
+  AuthenticatedSettingsProcessNewImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedSettingsProcessRoute,
   } as any)
 
 const AuthenticatedSettingsMaterialsNewRoute =
@@ -490,6 +498,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/materials/new'
       preLoaderRoute: typeof AuthenticatedSettingsMaterialsNewImport
       parentRoute: typeof AuthenticatedSettingsMaterialsImport
+    }
+    '/_authenticated/settings/process/new': {
+      id: '/_authenticated/settings/process/new'
+      path: '/new'
+      fullPath: '/settings/process/new'
+      preLoaderRoute: typeof AuthenticatedSettingsProcessNewImport
+      parentRoute: typeof AuthenticatedSettingsProcessImport
     }
     '/_authenticated/settings/suppliers/new': {
       id: '/_authenticated/settings/suppliers/new'
@@ -820,6 +835,20 @@ const AuthenticatedSettingsMaterialsRouteWithChildren =
     AuthenticatedSettingsMaterialsRouteChildren,
   )
 
+interface AuthenticatedSettingsProcessRouteChildren {
+  AuthenticatedSettingsProcessNewRoute: typeof AuthenticatedSettingsProcessNewRoute
+}
+
+const AuthenticatedSettingsProcessRouteChildren: AuthenticatedSettingsProcessRouteChildren =
+  {
+    AuthenticatedSettingsProcessNewRoute: AuthenticatedSettingsProcessNewRoute,
+  }
+
+const AuthenticatedSettingsProcessRouteWithChildren =
+  AuthenticatedSettingsProcessRoute._addFileChildren(
+    AuthenticatedSettingsProcessRouteChildren,
+  )
+
 interface AuthenticatedSettingsSuppliersRouteChildren {
   AuthenticatedSettingsSuppliersNewRoute: typeof AuthenticatedSettingsSuppliersNewRoute
   AuthenticatedSettingsSuppliersSupplierIdEditRoute: typeof AuthenticatedSettingsSuppliersSupplierIdEditRoute
@@ -842,7 +871,7 @@ interface AuthenticatedSettingsRouteChildren {
   AuthenticatedSettingsCustomersRoute: typeof AuthenticatedSettingsCustomersRouteWithChildren
   AuthenticatedSettingsEmployeesRoute: typeof AuthenticatedSettingsEmployeesRouteWithChildren
   AuthenticatedSettingsMaterialsRoute: typeof AuthenticatedSettingsMaterialsRouteWithChildren
-  AuthenticatedSettingsProcessRoute: typeof AuthenticatedSettingsProcessRoute
+  AuthenticatedSettingsProcessRoute: typeof AuthenticatedSettingsProcessRouteWithChildren
   AuthenticatedSettingsSuppliersRoute: typeof AuthenticatedSettingsSuppliersRouteWithChildren
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
@@ -854,7 +883,8 @@ const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
     AuthenticatedSettingsEmployeesRouteWithChildren,
   AuthenticatedSettingsMaterialsRoute:
     AuthenticatedSettingsMaterialsRouteWithChildren,
-  AuthenticatedSettingsProcessRoute: AuthenticatedSettingsProcessRoute,
+  AuthenticatedSettingsProcessRoute:
+    AuthenticatedSettingsProcessRouteWithChildren,
   AuthenticatedSettingsSuppliersRoute:
     AuthenticatedSettingsSuppliersRouteWithChildren,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
@@ -897,7 +927,7 @@ export interface FileRoutesByFullPath {
   '/settings/customers': typeof AuthenticatedSettingsCustomersRouteWithChildren
   '/settings/employees': typeof AuthenticatedSettingsEmployeesRouteWithChildren
   '/settings/materials': typeof AuthenticatedSettingsMaterialsRouteWithChildren
-  '/settings/process': typeof AuthenticatedSettingsProcessRoute
+  '/settings/process': typeof AuthenticatedSettingsProcessRouteWithChildren
   '/settings/suppliers': typeof AuthenticatedSettingsSuppliersRouteWithChildren
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/project/': typeof AuthenticatedProjectIndexRoute
@@ -908,6 +938,7 @@ export interface FileRoutesByFullPath {
   '/settings/customers/new': typeof AuthenticatedSettingsCustomersNewRoute
   '/settings/employees/new': typeof AuthenticatedSettingsEmployeesNewRoute
   '/settings/materials/new': typeof AuthenticatedSettingsMaterialsNewRoute
+  '/settings/process/new': typeof AuthenticatedSettingsProcessNewRoute
   '/settings/suppliers/new': typeof AuthenticatedSettingsSuppliersNewRoute
   '/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
   '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
@@ -938,7 +969,7 @@ export interface FileRoutesByTo {
   '/settings/customers': typeof AuthenticatedSettingsCustomersRouteWithChildren
   '/settings/employees': typeof AuthenticatedSettingsEmployeesRouteWithChildren
   '/settings/materials': typeof AuthenticatedSettingsMaterialsRouteWithChildren
-  '/settings/process': typeof AuthenticatedSettingsProcessRoute
+  '/settings/process': typeof AuthenticatedSettingsProcessRouteWithChildren
   '/settings/suppliers': typeof AuthenticatedSettingsSuppliersRouteWithChildren
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/project': typeof AuthenticatedProjectIndexRoute
@@ -947,6 +978,7 @@ export interface FileRoutesByTo {
   '/settings/customers/new': typeof AuthenticatedSettingsCustomersNewRoute
   '/settings/employees/new': typeof AuthenticatedSettingsEmployeesNewRoute
   '/settings/materials/new': typeof AuthenticatedSettingsMaterialsNewRoute
+  '/settings/process/new': typeof AuthenticatedSettingsProcessNewRoute
   '/settings/suppliers/new': typeof AuthenticatedSettingsSuppliersNewRoute
   '/project/$projectId': typeof AuthenticatedProjectProjectIdIndexRoute
   '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
@@ -978,7 +1010,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/customers': typeof AuthenticatedSettingsCustomersRouteWithChildren
   '/_authenticated/settings/employees': typeof AuthenticatedSettingsEmployeesRouteWithChildren
   '/_authenticated/settings/materials': typeof AuthenticatedSettingsMaterialsRouteWithChildren
-  '/_authenticated/settings/process': typeof AuthenticatedSettingsProcessRoute
+  '/_authenticated/settings/process': typeof AuthenticatedSettingsProcessRouteWithChildren
   '/_authenticated/settings/suppliers': typeof AuthenticatedSettingsSuppliersRouteWithChildren
   '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
   '/_authenticated/project/': typeof AuthenticatedProjectIndexRoute
@@ -989,6 +1021,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/customers/new': typeof AuthenticatedSettingsCustomersNewRoute
   '/_authenticated/settings/employees/new': typeof AuthenticatedSettingsEmployeesNewRoute
   '/_authenticated/settings/materials/new': typeof AuthenticatedSettingsMaterialsNewRoute
+  '/_authenticated/settings/process/new': typeof AuthenticatedSettingsProcessNewRoute
   '/_authenticated/settings/suppliers/new': typeof AuthenticatedSettingsSuppliersNewRoute
   '/_authenticated/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
   '/_authenticated/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
@@ -1035,6 +1068,7 @@ export interface FileRouteTypes {
     | '/settings/customers/new'
     | '/settings/employees/new'
     | '/settings/materials/new'
+    | '/settings/process/new'
     | '/settings/suppliers/new'
     | '/project/$projectId/'
     | '/project/$projectId/contract/input'
@@ -1073,6 +1107,7 @@ export interface FileRouteTypes {
     | '/settings/customers/new'
     | '/settings/employees/new'
     | '/settings/materials/new'
+    | '/settings/process/new'
     | '/settings/suppliers/new'
     | '/project/$projectId'
     | '/project/$projectId/contract/input'
@@ -1113,6 +1148,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/customers/new'
     | '/_authenticated/settings/employees/new'
     | '/_authenticated/settings/materials/new'
+    | '/_authenticated/settings/process/new'
     | '/_authenticated/settings/suppliers/new'
     | '/_authenticated/project/$projectId/'
     | '/_authenticated/project/$projectId/contract/input'
@@ -1242,7 +1278,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/settings/process": {
       "filePath": "_authenticated/settings/process.tsx",
-      "parent": "/_authenticated/settings"
+      "parent": "/_authenticated/settings",
+      "children": [
+        "/_authenticated/settings/process/new"
+      ]
     },
     "/_authenticated/settings/suppliers": {
       "filePath": "_authenticated/settings/suppliers.tsx",
@@ -1298,6 +1337,10 @@ export const routeTree = rootRoute
     "/_authenticated/settings/materials/new": {
       "filePath": "_authenticated/settings/materials/new.tsx",
       "parent": "/_authenticated/settings/materials"
+    },
+    "/_authenticated/settings/process/new": {
+      "filePath": "_authenticated/settings/process/new.tsx",
+      "parent": "/_authenticated/settings/process"
     },
     "/_authenticated/settings/suppliers/new": {
       "filePath": "_authenticated/settings/suppliers/new.tsx",

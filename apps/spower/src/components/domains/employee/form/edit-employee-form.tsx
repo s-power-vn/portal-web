@@ -9,7 +9,7 @@ import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
 import { DepartmentDropdownField } from '../../department';
-import { RoleDropdownField } from '../../role/role-dropdown-field';
+import { RoleDropdownField } from '../../role';
 
 const schema = object().shape({
   name: string().required('Hãy nhập họ tên'),

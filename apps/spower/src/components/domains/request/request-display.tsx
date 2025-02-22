@@ -16,7 +16,15 @@ import {
   SquarePlusIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { BASE_URL, Collections, IssueFileResponse, client } from 'portal-core';
+import {
+  BASE_URL,
+  Collections,
+  IssueFileResponse,
+  TreeData,
+  arrayToTree,
+  client,
+  getCommonPinningStyles
+} from 'portal-core';
 import printJS from 'print-js';
 
 import type { FC } from 'react';
@@ -40,10 +48,8 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../commons';
-import { arrayToTree, getCommonPinningStyles } from '../../../commons';
-import { IssueAttachment } from '../issue/issue-attachment';
-import { ADMIN_ID } from '../project/project-overview-tab';
+import { IssueAttachment } from '../issue';
+import { ADMIN_ID } from '../project';
 import { RequestDocument } from './request-document';
 
 export type RequestDetailItem = {
@@ -240,7 +246,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     state: {
       expanded,
       columnVisibility: {
-        unitPrice: client.authStore.model?.id === ADMIN_ID
+        unitPrice: client.authStore.record?.id === ADMIN_ID
       }
     },
     onExpandedChange: setExpanded,

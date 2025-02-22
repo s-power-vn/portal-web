@@ -16,6 +16,7 @@ import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type { DetailResponse } from 'portal-core';
+import { TreeData, arrayToTree, compareVersion } from 'portal-core';
 
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -31,9 +32,7 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../../commons/utils';
-import { arrayToTree, compareVersion } from '../../../../commons/utils';
-import { IndeterminateCheckbox } from '../../../checkbox/indeterminate-checkbox';
+import { IndeterminateCheckbox } from '../../../checkbox';
 
 export type PickDetailProps = {
   projectId?: string;

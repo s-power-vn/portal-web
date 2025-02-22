@@ -3,7 +3,7 @@ import { api } from 'portal-api';
 import { FC } from 'react';
 
 import { Combobox } from '../../../combobox';
-import { getDoneFlows } from '../../../flow';
+import { getDoneFlows } from '../../flow';
 
 export type SelectFinishedRequestProps = {
   projectId?: string;

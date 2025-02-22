@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react';
 
 import type { FC } from 'react';
 
-import { extractStatus, getNode } from '../../flow';
+import { extractStatus, getNode } from '../flow';
 
 export type IssueStatusTextProps = {
   type: 'request' | 'price';

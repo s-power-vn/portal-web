@@ -31,7 +31,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { extractStatus, isDoneNode } from '../../flow/process-flow';
+import { extractStatus, isDoneNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';

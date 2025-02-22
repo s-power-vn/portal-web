@@ -1,13 +1,17 @@
 import { DownloadIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, IssueFileResponse, client } from 'portal-core';
+import {
+  Collections,
+  IssueFileResponse,
+  client,
+  formatFileSize,
+  getFileIcon
+} from 'portal-core';
 
 import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@minhdtb/storeo-theme';
-
-import { formatFileSize, getFileIcon } from '../../../commons';
 
 export type IssueAttachmentProps = {
   issueId: string;

@@ -16,7 +16,14 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type { DetailInfoResponse } from 'portal-core';
-import { client, maskVolumeString } from 'portal-core';
+import {
+  TreeData,
+  arrayToTree,
+  client,
+  compareVersion,
+  getCommonPinningStyles,
+  maskVolumeString
+} from 'portal-core';
 
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -31,12 +38,6 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../commons/utils';
-import {
-  arrayToTree,
-  compareVersion,
-  getCommonPinningStyles
-} from '../../../commons/utils';
 import { Route } from '../../../routes/_authenticated/project/$projectId';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */

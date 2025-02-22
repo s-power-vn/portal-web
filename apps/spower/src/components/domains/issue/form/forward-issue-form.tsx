@@ -6,7 +6,7 @@ import type { FC } from 'react';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
-import { SelectEmployeeByConditionField } from '../../employee/select-employee-by-condition-field';
+import { SelectEmployeeByConditionField } from '../../employee';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
@@ -36,7 +36,7 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
     <Form
       className={'mt-2 flex flex-col gap-4'}
       schema={schema}
-      onSubmit={values => {
+      onSuccess={values => {
         forwardIssue.mutate({
           id: props.issueId,
           ...values
