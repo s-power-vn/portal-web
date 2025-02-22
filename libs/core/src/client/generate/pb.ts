@@ -6,6 +6,11 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Authorigins = "_authOrigins",
+	Externalauths = "_externalAuths",
+	Mfas = "_mfas",
+	Otps = "_otps",
+	Superusers = "_superusers",
 	Column = "column",
 	Comment = "comment",
 	Contract = "contract",
@@ -38,8 +43,6 @@ export type HTMLString = string
 // System fields
 export type BaseSystemFields<T = never> = {
 	id: RecordIdString
-	created: IsoDateString
-	updated: IsoDateString
 	collectionId: string
 	collectionName: Collections
 	expand?: T
@@ -54,47 +57,113 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export type AuthoriginsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	fingerprint: string
+	id: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type ExternalauthsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	provider: string
+	providerId: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type MfasRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	method: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type OtpsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	password: string
+	recordRef: string
+	sentTo?: string
+	updated?: IsoDateString
+}
+
+export type SuperusersRecord = {
+	created?: IsoDateString
+	email: string
+	emailVisibility?: boolean
+	id: string
+	password: string
+	tokenKey: string
+	updated?: IsoDateString
+	verified?: boolean
+}
+
 export enum ColumnTypeOptions {
 	"Numeric" = "Numeric",
 	"Text" = "Text",
 }
 export type ColumnRecord = {
+	created?: IsoDateString
+	id: string
 	project: RecordIdString
 	title: string
 	type: ColumnTypeOptions
+	updated?: IsoDateString
 }
 
 export type CommentRecord = {
 	content?: string
+	created?: IsoDateString
 	createdBy: RecordIdString
+	id: string
 	issue: RecordIdString
 	status?: string
+	updated?: IsoDateString
 }
 
 export type ContractRecord = {
 	count?: number
+	created?: IsoDateString
+	id: string
 	note?: string
 	request: RecordIdString
 	supplier: RecordIdString
+	updated?: IsoDateString
 }
 
 export type CustomerRecord = {
 	address?: string
 	code?: string
+	created?: IsoDateString
 	email?: string
+	id: string
 	name: string
 	note?: string
 	phone?: string
+	updated?: IsoDateString
 }
 
 export type DepartmentRecord = {
 	code?: string
+	created?: IsoDateString
 	description?: string
+	id: string
 	name: string
+	updated?: IsoDateString
 }
 
 export type DetailRecord<Textend = unknown> = {
+	created?: IsoDateString
 	extend?: null | Textend
+	id: string
 	level: string
 	note?: string
 	parent?: string
@@ -102,6 +171,7 @@ export type DetailRecord<Textend = unknown> = {
 	title: string
 	unit?: string
 	unitPrice?: number
+	updated?: IsoDateString
 	volume?: number
 }
 
@@ -111,16 +181,21 @@ export enum DetailImportStatusOptions {
 	"Error" = "Error",
 }
 export type DetailImportRecord = {
+	created?: IsoDateString
 	error?: string
 	file?: string
+	id: string
 	percent?: number
 	project?: RecordIdString
 	status?: DetailImportStatusOptions
+	updated?: IsoDateString
 }
 
 export type DetailInfoRecord<Textend = unknown> = {
+	created?: IsoDateString
 	extend?: null | Textend
 	group?: RecordIdString
+	id: string
 	issue?: RecordIdString
 	issueCode?: string
 	issueTitle: string
@@ -133,6 +208,7 @@ export type DetailInfoRecord<Textend = unknown> = {
 	title: string
 	unit?: string
 	unitPrice?: number
+	updated?: IsoDateString
 	volume?: number
 }
 
@@ -152,53 +228,69 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	assignee?: RecordIdString
 	changed?: IsoDateString
 	code?: string
+	created?: IsoDateString
 	createdBy?: RecordIdString
 	deadlineStatus?: IssueDeadlineStatusOptions
 	deleted?: boolean
 	endDate?: IsoDateString
+	id: string
 	lastAssignee?: null | TlastAssignee
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: string
 	title: string
 	type: IssueTypeOptions
+	updated?: IsoDateString
 }
 
 export type IssueFileRecord = {
+	created?: IsoDateString
+	id: string
 	issue?: RecordIdString
 	name?: string
 	size?: number
 	type?: string
+	updated?: IsoDateString
 	upload?: string
 }
 
 export type IssueUserInfoRecord = {
 	count?: number
+	id: string
 	project: RecordIdString
 	user?: RecordIdString
 }
 
 export type MaterialRecord = {
 	code?: string
+	created?: IsoDateString
+	id: string
 	name?: string
 	note?: string
 	unit?: string
+	updated?: IsoDateString
 }
 
 export type PriceRecord = {
+	created?: IsoDateString
+	id: string
 	issue: RecordIdString
 	project: RecordIdString
+	updated?: IsoDateString
 }
 
 export type PriceDetailRecord<Tprices = unknown> = {
+	created?: IsoDateString
 	estimateAmount?: number
 	estimatePrice?: number
+	id: string
 	index?: string
 	level?: string
 	price: RecordIdString
 	prices?: null | Tprices
 	title?: string
 	unit?: string
+	updated?: IsoDateString
 	volume?: number
 }
 
@@ -207,38 +299,51 @@ export enum ProcessTypeOptions {
 	"Price" = "Price",
 }
 export type ProcessRecord<Tprocess = unknown> = {
+	created?: IsoDateString
 	done: string
+	id: string
 	process?: null | Tprocess
 	type: ProcessTypeOptions
+	updated?: IsoDateString
 }
 
 export type ProjectRecord = {
 	bidding?: string
+	created?: IsoDateString
 	createdBy?: RecordIdString
 	customer?: RecordIdString
+	id: string
 	name?: string
+	updated?: IsoDateString
 }
 
 export type RequestRecord = {
+	created?: IsoDateString
+	id: string
 	issue: RecordIdString
 	project: RecordIdString
+	updated?: IsoDateString
 }
 
 export type RequestDetailRecord = {
+	created?: IsoDateString
 	customLevel?: string
 	customTitle?: string
 	customUnit?: string
 	deliveryDate?: IsoDateString
 	detail?: RecordIdString
+	id: string
 	index?: string
 	note?: string
 	request: RecordIdString
 	requestVolume?: number
+	updated?: IsoDateString
 }
 
 export type RequestDetailInfoRecord = {
 	deleted?: boolean
 	detail?: RecordIdString
+	id: string
 	request: RecordIdString
 	requestVolume?: number
 }
@@ -246,27 +351,47 @@ export type RequestDetailInfoRecord = {
 export type SupplierRecord = {
 	address?: string
 	code?: string
+	created?: IsoDateString
 	email?: string
+	id: string
 	name: string
 	note?: string
 	phone?: string
+	updated?: IsoDateString
 }
 
 export type TemplateRecord = {
+	created?: IsoDateString
 	detail?: string
+	id: string
+	updated?: IsoDateString
 }
 
 export type UserRecord = {
 	avatar?: string
+	created?: IsoDateString
 	department: RecordIdString
 	displayEmail?: string
+	email?: string
+	emailVisibility?: boolean
+	id: string
 	name: string
+	password: string
 	phone?: string
 	role?: number
 	title?: string
+	tokenKey: string
+	updated?: IsoDateString
+	username: string
+	verified?: boolean
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type ColumnResponse<Texpand = unknown> = Required<ColumnRecord> & BaseSystemFields<Texpand>
 export type CommentResponse<Texpand = unknown> = Required<CommentRecord> & BaseSystemFields<Texpand>
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
@@ -293,6 +418,11 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	_authOrigins: AuthoriginsRecord
+	_externalAuths: ExternalauthsRecord
+	_mfas: MfasRecord
+	_otps: OtpsRecord
+	_superusers: SuperusersRecord
 	column: ColumnRecord
 	comment: CommentRecord
 	contract: ContractRecord
@@ -318,6 +448,11 @@ export type CollectionRecords = {
 }
 
 export type CollectionResponses = {
+	_authOrigins: AuthoriginsResponse
+	_externalAuths: ExternalauthsResponse
+	_mfas: MfasResponse
+	_otps: OtpsResponse
+	_superusers: SuperusersResponse
 	column: ColumnResponse
 	comment: CommentResponse
 	contract: ContractResponse
@@ -346,6 +481,11 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: '_authOrigins'): RecordService<AuthoriginsResponse>
+	collection(idOrName: '_externalAuths'): RecordService<ExternalauthsResponse>
+	collection(idOrName: '_mfas'): RecordService<MfasResponse>
+	collection(idOrName: '_otps'): RecordService<OtpsResponse>
+	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
 	collection(idOrName: 'column'): RecordService<ColumnResponse>
 	collection(idOrName: 'comment'): RecordService<CommentResponse>
 	collection(idOrName: 'contract'): RecordService<ContractResponse>

@@ -46,7 +46,7 @@ const Login = () => {
         <CardContent className={'w-[330px]'}>
           <Form
             schema={schema}
-            onSubmit={({ email, password }) =>
+            onSuccess={({ email, password }) =>
               login.mutate({ email, password })
             }
             defaultValues={{
@@ -56,15 +56,12 @@ const Login = () => {
             className={'flex flex-col gap-4'}
             actions={
               <div className={'flex w-full items-center justify-center'}>
-                <Button
-                  className={'w-full'}
-                  type={'submit'}
-                  loading={login.isPending}
-                >
+                <Button className={'w-full'} type={'submit'}>
                   Đăng nhập
                 </Button>
               </div>
             }
+            loading={login.isPending}
           >
             <Logo />
             <div className={'flex w-full items-center justify-center'}>

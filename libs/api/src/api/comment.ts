@@ -30,7 +30,7 @@ export const commentApi = router('comment', {
       return client.collection(Collections.Comment).create({
         content: comment,
         issue: issueId,
-        createdBy: client.authStore.model?.id
+        createdBy: client.authStore.record?.id
       });
     }
   }),
