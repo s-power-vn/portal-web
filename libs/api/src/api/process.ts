@@ -1,11 +1,11 @@
-import { router } from 'react-query-kit';
-
 import {
   Collections,
   ProcessRecord,
   ProcessResponse,
   client
-} from '../../../core/src';
+} from 'portal-core';
+
+import { router } from 'react-query-kit';
 
 export const processApi = router('process', {
   listFull: router.query({
