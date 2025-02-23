@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -27,11 +26,12 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { PageHeader } from '../../../components';
+import { useInvalidateQueries } from '../../../hooks';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
   const [search, setSearch] = useState<string | undefined>();
-  const queryClient = useQueryClient();
+  const invalidates = useInvalidateQueries();
 
   const listEmployees = api.employee.listFull.useSuspenseQuery({
     variables: search
@@ -40,11 +40,7 @@ const Component = () => {
   const deleteEmployee = api.employee.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhân viên thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.employee.listFull.getKey(search)
-        })
-      ]);
+      invalidates([api.employee.listFull.getKey(search)]);
     }
   });
 

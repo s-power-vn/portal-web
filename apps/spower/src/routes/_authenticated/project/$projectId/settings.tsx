@@ -50,7 +50,7 @@ const Component = () => {
       <div className={'w-1/2 p-6'}>
         <Form
           schema={schema}
-          onSubmit={values =>
+          onSuccess={values =>
             updateProject.mutate({
               ...values,
               id: projectId
@@ -59,7 +59,7 @@ const Component = () => {
           onCancel={() => router.history.back()}
           defaultValues={project.data}
           loading={updateProject.isPending || project.isLoading}
-          className={'mt-4 flex flex-col gap-3'}
+          className={'flex flex-col gap-3'}
         >
           <TextareaField
             schema={schema}

@@ -1,9 +1,4 @@
-import {
-  Collections,
-  ProcessRecord,
-  ProcessResponse,
-  client
-} from 'portal-core';
+import { Collections, ProcessResponse, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
@@ -16,7 +11,7 @@ export const processApi = router('process', {
     }
   }),
   create: router.mutation({
-    mutationFn: (data: ProcessRecord) => {
+    mutationFn: (data: Partial<ProcessResponse>) => {
       return client
         .collection<ProcessResponse>(Collections.Process)
         .create(data);

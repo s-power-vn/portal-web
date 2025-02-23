@@ -300,10 +300,13 @@ export enum ProcessTypeOptions {
 }
 export type ProcessRecord<Tprocess = unknown> = {
 	created?: IsoDateString
-	done: string
+	createdBy: RecordIdString
+	description?: string
+	done?: string
 	id: string
+	name: string
 	process?: null | Tprocess
-	type: ProcessTypeOptions
+	type?: ProcessTypeOptions
 	updated?: IsoDateString
 }
 
