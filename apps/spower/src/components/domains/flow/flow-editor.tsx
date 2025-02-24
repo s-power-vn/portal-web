@@ -17,7 +17,7 @@ import { GripVertical, PlusIcon } from 'lucide-react';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
-import { ThemeButton } from '@minhdtb/storeo-theme';
+import { Button } from '@minhdtb/storeo-theme';
 
 import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
@@ -637,14 +637,15 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         >
           <Background color="#CBD5E1" gap={15} size={2} />
           <Controls />
-          <div className="absolute bottom-4 right-4 z-10">
-            <ThemeButton
+          <div className="absolute left-4 top-4 z-10">
+            <Button
               size="icon"
               className="bg-appBlue text-appWhite hover:bg-appBlue/90"
               onClick={handleAddNode}
+              type="button"
             >
               <PlusIcon className="h-5 w-5" />
-            </ThemeButton>
+            </Button>
           </div>
         </ReactFlow>
       </div>
