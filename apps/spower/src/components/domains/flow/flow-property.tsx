@@ -92,70 +92,69 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="overflow-y-auto p-4">
-        {selectedFlow ? (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">
-                ID
-                <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                {...register('id')}
-                placeholder="Nhập ID flow"
-                disabled
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              {errors.id && (
-                <p className="text-destructive mt-1 text-sm">
-                  {errors.id.message}
-                </p>
-              )}
+      <div className="flex-1 overflow-y-auto">
+        <div className="space-y-4 p-4">
+          {selectedFlow ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">
+                  ID
+                  <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('id')}
+                  placeholder="Nhập ID flow"
+                  disabled
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                {errors.id && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.id.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Hành động</label>
+                <textarea
+                  {...register('action', {
+                    onBlur: () => handleSubmit(onSubmit)()
+                  })}
+                  placeholder="Nhập hành động"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                {errors.action && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.action.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  {...register('approve', {
+                    onChange: () => handleSubmit(onSubmit)()
+                  })}
+                  className="border-input bg-background ring-offset-background focus-visible:ring-ring h-4 w-4 rounded border focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
+              </div>
+            </form>
+          ) : (
+            <div className="text-muted-foreground text-center text-sm">
+              Chọn một flow để xem thông tin
             </div>
-            <div>
-              <label className="text-sm font-medium">Hành động</label>
-              <textarea
-                {...register('action')}
-                placeholder="Nhập hành động"
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              {errors.action && (
-                <p className="text-destructive mt-1 text-sm">
-                  {errors.action.message}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                {...register('approve')}
-                className="border-input bg-background ring-offset-background focus-visible:ring-ring h-4 w-4 rounded border focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
-            </div>
-          </form>
-        ) : (
-          <div className="text-muted-foreground text-center text-sm">
-            Chọn một flow để xem thông tin
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <Show when={selectedFlow}>
-        <div className="border-border flex items-center justify-between border-t p-4">
+        <div className="border-border bg-background sticky flex h-[70px] shrink-0 items-center justify-between border-t p-4">
           <Button
             type="button"
             variant="destructive"
             onClick={() => selectedFlow && onFlowDelete?.(selectedFlow.id)}
           >
             Xóa
-          </Button>
-          <Button
-            type="submit"
-            onClick={handleSubmit(onSubmit)}
-            disabled={!isDirty}
-          >
-            Chấp nhận
           </Button>
         </div>
       </Show>

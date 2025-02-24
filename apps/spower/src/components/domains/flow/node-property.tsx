@@ -115,6 +115,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     const newId = `p${newPoints.length + 1}`;
     newPoints.push({ id: newId, type: 'right' });
     setValue('points', newPoints, { shouldDirty: true });
+    handleSubmit(onSubmit)();
   };
 
   const { replace } = useFieldArray({
@@ -139,144 +140,139 @@ export const NodeProperty: FC<NodePropertyProps> = ({
   };
 
   return (
-    <div className="flex h-[calc(100vh-130px)] flex-col">
-      <div className="min-h-0 flex-1">
-        <div className="h-full overflow-y-auto">
-          <div className="space-y-4 p-4">
-            {selectedNode ? (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-                <div>
-                  <label className="text-sm font-medium">
-                    Tên nút
-                    <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    {...register('name', {
-                      onBlur: () => handleSubmit(onSubmit)()
-                    })}
-                    placeholder="Nhập tên node"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  {errors.name && (
-                    <p className="text-destructive mt-1 text-sm">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Mô tả</label>
-                  <textarea
-                    {...register('description', {
-                      onBlur: () => handleSubmit(onSubmit)()
-                    })}
-                    placeholder="Nhập mô tả"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  {errors.description && (
-                    <p className="text-destructive mt-1 text-sm">
-                      {errors.description.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Điều kiện</label>
-                  <textarea
-                    {...register('condition', {
-                      onBlur: () => handleSubmit(onSubmit)()
-                    })}
-                    placeholder="Nhập điều kiện"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  {errors.condition && (
-                    <p className="text-destructive mt-1 text-sm">
-                      {errors.condition.message}
-                    </p>
-                  )}
-                </div>
-                <div className="mt-2">
-                  <div className="flex items-end justify-between">
-                    <label className="text-sm font-medium">Điểm nối</label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addPoint}
-                      className="mb-2 h-8"
-                    >
-                      <Plus className="mr-1 h-4 w-4" />
-                      Thêm điểm nối
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    {points?.map((point, index) => (
-                      <div key={point.id} className="flex items-center gap-2">
-                        <Select
-                          value={point.type}
-                          onValueChange={(
-                            value: 'top' | 'bottom' | 'right' | 'left'
-                          ) => {
-                            const newPoints = [...points];
-                            newPoints[index] = { ...point, type: value };
-                            setValue('points', newPoints, {
-                              shouldDirty: true
-                            });
-                            handleSubmit(onSubmit)();
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn vị trí" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="top">
-                              <div className="flex items-center gap-2">
-                                <ArrowUpToLineIcon className="h-4 w-4" />
-                                Trên
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="bottom">
-                              <div className="flex items-center gap-2">
-                                <ArrowDownToLineIcon className="h-4 w-4" />
-                                Dưới
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="right">
-                              <div className="flex items-center gap-2">
-                                <ArrowRightToLineIcon className="h-4 w-4" />
-                                Phải
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="left">
-                              <div className="flex items-center gap-2">
-                                <ArrowLeftToLineIcon className="h-4 w-4" />
-                                Trái
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removePoint(index)}
-                          className="h-10 w-10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </form>
-            ) : (
-              <div className="text-muted-foreground text-center text-sm">
-                Chọn một node để xem thông tin
+    <div className="flex max-h-0 flex-col">
+      <div className="flex-1">
+        <div className="space-y-4 p-4">
+          {selectedNode ? (
+            <div className="space-y-2">
+              <div>
+                <label className="text-sm font-medium">
+                  Tên nút
+                  <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('name')}
+                  onBlur={() => handleSubmit(onSubmit)()}
+                  placeholder="Nhập tên node"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                {errors.name && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
-            )}
-          </div>
+              <div>
+                <label className="text-sm font-medium">Mô tả</label>
+                <textarea
+                  {...register('description')}
+                  onBlur={() => handleSubmit(onSubmit)()}
+                  placeholder="Nhập mô tả"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                {errors.description && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Điều kiện</label>
+                <textarea
+                  {...register('condition')}
+                  onBlur={() => handleSubmit(onSubmit)()}
+                  placeholder="Nhập điều kiện"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                {errors.condition && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.condition.message}
+                  </p>
+                )}
+              </div>
+              <div className="mt-2">
+                <div className="flex items-end justify-between">
+                  <label className="text-sm font-medium">Điểm nối</label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addPoint}
+                    className="mb-2 h-8"
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Thêm điểm nối
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {points?.map((point, index) => (
+                    <div key={point.id} className="flex items-center gap-2">
+                      <Select
+                        value={point.type}
+                        onValueChange={(
+                          value: 'top' | 'bottom' | 'right' | 'left'
+                        ) => {
+                          const newPoints = [...points];
+                          newPoints[index] = { ...point, type: value };
+                          setValue('points', newPoints, {
+                            shouldDirty: true
+                          });
+                          handleSubmit(onSubmit)();
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn vị trí" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="top">
+                            <div className="flex items-center gap-2">
+                              <ArrowUpToLineIcon className="h-4 w-4" />
+                              Trên
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="bottom">
+                            <div className="flex items-center gap-2">
+                              <ArrowDownToLineIcon className="h-4 w-4" />
+                              Dưới
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="right">
+                            <div className="flex items-center gap-2">
+                              <ArrowRightToLineIcon className="h-4 w-4" />
+                              Phải
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="left">
+                            <div className="flex items-center gap-2">
+                              <ArrowLeftToLineIcon className="h-4 w-4" />
+                              Trái
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removePoint(index)}
+                        className="h-10 w-10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-muted-foreground text-center text-sm">
+              Chọn một node để xem thông tin
+            </div>
+          )}
         </div>
       </div>
-      <div className="border-border bg-background sticky flex h-[70px] shrink-0 items-center justify-between border-t p-4">
+      <div className="border-border bg-background  flex  items-center justify-between border-t p-4">
         <Button
           type="button"
           variant="destructive"

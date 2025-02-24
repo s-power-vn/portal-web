@@ -42,6 +42,8 @@ export const NewProcessForm: FC<NewProcessFormProps> = props => {
       defaultValues={{
         name: ''
       }}
+      className="flex flex-col gap-3"
+      loading={createProcess.isPending}
     >
       <TextField schema={schema} name={'name'} title={'Tên quy trình'} />
     </Form>

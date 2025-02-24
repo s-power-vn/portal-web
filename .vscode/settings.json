@@ -9,7 +9,7 @@
         "source.organizeImports": "explicit",
         "source.fixAll": "explicit"
     },
-    "typescript.preferences.importModuleSpecifier": "shortest",
+    "typescript.preferences.importModuleSpecifier": "project-relative",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,

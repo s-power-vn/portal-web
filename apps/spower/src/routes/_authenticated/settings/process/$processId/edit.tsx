@@ -1,8 +1,12 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { createFileRoute, useParams, useRouter } from '@tanstack/react-router';
+import { api } from 'portal-api';
 
 import { useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
+
+import { EditProcessForm } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
   '/_authenticated/settings/process/$processId/edit'
@@ -13,6 +17,8 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
+  const { processId } = useParams({ from: Route.id });
+  const invalidates = useInvalidateQueries();
 
   return (
     <Modal
@@ -24,8 +30,19 @@ function RouteComponent() {
         history.back();
       }}
       preventOutsideClick={true}
+      className="h-full w-full max-w-[calc(80vw)]"
     >
-      <div>Hello "/_authenticated/settings/process/$processId/edit"!</div>
+      <EditProcessForm
+        onCancel={() => history.back()}
+        processId={processId}
+        onSuccess={() => {
+          invalidates([
+            api.process.listFull.getKey(),
+            api.process.getById.getKey(processId)
+          ]);
+          history.back();
+        }}
+      />
     </Modal>
   );
 }

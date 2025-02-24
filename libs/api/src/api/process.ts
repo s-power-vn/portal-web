@@ -10,6 +10,11 @@ export const processApi = router('process', {
         .getFullList();
     }
   }),
+  getById: router.query({
+    fetcher: (id: string) => {
+      return client.collection<ProcessResponse>(Collections.Process).getOne(id);
+    }
+  }),
   create: router.mutation({
     mutationFn: (data: Partial<ProcessResponse>) => {
       return client

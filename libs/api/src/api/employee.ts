@@ -66,14 +66,14 @@ export const employeeApi = router('employee', {
       })
   }),
   create: router.mutation({
-    mutationFn: (params: UserRecord & { password: string }) =>
+    mutationFn: (params: Partial<UserRecord> & { password: string }) =>
       client.send('/create-employee', {
         method: 'POST',
         body: params
       })
   }),
   update: router.mutation({
-    mutationFn: (params: UserRecord & { id: string }) =>
+    mutationFn: (params: Partial<UserRecord> & { id: string }) =>
       client.collection(Collections.User).update(params.id, {
         name: params.name,
         department: params.department,
