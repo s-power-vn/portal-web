@@ -75,7 +75,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values => {
+      onSuccess={values => {
         createEmployee.mutate({
           ...values,
           title:

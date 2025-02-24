@@ -1,5 +1,6 @@
 import {
   Background,
+  Controls,
   MarkerType,
   NodeTypes,
   ReactFlow,
@@ -11,11 +12,12 @@ import {
   useUpdateNodeInternals
 } from '@xyflow/react';
 import _ from 'lodash';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, PlusIcon } from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
+import { ThemeButton } from '@minhdtb/storeo-theme';
 
 import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
@@ -105,7 +107,7 @@ const nodeTypes: NodeTypes = {
 };
 
 export type FlowEditorProps = {
-  value: ProcessData;
+  value?: ProcessData;
   onChange?: (value: ProcessData) => void;
 };
 
@@ -113,7 +115,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const { fitView } = useReactFlow();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
-  const [flowData, setFlowData] = useState(value);
+  const [flowData, setFlowData] = useState<ProcessData>(
+    () => value || { nodes: [], flows: [] }
+  );
   const [showSidebar, setShowSidebar] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
@@ -131,7 +135,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const fitViewOptions = useMemo(
     () => ({
       duration: 200,
-      padding: 0.2
+      padding: 0.2,
+      maxZoom: 1
     }),
     []
   );
@@ -143,13 +148,15 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   }, [fitView, fitViewOptions]);
 
   const nodesById = useMemo(
-    () => Object.fromEntries(flowData.nodes.map(node => [node.id, node])),
-    [flowData.nodes]
+    () =>
+      Object.fromEntries((flowData?.nodes || []).map(node => [node.id, node])),
+    [flowData?.nodes]
   );
 
   const flowsById = useMemo(
-    () => Object.fromEntries(flowData.flows.map(flow => [flow.id, flow])),
-    [flowData.flows]
+    () =>
+      Object.fromEntries((flowData?.flows || []).map(flow => [flow.id, flow])),
+    [flowData?.flows]
   );
 
   const handleNodeClick = useCallback(
@@ -186,7 +193,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   }, [handleFitView]);
 
   const updateFlowData = useCallback(
-    (updatedData: typeof flowData) => {
+    (updatedData: ProcessData) => {
       if (!_.isEqual(flowData, updatedData)) {
         setFlowData(updatedData);
         onChange?.(updatedData);
@@ -196,6 +203,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   );
 
   const onLayout = useCallback(async () => {
+    if (!flowData) return;
+
     const newEdges = getEdges(flowData, selectedFlow);
     const newNodes = getNodes(flowData, selectedNode, sourcePoint).map(node => {
       const existingNode = nodes.find(n => n.id === node.id);
@@ -261,8 +270,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
                 }
               };
 
-              const updatedData = {
+              const updatedData: ProcessData = {
                 ...flowData,
+                nodes: flowData.nodes,
                 flows: [...flowData.flows, newFlow]
               };
 
@@ -297,8 +307,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         flow.id === flowId ? { ...flow, ...updates } : flow
       );
 
-      const updatedData = {
+      const updatedData: ProcessData = {
         ...flowData,
+        nodes: flowData.nodes,
         flows: updatedFlows
       };
 
@@ -337,7 +348,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         }
       }
 
-      const updatedData = {
+      const updatedData: ProcessData = {
         ...flowData,
         nodes: updatedNodes,
         flows: updatedFlows
@@ -392,7 +403,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         return node;
       });
 
-      const updatedData = {
+      const updatedData: ProcessData = {
         ...flowData,
         nodes: updatedNodes,
         flows: updatedFlows
@@ -479,8 +490,9 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         }
       };
 
-      const updatedData = {
+      const updatedData: ProcessData = {
         ...flowData,
+        nodes: flowData.nodes,
         flows: [...flowData.flows, newFlow]
       };
 
@@ -544,6 +556,55 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     };
   }, [handleFitView]);
 
+  const handleAddNode = useCallback(() => {
+    const newNodeId = `n${flowData.nodes.length + 1}`;
+    const newNode: Node = {
+      id: newNodeId,
+      name: `Nút ${flowData.nodes.length + 1}`,
+      x: 0,
+      y: 0,
+      points: []
+    };
+
+    const updatedData: ProcessData = {
+      ...flowData,
+      nodes: [...flowData.nodes, newNode]
+    };
+
+    updateFlowData(updatedData);
+    onLayout();
+  }, [flowData, updateFlowData, onLayout]);
+
+  const handleNodesChange = useCallback(
+    (changes: any[]) => {
+      onNodesChange(changes);
+
+      // Update node positions in flowData when nodes are dragged
+      changes.forEach(change => {
+        if (change.type === 'position' && change.dragging && change.position) {
+          const x =
+            typeof change.position.x === 'number' ? change.position.x : 0;
+          const y =
+            typeof change.position.y === 'number' ? change.position.y : 0;
+
+          if (!Number.isNaN(x) && !Number.isNaN(y)) {
+            const updatedNodes = flowData.nodes.map(node =>
+              node.id === change.id ? { ...node, x, y } : node
+            );
+
+            const updatedData: ProcessData = {
+              ...flowData,
+              nodes: updatedNodes
+            };
+
+            updateFlowData(updatedData);
+          }
+        }
+      });
+    },
+    [flowData, updateFlowData]
+  );
+
   return (
     <div className="flex h-full overflow-hidden rounded-lg border">
       <div className="flex-1 overflow-hidden border-r" ref={ref}>
@@ -551,7 +612,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={handleNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           onEdgeClick={handleEdgeClick}
@@ -575,8 +636,15 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           }}
         >
           <Background color="#CBD5E1" gap={15} size={2} />
-          <div className="absolute bottom-2 left-2 rounded bg-white/50 p-2 text-xs text-gray-500">
-            Sử dụng chuột để phóng to • Kéo để di chuyển
+          <Controls />
+          <div className="absolute bottom-4 right-4 z-10">
+            <ThemeButton
+              size="icon"
+              className="bg-appBlue text-appWhite hover:bg-appBlue/90"
+              onClick={handleAddNode}
+            >
+              <PlusIcon className="h-5 w-5" />
+            </ThemeButton>
           </div>
         </ReactFlow>
       </div>
@@ -592,9 +660,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
             <GripVertical className="text-muted-foreground/50 h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
           <PropertySidebar
-            title={selectedNode ? 'Thuộc tính nút' : 'Thuộc tính quy trình'}
             onClose={handleCloseSidebar}
             width={sidebarWidth}
+            onAddNode={handleAddNode}
+            title={
+              selectedNode
+                ? 'Thuộc tính nút'
+                : selectedFlow
+                  ? 'Thuộc tính quy trình'
+                  : ''
+            }
           >
             {selectedNode ? (
               <NodeProperty

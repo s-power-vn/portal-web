@@ -1,4 +1,5 @@
 import { api } from 'portal-api';
+import { client } from 'portal-core';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -7,6 +8,7 @@ import {
   BusinessFormProps,
   Form,
   TextField,
+  error,
   success
 } from '@minhdtb/storeo-theme';
 
@@ -21,11 +23,28 @@ export const NewProcessForm: FC<NewProcessFormProps> = props => {
     onSuccess: () => {
       success('Quy trình đã được tạo thành công');
       props.onSuccess?.();
+    },
+    onError: () => {
+      error('Tạo quy trình thất bại');
     }
   });
 
   return (
-    <Form schema={schema} {...props}>
+    <Form
+      schema={schema}
+      {...props}
+      onSuccess={values =>
+        createProcess.mutate({
+          ...values,
+          createdBy: client.authStore.record?.id
+        })
+      }
+      defaultValues={{
+        name: ''
+      }}
+      className="flex flex-col gap-3"
+      loading={createProcess.isPending}
+    >
       <TextField schema={schema} name={'name'} title={'Tên quy trình'} />
     </Form>
   );

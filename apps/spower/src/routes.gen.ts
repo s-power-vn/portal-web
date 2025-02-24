@@ -39,6 +39,7 @@ import { Route as AuthenticatedProjectProjectIdContractImport } from './routes/_
 import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
 import { Route as AuthenticatedProjectProjectIdContractIndexImport } from './routes/_authenticated/project/$projectId/contract/index'
 import { Route as AuthenticatedSettingsSuppliersSupplierIdEditImport } from './routes/_authenticated/settings/suppliers/$supplierId/edit'
+import { Route as AuthenticatedSettingsProcessProcessIdEditImport } from './routes/_authenticated/settings/process/$processId/edit'
 import { Route as AuthenticatedSettingsMaterialsMaterialIdEditImport } from './routes/_authenticated/settings/materials/$materialId/edit'
 import { Route as AuthenticatedSettingsEmployeesEmployeeIdEditImport } from './routes/_authenticated/settings/employees/$employeeId/edit'
 import { Route as AuthenticatedSettingsCustomersCustomerIdEditImport } from './routes/_authenticated/settings/customers/$customerId/edit'
@@ -241,6 +242,13 @@ const AuthenticatedSettingsSuppliersSupplierIdEditRoute =
     id: '/$supplierId/edit',
     path: '/$supplierId/edit',
     getParentRoute: () => AuthenticatedSettingsSuppliersRoute,
+  } as any)
+
+const AuthenticatedSettingsProcessProcessIdEditRoute =
+  AuthenticatedSettingsProcessProcessIdEditImport.update({
+    id: '/$processId/edit',
+    path: '/$processId/edit',
+    getParentRoute: () => AuthenticatedSettingsProcessRoute,
   } as any)
 
 const AuthenticatedSettingsMaterialsMaterialIdEditRoute =
@@ -576,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsMaterialsMaterialIdEditImport
       parentRoute: typeof AuthenticatedSettingsMaterialsImport
     }
+    '/_authenticated/settings/process/$processId/edit': {
+      id: '/_authenticated/settings/process/$processId/edit'
+      path: '/$processId/edit'
+      fullPath: '/settings/process/$processId/edit'
+      preLoaderRoute: typeof AuthenticatedSettingsProcessProcessIdEditImport
+      parentRoute: typeof AuthenticatedSettingsProcessImport
+    }
     '/_authenticated/settings/suppliers/$supplierId/edit': {
       id: '/_authenticated/settings/suppliers/$supplierId/edit'
       path: '/$supplierId/edit'
@@ -837,11 +852,14 @@ const AuthenticatedSettingsMaterialsRouteWithChildren =
 
 interface AuthenticatedSettingsProcessRouteChildren {
   AuthenticatedSettingsProcessNewRoute: typeof AuthenticatedSettingsProcessNewRoute
+  AuthenticatedSettingsProcessProcessIdEditRoute: typeof AuthenticatedSettingsProcessProcessIdEditRoute
 }
 
 const AuthenticatedSettingsProcessRouteChildren: AuthenticatedSettingsProcessRouteChildren =
   {
     AuthenticatedSettingsProcessNewRoute: AuthenticatedSettingsProcessNewRoute,
+    AuthenticatedSettingsProcessProcessIdEditRoute:
+      AuthenticatedSettingsProcessProcessIdEditRoute,
   }
 
 const AuthenticatedSettingsProcessRouteWithChildren =
@@ -949,6 +967,7 @@ export interface FileRoutesByFullPath {
   '/settings/customers/$customerId/edit': typeof AuthenticatedSettingsCustomersCustomerIdEditRoute
   '/settings/employees/$employeeId/edit': typeof AuthenticatedSettingsEmployeesEmployeeIdEditRoute
   '/settings/materials/$materialId/edit': typeof AuthenticatedSettingsMaterialsMaterialIdEditRoute
+  '/settings/process/$processId/edit': typeof AuthenticatedSettingsProcessProcessIdEditRoute
   '/settings/suppliers/$supplierId/edit': typeof AuthenticatedSettingsSuppliersSupplierIdEditRoute
   '/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
@@ -986,6 +1005,7 @@ export interface FileRoutesByTo {
   '/settings/customers/$customerId/edit': typeof AuthenticatedSettingsCustomersCustomerIdEditRoute
   '/settings/employees/$employeeId/edit': typeof AuthenticatedSettingsEmployeesEmployeeIdEditRoute
   '/settings/materials/$materialId/edit': typeof AuthenticatedSettingsMaterialsMaterialIdEditRoute
+  '/settings/process/$processId/edit': typeof AuthenticatedSettingsProcessProcessIdEditRoute
   '/settings/suppliers/$supplierId/edit': typeof AuthenticatedSettingsSuppliersSupplierIdEditRoute
   '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
@@ -1032,6 +1052,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/customers/$customerId/edit': typeof AuthenticatedSettingsCustomersCustomerIdEditRoute
   '/_authenticated/settings/employees/$employeeId/edit': typeof AuthenticatedSettingsEmployeesEmployeeIdEditRoute
   '/_authenticated/settings/materials/$materialId/edit': typeof AuthenticatedSettingsMaterialsMaterialIdEditRoute
+  '/_authenticated/settings/process/$processId/edit': typeof AuthenticatedSettingsProcessProcessIdEditRoute
   '/_authenticated/settings/suppliers/$supplierId/edit': typeof AuthenticatedSettingsSuppliersSupplierIdEditRoute
   '/_authenticated/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
   '/_authenticated/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
@@ -1079,6 +1100,7 @@ export interface FileRouteTypes {
     | '/settings/customers/$customerId/edit'
     | '/settings/employees/$employeeId/edit'
     | '/settings/materials/$materialId/edit'
+    | '/settings/process/$processId/edit'
     | '/settings/suppliers/$supplierId/edit'
     | '/project/$projectId/contract/'
     | '/project/$projectId/issues/'
@@ -1115,6 +1137,7 @@ export interface FileRouteTypes {
     | '/settings/customers/$customerId/edit'
     | '/settings/employees/$employeeId/edit'
     | '/settings/materials/$materialId/edit'
+    | '/settings/process/$processId/edit'
     | '/settings/suppliers/$supplierId/edit'
     | '/project/$projectId/contract'
     | '/project/$projectId/issues'
@@ -1159,6 +1182,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/customers/$customerId/edit'
     | '/_authenticated/settings/employees/$employeeId/edit'
     | '/_authenticated/settings/materials/$materialId/edit'
+    | '/_authenticated/settings/process/$processId/edit'
     | '/_authenticated/settings/suppliers/$supplierId/edit'
     | '/_authenticated/project/$projectId/contract/'
     | '/_authenticated/project/$projectId/issues/'
@@ -1280,7 +1304,8 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/settings/process.tsx",
       "parent": "/_authenticated/settings",
       "children": [
-        "/_authenticated/settings/process/new"
+        "/_authenticated/settings/process/new",
+        "/_authenticated/settings/process/$processId/edit"
       ]
     },
     "/_authenticated/settings/suppliers": {
@@ -1393,6 +1418,10 @@ export const routeTree = rootRoute
     "/_authenticated/settings/materials/$materialId/edit": {
       "filePath": "_authenticated/settings/materials/$materialId/edit.tsx",
       "parent": "/_authenticated/settings/materials"
+    },
+    "/_authenticated/settings/process/$processId/edit": {
+      "filePath": "_authenticated/settings/process/$processId/edit.tsx",
+      "parent": "/_authenticated/settings/process"
     },
     "/_authenticated/settings/suppliers/$supplierId/edit": {
       "filePath": "_authenticated/settings/suppliers/$supplierId/edit.tsx",

@@ -8,38 +8,36 @@ import { Modal } from '@minhdtb/storeo-theme';
 import { NewProcessForm } from '../../../../components';
 import { useInvalidateQueries } from '../../../../hooks';
 
-const Component = () => {
+export const Route = createFileRoute('/_authenticated/settings/process/new')({
+  component: RouteComponent
+});
+
+function RouteComponent() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
 
-  const onSuccessHandler = useCallback(async () => {
-    setOpen(false);
+  const handleSuccess = useCallback(() => {
     history.back();
     invalidates([api.process.listFull.getKey()]);
-  }, [history]);
+  }, [history, invalidates]);
 
-  const onCancelHandler = useCallback(() => {
-    setOpen(false);
+  const handleCancel = useCallback(() => {
     history.back();
   }, [history]);
 
   return (
     <Modal
+      id={'process-new'}
       title={'Thêm quy trình'}
-      preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-process-modal'}
+      preventOutsideClick={true}
     >
-      <NewProcessForm onSuccess={onSuccessHandler} onCancel={onCancelHandler} />
+      <NewProcessForm onSuccess={handleSuccess} onCancel={handleCancel} />
     </Modal>
   );
-};
-
-export const Route = createFileRoute('/_authenticated/settings/process/new')({
-  component: Component
-});
+}

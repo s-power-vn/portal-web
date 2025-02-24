@@ -79,7 +79,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSuccess={values =>
         updateEmployee.mutate({
           ...values,
           id: props.employeeId,
