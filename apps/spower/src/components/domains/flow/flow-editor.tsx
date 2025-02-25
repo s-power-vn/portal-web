@@ -323,9 +323,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
-      const updatedNodes = flowData.nodes.map(node =>
-        node.id === nodeId ? { ...node, ...updates } : node
-      );
+      let updatedNodes = flowData.nodes.map(node => {
+        if (node.id === nodeId) {
+          return { ...node, ...updates };
+        }
+        // If current node is being marked as done, set all other nodes to not done
+        if (updates.done === true) {
+          return { ...node, done: false };
+        }
+        return node;
+      });
 
       let updatedFlows = flowData.flows;
 
@@ -561,6 +568,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     const newNode: Node = {
       id: newNodeId,
       name: `Nút ${flowData.nodes.length + 1}`,
+      done: false,
       x: 0,
       y: 0,
       points: []

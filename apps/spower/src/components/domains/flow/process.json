@@ -183,6 +183,7 @@
         "name": "Hoàn thành",
         "description": "",
         "condition": "role = 3",
+        "done": true,
         "x": 800,
         "y": 300,
         "points": [
@@ -586,6 +587,8 @@
         "id": "n7",
         "name": "Hoàn thành",
         "description": "",
+        "condition": "",
+        "done": true,
         "x": 200,
         "y": 400,
         "points": [

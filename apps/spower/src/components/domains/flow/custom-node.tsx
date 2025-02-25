@@ -15,6 +15,7 @@ export type CustomNodeProps = NodeProps<
     description: string;
     active: boolean;
     isApprove: boolean;
+    done: boolean;
     selected: boolean;
     clicked: boolean;
     points: {
@@ -75,6 +76,9 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
         <span>{data.name}</span>
         <Show when={data.isApprove}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
+        </Show>
+        <Show when={data.done}>
+          <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
         </Show>
       </div>
       {leftPoints.reverse().map((point, index) => (

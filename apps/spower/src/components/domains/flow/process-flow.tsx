@@ -57,12 +57,15 @@ export const getNodeFromFlows = (
 };
 
 export const isDoneNode = (type: 'request' | 'price', nodeId?: string) => {
-  return nodeId === processData[type].done;
+  if (!nodeId) return false;
+  const node = getNode(type, nodeId);
+  return node?.done || false;
 };
 
 export const getDoneFlows = (type: 'request' | 'price') => {
-  return processData[type].flows.filter(
-    it => it.to.node === processData[type].done
+  const doneNodes = processData[type].nodes.filter(node => node.done);
+  return processData[type].flows.filter(flow =>
+    doneNodes.some(node => flow.to.node === node.id)
   );
 };
 
@@ -91,6 +94,7 @@ const CustomNode = ({
     description: string;
     active: boolean;
     isApprove: boolean;
+    done: boolean;
     sources: {
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
@@ -123,8 +127,6 @@ const CustomNode = ({
     points.filter(point => point.type === 'bottom')
   );
 
-  const isDoneNode = data.nodeId === processData[data.type].done;
-
   return (
     <>
       <div
@@ -140,7 +142,7 @@ const CustomNode = ({
         <Show when={data.isApprove}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
         </Show>
-        <Show when={isDoneNode}>
+        <Show when={data.done}>
           <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
         </Show>
       </div>
@@ -195,7 +197,7 @@ function getNodes(type: 'request' | 'price', status?: string) {
   const extract = extractStatus(status);
 
   return data.nodes.map(node => {
-    const { id, x, y, points, ...rest } = node;
+    const { id, x, y, points, done, ...rest } = node;
 
     const mappedPoints = points.map(point => ({
       ...point,
@@ -239,6 +241,7 @@ function getNodes(type: 'request' | 'price', status?: string) {
         nodeId: id,
         type,
         isApprove,
+        done,
         sources,
         targets,
         active: extract?.to ? id === extract.to : id === extract?.from

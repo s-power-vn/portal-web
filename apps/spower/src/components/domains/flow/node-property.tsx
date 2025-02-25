@@ -28,6 +28,7 @@ type NodeFormValues = {
   name: string;
   description: string;
   condition: string;
+  done: boolean;
   points: Point[];
 };
 
@@ -37,6 +38,7 @@ const schema = yup
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
     condition: yup.string().default(''),
+    done: yup.boolean().default(false),
     points: yup
       .array()
       .of(
@@ -79,6 +81,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       condition: '',
+      done: false,
       points: []
     }
   });
@@ -93,6 +96,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         condition: rest.condition || '',
+        done: rest.done || false,
         points: Array.isArray(rest.points) ? rest.points : []
       };
       reset(formValues);
@@ -190,6 +194,21 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                     {errors.condition.message}
                   </p>
                 )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Trạng thái</label>
+                <div className="mt-2 flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    {...register('done')}
+                    onChange={e => {
+                      setValue('done', e.target.checked);
+                      handleSubmit(onSubmit)();
+                    }}
+                    className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm">Đã hoàn thành</span>
+                </div>
               </div>
               <div className="mt-2">
                 <div className="flex items-end justify-between">
