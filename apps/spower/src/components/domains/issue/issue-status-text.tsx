@@ -1,18 +1,26 @@
 import { ArrowRight } from 'lucide-react';
+import { api } from 'portal-api';
 
 import type { FC } from 'react';
 
-import { extractStatus, getNode } from '../flow';
+import { ProcessData, extractStatus, getNode } from '../flow';
 
 export type IssueStatusTextProps = {
-  type: 'request' | 'price';
-  status: string;
+  issueId: string;
 };
 
 export const IssueStatusText: FC<IssueStatusTextProps> = props => {
-  const extracted = extractStatus(props.status);
-  const from = getNode(props.type, extracted?.from);
-  const to = getNode(props.type, extracted?.to);
+  const issue = api.issue.byId.useSuspenseQuery({
+    variables: props.issueId
+  });
+
+  const process = api.process.byType.useSuspenseQuery({
+    variables: issue.data.expand?.type.id
+  });
+
+  const extracted = extractStatus(issue.data.status);
+  const from = getNode(process.data.process as ProcessData, extracted?.from);
+  const to = getNode(process.data.process as ProcessData, extracted?.to);
 
   return (
     <div className={'flex items-center gap-1'}>

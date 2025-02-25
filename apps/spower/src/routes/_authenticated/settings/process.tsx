@@ -5,12 +5,13 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { PlusIcon, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { ProcessResponse, formatDate } from 'portal-core';
 
 import { useCallback } from 'react';
 
+import { Match, Switch } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,
@@ -69,10 +70,50 @@ function RouteComponent() {
       header: () => 'Tên quy trình',
       footer: info => info.column.id
     }),
+    columnHelper.accessor('type', {
+      cell: info => (
+        <div className={'flex items-center whitespace-nowrap'}>
+          <Switch
+            fallback={
+              <span
+                className={
+                  'rounded-full bg-gray-500 px-2 py-1 text-xs text-white'
+                }
+              >
+                Không xác định
+              </span>
+            }
+          >
+            <Match when={info.getValue() === 'Request'}>
+              <span
+                className={
+                  'rounded-full bg-red-500 px-2 py-1 text-xs text-white'
+                }
+              >
+                Yêu cầu mua hàng
+              </span>
+            </Match>
+            <Match when={info.getValue() === 'Price'}>
+              <span
+                className={
+                  'rounded-full bg-blue-500 px-2 py-1 text-xs text-white'
+                }
+              >
+                Báo giá
+              </span>
+            </Match>
+          </Switch>
+        </div>
+      ),
+      header: () => 'Đối tượng áp dụng',
+      footer: info => info.column.id,
+      size: 120
+    }),
     columnHelper.accessor('createdBy', {
       cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
       header: () => 'Người tạo',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 150
     }),
     columnHelper.accessor('created', {
       cell: info => formatDate(info.getValue()),
@@ -92,9 +133,7 @@ function RouteComponent() {
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <Button className={'h-6 px-3'}>
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
+            <Button className={'flex h-6 gap-1 px-3 text-xs'}>Áp dụng</Button>
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}

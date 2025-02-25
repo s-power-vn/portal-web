@@ -1,6 +1,6 @@
 import { CalendarIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, IssueTypeOptions, getImageUrl } from 'portal-core';
+import { Collections, getImageUrl } from 'portal-core';
 
 import type { FC } from 'react';
 
@@ -51,14 +51,7 @@ export const IssueComment: FC<IssueCommentProps> = props => {
                       <CalendarIcon className={'h-3 w-3'} />
                       {timeSince(new Date(Date.parse(it.created)))}
                     </div>
-                    <IssueStatusText
-                      status={it.status}
-                      type={
-                        it.expand.issue.type === IssueTypeOptions.Request
-                          ? 'request'
-                          : 'price'
-                      }
-                    />
+                    <IssueStatusText issueId={props.issueId} />
                   </div>
                   <div className={'text-sm'}>{it.content}</div>
                 </div>

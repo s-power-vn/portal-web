@@ -3,8 +3,12 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { CircleDollarSignIcon, FilesIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
-import type { IssueFileResponse, IssueResponse } from 'portal-core';
-import { IssueTypeOptions } from 'portal-core';
+import {
+  type IssueFileResponse,
+  type IssueResponse,
+  ObjectResponse,
+  ObjectTypeOptions
+} from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
@@ -19,6 +23,7 @@ import {
 type IssueWithExpand = IssueResponse & {
   expand?: {
     issueFile_via_issue: IssueFileResponse[];
+    type: ObjectResponse;
   };
 };
 
@@ -46,7 +51,11 @@ const Component = () => {
       cell: info => (
         <div className={'flex w-full min-w-0 items-center gap-2'}>
           <Switch fallback={<span></span>}>
-            <Match when={info.row.original.type === IssueTypeOptions.Price}>
+            <Match
+              when={
+                info.row.original.expand?.type.type === ObjectTypeOptions.Price
+              }
+            >
               <CircleDollarSignIcon
                 className={'h-5 w-5 flex-shrink-0 text-blue-500'}
               />

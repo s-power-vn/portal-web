@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from 'portal-api';
-import { IssueTypeOptions, client } from 'portal-core';
+import { client } from 'portal-core';
 
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,6 +11,7 @@ import { Button, Checkbox, error, showModal } from '@minhdtb/storeo-theme';
 import { ForwardIssueForm, ReturnIssueForm } from '.';
 import { useInvalidateQueries } from '../../../hooks';
 import {
+  ProcessData,
   extractStatus,
   getNode,
   getNodeFromFlows,
@@ -49,24 +50,30 @@ export const IssueAction: FC<IssueActionProps> = props => {
     }
   });
 
+  const issueObject = issue.data.expand?.type;
+
+  const process = api.process.byType.useSuspenseQuery({
+    variables: issueObject?.id
+  });
+
   const currentNode = useMemo(() => {
-    const type =
-      issue.data.type === IssueTypeOptions.Request ? 'request' : 'price';
     const extracted = extractStatus(issue.data.status);
     const currentNode = extracted?.to ? extracted.to : extracted?.from;
-    return currentNode ? getNode(type, currentNode) : undefined;
-  }, [issue.data.status]);
+    return currentNode
+      ? getNode(process.data.process as ProcessData, currentNode)
+      : undefined;
+  }, [issue.data.status, process.data]);
 
   const toList = useMemo(() => {
-    const type =
-      issue.data.type === IssueTypeOptions.Request ? 'request' : 'price';
-
     if (!currentNode) {
       return [];
     }
 
-    return getNodeFromFlows(type, currentNode.id).map(it => {
-      const nodeInfo = getNode(type, it.to.node);
+    return getNodeFromFlows(
+      process.data.process as ProcessData,
+      currentNode.id
+    ).map(it => {
+      const nodeInfo = getNode(process.data.process as ProcessData, it.to.node);
 
       return {
         ...extractStatus(it.id),
@@ -136,12 +143,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
         }
       }
 
-      if (
-        isDoneNode(
-          issue.data.type === IssueTypeOptions.Request ? 'request' : 'price',
-          flow.to
-        )
-      ) {
+      if (isDoneNode(process.data.process as ProcessData, flow.to)) {
         showModal({
           title: flow.action ?? `Hoàn thành`,
           children: ({ close }) => {
@@ -218,7 +220,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
   );
 
   const isApproveNodeActive = isApproveNode(
-    issue.data.type === IssueTypeOptions.Request ? 'request' : 'price',
+    process.data.process as ProcessData,
     currentNode?.id
   );
 
@@ -249,12 +251,8 @@ export const IssueAction: FC<IssueActionProps> = props => {
                 key={item.to}
                 onClick={() => forwardNodeClick(item)}
                 className={cn(
-                  isDoneNode(
-                    issue.data.type === IssueTypeOptions.Request
-                      ? 'request'
-                      : 'price',
-                    item.to
-                  ) && 'bg-appSuccess'
+                  isDoneNode(process.data.process as ProcessData, item.to) &&
+                    'bg-appSuccess'
                 )}
               >
                 {item.action ?? `Chuyển ${item.toNode?.name}`}

@@ -1,7 +1,7 @@
 import { api } from 'portal-api';
 import {
   IssueDeadlineStatusOptions,
-  IssueTypeOptions,
+  ObjectTypeOptions,
   client
 } from 'portal-core';
 
@@ -37,10 +37,12 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     >
       <IssueSummary issueId={issueId} />
       <Switch fallback={<div className={`p-2`}></div>}>
-        <Match when={issue.data.type === IssueTypeOptions.Request}>
+        <Match
+          when={issue.data.expand?.type.type === ObjectTypeOptions.Request}
+        >
           <RequestDisplay issueId={issueId} />
         </Match>
-        <Match when={issue.data.type === IssueTypeOptions.Price}>
+        <Match when={issue.data.expand?.type.type === ObjectTypeOptions.Price}>
           <PriceDisplay issueId={issueId} />
         </Match>
       </Switch>

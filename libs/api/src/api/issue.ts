@@ -1,7 +1,8 @@
 import type {
   IssueFileResponse,
   IssueRecord,
-  IssueResponse
+  IssueResponse,
+  ObjectResponse
 } from 'portal-core';
 import { Collections, client } from 'portal-core';
 
@@ -15,6 +16,7 @@ export type IssueData = IssueResponse & {
     createdBy: UserData;
     assignee: UserData;
     issueFile_via_issue: IssueFileResponse[];
+    type: ObjectResponse;
   };
   approver?: Record<string, string>[];
 };
@@ -28,7 +30,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `type, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -41,7 +43,7 @@ export const issueApi = router('issue', {
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `type, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -54,7 +56,7 @@ export const issueApi = router('issue', {
         && title ~ "${search?.filter ?? ''}"
         && type = "Request"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `type, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -67,14 +69,14 @@ export const issueApi = router('issue', {
         && title ~ "${search?.filter ?? ''}"
         && type = "Price"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `type, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, assignee, issueFile_via_issue`
+        expand: `createdBy, assignee, type, issueFile_via_issue`
       })
   }),
   updateTitle: router.mutation({

@@ -10,9 +10,18 @@ export const processApi = router('process', {
         .getFullList();
     }
   }),
-  getById: router.query({
+  byId: router.query({
     fetcher: (id: string) => {
       return client.collection<ProcessResponse>(Collections.Process).getOne(id);
+    }
+  }),
+  byType: router.query({
+    fetcher: (objectId: string) => {
+      return client
+        .collection<ProcessResponse>(Collections.Process)
+        .getFirstListItem(objectId, {
+          filter: `type = "${objectId}"`
+        });
     }
   }),
   create: router.mutation({
@@ -35,6 +44,15 @@ export const processApi = router('process', {
   delete: router.mutation({
     mutationFn: (id: string) => {
       return client.collection<ProcessResponse>(Collections.Process).delete(id);
+    }
+  }),
+  apply: router.mutation({
+    mutationFn: ({ id, type }: { id: string; type: 'Request' | 'Price' }) => {
+      return client
+        .collection<ProcessResponse>(Collections.Process)
+        .update(id, {
+          type
+        });
     }
   })
 });

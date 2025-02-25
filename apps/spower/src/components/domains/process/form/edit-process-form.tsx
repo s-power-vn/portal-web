@@ -30,7 +30,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
   processId,
   ...props
 }) => {
-  const process = api.process.getById.useSuspenseQuery({
+  const process = api.process.byId.useSuspenseQuery({
     variables: processId
   });
 
