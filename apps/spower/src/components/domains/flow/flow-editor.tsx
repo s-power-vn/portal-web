@@ -118,7 +118,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const [flowData, setFlowData] = useState<ProcessData>(
     () => value || { nodes: [], flows: [] }
   );
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
   const startXRef = useRef<number>(0);
@@ -587,30 +587,33 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     (changes: any[]) => {
       onNodesChange(changes);
 
-      // Update node positions in flowData when nodes are dragged
-      changes.forEach(change => {
-        if (change.type === 'position' && change.dragging && change.position) {
-          const x =
-            typeof change.position.x === 'number' ? change.position.x : 0;
-          const y =
-            typeof change.position.y === 'number' ? change.position.y : 0;
+      // Only handle position changes when dragging ends
+      const positionChanges = changes.filter(
+        change => change.type === 'position' && !change.dragging
+      );
 
-          if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            const updatedNodes = flowData.nodes.map(node =>
-              node.id === change.id ? { ...node, x, y } : node
-            );
-
-            const updatedData: ProcessData = {
-              ...flowData,
-              nodes: updatedNodes
+      if (positionChanges.length > 0) {
+        const updatedNodes = flowData.nodes.map(node => {
+          const change = positionChanges.find(c => c.id === node.id);
+          if (change?.position) {
+            return {
+              ...node,
+              x: change.position.x,
+              y: change.position.y
             };
-
-            updateFlowData(updatedData);
           }
-        }
-      });
+          return node;
+        });
+
+        const updatedData: ProcessData = {
+          ...flowData,
+          nodes: updatedNodes
+        };
+
+        updateFlowData(updatedData);
+      }
     },
-    [flowData, updateFlowData]
+    [flowData, updateFlowData, onNodesChange]
   );
 
   return (
@@ -671,7 +674,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           <PropertySidebar
             onClose={handleCloseSidebar}
             width={sidebarWidth}
-            onAddNode={handleAddNode}
             title={
               selectedNode
                 ? 'Thuộc tính nút'
