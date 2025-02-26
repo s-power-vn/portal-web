@@ -112,7 +112,8 @@ export type FlowEditorProps = {
 };
 
 export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
-  const { fitView } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
+  const { fitView } = reactFlowInstance;
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState<ProcessData>(
@@ -554,7 +555,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const memoizedNodeTypes = useMemo(() => nodeTypes, []);
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.addEventListener('resize', handleFitView);
@@ -565,12 +566,31 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const handleAddNode = useCallback(() => {
     const newNodeId = `n${flowData.nodes.length + 1}`;
+
+    // Get the current viewport to position the node at the center
+    const { x, y, zoom } = reactFlowInstance.getViewport();
+    const reactFlowBounds = ref.current?.getBoundingClientRect();
+
+    // Calculate the center position in the viewport
+    let centerX = 0;
+    let centerY = 0;
+
+    if (reactFlowBounds) {
+      // Convert screen coordinates to flow coordinates
+      centerX = (reactFlowBounds.width / 2 - x) / zoom;
+      centerY = (reactFlowBounds.height / 2 - y) / zoom;
+
+      // Snap to grid if needed (multiples of 15)
+      centerX = Math.round(centerX / 15) * 15;
+      centerY = Math.round(centerY / 15) * 15;
+    }
+
     const newNode: Node = {
       id: newNodeId,
       name: `Nút ${flowData.nodes.length + 1}`,
       done: false,
-      x: 0,
-      y: 0,
+      x: centerX,
+      y: centerY,
       points: []
     };
 
@@ -581,7 +601,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
     updateFlowData(updatedData);
     onLayout();
-  }, [flowData, updateFlowData, onLayout]);
+  }, [flowData, updateFlowData, onLayout, reactFlowInstance]);
 
   const handleNodesChange = useCallback(
     (changes: any[]) => {
@@ -650,12 +670,12 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           <Controls />
           <div className="absolute left-4 top-4 z-10">
             <Button
-              size="icon"
-              className="bg-appBlue text-appWhite hover:bg-appBlue/90"
+              className="bg-appBlue text-appWhite hover:bg-appBlue/90 flex gap-1 text-xs"
               onClick={handleAddNode}
               type="button"
             >
-              <PlusIcon className="h-5 w-5" />
+              <PlusIcon className="h-4 w-4" />
+              <span className="font-medium">Thêm nút</span>
             </Button>
           </div>
         </ReactFlow>
