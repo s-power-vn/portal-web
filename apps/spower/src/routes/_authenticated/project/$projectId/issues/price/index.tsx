@@ -17,6 +17,7 @@ import {
   EmployeeDisplay,
   IssueDeadlineStatus,
   IssueStatus,
+  IssueType,
   NewIssueButton
 } from '../../../../../../components';
 
@@ -105,6 +106,13 @@ const Component = () => {
         <EmployeeDisplay employeeId={row.original.createdBy} />
       ),
       header: () => 'Người tạo',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.display({
+      id: 'object',
+      cell: ({ row }) => <IssueType issueId={row.original.id} />,
+      header: () => 'Loại',
       footer: info => info.column.id,
       size: 200
     }),

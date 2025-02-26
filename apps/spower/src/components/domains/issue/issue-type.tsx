@@ -31,24 +31,26 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
           when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
         >
           <span className={cn(style, 'bg-red-500', className)}>
-            Yêu cầu mua hàng
+            {issue.data.expand?.object.name}
           </span>
         </Match>
         <Match
           when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
         >
-          <span className={cn(style, 'bg-blue-500', className)}>Báo giá</span>
+          <span className={cn(style, 'bg-blue-500', className)}>
+            {issue.data.expand?.object.name}
+          </span>
         </Match>
         <Match when={issue.data.expand?.object.type === ObjectTypeOptions.Task}>
           <span className={cn(style, 'bg-green-500', className)}>
-            Công việc
+            {issue.data.expand?.object.name}
           </span>
         </Match>
         <Match
           when={issue.data.expand?.object.type === ObjectTypeOptions.Document}
         >
           <span className={cn(style, 'bg-purple-500', className)}>
-            Tài liệu
+            {issue.data.expand?.object.name}
           </span>
         </Match>
       </Switch>

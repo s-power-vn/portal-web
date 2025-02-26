@@ -20,6 +20,13 @@ export const objectApi = router('object', {
         expand: `process`
       })
   }),
+  listFullActive: router.query({
+    fetcher: () =>
+      client.collection<ObjectData>(Collections.Object).getFullList({
+        expand: `process`,
+        filter: `active = true`
+      })
+  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ObjectData>(Collections.Object).getOne(id, {

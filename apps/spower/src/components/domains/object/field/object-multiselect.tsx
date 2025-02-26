@@ -16,7 +16,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = ({ ...props }) => {
     (type: ObjectTypeOptions) => {
       switch (type) {
         case ObjectTypeOptions.Request:
-          return 'Yêu cầu mua hàng';
+          return 'Yêu cầu';
         case ObjectTypeOptions.Price:
           return 'Báo giá';
         case ObjectTypeOptions.Document:
