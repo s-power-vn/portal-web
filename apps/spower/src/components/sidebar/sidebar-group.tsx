@@ -41,8 +41,9 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
   const { collapsed, expanded } = useSidebar();
 
   const childrenWithProps = useCallback(
-    (padding: number) =>
-      Children.map(children, child => {
+    (padding: number) => {
+      return Children.map(children, child => {
+        console.log(child);
         if (isValidElement(child)) {
           return cloneElement(child, {
             isChild: true,
@@ -52,7 +53,8 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
           });
         }
         return child;
-      }),
+      });
+    },
     [children]
   );
 

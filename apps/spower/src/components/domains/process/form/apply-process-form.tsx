@@ -3,6 +3,7 @@ import { array, object, string } from 'yup';
 
 import { FC } from 'react';
 
+import { Show } from '@minhdtb/storeo-core';
 import { BusinessFormProps, Form, error, success } from '@minhdtb/storeo-theme';
 
 import { ObjectMultiselectField } from '../../object/field/object-multiselect-field';
@@ -61,10 +62,13 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
           Quy trình đang áp dụng:{' '}
         </div>
         <p className={'text-sm text-red-500'}>
-          {process.data.name}{' '}
-          <span className={'text-sm italic text-gray-500'}>
-            ({process.data.description})
-          </span>
+          {process.data.name}
+          <Show when={process.data.description}>
+            <span className={'text-sm italic text-gray-500'}>
+              {' '}
+              ({process.data.description})
+            </span>
+          </Show>
         </p>
       </div>
       <ObjectMultiselectField

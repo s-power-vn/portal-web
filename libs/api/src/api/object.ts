@@ -55,5 +55,15 @@ export const objectApi = router('object', {
           objectId: id
         }
       })
+  }),
+  actives: router.mutation({
+    mutationFn: (ids: string[]) =>
+      Promise.all(
+        ids.map(id =>
+          client.collection<ObjectData>(Collections.Object).update(id, {
+            active: true
+          })
+        )
+      )
   })
 });

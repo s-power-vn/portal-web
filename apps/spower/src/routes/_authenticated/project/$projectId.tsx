@@ -14,6 +14,7 @@ import {
   SettingsIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
+import { ObjectTypeOptions } from 'portal-core';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
@@ -29,6 +30,16 @@ const Component = () => {
     variables: projectId
   });
   const navigate = useNavigate({ from: Route.fullPath });
+
+  const listObjects = api.object.listFullActive.useQuery();
+
+  const hasRequest = listObjects.data?.some(
+    object => object.type === ObjectTypeOptions.Request
+  );
+
+  const hasPrice = listObjects.data?.some(
+    object => object.type === ObjectTypeOptions.Price
+  );
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -69,19 +80,21 @@ const Component = () => {
           fallback={
             <>
               <Sidebar uid={'project'} expanded={true}>
-                <SidebarGroup
-                  to={'/project/$projectId/contract'}
-                  icon={<NotebookPenIcon width={22} height={22} />}
-                >
-                  <SidebarItem
-                    to={'/project/$projectId/contract/input'}
-                    icon={<NotebookTextIcon width={22} height={22} />}
-                  ></SidebarItem>
-                  <SidebarItem
-                    to={'/project/$projectId/contract/monitoring'}
-                    icon={<BarChart3Icon width={22} height={22} />}
-                  ></SidebarItem>
-                </SidebarGroup>
+                {(hasRequest || hasPrice) && (
+                  <SidebarGroup
+                    to={'/project/$projectId/contract'}
+                    icon={<NotebookPenIcon width={22} height={22} />}
+                  >
+                    <SidebarItem
+                      to={'/project/$projectId/contract/input'}
+                      icon={<NotebookTextIcon width={22} height={22} />}
+                    ></SidebarItem>
+                    <SidebarItem
+                      to={'/project/$projectId/contract/monitoring'}
+                      icon={<BarChart3Icon width={22} height={22} />}
+                    ></SidebarItem>
+                  </SidebarGroup>
+                )}
                 <SidebarGroup
                   to={'/project/$projectId/issues'}
                   icon={<BriefcaseBusinessIcon width={22} height={22} />}
@@ -91,14 +104,19 @@ const Component = () => {
                     icon={<ListChecksIcon width={22} height={22} />}
                     badge={<IssueBadge projectId={projectId} />}
                   ></SidebarItem>
-                  <SidebarItem
-                    to={'/project/$projectId/issues/request'}
-                    icon={<LayoutListIcon width={22} height={22} />}
-                  ></SidebarItem>
-                  <SidebarItem
-                    to={'/project/$projectId/issues/price'}
-                    icon={<LayoutListIcon width={22} height={22} />}
-                  ></SidebarItem>
+                  {hasRequest && (
+                    <SidebarItem
+                      to={'/project/$projectId/issues/request'}
+                      isChild
+                      icon={<LayoutListIcon width={22} height={22} />}
+                    ></SidebarItem>
+                  )}
+                  {hasPrice && (
+                    <SidebarItem
+                      to={'/project/$projectId/issues/price'}
+                      icon={<LayoutListIcon width={22} height={22} />}
+                    ></SidebarItem>
+                  )}
                 </SidebarGroup>
               </Sidebar>
               <div className={'w-full flex-1 overflow-auto'}>

@@ -135,28 +135,36 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         align="start"
         sideOffset={2}
       >
-        {listObjects.data?.map(object => (
-          <DropdownMenuItem
-            key={object.id}
-            onClick={() => handleObjectClick(object)}
-          >
-            <Switch>
-              <Match when={object.type === ObjectTypeOptions.Request}>
-                <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
-              </Match>
-              <Match when={object.type === ObjectTypeOptions.Price}>
-                <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
-              </Match>
-              <Match when={object.type === ObjectTypeOptions.Document}>
-                <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
-              </Match>
-              <Match when={object.type === ObjectTypeOptions.Task}>
-                <CheckIcon className="mr-2 h-4 w-4 text-purple-500" />
-              </Match>
-            </Switch>
-            {object.name}
+        {listObjects.data?.length ? (
+          listObjects.data?.map(object => (
+            <DropdownMenuItem
+              key={object.id}
+              onClick={() => handleObjectClick(object)}
+            >
+              <Switch>
+                <Match when={object.type === ObjectTypeOptions.Request}>
+                  <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
+                </Match>
+                <Match when={object.type === ObjectTypeOptions.Price}>
+                  <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
+                </Match>
+                <Match when={object.type === ObjectTypeOptions.Document}>
+                  <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
+                </Match>
+                <Match when={object.type === ObjectTypeOptions.Task}>
+                  <CheckIcon className="mr-2 h-4 w-4 text-purple-500" />
+                </Match>
+              </Switch>
+              {object.name}
+            </DropdownMenuItem>
+          ))
+        ) : (
+          <DropdownMenuItem>
+            <span className="text-xs text-gray-500">
+              Không có đối tượng tạo công việc
+            </span>
           </DropdownMenuItem>
-        ))}
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
