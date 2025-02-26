@@ -11,7 +11,8 @@ export function useInvalidateQueries() {
       return Promise.all(
         queryKeys.map(queryKey => {
           return queryClient.invalidateQueries({
-            queryKey
+            queryKey,
+            type: 'all'
           });
         })
       );

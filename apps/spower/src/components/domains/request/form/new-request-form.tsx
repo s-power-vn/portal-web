@@ -69,6 +69,7 @@ const schema = object().shape({
 
 export type NewRequestFormProps = BusinessFormProps & {
   projectId: string;
+  objectId: string;
 };
 
 export const NewRequestForm: FC<NewRequestFormProps> = props => {
@@ -92,10 +93,11 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       }}
       className={'flex flex-col gap-4'}
       loading={createRequest.isPending}
-      onSubmit={values => {
+      onSuccess={values => {
         return createRequest.mutate({
           ...values,
-          project: props.projectId
+          project: props.projectId,
+          object: props.objectId
         });
       }}
       onCancel={props.onCancel}

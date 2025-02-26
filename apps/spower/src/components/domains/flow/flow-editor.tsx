@@ -112,13 +112,14 @@ export type FlowEditorProps = {
 };
 
 export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
-  const { fitView } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
+  const { fitView } = reactFlowInstance;
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState<ProcessData>(
     () => value || { nodes: [], flows: [] }
   );
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
   const startXRef = useRef<number>(0);
@@ -323,9 +324,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
-      const updatedNodes = flowData.nodes.map(node =>
-        node.id === nodeId ? { ...node, ...updates } : node
-      );
+      let updatedNodes = flowData.nodes.map(node => {
+        if (node.id === nodeId) {
+          return { ...node, ...updates };
+        }
+        // If current node is being marked as done, set all other nodes to not done
+        if (updates.done === true) {
+          return { ...node, done: false };
+        }
+        return node;
+      });
 
       let updatedFlows = flowData.flows;
 
@@ -547,7 +555,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const memoizedNodeTypes = useMemo(() => nodeTypes, []);
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.addEventListener('resize', handleFitView);
@@ -558,11 +566,31 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const handleAddNode = useCallback(() => {
     const newNodeId = `n${flowData.nodes.length + 1}`;
+
+    // Get the current viewport to position the node at the center
+    const { x, y, zoom } = reactFlowInstance.getViewport();
+    const reactFlowBounds = ref.current?.getBoundingClientRect();
+
+    // Calculate the center position in the viewport
+    let centerX = 0;
+    let centerY = 0;
+
+    if (reactFlowBounds) {
+      // Convert screen coordinates to flow coordinates
+      centerX = (reactFlowBounds.width / 2 - x) / zoom;
+      centerY = (reactFlowBounds.height / 2 - y) / zoom;
+
+      // Snap to grid if needed (multiples of 15)
+      centerX = Math.round(centerX / 15) * 15;
+      centerY = Math.round(centerY / 15) * 15;
+    }
+
     const newNode: Node = {
       id: newNodeId,
       name: `Nút ${flowData.nodes.length + 1}`,
-      x: 0,
-      y: 0,
+      done: false,
+      x: centerX,
+      y: centerY,
       points: []
     };
 
@@ -573,36 +601,39 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
     updateFlowData(updatedData);
     onLayout();
-  }, [flowData, updateFlowData, onLayout]);
+  }, [flowData, updateFlowData, onLayout, reactFlowInstance]);
 
   const handleNodesChange = useCallback(
     (changes: any[]) => {
       onNodesChange(changes);
 
-      // Update node positions in flowData when nodes are dragged
-      changes.forEach(change => {
-        if (change.type === 'position' && change.dragging && change.position) {
-          const x =
-            typeof change.position.x === 'number' ? change.position.x : 0;
-          const y =
-            typeof change.position.y === 'number' ? change.position.y : 0;
+      // Only handle position changes when dragging ends
+      const positionChanges = changes.filter(
+        change => change.type === 'position' && !change.dragging
+      );
 
-          if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            const updatedNodes = flowData.nodes.map(node =>
-              node.id === change.id ? { ...node, x, y } : node
-            );
-
-            const updatedData: ProcessData = {
-              ...flowData,
-              nodes: updatedNodes
+      if (positionChanges.length > 0) {
+        const updatedNodes = flowData.nodes.map(node => {
+          const change = positionChanges.find(c => c.id === node.id);
+          if (change?.position) {
+            return {
+              ...node,
+              x: change.position.x,
+              y: change.position.y
             };
-
-            updateFlowData(updatedData);
           }
-        }
-      });
+          return node;
+        });
+
+        const updatedData: ProcessData = {
+          ...flowData,
+          nodes: updatedNodes
+        };
+
+        updateFlowData(updatedData);
+      }
     },
-    [flowData, updateFlowData]
+    [flowData, updateFlowData, onNodesChange]
   );
 
   return (
@@ -639,12 +670,12 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           <Controls />
           <div className="absolute left-4 top-4 z-10">
             <Button
-              size="icon"
-              className="bg-appBlue text-appWhite hover:bg-appBlue/90"
+              className="bg-appBlue text-appWhite hover:bg-appBlue/90 flex gap-1 text-xs"
               onClick={handleAddNode}
               type="button"
             >
-              <PlusIcon className="h-5 w-5" />
+              <PlusIcon className="h-4 w-4" />
+              <span className="font-medium">Thêm nút</span>
             </Button>
           </div>
         </ReactFlow>
@@ -663,7 +694,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           <PropertySidebar
             onClose={handleCloseSidebar}
             width={sidebarWidth}
-            onAddNode={handleAddNode}
             title={
               selectedNode
                 ? 'Thuộc tính nút'

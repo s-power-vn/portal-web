@@ -12,7 +12,7 @@ import {
   Undo2Icon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { IssueTypeOptions, client } from 'portal-core';
+import { ObjectTypeOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, useCallback } from 'react';
@@ -31,7 +31,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { extractStatus, isDoneNode } from '../flow';
+import { ProcessData, extractStatus, isDoneNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueDeadlineStatus } from './issue-deadline-status';
@@ -41,7 +41,7 @@ export type IssueSummaryProps = {
   issueId: string;
 };
 
-export const IssueSummary: FC<IssueSummaryProps> = props => {
+const SummaryComponent: FC<IssueSummaryProps> = props => {
   const { issueId } = props;
 
   const invalidates = useInvalidateQueries();
@@ -54,9 +54,13 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
     variables: issueId
   });
 
+  const issueObject = issue.data.expand?.object;
+
+  const process = issueObject?.expand?.process;
+
   const statusInfo = extractStatus(issue.data.status);
   const isInDoneState = isDoneNode(
-    issue.data.type === IssueTypeOptions.Price ? 'price' : 'request',
+    process?.process as ProcessData,
     statusInfo?.to
   );
 
@@ -94,7 +98,9 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
             </div>
           }
         >
-          <Match when={issue.data.type === IssueTypeOptions.Request}>
+          <Match
+            when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
+          >
             <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
               <EditRequestForm
                 issueId={issueId}
@@ -109,7 +115,9 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
               />
             </Suspense>
           </Match>
-          <Match when={issue.data.type === IssueTypeOptions.Price}>
+          <Match
+            when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
+          >
             <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
               <EditPriceForm
                 issueId={issueId}
@@ -127,7 +135,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         </Switch>
       )
     });
-  }, [invalidates, issue.data.type, issueId]);
+  }, [invalidates, issue.data.expand?.object.type, issueId]);
 
   const handleResetIssue = useCallback(() => {
     confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () =>
@@ -165,10 +173,16 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         </Button>
         <span className={'flex flex-1 items-center gap-1 text-base font-bold'}>
           <Switch fallback={<span></span>}>
-            <Match when={issue.data.type === IssueTypeOptions.Price}>
+            <Match
+              when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
+            >
               <CircleDollarSignIcon className={'h-4 w-4 text-blue-500'} />
             </Match>
-            <Match when={issue.data.type === IssueTypeOptions.Request}>
+            <Match
+              when={
+                issue.data.expand?.object.type === ObjectTypeOptions.Request
+              }
+            >
               <ShoppingCartIcon className={'h-4 w-4 text-red-500'} />
             </Match>
           </Switch>
@@ -295,5 +309,19 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         />
       </div>
     </div>
+  );
+};
+
+export const IssueSummary: FC<IssueSummaryProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-2">
+          <Loader className={'h-4 w-4 animate-spin'} />
+        </div>
+      }
+    >
+      <SummaryComponent {...props} />
+    </Suspense>
   );
 };

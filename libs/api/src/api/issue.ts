@@ -8,6 +8,7 @@ import { Collections, client } from 'portal-core';
 import { router } from 'react-query-kit';
 
 import type { UserData } from './employee';
+import { ObjectData } from './object';
 import type { Search } from './types';
 
 export type IssueData = IssueResponse & {
@@ -15,6 +16,7 @@ export type IssueData = IssueResponse & {
     createdBy: UserData;
     assignee: UserData;
     issueFile_via_issue: IssueFileResponse[];
+    object: ObjectData;
   };
   approver?: Record<string, string>[];
 };
@@ -28,7 +30,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -41,7 +43,7 @@ export const issueApi = router('issue', {
         && assignee = "${client.authStore.model?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -52,9 +54,9 @@ export const issueApi = router('issue', {
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && title ~ "${search?.filter ?? ''}"
-        && type = "Request"
+        && object.type = "Request"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -65,16 +67,16 @@ export const issueApi = router('issue', {
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && title ~ "${search?.filter ?? ''}"
-        && type = "Price"
+        && object.type = "Price"
         && deleted = false`,
-          expand: `issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, assignee, issueFile_via_issue`
+        expand: `createdBy, assignee, object, object.process, issueFile_via_issue`
       })
   }),
   updateTitle: router.mutation({

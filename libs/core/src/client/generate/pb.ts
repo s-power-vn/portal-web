@@ -23,6 +23,7 @@ export enum Collections {
 	IssueFile = "issueFile",
 	IssueUserInfo = "issueUserInfo",
 	Material = "material",
+	Object = "object",
 	Price = "price",
 	PriceDetail = "priceDetail",
 	Process = "process",
@@ -212,12 +213,6 @@ export type DetailInfoRecord<Textend = unknown> = {
 	volume?: number
 }
 
-export enum IssueTypeOptions {
-	"Request" = "Request",
-	"Price" = "Price",
-	"Contract" = "Contract",
-}
-
 export enum IssueDeadlineStatusOptions {
 	"Normal" = "Normal",
 	"Warning" = "Warning",
@@ -235,11 +230,11 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	endDate?: IsoDateString
 	id: string
 	lastAssignee?: null | TlastAssignee
+	object: RecordIdString
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: string
 	title: string
-	type: IssueTypeOptions
 	updated?: IsoDateString
 }
 
@@ -271,6 +266,24 @@ export type MaterialRecord = {
 	updated?: IsoDateString
 }
 
+export enum ObjectTypeOptions {
+	"Request" = "Request",
+	"Price" = "Price",
+	"Task" = "Task",
+	"Document" = "Document",
+}
+export type ObjectRecord = {
+	active?: boolean
+	base?: boolean
+	created?: IsoDateString
+	description?: string
+	id: string
+	name: string
+	process?: RecordIdString
+	type: ObjectTypeOptions
+	updated?: IsoDateString
+}
+
 export type PriceRecord = {
 	created?: IsoDateString
 	id: string
@@ -294,10 +307,6 @@ export type PriceDetailRecord<Tprices = unknown> = {
 	volume?: number
 }
 
-export enum ProcessTypeOptions {
-	"Request" = "Request",
-	"Price" = "Price",
-}
 export type ProcessRecord<Tprocess = unknown> = {
 	created?: IsoDateString
 	createdBy: RecordIdString
@@ -306,7 +315,6 @@ export type ProcessRecord<Tprocess = unknown> = {
 	id: string
 	name: string
 	process?: null | Tprocess
-	type?: ProcessTypeOptions
 	updated?: IsoDateString
 }
 
@@ -407,6 +415,7 @@ export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand 
 export type IssueFileResponse<Texpand = unknown> = Required<IssueFileRecord> & BaseSystemFields<Texpand>
 export type IssueUserInfoResponse<Texpand = unknown> = Required<IssueUserInfoRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
+export type ObjectResponse<Texpand = unknown> = Required<ObjectRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
 export type ProcessResponse<Tprocess = unknown, Texpand = unknown> = Required<ProcessRecord<Tprocess>> & BaseSystemFields<Texpand>
@@ -438,6 +447,7 @@ export type CollectionRecords = {
 	issueFile: IssueFileRecord
 	issueUserInfo: IssueUserInfoRecord
 	material: MaterialRecord
+	object: ObjectRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
 	process: ProcessRecord
@@ -468,6 +478,7 @@ export type CollectionResponses = {
 	issueFile: IssueFileResponse
 	issueUserInfo: IssueUserInfoResponse
 	material: MaterialResponse
+	object: ObjectResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
 	process: ProcessResponse
@@ -501,6 +512,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'issueFile'): RecordService<IssueFileResponse>
 	collection(idOrName: 'issueUserInfo'): RecordService<IssueUserInfoResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
+	collection(idOrName: 'object'): RecordService<ObjectResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>
 	collection(idOrName: 'process'): RecordService<ProcessResponse>

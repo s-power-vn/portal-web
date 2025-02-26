@@ -1,23 +1,20 @@
 import {
   Edge,
-  Handle,
   MarkerType,
-  Node,
-  Position,
   ReactFlow,
+  Node as XYFlowNode,
   useEdgesState,
   useNodesState,
   useReactFlow
 } from '@xyflow/react';
-import _ from 'lodash';
-import { CheckCircle2Icon } from 'lucide-react';
 
 import type { FC } from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Show, cn } from '@minhdtb/storeo-core';
+import { cn } from '@minhdtb/storeo-core';
 
-import processData from './process.json';
+import { CustomNode } from './custom-node';
+import type { Flow, Node, Point, PointRole, ProcessData } from './types';
 
 export const nextTick = async (frames = 1) => {
   const _nextTick = async (idx: number) => {
@@ -45,191 +42,96 @@ export const extractStatus = (status?: string) => {
   };
 };
 
-export const getNode = (type: 'request' | 'price', nodeId?: string) => {
-  return processData[type].nodes.find(it => it.id === nodeId);
-};
-
-export const getNodeFromFlows = (
-  type: 'request' | 'price',
+export const getNode = (
+  processData: ProcessData,
   nodeId?: string
-) => {
-  return processData[type].flows.filter(it => it.from.node === nodeId);
+): Node | undefined => {
+  if (!nodeId || !processData?.nodes?.length) {
+    return undefined;
+  }
+  return processData.nodes.find((it: Node) => it.id === nodeId);
 };
 
-export const isDoneNode = (type: 'request' | 'price', nodeId?: string) => {
-  return nodeId === processData[type].done;
+export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
+  if (!nodeId || !processData?.flows?.length) {
+    return [];
+  }
+  return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
-export const getDoneFlows = (type: 'request' | 'price') => {
-  return processData[type].flows.filter(
-    it => it.to.node === processData[type].done
+export const isDoneNode = (processData: ProcessData, nodeId?: string) => {
+  if (!nodeId || !processData?.nodes?.length) return false;
+  const node = getNode(processData, nodeId);
+  return node?.done || false;
+};
+
+export const getDoneFlows = (processData: ProcessData) => {
+  if (!processData?.nodes?.length || !processData?.flows?.length) {
+    return [];
+  }
+  const doneNodes = processData.nodes.filter((node: Node) => node.done);
+  return processData.flows.filter((flow: Flow) =>
+    doneNodes.some((node: Node) => flow.to.node === node.id)
   );
 };
 
 export const isApproveNode = (
-  type: 'request' | 'price',
+  processData: ProcessData,
   nodeId?: string
 ): boolean => {
-  if (!nodeId) {
+  if (!nodeId || !processData?.flows?.length) {
     return false;
   }
 
-  const approvedFlows = processData[type].flows.filter(it => it.approve);
-  const fromNodeFlow = approvedFlows.find(it => it.from.node === nodeId);
+  const approvedFlows = processData.flows.filter((it: Flow) => it.approve);
+  const fromNodeFlow = approvedFlows.find(
+    (it: Flow) => it.from.node === nodeId
+  );
   return fromNodeFlow ? true : false;
 };
 
-type PointRole = 'source' | 'target' | 'unknown';
+function getNodes(
+  processData: ProcessData,
+  status?: string,
+  sourcePoint: { nodeId: string; pointId: string } | null = null,
+  selectedNode: string | null = null,
+  clickedNode: string | null = null
+): XYFlowNode[] {
+  if (!processData?.nodes?.length) {
+    return [];
+  }
 
-const CustomNode = ({
-  data
-}: {
-  data: {
-    nodeId: string;
-    type: 'request' | 'price';
-    name: string;
-    description: string;
-    active: boolean;
-    isApprove: boolean;
-    sources: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-    targets: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-  };
-}) => {
-  const points = [...data.sources, ...data.targets];
-
-  const sortByPointId = (points: typeof data.sources) => {
-    return _.sortBy(points, point => {
-      const match = point.id.match(/p(\d+)/);
-      return match ? parseInt(match[1]) : 0;
-    });
-  };
-
-  const leftPoints = sortByPointId(
-    points.filter(point => point.type === 'left')
-  );
-  const topPoints = sortByPointId(points.filter(point => point.type === 'top'));
-  const rightPoints = sortByPointId(
-    points.filter(point => point.type === 'right')
-  );
-  const bottomPoints = sortByPointId(
-    points.filter(point => point.type === 'bottom')
-  );
-
-  const isDoneNode = data.nodeId === processData[data.type].done;
-
-  return (
-    <>
-      <div
-        className={cn(
-          `flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs`,
-          data.active ? 'border-appError' : ''
-        )}
-      >
-        <Show when={data.active}>
-          <div className={'bg-appError h-3 w-3 rounded-full'}></div>
-        </Show>
-        <span>{data.name}</span>
-        <Show when={data.isApprove}>
-          <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
-        </Show>
-        <Show when={isDoneNode}>
-          <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
-        </Show>
-      </div>
-      {leftPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Left}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (leftPoints.length + 1))}%` }}
-        />
-      ))}
-      {topPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Top}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ left: `${(index + 1) * (100 / (topPoints.length + 1))}%` }}
-        />
-      ))}
-      {rightPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Right}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (rightPoints.length + 1))}%` }}
-        />
-      ))}
-      {bottomPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Bottom}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{
-            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`
-          }}
-        />
-      ))}
-    </>
-  );
-};
-
-function getNodes(type: 'request' | 'price', status?: string) {
-  const data = processData[type];
   const extract = extractStatus(status);
 
-  return data.nodes.map(node => {
-    const { id, x, y, points, ...rest } = node;
+  return processData.nodes.map((node: Node) => {
+    const { id, x, y, points, done, ...rest } = node;
 
-    const mappedPoints = points.map(point => ({
+    const mappedPoints = points.map((point: Point) => ({
       ...point,
       id: `${id}#${point.id}`
     }));
 
-    const pointsWithRoles = mappedPoints.map(point => {
-      const isSource = data.flows.some(
-        flow => `${flow.from.node}#${flow.from.point}` === point.id
-      );
-      const isTarget = data.flows.some(
-        flow => `${flow.to.node}#${flow.to.point}` === point.id
-      );
+    const pointsWithRoles = mappedPoints.map(
+      (point: Point & { id: string }) => {
+        const isSource = processData.flows.some(
+          (flow: Flow) => `${flow.from.node}#${flow.from.point}` === point.id
+        );
+        const isTarget = processData.flows.some(
+          (flow: Flow) => `${flow.to.node}#${flow.to.point}` === point.id
+        );
 
-      let role: PointRole = 'unknown';
-      if (isSource) role = 'source';
-      if (isTarget) role = 'target';
+        let role: PointRole = 'unknown';
+        if (isSource) role = 'source';
+        if (isTarget) role = 'target';
 
-      return {
-        point: { ...point, role },
-        isSource,
-        isTarget
-      };
-    });
+        return {
+          ...point,
+          role
+        };
+      }
+    );
 
-    const sources = pointsWithRoles
-      .filter(({ isSource, isTarget }) => isSource || (!isSource && !isTarget))
-      .map(({ point }) => point);
-
-    const targets = pointsWithRoles
-      .filter(({ isTarget }) => isTarget)
-      .map(({ point }) => point);
-
-    const isApprove = isApproveNode(type, id);
+    const isApprove = isApproveNode(processData, id);
 
     return {
       id,
@@ -237,40 +139,54 @@ function getNodes(type: 'request' | 'price', status?: string) {
       data: {
         ...rest,
         nodeId: id,
-        type,
         isApprove,
-        sources,
-        targets,
-        active: extract?.to ? id === extract.to : id === extract?.from
+        done,
+        points: pointsWithRoles,
+        active: extract?.to ? id === extract.to : id === extract?.from,
+        selected: id === selectedNode,
+        clicked: id === clickedNode,
+        sourcePoint,
+        onPointClick: () => {} // This will be replaced in the component
       },
       position: { x, y }
     };
   });
 }
 
-function getEdges(type: 'request' | 'price', status?: string) {
-  return processData[type].flows.map(flow => {
+function getEdges(processData: ProcessData, status?: string): Edge[] {
+  if (!processData?.flows?.length) {
+    return [];
+  }
+
+  const extract = extractStatus(status);
+
+  return processData.flows.map((flow: Flow) => {
+    const { id, from, to, approve, type } = flow;
+    const fromNodeId = from.node;
+    const toNodeId = to.node;
+
+    const isActive = extract?.from === fromNodeId && extract?.to === toNodeId;
+
+    // Map FlowType to edge type
+    const edgeType = type || 'smoothstep';
+
     return {
-      id: flow.id,
-      source: `${flow.from.node}`,
-      target: `${flow.to.node}`,
-      sourceHandle: `${flow.from.node}#${flow.from.point}`,
-      targetHandle: `${flow.to.node}#${flow.to.point}`,
-      type: flow.type ? flow.type : 'smoothstep',
-      style: status === flow.id ? { stroke: '#CC313D' } : {},
-      markerEnd:
-        status === flow.id
-          ? {
-              type: MarkerType.ArrowClosed,
-              color: '#CC313D',
-              width: 20,
-              height: 20
-            }
-          : {
-              type: MarkerType.ArrowClosed,
-              width: 20,
-              height: 20
-            }
+      id,
+      source: fromNodeId,
+      target: toNodeId,
+      sourceHandle: `${fromNodeId}#${from.point}`,
+      targetHandle: `${toNodeId}#${to.point}`,
+      type: edgeType,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 20,
+        height: 20
+      },
+      className: cn(
+        'stroke-2',
+        approve ? 'stroke-blue-500' : '',
+        isActive ? 'stroke-appError' : ''
+      )
     };
   });
 }
@@ -278,22 +194,86 @@ function getEdges(type: 'request' | 'price', status?: string) {
 const nodeTypes = { customNode: CustomNode };
 
 export type ProcessFlowProps = {
-  type: 'request' | 'price';
   status?: string;
+  processData?: ProcessData;
+  onPointClick?: (pointId: string, nodeId: string) => void;
 };
 
-export const ProcessFlow: FC<ProcessFlowProps> = ({ type, status }) => {
+export const ProcessFlow: FC<ProcessFlowProps> = ({
+  status,
+  processData = { nodes: [], flows: [] },
+  onPointClick
+}) => {
   const { fitView } = useReactFlow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<XYFlowNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [sourcePoint, setSourcePoint] = useState<{
+    nodeId: string;
+    pointId: string;
+  } | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [clickedNode, setClickedNode] = useState<string | null>(null);
+
+  const fitViewOptions = useMemo(
+    () => ({
+      duration: 200,
+      padding: 0.2,
+      maxZoom: 1
+    }),
+    []
+  );
+
+  const handlePointClick = useCallback(
+    (pointId: string, nodeId: string) => {
+      setSourcePoint({ nodeId, pointId });
+      setSelectedNode(nodeId);
+      if (onPointClick) {
+        onPointClick(pointId, nodeId);
+      }
+    },
+    [onPointClick]
+  );
 
   const onLayout = useCallback(async () => {
-    setEdges(getEdges(type, status));
+    setEdges(getEdges(processData, status));
     await nextTick(10);
-    setNodes(getNodes(type, status));
-    fitView();
-  }, [fitView, setEdges, setNodes, status, type]);
+
+    const updatedNodes = getNodes(
+      processData,
+      status,
+      sourcePoint,
+      selectedNode,
+      clickedNode
+    );
+
+    // Update the onPointClick handler for each node
+    const nodesWithHandlers = updatedNodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        onPointClick: handlePointClick
+      }
+    }));
+
+    setNodes(nodesWithHandlers);
+
+    // Only fit view if there are nodes to display
+    if (nodesWithHandlers.length > 0) {
+      fitView(fitViewOptions);
+    }
+  }, [
+    fitView,
+    fitViewOptions,
+    setEdges,
+    setNodes,
+    status,
+    processData,
+    sourcePoint,
+    selectedNode,
+    clickedNode,
+    handlePointClick
+  ]);
 
   useEffect(() => {
     onLayout();
@@ -308,6 +288,7 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({ type, status }) => {
       onEdgesChange={onEdgesChange}
       nodesDraggable={false}
       fitView
+      fitViewOptions={fitViewOptions}
     />
   );
 };

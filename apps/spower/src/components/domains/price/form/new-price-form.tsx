@@ -66,10 +66,12 @@ const schema = object().shape({
 
 export type NewPriceFormProps = BusinessFormProps & {
   projectId: string;
+  objectId: string;
 };
 
 export const NewPriceForm: FC<NewPriceFormProps> = ({
   projectId,
+  objectId,
   onSuccess,
   onCancel
 }) => {
@@ -95,10 +97,11 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
         attachments: []
       }}
       className={'flex flex-col gap-4'}
-      onSubmit={value => {
+      onSuccess={value => {
         createPrice.mutate({
           ...value,
           project: projectId,
+          object: objectId,
           details: value.data.map(item => ({
             ...item
           }))

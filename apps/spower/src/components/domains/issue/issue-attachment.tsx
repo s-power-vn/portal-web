@@ -1,4 +1,4 @@
-import { DownloadIcon } from 'lucide-react';
+import { DownloadIcon, Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import {
   Collections,
@@ -9,7 +9,7 @@ import {
 } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@minhdtb/storeo-theme';
 
@@ -21,7 +21,7 @@ const isImageFile = (type: string) => {
   return type.startsWith('image/');
 };
 
-export const IssueAttachment: FC<IssueAttachmentProps> = ({ issueId }) => {
+const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
@@ -126,5 +126,19 @@ export const IssueAttachment: FC<IssueAttachmentProps> = ({ issueId }) => {
         </div>
       )}
     </div>
+  );
+};
+
+export const IssueAttachment: FC<IssueAttachmentProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-4">
+          <Loader className={'h-4 w-4 animate-spin'} />
+        </div>
+      }
+    >
+      <AttachmentComponent {...props} />
+    </Suspense>
   );
 };

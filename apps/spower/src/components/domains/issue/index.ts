@@ -9,4 +9,5 @@ export * from './issue-deadline-status';
 export * from './issue-status';
 export * from './issue-status-text';
 export * from './issue-summary';
+export * from './issue-type';
 export * from './new-issue-button';

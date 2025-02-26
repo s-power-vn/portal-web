@@ -4,6 +4,7 @@ import {
   FactoryIcon,
   GitBranchIcon,
   HandshakeIcon,
+  PackageIcon,
   Users2Icon
 } from 'lucide-react';
 
@@ -35,6 +36,10 @@ function Settings() {
           <SidebarItem
             to={'/settings/materials'}
             icon={<AnvilIcon width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/settings/objects'}
+            icon={<PackageIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/process'}

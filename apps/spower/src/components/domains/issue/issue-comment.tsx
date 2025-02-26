@@ -1,8 +1,9 @@
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Loader } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, IssueTypeOptions, getImageUrl } from 'portal-core';
+import { Collections, getImageUrl } from 'portal-core';
 
 import type { FC } from 'react';
+import { Suspense } from 'react';
 
 import { timeSince } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
@@ -13,7 +14,7 @@ export type IssueCommentProps = {
   issueId: string;
 };
 
-export const IssueComment: FC<IssueCommentProps> = props => {
+const CommentComponent: FC<IssueCommentProps> = props => {
   const comments = api.comment.list.useSuspenseQuery({
     variables: props.issueId
   });
@@ -51,14 +52,7 @@ export const IssueComment: FC<IssueCommentProps> = props => {
                       <CalendarIcon className={'h-3 w-3'} />
                       {timeSince(new Date(Date.parse(it.created)))}
                     </div>
-                    <IssueStatusText
-                      status={it.status}
-                      type={
-                        it.expand.issue.type === IssueTypeOptions.Request
-                          ? 'request'
-                          : 'price'
-                      }
-                    />
+                    <IssueStatusText issueId={props.issueId} />
                   </div>
                   <div className={'text-sm'}>{it.content}</div>
                 </div>
@@ -67,5 +61,19 @@ export const IssueComment: FC<IssueCommentProps> = props => {
           : null}
       </div>
     </div>
+  );
+};
+
+export const IssueComment: FC<IssueCommentProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center pt-4">
+          <Loader className={'h-4 w-4 animate-spin'} />
+        </div>
+      }
+    >
+      <CommentComponent {...props} />
+    </Suspense>
   );
 };

@@ -1,11 +1,13 @@
+import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import {
   IssueDeadlineStatusOptions,
-  IssueTypeOptions,
+  ObjectTypeOptions,
   client
 } from 'portal-core';
 
 import type { FC } from 'react';
+import { Suspense } from 'react';
 
 import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
 
@@ -19,7 +21,7 @@ export type IssueProps = {
   issueId: string;
 };
 
-export const Issue: FC<IssueProps> = ({ issueId }) => {
+const IssueComponent: FC<IssueProps> = ({ issueId }) => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
@@ -37,17 +39,35 @@ export const Issue: FC<IssueProps> = ({ issueId }) => {
     >
       <IssueSummary issueId={issueId} />
       <Switch fallback={<div className={`p-2`}></div>}>
-        <Match when={issue.data.type === IssueTypeOptions.Request}>
+        <Match
+          when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
+        >
           <RequestDisplay issueId={issueId} />
         </Match>
-        <Match when={issue.data.type === IssueTypeOptions.Price}>
+        <Match
+          when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
+        >
           <PriceDisplay issueId={issueId} />
         </Match>
       </Switch>
-      <Show when={client.authStore.model?.id === issue.data.assignee}>
+      <Show when={client.authStore.record?.id === issue.data.assignee}>
         <IssueAction issueId={issueId} />
       </Show>
       <IssueComment issueId={issueId} />
     </div>
+  );
+};
+
+export const Issue: FC<IssueProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-4">
+          <Loader className={'h-6 w-6 animate-spin'} />
+        </div>
+      }
+    >
+      <IssueComponent {...props} />
+    </Suspense>
   );
 };

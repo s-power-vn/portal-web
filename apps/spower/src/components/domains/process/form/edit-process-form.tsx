@@ -13,10 +13,12 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { FlowEditorField } from '../../flow';
+import { ProcessData } from '../../flow/types';
 
 const schema = object().shape({
   name: string().required('Tên quy trình là bắt buộc'),
   description: string(),
+  done: string().nullable(),
   process: object().shape({}).optional()
 });
 
@@ -28,7 +30,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
   processId,
   ...props
 }) => {
-  const process = api.process.getById.useSuspenseQuery({
+  const process = api.process.byId.useSuspenseQuery({
     variables: processId
   });
 
@@ -47,16 +49,20 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
       {...props}
       schema={schema}
       className="flex h-full w-full flex-col gap-3"
-      onSuccess={values =>
+      onSuccess={values => {
+        const processData = values.process as ProcessData;
+        const doneNode = processData?.nodes?.find(node => node.done === true);
+
         updateProcess.mutate({
           id: processId,
-          ...values
-        })
-      }
+          ...values,
+          done: doneNode?.id || undefined
+        });
+      }}
       defaultValues={{
         name: process.data?.name,
         description: process.data?.description,
-        process: process.data?.process as {} | undefined
+        process: process.data?.process as ProcessData | undefined
       }}
     >
       <TextField schema={schema} name="name" title="Tên quy trình" />

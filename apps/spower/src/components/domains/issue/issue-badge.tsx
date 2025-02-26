@@ -1,19 +1,20 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { Collections, client } from 'portal-core';
 
-import { FC, useEffect } from 'react';
+import { FC, Suspense, useEffect } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Badge } from '@minhdtb/storeo-theme';
+
+import { useInvalidateQueries } from '../../../hooks';
 
 export type IssueBadgeProps = {
   projectId?: string;
   isAll?: boolean;
 };
 
-export const IssueBadge: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
-  const queryClient = useQueryClient();
+const BadgeComponent: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
   const issueUserInfo = api.issue.userInfo.useSuspenseQuery({
     variables: {
       projectId,
@@ -21,17 +22,17 @@ export const IssueBadge: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
     }
   });
 
+  const invalidates = useInvalidateQueries();
+
   useEffect(() => {
-    client.collection(Collections.Issue).subscribe('*', () =>
-      queryClient.invalidateQueries({
-        queryKey: api.issue.userInfo.getKey()
-      })
-    );
+    client
+      .collection(Collections.Issue)
+      .subscribe('*', () => invalidates([api.issue.userInfo.getKey()]));
 
     return () => {
       client.collection(Collections.Issue).unsubscribe();
     };
-  }, [projectId]);
+  }, [projectId, invalidates]);
 
   return (
     <Show fallback="" when={issueUserInfo.data && issueUserInfo.data > 0}>
@@ -39,5 +40,19 @@ export const IssueBadge: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
         {issueUserInfo.data}
       </Badge>
     </Show>
+  );
+};
+
+export const IssueBadge: FC<IssueBadgeProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <span className="mr-1">
+          <Loader className={'h-3 w-3 animate-spin'} />
+        </span>
+      }
+    >
+      <BadgeComponent {...props} />
+    </Suspense>
   );
 };

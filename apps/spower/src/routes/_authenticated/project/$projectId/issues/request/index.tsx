@@ -1,24 +1,30 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
+import { ObjectData } from 'libs/api/src/api/object';
 import { FilesIcon, ShoppingCartIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
-import type { IssueFileResponse, IssueResponse } from 'portal-core';
-import { IssueTypeOptions } from 'portal-core';
+import {
+  type IssueFileResponse,
+  type IssueResponse,
+  ObjectTypeOptions
+} from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
   EmployeeDisplay,
+  IssueDeadlineStatus,
   IssueStatus,
+  IssueType,
   NewIssueButton
 } from '../../../../../../components';
-import { IssueDeadlineStatus } from '../../../../../../components/domains/issue/issue-deadline-status';
 
 type IssueWithExpand = IssueResponse & {
   expand?: {
     issueFile_via_issue: IssueFileResponse[];
+    object: ObjectData;
   };
 };
 
@@ -46,9 +52,14 @@ const Component = () => {
       cell: info => (
         <div className={'flex w-full min-w-0 items-center gap-2'}>
           <Switch fallback={<span></span>}>
-            <Match when={info.row.original.type === IssueTypeOptions.Request}>
+            <Match
+              when={
+                info.row.original.expand?.object.type ===
+                ObjectTypeOptions.Request
+              }
+            >
               <ShoppingCartIcon
-                className={'h-5 w-5 flex-shrink-0 text-red-500'}
+                className={'h-4 w-4 flex-shrink-0 text-red-500'}
               />
             </Match>
           </Switch>
@@ -87,13 +98,7 @@ const Component = () => {
     }),
     columnHelper.display({
       id: 'state',
-      cell: ({ row }) => (
-        <Switch>
-          <Match when={row.original.type === IssueTypeOptions.Request}>
-            <IssueStatus issueId={row.original.id} />
-          </Match>
-        </Switch>
-      ),
+      cell: ({ row }) => <IssueStatus issueId={row.original.id} />,
       header: () => 'Trạng thái',
       footer: info => info.column.id,
       size: 200
@@ -103,6 +108,13 @@ const Component = () => {
         <EmployeeDisplay employeeId={row.original.createdBy} />
       ),
       header: () => 'Người tạo',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.display({
+      id: 'object',
+      cell: ({ row }) => <IssueType issueId={row.original.id} />,
+      header: () => 'Loại',
       footer: info => info.column.id,
       size: 200
     }),

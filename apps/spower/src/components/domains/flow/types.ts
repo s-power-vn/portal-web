@@ -1,5 +1,7 @@
 export type PointRole = 'source' | 'target' | 'unknown';
 
+export type FlowType = 'bezier' | 'straight' | 'step' | 'smoothstep';
+
 export type Point = {
   id: string;
   type: 'top' | 'bottom' | 'right' | 'left';
@@ -11,6 +13,7 @@ export type Node = {
   name: string;
   description?: string;
   condition?: string;
+  done: boolean;
   x: number;
   y: number;
   points: Point[];
@@ -26,7 +29,7 @@ export type Flow = {
     node: string;
     point: string;
   };
-  type?: string;
+  type?: FlowType;
   action?: string;
   approve?: boolean;
 };
@@ -34,5 +37,4 @@ export type Flow = {
 export type ProcessData = {
   nodes: Node[];
   flows: Flow[];
-  done?: string;
 };

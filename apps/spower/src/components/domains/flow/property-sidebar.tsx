@@ -5,7 +5,6 @@ import { FC } from 'react';
 export type PropertySidebarProps = {
   children: React.ReactNode;
   onClose?: () => void;
-  onAddNode?: () => void;
   width: number;
   title?: string;
 };
@@ -13,7 +12,6 @@ export type PropertySidebarProps = {
 export const PropertySidebar: FC<PropertySidebarProps> = ({
   children,
   onClose,
-  onAddNode,
   width,
   title
 }) => {

@@ -5,13 +5,15 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { ProcessDbData } from 'libs/api/src/api/process';
+import { CopyIcon, PlusIcon, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { ProcessResponse, formatDate } from 'portal-core';
 
 import { useCallback } from 'react';
 
+import { formatDateTime } from '@minhdtb/storeo-core';
 import {
+  Badge,
   Button,
   Table,
   TableBody,
@@ -19,11 +21,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  showModal,
   success,
   useConfirm
 } from '@minhdtb/storeo-theme';
 
 import { EmployeeDisplay, PageHeader } from '../../../components';
+import { ApplyProcessForm } from '../../../components/domains/process/form/apply-process-form';
 import { useInvalidateQueries } from '../../../hooks';
 
 export const Route = createFileRoute('/_authenticated/settings/process')({
@@ -49,9 +57,44 @@ function RouteComponent() {
     }
   });
 
+  const duplicateProcess = api.process.duplicate.useMutation({
+    onSuccess: async () => {
+      success('Nhân bản quy trình thành công');
+      invalidates([api.process.listFull.getKey()]);
+    }
+  });
+
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<ProcessResponse>();
+  const columnHelper = createColumnHelper<ProcessDbData>();
+
+  const handleApplyProcess = useCallback((processId: string) => {
+    showModal({
+      title: 'Áp dụng quy trình',
+      children: ({ close }) => (
+        <ApplyProcessForm
+          processId={processId}
+          onSuccess={() => {
+            close();
+            invalidates([
+              api.process.listFull.getKey(),
+              api.process.byId.getKey()
+            ]);
+          }}
+          onCancel={close}
+        />
+      )
+    });
+  }, []);
+
+  const handleDuplicateProcess = useCallback(
+    (processId: string) => {
+      confirm('Bạn có chắc chắn muốn nhân bản quy trình này?', () => {
+        duplicateProcess.mutate(processId);
+      });
+    },
+    [confirm, duplicateProcess]
+  );
 
   const columns = [
     columnHelper.display({
@@ -64,42 +107,34 @@ function RouteComponent() {
       header: () => <div className={'flex items-center justify-center'}>#</div>,
       size: 30
     }),
-    columnHelper.accessor('name', {
-      cell: info => info.getValue(),
-      header: () => 'Tên quy trình',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('createdBy', {
-      cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
-      header: () => 'Người tạo',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('created', {
-      cell: info => formatDate(info.getValue()),
-      header: () => 'Ngày tạo',
-      footer: info => info.column.id,
-      size: 100
-    }),
-    columnHelper.accessor('updated', {
-      cell: info => formatDate(info.getValue()),
-      header: () => 'Ngày cập nhật',
-      footer: info => info.column.id,
-      size: 100
-    }),
     columnHelper.display({
-      size: 100,
+      size: 180,
       id: 'actions',
       cell: ({ row }) => {
         return (
           <div className={'flex gap-1'}>
-            <Button className={'h-6 px-3'}>
-              <EditIcon className={'h-3 w-3'} />
+            <Button
+              className={'flex h-6 gap-1 px-3 text-xs'}
+              onClick={e => {
+                e.stopPropagation();
+                handleApplyProcess(row.original.id);
+              }}
+            >
+              Áp dụng
+            </Button>
+            <Button
+              className={'h-6 px-3'}
+              onClick={e => {
+                e.stopPropagation();
+                handleDuplicateProcess(row.original.id);
+              }}
+            >
+              <CopyIcon className={'h-3 w-3'} />
             </Button>
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
               onClick={e => {
-                e.preventDefault();
                 e.stopPropagation();
                 confirm('Bạn chắc chắn muốn xóa quy trình này?', () => {
                   deleteProcess.mutate(row.original.id);
@@ -112,6 +147,84 @@ function RouteComponent() {
         );
       },
       header: () => 'Thao tác'
+    }),
+    columnHelper.accessor('name', {
+      cell: info => info.getValue(),
+      header: () => 'Tên quy trình',
+      footer: info => info.column.id,
+      size: 300
+    }),
+    columnHelper.accessor('expand.object_via_process', {
+      cell: info => {
+        const objects = info.getValue();
+        if (!objects || objects.length === 0) {
+          return (
+            <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
+          );
+        }
+
+        // Display up to 3 badges, then show a count for the rest
+        const displayLimit = 3;
+        const hasMore = objects.length > displayLimit;
+        const displayObjects = hasMore
+          ? objects.slice(0, displayLimit)
+          : objects;
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            {displayObjects.map(object => (
+              <Badge
+                key={object.id}
+                className="bg-appBlueLight text-appWhite text-xs"
+              >
+                {object.name}
+              </Badge>
+            ))}
+            {hasMore && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge className="cursor-pointer bg-gray-500 text-xs text-white">
+                      +{objects.length - displayLimit}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="p-1">
+                      {objects.slice(displayLimit).map(object => (
+                        <div
+                          key={object.id}
+                          className="whitespace-nowrap text-xs"
+                        >
+                          {object.name}
+                        </div>
+                      ))}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+        );
+      },
+      header: () => 'Đối tượng áp dụng',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.accessor('createdBy', {
+      cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
+      header: () => 'Người tạo',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.accessor('created', {
+      cell: info => formatDateTime(info.getValue()),
+      header: () => 'Ngày tạo',
+      footer: info => info.column.id
+    }),
+    columnHelper.accessor('updated', {
+      cell: info => formatDateTime(info.getValue()),
+      header: () => 'Ngày cập nhật',
+      footer: info => info.column.id
     })
   ];
 

@@ -7,19 +7,24 @@ import { useForm } from 'react-hook-form';
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
-import type { Flow } from '.';
+import type { Flow, FlowType } from '.';
 
 type FlowFormValues = {
   id: string;
   action: string;
   approve: boolean;
+  type: FlowType;
 };
 
 const schema = yup
   .object({
     id: yup.string().required('ID flow là bắt buộc'),
     action: yup.string().default(''),
-    approve: yup.boolean().default(false)
+    approve: yup.boolean().default(false),
+    type: yup
+      .string()
+      .oneOf(['bezier', 'straight', 'step', 'smoothstep'])
+      .default('smoothstep')
   })
   .required();
 
@@ -44,7 +49,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
     defaultValues: {
       id: '',
       action: '',
-      approve: false
+      approve: false,
+      type: 'smoothstep'
     }
   });
 
@@ -54,7 +60,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
         {
           id: selectedFlow.id,
           action: selectedFlow.action ?? '',
-          approve: selectedFlow.approve ?? false
+          approve: selectedFlow.approve ?? false,
+          type: selectedFlow.type ?? 'smoothstep'
         },
         {
           keepDefaultValues: false
@@ -65,7 +72,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
         {
           id: '',
           action: '',
-          approve: false
+          approve: false,
+          type: 'smoothstep'
         },
         {
           keepDefaultValues: false
@@ -81,6 +89,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
 
       if (dirtyKeys.includes('action')) updates.action = values.action;
       if (dirtyKeys.includes('approve')) updates.approve = values.approve;
+      if (dirtyKeys.includes('type')) updates.type = values.type;
 
       onFlowUpdate?.(selectedFlow.id, updates);
 
@@ -126,6 +135,25 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                 {errors.action && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.action.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Kiểu đường</label>
+                <select
+                  {...register('type', {
+                    onChange: () => handleSubmit(onSubmit)()
+                  })}
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="bezier">Bezier</option>
+                  <option value="straight">Thẳng</option>
+                  <option value="step">Bậc thang</option>
+                  <option value="smoothstep">Bậc thang mượt</option>
+                </select>
+                {errors.type && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.type.message}
                   </p>
                 )}
               </div>

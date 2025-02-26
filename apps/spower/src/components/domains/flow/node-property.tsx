@@ -28,6 +28,7 @@ type NodeFormValues = {
   name: string;
   description: string;
   condition: string;
+  done: boolean;
   points: Point[];
 };
 
@@ -37,6 +38,7 @@ const schema = yup
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
     condition: yup.string().default(''),
+    done: yup.boolean().default(false),
     points: yup
       .array()
       .of(
@@ -79,6 +81,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       condition: '',
+      done: false,
       points: []
     }
   });
@@ -93,6 +96,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         condition: rest.condition || '',
+        done: rest.done || false,
         points: Array.isArray(rest.points) ? rest.points : []
       };
       reset(formValues);
@@ -147,6 +151,18 @@ export const NodeProperty: FC<NodePropertyProps> = ({
             <div className="space-y-2">
               <div>
                 <label className="text-sm font-medium">
+                  ID
+                  <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('id')}
+                  disabled
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">
                   Tên nút
                   <span className="text-destructive">*</span>
                 </label>
@@ -190,6 +206,21 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                     {errors.condition.message}
                   </p>
                 )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Trạng thái</label>
+                <div className="mt-2 flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    {...register('done')}
+                    onChange={e => {
+                      setValue('done', e.target.checked);
+                      handleSubmit(onSubmit)();
+                    }}
+                    className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm">Đã hoàn thành</span>
+                </div>
               </div>
               <div className="mt-2">
                 <div className="flex items-end justify-between">

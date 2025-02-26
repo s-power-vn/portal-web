@@ -41,6 +41,7 @@ export const priceApi = router('price', {
     mutationFn: async (params: {
       title: string;
       project: string;
+      object: string;
       code: string;
       startDate?: Date;
       endDate?: Date;
