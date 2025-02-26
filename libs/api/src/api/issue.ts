@@ -104,9 +104,7 @@ export const issueApi = router('issue', {
   }),
   delete: router.mutation({
     mutationFn: (issueId: string) =>
-      client.collection(Collections.Issue).update(issueId, {
-        deleted: true
-      })
+      client.collection(Collections.Issue).delete(issueId)
   }),
   forward: router.mutation({
     mutationFn: (params: {
