@@ -25,5 +25,28 @@ export const objectApi = router('object', {
       client.collection<ObjectData>(Collections.Object).getOne(id, {
         expand: `process`
       })
+  }),
+  create: router.mutation({
+    mutationFn: (params: Partial<ObjectResponse>) =>
+      client.collection<ObjectData>(Collections.Object).create(params)
+  }),
+  update: router.mutation({
+    mutationFn: (params: Partial<ObjectResponse> & { id: string }) =>
+      client
+        .collection<ObjectData>(Collections.Object)
+        .update(params.id, params)
+  }),
+  delete: router.mutation({
+    mutationFn: (id: string) =>
+      client.collection<ObjectData>(Collections.Object).delete(id)
+  }),
+  duplicate: router.mutation({
+    mutationFn: (id: string) =>
+      client.send('/duplicate-object', {
+        method: 'POST',
+        body: {
+          objectId: id
+        }
+      })
   })
 });

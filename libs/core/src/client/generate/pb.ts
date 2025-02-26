@@ -230,7 +230,7 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	endDate?: IsoDateString
 	id: string
 	lastAssignee?: null | TlastAssignee
-	object?: RecordIdString
+	object: RecordIdString
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: string

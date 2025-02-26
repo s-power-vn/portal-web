@@ -5,6 +5,7 @@ export * from './employee';
 export * from './flow';
 export * from './issue';
 export * from './material';
+export * from './object';
 export * from './price';
 export * from './process';
 export * from './project';
