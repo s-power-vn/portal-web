@@ -9,7 +9,7 @@ import {
 } from '@xyflow/react';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 
@@ -42,7 +42,10 @@ export const extractStatus = (status?: string) => {
   };
 };
 
-export const getNode = (processData: ProcessData, nodeId?: string) => {
+export const getNode = (
+  processData: ProcessData,
+  nodeId?: string
+): Node | undefined => {
   if (!nodeId || !processData?.nodes?.length) {
     return undefined;
   }
@@ -93,7 +96,7 @@ function getNodes(
   sourcePoint: { nodeId: string; pointId: string } | null = null,
   selectedNode: string | null = null,
   clickedNode: string | null = null
-) {
+): XYFlowNode[] {
   if (!processData?.nodes?.length) {
     return [];
   }
@@ -108,23 +111,25 @@ function getNodes(
       id: `${id}#${point.id}`
     }));
 
-    const pointsWithRoles = mappedPoints.map((point: Point) => {
-      const isSource = processData.flows.some(
-        (flow: Flow) => `${flow.from.node}#${flow.from.point}` === point.id
-      );
-      const isTarget = processData.flows.some(
-        (flow: Flow) => `${flow.to.node}#${flow.to.point}` === point.id
-      );
+    const pointsWithRoles = mappedPoints.map(
+      (point: Point & { id: string }) => {
+        const isSource = processData.flows.some(
+          (flow: Flow) => `${flow.from.node}#${flow.from.point}` === point.id
+        );
+        const isTarget = processData.flows.some(
+          (flow: Flow) => `${flow.to.node}#${flow.to.point}` === point.id
+        );
 
-      let role: PointRole = 'unknown';
-      if (isSource) role = 'source';
-      if (isTarget) role = 'target';
+        let role: PointRole = 'unknown';
+        if (isSource) role = 'source';
+        if (isTarget) role = 'target';
 
-      return {
-        ...point,
-        role
-      };
-    });
+        return {
+          ...point,
+          role
+        };
+      }
+    );
 
     const isApprove = isApproveNode(processData, id);
 
@@ -148,7 +153,7 @@ function getNodes(
   });
 }
 
-function getEdges(processData: ProcessData, status?: string) {
+function getEdges(processData: ProcessData, status?: string): Edge[] {
   if (!processData?.flows?.length) {
     return [];
   }
@@ -156,14 +161,14 @@ function getEdges(processData: ProcessData, status?: string) {
   const extract = extractStatus(status);
 
   return processData.flows.map((flow: Flow) => {
-    const { id, from, to, approve } = flow;
+    const { id, from, to, approve, type } = flow;
     const fromNodeId = from.node;
     const toNodeId = to.node;
 
-    const fromNode = getNode(processData, fromNodeId);
-    const toNode = getNode(processData, toNodeId);
-
     const isActive = extract?.from === fromNodeId && extract?.to === toNodeId;
+
+    // Map FlowType to edge type
+    const edgeType = type || 'smoothstep';
 
     return {
       id,
@@ -171,7 +176,7 @@ function getEdges(processData: ProcessData, status?: string) {
       target: toNodeId,
       sourceHandle: `${fromNodeId}#${from.point}`,
       targetHandle: `${toNodeId}#${to.point}`,
-      type: 'default',
+      type: edgeType,
       markerEnd: {
         type: MarkerType.ArrowClosed,
         width: 20,
@@ -210,6 +215,15 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [clickedNode, setClickedNode] = useState<string | null>(null);
 
+  const fitViewOptions = useMemo(
+    () => ({
+      duration: 200,
+      padding: 0.2,
+      maxZoom: 1
+    }),
+    []
+  );
+
   const handlePointClick = useCallback(
     (pointId: string, nodeId: string) => {
       setSourcePoint({ nodeId, pointId });
@@ -246,10 +260,11 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
 
     // Only fit view if there are nodes to display
     if (nodesWithHandlers.length > 0) {
-      fitView();
+      fitView(fitViewOptions);
     }
   }, [
     fitView,
+    fitViewOptions,
     setEdges,
     setNodes,
     status,
@@ -273,6 +288,7 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
       onEdgesChange={onEdgesChange}
       nodesDraggable={false}
       fitView
+      fitViewOptions={fitViewOptions}
     />
   );
 };

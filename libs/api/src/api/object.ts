@@ -14,6 +14,12 @@ export type ObjectData = ObjectResponse & {
 };
 
 export const objectApi = router('object', {
+  listFull: router.query({
+    fetcher: () =>
+      client.collection<ObjectData>(Collections.Object).getFullList({
+        expand: `process`
+      })
+  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ObjectData>(Collections.Object).getOne(id, {

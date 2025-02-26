@@ -1,18 +1,31 @@
-import { Collections, ProcessResponse, client } from 'portal-core';
+import {
+  Collections,
+  ObjectResponse,
+  ProcessResponse,
+  client
+} from 'portal-core';
 
 import { router } from 'react-query-kit';
+
+export type ProcessDbData = ProcessResponse & {
+  expand?: {
+    object_via_process?: ObjectResponse[];
+  };
+};
 
 export const processApi = router('process', {
   listFull: router.query({
     fetcher: () => {
-      return client
-        .collection<ProcessResponse>(Collections.Process)
-        .getFullList();
+      return client.collection<ProcessDbData>(Collections.Process).getFullList({
+        expand: 'object_via_process'
+      });
     }
   }),
   byId: router.query({
     fetcher: (id: string) => {
-      return client.collection<ProcessResponse>(Collections.Process).getOne(id);
+      return client.collection<ProcessDbData>(Collections.Process).getOne(id, {
+        expand: 'object_via_process'
+      });
     }
   }),
   create: router.mutation({
@@ -38,12 +51,21 @@ export const processApi = router('process', {
     }
   }),
   apply: router.mutation({
-    mutationFn: ({ id, type }: { id: string; type: 'Request' | 'Price' }) => {
-      return client
-        .collection<ProcessResponse>(Collections.Process)
-        .update(id, {
-          type
-        });
+    mutationFn: (params: { processId: string; objectIds: string[] }) => {
+      return client.send('/apply-process', {
+        method: 'POST',
+        body: params
+      });
+    }
+  }),
+  duplicate: router.mutation({
+    mutationFn: (id: string) => {
+      return client.send('/duplicate-process', {
+        method: 'POST',
+        body: {
+          processId: id
+        }
+      });
     }
   })
 });
