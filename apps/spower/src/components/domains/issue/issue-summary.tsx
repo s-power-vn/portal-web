@@ -41,7 +41,7 @@ export type IssueSummaryProps = {
   issueId: string;
 };
 
-export const IssueSummary: FC<IssueSummaryProps> = props => {
+const SummaryComponent: FC<IssueSummaryProps> = props => {
   const { issueId } = props;
 
   const invalidates = useInvalidateQueries();
@@ -54,13 +54,13 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
     variables: issueId
   });
 
-  const process = api.process.byType.useSuspenseQuery({
-    variables: issue.data.expand?.type.id
-  });
+  const issueObject = issue.data.expand?.object;
+
+  const process = issueObject?.expand?.process;
 
   const statusInfo = extractStatus(issue.data.status);
   const isInDoneState = isDoneNode(
-    process.data.process as ProcessData,
+    process?.process as ProcessData,
     statusInfo?.to
   );
 
@@ -99,7 +99,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
           }
         >
           <Match
-            when={issue.data.expand?.type.type === ObjectTypeOptions.Request}
+            when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
           >
             <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
               <EditRequestForm
@@ -116,7 +116,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
             </Suspense>
           </Match>
           <Match
-            when={issue.data.expand?.type.type === ObjectTypeOptions.Price}
+            when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
           >
             <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
               <EditPriceForm
@@ -135,7 +135,7 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         </Switch>
       )
     });
-  }, [invalidates, issue.data.type, issueId]);
+  }, [invalidates, issue.data.expand?.object.type, issueId]);
 
   const handleResetIssue = useCallback(() => {
     confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () =>
@@ -174,12 +174,14 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         <span className={'flex flex-1 items-center gap-1 text-base font-bold'}>
           <Switch fallback={<span></span>}>
             <Match
-              when={issue.data.expand?.type.type === ObjectTypeOptions.Price}
+              when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
             >
               <CircleDollarSignIcon className={'h-4 w-4 text-blue-500'} />
             </Match>
             <Match
-              when={issue.data.expand?.type.type === ObjectTypeOptions.Request}
+              when={
+                issue.data.expand?.object.type === ObjectTypeOptions.Request
+              }
             >
               <ShoppingCartIcon className={'h-4 w-4 text-red-500'} />
             </Match>
@@ -307,5 +309,19 @@ export const IssueSummary: FC<IssueSummaryProps> = props => {
         />
       </div>
     </div>
+  );
+};
+
+export const IssueSummary: FC<IssueSummaryProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-2">
+          <Loader className={'h-4 w-4 animate-spin'} />
+        </div>
+      }
+    >
+      <SummaryComponent {...props} />
+    </Suspense>
   );
 };

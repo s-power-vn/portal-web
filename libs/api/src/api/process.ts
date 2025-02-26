@@ -15,15 +15,6 @@ export const processApi = router('process', {
       return client.collection<ProcessResponse>(Collections.Process).getOne(id);
     }
   }),
-  byType: router.query({
-    fetcher: (objectId: string) => {
-      return client
-        .collection<ProcessResponse>(Collections.Process)
-        .getFirstListItem(objectId, {
-          filter: `type = "${objectId}"`
-        });
-    }
-  }),
   create: router.mutation({
     mutationFn: (data: Partial<ProcessResponse>) => {
       return client

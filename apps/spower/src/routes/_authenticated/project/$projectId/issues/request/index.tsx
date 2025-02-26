@@ -1,12 +1,12 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
+import { ObjectData } from 'libs/api/src/api/object';
 import { FilesIcon, ShoppingCartIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
 import {
   type IssueFileResponse,
   type IssueResponse,
-  ObjectResponse,
   ObjectTypeOptions
 } from 'portal-core';
 
@@ -15,15 +15,15 @@ import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
   EmployeeDisplay,
+  IssueDeadlineStatus,
   IssueStatus,
   NewIssueButton
 } from '../../../../../../components';
-import { IssueDeadlineStatus } from '../../../../../../components/domains/issue/issue-deadline-status';
 
 type IssueWithExpand = IssueResponse & {
   expand?: {
     issueFile_via_issue: IssueFileResponse[];
-    type: ObjectResponse;
+    object: ObjectData;
   };
 };
 
@@ -53,7 +53,7 @@ const Component = () => {
           <Switch fallback={<span></span>}>
             <Match
               when={
-                info.row.original.expand?.type.type ===
+                info.row.original.expand?.object.type ===
                 ObjectTypeOptions.Request
               }
             >

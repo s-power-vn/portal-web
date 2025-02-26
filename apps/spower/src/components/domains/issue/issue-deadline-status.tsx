@@ -1,7 +1,9 @@
+import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
+import { Suspense } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 
@@ -10,7 +12,7 @@ export type IssueDeadlineStatusProps = {
   className?: string;
 };
 
-export const IssueDeadlineStatus: FC<IssueDeadlineStatusProps> = props => {
+const DeadlineStatusComponent: FC<IssueDeadlineStatusProps> = props => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: props.issueId
   });
@@ -42,5 +44,19 @@ export const IssueDeadlineStatus: FC<IssueDeadlineStatusProps> = props => {
     >
       Đang chậm
     </div>
+  );
+};
+
+export const IssueDeadlineStatus: FC<IssueDeadlineStatusProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-fit px-2 py-1">
+          <Loader className={'h-3 w-3 animate-spin'} />
+        </div>
+      }
+    >
+      <DeadlineStatusComponent {...props} />
+    </Suspense>
   );
 };

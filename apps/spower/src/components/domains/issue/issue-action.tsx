@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { client } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { For, Show, cn } from '@minhdtb/storeo-core';
 import { Button, Checkbox, error, showModal } from '@minhdtb/storeo-theme';
@@ -24,7 +25,7 @@ export type IssueActionProps = {
   issueId: string;
 };
 
-export const IssueAction: FC<IssueActionProps> = props => {
+const ActionComponent: FC<IssueActionProps> = props => {
   const invalidates = useInvalidateQueries();
   const [isApproved, setIsApproved] = useState(false);
 
@@ -50,19 +51,17 @@ export const IssueAction: FC<IssueActionProps> = props => {
     }
   });
 
-  const issueObject = issue.data.expand?.type;
+  const issueObject = issue.data.expand?.object;
 
-  const process = api.process.byType.useSuspenseQuery({
-    variables: issueObject?.id
-  });
+  const process = issueObject?.expand?.process;
 
   const currentNode = useMemo(() => {
     const extracted = extractStatus(issue.data.status);
     const currentNode = extracted?.to ? extracted.to : extracted?.from;
     return currentNode
-      ? getNode(process.data.process as ProcessData, currentNode)
+      ? getNode(process?.process as ProcessData, currentNode)
       : undefined;
-  }, [issue.data.status, process.data]);
+  }, [issue.data.status, process]);
 
   const toList = useMemo(() => {
     if (!currentNode) {
@@ -70,10 +69,10 @@ export const IssueAction: FC<IssueActionProps> = props => {
     }
 
     return getNodeFromFlows(
-      process.data.process as ProcessData,
+      process?.process as ProcessData,
       currentNode.id
     ).map(it => {
-      const nodeInfo = getNode(process.data.process as ProcessData, it.to.node);
+      const nodeInfo = getNode(process?.process as ProcessData, it.to.node);
 
       return {
         ...extractStatus(it.id),
@@ -143,7 +142,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
         }
       }
 
-      if (isDoneNode(process.data.process as ProcessData, flow.to)) {
+      if (isDoneNode(process?.process as ProcessData, flow.to)) {
         showModal({
           title: flow.action ?? `Hoàn thành`,
           children: ({ close }) => {
@@ -220,7 +219,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
   );
 
   const isApproveNodeActive = isApproveNode(
-    process.data.process as ProcessData,
+    process?.process as ProcessData,
     currentNode?.id
   );
 
@@ -251,7 +250,7 @@ export const IssueAction: FC<IssueActionProps> = props => {
                 key={item.to}
                 onClick={() => forwardNodeClick(item)}
                 className={cn(
-                  isDoneNode(process.data.process as ProcessData, item.to) &&
+                  isDoneNode(process?.process as ProcessData, item.to) &&
                     'bg-appSuccess'
                 )}
               >
@@ -262,5 +261,19 @@ export const IssueAction: FC<IssueActionProps> = props => {
         </For>
       </div>
     </div>
+  );
+};
+
+export const IssueAction: FC<IssueActionProps> = props => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-2">
+          <Loader className={'h-4 w-4 animate-spin'} />
+        </div>
+      }
+    >
+      <ActionComponent {...props} />
+    </Suspense>
   );
 };

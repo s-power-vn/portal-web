@@ -19,9 +19,9 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
     variables: issueId
   });
 
-  const process = api.process.byType.useSuspenseQuery({
-    variables: issue.data.expand?.type.id
-  });
+  const issueObject = issue.data.expand?.object;
+
+  const process = issueObject?.expand?.process;
 
   const handleClick = useCallback(() => {
     showModal({
@@ -30,13 +30,13 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
       children: (
         <div className={'h-[400px]'}>
           <ProcessFlow
-            processData={process.data.process as ProcessData}
+            processData={process?.process as ProcessData}
             status={issue.data.status}
           />
         </div>
       )
     });
-  }, [issue.data.status]);
+  }, [issue.data.status, process]);
 
   const style = `text-appWhite flex w-fit h-fit items-center
   justify-center whitespace-nowrap rounded-full px-2 py-1 text-xs`;
@@ -45,9 +45,9 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
     const extracted = extractStatus(issue.data.status);
     const currentNode = extracted?.to ? extracted.to : extracted?.from;
     return currentNode
-      ? getNode(process.data.process as ProcessData, currentNode)
+      ? getNode(process?.process as ProcessData, currentNode)
       : undefined;
-  }, [issue.data.status]);
+  }, [issue.data.status, process]);
 
   return (
     <Switch

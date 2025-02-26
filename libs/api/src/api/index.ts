@@ -7,6 +7,7 @@ import type { UserData } from './employee';
 import { employeeApi } from './employee';
 import { issueApi } from './issue';
 import { materialApi } from './material';
+import { objectApi } from './object';
 import { priceApi } from './price';
 import { processApi } from './process';
 import type { ProjectData } from './project';
@@ -28,6 +29,7 @@ export const api = {
   employee: employeeApi,
   issue: issueApi,
   material: materialApi,
+  object: objectApi,
   price: priceApi,
   process: processApi,
   project: projectApi,

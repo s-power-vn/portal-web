@@ -1,22 +1,19 @@
 import {
   Edge,
-  Handle,
   MarkerType,
-  Position,
   ReactFlow,
   Node as XYFlowNode,
   useEdgesState,
   useNodesState,
   useReactFlow
 } from '@xyflow/react';
-import _ from 'lodash';
-import { CheckCircle2Icon } from 'lucide-react';
 
 import type { FC } from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { Show, cn } from '@minhdtb/storeo-core';
+import { cn } from '@minhdtb/storeo-core';
 
+import { CustomNode } from './custom-node';
 import type { Flow, Node, Point, PointRole, ProcessData } from './types';
 
 export const nextTick = async (frames = 1) => {
@@ -46,20 +43,29 @@ export const extractStatus = (status?: string) => {
 };
 
 export const getNode = (processData: ProcessData, nodeId?: string) => {
+  if (!nodeId || !processData?.nodes?.length) {
+    return undefined;
+  }
   return processData.nodes.find((it: Node) => it.id === nodeId);
 };
 
 export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
+  if (!nodeId || !processData?.flows?.length) {
+    return [];
+  }
   return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
 export const isDoneNode = (processData: ProcessData, nodeId?: string) => {
-  if (!nodeId) return false;
+  if (!nodeId || !processData?.nodes?.length) return false;
   const node = getNode(processData, nodeId);
   return node?.done || false;
 };
 
 export const getDoneFlows = (processData: ProcessData) => {
+  if (!processData?.nodes?.length || !processData?.flows?.length) {
+    return [];
+  }
   const doneNodes = processData.nodes.filter((node: Node) => node.done);
   return processData.flows.filter((flow: Flow) =>
     doneNodes.some((node: Node) => flow.to.node === node.id)
@@ -70,7 +76,7 @@ export const isApproveNode = (
   processData: ProcessData,
   nodeId?: string
 ): boolean => {
-  if (!nodeId) {
+  if (!nodeId || !processData?.flows?.length) {
     return false;
   }
 
@@ -81,114 +87,17 @@ export const isApproveNode = (
   return fromNodeFlow ? true : false;
 };
 
-const CustomNode = ({
-  data
-}: {
-  data: {
-    nodeId: string;
-    name: string;
-    description: string;
-    active: boolean;
-    isApprove: boolean;
-    done: boolean;
-    sources: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-    targets: {
-      id: string;
-      type: 'top' | 'bottom' | 'right' | 'left';
-      role: PointRole;
-    }[];
-  };
-}) => {
-  const points = [...data.sources, ...data.targets];
+function getNodes(
+  processData: ProcessData,
+  status?: string,
+  sourcePoint: { nodeId: string; pointId: string } | null = null,
+  selectedNode: string | null = null,
+  clickedNode: string | null = null
+) {
+  if (!processData?.nodes?.length) {
+    return [];
+  }
 
-  const sortByPointId = (points: typeof data.sources) => {
-    return _.sortBy(points, point => {
-      const match = point.id.match(/p(\d+)/);
-      return match ? parseInt(match[1]) : 0;
-    });
-  };
-
-  const leftPoints = sortByPointId(
-    points.filter(point => point.type === 'left')
-  );
-  const topPoints = sortByPointId(points.filter(point => point.type === 'top'));
-  const rightPoints = sortByPointId(
-    points.filter(point => point.type === 'right')
-  );
-  const bottomPoints = sortByPointId(
-    points.filter(point => point.type === 'bottom')
-  );
-
-  return (
-    <>
-      <div
-        className={cn(
-          `flex w-40 items-center justify-center gap-2 rounded border p-2 text-xs`,
-          data.active ? 'border-appError' : ''
-        )}
-      >
-        <Show when={data.active}>
-          <div className={'bg-appError h-3 w-3 rounded-full'}></div>
-        </Show>
-        <span>{data.name}</span>
-        <Show when={data.isApprove}>
-          <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
-        </Show>
-        <Show when={data.done}>
-          <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
-        </Show>
-      </div>
-      {leftPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Left}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (leftPoints.length + 1))}%` }}
-        />
-      ))}
-      {topPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Top}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ left: `${(index + 1) * (100 / (topPoints.length + 1))}%` }}
-        />
-      ))}
-      {rightPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Right}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{ top: `${(index + 1) * (100 / (rightPoints.length + 1))}%` }}
-        />
-      ))}
-      {bottomPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={data.sources.includes(point) ? 'source' : 'target'}
-          position={Position.Bottom}
-          id={point.id}
-          className={cn(point.role === 'unknown' && 'hidden')}
-          style={{
-            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`
-          }}
-        />
-      ))}
-    </>
-  );
-};
-
-function getNodes(processData: ProcessData, status?: string) {
   const extract = extractStatus(status);
 
   return processData.nodes.map((node: Node) => {
@@ -212,19 +121,10 @@ function getNodes(processData: ProcessData, status?: string) {
       if (isTarget) role = 'target';
 
       return {
-        point: { ...point, role },
-        isSource,
-        isTarget
+        ...point,
+        role
       };
     });
-
-    const sources = pointsWithRoles
-      .filter(({ isSource, isTarget }) => isSource || (!isSource && !isTarget))
-      .map(({ point }) => point);
-
-    const targets = pointsWithRoles
-      .filter(({ isTarget }) => isTarget)
-      .map(({ point }) => point);
 
     const isApprove = isApproveNode(processData, id);
 
@@ -236,9 +136,12 @@ function getNodes(processData: ProcessData, status?: string) {
         nodeId: id,
         isApprove,
         done,
-        sources,
-        targets,
-        active: extract?.to ? id === extract.to : id === extract?.from
+        points: pointsWithRoles,
+        active: extract?.to ? id === extract.to : id === extract?.from,
+        selected: id === selectedNode,
+        clicked: id === clickedNode,
+        sourcePoint,
+        onPointClick: () => {} // This will be replaced in the component
       },
       position: { x, y }
     };
@@ -246,6 +149,10 @@ function getNodes(processData: ProcessData, status?: string) {
 }
 
 function getEdges(processData: ProcessData, status?: string) {
+  if (!processData?.flows?.length) {
+    return [];
+  }
+
   const extract = extractStatus(status);
 
   return processData.flows.map((flow: Flow) => {
@@ -283,21 +190,75 @@ const nodeTypes = { customNode: CustomNode };
 
 export type ProcessFlowProps = {
   status?: string;
-  processData: ProcessData;
+  processData?: ProcessData;
+  onPointClick?: (pointId: string, nodeId: string) => void;
 };
 
-export const ProcessFlow: FC<ProcessFlowProps> = ({ status, processData }) => {
+export const ProcessFlow: FC<ProcessFlowProps> = ({
+  status,
+  processData = { nodes: [], flows: [] },
+  onPointClick
+}) => {
   const { fitView } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState<XYFlowNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [sourcePoint, setSourcePoint] = useState<{
+    nodeId: string;
+    pointId: string;
+  } | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [clickedNode, setClickedNode] = useState<string | null>(null);
+
+  const handlePointClick = useCallback(
+    (pointId: string, nodeId: string) => {
+      setSourcePoint({ nodeId, pointId });
+      setSelectedNode(nodeId);
+      if (onPointClick) {
+        onPointClick(pointId, nodeId);
+      }
+    },
+    [onPointClick]
+  );
 
   const onLayout = useCallback(async () => {
     setEdges(getEdges(processData, status));
     await nextTick(10);
-    setNodes(getNodes(processData, status));
-    fitView();
-  }, [fitView, setEdges, setNodes, status, processData]);
+
+    const updatedNodes = getNodes(
+      processData,
+      status,
+      sourcePoint,
+      selectedNode,
+      clickedNode
+    );
+
+    // Update the onPointClick handler for each node
+    const nodesWithHandlers = updatedNodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        onPointClick: handlePointClick
+      }
+    }));
+
+    setNodes(nodesWithHandlers);
+
+    // Only fit view if there are nodes to display
+    if (nodesWithHandlers.length > 0) {
+      fitView();
+    }
+  }, [
+    fitView,
+    setEdges,
+    setNodes,
+    status,
+    processData,
+    sourcePoint,
+    selectedNode,
+    clickedNode,
+    handlePointClick
+  ]);
 
   useEffect(() => {
     onLayout();

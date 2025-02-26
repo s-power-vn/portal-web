@@ -11,7 +11,6 @@ import { ProcessResponse, formatDate } from 'portal-core';
 
 import { useCallback } from 'react';
 
-import { Match, Switch } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,
@@ -71,40 +70,7 @@ function RouteComponent() {
       footer: info => info.column.id
     }),
     columnHelper.accessor('type', {
-      cell: info => (
-        <div className={'flex items-center whitespace-nowrap'}>
-          <Switch
-            fallback={
-              <span
-                className={
-                  'rounded-full bg-gray-500 px-2 py-1 text-xs text-white'
-                }
-              >
-                Không xác định
-              </span>
-            }
-          >
-            <Match when={info.getValue() === 'Request'}>
-              <span
-                className={
-                  'rounded-full bg-red-500 px-2 py-1 text-xs text-white'
-                }
-              >
-                Yêu cầu mua hàng
-              </span>
-            </Match>
-            <Match when={info.getValue() === 'Price'}>
-              <span
-                className={
-                  'rounded-full bg-blue-500 px-2 py-1 text-xs text-white'
-                }
-              >
-                Báo giá
-              </span>
-            </Match>
-          </Switch>
-        </div>
-      ),
+      cell: info => info.getValue(),
       header: () => 'Đối tượng áp dụng',
       footer: info => info.column.id,
       size: 120

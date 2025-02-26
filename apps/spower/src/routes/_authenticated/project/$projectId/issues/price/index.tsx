@@ -1,12 +1,12 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
+import { ObjectData } from 'libs/api/src/api/object';
 import { CircleDollarSignIcon, FilesIcon } from 'lucide-react';
 import { SearchSchema, api } from 'portal-api';
 import {
   type IssueFileResponse,
   type IssueResponse,
-  ObjectResponse,
   ObjectTypeOptions
 } from 'portal-core';
 
@@ -23,7 +23,7 @@ import {
 type IssueWithExpand = IssueResponse & {
   expand?: {
     issueFile_via_issue: IssueFileResponse[];
-    type: ObjectResponse;
+    object: ObjectData;
   };
 };
 
@@ -53,7 +53,8 @@ const Component = () => {
           <Switch fallback={<span></span>}>
             <Match
               when={
-                info.row.original.expand?.type.type === ObjectTypeOptions.Price
+                info.row.original.expand?.object.type ===
+                ObjectTypeOptions.Price
               }
             >
               <CircleDollarSignIcon

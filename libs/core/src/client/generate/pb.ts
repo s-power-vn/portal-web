@@ -230,11 +230,11 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	endDate?: IsoDateString
 	id: string
 	lastAssignee?: null | TlastAssignee
+	object?: RecordIdString
 	project: RecordIdString
 	startDate?: IsoDateString
 	status?: string
 	title: string
-	type?: RecordIdString
 	updated?: IsoDateString
 }
 
@@ -279,6 +279,7 @@ export type ObjectRecord = {
 	description?: string
 	id: string
 	name: string
+	process?: RecordIdString
 	type: ObjectTypeOptions
 	updated?: IsoDateString
 }
@@ -314,7 +315,6 @@ export type ProcessRecord<Tprocess = unknown> = {
 	id: string
 	name: string
 	process?: null | Tprocess
-	type?: RecordIdString
 	updated?: IsoDateString
 }
 
