@@ -59,7 +59,7 @@ const Component = () => {
               }
             >
               <CircleDollarSignIcon
-                className={'h-5 w-5 flex-shrink-0 text-blue-500'}
+                className={'h-4 w-4 flex-shrink-0 text-blue-500'}
               />
             </Match>
           </Switch>
