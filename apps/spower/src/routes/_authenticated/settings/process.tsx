@@ -35,11 +35,11 @@ import { ApplyProcessForm } from '../../../components/domains/process/form/apply
 import { useInvalidateQueries } from '../../../hooks';
 
 export const Route = createFileRoute('/_authenticated/settings/process')({
-  component: RouteComponent,
+  component: Component,
   beforeLoad: () => ({ title: 'Quản lý quy trình' })
 });
 
-function RouteComponent() {
+function Component() {
   const { data: process } = api.process.listFull.useSuspenseQuery();
   const navigate = useNavigate({ from: Route.fullPath });
   const invalidates = useInvalidateQueries();

@@ -20,9 +20,6 @@ const Component = () => {
     await Promise.all([
       queryClient.invalidateQueries({
         queryKey: api.employee.list.getKey(search)
-      }),
-      queryClient.invalidateQueries({
-        queryKey: api.employee.listFull.getKey()
       })
     ]);
   }, [history, queryClient, search]);

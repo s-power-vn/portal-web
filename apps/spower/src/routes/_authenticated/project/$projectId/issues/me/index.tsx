@@ -7,7 +7,7 @@ import {
   FilesIcon,
   ShoppingCartIcon
 } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
 import { ObjectTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
@@ -202,7 +202,7 @@ export const Route = createFileRoute(
 )({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
+    ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

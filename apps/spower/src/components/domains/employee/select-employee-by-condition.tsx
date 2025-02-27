@@ -25,7 +25,7 @@ export const SelectEmployeeByCondition: FC<
 
         const result = await api.employee.listByCondition.fetcher({
           filter,
-          pageIndex: page,
+          pageIndex: page ?? 1,
           pageSize: 10
         });
 
@@ -33,7 +33,7 @@ export const SelectEmployeeByCondition: FC<
           items: result.items.map(it => ({
             label: it.name,
             value: it.id,
-            group: it.expand.department.name,
+            group: it.expand?.department.name,
             subLabel: it.email
           })),
           hasMore: result.page < result.totalPages

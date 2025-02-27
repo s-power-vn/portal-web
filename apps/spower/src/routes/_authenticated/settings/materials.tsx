@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
 import type { MaterialResponse } from 'portal-core';
 
 import {
@@ -21,9 +21,9 @@ import {
 import { PageHeader } from '../../../components';
 
 export const Route = createFileRoute('/_authenticated/settings/materials')({
-  component: RouteComponent,
+  component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
+    ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
@@ -36,7 +36,7 @@ export const Route = createFileRoute('/_authenticated/settings/materials')({
   }
 });
 
-function RouteComponent() {
+function Component() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();

@@ -128,9 +128,7 @@ export function Combobox({
             aria-expanded={open}
             className={cn(
               'relative w-full justify-between text-sm font-normal',
-              selectedItem
-                ? 'text-appBlack font-medium'
-                : 'text-muted-foreground',
+              selectedItem ? 'text-appBlack' : 'text-muted-foreground',
               className
             )}
           >

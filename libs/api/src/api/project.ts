@@ -8,7 +8,7 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { Search } from './types';
+import type { ListParams } from './types';
 
 export type ProjectData = ProjectResponse<{
   customer: CustomerResponse;
@@ -24,11 +24,11 @@ export const projectApi = router('project', {
       })
   }),
   list: router.query({
-    fetcher: (search?: Search) =>
+    fetcher: (params?: ListParams) =>
       client
         .collection<ProjectData>(Collections.Project)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `(name ~ "${params?.filter ?? ''}" || bidding ~ "${params?.filter ?? ''}")`,
           expand: 'customer, createdBy',
           sort: '-created'
         })

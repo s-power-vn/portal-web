@@ -2,13 +2,12 @@ import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { ProjectData } from 'portal-api';
-import { SearchSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
-import { EmployeeDisplay } from '../../../components';
-import { IssueBadge } from '../../../components/domains/issue/issue-badge';
+import { EmployeeDisplay, IssueBadge } from '../../../components';
 
 const Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
@@ -49,7 +48,7 @@ const Component = () => {
     }),
     columnHelper.accessor('customer', {
       cell: ({ row }) => (
-        <div className={'truncate'}>{row.original.expand.customer.name}</div>
+        <div className={'truncate'}>{row.original.expand?.customer.name}</div>
       ),
       header: () => 'Chủ đầu tư',
       footer: info => info.column.id,
@@ -141,7 +140,7 @@ const Component = () => {
 export const Route = createFileRoute('/_authenticated/project/')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
+    ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

@@ -7,9 +7,9 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { ObjectData } from 'libs/api/src/api/object';
 import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import type { ObjectResponse, ProcessResponse } from 'portal-core';
 import { ObjectTypeOptions } from 'portal-core';
 
 import { useCallback, useState } from 'react';
@@ -32,20 +32,25 @@ import { PageHeader } from '../../../components';
 import { IndeterminateCheckbox } from '../../../components/checkbox';
 import { useInvalidateQueries } from '../../../hooks';
 
-type ObjectWithExpand = ObjectResponse & {
-  expand?: {
-    process?: ProcessResponse;
-  };
-};
+export const Route = createFileRoute('/_authenticated/settings/objects')({
+  component: Component,
+  loader: ({ context: { queryClient } }) =>
+    queryClient?.ensureQueryData(api.object.listFull.getOptions()),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý đối tượng'
+    };
+  }
+});
 
-const Component = () => {
+function Component() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const listObjects = api.object.listFull.useSuspenseQuery();
   const invalidates = useInvalidateQueries();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const columnHelper = createColumnHelper<ObjectWithExpand>();
+  const columnHelper = createColumnHelper<ObjectData>();
 
   const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
@@ -410,15 +415,4 @@ const Component = () => {
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute('/_authenticated/settings/objects')({
-  component: Component,
-  loader: ({ context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.object.listFull.getOptions()),
-  beforeLoad: () => {
-    return {
-      title: 'Quản lý đối tượng'
-    };
-  }
-});
+}
