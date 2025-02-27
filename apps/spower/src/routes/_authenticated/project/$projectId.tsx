@@ -54,7 +54,7 @@ const Component = () => {
           </span>
           <div className={'flex items-center'}>
             <span className={'text-muted-foreground truncate text-sm'}>
-              {project.data?.name} - {project.data?.expand.customer.name}
+              {project.data?.name} - {project.data?.expand?.customer.name}
             </span>
           </div>
         </div>

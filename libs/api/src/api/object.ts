@@ -7,11 +7,9 @@ import {
 
 import { router } from 'react-query-kit';
 
-export type ObjectData = ObjectResponse & {
-  expand?: {
-    process: ProcessResponse;
-  };
-};
+export type ObjectData = ObjectResponse<{
+  process: ProcessResponse;
+}>;
 
 export const objectApi = router('object', {
   listFull: router.query({

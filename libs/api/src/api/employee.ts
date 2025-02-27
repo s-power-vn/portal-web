@@ -3,61 +3,34 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { Search } from './types';
+import type { ListParams } from './types';
 
-export type UserData = UserResponse & {
-  expand: {
-    department: DepartmentResponse;
-  };
-};
+export type UserData = UserResponse<{
+  department: DepartmentResponse;
+}>;
 
 export const employeeApi = router('employee', {
-  listFull: router.query({
-    fetcher: (search?: string) => {
-      return client.collection<UserData>(Collections.User).getFullList({
-        filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
-        sort: 'department',
-        expand: 'department'
-      });
-    }
-  }),
-  listFirst: router.query({
-    fetcher: (search?: string) =>
-      client.collection<UserData>(Collections.User).getList(1, 10, {
-        filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
-        sort: 'department',
-        expand: 'department'
-      })
-  }),
-  listByCondition: router.query({
-    fetcher: ({
-      filter,
-      pageIndex,
-      pageSize
-    }: {
-      filter?: string;
-      pageIndex?: number;
-      pageSize?: number;
-    }) =>
-      client
-        .collection<UserData>(Collections.User)
-        .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter: filter ?? '',
-          sort: 'department',
-          expand: 'department'
-        })
-  }),
   list: router.query({
-    fetcher: (search?: Search) => {
-      const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
+    fetcher: (params?: ListParams) => {
+      const filter = `(name ~ "${params?.filter ?? ''}" || email ~ "${params?.filter ?? ''}")`;
       return client
         .collection<UserData>(Collections.User)
-        .getList(search?.pageIndex, search?.pageSize, {
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
           filter,
           sort: 'department',
           expand: 'department'
         });
     }
+  }),
+  listByCondition: router.query({
+    fetcher: (params: ListParams) =>
+      client
+        .collection<UserData>(Collections.User)
+        .getList(params.pageIndex ?? 1, params.pageSize ?? 10, {
+          filter: params.filter ?? '',
+          sort: 'department',
+          expand: 'department'
+        })
   }),
   byId: router.query({
     fetcher: (id: string) =>

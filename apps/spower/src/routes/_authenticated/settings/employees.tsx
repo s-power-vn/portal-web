@@ -1,16 +1,22 @@
-import type { SearchSchemaInput } from '@tanstack/react-router';
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  Outlet,
+  SearchSchemaInput,
+  createFileRoute,
+  useNavigate
+} from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import type { UserData } from 'portal-api';
-import { SearchSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   Button,
@@ -28,19 +34,54 @@ import {
 import { PageHeader } from '../../../components';
 import { useInvalidateQueries } from '../../../hooks';
 
-const Component = () => {
+export const Route = createFileRoute('/_authenticated/settings/employees')({
+  component: Component,
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(
+      api.employee.list.getOptions({
+        filter: deps.search.filter,
+        pageIndex: 1,
+        pageSize: 20
+      })
+    ),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý nhân viên'
+    };
+  }
+});
+
+function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
   const [search, setSearch] = useState<string | undefined>();
   const invalidates = useInvalidateQueries();
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const listEmployees = api.employee.listFull.useSuspenseQuery({
-    variables: search
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ['employees', search],
+      queryFn: ({ pageParam = 1 }) =>
+        api.employee.list.fetcher({
+          filter: search ?? '',
+          pageIndex: pageParam,
+          pageSize: 20
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1
+    });
+
+  const employees = data?.pages.flatMap(page => page.items) || [];
 
   const deleteEmployee = api.employee.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhân viên thành công');
-      invalidates([api.employee.listFull.getKey(search)]);
+      invalidates([api.employee.list.getKey({ filter: search ?? '' })]);
     }
   });
 
@@ -79,7 +120,7 @@ const Component = () => {
     }),
     columnHelper.accessor('department', {
       cell: ({ row }) => {
-        return row.original.expand.department.name;
+        return row.original.expand?.department.name;
       },
       header: () => 'Phòng ban',
       footer: info => info.column.id
@@ -98,7 +139,8 @@ const Component = () => {
           <div className={'flex gap-1'}>
             <Button
               className={'h-6 px-3'}
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
                 navigate({
                   to: './$employeeId/edit',
                   params: {
@@ -133,8 +175,31 @@ const Component = () => {
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: listEmployees.data || []
+    data: employees
   });
+
+  const { rows } = table.getRowModel();
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      if (
+        scrollHeight - scrollTop - clientHeight < 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -166,108 +231,125 @@ const Component = () => {
             'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
           }
         >
-          <div className="absolute inset-0 overflow-auto">
-            <Table
-              style={{
-                width: '100%',
-                tableLayout: 'fixed'
-              }}
-            >
-              <TableHeader
-                className={'bg-appBlueLight'}
+          <div
+            className="absolute inset-0 overflow-auto"
+            ref={parentRef}
+            onScroll={handleScroll}
+          >
+            {isLoading ? (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <Table
                 style={{
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 2
+                  width: '100%',
+                  tableLayout: 'fixed'
                 }}
               >
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className={'text-appWhite whitespace-nowrap'}
-                        style={{
-                          width: header.getSize(),
-                          maxWidth: header.getSize()
-                        }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map(row => (
+                <TableHeader
+                  className={'bg-appBlueLight'}
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2
+                  }}
+                >
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
-                      key={row.id}
-                      className={'cursor-pointer last:border-b-0'}
-                      onClick={() => {
-                        navigate({
-                          to: './$employeeId/edit',
-                          params: {
-                            employeeId: row.original.id
-                          }
-                        });
-                      }}
+                      key={headerGroup.id}
+                      className={'hover:bg-appBlue'}
                     >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={'truncate text-left'}
+                      {headerGroup.headers.map(header => (
+                        <TableHead
+                          key={header.id}
+                          className={'text-appWhite whitespace-nowrap'}
                           style={{
-                            width: cell.column.getSize(),
-                            maxWidth: cell.column.getSize()
+                            width: header.getSize(),
+                            maxWidth: header.getSize()
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
                           )}
-                        </TableCell>
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow className={'border-b-0'}>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableHeader>
+                <TableBody
+                  className={'relative'}
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`
+                  }}
+                >
+                  {rows.length ? (
+                    virtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={virtualRow.key}
+                          className={
+                            'absolute w-full cursor-pointer last:border-b-0'
+                          }
+                          data-index={virtualRow.index}
+                          ref={virtualizer.measureElement}
+                          style={{
+                            transform: `translateY(${virtualRow.start}px)`
+                          }}
+                          onClick={() => {
+                            navigate({
+                              to: './$employeeId/edit',
+                              params: {
+                                employeeId: row.original.id
+                              }
+                            });
+                          }}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              className={'truncate text-left'}
+                              style={{
+                                width: cell.column.getSize(),
+                                maxWidth: cell.column.getSize()
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow className={'border-b-0'}>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-16 text-center"
+                      >
+                        Không có dữ liệu.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
+            {isFetchingNextPage && (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute('/_authenticated/settings/employees')({
-  component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
-  loaderDeps: ({ search }) => {
-    return { search };
-  },
-  loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.employee.list.getOptions(deps.search)),
-  beforeLoad: () => {
-    return {
-      title: 'Quản lý nhân viên'
-    };
-  }
-});
+}

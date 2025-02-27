@@ -14,17 +14,19 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
       placeholder="Chọn nhân viên"
       emptyText="Không tìm thấy nhân viên"
       queryKey={['employees']}
-      queryFn={async ({ search }) => {
+      queryFn={async ({ search, page }) => {
         const result = await api.employee.listByCondition.fetcher({
           filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
-          pageIndex: 1,
+          pageIndex: page ?? 1,
           pageSize: 10
         });
 
         return {
           items: result.items.map(it => ({
             label: it.name,
-            value: it.id
+            value: it.id,
+            group: it.expand?.department.name,
+            subLabel: it.email
           })),
           hasMore: result.page < result.totalPages
         };

@@ -1,20 +1,36 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
 
-import type { SelectInputProps } from '@minhdtb/storeo-theme';
-import { SelectInput } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../combobox';
 
-export type CustomerDropdownProps = Omit<SelectInputProps, 'items'>;
+export type CustomerDropdownProps = Partial<ComboboxProps>;
 
-export const CustomerDropdown: FC<CustomerDropdownProps> = ({ ...props }) => {
-  const listCustomers = api.customer.listFull.useQuery();
+export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
+  return (
+    <Combobox
+      value={props.value}
+      onChange={props.onChange}
+      placeholder="Chọn chủ đầu tư"
+      emptyText="Không tìm thấy chủ đầu tư"
+      queryKey={['customers']}
+      queryFn={async ({ search, page }) => {
+        const result = await api.customer.list.fetcher({
+          filter: search ?? '',
+          pageIndex: page ?? 1,
+          pageSize: 10
+        });
 
-  const items = _.map(listCustomers.data, ({ id, name }) => ({
-    value: id,
-    label: name
-  }));
-
-  return <SelectInput items={items} showSearch={true} {...props} />;
+        return {
+          items: result.items.map(it => ({
+            label: it.name,
+            value: it.id
+          })),
+          hasMore: result.page < result.totalPages
+        };
+      }}
+      className={props.className}
+      showGroups={false}
+    />
+  );
 };

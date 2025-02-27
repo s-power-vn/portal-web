@@ -43,7 +43,6 @@ export const SidebarGroup: FC<SidebarGroupProps> = ({
   const childrenWithProps = useCallback(
     (padding: number) => {
       return Children.map(children, child => {
-        console.log(child);
         if (isValidElement(child)) {
           return cloneElement(child, {
             isChild: true,

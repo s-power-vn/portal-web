@@ -1,18 +1,14 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ObjectData } from 'libs/api/src/api/object';
+import { IssueData } from 'libs/api/src/api/issue';
 import {
   CircleDollarSignIcon,
   FilesIcon,
   ShoppingCartIcon
 } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
-import {
-  type IssueFileResponse,
-  type IssueResponse,
-  ObjectTypeOptions
-} from 'portal-core';
+import { ListSchema, api } from 'portal-api';
+import { ObjectTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
@@ -25,13 +21,6 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
-type IssueWithExpand = IssueResponse & {
-  expand?: {
-    issueFile_via_issue?: IssueFileResponse[];
-    object: ObjectData;
-  };
-};
-
 const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -43,7 +32,7 @@ const Component = () => {
     }
   });
 
-  const columnHelper = createColumnHelper<IssueWithExpand>();
+  const columnHelper = createColumnHelper<IssueData>();
 
   const columns = [
     columnHelper.display({
@@ -213,7 +202,7 @@ export const Route = createFileRoute(
 )({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
+    ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },

@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -7,11 +7,12 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
+import { ListSchema, api } from 'portal-api';
 import type { CustomerResponse } from 'portal-core';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   Button,
@@ -27,30 +28,62 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { PageHeader } from '../../../components';
+import { useInvalidateQueries } from '../../../hooks';
 
-const Component = () => {
-  const queryClient = useQueryClient();
+export const Route = createFileRoute('/_authenticated/settings/customers')({
+  component: Component,
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(
+      api.customer.list.getOptions({
+        filter: deps.search.filter,
+        pageIndex: 1,
+        pageSize: 20
+      })
+    ),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý chủ đầu tư'
+    };
+  }
+});
+
+function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
   const [search, setSearch] = useState<string | undefined>();
+  const invalidates = useInvalidateQueries();
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const listCustomers = api.customer.listFull.useSuspenseQuery({
-    variables: search
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ['customers', search],
+      queryFn: ({ pageParam = 1 }) =>
+        api.customer.list.fetcher({
+          filter: search ?? '',
+          pageIndex: pageParam,
+          pageSize: 20
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1
+    });
 
-  const columnHelper = createColumnHelper<CustomerResponse>();
+  const customers = data?.pages.flatMap(page => page.items) || [];
 
   const deleteCustomer = api.customer.delete.useMutation({
     onSuccess: async () => {
       success('Xóa chủ đầu tư thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.customer.listFull.getKey(search)
-        })
-      ]);
+      invalidates([api.customer.list.getKey({ filter: search ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
+
+  const columnHelper = createColumnHelper<CustomerResponse>();
 
   const columns = [
     columnHelper.display({
@@ -98,15 +131,16 @@ const Component = () => {
           <div className={'flex gap-1'}>
             <Button
               className={'h-6 px-3'}
-              onClick={() =>
+              onClick={e => {
+                e.stopPropagation();
                 navigate({
                   to: './$customerId/edit',
                   params: {
                     customerId: row.original.id
                   },
                   search
-                })
-              }
+                });
+              }}
             >
               <EditIcon className={'h-3 w-3'} />
             </Button>
@@ -133,8 +167,31 @@ const Component = () => {
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: listCustomers.data || []
+    data: customers
   });
+
+  const { rows } = table.getRowModel();
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      if (
+        scrollHeight - scrollTop - clientHeight < 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -166,108 +223,126 @@ const Component = () => {
             'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
           }
         >
-          <div className="absolute inset-0 overflow-auto">
-            <Table
-              style={{
-                width: '100%',
-                tableLayout: 'fixed'
-              }}
-            >
-              <TableHeader
-                className={'bg-appBlueLight'}
+          <div
+            className="absolute inset-0 overflow-auto"
+            ref={parentRef}
+            onScroll={handleScroll}
+          >
+            {isLoading ? (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <Table
                 style={{
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 2
+                  width: '100%',
+                  tableLayout: 'fixed'
                 }}
               >
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className={'text-appWhite whitespace-nowrap'}
-                        style={{
-                          width: header.getSize(),
-                          maxWidth: header.getSize()
-                        }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map(row => (
+                <TableHeader
+                  className={'bg-appBlueLight'}
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2
+                  }}
+                >
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
-                      key={row.id}
-                      className={'cursor-pointer last:border-b-0'}
-                      onClick={() =>
-                        navigate({
-                          to: './$customerId/edit',
-                          params: {
-                            customerId: row.original.id
-                          }
-                        })
-                      }
+                      key={headerGroup.id}
+                      className={'hover:bg-appBlue'}
                     >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={'truncate text-left'}
+                      {headerGroup.headers.map(header => (
+                        <TableHead
+                          key={header.id}
+                          className={'text-appWhite whitespace-nowrap'}
                           style={{
-                            width: cell.column.getSize(),
-                            maxWidth: cell.column.getSize()
+                            width: header.getSize(),
+                            maxWidth: header.getSize()
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
                           )}
-                        </TableCell>
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow className={'border-b-0'}>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableHeader>
+                <TableBody
+                  className={'relative'}
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`
+                  }}
+                >
+                  {rows.length ? (
+                    virtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={virtualRow.key}
+                          className={
+                            'absolute w-full cursor-pointer last:border-b-0'
+                          }
+                          data-index={virtualRow.index}
+                          ref={virtualizer.measureElement}
+                          style={{
+                            transform: `translateY(${virtualRow.start}px)`
+                          }}
+                          onClick={() => {
+                            navigate({
+                              to: './$customerId/edit',
+                              params: {
+                                customerId: row.original.id
+                              },
+                              search
+                            });
+                          }}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              className={'truncate text-left'}
+                              style={{
+                                width: cell.column.getSize(),
+                                maxWidth: cell.column.getSize()
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow className={'border-b-0'}>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-16 text-center"
+                      >
+                        Không có dữ liệu.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
+            {isFetchingNextPage && (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute('/_authenticated/settings/customers')({
-  component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
-  loaderDeps: ({ search }) => {
-    return { search };
-  },
-  loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.customer.list.getOptions(deps.search)),
-  beforeLoad: () => {
-    return {
-      title: 'Quản lý chủ đầu tư'
-    };
-  }
-});
+}

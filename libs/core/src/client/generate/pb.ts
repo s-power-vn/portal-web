@@ -152,12 +152,12 @@ export type CustomerRecord = {
 	updated?: IsoDateString
 }
 
-export type DepartmentRecord = {
-	code?: string
+export type DepartmentRecord<Troles = unknown> = {
 	created?: IsoDateString
 	description?: string
 	id: string
 	name: string
+	roles?: null | Troles
 	updated?: IsoDateString
 }
 
@@ -407,7 +407,7 @@ export type ColumnResponse<Texpand = unknown> = Required<ColumnRecord> & BaseSys
 export type CommentResponse<Texpand = unknown> = Required<CommentRecord> & BaseSystemFields<Texpand>
 export type ContractResponse<Texpand = unknown> = Required<ContractRecord> & BaseSystemFields<Texpand>
 export type CustomerResponse<Texpand = unknown> = Required<CustomerRecord> & BaseSystemFields<Texpand>
-export type DepartmentResponse<Texpand = unknown> = Required<DepartmentRecord> & BaseSystemFields<Texpand>
+export type DepartmentResponse<Troles = unknown, Texpand = unknown> = Required<DepartmentRecord<Troles>> & BaseSystemFields<Texpand>
 export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<DetailRecord<Textend>> & BaseSystemFields<Texpand>
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>

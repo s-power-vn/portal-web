@@ -8,30 +8,28 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { Search } from './types';
+import type { ListParams } from './types';
 
-export type ProjectData = ProjectResponse & {
-  expand: {
-    customer: CustomerResponse;
-    createdBy: UserResponse;
-    column_via_project: ColumnResponse[];
-  };
-};
+export type ProjectData = ProjectResponse<{
+  customer: CustomerResponse;
+  createdBy: UserResponse;
+  column_via_project: ColumnResponse[];
+}>;
 
 export const projectApi = router('project', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ProjectData>(Collections.Project).getOne(id, {
-        expand: 'customer,createdBy,column_via_project'
+        expand: 'customer, createdBy, column_via_project'
       })
   }),
   list: router.query({
-    fetcher: (search?: Search) =>
+    fetcher: (params?: ListParams) =>
       client
         .collection<ProjectData>(Collections.Project)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `(name ~ "${search?.filter ?? ''}" || bidding ~ "${search?.filter ?? ''}")`,
-          expand: 'customer,createdBy',
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `(name ~ "${params?.filter ?? ''}" || bidding ~ "${params?.filter ?? ''}")`,
+          expand: 'customer, createdBy',
           sort: '-created'
         })
   }),
@@ -39,7 +37,7 @@ export const projectApi = router('project', {
     mutationFn: (params: Partial<ProjectResponse>) =>
       client.collection(Collections.Project).create({
         ...params,
-        createdBy: client.authStore.model?.id
+        createdBy: client.authStore.record?.id
       })
   }),
   delete: router.mutation({

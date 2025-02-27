@@ -7,11 +7,12 @@ import {
 
 import { router } from 'react-query-kit';
 
-export type ProcessDbData = ProcessResponse & {
-  expand?: {
-    object_via_process?: ObjectResponse[];
-  };
-};
+export type ProcessDbData = ProcessResponse<
+  {},
+  {
+    object_via_process: ObjectResponse[];
+  }
+>;
 
 export const processApi = router('process', {
   listFull: router.query({

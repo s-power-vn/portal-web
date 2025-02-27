@@ -3,7 +3,7 @@ import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
-import { SearchSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
 import type { SupplierResponse } from 'portal-core';
 
 import {
@@ -16,7 +16,23 @@ import {
 
 import { PageHeader } from '../../../components';
 
-const Component = () => {
+export const Route = createFileRoute('/_authenticated/settings/suppliers')({
+  component: Component,
+  validateSearch: (input: unknown & SearchSchemaInput) =>
+    ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
+  beforeLoad: () => {
+    return {
+      title: 'Quản lý nhà cung cấp'
+    };
+  }
+});
+
+function Component() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
@@ -196,20 +212,4 @@ const Component = () => {
       </div>
     </>
   );
-};
-
-export const Route = createFileRoute('/_authenticated/settings/suppliers')({
-  component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    SearchSchema.validateSync(input),
-  loaderDeps: ({ search }) => {
-    return { search };
-  },
-  loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
-  beforeLoad: () => {
-    return {
-      title: 'Quản lý nhà cung cấp'
-    };
-  }
-});
+}

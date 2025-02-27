@@ -3,7 +3,7 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { Search } from './types';
+import type { ListParams } from './types';
 
 export const supplierApi = router('supplier', {
   listFull: router.query({
@@ -13,11 +13,11 @@ export const supplierApi = router('supplier', {
       })
   }),
   list: router.query({
-    fetcher: (search?: Search) => {
-      const filter = `(name ~ "${search?.filter ?? ''}" || email ~ "${search?.filter ?? ''}")`;
+    fetcher: (params?: ListParams) => {
+      const filter = `(name ~ "${params?.filter ?? ''}" || email ~ "${params?.filter ?? ''}")`;
       return client
         .collection(Collections.Supplier)
-        .getList(search?.pageIndex, search?.pageSize, {
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
           filter,
           sort: '-created'
         });

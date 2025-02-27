@@ -7,23 +7,24 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { UserData } from './employee';
+import { UserData } from './employee';
 import { ObjectData } from './object';
-import type { Search } from './types';
+import { ListParams } from './types';
 
-export type IssueData = IssueResponse & {
-  expand?: {
+export type IssueData = IssueResponse<
+  Record<string, string>[],
+  string[],
+  {
     createdBy: UserData;
     assignee: UserData;
     issueFile_via_issue: IssueFileResponse[];
     object: ObjectData;
-  };
-  approver?: Record<string, string>[];
-};
+  }
+>;
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: (search?: Search & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -35,12 +36,12 @@ export const issueApi = router('issue', {
         })
   }),
   listMine: router.query({
-    fetcher: (search?: Search & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
-        && assignee = "${client.authStore.model?.id}"
+        && assignee = "${client.authStore.record?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
           expand: `object, object.process, issueFile_via_issue`,
@@ -48,7 +49,7 @@ export const issueApi = router('issue', {
         })
   }),
   listRequest: router.query({
-    fetcher: (search?: Search & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -61,7 +62,7 @@ export const issueApi = router('issue', {
         })
   }),
   listPrice: router.query({
-    fetcher: (search?: Search & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {

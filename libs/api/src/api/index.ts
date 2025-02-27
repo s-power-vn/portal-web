@@ -15,7 +15,7 @@ import { projectApi } from './project';
 import type { RequestData, RequestDetailData } from './request';
 import { requestApi, requestDetailApi } from './request';
 import { supplierApi } from './supplier';
-import { SearchSchema } from './types';
+import { ListSchema } from './types';
 import { userApi } from './user';
 
 export const api = {
@@ -41,4 +41,4 @@ export const api = {
 
 export type { ProjectData, RequestData, RequestDetailData, UserData };
 
-export { SearchSchema };
+export { ListSchema };
