@@ -9,7 +9,7 @@ import { router } from 'react-query-kit';
 
 import { UserData } from './employee';
 import { ObjectData } from './object';
-import type { SearchParams } from './types';
+import { ListParams } from './types';
 
 export type IssueData = IssueResponse<
   Record<string, string>[],
@@ -24,7 +24,7 @@ export type IssueData = IssueResponse<
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: (search?: SearchParams & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -36,7 +36,7 @@ export const issueApi = router('issue', {
         })
   }),
   listMine: router.query({
-    fetcher: (search?: SearchParams & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -49,7 +49,7 @@ export const issueApi = router('issue', {
         })
   }),
   listRequest: router.query({
-    fetcher: (search?: SearchParams & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
@@ -62,7 +62,7 @@ export const issueApi = router('issue', {
         })
   }),
   listPrice: router.query({
-    fetcher: (search?: SearchParams & { projectId: string }) =>
+    fetcher: (search?: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
