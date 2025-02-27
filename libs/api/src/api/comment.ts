@@ -3,12 +3,10 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-export type CommentData = CommentResponse & {
-  expand: {
-    issue: IssueResponse;
-    createdBy: UserResponse;
-  };
-};
+export type CommentData = CommentResponse<{
+  issue: IssueResponse;
+  createdBy: UserResponse;
+}>;
 
 export const commentApi = router('comment', {
   list: router.query({

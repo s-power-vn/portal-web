@@ -1,6 +1,5 @@
 import type {
   DetailResponse,
-  IssueResponse,
   ProjectResponse,
   RequestDetailResponse,
   RequestResponse,
@@ -12,28 +11,19 @@ import { number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
 
-import type { UserData } from './employee';
+import { IssueData } from './issue';
 
-export type RequestDetailData = RequestDetailResponse & {
-  expand: {
-    request: RequestResponse;
-    detail: DetailResponse;
-    supplier: SupplierResponse;
-  };
-};
+export type RequestDetailData = RequestDetailResponse<{
+  request: RequestResponse;
+  detail: DetailResponse;
+  supplier: SupplierResponse;
+}>;
 
-export type RequestData = RequestResponse & {
-  expand: {
-    project: ProjectResponse;
-    requestDetail_via_request: RequestDetailData[];
-    issue: IssueResponse & {
-      expand: {
-        createdBy: UserData;
-        assignee: UserData;
-      };
-    };
-  };
-};
+export type RequestData = RequestResponse<{
+  project: ProjectResponse;
+  requestDetail_via_request: RequestDetailData[];
+  issue: IssueData;
+}>;
 
 export const requestApi = router('request', {
   listFinished: router.query({

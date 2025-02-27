@@ -5,11 +5,9 @@ import { router } from 'react-query-kit';
 
 import type { Search } from './types';
 
-export type UserData = UserResponse & {
-  expand: {
-    department: DepartmentResponse;
-  };
-};
+export type UserData = UserResponse<{
+  department: DepartmentResponse;
+}>;
 
 export const employeeApi = router('employee', {
   listFull: router.query({

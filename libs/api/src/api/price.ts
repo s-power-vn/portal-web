@@ -7,15 +7,13 @@ import {
 
 import { router } from 'react-query-kit';
 
-export type PriceDetailData = PriceDetailResponse & {
+export type PriceDetailData = PriceDetailResponse<{
   prices: Record<string, number>;
-};
+}>;
 
-export type PriceData = PriceResponse & {
-  expand: {
-    priceDetail_via_price: PriceDetailData[];
-  };
-};
+export type PriceData = PriceResponse<{
+  priceDetail_via_price: PriceDetailData[];
+}>;
 
 export const priceApi = router('price', {
   byIssueId: router.query({

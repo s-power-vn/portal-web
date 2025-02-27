@@ -7,19 +7,20 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { UserData } from './employee';
+import { UserData } from './employee';
 import { ObjectData } from './object';
 import type { Search } from './types';
 
-export type IssueData = IssueResponse & {
-  expand?: {
+export type IssueData = IssueResponse<
+  Record<string, string>[],
+  string[],
+  {
     createdBy: UserData;
     assignee: UserData;
     issueFile_via_issue: IssueFileResponse[];
     object: ObjectData;
-  };
-  approver?: Record<string, string>[];
-};
+  }
+>;
 
 export const issueApi = router('issue', {
   list: router.query({
@@ -40,7 +41,7 @@ export const issueApi = router('issue', {
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
-        && assignee = "${client.authStore.model?.id}"
+        && assignee = "${client.authStore.record?.id}"
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
           expand: `object, object.process, issueFile_via_issue`,
