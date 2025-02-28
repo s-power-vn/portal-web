@@ -389,7 +389,7 @@ export type UserRecord = {
 	name: string
 	password: string
 	phone?: string
-	role?: number
+	role?: string
 	title?: string
 	tokenKey: string
 	updated?: IsoDateString
