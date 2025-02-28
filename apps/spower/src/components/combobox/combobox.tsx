@@ -30,8 +30,8 @@ export type ComboboxItem = {
 };
 
 export type ComboboxProps = {
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: string | string[];
+  onChange?: (value: string | string[]) => void;
   placeholder?: string;
   emptyText?: string;
   searchHint?: string;
@@ -44,6 +44,7 @@ export type ComboboxProps = {
   showGroups?: boolean;
   align?: Align;
   showClear?: boolean;
+  multiple?: boolean;
 };
 
 export function Combobox({
@@ -57,7 +58,8 @@ export function Combobox({
   className,
   showGroups = true,
   showClear = true,
-  align = 'start'
+  align = 'start',
+  multiple = false
 }: ComboboxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = React.useState(false);
@@ -65,6 +67,7 @@ export function Combobox({
   const [selectedItem, setSelectedItem] = React.useState<
     ComboboxItem | undefined
   >();
+  const [selectedItems, setSelectedItems] = React.useState<ComboboxItem[]>([]);
 
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
@@ -85,15 +88,23 @@ export function Combobox({
     [allItems]
   );
 
-  // Update selectedItem when value changes or when items are loaded
+  // Update selected items when value changes or when items are loaded
   React.useEffect(() => {
     if (value && allItems.length > 0) {
-      const found = allItems.find(it => it.value === value);
-      if (found) {
-        setSelectedItem(found);
+      if (multiple) {
+        const values = value as string[];
+        const items = values
+          .map(v => allItems.find(it => it.value === v))
+          .filter(Boolean) as ComboboxItem[];
+        setSelectedItems(items);
+      } else {
+        const found = allItems.find(it => it.value === value);
+        if (found) {
+          setSelectedItem(found);
+        }
       }
     }
-  }, [value, allItems]);
+  }, [value, allItems, multiple]);
 
   const handleScroll = React.useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
@@ -112,11 +123,51 @@ export function Combobox({
   const handleClear = React.useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      setSelectedItem(undefined);
-      onChange?.('');
+      if (multiple) {
+        setSelectedItems([]);
+        onChange?.([]);
+      } else {
+        setSelectedItem(undefined);
+        onChange?.('');
+      }
     },
-    [onChange]
+    [onChange, multiple]
   );
+
+  const handleRemoveItem = React.useCallback(
+    (e: React.MouseEvent, item: ComboboxItem) => {
+      e.stopPropagation();
+      const newItems = selectedItems.filter(it => it.value !== item.value);
+      setSelectedItems(newItems);
+      onChange?.(newItems.map(it => it.value));
+    },
+    [selectedItems, onChange]
+  );
+
+  const displayContent = React.useMemo(() => {
+    if (multiple && selectedItems.length > 0) {
+      return (
+        <div className="flex w-full flex-wrap items-start gap-1 pr-4">
+          {selectedItems.map(item => (
+            <span
+              key={item.value}
+              className="bg-appGrayLight border-appGr flex max-w-full items-center gap-1 rounded-md border px-2 py-0.5"
+            >
+              <span className="max-w-[200px] truncate">{item.label}</span>
+              <X
+                className="text-appBlack hover:text-appError h-3 w-3 flex-shrink-0 cursor-pointer"
+                onClick={e => handleRemoveItem(e, item)}
+              />
+            </span>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <span className="!truncate">{selectedItem?.label ?? placeholder}</span>
+    );
+  }, [multiple, selectedItems, selectedItem, placeholder, handleRemoveItem]);
 
   return (
     <div ref={containerRef} className={'flex-1'}>
@@ -127,26 +178,31 @@ export function Combobox({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              'relative w-full justify-between text-sm font-normal',
-              selectedItem ? 'text-appBlack' : 'text-muted-foreground',
+              'relative h-auto min-h-10 w-full p-1.5 text-sm font-normal',
+              'flex flex-wrap items-center gap-1',
+              multiple ? 'justify-start' : 'justify-between',
+              (multiple && selectedItems.length > 0) ||
+                (selectedItem && !multiple)
+                ? 'text-appBlack'
+                : 'text-muted-foreground',
               className
             )}
           >
-            <span className="!truncate">
-              {selectedItem?.label ?? placeholder}
-            </span>
+            {displayContent}
             <div className="absolute right-2 flex items-center gap-1">
-              {showClear && selectedItem && (
-                <div
-                  className={cn(
-                    `bg-appError flex h-4 w-4 items-center
+              {showClear &&
+                ((multiple && selectedItems.length > 0) ||
+                  (!multiple && selectedItem)) && (
+                  <div
+                    className={cn(
+                      `bg-appError flex h-4 w-4 items-center
                    justify-center rounded-full p-0 text-white shadow`
-                  )}
-                  onClick={handleClear}
-                >
-                  <X className="h-2 w-2" />
-                </div>
-              )}
+                    )}
+                    onClick={handleClear}
+                  >
+                    <X className="h-2 w-2" />
+                  </div>
+                )}
               <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
             </div>
           </ThemeButton>
@@ -184,14 +240,38 @@ export function Combobox({
                     <React.Fragment key={key}>
                       <CommandGroup heading={showGroups ? key : undefined}>
                         {normalizedItems[key].map(it => {
+                          const isSelectedInMultiple =
+                            multiple &&
+                            selectedItems.some(item => item.value === it.value);
+                          const isSelectedInSingle =
+                            !multiple && selectedItem?.value === it.value;
+
                           return (
                             <CommandItem
                               key={it.value}
                               className={'hover:bg-appGrayLight'}
                               onSelect={() => {
-                                setSelectedItem(it);
-                                onChange?.(it.value);
-                                setOpen(false);
+                                if (multiple) {
+                                  const isSelected = selectedItems.some(
+                                    item => item.value === it.value
+                                  );
+                                  let newItems: ComboboxItem[];
+
+                                  if (isSelected) {
+                                    newItems = selectedItems.filter(
+                                      item => item.value !== it.value
+                                    );
+                                  } else {
+                                    newItems = [...selectedItems, it];
+                                  }
+
+                                  setSelectedItems(newItems);
+                                  onChange?.(newItems.map(item => item.value));
+                                } else {
+                                  setSelectedItem(it);
+                                  onChange?.(it.value);
+                                  setOpen(false);
+                                }
                               }}
                               value={it.value}
                             >
@@ -206,7 +286,7 @@ export function Combobox({
                               <CheckIcon
                                 className={cn(
                                   'ml-auto h-4 w-4',
-                                  selectedItem?.value === it.value
+                                  isSelectedInMultiple || isSelectedInSingle
                                     ? 'opacity-100'
                                     : 'opacity-0'
                                 )}

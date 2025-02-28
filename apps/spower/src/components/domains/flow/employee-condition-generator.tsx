@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DepartmentData } from 'libs/api/src/api/department';
 import _ from 'lodash';
-import { Plus, Trash2, User, Users } from 'lucide-react';
+import { NetworkIcon, Plus, Trash2, User } from 'lucide-react';
 import { api } from 'portal-api';
 import * as yup from 'yup';
 
@@ -16,15 +16,11 @@ import {
 } from 'react';
 import { UseFormSetValue, useFieldArray, useForm } from 'react-hook-form';
 
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectInput,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@minhdtb/storeo-theme';
+import { Button, SelectInput } from '@minhdtb/storeo-theme';
+
+import { DepartmentDropdown } from '../department';
+import { SelectEmployee } from '../employee';
+import { RoleDropdown } from '../role';
 
 type ConditionType = 'department' | 'employee';
 
@@ -234,7 +230,7 @@ const ConditionBlock = memo(
     );
 
     const handleEmployeeChange = useCallback(
-      (value: any) => {
+      (value: string | string[]) => {
         setValue(
           `conditions.${index}.employeeIds`,
           Array.isArray(value) ? value : [],
@@ -261,28 +257,17 @@ const ConditionBlock = memo(
         {isDepartmentCondition(condition) && (
           <div className="mt-2 space-y-3">
             <div className="mb-2 flex items-center gap-1 text-sm font-medium">
-              <Users className="h-4 w-4" />
+              <NetworkIcon className="h-4 w-4" />
               Phòng ban
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium">
-                Phòng ban <span className="text-destructive">*</span>
+                Phòng ban<span className="text-destructive">*</span>
               </label>
-              <Select
+              <DepartmentDropdown
                 value={localDeptId}
-                onValueChange={handleDepartmentChange}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Chọn phòng ban" />
-                </SelectTrigger>
-                <SelectContent>
-                  {departments.map(dept => (
-                    <SelectItem key={dept.id} value={dept.id}>
-                      {dept.name.toString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={value => handleDepartmentChange(value as string)}
+              />
               {formErrors.conditions?.[index]?.departmentId && (
                 <p className="text-destructive mt-1 text-sm">
                   {formErrors.conditions[index]?.departmentId?.message}
@@ -292,29 +277,17 @@ const ConditionBlock = memo(
 
             <div>
               <label className="mb-1 block text-sm font-medium">
-                Chức danh (không bắt buộc)
+                Chức danh
               </label>
-              <Select value={localRole} onValueChange={handleRoleChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Chọn chức danh" />
-                </SelectTrigger>
-                <SelectContent>
-                  {departmentRoles.length > 0 ? (
-                    departmentRoles.map(role => (
-                      <SelectItem
-                        key={typeof role === 'object' ? role.id : role}
-                        value={typeof role === 'object' ? role.id : role}
-                      >
-                        {typeof role === 'object' ? role.name : String(role)}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="none" disabled>
-                      Không có chức danh
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+              <RoleDropdown
+                items={departmentRoles.map(role => ({
+                  value: role.id,
+                  label: role.name
+                }))}
+                value={localRole}
+                onChange={value => handleRoleChange(value as string)}
+                placeholder="Chọn chức danh"
+              />
             </div>
           </div>
         )}
@@ -329,10 +302,11 @@ const ConditionBlock = memo(
               <label className="mb-1 block text-sm font-medium">
                 Nhân viên <span className="text-destructive">*</span>
               </label>
-              <EmployeeDropdown
+              <SelectEmployee
                 value={condition.employeeIds}
                 onChange={handleEmployeeChange}
                 placeholder="Chọn nhân viên"
+                multiple={true}
               />
               {formErrors.conditions?.[index]?.employeeIds && (
                 <p className="text-destructive mt-1 text-sm">

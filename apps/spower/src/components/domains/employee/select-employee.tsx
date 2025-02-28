@@ -4,11 +4,12 @@ import type { FC } from 'react';
 
 import { Combobox, ComboboxProps } from '../../combobox';
 
-export type SelectEmployeeProps = ComboboxProps;
+export type SelectEmployeeProps = Partial<ComboboxProps>;
 
 export const SelectEmployee: FC<SelectEmployeeProps> = props => {
   return (
     <Combobox
+      {...props}
       value={props.value}
       onChange={props.onChange}
       placeholder="Chọn nhân viên"
