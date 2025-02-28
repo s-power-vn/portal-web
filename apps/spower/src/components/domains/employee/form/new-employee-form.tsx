@@ -20,7 +20,6 @@ const schema = object().shape({
   passwordConfirmation: string()
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
     .required('Hãy xác nhận mật khẩu'),
-  title: string(),
   phone: string(),
   role: string().required('Hãy chọn chức danh')
 });
@@ -64,7 +63,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
 
         createEmployee.mutate({
           ...values,
-          title: selectedRole?.name || ''
+          role: values.role
         });
       }}
       onCancel={props.onCancel}

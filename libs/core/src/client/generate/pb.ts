@@ -390,7 +390,6 @@ export type UserRecord = {
 	password: string
 	phone?: string
 	role?: string
-	title?: string
 	tokenKey: string
 	updated?: IsoDateString
 	username: string

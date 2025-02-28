@@ -5,11 +5,12 @@ import {
   ArrowRightToLineIcon,
   ArrowUpToLineIcon,
   Plus,
+  Search,
   Trash2
 } from 'lucide-react';
 import * as yup from 'yup';
 
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import {
@@ -18,9 +19,11 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  showModal
 } from '@minhdtb/storeo-theme';
 
+import { EmployeeConditionGenerator } from './employee-condition-generator';
 import type { Node, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -66,6 +69,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
   onNodeUpdate,
   onNodeDelete
 }) => {
+  const [showConditionGenerator, setShowConditionGenerator] = useState(false);
   const {
     register,
     handleSubmit,
@@ -143,6 +147,23 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     }
   };
 
+  const handleShowConditionGenerator = useCallback(() => {
+    showModal({
+      title: 'Tạo điều kiện',
+      className: 'max-h-[80vh]',
+      children: ({ close }) => (
+        <EmployeeConditionGenerator
+          value={watch('condition')}
+          onChange={value => {
+            setValue('condition', value);
+            handleSubmit(onSubmit)();
+            close();
+          }}
+        />
+      )
+    });
+  }, [handleSubmit, setValue, watch]);
+
   return (
     <div className="flex max-h-0 flex-col">
       <div className="flex-1">
@@ -195,12 +216,24 @@ export const NodeProperty: FC<NodePropertyProps> = ({
               </div>
               <div>
                 <label className="text-sm font-medium">Điều kiện</label>
-                <textarea
-                  {...register('condition')}
-                  onBlur={() => handleSubmit(onSubmit)()}
-                  placeholder="Nhập điều kiện"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <div className="flex gap-2">
+                  <textarea
+                    {...register('condition')}
+                    onBlur={() => handleSubmit(onSubmit)()}
+                    placeholder="Nhập điều kiện"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-10"
+                    onClick={handleShowConditionGenerator}
+                  >
+                    <Search size={16} className="mr-1" />
+                    Tạo
+                  </Button>
+                </div>
                 {errors.condition && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.condition.message}

@@ -15,7 +15,6 @@ const schema = object().shape({
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
   phone: string(),
-  title: string(),
   role: string().required('Hãy chọn chức danh')
 });
 
@@ -69,7 +68,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
         updateEmployee.mutate({
           ...values,
           id: props.employeeId,
-          title: selectedRole?.name || ''
+          role: values.role
         });
       }}
       onCancel={props.onCancel}

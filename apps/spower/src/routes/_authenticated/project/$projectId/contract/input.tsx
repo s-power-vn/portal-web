@@ -395,7 +395,7 @@ const Component = () => {
       })
     ];
 
-    if (project.data.expand.column_via_project) {
+    if (project.data.expand?.column_via_project) {
       for (const col of project.data.expand.column_via_project) {
         value.push(
           columnHelper.display({
@@ -431,7 +431,7 @@ const Component = () => {
     }
 
     return value;
-  }, [columnHelper, project.data.expand.column_via_project]);
+  }, [columnHelper, project.data.expand?.column_via_project]);
 
   const listDetailInfos = api.detailInfo.listFull.useSuspenseQuery({
     variables: projectId
