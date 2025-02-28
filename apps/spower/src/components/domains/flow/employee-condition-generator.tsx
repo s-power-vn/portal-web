@@ -267,6 +267,7 @@ const ConditionBlock = memo(
               <DepartmentDropdown
                 value={localDeptId}
                 onChange={value => handleDepartmentChange(value as string)}
+                showClear={false}
               />
               {formErrors.conditions?.[index]?.departmentId && (
                 <p className="text-destructive mt-1 text-sm">
