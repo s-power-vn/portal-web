@@ -16,7 +16,7 @@ import {
 } from 'react';
 import { UseFormSetValue, useFieldArray, useForm } from 'react-hook-form';
 
-import { Button, SelectInput } from '@minhdtb/storeo-theme';
+import { Button } from '@minhdtb/storeo-theme';
 
 import { DepartmentDropdown } from '../department';
 import { SelectEmployee } from '../employee';
@@ -43,7 +43,6 @@ type ConditionFormValues = {
   conditions: SubCondition[];
 };
 
-// Create a more specific type for form errors
 type ConditionErrors = {
   conditions?: Array<{
     id?: { message?: string };
@@ -52,12 +51,6 @@ type ConditionErrors = {
     role?: { message?: string };
     employeeIds?: { message?: string };
   }>;
-};
-
-type Department = {
-  id: string;
-  name: string;
-  roles?: { id: string; name: string }[];
 };
 
 const isDepartmentCondition = (
@@ -72,7 +65,6 @@ const isEmployeeCondition = (
   return cond.type === 'employee';
 };
 
-// Validation schema - Modified to address typing issues
 const conditionsSchema = yup.object().shape({
   id: yup.string().required(),
   type: yup.string().oneOf(['department', 'employee']).required(),
@@ -92,7 +84,6 @@ const conditionsSchema = yup.object().shape({
     })
 });
 
-// Main schema - Removed operator
 const schema = yup.object().shape({
   conditions: yup
     .array()
@@ -101,69 +92,17 @@ const schema = yup.object().shape({
     .required()
 });
 
-// Employee dropdown component for selecting employees
-type EmployeeDropdownProps = Omit<
-  React.ComponentProps<typeof SelectInput>,
-  'items'
->;
-
-const EmployeeDropdown: FC<EmployeeDropdownProps> = ({ ...props }) => {
-  const [employees, setEmployees] = useState<
-    Array<{
-      id: string;
-      name: string;
-      email?: string;
-      department?: string;
-    }>
-  >([]);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const result = await api.employee.list.fetcher({
-          filter: '', // Empty filter to get all employees
-          pageIndex: 1,
-          pageSize: 200
-        });
-
-        setEmployees(
-          result.items.map(emp => ({
-            id: emp.id,
-            name: emp.name,
-            email: emp.email,
-            department: emp.expand?.department?.name
-          }))
-        );
-      } catch (error) {
-        console.error('Failed to fetch employees:', error);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
-
-  const items = useMemo(
-    () =>
-      _.map(employees, ({ id, name, email, department }) => ({
-        value: id,
-        label: name,
-        description: email,
-        group: department
-      })),
-    [employees]
-  );
-
-  return <SelectInput {...props} items={items} multiple={true} />;
-};
-
-// Memoized Condition Block component to prevent unnecessary re-renders
 type ConditionBlockProps = {
   condition: SubCondition;
   index: number;
   departments: DepartmentData[];
   formErrors: ConditionErrors;
+  formSubmitted: boolean;
+  showEmployeeError: boolean;
+  showDepartmentError: boolean;
   setValue: UseFormSetValue<ConditionFormValues>;
   onRemove: (index: number) => void;
+  clearError: (type: 'department' | 'employee', index: number) => void;
 };
 
 const ConditionBlock = memo(
@@ -171,9 +110,12 @@ const ConditionBlock = memo(
     condition,
     index,
     departments,
-    formErrors,
+    formSubmitted,
+    showEmployeeError,
+    showDepartmentError,
     setValue,
-    onRemove
+    onRemove,
+    clearError
   }: ConditionBlockProps) => {
     // Local state to force re-render when department changes
     const [localDeptId, setLocalDeptId] = useState(
@@ -209,12 +151,24 @@ const ConditionBlock = memo(
       (value: string) => {
         setLocalDeptId(value);
         setLocalRole('');
+
+        // Clear department error immediately if a valid value is selected
+        if (value) {
+          clearError('department', index);
+        }
+
         setValue(`conditions.${index}.departmentId`, value, {
-          shouldValidate: true
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true
         });
-        setValue(`conditions.${index}.role`, undefined);
+        setValue(`conditions.${index}.role`, undefined, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true
+        });
       },
-      [setValue, index]
+      [setValue, index, clearError]
     );
 
     const handleRoleChange = useCallback(
@@ -223,7 +177,12 @@ const ConditionBlock = memo(
         setLocalRole(newValue);
         setValue(
           `conditions.${index}.role`,
-          value === 'none' ? undefined : value
+          value === 'none' ? undefined : value,
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true
+          }
         );
       },
       [setValue, index]
@@ -231,15 +190,20 @@ const ConditionBlock = memo(
 
     const handleEmployeeChange = useCallback(
       (value: string | string[]) => {
-        setValue(
-          `conditions.${index}.employeeIds`,
-          Array.isArray(value) ? value : [],
-          {
-            shouldValidate: true
-          }
-        );
+        const employeeIds = Array.isArray(value) ? value : [];
+
+        // Clear employee error immediately if at least one employee is selected
+        if (employeeIds.length > 0) {
+          clearError('employee', index);
+        }
+
+        setValue(`conditions.${index}.employeeIds`, employeeIds, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true
+        });
       },
-      [setValue, index]
+      [setValue, index, clearError]
     );
 
     const handleRemove = useCallback(() => {
@@ -269,9 +233,9 @@ const ConditionBlock = memo(
                 onChange={value => handleDepartmentChange(value as string)}
                 showClear={false}
               />
-              {formErrors.conditions?.[index]?.departmentId && (
+              {formSubmitted && showDepartmentError && !localDeptId && (
                 <p className="text-destructive mt-1 text-sm">
-                  {formErrors.conditions[index]?.departmentId?.message}
+                  Phòng ban là bắt buộc
                 </p>
               )}
             </div>
@@ -309,11 +273,14 @@ const ConditionBlock = memo(
                 placeholder="Chọn nhân viên"
                 multiple={true}
               />
-              {formErrors.conditions?.[index]?.employeeIds && (
-                <p className="text-destructive mt-1 text-sm">
-                  {formErrors.conditions[index]?.employeeIds?.message as string}
-                </p>
-              )}
+              {formSubmitted &&
+                showEmployeeError &&
+                isEmployeeCondition(condition) &&
+                condition.employeeIds.length === 0 && (
+                  <p className="text-destructive mt-1 text-sm">
+                    Phải chọn ít nhất một nhân viên
+                  </p>
+                )}
             </div>
           </div>
         )}
@@ -332,29 +299,59 @@ const ConditionBlock = memo(
     );
   },
   (prevProps, nextProps) => {
-    // Only re-render if the specific condition changed or if the departments data changed
-    return (
-      prevProps.index === nextProps.index &&
-      prevProps.condition.id === nextProps.condition.id &&
-      prevProps.condition.type === nextProps.condition.type &&
-      (isDepartmentCondition(prevProps.condition) &&
-      isDepartmentCondition(nextProps.condition)
-        ? prevProps.condition.departmentId ===
-            nextProps.condition.departmentId &&
-          prevProps.condition.role === nextProps.condition.role
-        : isEmployeeCondition(prevProps.condition) &&
-            isEmployeeCondition(nextProps.condition)
-          ? _.isEqual(
-              prevProps.condition.employeeIds,
-              nextProps.condition.employeeIds
-            )
-          : false) &&
-      _.isEqual(
-        prevProps.formErrors.conditions?.[prevProps.index],
-        nextProps.formErrors.conditions?.[nextProps.index]
-      ) &&
-      prevProps.departments.length === nextProps.departments.length
-    );
+    // Always re-render when formSubmitted or error flags change
+    if (
+      prevProps.formSubmitted !== nextProps.formSubmitted ||
+      prevProps.showEmployeeError !== nextProps.showEmployeeError ||
+      prevProps.showDepartmentError !== nextProps.showDepartmentError
+    ) {
+      return false;
+    }
+
+    // Check if the condition itself has changed
+    const prevCondition = prevProps.condition;
+    const nextCondition = nextProps.condition;
+
+    // Re-render if basic properties changed
+    if (
+      prevProps.index !== nextProps.index ||
+      prevCondition.id !== nextCondition.id ||
+      prevCondition.type !== nextCondition.type
+    ) {
+      return false;
+    }
+
+    // Handle department conditions
+    if (
+      isDepartmentCondition(prevCondition) &&
+      isDepartmentCondition(nextCondition)
+    ) {
+      if (
+        prevCondition.departmentId !== nextCondition.departmentId ||
+        prevCondition.role !== nextCondition.role
+      ) {
+        return false;
+      }
+    } else if (
+      isEmployeeCondition(prevCondition) &&
+      isEmployeeCondition(nextCondition)
+    ) {
+      // Handle employee conditions
+      if (!_.isEqual(prevCondition.employeeIds, nextCondition.employeeIds)) {
+        return false;
+      }
+    } else {
+      // Different condition types, needs re-render
+      return false;
+    }
+
+    // Check if departments data changed
+    if (prevProps.departments.length !== nextProps.departments.length) {
+      return false;
+    }
+
+    // No meaningful changes, don't re-render
+    return true;
   }
 );
 
@@ -370,6 +367,12 @@ export const EmployeeConditionGenerator: FC<
   EmployeeConditionGeneratorProps
 > = ({ value, onChange }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Add manual validation state to track errors when form is submitted
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const {
     control,
@@ -387,12 +390,64 @@ export const EmployeeConditionGenerator: FC<
 
   const formErrors = errors as unknown as ConditionErrors;
 
+  // Debug useEffect to log form errors
+  useEffect(() => {
+    if (Object.keys(formErrors).length > 0) {
+      console.log('Form validation errors:', formErrors);
+    }
+  }, [formErrors]);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'conditions'
   });
 
   const watchConditions = watch('conditions');
+
+  // Reset formSubmitted and errors when conditions change (e.g., adding/removing conditions)
+  useEffect(() => {
+    // Reset form submission state and validation errors when field structure changes
+    setFormSubmitted(false);
+    setValidationErrors({});
+  }, [fields.length]);
+
+  // Watch for field value changes to clear errors
+  useEffect(() => {
+    // Skip if form hasn't been submitted yet
+    if (!formSubmitted) return;
+
+    // Create a copy of current errors
+    const updatedErrors = { ...validationErrors };
+    let hasChanges = false;
+
+    // Check each condition
+    watchConditions.forEach((condition, index) => {
+      // For employee conditions, clear error if employeeIds is not empty
+      if (
+        isEmployeeCondition(condition) &&
+        condition.employeeIds.length > 0 &&
+        validationErrors[`employee_${index}`]
+      ) {
+        delete updatedErrors[`employee_${index}`];
+        hasChanges = true;
+      }
+
+      // For department conditions, clear error if departmentId is set
+      if (
+        isDepartmentCondition(condition) &&
+        condition.departmentId &&
+        validationErrors[`department_${index}`]
+      ) {
+        delete updatedErrors[`department_${index}`];
+        hasChanges = true;
+      }
+    });
+
+    // Update error state if we cleared any errors
+    if (hasChanges) {
+      setValidationErrors(updatedErrors);
+    }
+  }, [watchConditions, formSubmitted, validationErrors]);
 
   // Scroll to bottom when a new condition is added
   useEffect(() => {
@@ -520,10 +575,39 @@ export const EmployeeConditionGenerator: FC<
   // Handle form submission
   const onSubmit = useCallback(
     (data: ConditionFormValues) => {
-      const conditionString = generateConditionString(data);
-      onChange?.(conditionString);
+      // Validate all conditions
+      let hasValidationErrors = false;
+
+      // First, validate all fields manually to ensure errors show up
+      data.conditions.forEach((condition, index) => {
+        if (
+          isEmployeeCondition(condition) &&
+          condition.employeeIds.length === 0
+        ) {
+          hasValidationErrors = true;
+          // Trigger validation for the field
+          setValue(`conditions.${index}.employeeIds`, [], {
+            shouldValidate: true
+          });
+        }
+
+        if (isDepartmentCondition(condition) && !condition.departmentId) {
+          hasValidationErrors = true;
+          // Trigger validation for the field
+          setValue(`conditions.${index}.departmentId`, '', {
+            shouldValidate: true
+          });
+        }
+      });
+
+      // If validation passes, generate the condition string and call onChange
+      if (!hasValidationErrors) {
+        const conditionString = generateConditionString(data);
+        onChange?.(conditionString);
+        setFormSubmitted(false); // Reset submitted state on successful submission
+      }
     },
-    [generateConditionString, onChange]
+    [generateConditionString, onChange, setValue, setFormSubmitted]
   );
 
   // Add new sub-condition
@@ -564,24 +648,78 @@ export const EmployeeConditionGenerator: FC<
     [addCondition]
   );
 
-  const handleFormSubmit = useCallback(
-    () => handleSubmit(onSubmit)(),
-    [handleSubmit, onSubmit]
-  );
+  // Updated handleFormSubmit to track validation errors manually
+  const handleFormSubmit = useCallback(() => {
+    // Set form as submitted to show validation errors
+    setFormSubmitted(true);
+
+    // Check for validation errors before submitting
+    const newErrors: { [key: string]: boolean } = {};
+    let hasErrors = false;
+
+    // Check all fields for validation errors
+    watchConditions.forEach((condition, index) => {
+      if (
+        isEmployeeCondition(condition) &&
+        condition.employeeIds.length === 0
+      ) {
+        newErrors[`employee_${index}`] = true;
+        hasErrors = true;
+      }
+
+      if (isDepartmentCondition(condition) && !condition.departmentId) {
+        newErrors[`department_${index}`] = true;
+        hasErrors = true;
+      }
+    });
+
+    // Update validation errors
+    setValidationErrors(newErrors);
+
+    // Only proceed with form submission if there are no validation errors
+    if (!hasErrors) {
+      handleSubmit(onSubmit)();
+    } else {
+      console.log('Validation errors detected:', newErrors);
+    }
+  }, [handleSubmit, onSubmit, watchConditions]);
 
   const departments = api.department.listFull.useSuspenseQuery();
+
+  // Function to immediately clear specific errors
+  const clearError = useCallback(
+    (type: 'department' | 'employee', index: number) => {
+      setValidationErrors(prev => {
+        // Create a copy of current errors
+        const updatedErrors = { ...prev };
+        // Remove the specific error
+        delete updatedErrors[`${type}_${index}`];
+        return updatedErrors;
+      });
+    },
+    []
+  );
 
   return (
     <div className="flex h-full max-h-[calc(100vh-250px)] flex-col">
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto scroll-smooth pr-1"
+        className="flex-1 overflow-y-auto scroll-smooth pr-1 pt-2"
       >
         <div className="space-y-4">
           {fields.map((field, index) => {
             const condition = watchConditions[index];
 
             if (!condition) return null;
+
+            // Determine error states based on validation state
+            const showEmployeeError =
+              isEmployeeCondition(condition) &&
+              validationErrors[`employee_${index}`] === true;
+
+            const showDepartmentError =
+              isDepartmentCondition(condition) &&
+              validationErrors[`department_${index}`] === true;
 
             return (
               <ConditionBlock
@@ -590,8 +728,12 @@ export const EmployeeConditionGenerator: FC<
                 index={index}
                 departments={departments.data}
                 formErrors={formErrors}
+                formSubmitted={formSubmitted}
+                showEmployeeError={showEmployeeError}
+                showDepartmentError={showDepartmentError}
                 setValue={setValue}
                 onRemove={handleRemoveCondition}
+                clearError={clearError}
               />
             );
           })}

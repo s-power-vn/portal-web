@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import * as yup from 'yup';
 
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import {
@@ -69,7 +69,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
   onNodeUpdate,
   onNodeDelete
 }) => {
-  const [showConditionGenerator, setShowConditionGenerator] = useState(false);
   const {
     register,
     handleSubmit,
@@ -162,7 +161,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         />
       )
     });
-  }, [handleSubmit, setValue, watch]);
+  }, [handleSubmit, setValue, watch, selectedNode]);
 
   return (
     <div className="flex max-h-0 flex-col">
