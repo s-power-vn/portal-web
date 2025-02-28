@@ -35,11 +35,11 @@ export const supplierApi = router('supplier', {
     fetcher: (id: string) => client.collection(Collections.Supplier).getOne(id)
   }),
   create: router.mutation({
-    mutationFn: (params: SupplierRecord) =>
+    mutationFn: (params: Partial<SupplierRecord>) =>
       client.collection(Collections.Supplier).create(params)
   }),
   update: router.mutation({
-    mutationFn: (params: SupplierRecord & { id: string }) =>
+    mutationFn: (params: Partial<SupplierRecord> & { id: string }) =>
       client.collection(Collections.Supplier).update(params.id, params)
   }),
   delete: router.mutation({
