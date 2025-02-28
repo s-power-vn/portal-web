@@ -12,7 +12,7 @@ import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
 import type { CustomerResponse } from 'portal-core';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
   Button,
@@ -60,7 +60,7 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: ['customers', search],
+      queryKey: [api.customer.list.getKey({ filter: search ?? '' })],
       queryFn: ({ pageParam = 1 }) =>
         api.customer.list.fetcher({
           filter: search ?? '',
@@ -72,7 +72,10 @@ function Component() {
       initialPageParam: 1
     });
 
-  const customers = data?.pages.flatMap(page => page.items) || [];
+  const customers = useMemo(
+    () => data?.pages.flatMap(page => page.items) || [],
+    [data]
+  );
 
   const deleteCustomer = api.customer.delete.useMutation({
     onSuccess: async () => {
@@ -85,84 +88,89 @@ function Component() {
 
   const columnHelper = createColumnHelper<CustomerResponse>();
 
-  const columns = [
-    columnHelper.display({
-      id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
-      header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
-    }),
-    columnHelper.accessor('name', {
-      cell: info => info.getValue(),
-      header: () => 'Tên chủ đầu tư',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('phone', {
-      cell: info => info.getValue(),
-      header: () => 'Số điện thoại',
-      footer: info => info.column.id,
-      size: 150
-    }),
-    columnHelper.accessor('email', {
-      cell: info => info.getValue(),
-      header: () => 'Email',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.accessor('address', {
-      cell: info => info.getValue(),
-      header: () => 'Địa chỉ',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('note', {
-      cell: info => info.getValue(),
-      header: () => 'Ghi chú',
-      footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                navigate({
-                  to: './$customerId/edit',
-                  params: {
-                    customerId: row.original.id
-                  },
-                  search
-                });
-              }}
-            >
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
-              variant={'destructive'}
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
-                  deleteCustomer.mutate(row.original.id);
-                });
-              }}
-            >
-              <XIcon className={'h-3 w-3'} />
-            </Button>
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'index',
+        cell: info => (
+          <div className={'flex items-center justify-center'}>
+            {info.row.index + 1}
           </div>
-        );
-      },
-      header: () => 'Thao tác'
-    })
-  ];
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>#</div>
+        ),
+        size: 30
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên chủ đầu tư',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('phone', {
+        cell: info => info.getValue(),
+        header: () => 'Số điện thoại',
+        footer: info => info.column.id,
+        size: 150
+      }),
+      columnHelper.accessor('email', {
+        cell: info => info.getValue(),
+        header: () => 'Email',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('address', {
+        cell: info => info.getValue(),
+        header: () => 'Địa chỉ',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('note', {
+        cell: info => info.getValue(),
+        header: () => 'Ghi chú',
+        footer: info => info.column.id
+      }),
+      columnHelper.display({
+        id: 'actions',
+        cell: ({ row }) => {
+          return (
+            <div className={'flex gap-1'}>
+              <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate({
+                    to: './$customerId/edit',
+                    params: {
+                      customerId: row.original.id
+                    },
+                    search
+                  });
+                }}
+              >
+                <EditIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
+                variant={'destructive'}
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
+                    deleteCustomer.mutate(row.original.id);
+                  });
+                }}
+              >
+                <XIcon className={'h-3 w-3'} />
+              </Button>
+            </div>
+          );
+        },
+        header: () => 'Thao tác'
+      })
+    ],
+    [columnHelper, navigate, confirm, deleteCustomer, search]
+  );
 
   const table = useReactTable({
     columns,
@@ -193,21 +201,37 @@ function Component() {
     [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
+  const handleNavigateToEdit = useCallback(
+    (customerId: string) => {
+      navigate({
+        to: './$customerId/edit',
+        params: {
+          customerId
+        },
+        search
+      });
+    },
+    [navigate, search]
+  );
+
+  const handleAddCustomer = useCallback(() => {
+    navigate({
+      to: './new',
+      search
+    });
+  }, [navigate, search]);
+
+  const handleSearchChange = useCallback((value: string | undefined) => {
+    setSearch(value);
+  }, []);
+
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
       <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button
-            className={'flex gap-1'}
-            onClick={() =>
-              navigate({
-                to: './new',
-                search
-              })
-            }
-          >
+          <Button className={'flex gap-1'} onClick={handleAddCustomer}>
             <PlusIcon className={'h-5 w-5'} />
             Thêm chủ đầu tư
           </Button>
@@ -215,7 +239,7 @@ function Component() {
             value={search}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
-            onChange={value => setSearch(value)}
+            onChange={handleSearchChange}
           />
         </div>
         <div
@@ -294,15 +318,7 @@ function Component() {
                           style={{
                             transform: `translateY(${virtualRow.start}px)`
                           }}
-                          onClick={() => {
-                            navigate({
-                              to: './$customerId/edit',
-                              params: {
-                                customerId: row.original.id
-                              },
-                              search
-                            });
-                          }}
+                          onClick={() => handleNavigateToEdit(row.original.id)}
                         >
                           {row.getVisibleCells().map(cell => (
                             <TableCell

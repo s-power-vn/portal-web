@@ -12,7 +12,7 @@ import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { ObjectTypeOptions } from 'portal-core';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import {
@@ -98,172 +98,181 @@ function Component() {
     [confirm, duplicateObject]
   );
 
-  const columns = [
-    columnHelper.display({
-      id: 'select',
-      cell: ({ row }) => (
-        <div className={'flex items-center justify-center'}>
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        </div>
-      ),
-      header: () => (
-        <div className={'flex items-center justify-center'}>
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        </div>
-      ),
-      size: 40
-    }),
-    columnHelper.display({
-      id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
-      header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
-    }),
-    columnHelper.display({
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                navigate({
-                  to: './$objectId/edit',
-                  params: {
-                    objectId: row.original.id
-                  }
-                });
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'select',
+        cell: ({ row }) => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler()
               }}
-            >
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                handleDuplicateObject(row.original.id);
-              }}
-            >
-              <CopyIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
-              variant={'destructive'}
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                confirm('Bạn chắc chắn muốn xóa đối tượng này?', () => {
-                  deleteObject.mutate(row.original.id);
-                });
-              }}
-            >
-              <XIcon className={'h-3 w-3'} />
-            </Button>
+            />
           </div>
-        );
-      },
-      header: () => 'Thao tác'
-    }),
-    columnHelper.accessor('name', {
-      cell: info => info.getValue(),
-      header: () => 'Tên đối tượng',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('active', {
-      cell: info => (
-        <div className="flex justify-center">
-          {info.getValue() ? (
-            <CheckIcon className="h-4 w-4 text-green-500" />
-          ) : (
-            ''
-          )}
-        </div>
-      ),
-      header: () => 'Kích hoạt',
-      footer: info => info.column.id,
-      size: 100
-    }),
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler()
+              }}
+            />
+          </div>
+        ),
+        size: 40
+      }),
+      columnHelper.display({
+        id: 'index',
+        cell: info => (
+          <div className={'flex items-center justify-center'}>
+            {info.row.index + 1}
+          </div>
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>#</div>
+        ),
+        size: 30
+      }),
+      columnHelper.display({
+        id: 'actions',
+        cell: ({ row }) => {
+          return (
+            <div className={'flex gap-1'}>
+              <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate({
+                    to: './$objectId/edit',
+                    params: {
+                      objectId: row.original.id
+                    }
+                  });
+                }}
+              >
+                <EditIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDuplicateObject(row.original.id);
+                }}
+              >
+                <CopyIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
+                variant={'destructive'}
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  confirm('Bạn chắc chắn muốn xóa đối tượng này?', () => {
+                    deleteObject.mutate(row.original.id);
+                  });
+                }}
+              >
+                <XIcon className={'h-3 w-3'} />
+              </Button>
+            </div>
+          );
+        },
+        header: () => 'Thao tác'
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên đối tượng',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('active', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <CheckIcon className="h-4 w-4 text-green-500" />
+            ) : (
+              ''
+            )}
+          </div>
+        ),
+        header: () => 'Kích hoạt',
+        footer: info => info.column.id,
+        size: 100
+      }),
 
-    columnHelper.accessor('type', {
-      cell: info => {
-        const type = info.getValue();
-        const badgeStyle =
-          'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap';
+      columnHelper.accessor('type', {
+        cell: info => {
+          const type = info.getValue();
+          const badgeStyle =
+            'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap';
 
-        switch (type) {
-          case ObjectTypeOptions.Task:
-            return (
-              <span className={cn(badgeStyle, 'bg-green-500')}>Công việc</span>
-            );
-          case ObjectTypeOptions.Request:
-            return (
-              <span className={cn(badgeStyle, 'bg-red-500')}>Yêu cầu</span>
-            );
-          case ObjectTypeOptions.Price:
-            return (
-              <span className={cn(badgeStyle, 'bg-blue-500')}>Báo giá</span>
-            );
-          case ObjectTypeOptions.Document:
-            return (
-              <span className={cn(badgeStyle, 'bg-purple-500')}>Tài liệu</span>
-            );
-          default:
-            return (
-              <span className={cn(badgeStyle, 'bg-gray-500')}>{type}</span>
-            );
-        }
-      },
-      header: () => 'Loại',
-      footer: info => info.column.id,
-      size: 100
-    }),
-    columnHelper.accessor(row => row.expand?.process?.name, {
-      id: 'processName',
-      cell: info => info.getValue() || '',
-      header: () => 'Quy trình',
-      footer: info => info.column.id,
-      size: 150
-    }),
+          switch (type) {
+            case ObjectTypeOptions.Task:
+              return (
+                <span className={cn(badgeStyle, 'bg-green-500')}>
+                  Công việc
+                </span>
+              );
+            case ObjectTypeOptions.Request:
+              return (
+                <span className={cn(badgeStyle, 'bg-red-500')}>Yêu cầu</span>
+              );
+            case ObjectTypeOptions.Price:
+              return (
+                <span className={cn(badgeStyle, 'bg-blue-500')}>Báo giá</span>
+              );
+            case ObjectTypeOptions.Document:
+              return (
+                <span className={cn(badgeStyle, 'bg-purple-500')}>
+                  Tài liệu
+                </span>
+              );
+            default:
+              return (
+                <span className={cn(badgeStyle, 'bg-gray-500')}>{type}</span>
+              );
+          }
+        },
+        header: () => 'Loại',
+        footer: info => info.column.id,
+        size: 100
+      }),
+      columnHelper.accessor(row => row.expand?.process?.name, {
+        id: 'processName',
+        cell: info => info.getValue() || '',
+        header: () => 'Quy trình',
+        footer: info => info.column.id,
+        size: 150
+      }),
 
-    columnHelper.accessor('base', {
-      cell: info => (
-        <div className="flex justify-center">
-          {info.getValue() ? (
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-              Cơ bản
-            </span>
-          ) : null}
-        </div>
-      ),
-      header: () => 'Cơ bản',
-      footer: info => info.column.id,
-      size: 100
-    }),
-    columnHelper.accessor('description', {
-      cell: info => info.getValue() || '',
-      header: () => 'Mô tả',
-      footer: info => info.column.id
-    })
-  ];
+      columnHelper.accessor('base', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                Cơ bản
+              </span>
+            ) : null}
+          </div>
+        ),
+        header: () => 'Cơ bản',
+        footer: info => info.column.id,
+        size: 100
+      }),
+      columnHelper.accessor('description', {
+        cell: info => info.getValue() || '',
+        header: () => 'Mô tả',
+        footer: info => info.column.id
+      })
+    ],
+    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm]
+  );
 
   const table = useReactTable({
     columns,

@@ -5,23 +5,23 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditCustomerForm } from '../../../../../components';
+import { EditDepartmentForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const { customerId } = Route.useParams();
+  const { departmentId } = Route.useParams();
   const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
     invalidates([
-      api.customer.byId.getKey(customerId),
-      api.customer.list.getKey()
+      api.department.byId.getKey(departmentId),
+      api.department.list.getKey()
     ]);
-  }, [customerId, history, invalidates]);
+  }, [departmentId, history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -30,17 +30,17 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Chỉnh sửa chủ đầu tư'}
+      title={'Chỉnh sửa phòng ban'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'edit-customer-modal'}
+      id={'edit-department-modal'}
     >
-      <EditCustomerForm
-        customerId={customerId}
+      <EditDepartmentForm
+        departmentId={departmentId}
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -49,9 +49,9 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/settings/customers/$customerId/edit'
+  '/_authenticated/settings/departments/$departmentId/edit'
 )({
   component: Component,
-  loader: ({ context: { queryClient }, params: { customerId } }) =>
-    queryClient?.ensureQueryData(api.customer.byId.getOptions(customerId))
+  loader: ({ context: { queryClient }, params: { departmentId } }) =>
+    queryClient?.ensureQueryData(api.department.byId.getOptions(departmentId))
 });

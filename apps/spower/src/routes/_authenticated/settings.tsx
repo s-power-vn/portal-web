@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import {
   AnvilIcon,
+  BuildingIcon,
   FactoryIcon,
   GitBranchIcon,
   HandshakeIcon,
@@ -24,6 +25,10 @@ function Settings() {
           <SidebarItem
             to={'/settings/employees'}
             icon={<Users2Icon width={22} height={22} />}
+          ></SidebarItem>
+          <SidebarItem
+            to={'/settings/departments'}
+            icon={<BuildingIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/settings/customers'}

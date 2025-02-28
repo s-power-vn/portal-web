@@ -5,23 +5,19 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditCustomerForm } from '../../../../../components';
-import { useInvalidateQueries } from '../../../../../hooks';
+import { NewDepartmentForm } from '../../../../components';
+import { useInvalidateQueries } from '../../../../hooks';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const { customerId } = Route.useParams();
   const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
+    invalidates([api.department.list.getKey()]);
     history.back();
-    invalidates([
-      api.customer.byId.getKey(customerId),
-      api.customer.list.getKey()
-    ]);
-  }, [customerId, history, invalidates]);
+  }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -30,17 +26,16 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Chỉnh sửa chủ đầu tư'}
+      title={'Thêm phòng ban'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'edit-customer-modal'}
+      id={'new-department-modal'}
     >
-      <EditCustomerForm
-        customerId={customerId}
+      <NewDepartmentForm
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -49,9 +44,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_authenticated/settings/customers/$customerId/edit'
+  '/_authenticated/settings/departments/new'
 )({
-  component: Component,
-  loader: ({ context: { queryClient }, params: { customerId } }) =>
-    queryClient?.ensureQueryData(api.customer.byId.getOptions(customerId))
+  component: Component
 });

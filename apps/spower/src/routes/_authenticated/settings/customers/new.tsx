@@ -11,14 +11,13 @@ import { useInvalidateQueries } from '../../../../hooks';
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
 
-  const onSuccessHandler = useCallback(async () => {
+  const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.customer.list.getKey(search)]);
-  }, [history, invalidates, search]);
+    invalidates([api.customer.list.getKey()]);
+  }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);

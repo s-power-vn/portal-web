@@ -10,6 +10,8 @@ import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
 import type { MaterialResponse } from 'portal-core';
 
+import { useMemo } from 'react';
+
 import {
   Button,
   CommonTable,
@@ -44,6 +46,11 @@ function Component() {
     variables: search
   });
 
+  const materials = useMemo(
+    () => listMaterials.data?.items || [],
+    [listMaterials.data]
+  );
+
   const columnHelper = createColumnHelper<MaterialResponse>();
 
   const deleteMaterial = api.material.delete.useMutation({
@@ -59,76 +66,82 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columns = [
-    columnHelper.display({
-      id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
-      header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
-    }),
-    columnHelper.accessor('name', {
-      cell: info => info.getValue(),
-      header: () => 'Tên vật tư',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('code', {
-      cell: info => info.getValue(),
-      header: () => 'Mã vật tư',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('unit', {
-      cell: info => info.getValue(),
-      header: () => 'Đơn vị',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('note', {
-      cell: info => info.getValue(),
-      header: () => 'Ghi chú',
-      footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'h-6 px-3'}
-              onClick={() =>
-                navigate({
-                  to: './$materialId/edit',
-                  params: {
-                    materialId: row.original.id
-                  },
-                  search
-                })
-              }
-            >
-              <EditIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
-              variant={'destructive'}
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
-                  deleteMaterial.mutate(row.original.id);
-                });
-              }}
-            >
-              <XIcon className={'h-3 w-3'} />
-            </Button>
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'index',
+        cell: info => (
+          <div className={'flex items-center justify-center'}>
+            {info.row.index + 1}
           </div>
-        );
-      },
-      header: () => 'Thao tác'
-    })
-  ];
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>#</div>
+        ),
+        size: 30
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên vật tư',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('code', {
+        cell: info => info.getValue(),
+        header: () => 'Mã vật tư',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('unit', {
+        cell: info => info.getValue(),
+        header: () => 'Đơn vị',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('note', {
+        cell: info => info.getValue(),
+        header: () => 'Ghi chú',
+        footer: info => info.column.id
+      }),
+      columnHelper.display({
+        id: 'actions',
+        cell: ({ row }) => {
+          return (
+            <div className={'flex gap-1'}>
+              <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate({
+                    to: './$materialId/edit',
+                    params: {
+                      materialId: row.original.id
+                    },
+                    search
+                  });
+                }}
+              >
+                <EditIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
+                variant={'destructive'}
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
+                    deleteMaterial.mutate(row.original.id);
+                  });
+                }}
+              >
+                <XIcon className={'h-3 w-3'} />
+              </Button>
+            </div>
+          );
+        },
+        header: () => 'Thao tác'
+      })
+    ],
+    [columnHelper, navigate, confirm, deleteMaterial, search]
+  );
 
   return (
     <>
@@ -164,7 +177,7 @@ function Component() {
           />
         </div>
         <CommonTable
-          data={listMaterials.data?.items ?? []}
+          data={materials}
           columns={columns}
           rowCount={listMaterials.data?.totalItems}
           pageCount={listMaterials.data?.totalPages}

@@ -12,8 +12,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { DepartmentData } from 'libs/api/src/api/department';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import type { UserData } from 'portal-api';
 import { ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -34,7 +34,7 @@ import {
 import { PageHeader } from '../../../components';
 import { useInvalidateQueries } from '../../../hooks';
 
-export const Route = createFileRoute('/_authenticated/settings/employees')({
+export const Route = createFileRoute('/_authenticated/settings/departments')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     ListSchema.validateSync(input),
@@ -43,7 +43,7 @@ export const Route = createFileRoute('/_authenticated/settings/employees')({
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.employee.list.getOptions({
+      api.department.list.getOptions({
         filter: deps.search.filter,
         pageIndex: 1,
         pageSize: 20
@@ -51,7 +51,7 @@ export const Route = createFileRoute('/_authenticated/settings/employees')({
     ),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhân viên'
+      title: 'Quản lý phòng ban'
     };
   }
 });
@@ -64,9 +64,9 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.employee.list.getKey({ filter: search ?? '' }),
+      queryKey: api.department.list.getKey({ filter: search ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.employee.list.fetcher({
+        api.department.list.fetcher({
           filter: search ?? '',
           pageIndex: pageParam,
           pageSize: 20
@@ -76,21 +76,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const employees = useMemo(
+  const departments = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteEmployee = api.employee.delete.useMutation({
+  const deleteDepartment = api.department.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhân viên thành công');
-      invalidates([api.employee.list.getKey({ filter: search ?? '' })]);
+      success('Xóa phòng ban thành công');
+      invalidates([api.department.list.getKey({ filter: search ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<UserData>();
+  const columnHelper = createColumnHelper<DepartmentData>();
 
   const columns = useMemo(
     () => [
@@ -104,39 +104,42 @@ function Component() {
         header: () => (
           <div className={'flex items-center justify-center'}>#</div>
         ),
-        size: 30
+        size: 60
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Họ tên',
+        header: () => 'Tên phòng ban',
         footer: info => info.column.id,
         size: 300
       }),
-      columnHelper.accessor('phone', {
+      columnHelper.accessor('description', {
         cell: info => info.getValue(),
-        header: () => 'Số điện thoại',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('email', {
-        cell: info => info.getValue(),
-        header: () => 'Email',
-        footer: info => info.column.id,
-        size: 200
-      }),
-      columnHelper.accessor('department', {
-        cell: ({ row }) => {
-          return row.original.expand?.department.name;
-        },
-        header: () => 'Phòng ban',
+        header: () => 'Mô tả',
         footer: info => info.column.id
       }),
-      columnHelper.accessor('title', {
-        cell: ({ row }) => {
-          return row.original.title;
+      columnHelper.accessor('roles', {
+        cell: info => {
+          const roles = info.getValue();
+          return (
+            <div className="flex flex-wrap gap-1">
+              {roles && roles.length > 0 ? (
+                roles.map(role => (
+                  <span
+                    key={role.id}
+                    className="bg-appBlueLight text-appWhite rounded-full px-2 py-0.5 text-xs"
+                  >
+                    {role.name}
+                  </span>
+                ))
+              ) : (
+                <span className="text-xs text-gray-400">Không có</span>
+              )}
+            </div>
+          );
         },
         header: () => 'Chức danh',
-        footer: info => info.column.id
+        footer: info => info.column.id,
+        size: 200
       }),
       columnHelper.display({
         id: 'actions',
@@ -145,12 +148,11 @@ function Component() {
             <div className={'flex gap-1'}>
               <Button
                 className={'h-6 px-3'}
-                onClick={e => {
-                  e.stopPropagation();
+                onClick={() => {
                   navigate({
-                    to: './$employeeId/edit',
+                    to: './$departmentId/edit',
                     params: {
-                      employeeId: row.original.id
+                      departmentId: row.original.id
                     },
                     search
                   });
@@ -161,11 +163,9 @@ function Component() {
               <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
-                    deleteEmployee.mutate(row.original.id);
+                onClick={() => {
+                  confirm('Bạn chắc chắn muốn xóa phòng ban này?', () => {
+                    deleteDepartment.mutate(row.original.id);
                   });
                 }}
               >
@@ -174,16 +174,17 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác'
+        header: () => 'Thao tác',
+        size: 120
       })
     ],
-    [columnHelper, navigate, confirm, deleteEmployee, search]
+    [columnHelper, navigate, confirm, deleteDepartment, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: employees
+    data: departments
   });
 
   const { rows } = table.getRowModel();
@@ -210,11 +211,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (employeeId: string) => {
+    (departmentId: string) => {
       navigate({
-        to: './$employeeId/edit',
+        to: './$departmentId/edit',
         params: {
-          employeeId
+          departmentId
         },
         search
       });
@@ -222,7 +223,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddEmployee = useCallback(() => {
+  const handleAddDepartment = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -236,12 +237,12 @@ function Component() {
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý nhân viên'} />
+      <PageHeader title={'Quản lý phòng ban'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddEmployee}>
+          <Button className={'flex gap-1'} onClick={handleAddDepartment}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm nhân viên
+            Thêm phòng ban
           </Button>
           <DebouncedInput
             value={search}
@@ -267,7 +268,7 @@ function Component() {
             ) : (
               <Table
                 style={{
-                  width: '100%',
+                  width: table.getTotalSize(),
                   tableLayout: 'fixed'
                 }}
               >
@@ -290,6 +291,7 @@ function Component() {
                           className={'text-appWhite whitespace-nowrap'}
                           style={{
                             width: header.getSize(),
+                            minWidth: header.getSize(),
                             maxWidth: header.getSize()
                           }}
                         >
@@ -334,6 +336,7 @@ function Component() {
                               className={'truncate text-left'}
                               style={{
                                 width: cell.column.getSize(),
+                                minWidth: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()
                               }}
                             >

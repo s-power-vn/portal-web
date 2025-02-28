@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
 
@@ -7,22 +6,18 @@ import { useCallback, useState } from 'react';
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { NewEmployeeForm } from '../../../../components';
+import { useInvalidateQueries } from '../../../../hooks';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const queryClient = useQueryClient();
-  const search = Route.useSearch();
+  const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(async () => {
     setOpen(false);
     history.back();
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: api.employee.list.getKey(search)
-      })
-    ]);
-  }, [history, queryClient, search]);
+    invalidates([api.employee.list.getKey()]);
+  }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
