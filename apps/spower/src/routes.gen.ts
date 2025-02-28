@@ -24,6 +24,7 @@ import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated
 import { Route as AuthenticatedSettingsOperationImport } from './routes/_authenticated/settings/operation'
 import { Route as AuthenticatedSettingsGeneralImport } from './routes/_authenticated/settings/general'
 import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
+import { Route as AuthenticatedSettingsOperationIndexImport } from './routes/_authenticated/settings/operation/index'
 import { Route as AuthenticatedSettingsGeneralIndexImport } from './routes/_authenticated/settings/general/index'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
 import { Route as AuthenticatedSettingsOperationProcessImport } from './routes/_authenticated/settings/operation/process'
@@ -146,6 +147,13 @@ const AuthenticatedProjectProjectIdRoute =
     id: '/$projectId',
     path: '/$projectId',
     getParentRoute: () => AuthenticatedProjectRoute,
+  } as any)
+
+const AuthenticatedSettingsOperationIndexRoute =
+  AuthenticatedSettingsOperationIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSettingsOperationRoute,
   } as any)
 
 const AuthenticatedSettingsGeneralIndexRoute =
@@ -599,6 +607,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/general/'
       preLoaderRoute: typeof AuthenticatedSettingsGeneralIndexImport
       parentRoute: typeof AuthenticatedSettingsGeneralImport
+    }
+    '/_authenticated/settings/operation/': {
+      id: '/_authenticated/settings/operation/'
+      path: '/'
+      fullPath: '/settings/operation/'
+      preLoaderRoute: typeof AuthenticatedSettingsOperationIndexImport
+      parentRoute: typeof AuthenticatedSettingsOperationImport
     }
     '/_authenticated/project/$projectId/contract/input': {
       id: '/_authenticated/project/$projectId/contract/input'
@@ -1090,6 +1105,7 @@ const AuthenticatedSettingsOperationProcessRouteWithChildren =
 interface AuthenticatedSettingsOperationRouteChildren {
   AuthenticatedSettingsOperationObjectsRoute: typeof AuthenticatedSettingsOperationObjectsRouteWithChildren
   AuthenticatedSettingsOperationProcessRoute: typeof AuthenticatedSettingsOperationProcessRouteWithChildren
+  AuthenticatedSettingsOperationIndexRoute: typeof AuthenticatedSettingsOperationIndexRoute
 }
 
 const AuthenticatedSettingsOperationRouteChildren: AuthenticatedSettingsOperationRouteChildren =
@@ -1098,6 +1114,8 @@ const AuthenticatedSettingsOperationRouteChildren: AuthenticatedSettingsOperatio
       AuthenticatedSettingsOperationObjectsRouteWithChildren,
     AuthenticatedSettingsOperationProcessRoute:
       AuthenticatedSettingsOperationProcessRouteWithChildren,
+    AuthenticatedSettingsOperationIndexRoute:
+      AuthenticatedSettingsOperationIndexRoute,
   }
 
 const AuthenticatedSettingsOperationRouteWithChildren =
@@ -1170,6 +1188,7 @@ export interface FileRoutesByFullPath {
   '/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
   '/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
   '/settings/general/': typeof AuthenticatedSettingsGeneralIndexRoute
+  '/settings/operation/': typeof AuthenticatedSettingsOperationIndexRoute
   '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
   '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
   '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
@@ -1205,7 +1224,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
   '/notification': typeof AuthenticatedNotificationRoute
-  '/settings/operation': typeof AuthenticatedSettingsOperationRouteWithChildren
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/project': typeof AuthenticatedProjectIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -1219,6 +1237,7 @@ export interface FileRoutesByTo {
   '/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
   '/project/$projectId': typeof AuthenticatedProjectProjectIdIndexRoute
   '/settings/general': typeof AuthenticatedSettingsGeneralIndexRoute
+  '/settings/operation': typeof AuthenticatedSettingsOperationIndexRoute
   '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
   '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
   '/settings/general/customers/new': typeof AuthenticatedSettingsGeneralCustomersNewRoute
@@ -1272,6 +1291,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
   '/_authenticated/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
   '/_authenticated/settings/general/': typeof AuthenticatedSettingsGeneralIndexRoute
+  '/_authenticated/settings/operation/': typeof AuthenticatedSettingsOperationIndexRoute
   '/_authenticated/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
   '/_authenticated/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
   '/_authenticated/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
@@ -1329,6 +1349,7 @@ export interface FileRouteTypes {
     | '/settings/operation/process'
     | '/project/$projectId/'
     | '/settings/general/'
+    | '/settings/operation/'
     | '/project/$projectId/contract/input'
     | '/project/$projectId/contract/monitoring'
     | '/project/$projectId/issues/me'
@@ -1363,7 +1384,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/notification'
-    | '/settings/operation'
     | '/user/profile'
     | '/project'
     | '/settings'
@@ -1377,6 +1397,7 @@ export interface FileRouteTypes {
     | '/settings/operation/process'
     | '/project/$projectId'
     | '/settings/general'
+    | '/settings/operation'
     | '/project/$projectId/contract/input'
     | '/project/$projectId/contract/monitoring'
     | '/settings/general/customers/new'
@@ -1428,6 +1449,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/operation/process'
     | '/_authenticated/project/$projectId/'
     | '/_authenticated/settings/general/'
+    | '/_authenticated/settings/operation/'
     | '/_authenticated/project/$projectId/contract/input'
     | '/_authenticated/project/$projectId/contract/monitoring'
     | '/_authenticated/project/$projectId/issues/me'
@@ -1553,7 +1575,8 @@ export const routeTree = rootRoute
       "parent": "/_authenticated/settings",
       "children": [
         "/_authenticated/settings/operation/objects",
-        "/_authenticated/settings/operation/process"
+        "/_authenticated/settings/operation/process",
+        "/_authenticated/settings/operation/"
       ]
     },
     "/_authenticated/user/profile": {
@@ -1654,6 +1677,10 @@ export const routeTree = rootRoute
     "/_authenticated/settings/general/": {
       "filePath": "_authenticated/settings/general/index.tsx",
       "parent": "/_authenticated/settings/general"
+    },
+    "/_authenticated/settings/operation/": {
+      "filePath": "_authenticated/settings/operation/index.tsx",
+      "parent": "/_authenticated/settings/operation"
     },
     "/_authenticated/project/$projectId/contract/input": {
       "filePath": "_authenticated/project/$projectId/contract/input.tsx",
