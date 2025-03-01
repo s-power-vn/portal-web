@@ -358,14 +358,15 @@ const ConditionBlock = memo(
 ConditionBlock.displayName = 'ConditionBlock';
 
 // Props interface
-export type EmployeeConditionGeneratorProps = {
+export type ConditionGeneratorProps = {
   value?: string;
   onChange?: (value: string) => void;
 };
 
-export const EmployeeConditionGenerator: FC<
-  EmployeeConditionGeneratorProps
-> = ({ value, onChange }) => {
+export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
+  value,
+  onChange
+}) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
@@ -388,15 +389,6 @@ export const EmployeeConditionGenerator: FC<
     }
   });
 
-  const formErrors = errors as unknown as ConditionErrors;
-
-  // Debug useEffect to log form errors
-  useEffect(() => {
-    if (Object.keys(formErrors).length > 0) {
-      console.log('Form validation errors:', formErrors);
-    }
-  }, [formErrors]);
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'conditions'
@@ -404,25 +396,18 @@ export const EmployeeConditionGenerator: FC<
 
   const watchConditions = watch('conditions');
 
-  // Reset formSubmitted and errors when conditions change (e.g., adding/removing conditions)
   useEffect(() => {
-    // Reset form submission state and validation errors when field structure changes
     setFormSubmitted(false);
     setValidationErrors({});
   }, [fields.length]);
 
-  // Watch for field value changes to clear errors
   useEffect(() => {
-    // Skip if form hasn't been submitted yet
     if (!formSubmitted) return;
 
-    // Create a copy of current errors
     const updatedErrors = { ...validationErrors };
     let hasChanges = false;
 
-    // Check each condition
     watchConditions.forEach((condition, index) => {
-      // For employee conditions, clear error if employeeIds is not empty
       if (
         isEmployeeCondition(condition) &&
         condition.employeeIds.length > 0 &&
@@ -432,7 +417,6 @@ export const EmployeeConditionGenerator: FC<
         hasChanges = true;
       }
 
-      // For department conditions, clear error if departmentId is set
       if (
         isDepartmentCondition(condition) &&
         condition.departmentId &&
@@ -443,16 +427,13 @@ export const EmployeeConditionGenerator: FC<
       }
     });
 
-    // Update error state if we cleared any errors
     if (hasChanges) {
       setValidationErrors(updatedErrors);
     }
   }, [watchConditions, formSubmitted, validationErrors]);
 
-  // Scroll to bottom when a new condition is added
   useEffect(() => {
     if (scrollContainerRef.current && fields.length > 0) {
-      // Use a small timeout to ensure the DOM has updated
       setTimeout(() => {
         const lastCondition = scrollContainerRef.current?.querySelector(
           '.space-y-4 > div:last-child'
@@ -460,7 +441,6 @@ export const EmployeeConditionGenerator: FC<
         if (lastCondition) {
           lastCondition.scrollIntoView({ behavior: 'smooth', block: 'end' });
         } else {
-          // Fallback to the standard scroll if we can't find the last element
           scrollContainerRef.current?.scrollTo({
             top: scrollContainerRef.current.scrollHeight,
             behavior: 'smooth'
@@ -470,22 +450,17 @@ export const EmployeeConditionGenerator: FC<
     }
   }, [fields.length]);
 
-  // Parse initial value if provided
   useEffect(() => {
     if (value) {
       try {
-        // Parse the condition string into our form structure
-        // Example: "(department = 'dept1' && role = 'role1') || (id = 'emp1' || id = 'emp2')"
         const parsedConditions: SubCondition[] = [];
 
-        // For each condition group (wrapped in parentheses)
         const conditionGroups = value.match(/\([^()]+\)/g) || [];
 
         conditionGroups.forEach((group, index) => {
-          const groupContent = group.slice(1, -1); // Remove parentheses
+          const groupContent = group.slice(1, -1);
 
           if (groupContent.includes('department =')) {
-            // Department condition
             const departmentMatch = groupContent.match(
               /department = ['"]([^'"]+)['"]/
             );
@@ -500,7 +475,6 @@ export const EmployeeConditionGenerator: FC<
               });
             }
           } else if (groupContent.includes('id =')) {
-            // Employee condition
             const employeeIds =
               groupContent
                 .match(/id = ['"]([^'"]+)['"]/g)
@@ -523,20 +497,17 @@ export const EmployeeConditionGenerator: FC<
         });
       } catch (error) {
         console.error('Failed to parse condition:', error);
-        // Default to empty condition list
         reset({
           conditions: []
         });
       }
     } else {
-      // Default to empty condition list if no value
       reset({
         conditions: []
       });
     }
   }, [value, reset]);
 
-  // Generate condition string from form values
   const generateConditionString = useCallback(
     (data: ConditionFormValues): string => {
       if (data.conditions.length === 0) return '';
@@ -566,26 +537,21 @@ export const EmployeeConditionGenerator: FC<
         })
         .filter(Boolean);
 
-      // Always use OR operator
       return conditionParts.join(' || ');
     },
     []
   );
 
-  // Handle form submission
   const onSubmit = useCallback(
     (data: ConditionFormValues) => {
-      // Validate all conditions
       let hasValidationErrors = false;
 
-      // First, validate all fields manually to ensure errors show up
       data.conditions.forEach((condition, index) => {
         if (
           isEmployeeCondition(condition) &&
           condition.employeeIds.length === 0
         ) {
           hasValidationErrors = true;
-          // Trigger validation for the field
           setValue(`conditions.${index}.employeeIds`, [], {
             shouldValidate: true
           });
@@ -593,24 +559,21 @@ export const EmployeeConditionGenerator: FC<
 
         if (isDepartmentCondition(condition) && !condition.departmentId) {
           hasValidationErrors = true;
-          // Trigger validation for the field
           setValue(`conditions.${index}.departmentId`, '', {
             shouldValidate: true
           });
         }
       });
 
-      // If validation passes, generate the condition string and call onChange
       if (!hasValidationErrors) {
         const conditionString = generateConditionString(data);
         onChange?.(conditionString);
-        setFormSubmitted(false); // Reset submitted state on successful submission
+        setFormSubmitted(false);
       }
     },
     [generateConditionString, onChange, setValue, setFormSubmitted]
   );
 
-  // Add new sub-condition
   const addCondition = useCallback(
     (type: ConditionType) => {
       const newId = `${type}_${Date.now()}`;
@@ -624,7 +587,6 @@ export const EmployeeConditionGenerator: FC<
     [append]
   );
 
-  // Memoized handler for removing conditions
   const handleRemoveCondition = useCallback(
     (index: number) => {
       remove(index);
@@ -648,16 +610,12 @@ export const EmployeeConditionGenerator: FC<
     [addCondition]
   );
 
-  // Updated handleFormSubmit to track validation errors manually
   const handleFormSubmit = useCallback(() => {
-    // Set form as submitted to show validation errors
     setFormSubmitted(true);
 
-    // Check for validation errors before submitting
     const newErrors: { [key: string]: boolean } = {};
     let hasErrors = false;
 
-    // Check all fields for validation errors
     watchConditions.forEach((condition, index) => {
       if (
         isEmployeeCondition(condition) &&
@@ -673,26 +631,19 @@ export const EmployeeConditionGenerator: FC<
       }
     });
 
-    // Update validation errors
     setValidationErrors(newErrors);
 
-    // Only proceed with form submission if there are no validation errors
     if (!hasErrors) {
       handleSubmit(onSubmit)();
-    } else {
-      console.log('Validation errors detected:', newErrors);
     }
   }, [handleSubmit, onSubmit, watchConditions]);
 
   const departments = api.department.listFull.useSuspenseQuery();
 
-  // Function to immediately clear specific errors
   const clearError = useCallback(
     (type: 'department' | 'employee', index: number) => {
       setValidationErrors(prev => {
-        // Create a copy of current errors
         const updatedErrors = { ...prev };
-        // Remove the specific error
         delete updatedErrors[`${type}_${index}`];
         return updatedErrors;
       });
@@ -727,7 +678,7 @@ export const EmployeeConditionGenerator: FC<
                 condition={condition}
                 index={index}
                 departments={departments.data}
-                formErrors={formErrors}
+                formErrors={errors as unknown as ConditionErrors}
                 formSubmitted={formSubmitted}
                 showEmployeeError={showEmployeeError}
                 showDepartmentError={showDepartmentError}

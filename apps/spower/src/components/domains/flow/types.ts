@@ -1,6 +1,6 @@
 export type PointRole = 'source' | 'target' | 'unknown';
 
-export type FlowType = 'bezier' | 'straight' | 'step' | 'smoothstep';
+export type FlowType = 'default' | 'straight' | 'step' | 'smoothstep';
 
 export type Point = {
   id: string;

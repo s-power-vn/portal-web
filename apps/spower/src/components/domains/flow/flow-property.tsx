@@ -23,7 +23,7 @@ const schema = yup
     approve: yup.boolean().default(false),
     type: yup
       .string()
-      .oneOf(['bezier', 'straight', 'step', 'smoothstep'])
+      .oneOf(['default', 'straight', 'step', 'smoothstep'])
       .default('smoothstep')
   })
   .required();
@@ -104,7 +104,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-4 p-4">
           {selectedFlow ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">
                   ID
@@ -146,7 +146,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                   })}
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="bezier">Bezier</option>
+                  <option value="default">Mặc định</option>
                   <option value="straight">Thẳng</option>
                   <option value="step">Bậc thang</option>
                   <option value="smoothstep">Bậc thang mượt</option>
@@ -167,7 +167,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                 />
                 <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
               </div>
-            </form>
+            </div>
           ) : (
             <div className="text-muted-foreground text-center text-sm">
               Chọn một flow để xem thông tin

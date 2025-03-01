@@ -23,7 +23,7 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
-import { EmployeeConditionGenerator } from './employee-condition-generator';
+import { ConditionGenerator } from './condition-generator';
 import type { Node, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -151,7 +151,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       title: 'Tạo điều kiện',
       className: 'max-h-[80vh]',
       children: ({ close }) => (
-        <EmployeeConditionGenerator
+        <ConditionGenerator
           value={watch('condition')}
           onChange={value => {
             setValue('condition', value);
