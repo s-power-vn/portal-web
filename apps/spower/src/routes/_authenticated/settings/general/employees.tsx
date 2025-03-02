@@ -137,7 +137,8 @@ function Component() {
         cell: info => info.getValue(),
         header: () => 'Họ tên',
         footer: info => info.column.id,
-        size: 300
+        size: 300,
+        id: 'name'
       }),
       columnHelper.accessor('phone', {
         cell: info => info.getValue(),
@@ -306,6 +307,7 @@ function Component() {
                   width: '100%',
                   tableLayout: 'fixed'
                 }}
+                className="relative"
               >
                 <TableHeader
                   className={'bg-appBlueLight'}
@@ -323,7 +325,13 @@ function Component() {
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className={'text-appWhite whitespace-nowrap'}
+                          className={`text-appWhite whitespace-nowrap ${
+                            header.column.id === 'index'
+                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                              : header.column.id === 'name'
+                                ? 'bg-appBlueLight sticky left-[30px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                : ''
+                          }`}
                           style={{
                             width: header.getSize(),
                             maxWidth: header.getSize()
@@ -367,7 +375,13 @@ function Component() {
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={'truncate text-left'}
+                              className={`truncate text-left ${
+                                cell.column.id === 'index'
+                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                  : cell.column.id === 'name'
+                                    ? 'sticky left-[30px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                    : ''
+                              }`}
                               style={{
                                 width: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()
