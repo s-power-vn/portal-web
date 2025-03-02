@@ -21,6 +21,7 @@ import { Button } from '@minhdtb/storeo-theme';
 import { DepartmentDropdown } from '../department';
 import { SelectEmployee } from '../employee';
 import { RoleDropdown } from '../role';
+import { ConditionDisplay } from './condition-display';
 
 type ConditionType = 'department' | 'employee';
 
@@ -718,9 +719,23 @@ export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
       </div>
       <div className="mt-4 border-t pt-3">
         <div className="mb-1 text-sm font-medium">Điều kiện đã tạo:</div>
-        <pre className="bg-muted overflow-auto rounded p-2 text-xs">
-          {conditionString}
-        </pre>
+        {conditionString ? (
+          <div className="bg-muted rounded p-2">
+            <ConditionDisplay condition={conditionString} />
+          </div>
+        ) : (
+          <div className="bg-muted rounded p-2 text-sm text-gray-500">
+            Không có điều kiện
+          </div>
+        )}
+        <div className="mt-2 text-xs text-gray-500">
+          <details>
+            <summary className="cursor-pointer">Xem chuỗi điều kiện</summary>
+            <pre className="bg-muted/50 mt-1 overflow-auto rounded p-2">
+              {conditionString || 'Không có điều kiện'}
+            </pre>
+          </details>
+        </div>
         <Button
           type="button"
           onClick={handleFormSubmit}

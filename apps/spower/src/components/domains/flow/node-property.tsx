@@ -4,8 +4,8 @@ import {
   ArrowLeftToLineIcon,
   ArrowRightToLineIcon,
   ArrowUpToLineIcon,
+  Edit,
   Plus,
-  Search,
   Trash2
 } from 'lucide-react';
 import * as yup from 'yup';
@@ -23,6 +23,7 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { ConditionDisplay } from './condition-display';
 import { ConditionGenerator } from './condition-generator';
 import type { Node, Point, PointRole } from './types';
 
@@ -215,23 +216,56 @@ export const NodeProperty: FC<NodePropertyProps> = ({
               </div>
               <div>
                 <label className="text-sm font-medium">Điều kiện</label>
-                <div className="flex gap-2">
-                  <textarea
-                    {...register('condition')}
-                    onBlur={() => handleSubmit(onSubmit)()}
-                    placeholder="Nhập điều kiện"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-10"
-                    onClick={handleShowConditionGenerator}
-                  >
-                    <Search size={16} className="mr-1" />
-                    Tạo
-                  </Button>
+                <div className="flex flex-col gap-2">
+                  {watch('condition') ? (
+                    <div className="rounded-md border p-2">
+                      <ConditionDisplay condition={watch('condition')} />
+                    </div>
+                  ) : (
+                    <div className="rounded-md border p-2 text-sm text-gray-500">
+                      Không có điều kiện
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-10"
+                      onClick={handleShowConditionGenerator}
+                    >
+                      <Edit size={16} className="mr-1" />
+                      {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
+                    </Button>
+                    {watch('condition') && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="h-10"
+                        onClick={() => {
+                          setValue('condition', '');
+                          handleSubmit(onSubmit)();
+                        }}
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Xóa điều kiện
+                      </Button>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <details>
+                      <summary className="cursor-pointer">
+                        Xem chuỗi điều kiện
+                      </summary>
+                      <textarea
+                        {...register('condition')}
+                        onBlur={() => handleSubmit(onSubmit)()}
+                        placeholder="Nhập điều kiện"
+                        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                    </details>
+                  </div>
                 </div>
                 {errors.condition && (
                   <p className="text-destructive mt-1 text-sm">
@@ -341,7 +375,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           variant="destructive"
           onClick={() => selectedNode && onNodeDelete?.(selectedNode.id)}
         >
-          Xóa
+          Xóa nút
         </Button>
       </div>
     </div>
