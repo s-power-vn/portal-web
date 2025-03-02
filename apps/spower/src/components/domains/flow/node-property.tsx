@@ -171,16 +171,15 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           {selectedNode ? (
             <div className="space-y-2">
               <div>
-                <label className="text-sm font-medium">
-                  ID
-                  <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register('id')}
-                  disabled
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <label className="text-sm font-medium">ID</label>
+                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
+                  {watch('id')}
+                </div>
+                {errors.id && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.id.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">
@@ -231,7 +230,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-10"
+                      className="h-8"
                       onClick={handleShowConditionGenerator}
                     >
                       <Edit size={16} className="mr-1" />
@@ -242,7 +241,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                         type="button"
                         variant="destructive"
                         size="sm"
-                        className="h-10"
+                        className="h-8"
                         onClick={() => {
                           setValue('condition', '');
                           handleSubmit(onSubmit)();
@@ -375,6 +374,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           variant="destructive"
           onClick={() => selectedNode && onNodeDelete?.(selectedNode.id)}
         >
+          <Trash2 size={16} className="mr-1" />
           Xóa nút
         </Button>
       </div>

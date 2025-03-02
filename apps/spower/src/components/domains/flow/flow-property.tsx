@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Trash2 } from 'lucide-react';
 import * as yup from 'yup';
 
 import { FC, useEffect } from 'react';
@@ -43,7 +44,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { isDirty, errors, dirtyFields }
+    watch,
+    formState: { errors, dirtyFields }
   } = useForm<FlowFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -106,17 +108,10 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
           {selectedFlow ? (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">
-                  ID
-                  <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register('id')}
-                  placeholder="Nhập ID flow"
-                  disabled
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <label className="text-sm font-medium">ID</label>
+                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
+                  {watch('id')}
+                </div>
                 {errors.id && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.id.message}
@@ -182,7 +177,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
             variant="destructive"
             onClick={() => selectedFlow && onFlowDelete?.(selectedFlow.id)}
           >
-            Xóa
+            <Trash2 size={16} className="mr-1" />
+            Xóa quy trình
           </Button>
         </div>
       </Show>
