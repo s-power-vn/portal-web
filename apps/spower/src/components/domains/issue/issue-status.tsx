@@ -59,9 +59,12 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
     >
       <Match when={!!currentNode}>
         <Button
-          variant={'outline'}
           onClick={handleClick}
-          className={cn(style, 'bg-appError', className)}
+          className={cn(
+            style,
+            'bg-appBlue hover:bg-appBlueLight hover:text-appWhite',
+            className
+          )}
         >
           {currentNode?.name}
         </Button>

@@ -4,12 +4,13 @@ import {
   ArrowLeftToLineIcon,
   ArrowRightToLineIcon,
   ArrowUpToLineIcon,
+  Edit,
   Plus,
   Trash2
 } from 'lucide-react';
 import * as yup from 'yup';
 
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import {
@@ -18,9 +19,12 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  showModal
 } from '@minhdtb/storeo-theme';
 
+import { ConditionDisplay } from './condition-display';
+import { ConditionGenerator } from './condition-generator';
 import type { Node, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -143,6 +147,23 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     }
   };
 
+  const handleShowConditionGenerator = useCallback(() => {
+    showModal({
+      title: 'Tạo điều kiện',
+      className: 'max-h-[80vh]',
+      children: ({ close }) => (
+        <ConditionGenerator
+          value={watch('condition')}
+          onChange={value => {
+            setValue('condition', value);
+            handleSubmit(onSubmit)();
+            close();
+          }}
+        />
+      )
+    });
+  }, [handleSubmit, setValue, watch, selectedNode]);
+
   return (
     <div className="flex max-h-0 flex-col">
       <div className="flex-1">
@@ -150,16 +171,15 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           {selectedNode ? (
             <div className="space-y-2">
               <div>
-                <label className="text-sm font-medium">
-                  ID
-                  <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register('id')}
-                  disabled
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <label className="text-sm font-medium">ID</label>
+                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
+                  {watch('id')}
+                </div>
+                {errors.id && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.id.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">
@@ -195,12 +215,57 @@ export const NodeProperty: FC<NodePropertyProps> = ({
               </div>
               <div>
                 <label className="text-sm font-medium">Điều kiện</label>
-                <textarea
-                  {...register('condition')}
-                  onBlur={() => handleSubmit(onSubmit)()}
-                  placeholder="Nhập điều kiện"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <div className="flex flex-col gap-2">
+                  {watch('condition') ? (
+                    <div className="rounded-md border p-2">
+                      <ConditionDisplay condition={watch('condition')} />
+                    </div>
+                  ) : (
+                    <div className="rounded-md border p-2 text-sm text-gray-500">
+                      Không có điều kiện
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8"
+                      onClick={handleShowConditionGenerator}
+                    >
+                      <Edit size={16} className="mr-1" />
+                      {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
+                    </Button>
+                    {watch('condition') && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="h-8"
+                        onClick={() => {
+                          setValue('condition', '');
+                          handleSubmit(onSubmit)();
+                        }}
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Xóa điều kiện
+                      </Button>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <details>
+                      <summary className="cursor-pointer">
+                        Xem chuỗi điều kiện
+                      </summary>
+                      <textarea
+                        {...register('condition')}
+                        onBlur={() => handleSubmit(onSubmit)()}
+                        placeholder="Nhập điều kiện"
+                        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                    </details>
+                  </div>
+                </div>
                 {errors.condition && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.condition.message}
@@ -309,7 +374,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           variant="destructive"
           onClick={() => selectedNode && onNodeDelete?.(selectedNode.id)}
         >
-          Xóa
+          <Trash2 size={16} className="mr-1" />
+          Xóa nút
         </Button>
       </div>
     </div>

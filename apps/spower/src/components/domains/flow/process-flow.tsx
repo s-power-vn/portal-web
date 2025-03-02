@@ -11,8 +11,6 @@ import {
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { cn } from '@minhdtb/storeo-core';
-
 import { CustomNode } from './custom-node';
 import type { Flow, Node, Point, PointRole, ProcessData } from './types';
 
@@ -158,17 +156,22 @@ function getEdges(processData: ProcessData, status?: string): Edge[] {
     return [];
   }
 
-  const extract = extractStatus(status);
-
   return processData.flows.map((flow: Flow) => {
-    const { id, from, to, approve, type } = flow;
+    const { id, from, to, type } = flow;
     const fromNodeId = from.node;
     const toNodeId = to.node;
 
-    const isActive = extract?.from === fromNodeId && extract?.to === toNodeId;
+    // Directly compare flow id with status
+    const isActiveFlow = id === status;
 
     // Map FlowType to edge type
     const edgeType = type || 'smoothstep';
+
+    // Set the style directly instead of using className
+    const edgeStyle = {
+      strokeWidth: isActiveFlow ? 2 : 1,
+      stroke: isActiveFlow ? '#CC313D' : '#b1b1b7'
+    };
 
     return {
       id,
@@ -177,16 +180,13 @@ function getEdges(processData: ProcessData, status?: string): Edge[] {
       sourceHandle: `${fromNodeId}#${from.point}`,
       targetHandle: `${toNodeId}#${to.point}`,
       type: edgeType,
+      style: edgeStyle,
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20
-      },
-      className: cn(
-        'stroke-2',
-        approve ? 'stroke-blue-500' : '',
-        isActive ? 'stroke-appError' : ''
-      )
+        width: isActiveFlow ? 15 : 20,
+        height: isActiveFlow ? 15 : 20,
+        color: isActiveFlow ? '#CC313D' : '#b1b1b7'
+      }
     };
   });
 }
@@ -287,6 +287,11 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       nodesDraggable={false}
+      nodesConnectable={false}
+      draggable={false}
+      panOnDrag={false}
+      zoomOnScroll={false}
+      zoomOnPinch={false}
       fitView
       fitViewOptions={fitViewOptions}
     />

@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
-import { number, object, ref, string } from 'yup';
+import { object, ref, string } from 'yup';
 
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
@@ -21,9 +20,8 @@ const schema = object().shape({
   passwordConfirmation: string()
     .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
     .required('Hãy xác nhận mật khẩu'),
-  title: string(),
   phone: string(),
-  role: number().required('Hãy chọn chức danh')
+  role: string().required('Hãy chọn chức danh')
 });
 
 export type NewEmployeeFormProps = BusinessFormProps;
@@ -46,41 +44,26 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
   });
 
   const roleItems = useMemo(() => {
-    if (department.data) {
-      const code = department.data.code;
-      return code === 'BGD'
-        ? [
-            {
-              label: 'Giám đốc',
-              value: '1'
-            },
-            {
-              label: 'Phó giám đốc',
-              value: '2'
-            }
-          ]
-        : [
-            {
-              label: 'Trưởng phòng',
-              value: '3'
-            },
-            {
-              label: 'Chuyên viên',
-              value: '4'
-            }
-          ];
+    if (department.data?.roles && Array.isArray(department.data.roles)) {
+      return department.data.roles.map(role => ({
+        label: role.name,
+        value: role.id
+      }));
     }
-  }, [department]);
+    return [];
+  }, [department.data]);
 
   return (
     <Form
       schema={schema}
       onSuccess={values => {
+        const selectedRole = department.data?.roles?.find(
+          role => role.id === values.role
+        );
+
         createEmployee.mutate({
           ...values,
-          title:
-            _.find(roleItems, it => it.value === values.role?.toString())
-              ?.label ?? ''
+          role: values.role
         });
       }}
       onCancel={props.onCancel}

@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
-import { number, object, string } from 'yup';
+import { object, string } from 'yup';
 
 import type { FC } from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -16,8 +15,7 @@ const schema = object().shape({
   email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
   phone: string(),
-  title: string(),
-  role: number().required('Hãy chọn chức danh')
+  role: string().required('Hãy chọn chức danh')
 });
 
 export type EditEmployeeFormProps = BusinessFormProps & {
@@ -41,8 +39,8 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
   >();
 
   useEffect(() => {
-    setSelectedDepartment(employee.data?.department);
-  }, [employee.data?.department]);
+    setSelectedDepartment(employee.data?.expand?.department.id);
+  }, [employee.data?.expand?.department.id]);
 
   const department = api.department.byId.useQuery({
     variables: selectedDepartment,
@@ -50,47 +48,33 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
   });
 
   const roleItems = useMemo(() => {
-    if (department.data) {
-      const code = department.data.code;
-      return code === 'BGD'
-        ? [
-            {
-              label: 'Giám đốc',
-              value: '1'
-            },
-            {
-              label: 'Phó giám đốc',
-              value: '2'
-            }
-          ]
-        : [
-            {
-              label: 'Trưởng phòng',
-              value: '3'
-            },
-            {
-              label: 'Chuyên viên',
-              value: '4'
-            }
-          ];
+    if (department.data?.roles && Array.isArray(department.data.roles)) {
+      return department.data.roles.map(role => ({
+        label: role.name,
+        value: role.id
+      }));
     }
-  }, [department]);
+    return [];
+  }, [department.data]);
 
   return (
     <Form
       schema={schema}
-      onSuccess={values =>
+      onSuccess={values => {
+        const selectedRole = department.data?.roles?.find(
+          role => role.id === values.role
+        );
+
         updateEmployee.mutate({
           ...values,
           id: props.employeeId,
-          title:
-            _.find(roleItems, it => it.value === values.role?.toString())
-              ?.label ?? ''
-        })
-      }
+          role: values.role
+        });
+      }}
       onCancel={props.onCancel}
       defaultValues={{
-        ...employee.data
+        ...employee.data,
+        role: employee.data?.role
       }}
       loading={updateEmployee.isPending}
       className={'flex flex-col gap-3'}

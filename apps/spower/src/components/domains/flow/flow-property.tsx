@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Trash2 } from 'lucide-react';
 import * as yup from 'yup';
 
 import { FC, useEffect } from 'react';
@@ -23,7 +24,7 @@ const schema = yup
     approve: yup.boolean().default(false),
     type: yup
       .string()
-      .oneOf(['bezier', 'straight', 'step', 'smoothstep'])
+      .oneOf(['default', 'straight', 'step', 'smoothstep'])
       .default('smoothstep')
   })
   .required();
@@ -43,7 +44,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { isDirty, errors, dirtyFields }
+    watch,
+    formState: { errors, dirtyFields }
   } = useForm<FlowFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -104,19 +106,12 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-4 p-4">
           {selectedFlow ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">
-                  ID
-                  <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register('id')}
-                  placeholder="Nhập ID flow"
-                  disabled
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                <label className="text-sm font-medium">ID</label>
+                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
+                  {watch('id')}
+                </div>
                 {errors.id && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.id.message}
@@ -146,7 +141,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                   })}
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="bezier">Bezier</option>
+                  <option value="default">Mặc định</option>
                   <option value="straight">Thẳng</option>
                   <option value="step">Bậc thang</option>
                   <option value="smoothstep">Bậc thang mượt</option>
@@ -167,7 +162,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                 />
                 <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
               </div>
-            </form>
+            </div>
           ) : (
             <div className="text-muted-foreground text-center text-sm">
               Chọn một flow để xem thông tin
@@ -182,7 +177,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
             variant="destructive"
             onClick={() => selectedFlow && onFlowDelete?.(selectedFlow.id)}
           >
-            Xóa
+            <Trash2 size={16} className="mr-1" />
+            Xóa quy trình
           </Button>
         </div>
       </Show>

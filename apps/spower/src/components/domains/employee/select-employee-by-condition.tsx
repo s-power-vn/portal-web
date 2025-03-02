@@ -13,6 +13,7 @@ export const SelectEmployeeByCondition: FC<
 > = props => {
   return (
     <Combobox
+      {...props}
       value={props.value}
       onChange={props.onChange}
       placeholder="Chọn nhân viên"
