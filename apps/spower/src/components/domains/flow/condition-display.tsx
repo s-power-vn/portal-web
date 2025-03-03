@@ -16,7 +16,6 @@ type ParsedCondition = {
   employeeIds?: string[];
 };
 
-// Constants for regex patterns to improve readability and maintainability
 const REGEX = {
   CONDITION_GROUP: /\([^()]+\)/g,
   DEPARTMENT: /department = ["']([^"']+)["']/,
@@ -25,12 +24,10 @@ const REGEX = {
   EMPLOYEE_ID_EXTRACT: /id = ["']([^"']+)["']/
 };
 
-// Empty state component
 const EmptyCondition: FC = () => (
   <div className="text-sm text-gray-500">Không có điều kiện</div>
 );
 
-// Department condition component
 type DepartmentConditionProps = {
   department: any;
   roleId?: string;
@@ -64,7 +61,6 @@ const DepartmentCondition: FC<DepartmentConditionProps> = ({
   );
 };
 
-// Employee condition component
 type EmployeeConditionProps = {
   employeeIds: string[];
   employees: any;
@@ -147,13 +143,11 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
   condition,
   className
 }) => {
-  // Parse conditions once and memoize the result
   const parsedConditions = useMemo(
     () => parseConditions(condition),
     [condition]
   );
 
-  // Extract unique employee IDs
   const employeeIds = useMemo(
     () =>
       _.uniq(
@@ -164,7 +158,6 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
     [parsedConditions]
   );
 
-  // Fetch data using Suspense queries
   const { data: departments } = api.department.listFull.useSuspenseQuery();
 
   const { data: employees } = api.employee.listByCondition.useSuspenseQuery({
@@ -177,7 +170,6 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
     }
   });
 
-  // Return early if no conditions
   if (!condition || !parsedConditions.length) {
     return <EmptyCondition />;
   }

@@ -34,7 +34,7 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSuccess={values =>
         updateMaterial.mutate({
           id: props.materialId,
           ...values
@@ -43,7 +43,7 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
       onCancel={props.onCancel}
       defaultValues={materialById.data}
       loading={updateMaterial.isPending}
-      className={' flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField
         schema={schema}

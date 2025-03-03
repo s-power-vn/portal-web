@@ -118,7 +118,6 @@ const ConditionBlock = memo(
     onRemove,
     clearError
   }: ConditionBlockProps) => {
-    // Local state to force re-render when department changes
     const [localDeptId, setLocalDeptId] = useState(
       isDepartmentCondition(condition) ? condition.departmentId : ''
     );
@@ -126,7 +125,6 @@ const ConditionBlock = memo(
       isDepartmentCondition(condition) ? condition.role || '' : ''
     );
 
-    // Update local state when condition changes from parent
     useEffect(() => {
       if (isDepartmentCondition(condition)) {
         setLocalDeptId(condition.departmentId);
@@ -134,7 +132,6 @@ const ConditionBlock = memo(
       }
     }, [condition]);
 
-    // Get current department and its roles
     const currentDepartment = useMemo(
       () =>
         departments.find(
@@ -153,7 +150,6 @@ const ConditionBlock = memo(
         setLocalDeptId(value);
         setLocalRole('');
 
-        // Clear department error immediately if a valid value is selected
         if (value) {
           clearError('department', index);
         }
@@ -193,7 +189,6 @@ const ConditionBlock = memo(
       (value: string | string[]) => {
         const employeeIds = Array.isArray(value) ? value : [];
 
-        // Clear employee error immediately if at least one employee is selected
         if (employeeIds.length > 0) {
           clearError('employee', index);
         }
@@ -300,7 +295,6 @@ const ConditionBlock = memo(
     );
   },
   (prevProps, nextProps) => {
-    // Always re-render when formSubmitted or error flags change
     if (
       prevProps.formSubmitted !== nextProps.formSubmitted ||
       prevProps.showEmployeeError !== nextProps.showEmployeeError ||
@@ -309,11 +303,9 @@ const ConditionBlock = memo(
       return false;
     }
 
-    // Check if the condition itself has changed
     const prevCondition = prevProps.condition;
     const nextCondition = nextProps.condition;
 
-    // Re-render if basic properties changed
     if (
       prevProps.index !== nextProps.index ||
       prevCondition.id !== nextCondition.id ||
@@ -322,7 +314,6 @@ const ConditionBlock = memo(
       return false;
     }
 
-    // Handle department conditions
     if (
       isDepartmentCondition(prevCondition) &&
       isDepartmentCondition(nextCondition)
@@ -337,28 +328,23 @@ const ConditionBlock = memo(
       isEmployeeCondition(prevCondition) &&
       isEmployeeCondition(nextCondition)
     ) {
-      // Handle employee conditions
       if (!_.isEqual(prevCondition.employeeIds, nextCondition.employeeIds)) {
         return false;
       }
     } else {
-      // Different condition types, needs re-render
       return false;
     }
 
-    // Check if departments data changed
     if (prevProps.departments.length !== nextProps.departments.length) {
       return false;
     }
 
-    // No meaningful changes, don't re-render
     return true;
   }
 );
 
 ConditionBlock.displayName = 'ConditionBlock';
 
-// Props interface
 export type ConditionGeneratorProps = {
   value?: string;
   onChange?: (value: string) => void;
@@ -371,7 +357,6 @@ export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Add manual validation state to track errors when form is submitted
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: boolean;
   }>({});
