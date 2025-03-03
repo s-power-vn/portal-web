@@ -20,7 +20,7 @@ export const detailApi = router('detail', {
     fetcher: (id: string) => client.collection(Collections.Detail).getOne(id)
   }),
   create: router.mutation({
-    mutationFn: (params: DetailRecord) => {
+    mutationFn: (params: Partial<DetailRecord>) => {
       const parent = params.parent ? params.parent : `${params.project}-root`;
       return client.collection(Collections.Detail).create({
         ...params,
@@ -30,7 +30,7 @@ export const detailApi = router('detail', {
     }
   }),
   update: router.mutation({
-    mutationFn: (params: DetailRecord & { id: string }) =>
+    mutationFn: (params: Partial<DetailRecord> & { id: string }) =>
       client.collection(Collections.Detail).update(params.id, params)
   }),
   delete: router.mutation({

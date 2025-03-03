@@ -7,7 +7,7 @@ import {
 
 import { router } from 'react-query-kit';
 
-import type { ListParams } from './types';
+import type { ListParams } from '../../types';
 
 export type DepartmentData = DepartmentResponse<
   {

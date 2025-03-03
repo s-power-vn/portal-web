@@ -52,7 +52,7 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSuccess={values =>
         createDetail.mutate({
           ...values,
           project: props.projectId,

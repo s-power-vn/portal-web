@@ -7,9 +7,9 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { UserData } from './employee';
-import { ObjectData } from './object';
-import { ListParams } from './types';
+import { UserData } from '../setting/general/employee';
+import { ObjectData } from '../setting/operation/object';
+import { ListParams } from '../types';
 
 export type IssueData = IssueResponse<
   Record<string, string>[],
@@ -79,19 +79,6 @@ export const issueApi = router('issue', {
       client.collection<IssueData>(Collections.Issue).getOne(id, {
         expand: `createdBy, assignee, object, object.process, issueFile_via_issue`
       })
-  }),
-  updateTitle: router.mutation({
-    mutationFn: async ({
-      title,
-      issueId
-    }: {
-      title: string;
-      issueId: string;
-    }) => {
-      return await client.collection('issue').update(issueId, {
-        title
-      });
-    }
   }),
   update: router.mutation({
     mutationFn: (
