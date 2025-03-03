@@ -37,7 +37,7 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
         note: ''
       }}
       loading={createSupplier.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField
         schema={schema}

@@ -27,11 +27,11 @@ export const materialApi = router('material', {
     fetcher: (id: string) => client.collection(Collections.Material).getOne(id)
   }),
   create: router.mutation({
-    mutationFn: (params: MaterialRecord) =>
+    mutationFn: (params: Partial<MaterialRecord>) =>
       client.collection(Collections.Material).create(params)
   }),
   update: router.mutation({
-    mutationFn: (params: MaterialRecord & { id: string }) =>
+    mutationFn: (params: Partial<MaterialRecord> & { id: string }) =>
       client.collection(Collections.Material).update(params.id, params)
   }),
   delete: router.mutation({

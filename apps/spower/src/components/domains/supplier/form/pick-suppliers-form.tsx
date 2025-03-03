@@ -22,7 +22,7 @@ export const PickSuppliersForm: FC<PickSuppliersFormProps> = ({
   return (
     <Form
       schema={schema}
-      onSubmit={onSuccess}
+      onSuccess={onSuccess}
       onCancel={onCancel}
       className={'flex flex-col gap-3'}
       defaultValues={{

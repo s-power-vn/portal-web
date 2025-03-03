@@ -33,7 +33,7 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSuccess={values =>
         updateSupplier.mutate({
           id: props.supplierId,
           ...values
@@ -42,7 +42,7 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
       onCancel={props.onCancel}
       defaultValues={supplierById.data}
       loading={updateSupplier.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField
         schema={schema}

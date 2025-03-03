@@ -28,7 +28,7 @@ export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values => createMaterial.mutate(values)}
+      onSuccess={values => createMaterial.mutate(values)}
       onCancel={props.onCancel}
       defaultValues={{
         code: '',
@@ -37,7 +37,7 @@ export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
         note: ''
       }}
       loading={createMaterial.isPending}
-      className={'mt-4 flex flex-col gap-3'}
+      className={'flex flex-col gap-3'}
     >
       <TextField
         schema={schema}
