@@ -54,10 +54,8 @@ const Component = ({
     : Math.min(maxVisible, totalAssignees);
   const hasMoreAssignees = totalAssignees > visibleAssignees;
 
-  // Get current user
   const currentUser = getUser();
 
-  // Sort assignees to put current user first
   const sortedAssignees = useMemo(() => {
     if (!currentUser) return issueAssignData;
 

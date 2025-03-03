@@ -103,7 +103,7 @@ export const issueApi = router('issue', {
   forward: router.mutation({
     mutationFn: (params: {
       id: string;
-      assignee: string;
+      assignees: string[];
       status: string;
       note?: string;
     }) => {
@@ -200,29 +200,5 @@ export const issueApi = router('issue', {
         return null;
       }
     }
-  })
-});
-
-export const issueAssignApi = router('issueAssign', {
-  list: router.query({
-    fetcher: (issueId: string) =>
-      client
-        .collection<IssueAssignData>(Collections.IssueAssign)
-        .getList(1, 100, {
-          filter: `issue = "${issueId}"`,
-          expand: 'assign'
-        })
-  }),
-  create: router.mutation({
-    mutationFn: (params: { issueId: string; assignId: string }) => {
-      return client.collection(Collections.IssueAssign).create({
-        issue: params.issueId,
-        assign: params.assignId
-      });
-    }
-  }),
-  delete: router.mutation({
-    mutationFn: (id: string) =>
-      client.collection(Collections.IssueAssign).delete(id)
   })
 });

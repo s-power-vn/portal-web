@@ -1,8 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DepartmentData } from 'libs/api/src/api/department';
 import _ from 'lodash';
 import { NetworkIcon, Plus, Trash2, User } from 'lucide-react';
-import { api } from 'portal-api';
+import { DepartmentData, api } from 'portal-api';
 import * as yup from 'yup';
 
 import {
