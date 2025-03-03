@@ -1,7 +1,7 @@
 import { authApi } from './auth';
 import { commentApi } from './domain/comment';
 import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
-import { issueApi } from './domain/issue';
+import { IssueData, issueApi, issueAssignApi } from './domain/issue';
 import { priceApi } from './domain/price';
 import type { ProjectData } from './domain/project';
 import { projectApi } from './domain/project';
@@ -28,6 +28,7 @@ export const api = {
   detailImport: detailImportApi,
   employee: employeeApi,
   issue: issueApi,
+  issueAssign: issueAssignApi,
   material: materialApi,
   object: objectApi,
   price: priceApi,
@@ -41,6 +42,7 @@ export const api = {
 
 export type {
   DepartmentData,
+  IssueData,
   ObjectData,
   ProcessDbData,
   ProjectData,

@@ -1,4 +1,5 @@
 import type {
+  IssueAssignResponse,
   IssueFileResponse,
   IssueRecord,
   IssueResponse
@@ -11,6 +12,10 @@ import { UserData } from '../setting/general/employee';
 import { ObjectData } from '../setting/operation/object';
 import { ListParams } from '../types';
 
+export type IssueAssignData = IssueAssignResponse<{
+  assign: UserData;
+}>;
+
 export type IssueData = IssueResponse<
   Record<string, string>[],
   string[],
@@ -19,6 +24,7 @@ export type IssueData = IssueResponse<
     assignee: UserData;
     issueFile_via_issue: IssueFileResponse[];
     object: ObjectData;
+    issueAssign_via_issue: IssueAssignData[];
   }
 >;
 
@@ -31,7 +37,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue, issueAssign_via_issue.assign`,
           sort: '-changed'
         })
   }),
@@ -41,10 +47,10 @@ export const issueApi = router('issue', {
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
-        && assignee = "${client.authStore.record?.id}"
+        && issueAssign_via_issue.assign ?~ '${client.authStore.record?.id}'
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue, issueAssign_via_issue.assign`,
           sort: '-changed'
         })
   }),
@@ -57,7 +63,7 @@ export const issueApi = router('issue', {
         && title ~ "${search?.filter ?? ''}"
         && object.type = "Request"
         && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue, issueAssign_via_issue.assign`,
           sort: '-changed'
         })
   }),
@@ -70,14 +76,14 @@ export const issueApi = router('issue', {
         && title ~ "${search?.filter ?? ''}"
         && object.type = "Price"
         && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.process, issueFile_via_issue, issueAssign_via_issue.assign`,
           sort: '-changed'
         })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, assignee, object, object.process, issueFile_via_issue`
+        expand: `createdBy, object, object.process, issueFile_via_issue, issueAssign_via_issue.assign`
       })
   }),
   update: router.mutation({
@@ -194,5 +200,29 @@ export const issueApi = router('issue', {
         return null;
       }
     }
+  })
+});
+
+export const issueAssignApi = router('issueAssign', {
+  list: router.query({
+    fetcher: (issueId: string) =>
+      client
+        .collection<IssueAssignData>(Collections.IssueAssign)
+        .getList(1, 100, {
+          filter: `issue = "${issueId}"`,
+          expand: 'assign'
+        })
+  }),
+  create: router.mutation({
+    mutationFn: (params: { issueId: string; assignId: string }) => {
+      return client.collection(Collections.IssueAssign).create({
+        issue: params.issueId,
+        assign: params.assignId
+      });
+    }
+  }),
+  delete: router.mutation({
+    mutationFn: (id: string) =>
+      client.collection(Collections.IssueAssign).delete(id)
   })
 });

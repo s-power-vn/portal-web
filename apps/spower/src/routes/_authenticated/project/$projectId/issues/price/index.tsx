@@ -1,9 +1,8 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IssueData } from 'libs/api/src/api/issue';
 import { CircleDollarSignIcon, FilesIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
+import { IssueData, ListSchema, api } from 'portal-api';
 import { ObjectTypeOptions } from 'portal-core';
 
 import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
@@ -11,6 +10,7 @@ import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
   EmployeeDisplay,
+  IssueAssigneeDisplay,
   IssueDeadlineStatus,
   IssueStatus,
   IssueType,
@@ -66,7 +66,9 @@ const Component = () => {
       size: 200
     }),
     columnHelper.accessor('assignee', {
-      cell: ({ row }) => <EmployeeDisplay employeeId={row.original.assignee} />,
+      cell: ({ row }) => (
+        <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
+      ),
       header: () => 'Người thực hiện',
       footer: info => info.column.id,
       size: 200

@@ -20,6 +20,7 @@ export enum Collections {
 	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
+	IssueAssign = "issueAssign",
 	IssueFile = "issueFile",
 	IssueUserInfo = "issueUserInfo",
 	Material = "material",
@@ -238,6 +239,14 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	updated?: IsoDateString
 }
 
+export type IssueAssignRecord = {
+	assign?: RecordIdString
+	created?: IsoDateString
+	id: string
+	issue?: RecordIdString
+	updated?: IsoDateString
+}
+
 export type IssueFileRecord = {
 	created?: IsoDateString
 	id: string
@@ -411,6 +420,7 @@ export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<Deta
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
 export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<Tapprover, TlastAssignee>> & BaseSystemFields<Texpand>
+export type IssueAssignResponse<Texpand = unknown> = Required<IssueAssignRecord> & BaseSystemFields<Texpand>
 export type IssueFileResponse<Texpand = unknown> = Required<IssueFileRecord> & BaseSystemFields<Texpand>
 export type IssueUserInfoResponse<Texpand = unknown> = Required<IssueUserInfoRecord> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
@@ -443,6 +453,7 @@ export type CollectionRecords = {
 	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
+	issueAssign: IssueAssignRecord
 	issueFile: IssueFileRecord
 	issueUserInfo: IssueUserInfoRecord
 	material: MaterialRecord
@@ -474,6 +485,7 @@ export type CollectionResponses = {
 	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
+	issueAssign: IssueAssignResponse
 	issueFile: IssueFileResponse
 	issueUserInfo: IssueUserInfoResponse
 	material: MaterialResponse
@@ -508,6 +520,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
+	collection(idOrName: 'issueAssign'): RecordService<IssueAssignResponse>
 	collection(idOrName: 'issueFile'): RecordService<IssueFileResponse>
 	collection(idOrName: 'issueUserInfo'): RecordService<IssueUserInfoResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
