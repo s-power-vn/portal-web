@@ -1,7 +1,15 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { MoreHorizontal, PlusCircle, Send, Users } from 'lucide-react';
+import {
+  api,
+  subscribeToChat,
+  subscribeToChats,
+  subscribeToTeam
+} from 'portal-api';
 import {
   MsgChannelTypeOptions,
   MsgChatTypeOptions,
+  MsgMessageTypeOptions,
   getUser
 } from 'portal-core';
 
@@ -79,39 +87,86 @@ type NewTeamModalProps = {
   onCancel: () => void;
 };
 
+type User = {
+  id: string;
+  name: string;
+  avatar?: string;
+};
+
 const NewTeamModal: FC<NewTeamModalProps> = ({ onSuccess, onCancel }) => {
   const [teamName, setTeamName] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const createTeam = api.chat.createTeam.useMutation();
 
-  // Use a mock user list
-  const [users, setUsers] = useState<any[]>([]);
+  // Use infinite query for loading employees
+  const {
+    data: employeesData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingEmployees,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['employees', ''],
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+      return api.employee.list.fetcher({
+        filter: '',
+        pageIndex: pageParam,
+        pageSize: 20
+      });
+    },
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.page < lastPage.totalPages
+        ? lastPage.page + 1
+        : undefined;
+    },
+    initialPageParam: 1
+  });
 
-  // Fetch users
+  // Flatten the pages data into a single array of users
   useEffect(() => {
-    // Mock user data
-    setUsers([
-      { id: '1', name: 'User 1', avatar: '' },
-      { id: '2', name: 'User 2', avatar: '' },
-      { id: '3', name: 'User 3', avatar: '' }
-    ]);
-  }, []);
+    if (employeesData) {
+      const allUsers = employeesData.pages.flatMap(page =>
+        page.items.map(employee => ({
+          id: employee.id,
+          name: employee.name,
+          avatar: employee.avatar
+        }))
+      );
+      setUsers(allUsers);
+    }
+  }, [employeesData]);
+
+  // Load more users when scrolling to the bottom
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (
+      scrollHeight - scrollTop <= clientHeight * 1.5 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  };
 
   const handleCreateTeam = useCallback(async () => {
     if (!teamName.trim() || selectedUsers.length === 0) return;
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      setTimeout(() => {
-        onSuccess('new-team-' + Date.now());
-        setIsLoading(false);
-      }, 500);
+      const result = await createTeam.mutateAsync({
+        name: teamName,
+        members: selectedUsers
+      });
+      onSuccess(result.id);
     } catch (error) {
       console.error('Failed to create team:', error);
+    } finally {
       setIsLoading(false);
     }
-  }, [teamName, selectedUsers, onSuccess]);
+  }, [teamName, selectedUsers, onSuccess, createTeam]);
 
   return (
     <div className="p-4">
@@ -127,34 +182,56 @@ const NewTeamModal: FC<NewTeamModalProps> = ({ onSuccess, onCancel }) => {
       </div>
       <div className="mb-4">
         <p className="mb-2 text-sm font-medium">Chọn thành viên:</p>
-        <div className="max-h-60 overflow-y-auto">
-          {users.map(user => (
-            <div
-              key={user.id}
-              className="mb-2 flex cursor-pointer items-center rounded p-2 hover:bg-gray-100"
-              onClick={() => {
-                setSelectedUsers(prev =>
-                  prev.includes(user.id)
-                    ? prev.filter(id => id !== user.id)
-                    : [...prev, user.id]
-                );
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedUsers.includes(user.id)}
-                onChange={() => {}}
-                className="mr-2"
-              />
-              <Avatar
-                size="sm"
-                alt={user.name}
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
-                className="mr-2"
-              />
-              <span>{user.name}</span>
+        <div className="max-h-60 overflow-y-auto" onScroll={handleScroll}>
+          {isLoadingEmployees && !users.length ? (
+            <div className="flex justify-center p-4">
+              <div className="animate-spin">
+                <Users size={20} />
+              </div>
             </div>
-          ))}
+          ) : isError ? (
+            <div className="p-4 text-center text-red-500">
+              Không thể tải danh sách nhân viên
+            </div>
+          ) : (
+            users.map(user => (
+              <div
+                key={user.id}
+                className="mb-2 flex cursor-pointer items-center rounded p-2 hover:bg-gray-100"
+                onClick={() => {
+                  setSelectedUsers(prev =>
+                    prev.includes(user.id)
+                      ? prev.filter(id => id !== user.id)
+                      : [...prev, user.id]
+                  );
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.includes(user.id)}
+                  onChange={() => {}}
+                  className="mr-2"
+                />
+                <Avatar
+                  size="sm"
+                  alt={user.name}
+                  src={
+                    user.avatar ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`
+                  }
+                  className="mr-2"
+                />
+                <span>{user.name}</span>
+              </div>
+            ))
+          )}
+          {isFetchingNextPage && (
+            <div className="flex justify-center p-2">
+              <div className="animate-spin">
+                <Users size={16} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex justify-end gap-2">
@@ -165,7 +242,7 @@ const NewTeamModal: FC<NewTeamModalProps> = ({ onSuccess, onCancel }) => {
           onClick={handleCreateTeam}
           disabled={!teamName.trim() || selectedUsers.length === 0 || isLoading}
         >
-          Tạo
+          {isLoading ? 'Đang tạo...' : 'Tạo'}
         </Button>
       </div>
     </div>
@@ -186,22 +263,26 @@ const NewChannelModal: FC<NewChannelModalProps> = ({
   const [channelName, setChannelName] = useState('');
   const [channelDescription, setChannelDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const createChannel = api.chat.createChannel.useMutation();
 
   const handleCreateChannel = useCallback(async () => {
     if (!channelName.trim()) return;
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      setTimeout(() => {
-        onSuccess();
-        setIsLoading(false);
-      }, 500);
+      await createChannel.mutateAsync({
+        name: channelName,
+        description: channelDescription,
+        teamId: teamId,
+        type: MsgChannelTypeOptions.Public
+      });
+      onSuccess();
     } catch (error) {
       console.error('Failed to create channel:', error);
+    } finally {
       setIsLoading(false);
     }
-  }, [channelName, onSuccess]);
+  }, [channelName, channelDescription, teamId, onSuccess, createChannel]);
 
   return (
     <div className="p-4">
@@ -232,7 +313,7 @@ const NewChannelModal: FC<NewChannelModalProps> = ({
           onClick={handleCreateChannel}
           disabled={!channelName.trim() || isLoading}
         >
-          Tạo
+          {isLoading ? 'Đang tạo...' : 'Tạo'}
         </Button>
       </div>
     </div>
@@ -254,130 +335,113 @@ export const GroupChat: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Load mock data
+  // Load teams
+  const {
+    data: teamsData,
+    isLoading: isLoadingTeams,
+    refetch: refetchTeams
+  } = api.chat.listTeams.useQuery({
+    variables: currentUserId,
+    enabled: !!currentUserId
+  });
+
+  // Update teams when data is loaded
   useEffect(() => {
-    // Simulate API calls
-    setTimeout(() => {
-      setTeams([
-        { id: '1', name: 'Team 1', members: ['1', '2', '3'], logo: '' }
-      ]);
+    if (teamsData) {
+      setTeams(teamsData);
       setIsLoading(false);
-    }, 500);
-  }, []);
 
-  useEffect(() => {
-    if (selectedTeam) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setChannels([
-          {
-            id: '1',
-            name: 'General',
-            teamId: selectedTeam,
-            type: MsgChannelTypeOptions.Public
-          }
-        ]);
-        setIsLoading(false);
-      }, 500);
+      // Select first team if none selected
+      if (!selectedTeam && teamsData.length > 0) {
+        setSelectedTeam(teamsData[0].id);
+      }
     }
-  }, [selectedTeam]);
+  }, [teamsData, selectedTeam]);
 
-  useEffect(() => {
-    if (selectedChannel) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setChats([
-          {
-            id: '1',
-            channelId: selectedChannel,
-            teamId: selectedTeam,
-            participants: ['1', '2', '3']
-          }
-        ]);
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [selectedChannel, selectedTeam]);
+  // Load channels for selected team
+  const {
+    data: channelsData,
+    isLoading: isLoadingChannels,
+    refetch: refetchChannels
+  } = api.chat.listChannels.useQuery({
+    variables: selectedTeam || '',
+    enabled: !!selectedTeam
+  });
 
+  // Update channels when data is loaded
   useEffect(() => {
-    if (selectedChat) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setMessages([
-          {
-            id: '1',
-            chatId: selectedChat,
-            content: 'Hello team!',
-            sender: '1',
-            created: new Date().toISOString(),
-            expand: { sender: { id: '1', name: 'User 1', avatar: '' } }
-          },
-          {
-            id: '2',
-            chatId: selectedChat,
-            content: 'Hi there!',
-            sender: '2',
-            created: new Date().toISOString(),
-            expand: { sender: { id: '2', name: 'User 2', avatar: '' } }
-          }
-        ]);
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [selectedChat]);
+    if (channelsData) {
+      setChannels(channelsData);
 
-  // Update teams when data changes
-  useEffect(() => {
-    // Select first team if none selected
-    if (!selectedTeam && teams.length > 0) {
-      setSelectedTeam(teams[0].id);
+      // Select first channel if none selected
+      if (!selectedChannel && channelsData.length > 0) {
+        setSelectedChannel(channelsData[0].id);
+      }
     }
-  }, [teams, selectedTeam]);
+  }, [channelsData, selectedChannel]);
 
-  // Update channels when data changes
-  useEffect(() => {
-    // Select first channel if none selected
-    if (!selectedChannel && channels.length > 0) {
-      setSelectedChannel(channels[0].id);
-    }
-  }, [channels, selectedChannel]);
+  // Load chats for selected channel
+  const {
+    data: chatsData,
+    isLoading: isLoadingChats,
+    refetch: refetchChats
+  } = api.chat.getChatsByChannel.useQuery({
+    variables: selectedChannel || '',
+    enabled: !!selectedChannel
+  });
 
-  // Update chats when data changes
+  // Update chats when data is loaded
   useEffect(() => {
-    // Select first chat if none selected
-    if (!selectedChat && chats.length > 0) {
-      setSelectedChat(chats[0].id);
-    } else if (chats.length === 0 && selectedChannel) {
-      // Create a new chat for this channel if none exists
-      handleCreateChannelChat();
+    if (chatsData) {
+      setChats(chatsData);
+      // If there are chats, select the first one
+      if (chatsData.length > 0 && !selectedChat) {
+        setSelectedChat(chatsData[0].id);
+      }
     }
-  }, [chats, selectedChat]);
+  }, [chatsData, selectedChat]);
+
+  // Load messages for selected chat
+  const {
+    data: messagesData,
+    isLoading: isLoadingMessages,
+    refetch: refetchMessages
+  } = api.chat.listMessages.useQuery({
+    variables: { chatId: selectedChat || '', page: 1, limit: 50 },
+    enabled: !!selectedChat
+  });
+
+  // Update messages when data is loaded
+  useEffect(() => {
+    if (messagesData) {
+      setMessages(messagesData.items);
+    }
+  }, [messagesData]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Create message mutation
+  const sendMessage = api.chat.sendMessage.useMutation();
+
   const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      // Add message to the list
-      const newMsg = {
-        id: Date.now().toString(),
+      // Send message using the API
+      await sendMessage.mutateAsync({
         chatId: selectedChat,
         content: newMessage.trim(),
-        sender: currentUserId,
-        created: new Date().toISOString(),
-        expand: { sender: { id: currentUserId, name: 'Me', avatar: '' } }
-      };
+        type: MsgMessageTypeOptions.Text
+      });
 
-      setMessages(prev => [...prev, newMsg]);
       setNewMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);
     }
-  }, [newMessage, selectedChat, currentUserId]);
+  }, [newMessage, selectedChat, sendMessage]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -396,14 +460,8 @@ export const GroupChat: FC = () => {
       children: ({ close }) => (
         <NewTeamModal
           onSuccess={teamId => {
-            // Add new team to the list
-            const newTeam = {
-              id: teamId,
-              name: 'New Team',
-              members: ['1', '2', '3'],
-              logo: ''
-            };
-            setTeams(prev => [...prev, newTeam]);
+            // Refresh teams to get the new team
+            refetchTeams();
             setSelectedTeam(teamId);
             close();
           }}
@@ -411,7 +469,7 @@ export const GroupChat: FC = () => {
         />
       )
     });
-  }, []);
+  }, [refetchTeams]);
 
   const handleNewChannel = useCallback(() => {
     if (!selectedTeam) return;
@@ -423,44 +481,41 @@ export const GroupChat: FC = () => {
         <NewChannelModal
           teamId={selectedTeam}
           onSuccess={() => {
-            // Add new channel to the list
-            const newChannel = {
-              id: 'new-channel-' + Date.now(),
-              name: 'New Channel',
-              teamId: selectedTeam,
-              type: MsgChannelTypeOptions.Public
-            };
-            setChannels(prev => [...prev, newChannel]);
+            // Refresh channels to get the new channel
+            refetchChannels();
             close();
           }}
           onCancel={close}
         />
       )
     });
-  }, [selectedTeam]);
+  }, [selectedTeam, refetchChannels]);
 
-  const handleCreateChannelChat = useCallback(() => {
+  // Create a chat for a channel
+  const createChannelChat = api.chat.createChat.useMutation();
+
+  const handleCreateChannelChat = useCallback(async () => {
     if (!selectedChannel || !selectedTeam) return;
 
     try {
       const team = teams.find(t => t.id === selectedTeam);
       if (!team) return;
 
-      // Create a new chat
-      const newChat = {
-        id: 'new-chat-' + Date.now(),
+      // Create a new chat for the channel
+      const result = await createChannelChat.mutateAsync({
         type: MsgChatTypeOptions.Group,
         participants: team.members || [],
         teamId: selectedTeam,
         channelId: selectedChannel
-      };
+      });
 
-      setChats(prev => [...prev, newChat]);
-      setSelectedChat(newChat.id);
+      // Refresh chats to get the new chat
+      refetchChats();
+      setSelectedChat(result.id);
     } catch (error) {
       console.error('Failed to create chat for channel:', error);
     }
-  }, [selectedChannel, selectedTeam, teams]);
+  }, [selectedChannel, selectedTeam, teams, createChannelChat, refetchChats]);
 
   const getTeamName = useCallback(
     (teamId: string) => {
@@ -498,6 +553,69 @@ export const GroupChat: FC = () => {
     },
     [currentUserId]
   );
+
+  // Subscribe to teams
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    let unsubscribe: () => void;
+
+    // Subscribe to teams for the current user
+    subscribeToChats(currentUserId, () => {
+      // Refresh teams when a team is updated
+      refetchTeams();
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [currentUserId, refetchTeams]);
+
+  // Subscribe to channels for the selected team
+  useEffect(() => {
+    if (!selectedTeam) return;
+
+    let unsubscribe: () => void;
+
+    // Subscribe to the selected team for channel updates
+    subscribeToTeam(selectedTeam, () => {
+      // Refresh channels when a channel is added or updated
+      refetchChannels();
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [selectedTeam, refetchChannels]);
+
+  // Subscribe to selected chat for real-time messages
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    let unsubscribe: () => void;
+
+    // Subscribe to the selected chat for real-time messages
+    subscribeToChat(selectedChat, () => {
+      // Refresh messages when a new message is sent or received
+      refetchMessages();
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [selectedChat, refetchMessages]);
 
   return (
     <div className="flex h-full">

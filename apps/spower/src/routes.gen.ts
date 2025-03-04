@@ -24,7 +24,6 @@ import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated
 import { Route as AuthenticatedSettingsOperationImport } from './routes/_authenticated/settings/operation'
 import { Route as AuthenticatedSettingsGeneralImport } from './routes/_authenticated/settings/general'
 import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
-import { Route as AuthenticatedMessengerChatImport } from './routes/_authenticated/messenger/chat'
 import { Route as AuthenticatedSettingsOperationIndexImport } from './routes/_authenticated/settings/operation/index'
 import { Route as AuthenticatedSettingsGeneralIndexImport } from './routes/_authenticated/settings/general/index'
 import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
@@ -149,14 +148,6 @@ const AuthenticatedProjectProjectIdRoute =
     path: '/$projectId',
     getParentRoute: () => AuthenticatedProjectRoute,
   } as any)
-
-const AuthenticatedMessengerChatRoute = AuthenticatedMessengerChatImport.update(
-  {
-    id: '/chat',
-    path: '/chat',
-    getParentRoute: () => AuthenticatedMessengerRoute,
-  } as any,
-)
 
 const AuthenticatedSettingsOperationIndexRoute =
   AuthenticatedSettingsOperationIndexImport.update({
@@ -491,13 +482,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/messenger/chat': {
-      id: '/_authenticated/messenger/chat'
-      path: '/chat'
-      fullPath: '/messenger/chat'
-      preLoaderRoute: typeof AuthenticatedMessengerChatImport
-      parentRoute: typeof AuthenticatedMessengerImport
-    }
     '/_authenticated/project/$projectId': {
       id: '/_authenticated/project/$projectId'
       path: '/$projectId'
@@ -824,20 +808,6 @@ declare module '@tanstack/react-router' {
 }
 
 // Create and export the route tree
-
-interface AuthenticatedMessengerRouteChildren {
-  AuthenticatedMessengerChatRoute: typeof AuthenticatedMessengerChatRoute
-}
-
-const AuthenticatedMessengerRouteChildren: AuthenticatedMessengerRouteChildren =
-  {
-    AuthenticatedMessengerChatRoute: AuthenticatedMessengerChatRoute,
-  }
-
-const AuthenticatedMessengerRouteWithChildren =
-  AuthenticatedMessengerRoute._addFileChildren(
-    AuthenticatedMessengerRouteChildren,
-  )
 
 interface AuthenticatedProjectProjectIdContractRouteChildren {
   AuthenticatedProjectProjectIdContractInputRoute: typeof AuthenticatedProjectProjectIdContractInputRoute
@@ -1174,7 +1144,7 @@ const AuthenticatedSettingsRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedMessengerRoute: typeof AuthenticatedMessengerRouteWithChildren
+  AuthenticatedMessengerRoute: typeof AuthenticatedMessengerRoute
   AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
@@ -1182,7 +1152,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedMessengerRoute: AuthenticatedMessengerRouteWithChildren,
+  AuthenticatedMessengerRoute: AuthenticatedMessengerRoute,
   AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
   AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
@@ -1197,10 +1167,9 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/messenger': typeof AuthenticatedMessengerRouteWithChildren
+  '/messenger': typeof AuthenticatedMessengerRoute
   '/project': typeof AuthenticatedProjectRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
-  '/messenger/chat': typeof AuthenticatedMessengerChatRoute
   '/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
   '/settings/general': typeof AuthenticatedSettingsGeneralRouteWithChildren
   '/settings/operation': typeof AuthenticatedSettingsOperationRouteWithChildren
@@ -1254,8 +1223,7 @@ export interface FileRoutesByTo {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/messenger': typeof AuthenticatedMessengerRouteWithChildren
-  '/messenger/chat': typeof AuthenticatedMessengerChatRoute
+  '/messenger': typeof AuthenticatedMessengerRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/project': typeof AuthenticatedProjectIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -1302,10 +1270,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/messenger': typeof AuthenticatedMessengerRouteWithChildren
+  '/_authenticated/messenger': typeof AuthenticatedMessengerRoute
   '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
-  '/_authenticated/messenger/chat': typeof AuthenticatedMessengerChatRoute
   '/_authenticated/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
   '/_authenticated/settings/general': typeof AuthenticatedSettingsGeneralRouteWithChildren
   '/_authenticated/settings/operation': typeof AuthenticatedSettingsOperationRouteWithChildren
@@ -1364,7 +1331,6 @@ export interface FileRouteTypes {
     | '/messenger'
     | '/project'
     | '/settings'
-    | '/messenger/chat'
     | '/project/$projectId'
     | '/settings/general'
     | '/settings/operation'
@@ -1418,7 +1384,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/messenger'
-    | '/messenger/chat'
     | '/user/profile'
     | '/project'
     | '/settings'
@@ -1466,7 +1431,6 @@ export interface FileRouteTypes {
     | '/_authenticated/messenger'
     | '/_authenticated/project'
     | '/_authenticated/settings'
-    | '/_authenticated/messenger/chat'
     | '/_authenticated/project/$projectId'
     | '/_authenticated/settings/general'
     | '/_authenticated/settings/operation'
@@ -1565,10 +1529,7 @@ export const routeTree = rootRoute
     },
     "/_authenticated/messenger": {
       "filePath": "_authenticated/messenger.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/messenger/chat"
-      ]
+      "parent": "/_authenticated"
     },
     "/_authenticated/project": {
       "filePath": "_authenticated/project.tsx",
@@ -1586,10 +1547,6 @@ export const routeTree = rootRoute
         "/_authenticated/settings/operation",
         "/_authenticated/settings/"
       ]
-    },
-    "/_authenticated/messenger/chat": {
-      "filePath": "_authenticated/messenger/chat.tsx",
-      "parent": "/_authenticated/messenger"
     },
     "/_authenticated/project/$projectId": {
       "filePath": "_authenticated/project/$projectId.tsx",

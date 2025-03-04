@@ -16,7 +16,7 @@ const Component = () => {
   return (
     <div className="flex h-full flex-col">
       <PageHeader title="Tin nhắn" />
-      <Tabs defaultValue="direct" className="flex-1">
+      <Tabs defaultValue="direct" className="flex flex-1 flex-col">
         <TabsList className="grid w-full grid-cols-2 gap-1 rounded-none">
           <TabsTrigger value="direct">
             <div className="flex items-center gap-2">
@@ -32,11 +32,11 @@ const Component = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="direct" className="flex-1">
+        <TabsContent value="direct" className="mt-0 flex-1">
           <DirectChat />
         </TabsContent>
 
-        <TabsContent value="group" className="flex-1">
+        <TabsContent value="group" className="mt-0 flex-1">
           <GroupChat />
         </TabsContent>
       </Tabs>

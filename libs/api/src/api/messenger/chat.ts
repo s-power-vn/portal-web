@@ -1,130 +1,60 @@
 import {
   Collections,
+  MsgChannelResponse,
   MsgChannelTypeOptions,
+  MsgChatResponse,
   MsgChatTypeOptions,
+  MsgMessageResponse,
   MsgMessageTypeOptions,
+  MsgReactionResponse,
+  MsgSettingResponse,
+  MsgTeamResponse,
+  UserResponse,
   client
 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-// Type definitions for chat entities
-export type ChatTeam = {
-  id: string;
-  name: string;
-  owner: string;
-  members: string[];
-  logo: string;
-  created: string;
-  updated: string;
-};
+export type MsgTeam = MsgTeamResponse<{
+  members: UserResponse[];
+  owner: UserResponse;
+}>;
 
-export type ChatChannel = {
-  id: string;
-  name: string;
-  team: string;
-  type: MsgChannelTypeOptions;
-  description: string;
-  created: string;
-  updated: string;
-};
+export type MsgChannel = MsgChannelResponse<{
+  team: MsgTeam;
+}>;
 
-export type ChatRoom = {
-  id: string;
-  type: MsgChatTypeOptions;
-  participants: string[];
-  team: string;
-  channel: string;
-  lastMessage: string;
-  pinnedMessages: string[];
-  created: string;
-  updated: string;
-};
+export type MsgChat = MsgChatResponse<
+  Record<string, string>,
+  {
+    lastMessage: MsgMessage;
+    participants: UserResponse[];
+    team: MsgTeam;
+    channel: MsgChannel;
+  }
+>;
 
-export type ChatMessage = {
-  id: string;
-  chat: string;
-  sender: string;
-  content: string;
-  type: MsgMessageTypeOptions;
-  file: string;
-  replyTo: string;
-  metadata: Record<string, any>;
-  created: string;
-  updated: string;
-};
+export type MsgMessage = MsgMessageResponse<
+  Record<string, string>,
+  {
+    sender: UserResponse;
+    replyTo: MsgMessage;
+  }
+>;
 
-export type ChatReaction = {
-  id: string;
-  message: string;
-  user: string;
-  emojiCode: string;
-  created: string;
-  updated: string;
-};
+export type MsgReaction = MsgReactionResponse<{
+  user: UserResponse;
+}>;
 
-export type ChatSetting = {
-  id: string;
-  user: string;
-  chat: string;
-  lastRead: string;
-  mute: boolean;
-  created: string;
-  updated: string;
-};
+export type MsgSetting = MsgSettingResponse<{
+  user: UserResponse;
+  chat: MsgChat;
+}>;
 
-// Expanding these types with relations for API responses
-export type ChatTeamWithMembers = ChatTeam & {
-  expand?: {
-    members: Array<{
-      id: string;
-      name: string;
-      avatar?: string;
-    }>;
-    owner: {
-      id: string;
-      name: string;
-      avatar?: string;
-    };
-  };
-};
-
-export type ChatChannelWithTeam = ChatChannel & {
-  expand?: {
-    team: ChatTeam;
-  };
-};
-
-export type ChatRoomWithDetails = ChatRoom & {
-  expand?: {
-    participants: Array<{
-      id: string;
-      name: string;
-      avatar?: string;
-    }>;
-    team?: ChatTeam;
-    channel?: ChatChannel;
-    lastMessage?: ChatMessageWithSender;
-  };
-};
-
-export type ChatMessageWithSender = ChatMessage & {
-  expand?: {
-    sender: {
-      id: string;
-      name: string;
-      avatar?: string;
-    };
-    replyTo?: ChatMessageWithSender;
-  };
-};
-
-// Define the chat API
 export const chatApi = router('chat', {
-  // Teams
   listTeams: router.query({
     fetcher: (userId: string) => {
-      return client.collection(Collections.MsgTeam).getFullList({
+      return client.collection<MsgTeam>(Collections.MsgTeam).getFullList({
         filter: `members ?~ "${userId}" || owner = "${userId}"`,
         sort: '-updated'
       });
@@ -133,7 +63,7 @@ export const chatApi = router('chat', {
 
   getTeam: router.query({
     fetcher: (id: string) => {
-      return client.collection(Collections.MsgTeam).getOne(id, {
+      return client.collection<MsgTeam>(Collections.MsgTeam).getOne(id, {
         expand: 'members,owner'
       });
     }
@@ -144,7 +74,7 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      return client.collection(Collections.MsgTeam).create({
+      return client.collection<MsgTeam>(Collections.MsgTeam).create({
         name: data.name,
         owner: currentUser,
         members: data.members,
@@ -165,14 +95,15 @@ export const chatApi = router('chat', {
       if (data.logo) updateData.logo = data.logo;
       if (data.members) updateData.members = data.members;
 
-      return client.collection(Collections.MsgTeam).update(data.id, updateData);
+      return client
+        .collection<MsgTeam>(Collections.MsgTeam)
+        .update(data.id, updateData);
     }
   }),
 
-  // Channels
   listChannels: router.query({
     fetcher: (teamId: string) => {
-      return client.collection(Collections.MsgChannel).getFullList({
+      return client.collection<MsgChannel>(Collections.MsgChannel).getFullList({
         filter: `team = "${teamId}"`,
         sort: 'name'
       });
@@ -181,7 +112,7 @@ export const chatApi = router('chat', {
 
   getChannel: router.query({
     fetcher: (id: string) => {
-      return client.collection(Collections.MsgChannel).getOne(id, {
+      return client.collection<MsgChannel>(Collections.MsgChannel).getOne(id, {
         expand: 'team'
       });
     }
@@ -194,7 +125,7 @@ export const chatApi = router('chat', {
       type: MsgChannelTypeOptions;
       description?: string;
     }) => {
-      return client.collection(Collections.MsgChannel).create({
+      return client.collection<MsgChannel>(Collections.MsgChannel).create({
         team: data.teamId,
         name: data.name,
         type: data.type,
@@ -216,17 +147,16 @@ export const chatApi = router('chat', {
       if (data.type) updateData.type = data.type;
 
       return client
-        .collection(Collections.MsgChannel)
+        .collection<MsgChannel>(Collections.MsgChannel)
         .update(data.id, updateData);
     }
   }),
 
-  // Chat Rooms
   listChats: router.query({
     fetcher: (userId: string) => {
-      return client.collection(Collections.MsgChat).getFullList({
+      return client.collection<MsgChat>(Collections.MsgChat).getFullList({
         filter: `participants ?~ "${userId}"`,
-        expand: 'lastMessage,lastMessage.sender',
+        expand: 'lastMessage,lastMessage.sender,participants',
         sort: '-updated'
       });
     }
@@ -234,9 +164,9 @@ export const chatApi = router('chat', {
 
   getChatsByTeam: router.query({
     fetcher: (teamId: string) => {
-      return client.collection(Collections.MsgChat).getFullList({
+      return client.collection<MsgChat>(Collections.MsgChat).getFullList({
         filter: `team = "${teamId}"`,
-        expand: 'lastMessage,lastMessage.sender',
+        expand: 'lastMessage,lastMessage.sender,participants',
         sort: '-updated'
       });
     }
@@ -244,7 +174,7 @@ export const chatApi = router('chat', {
 
   getChatsByChannel: router.query({
     fetcher: (channelId: string) => {
-      return client.collection(Collections.MsgChat).getFullList({
+      return client.collection<MsgChat>(Collections.MsgChat).getFullList({
         filter: `channel = "${channelId}"`,
         expand: 'lastMessage,lastMessage.sender',
         sort: '-updated'
@@ -254,7 +184,7 @@ export const chatApi = router('chat', {
 
   getChat: router.query({
     fetcher: (id: string) => {
-      return client.collection(Collections.MsgChat).getOne(id, {
+      return client.collection<MsgChat>(Collections.MsgChat).getOne(id, {
         expand: 'participants,team,channel,lastMessage,lastMessage.sender'
       });
     }
@@ -283,7 +213,7 @@ export const chatApi = router('chat', {
         pinnedMessages: []
       };
 
-      return client.collection(Collections.MsgChat).create(chatData);
+      return client.collection<MsgChat>(Collections.MsgChat).create(chatData);
     }
   }),
 
@@ -297,15 +227,16 @@ export const chatApi = router('chat', {
       if (data.participants) updateData.participants = data.participants;
       if (data.pinnedMessages) updateData.pinnedMessages = data.pinnedMessages;
 
-      return client.collection(Collections.MsgChat).update(data.id, updateData);
+      return client
+        .collection<MsgChat>(Collections.MsgChat)
+        .update(data.id, updateData);
     }
   }),
 
-  // Messages
   listMessages: router.query({
     fetcher: (params: { chatId: string; page?: number; limit?: number }) => {
       return client
-        .collection(Collections.MsgMessage)
+        .collection<MsgMessage>(Collections.MsgMessage)
         .getList(params.page || 1, params.limit || 50, {
           filter: `chat = "${params.chatId}"`,
           expand: 'sender,replyTo,replyTo.sender',
@@ -326,8 +257,7 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      // Update chat's lastActivity timestamp
-      client.collection(Collections.MsgChat).update(data.chatId, {
+      client.collection<MsgChat>(Collections.MsgChat).update(data.chatId, {
         updated: new Date().toISOString()
       });
 
@@ -342,13 +272,14 @@ export const chatApi = router('chat', {
       };
 
       return client
-        .collection(Collections.MsgMessage)
+        .collection<MsgMessage>(Collections.MsgMessage)
         .create(messageData)
         .then(async message => {
-          // Update the last message reference in the chat
-          await client.collection(Collections.MsgChat).update(data.chatId, {
-            lastMessage: message.id
-          });
+          await client
+            .collection<MsgChat>(Collections.MsgChat)
+            .update(data.chatId, {
+              lastMessage: message.id
+            });
           return message;
         });
     }
@@ -368,15 +299,14 @@ export const chatApi = router('chat', {
       if (data.metadata !== undefined) updateData.metadata = data.metadata;
 
       return client
-        .collection(Collections.MsgMessage)
+        .collection<MsgMessage>(Collections.MsgMessage)
         .update(data.id, updateData);
     }
   }),
 
   deleteMessage: router.mutation({
     mutationFn: (id: string) => {
-      // Instead of hard deleting, we update metadata to mark it as deleted
-      return client.collection(Collections.MsgMessage).update(id, {
+      return client.collection<MsgMessage>(Collections.MsgMessage).update(id, {
         metadata: { isDeleted: true },
         content: '',
         updated: new Date().toISOString()
@@ -390,7 +320,7 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      return client.collection(Collections.MsgReaction).create({
+      return client.collection<MsgReaction>(Collections.MsgReaction).create({
         message: data.messageId,
         user: currentUser,
         emojiCode: data.emojiCode
@@ -400,24 +330,25 @@ export const chatApi = router('chat', {
 
   removeReaction: router.mutation({
     mutationFn: (id: string) => {
-      return client.collection(Collections.MsgReaction).delete(id);
+      return client.collection<MsgReaction>(Collections.MsgReaction).delete(id);
     }
   }),
 
   listReactions: router.query({
     fetcher: (messageId: string) => {
-      return client.collection(Collections.MsgReaction).getFullList({
-        filter: `message = "${messageId}"`,
-        expand: 'user'
-      });
+      return client
+        .collection<MsgReaction>(Collections.MsgReaction)
+        .getFullList({
+          filter: `message = "${messageId}"`,
+          expand: 'user'
+        });
     }
   }),
 
-  // Chat Settings
   getChatSettings: router.query({
     fetcher: (params: { userId: string; chatId: string }) => {
       return client
-        .collection(Collections.MsgSetting)
+        .collection<MsgSetting>(Collections.MsgSetting)
         .getFirstListItem(
           `user = "${params.userId}" && chat = "${params.chatId}"`
         )
@@ -439,20 +370,17 @@ export const chatApi = router('chat', {
       if (data.mute !== undefined) updateData.mute = data.mute;
 
       try {
-        // Try to get existing settings
         const settings = await client
-          .collection(Collections.MsgSetting)
+          .collection<MsgSetting>(Collections.MsgSetting)
           .getFirstListItem(
             `user = "${currentUser}" && chat = "${data.chatId}"`
           );
 
-        // Update existing settings
         return client
-          .collection(Collections.MsgSetting)
+          .collection<MsgSetting>(Collections.MsgSetting)
           .update(settings.id, updateData);
       } catch (error) {
-        // Create new settings if none exist
-        return client.collection(Collections.MsgSetting).create({
+        return client.collection<MsgSetting>(Collections.MsgSetting).create({
           user: currentUser,
           chat: data.chatId,
           lastRead: data.lastRead || new Date().toISOString(),
@@ -470,18 +398,17 @@ export const chatApi = router('chat', {
       const now = new Date().toISOString();
 
       try {
-        // Try to get existing settings
         const settings = await client
-          .collection(Collections.MsgSetting)
+          .collection<MsgSetting>(Collections.MsgSetting)
           .getFirstListItem(`user = "${currentUser}" && chat = "${chatId}"`);
 
-        // Update existing settings
-        return client.collection(Collections.MsgSetting).update(settings.id, {
-          lastRead: now
-        });
+        return client
+          .collection<MsgSetting>(Collections.MsgSetting)
+          .update(settings.id, {
+            lastRead: now
+          });
       } catch (error) {
-        // Create new settings if none exist
-        return client.collection(Collections.MsgSetting).create({
+        return client.collection<MsgSetting>(Collections.MsgSetting).create({
           user: currentUser,
           chat: chatId,
           lastRead: now,
@@ -492,27 +419,26 @@ export const chatApi = router('chat', {
   })
 });
 
-// Subscription functions (outside of the router)
 export const subscribeToChat = (chatId: string, callback: () => void) => {
   return client
-    .collection(Collections.MsgMessage)
+    .collection<MsgMessage>(Collections.MsgMessage)
     .subscribe(`chat="${chatId}"`, callback);
 };
 
 export const subscribeToChats = (userId: string, callback: () => void) => {
   return client
-    .collection(Collections.MsgChat)
+    .collection<MsgChat>(Collections.MsgChat)
     .subscribe(`participants ?~ "${userId}"`, callback);
 };
 
 export const subscribeToChannel = (channelId: string, callback: () => void) => {
   return client
-    .collection(Collections.MsgChat)
+    .collection<MsgChat>(Collections.MsgChat)
     .subscribe(`channel="${channelId}"`, callback);
 };
 
 export const subscribeToTeam = (teamId: string, callback: () => void) => {
   return client
-    .collection(Collections.MsgTeam)
+    .collection<MsgTeam>(Collections.MsgTeam)
     .subscribe(`id="${teamId}"`, callback);
 };
