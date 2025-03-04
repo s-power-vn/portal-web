@@ -247,7 +247,7 @@
       {
         "id": "n2-n3#1",
         "type": "straight",
-        "approve": true,
+        "approver": ["id1", "id2"],
         "from": {
           "node": "n2",
           "point": "p5"
@@ -294,7 +294,7 @@
       },
       {
         "id": "n3-n5#1",
-        "approve": true,
+        "approver": ["id1", "id2"],
         "from": {
           "node": "n3",
           "point": "p5"
@@ -340,7 +340,7 @@
       {
         "id": "n5-n2#1",
         "type": "straight",
-        "approve": true,
+        "approver": ["id1", "id2"],
         "from": {
           "node": "n5",
           "point": "p1"
@@ -365,7 +365,7 @@
       {
         "id": "n5-n7#1",
         "action": "Hoàn thành",
-        "approve": true,
+        "approver": ["id1", "id2"],
         "from": {
           "node": "n5",
           "point": "p7"
@@ -739,7 +739,7 @@
       },
       {
         "id": "n7-n2#1",
-        "approve": false,
+        "approver": ["id1", "id2"],
         "from": {
           "node": "n7",
           "point": "p1"

@@ -51,3 +51,5 @@ export type {
 };
 
 export { ListSchema };
+
+export * from './messenger/chat';

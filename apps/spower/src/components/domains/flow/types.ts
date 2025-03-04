@@ -31,7 +31,7 @@ export type Flow = {
   };
   type?: FlowType;
   action?: string;
-  approve?: boolean;
+  approver?: string[];
 };
 
 export type ProcessData = {

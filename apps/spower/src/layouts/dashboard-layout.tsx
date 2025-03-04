@@ -1,6 +1,6 @@
 import {
   AreaChartIcon,
-  BellDotIcon,
+  MessageSquareTextIcon,
   PackagePlusIcon,
   SettingsIcon,
   SquareKanbanIcon
@@ -77,8 +77,8 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<AreaChartIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
-            to={'/notification'}
-            icon={<BellDotIcon width={22} height={22} />}
+            to={'/messenger'}
+            icon={<MessageSquareTextIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
             to={'/project'}
