@@ -18,14 +18,11 @@ const IssueAssigneeComponent: FC<IssueAssigneeDisplayProps> = ({
     variables: issueId
   });
 
-  const expand = issue.data.expand as any;
-  const issueAssignData = expand?.issueAssign_via_issue || [];
+  // Use assignees directly from the issue record
+  const assignees = issue.data.assignees || [];
 
   return (
-    <MultipleEmployeeDisplay
-      issueAssignData={issueAssignData}
-      maxVisible={maxVisible}
-    />
+    <MultipleEmployeeDisplay assigneeIds={assignees} maxVisible={maxVisible} />
   );
 };
 

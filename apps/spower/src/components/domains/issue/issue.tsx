@@ -1,4 +1,3 @@
-import { IssueAssignData } from 'libs/api/src/api/domain/issue';
 import { ObjectData } from 'libs/api/src/api/setting/operation/object';
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
@@ -25,7 +24,6 @@ export type IssueProps = {
 
 interface ExpandType {
   object?: ObjectData;
-  issueAssign_via_issue?: IssueAssignData[];
   [key: string]: unknown;
 }
 
@@ -36,11 +34,9 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
 
   const expand = (issue.data.expand || {}) as ExpandType;
   const objectData = expand.object;
-  const issueAssignData = expand.issueAssign_via_issue || [];
+  const assignees = issue.data.assignees || [];
 
-  const isUserAssigned = issueAssignData.some(
-    assign => assign.expand?.assign?.id === client.authStore.record?.id
-  );
+  const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
 
   return (
     <div

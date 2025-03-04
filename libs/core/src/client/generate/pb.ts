@@ -20,10 +20,15 @@ export enum Collections {
 	DetailImport = "detailImport",
 	DetailInfo = "detailInfo",
 	Issue = "issue",
-	IssueAssign = "issueAssign",
 	IssueFile = "issueFile",
 	IssueUserInfo = "issueUserInfo",
 	Material = "material",
+	MsgChannel = "msgChannel",
+	MsgChat = "msgChat",
+	MsgMessage = "msgMessage",
+	MsgReaction = "msgReaction",
+	MsgSetting = "msgSetting",
+	MsgTeam = "msgTeam",
 	Object = "object",
 	Price = "price",
 	PriceDetail = "priceDetail",
@@ -221,7 +226,7 @@ export enum IssueDeadlineStatusOptions {
 }
 export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	approver?: null | Tapprover
-	assignee?: RecordIdString
+	assignees?: RecordIdString[]
 	changed?: IsoDateString
 	code?: string
 	created?: IsoDateString
@@ -239,14 +244,6 @@ export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	updated?: IsoDateString
 }
 
-export type IssueAssignRecord = {
-	assign?: RecordIdString
-	created?: IsoDateString
-	id: string
-	issue?: RecordIdString
-	updated?: IsoDateString
-}
-
 export type IssueFileRecord = {
 	created?: IsoDateString
 	id: string
@@ -258,11 +255,11 @@ export type IssueFileRecord = {
 	upload?: string
 }
 
-export type IssueUserInfoRecord = {
+export type IssueUserInfoRecord<Tuser = unknown> = {
 	count?: number
 	id: string
 	project: RecordIdString
-	user?: RecordIdString
+	user?: null | Tuser
 }
 
 export type MaterialRecord = {
@@ -272,6 +269,84 @@ export type MaterialRecord = {
 	name?: string
 	note?: string
 	unit?: string
+	updated?: IsoDateString
+}
+
+export enum MsgChannelTypeOptions {
+	"Public" = "Public",
+	"Private" = "Private",
+}
+export type MsgChannelRecord = {
+	created?: IsoDateString
+	description?: string
+	id: string
+	name?: string
+	team?: RecordIdString
+	type?: MsgChannelTypeOptions
+	updated?: IsoDateString
+}
+
+export enum MsgChatTypeOptions {
+	"Private" = "Private",
+	"Group" = "Group",
+	"Channel" = "Channel",
+}
+export type MsgChatRecord<TpinnedMessages = unknown> = {
+	channel?: RecordIdString
+	created?: IsoDateString
+	id: string
+	lastMessage?: RecordIdString
+	participants?: RecordIdString[]
+	pinnedMessages?: null | TpinnedMessages
+	team?: RecordIdString
+	type?: MsgChatTypeOptions
+	updated?: IsoDateString
+}
+
+export enum MsgMessageTypeOptions {
+	"Text" = "Text",
+	"File" = "File",
+	"Sticker" = "Sticker",
+}
+export type MsgMessageRecord<Tmetadata = unknown> = {
+	chat?: RecordIdString
+	content?: string
+	created?: IsoDateString
+	file?: string
+	id: string
+	metadata?: null | Tmetadata
+	replyTo?: RecordIdString
+	sender?: RecordIdString
+	type?: MsgMessageTypeOptions
+	updated?: IsoDateString
+}
+
+export type MsgReactionRecord = {
+	created?: IsoDateString
+	emojiCode?: string
+	id: string
+	message?: RecordIdString
+	updated?: IsoDateString
+	user?: RecordIdString
+}
+
+export type MsgSettingRecord = {
+	chat?: RecordIdString
+	created?: IsoDateString
+	id: string
+	lastRead?: IsoDateString
+	mute?: boolean
+	updated?: IsoDateString
+	user?: RecordIdString
+}
+
+export type MsgTeamRecord = {
+	created?: IsoDateString
+	id: string
+	logo?: string
+	members?: RecordIdString[]
+	name?: string
+	owner?: RecordIdString
 	updated?: IsoDateString
 }
 
@@ -420,10 +495,15 @@ export type DetailResponse<Textend = unknown, Texpand = unknown> = Required<Deta
 export type DetailImportResponse<Texpand = unknown> = Required<DetailImportRecord> & BaseSystemFields<Texpand>
 export type DetailInfoResponse<Textend = unknown, Texpand = unknown> = Required<DetailInfoRecord<Textend>> & BaseSystemFields<Texpand>
 export type IssueResponse<Tapprover = unknown, TlastAssignee = unknown, Texpand = unknown> = Required<IssueRecord<Tapprover, TlastAssignee>> & BaseSystemFields<Texpand>
-export type IssueAssignResponse<Texpand = unknown> = Required<IssueAssignRecord> & BaseSystemFields<Texpand>
 export type IssueFileResponse<Texpand = unknown> = Required<IssueFileRecord> & BaseSystemFields<Texpand>
-export type IssueUserInfoResponse<Texpand = unknown> = Required<IssueUserInfoRecord> & BaseSystemFields<Texpand>
+export type IssueUserInfoResponse<Tuser = unknown, Texpand = unknown> = Required<IssueUserInfoRecord<Tuser>> & BaseSystemFields<Texpand>
 export type MaterialResponse<Texpand = unknown> = Required<MaterialRecord> & BaseSystemFields<Texpand>
+export type MsgChannelResponse<Texpand = unknown> = Required<MsgChannelRecord> & BaseSystemFields<Texpand>
+export type MsgChatResponse<TpinnedMessages = unknown, Texpand = unknown> = Required<MsgChatRecord<TpinnedMessages>> & BaseSystemFields<Texpand>
+export type MsgMessageResponse<Tmetadata = unknown, Texpand = unknown> = Required<MsgMessageRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type MsgReactionResponse<Texpand = unknown> = Required<MsgReactionRecord> & BaseSystemFields<Texpand>
+export type MsgSettingResponse<Texpand = unknown> = Required<MsgSettingRecord> & BaseSystemFields<Texpand>
+export type MsgTeamResponse<Texpand = unknown> = Required<MsgTeamRecord> & BaseSystemFields<Texpand>
 export type ObjectResponse<Texpand = unknown> = Required<ObjectRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
@@ -453,10 +533,15 @@ export type CollectionRecords = {
 	detailImport: DetailImportRecord
 	detailInfo: DetailInfoRecord
 	issue: IssueRecord
-	issueAssign: IssueAssignRecord
 	issueFile: IssueFileRecord
 	issueUserInfo: IssueUserInfoRecord
 	material: MaterialRecord
+	msgChannel: MsgChannelRecord
+	msgChat: MsgChatRecord
+	msgMessage: MsgMessageRecord
+	msgReaction: MsgReactionRecord
+	msgSetting: MsgSettingRecord
+	msgTeam: MsgTeamRecord
 	object: ObjectRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
@@ -485,10 +570,15 @@ export type CollectionResponses = {
 	detailImport: DetailImportResponse
 	detailInfo: DetailInfoResponse
 	issue: IssueResponse
-	issueAssign: IssueAssignResponse
 	issueFile: IssueFileResponse
 	issueUserInfo: IssueUserInfoResponse
 	material: MaterialResponse
+	msgChannel: MsgChannelResponse
+	msgChat: MsgChatResponse
+	msgMessage: MsgMessageResponse
+	msgReaction: MsgReactionResponse
+	msgSetting: MsgSettingResponse
+	msgTeam: MsgTeamResponse
 	object: ObjectResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
@@ -520,10 +610,15 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'detailImport'): RecordService<DetailImportResponse>
 	collection(idOrName: 'detailInfo'): RecordService<DetailInfoResponse>
 	collection(idOrName: 'issue'): RecordService<IssueResponse>
-	collection(idOrName: 'issueAssign'): RecordService<IssueAssignResponse>
 	collection(idOrName: 'issueFile'): RecordService<IssueFileResponse>
 	collection(idOrName: 'issueUserInfo'): RecordService<IssueUserInfoResponse>
 	collection(idOrName: 'material'): RecordService<MaterialResponse>
+	collection(idOrName: 'msgChannel'): RecordService<MsgChannelResponse>
+	collection(idOrName: 'msgChat'): RecordService<MsgChatResponse>
+	collection(idOrName: 'msgMessage'): RecordService<MsgMessageResponse>
+	collection(idOrName: 'msgReaction'): RecordService<MsgReactionResponse>
+	collection(idOrName: 'msgSetting'): RecordService<MsgSettingResponse>
+	collection(idOrName: 'msgTeam'): RecordService<MsgTeamResponse>
 	collection(idOrName: 'object'): RecordService<ObjectResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>

@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { IssueAssignData } from 'libs/api/src/api/domain/issue';
 import { Loader, UserIcon, UsersIcon } from 'lucide-react';
 import { Collections, client, getImageUrl, getUser } from 'portal-core';
 
@@ -39,16 +38,26 @@ const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
 };
 
 export type MultipleEmployeeDisplayProps = {
-  issueAssignData?: IssueAssignData[];
+  assigneeIds?: string[];
+  issueAssignData?: any[]; // Maintaining for backward compatibility
   maxVisible?: number;
 };
 
 const Component = ({
+  assigneeIds = [],
   issueAssignData = [],
   maxVisible = 1
 }: MultipleEmployeeDisplayProps) => {
+  // Use assigneeIds if provided, otherwise extract from issueAssignData for backward compatibility
+  const userIds =
+    assigneeIds.length > 0
+      ? assigneeIds
+      : issueAssignData
+          .map(item => item.expand?.assign?.id || '')
+          .filter(Boolean);
+
   const [showAll, setShowAll] = useState(false);
-  const totalAssignees = issueAssignData.length;
+  const totalAssignees = userIds.length;
   const visibleAssignees = showAll
     ? totalAssignees
     : Math.min(maxVisible, totalAssignees);
@@ -56,18 +65,18 @@ const Component = ({
 
   const currentUser = getUser();
 
-  const sortedAssignees = useMemo(() => {
-    if (!currentUser) return issueAssignData;
+  const sortedUserIds = useMemo(() => {
+    if (!currentUser) return userIds;
 
-    return [...issueAssignData].sort((a, b) => {
-      const aIsCurrentUser = a.expand?.assign?.id === currentUser.id;
-      const bIsCurrentUser = b.expand?.assign?.id === currentUser.id;
+    return [...userIds].sort((a, b) => {
+      const aIsCurrentUser = a === currentUser.id;
+      const bIsCurrentUser = b === currentUser.id;
 
       if (aIsCurrentUser && !bIsCurrentUser) return -1;
       if (!aIsCurrentUser && bIsCurrentUser) return 1;
       return 0;
     });
-  }, [issueAssignData, currentUser]);
+  }, [userIds, currentUser]);
 
   if (totalAssignees === 0) {
     return (
@@ -79,10 +88,10 @@ const Component = ({
 
   return (
     <div className="flex flex-col gap-1">
-      {sortedAssignees.slice(0, visibleAssignees).map((item, index) => (
-        <Fragment key={item.id}>
+      {sortedUserIds.slice(0, visibleAssignees).map((userId, index) => (
+        <Fragment key={userId}>
           <Suspense fallback={<Loader className={'h-4 w-4 animate-spin'} />}>
-            <EmployeeItem employeeId={item.expand?.assign?.id || ''} />
+            <EmployeeItem employeeId={userId} />
           </Suspense>
         </Fragment>
       ))}
@@ -110,8 +119,10 @@ const Component = ({
             <TooltipContent>
               {!showAll && (
                 <div className="flex flex-col gap-1">
-                  {sortedAssignees.slice(visibleAssignees).map(item => (
-                    <div key={item.id}>{item.expand?.assign?.name || ''}</div>
+                  {sortedUserIds.slice(visibleAssignees).map(userId => (
+                    <Suspense key={userId} fallback={<div>Loading...</div>}>
+                      <EmployeeItem employeeId={userId} />
+                    </Suspense>
                   ))}
                 </div>
               )}
@@ -126,7 +137,12 @@ const Component = ({
 export const MultipleEmployeeDisplay: FC<
   MultipleEmployeeDisplayProps
 > = props => {
-  if (!props.issueAssignData || props.issueAssignData.length === 0) {
+  // Check if we have either assigneeIds or issueAssignData
+  const hasAssignees =
+    (props.assigneeIds && props.assigneeIds.length > 0) ||
+    (props.issueAssignData && props.issueAssignData.length > 0);
+
+  if (!hasAssignees) {
     return null;
   }
 
