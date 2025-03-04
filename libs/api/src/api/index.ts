@@ -8,6 +8,16 @@ import { projectApi } from './domain/project';
 import type { RequestData, RequestDetailData } from './domain/request';
 import { requestApi, requestDetailApi } from './domain/request';
 import { userApi } from './domain/user';
+import {
+  ChatChannel,
+  ChatChannelWithTeam,
+  ChatMessage,
+  ChatMessageWithSender,
+  ChatRoom,
+  ChatRoomWithDetails,
+  ChatTeam,
+  chatApi
+} from './messenger/chat';
 import { customerApi } from './setting/general/customer';
 import { DepartmentData, departmentApi } from './setting/general/department';
 import type { UserData } from './setting/general/employee';
@@ -20,6 +30,7 @@ import { ListSchema } from './types';
 
 export const api = {
   auth: authApi,
+  chat: chatApi,
   comment: commentApi,
   customer: customerApi,
   department: departmentApi,
@@ -40,6 +51,13 @@ export const api = {
 };
 
 export type {
+  ChatChannel,
+  ChatChannelWithTeam,
+  ChatMessage,
+  ChatMessageWithSender,
+  ChatRoom,
+  ChatRoomWithDetails,
+  ChatTeam,
   DepartmentData,
   IssueData,
   ObjectData,
