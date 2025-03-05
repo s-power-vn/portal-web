@@ -152,13 +152,15 @@ export const chatApi = router('chat', {
     }
   }),
 
-  listChats: router.query({
-    fetcher: (userId: string) => {
-      return client.collection<MsgChat>(Collections.MsgChat).getFullList({
-        filter: `participants ?~ "${userId}"`,
-        expand: 'lastMessage,lastMessage.sender,participants',
-        sort: '-updated'
-      });
+  listPrivateChats: router.query({
+    fetcher: (params: { userId: string; page?: number; perPage?: number }) => {
+      return client
+        .collection<MsgChat>(Collections.MsgChat)
+        .getList(params.page || 1, params.perPage || 20, {
+          filter: `participants ?~ "${params.userId}" && type = "${MsgChatTypeOptions.Private}"`,
+          expand: 'lastMessage,lastMessage.sender,participants',
+          sort: '-updated'
+        });
     }
   }),
 
@@ -234,10 +236,10 @@ export const chatApi = router('chat', {
   }),
 
   listMessages: router.query({
-    fetcher: (params: { chatId: string; page?: number; limit?: number }) => {
+    fetcher: (params: { chatId: string; page?: number; perPage?: number }) => {
       return client
         .collection<MsgMessage>(Collections.MsgMessage)
-        .getList(params.page || 1, params.limit || 50, {
+        .getList(params.page || 1, params.perPage || 50, {
           filter: `chat = "${params.chatId}"`,
           expand: 'sender,replyTo,replyTo.sender',
           sort: 'created'
@@ -314,7 +316,6 @@ export const chatApi = router('chat', {
     }
   }),
 
-  // Message Reactions
   addReaction: router.mutation({
     mutationFn: (data: { messageId: string; emojiCode: string }) => {
       const currentUser = client.authStore.record?.id;
@@ -419,16 +420,20 @@ export const chatApi = router('chat', {
   })
 });
 
-export const subscribeToChat = (chatId: string, callback: () => void) => {
+export const subscribeMessages = (chatId: string, callback: () => void) => {
   return client
     .collection<MsgMessage>(Collections.MsgMessage)
-    .subscribe(`chat="${chatId}"`, callback);
+    .subscribe(`*`, callback, {
+      filter: `chat = "${chatId}"`
+    });
 };
 
-export const subscribeToChats = (userId: string, callback: () => void) => {
+export const subscribeChats = (userId: string, callback: () => void) => {
   return client
     .collection<MsgChat>(Collections.MsgChat)
-    .subscribe(`participants ?~ "${userId}"`, callback);
+    .subscribe(`*`, callback, {
+      filter: `participants ?~ "${userId}"`
+    });
 };
 
 export const subscribeToChannel = (channelId: string, callback: () => void) => {

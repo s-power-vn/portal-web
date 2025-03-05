@@ -69,7 +69,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className={'flex h-screen w-full flex-col overflow-hidden'}>
       <Header />
-      <div className={'flex h-full w-full'}>
+      <div className={'flex w-full flex-1 overflow-hidden'}>
         <Sidebar uid={'dashboard'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem

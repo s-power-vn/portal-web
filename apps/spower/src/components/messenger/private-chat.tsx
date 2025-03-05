@@ -1,6 +1,12 @@
-import console from 'console';
-import { MoreHorizontal, PlusCircle, Send, UserIcon } from 'lucide-react';
-import { MsgChat, api, subscribeToChat, subscribeToChats } from 'portal-api';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  Loader,
+  MoreHorizontal,
+  PlusCircle,
+  Send,
+  UserIcon
+} from 'lucide-react';
+import { MsgChat, api, subscribeChats, subscribeMessages } from 'portal-api';
 import {
   Collections,
   MsgChatTypeOptions,
@@ -9,7 +15,15 @@ import {
   getUser
 } from 'portal-core';
 
-import { FC, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  FC,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import {
@@ -21,6 +35,7 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../hooks';
 import { NewChatForm } from './form/new-chat-form';
 
 const Skeleton: FC<{ className?: string }> = ({ className }) => {
@@ -37,18 +52,6 @@ const Message: FC<MessageProps> = ({ message, isCurrentUser }) => {
     <div
       className={`mb-4 flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
     >
-      {!isCurrentUser && (
-        <Avatar
-          size="md"
-          alt={message.expand?.sender?.name || 'User'}
-          src={
-            message.expand?.sender?.avatar
-              ? `https://ui-avatars.com/api/?name=${encodeURIComponent(message.expand.sender.name)}&background=random`
-              : undefined
-          }
-          className="mr-3"
-        />
-      )}
       <div
         className={cn(
           'max-w-[75%] rounded-lg px-4 py-2',
@@ -57,11 +60,6 @@ const Message: FC<MessageProps> = ({ message, isCurrentUser }) => {
             : 'border border-gray-200 bg-gray-100 text-gray-800'
         )}
       >
-        {!isCurrentUser && (
-          <div className="mb-1 text-xs font-medium">
-            {message.expand?.sender?.name || 'User'}
-          </div>
-        )}
         <div>{message.content}</div>
         <div className="mt-1 text-xs opacity-70">
           {new Date(message.created).toLocaleTimeString([], {
@@ -70,18 +68,6 @@ const Message: FC<MessageProps> = ({ message, isCurrentUser }) => {
           })}
         </div>
       </div>
-      {isCurrentUser && (
-        <Avatar
-          size="md"
-          alt="Me"
-          src={
-            getUser()?.avatar
-              ? `https://ui-avatars.com/api/?name=${encodeURIComponent(getUser()?.name || 'Me')}&background=random`
-              : undefined
-          }
-          className="ml-3"
-        />
-      )}
     </div>
   );
 };
@@ -132,18 +118,47 @@ export const ChatList: FC<ChatListProps> = ({
   onNewChat,
   getOtherParticipant
 }) => {
-  const { data: chatsData, refetch: refetchChats } =
-    api.chat.listChats.useSuspenseQuery({
-      variables: userId
-    });
+  const perPage = 20;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const invalidates = useInvalidateQueries();
+
+  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
+    queryKey: api.chat.listPrivateChats.getKey({ userId }),
+    queryFn: ({ pageParam = 1 }) =>
+      api.chat.listPrivateChats.fetcher({
+        userId,
+        page: pageParam,
+        perPage
+      }),
+    getNextPageParam: lastPage =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialPageParam: 1
+  });
+
+  const allChats = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data]
+  );
+
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+
+      if (distanceToBottom < 50 && hasNextPage && !isFetching) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetching]
+  );
 
   useEffect(() => {
     if (!userId) return;
 
     let unsubscribe: () => void;
 
-    subscribeToChats(userId, () => {
-      refetchChats();
+    subscribeChats(userId, () => {
+      invalidates([api.chat.listPrivateChats.getKey({ userId })]);
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -153,11 +168,15 @@ export const ChatList: FC<ChatListProps> = ({
         unsubscribe();
       }
     };
-  }, [userId, refetchChats]);
+  }, [userId, fetchNextPage]);
 
   return (
-    <div className="py-2">
-      {chatsData.map(chat => {
+    <div
+      ref={scrollContainerRef}
+      className="h-full overflow-y-auto py-2"
+      onScroll={handleScroll}
+    >
+      {allChats.map((chat: MsgChat) => {
         const otherParticipant = getOtherParticipant(chat);
         if (!otherParticipant) return null;
 
@@ -183,12 +202,14 @@ export const ChatList: FC<ChatListProps> = ({
                   <UserIcon />
                 </AvatarFallback>
               </Avatar>
-              <div className="flex w-full flex-col">
-                <span className="truncate text-sm font-medium">
-                  {otherParticipant.name}
-                </span>
+              <div className="flex w-full flex-col overflow-hidden">
+                <div className="flex min-w-0">
+                  <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+                    {otherParticipant.name}
+                  </span>
+                </div>
                 <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span className="truncate">
+                  <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                     {chat.expand?.lastMessage?.content}
                   </span>
                   <span className="text-xs">
@@ -209,7 +230,12 @@ export const ChatList: FC<ChatListProps> = ({
           </div>
         );
       })}
-      {chatsData.length === 0 && (
+      {isFetching && (
+        <div className="flex items-center justify-center py-2">
+          <Loader className="h-4 w-4 animate-spin" />
+        </div>
+      )}
+      {allChats.length === 0 && !isFetching && (
         <div className="flex h-40 items-center justify-center">
           <div className="text-center">
             <p className="text-sm text-gray-500">Chưa có cuộc trò chuyện nào</p>
@@ -224,41 +250,92 @@ export const ChatList: FC<ChatListProps> = ({
   );
 };
 
-export const DirectChat: FC = () => {
+export type MessageListProps = {
+  chat?: MsgChat;
+};
+
+export const MessageList: FC<MessageListProps> = ({ chat }) => {
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef<number>(0);
+  const prevHeightRef = useRef<number>(0);
   const currentUser = getUser();
-  const currentUserId = currentUser?.id || '';
-
-  const [selectedChat, setSelectedChat] = useState<MsgChat | undefined>();
-  const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const createChat = api.chat.createChat.useMutation();
+  const invalidates = useInvalidateQueries();
+  const perPage = 20;
 
   const {
-    data: messagesData,
-    isLoading: isLoadingMessages,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     refetch: refetchMessages
-  } = api.chat.listMessages.useQuery({
-    variables: { chatId: selectedChat?.id || '', page: 1, limit: 50 },
-    enabled: !!selectedChat
+  } = useInfiniteQuery({
+    queryKey: api.chat.listMessages.getKey({ chatId: chat?.id || '' }),
+    queryFn: ({ pageParam = 1 }) =>
+      api.chat.listMessages.fetcher({
+        chatId: chat?.id || '',
+        page: pageParam,
+        perPage
+      }),
+    getNextPageParam: lastPage =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialPageParam: 1,
+    enabled: !!chat?.id
   });
 
-  useEffect(() => {
-    if (messagesData) {
-      setMessages(messagesData.items);
+  const allMessages = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data]
+  );
+
+  const handleScroll = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container || !hasNextPage || isFetchingNextPage) return;
+
+    if (container.scrollTop < 50) {
+      scrollPositionRef.current = container.scrollHeight - container.scrollTop;
+      prevHeightRef.current = container.scrollHeight;
+      fetchNextPage();
     }
-  }, [messagesData]);
-
-  const sendMessage = api.chat.sendMessage.useMutation();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    if (!selectedChat) return;
+    const container = messagesContainerRef.current;
+    if (!container || !scrollPositionRef.current) return;
+
+    if (
+      prevHeightRef.current &&
+      container.scrollHeight > prevHeightRef.current
+    ) {
+      const newPosition = container.scrollHeight - scrollPositionRef.current;
+      container.scrollTop = newPosition;
+
+      if (isFetchingNextPage === false) {
+        scrollPositionRef.current = 0;
+        prevHeightRef.current = 0;
+      }
+    }
+  }, [allMessages, isFetchingNextPage]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      100;
+
+    if (isAtBottom || !scrollPositionRef.current) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [allMessages]);
+
+  useEffect(() => {
+    if (!chat) return;
 
     let unsubscribe: () => void;
 
-    subscribeToChat(selectedChat.id, () => {
-      refetchMessages();
+    subscribeMessages(chat.id, () => {
+      invalidates([api.chat.listMessages.getKey({ chatId: chat.id })]);
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -268,11 +345,54 @@ export const DirectChat: FC = () => {
         unsubscribe();
       }
     };
-  }, [selectedChat, refetchMessages]);
+  }, [chat, refetchMessages]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  if (!chat) return null;
+
+  return (
+    <div
+      ref={messagesContainerRef}
+      className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 h-full overflow-y-auto pr-4"
+      onScroll={handleScroll}
+    >
+      {isFetchingNextPage && (
+        <div className="flex justify-center py-2">
+          <Loader className="h-4 w-4 animate-spin" />
+        </div>
+      )}
+
+      {allMessages.length === 0 ? (
+        <div className="space-y-3">
+          <Skeleton className="h-16 w-3/4" />
+          <Skeleton className="ml-auto h-16 w-3/4" />
+          <Skeleton className="h-16 w-3/4" />
+        </div>
+      ) : (
+        <>
+          {allMessages.map(message => (
+            <Message
+              key={message.id}
+              message={message}
+              isCurrentUser={message.sender === currentUser?.id}
+            />
+          ))}
+        </>
+      )}
+    </div>
+  );
+};
+
+export const PrivateChat: FC = () => {
+  const currentUser = getUser();
+  const currentUserId = currentUser?.id || '';
+
+  const [selectedChat, setSelectedChat] = useState<MsgChat | undefined>();
+  const [newMessage, setNewMessage] = useState('');
+  const lastKeypressTime = useRef<number>(0);
+
+  const createChat = api.chat.createChat.useMutation();
+
+  const sendMessage = api.chat.sendMessage.useMutation();
 
   const handleSendMessage = useCallback(() => {
     if (!newMessage.trim() || !selectedChat) return;
@@ -286,16 +406,23 @@ export const DirectChat: FC = () => {
       {
         onSuccess: () => {
           setNewMessage('');
-          refetchMessages();
         }
       }
     );
-  }, [newMessage, selectedChat, sendMessage, refetchMessages]);
+  }, [newMessage, selectedChat, sendMessage]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
+        e.stopPropagation();
+
+        const now = Date.now();
+        if (now - lastKeypressTime.current < 100) {
+          return;
+        }
+        lastKeypressTime.current = now;
+
         handleSendMessage();
       }
     },
@@ -324,7 +451,6 @@ export const DirectChat: FC = () => {
 
   const getOtherParticipant = useCallback(
     (chat: MsgChat) => {
-      console.log(chat.expand?.participants);
       if (!chat.expand?.participants) return null;
 
       return chat.expand.participants.find((p: any) => p.id !== currentUserId);
@@ -333,9 +459,9 @@ export const DirectChat: FC = () => {
   );
 
   return (
-    <div className="flex h-full">
-      <div className="flex w-1/4 flex-col border-r">
-        <div className="flex items-center justify-between border-b p-3">
+    <div className="flex h-full w-full overflow-hidden">
+      <div className="flex h-full w-1/4 flex-col overflow-hidden border-r">
+        <div className="flex flex-none items-center justify-between border-b p-3">
           <h2 className="text-sm font-semibold">Tin nhắn</h2>
           <Button
             variant="ghost"
@@ -366,36 +492,29 @@ export const DirectChat: FC = () => {
           </Suspense>
         </div>
       </div>
-
-      <div className="flex flex-1 flex-col">
+      <div className="flex h-full w-3/4 flex-col overflow-hidden">
         {selectedChat ? (
           <>
-            <ChatHeader
-              chat={selectedChat}
-              getOtherParticipant={getOtherParticipant}
-            />
-            <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
-              {isLoadingMessages && messages.length === 0 ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-16 w-3/4" />
-                  <Skeleton className="ml-auto h-16 w-3/4" />
-                  <Skeleton className="h-16 w-3/4" />
-                </div>
-              ) : (
-                <>
-                  {messages.map(message => (
-                    <Message
-                      key={message.id}
-                      message={message}
-                      isCurrentUser={message.sender === currentUserId}
-                    />
-                  ))}
-                  <div ref={messagesEndRef} />
-                </>
-              )}
+            <div className="flex-none">
+              <ChatHeader
+                chat={selectedChat}
+                getOtherParticipant={getOtherParticipant}
+              />
             </div>
-
-            <div className="border-t bg-white p-3">
+            <div className="flex-1 overflow-y-auto bg-gray-50 pl-4 pr-0">
+              <Suspense
+                fallback={
+                  <div className="space-y-3 p-4">
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                  </div>
+                }
+              >
+                <MessageList chat={selectedChat} />
+              </Suspense>
+            </div>
+            <div className="flex-none border-t bg-white p-3">
               <div className="flex items-center gap-2">
                 <Textarea
                   className="flex-1 border-none shadow-none"
