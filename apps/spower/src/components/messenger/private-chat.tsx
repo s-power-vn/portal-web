@@ -37,6 +37,7 @@ import {
 
 import { useInvalidateQueries } from '../../hooks';
 import { NewChatForm } from './form/new-chat-form';
+import { MessengerBadge } from './messenger-badge';
 
 const Skeleton: FC<{ className?: string }> = ({ className }) => {
   return <div className={cn('animate-pulse rounded bg-gray-200', className)} />;
@@ -168,7 +169,7 @@ export const ChatList: FC<ChatListProps> = ({
         unsubscribe();
       }
     };
-  }, [userId, fetchNextPage]);
+  }, [userId, invalidates]);
 
   return (
     <div
@@ -189,7 +190,8 @@ export const ChatList: FC<ChatListProps> = ({
             )}
             onClick={() => setSelectedChat(chat)}
           >
-            <div className="flex items-center gap-2">
+            <div className="relative flex items-center gap-2">
+              <MessengerBadge className="absolute right-0 top-1/2 z-50 -translate-y-1/2" />
               <Avatar className={'h-8 w-8'}>
                 <AvatarImage
                   src={getImageUrl(
@@ -283,7 +285,7 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
   });
 
   const allMessages = useMemo(
-    () => data?.pages.flatMap(page => page.items) ?? [],
+    () => data?.pages.flatMap(page => page.items).reverse() ?? [],
     [data]
   );
 
@@ -309,7 +311,7 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
       const newPosition = container.scrollHeight - scrollPositionRef.current;
       container.scrollTop = newPosition;
 
-      if (isFetchingNextPage === false) {
+      if (!isFetchingNextPage) {
         scrollPositionRef.current = 0;
         prevHeightRef.current = 0;
       }
@@ -324,10 +326,14 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
       container.scrollHeight - container.scrollTop - container.clientHeight <
       100;
 
-    if (isAtBottom || !scrollPositionRef.current) {
-      container.scrollTop = container.scrollHeight;
+    if ((isAtBottom || !scrollPositionRef.current) && !isFetchingNextPage) {
+      setTimeout(() => {
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      }, 0);
     }
-  }, [allMessages]);
+  }, [allMessages, isFetchingNextPage]);
 
   useEffect(() => {
     if (!chat) return;
@@ -345,7 +351,7 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
         unsubscribe();
       }
     };
-  }, [chat, refetchMessages]);
+  }, [chat, invalidates]);
 
   if (!chat) return null;
 
@@ -391,8 +397,16 @@ export const PrivateChat: FC = () => {
   const lastKeypressTime = useRef<number>(0);
 
   const createChat = api.chat.createChat.useMutation();
-
+  const markChatAsRead = api.chat.markChatAsRead.useMutation();
   const sendMessage = api.chat.sendMessage.useMutation();
+
+  const handleSelectChat = useCallback(
+    (chat: MsgChat) => {
+      setSelectedChat(chat);
+      markChatAsRead.mutate(chat.id);
+    },
+    [markChatAsRead]
+  );
 
   const handleSendMessage = useCallback(() => {
     if (!newMessage.trim() || !selectedChat) return;
@@ -440,14 +454,14 @@ export const PrivateChat: FC = () => {
               participants: values?.users ?? []
             });
 
-            setSelectedChat(result);
+            handleSelectChat(result);
             close();
           }}
           onCancel={close}
         />
       )
     });
-  }, [createChat]);
+  }, [createChat, handleSelectChat]);
 
   const getOtherParticipant = useCallback(
     (chat: MsgChat) => {
@@ -457,6 +471,24 @@ export const PrivateChat: FC = () => {
     },
     [currentUserId]
   );
+
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    let unsubscribe: () => void;
+
+    subscribeMessages(selectedChat.id, () => {
+      markChatAsRead.mutate(selectedChat.id);
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [selectedChat, markChatAsRead]);
 
   return (
     <div className="flex h-full w-full overflow-hidden">
@@ -485,7 +517,7 @@ export const PrivateChat: FC = () => {
             <ChatList
               userId={currentUserId}
               selectedChat={selectedChat}
-              setSelectedChat={setSelectedChat}
+              setSelectedChat={handleSelectChat}
               onNewChat={handleNewChat}
               getOtherParticipant={getOtherParticipant}
             />

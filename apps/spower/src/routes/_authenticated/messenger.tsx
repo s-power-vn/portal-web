@@ -8,9 +8,7 @@ import {
   TabsTrigger
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../components';
-import { GroupChat } from '../../components/messenger/group-chat';
-import { PrivateChat } from '../../components/messenger/private-chat';
+import { PageHeader, PrivateChat, TeamChat } from '../../components';
 
 const Component = () => {
   return (
@@ -42,7 +40,7 @@ const Component = () => {
         </TabsContent>
 
         <TabsContent value="group" className="mt-0 flex-1 overflow-hidden">
-          <GroupChat />
+          <TeamChat />
         </TabsContent>
       </Tabs>
     </div>

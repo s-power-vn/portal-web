@@ -9,6 +9,7 @@ import {
   MsgReactionResponse,
   MsgSettingResponse,
   MsgTeamResponse,
+  MsgUnreadResponse,
   UserResponse,
   client
 } from 'portal-core';
@@ -242,7 +243,7 @@ export const chatApi = router('chat', {
         .getList(params.page || 1, params.perPage || 50, {
           filter: `chat = "${params.chatId}"`,
           expand: 'sender,replyTo,replyTo.sender',
-          sort: 'created'
+          sort: '-created'
         });
     }
   }),
@@ -417,6 +418,20 @@ export const chatApi = router('chat', {
         });
       }
     }
+  }),
+
+  getUnreadCount: router.query({
+    fetcher: async (params: { userId?: string }) => {
+      if (params.userId) {
+        const unread = await client
+          .collection<MsgUnreadResponse<number>>(Collections.MsgUnread)
+          .getFirstListItem(`userId = "${params.userId}"`);
+
+        return unread?.unreadCount;
+      }
+
+      return 0;
+    }
   })
 });
 
@@ -446,4 +461,12 @@ export const subscribeToTeam = (teamId: string, callback: () => void) => {
   return client
     .collection<MsgTeam>(Collections.MsgTeam)
     .subscribe(`id="${teamId}"`, callback);
+};
+
+export const subscribeSettings = (userId: string, callback: () => void) => {
+  return client
+    .collection<MsgSetting>(Collections.MsgSetting)
+    .subscribe(`*`, callback, {
+      filter: `user = "${userId}"`
+    });
 };

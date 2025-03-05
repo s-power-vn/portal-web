@@ -29,6 +29,7 @@ export enum Collections {
 	MsgReaction = "msgReaction",
 	MsgSetting = "msgSetting",
 	MsgTeam = "msgTeam",
+	MsgUnread = "msgUnread",
 	Object = "object",
 	Price = "price",
 	PriceDetail = "priceDetail",
@@ -350,6 +351,19 @@ export type MsgTeamRecord = {
 	updated?: IsoDateString
 }
 
+export enum MsgUnreadChatTypeOptions {
+	"Private" = "Private",
+	"Group" = "Group",
+	"Channel" = "Channel",
+}
+export type MsgUnreadRecord<TunreadCount = unknown> = {
+	chatId?: RecordIdString
+	chatType?: MsgUnreadChatTypeOptions
+	id: string
+	unreadCount?: null | TunreadCount
+	userId?: RecordIdString
+}
+
 export enum ObjectTypeOptions {
 	"Request" = "Request",
 	"Price" = "Price",
@@ -504,6 +518,7 @@ export type MsgMessageResponse<Tmetadata = unknown, Texpand = unknown> = Require
 export type MsgReactionResponse<Texpand = unknown> = Required<MsgReactionRecord> & BaseSystemFields<Texpand>
 export type MsgSettingResponse<Texpand = unknown> = Required<MsgSettingRecord> & BaseSystemFields<Texpand>
 export type MsgTeamResponse<Texpand = unknown> = Required<MsgTeamRecord> & BaseSystemFields<Texpand>
+export type MsgUnreadResponse<TunreadCount = unknown, Texpand = unknown> = Required<MsgUnreadRecord<TunreadCount>> & BaseSystemFields<Texpand>
 export type ObjectResponse<Texpand = unknown> = Required<ObjectRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
@@ -542,6 +557,7 @@ export type CollectionRecords = {
 	msgReaction: MsgReactionRecord
 	msgSetting: MsgSettingRecord
 	msgTeam: MsgTeamRecord
+	msgUnread: MsgUnreadRecord
 	object: ObjectRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
@@ -579,6 +595,7 @@ export type CollectionResponses = {
 	msgReaction: MsgReactionResponse
 	msgSetting: MsgSettingResponse
 	msgTeam: MsgTeamResponse
+	msgUnread: MsgUnreadResponse
 	object: ObjectResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
@@ -619,6 +636,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'msgReaction'): RecordService<MsgReactionResponse>
 	collection(idOrName: 'msgSetting'): RecordService<MsgSettingResponse>
 	collection(idOrName: 'msgTeam'): RecordService<MsgTeamResponse>
+	collection(idOrName: 'msgUnread'): RecordService<MsgUnreadResponse>
 	collection(idOrName: 'object'): RecordService<ObjectResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>
