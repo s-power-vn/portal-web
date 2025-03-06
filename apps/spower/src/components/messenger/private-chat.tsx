@@ -1,11 +1,6 @@
+import { signal } from '@preact/signals-react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import {
-  Loader,
-  MoreHorizontal,
-  PlusCircle,
-  Send,
-  UserIcon
-} from 'lucide-react';
+import { Loader, PlusCircle, Send, User as UserIcon } from 'lucide-react';
 import { MsgChat, api, subscribeChats, subscribeMessages } from 'portal-api';
 import {
   Collections,
@@ -39,36 +34,8 @@ import { useInvalidateQueries } from '../../hooks';
 import { NewChatForm } from './form/new-chat-form';
 
 const Skeleton: FC<{ className?: string }> = ({ className }) => {
-  return <div className={cn('animate-pulse rounded bg-gray-200', className)} />;
-};
-
-type MessageProps = {
-  message: any;
-  isCurrentUser: boolean;
-};
-
-const Message: FC<MessageProps> = ({ message, isCurrentUser }) => {
   return (
-    <div
-      className={`mb-4 flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
-    >
-      <div
-        className={cn(
-          'max-w-[75%] rounded-lg px-4 py-2',
-          isCurrentUser
-            ? 'bg-appBlue text-white'
-            : 'border border-gray-200 bg-gray-100 text-gray-800'
-        )}
-      >
-        <div>{message.content}</div>
-        <div className="mt-1 text-xs opacity-70">
-          {new Date(message.created).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })}
-        </div>
-      </div>
-    </div>
+    <div className={cn('animate-pulse rounded-md bg-gray-200', className)} />
   );
 };
 
@@ -79,26 +46,24 @@ export type ChatHeaderProps = {
 
 const ChatHeader: FC<ChatHeaderProps> = ({ chat, getOtherParticipant }) => {
   const otherParticipant = getOtherParticipant(chat);
+
   return (
-    <div className="flex items-center justify-between border-b bg-white p-3">
-      <div className="flex items-center gap-2">
-        <Avatar className={'h-8 w-8'}>
-          <AvatarImage
-            src={getImageUrl(
-              Collections.User,
-              otherParticipant.id,
-              otherParticipant.avatar
-            )}
-          />
-          <AvatarFallback className={'text-sm'}>
-            <UserIcon />
-          </AvatarFallback>
-        </Avatar>
-        <span className="font-medium">{otherParticipant?.name}</span>
+    <div className="flex items-center border-b p-3">
+      <Avatar className="mr-2 h-8 w-8">
+        <AvatarImage
+          src={getImageUrl(
+            Collections.User,
+            otherParticipant.id,
+            otherParticipant.avatar
+          )}
+        />
+        <AvatarFallback>
+          <UserIcon className="h-4 w-4" />
+        </AvatarFallback>
+      </Avatar>
+      <div>
+        <h3 className="text-sm font-medium">{otherParticipant.name}</h3>
       </div>
-      <Button variant="ghost" size="icon" className="h-8 w-8">
-        <MoreHorizontal className="h-5 w-5" />
-      </Button>
     </div>
   );
 };
@@ -210,83 +175,38 @@ export const ChatList: FC<ChatListProps> = ({
   onNewChat,
   getOtherParticipant
 }) => {
-  const perPage = 20;
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const invalidates = useInvalidateQueries();
-
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: api.chat.listPrivateChats.getKey({ userId }),
-    queryFn: ({ pageParam = 1 }) =>
-      api.chat.listPrivateChats.fetcher({
-        userId,
-        page: pageParam,
-        perPage
-      }),
-    getNextPageParam: lastPage =>
-      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
-    initialPageParam: 1
+  const { data: chatsData } = api.chat.listPrivateChats.useSuspenseQuery({
+    variables: {
+      userId
+    }
   });
 
-  const allChats = useMemo(
-    () => data?.pages.flatMap(page => page.items) ?? [],
-    [data]
-  );
+  const allChats = useMemo(() => {
+    const chats = chatsData?.items || [];
+    return [...chats].sort((a, b) => {
+      const aTime = a.expand?.lastMessage?.created
+        ? new Date(a.expand.lastMessage.created).getTime()
+        : new Date(a.updated).getTime();
 
-  const handleScroll = useCallback(
-    (event: React.UIEvent<HTMLDivElement>) => {
-      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
-      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+      const bTime = b.expand?.lastMessage?.created
+        ? new Date(b.expand.lastMessage.created).getTime()
+        : new Date(b.updated).getTime();
 
-      if (distanceToBottom < 50 && hasNextPage) {
-        fetchNextPage();
-      }
-    },
-    [fetchNextPage, hasNextPage]
-  );
-
-  useEffect(() => {
-    if (!userId) return;
-
-    let unsubscribe: () => void;
-
-    subscribeChats(userId, value => {
-      if (value.action === 'create') {
-        invalidates([api.chat.listPrivateChats.getKey({ userId })]);
-      } else {
-        console.log('update', value.record.id);
-        invalidates([api.chat.getChat.getKey(value.record.id)]);
-      }
-    }).then(unsub => {
-      unsubscribe = unsub;
+      return bTime - aTime;
     });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [userId, invalidates]);
+  }, [chatsData]);
 
   return (
-    <div
-      ref={scrollContainerRef}
-      className="h-full overflow-y-auto py-2"
-      onScroll={handleScroll}
-    >
-      {allChats.map((chat: MsgChat) => {
-        const otherParticipant = getOtherParticipant(chat);
-        if (!otherParticipant) return null;
-
-        return (
-          <ChatListItem
-            key={chat.id}
-            chatId={chat.id}
-            isSelected={selectedChat?.id === chat.id}
-            onClick={() => setSelectedChat(chat)}
-            getOtherParticipant={getOtherParticipant}
-          />
-        );
-      })}
+    <div className="h-full overflow-y-auto">
+      {allChats.map(chat => (
+        <ChatListItem
+          key={chat.id}
+          chatId={chat.id}
+          isSelected={selectedChat?.id === chat.id}
+          onClick={() => setSelectedChat(chat)}
+          getOtherParticipant={getOtherParticipant}
+        />
+      ))}
 
       {allChats.length === 0 && (
         <div className="flex h-40 items-center justify-center">
@@ -303,6 +223,42 @@ export const ChatList: FC<ChatListProps> = ({
   );
 };
 
+const scrollToBottomSignal = signal<number>(0);
+
+export const triggerScrollToBottom = () => {
+  scrollToBottomSignal.value++;
+};
+
+type MessageProps = {
+  message: any;
+  isCurrentUser: boolean;
+};
+
+const Message: FC<MessageProps> = ({ message, isCurrentUser }) => {
+  return (
+    <div
+      className={`mb-4 flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
+    >
+      <div
+        className={cn(
+          'max-w-[75%] rounded-lg px-4 py-2',
+          isCurrentUser
+            ? 'bg-appBlue text-white'
+            : 'border border-gray-200 bg-gray-100 text-gray-800'
+        )}
+      >
+        <div>{message.content}</div>
+        <div className="mt-1 text-xs opacity-70">
+          {new Date(message.created).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export type MessageListProps = {
   chat?: MsgChat;
 };
@@ -311,9 +267,25 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
   const prevHeightRef = useRef<number>(0);
+  const isInitialLoadRef = useRef<boolean>(true);
   const currentUser = getUser();
   const invalidates = useInvalidateQueries();
   const perPage = 20;
+
+  const scrollToBottom = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    setTimeout(() => {
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [scrollToBottomSignal.value, scrollToBottom]);
 
   const {
     data,
@@ -353,18 +325,31 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
 
   useEffect(() => {
     const container = messagesContainerRef.current;
-    if (!container || !scrollPositionRef.current) return;
+    if (!container) return;
 
     if (
+      isFetchingNextPage &&
       prevHeightRef.current &&
-      container.scrollHeight > prevHeightRef.current
+      scrollPositionRef.current
     ) {
-      const newPosition = container.scrollHeight - scrollPositionRef.current;
-      container.scrollTop = newPosition;
+      return;
+    }
 
-      if (!isFetchingNextPage) {
-        scrollPositionRef.current = 0;
-        prevHeightRef.current = 0;
+    if (
+      !isFetchingNextPage &&
+      prevHeightRef.current &&
+      scrollPositionRef.current
+    ) {
+      if (container.scrollHeight > prevHeightRef.current) {
+        const newPosition = container.scrollHeight - scrollPositionRef.current;
+        container.scrollTop = newPosition;
+
+        setTimeout(() => {
+          if (!isFetchingNextPage) {
+            scrollPositionRef.current = 0;
+            prevHeightRef.current = 0;
+          }
+        }, 100);
       }
     }
   }, [allMessages, isFetchingNextPage]);
@@ -377,14 +362,16 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
       container.scrollHeight - container.scrollTop - container.clientHeight <
       100;
 
-    if ((isAtBottom || !scrollPositionRef.current) && !isFetchingNextPage) {
-      setTimeout(() => {
-        if (container) {
-          container.scrollTop = container.scrollHeight;
-        }
-      }, 0);
+    if (
+      isInitialLoadRef.current ||
+      (isAtBottom && !isFetchingNextPage && !scrollPositionRef.current)
+    ) {
+      scrollToBottom();
+      if (isInitialLoadRef.current) {
+        isInitialLoadRef.current = false;
+      }
     }
-  }, [allMessages, isFetchingNextPage]);
+  }, [allMessages, isFetchingNextPage, scrollToBottom]);
 
   useEffect(() => {
     if (!chat) return;
@@ -393,6 +380,21 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
 
     subscribeMessages(chat.id, () => {
       invalidates([api.chat.listMessages.getKey({ chatId: chat.id })]);
+
+      setTimeout(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        const isAtBottom =
+          container.scrollHeight -
+            container.scrollTop -
+            container.clientHeight <
+          100;
+
+        if (isAtBottom) {
+          scrollToBottom();
+        }
+      }, 100);
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -402,7 +404,13 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
         unsubscribe();
       }
     };
-  }, [chat, invalidates]);
+  }, [chat, invalidates, scrollToBottom]);
+
+  useEffect(() => {
+    isInitialLoadRef.current = true;
+    scrollPositionRef.current = 0;
+    prevHeightRef.current = 0;
+  }, [chat?.id]);
 
   if (!chat) return null;
 
@@ -442,8 +450,9 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
 export const PrivateChat: FC = () => {
   const currentUser = getUser();
   const currentUserId = currentUser?.id || '';
+  const invalidates = useInvalidateQueries();
 
-  const [selectedChat, setSelectedChat] = useState<MsgChat | undefined>();
+  const [selectedChat, setSelectedChat] = useState<MsgChat>();
   const [newMessage, setNewMessage] = useState('');
   const lastKeypressTime = useRef<number>(0);
 
@@ -471,6 +480,7 @@ export const PrivateChat: FC = () => {
       {
         onSuccess: () => {
           setNewMessage('');
+          triggerScrollToBottom();
         }
       }
     );
@@ -540,6 +550,26 @@ export const PrivateChat: FC = () => {
       }
     };
   }, [selectedChat, markChatAsRead]);
+
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    let unsubscribe: () => void;
+
+    subscribeChats(currentUserId, () => {
+      invalidates([
+        api.chat.listPrivateChats.getKey({ userId: currentUserId })
+      ]);
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [currentUserId, invalidates]);
 
   return (
     <div className="flex h-full w-full overflow-hidden">
