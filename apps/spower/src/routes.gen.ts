@@ -16,7 +16,7 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProjectImport } from './routes/_authenticated/project'
-import { Route as AuthenticatedNotificationImport } from './routes/_authenticated/notification'
+import { Route as AuthenticatedMessengerImport } from './routes/_authenticated/messenger'
 import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProjectIndexImport } from './routes/_authenticated/project/index'
@@ -96,9 +96,9 @@ const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedNotificationRoute = AuthenticatedNotificationImport.update({
-  id: '/notification',
-  path: '/notification',
+const AuthenticatedMessengerRoute = AuthenticatedMessengerImport.update({
+  id: '/messenger',
+  path: '/messenger',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -461,11 +461,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/notification': {
-      id: '/_authenticated/notification'
-      path: '/notification'
-      fullPath: '/notification'
-      preLoaderRoute: typeof AuthenticatedNotificationImport
+    '/_authenticated/messenger': {
+      id: '/_authenticated/messenger'
+      path: '/messenger'
+      fullPath: '/messenger'
+      preLoaderRoute: typeof AuthenticatedMessengerImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/project': {
@@ -1144,7 +1144,7 @@ const AuthenticatedSettingsRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedNotificationRoute: typeof AuthenticatedNotificationRoute
+  AuthenticatedMessengerRoute: typeof AuthenticatedMessengerRoute
   AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
@@ -1152,7 +1152,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedNotificationRoute: AuthenticatedNotificationRoute,
+  AuthenticatedMessengerRoute: AuthenticatedMessengerRoute,
   AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
   AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
@@ -1167,7 +1167,7 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/notification': typeof AuthenticatedNotificationRoute
+  '/messenger': typeof AuthenticatedMessengerRoute
   '/project': typeof AuthenticatedProjectRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
@@ -1223,7 +1223,7 @@ export interface FileRoutesByTo {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/notification': typeof AuthenticatedNotificationRoute
+  '/messenger': typeof AuthenticatedMessengerRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/project': typeof AuthenticatedProjectIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -1270,7 +1270,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/notification': typeof AuthenticatedNotificationRoute
+  '/_authenticated/messenger': typeof AuthenticatedMessengerRoute
   '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/_authenticated/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
@@ -1328,7 +1328,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/home'
-    | '/notification'
+    | '/messenger'
     | '/project'
     | '/settings'
     | '/project/$projectId'
@@ -1383,7 +1383,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/home'
-    | '/notification'
+    | '/messenger'
     | '/user/profile'
     | '/project'
     | '/settings'
@@ -1428,7 +1428,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/home'
-    | '/_authenticated/notification'
+    | '/_authenticated/messenger'
     | '/_authenticated/project'
     | '/_authenticated/settings'
     | '/_authenticated/project/$projectId'
@@ -1514,7 +1514,7 @@ export const routeTree = rootRoute
       "filePath": "_authenticated.tsx",
       "children": [
         "/_authenticated/home",
-        "/_authenticated/notification",
+        "/_authenticated/messenger",
         "/_authenticated/project",
         "/_authenticated/settings",
         "/_authenticated/user/profile"
@@ -1527,8 +1527,8 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/home.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/notification": {
-      "filePath": "_authenticated/notification.tsx",
+    "/_authenticated/messenger": {
+      "filePath": "_authenticated/messenger.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/project": {

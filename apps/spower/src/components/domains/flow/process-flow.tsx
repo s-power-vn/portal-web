@@ -81,7 +81,9 @@ export const isApproveNode = (
     return false;
   }
 
-  const approvedFlows = processData.flows.filter((it: Flow) => it.approve);
+  const approvedFlows = processData.flows.filter(
+    (it: Flow) => it.approver && it.approver.length > 0
+  );
   const fromNodeFlow = approvedFlows.find(
     (it: Flow) => it.from.node === nodeId
   );

@@ -1,20 +1,19 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query';
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { ObjectData } from 'libs/api/src/api/object'
-import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react'
-import { api } from 'portal-api'
-import { ObjectTypeOptions } from 'portal-core'
+  useReactTable
+} from '@tanstack/react-table';
+import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { ObjectData, api } from 'portal-api';
+import { ObjectTypeOptions } from 'portal-core';
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react';
 
-import { cn } from '@minhdtb/storeo-core'
+import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
   Table,
@@ -25,80 +24,80 @@ import {
   TableRow,
   error,
   success,
-  useConfirm,
-} from '@minhdtb/storeo-theme'
+  useConfirm
+} from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components'
-import { IndeterminateCheckbox } from '../../../../components/checkbox'
-import { useInvalidateQueries } from '../../../../hooks'
+import { PageHeader } from '../../../../components';
+import { IndeterminateCheckbox } from '../../../../components/checkbox';
+import { useInvalidateQueries } from '../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_authenticated/settings/operation/objects',
+  '/_authenticated/settings/operation/objects'
 )({
   component: Component,
   loader: ({ context: { queryClient } }) =>
     queryClient?.ensureQueryData(api.object.listFull.getOptions()),
   beforeLoad: () => {
     return {
-      title: 'Quản lý đối tượng',
-    }
-  },
-})
+      title: 'Quản lý đối tượng'
+    };
+  }
+});
 
 function Component() {
-  const queryClient = useQueryClient()
-  const navigate = useNavigate({ from: Route.fullPath })
-  const listObjects = api.object.listFull.useSuspenseQuery()
-  const invalidates = useInvalidateQueries()
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const listObjects = api.object.listFull.useSuspenseQuery();
+  const invalidates = useInvalidateQueries();
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const columnHelper = createColumnHelper<ObjectData>()
+  const columnHelper = createColumnHelper<ObjectData>();
 
   const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa đối tượng thành công')
+      success('Xóa đối tượng thành công');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: api.object.listFull.getKey(),
-        }),
-      ])
+          queryKey: api.object.listFull.getKey()
+        })
+      ]);
     },
     onError: () => {
-      error('Xóa đối tượng thất bại')
-    },
-  })
+      error('Xóa đối tượng thất bại');
+    }
+  });
 
   const duplicateObject = api.object.duplicate.useMutation({
     onSuccess: async () => {
-      success('Nhân bản đối tượng thành công')
-      invalidates([api.object.listFull.getKey()])
+      success('Nhân bản đối tượng thành công');
+      invalidates([api.object.listFull.getKey()]);
     },
     onError: () => {
-      error('Nhân bản đối tượng thất bại')
-    },
-  })
+      error('Nhân bản đối tượng thất bại');
+    }
+  });
 
   const activateObjects = api.object.actives.useMutation({
     onSuccess: async () => {
-      success('Kích hoạt đối tượng thành công')
-      setRowSelection({})
-      invalidates([api.object.listFull.getKey()])
+      success('Kích hoạt đối tượng thành công');
+      setRowSelection({});
+      invalidates([api.object.listFull.getKey()]);
     },
     onError: () => {
-      error('Kích hoạt đối tượng thất bại')
-    },
-  })
+      error('Kích hoạt đối tượng thất bại');
+    }
+  });
 
-  const { confirm } = useConfirm()
+  const { confirm } = useConfirm();
 
   const handleDuplicateObject = useCallback(
     (objectId: string) => {
       confirm('Bạn có chắc chắn muốn nhân bản đối tượng này?', () => {
-        duplicateObject.mutate(objectId)
-      })
+        duplicateObject.mutate(objectId);
+      });
     },
-    [confirm, duplicateObject],
-  )
+    [confirm, duplicateObject]
+  );
 
   const columns = useMemo(
     () => [
@@ -111,7 +110,7 @@ function Component() {
                 checked: row.getIsSelected(),
                 disabled: !row.getCanSelect(),
                 indeterminate: row.getIsSomeSelected(),
-                onChange: row.getToggleSelectedHandler(),
+                onChange: row.getToggleSelectedHandler()
               }}
             />
           </div>
@@ -122,16 +121,16 @@ function Component() {
               {...{
                 checked: table.getIsAllRowsSelected(),
                 indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
+                onChange: table.getToggleAllRowsSelectedHandler()
               }}
             />
           </div>
         ),
-        size: 40,
+        size: 40
       }),
       columnHelper.display({
         id: 'index',
-        cell: (info) => (
+        cell: info => (
           <div className={'flex items-center justify-center'}>
             {info.row.index + 1}
           </div>
@@ -139,7 +138,7 @@ function Component() {
         header: () => (
           <div className={'flex items-center justify-center'}>#</div>
         ),
-        size: 30,
+        size: 30
       }),
       columnHelper.display({
         id: 'actions',
@@ -148,23 +147,23 @@ function Component() {
             <div className={'flex gap-1'}>
               <Button
                 className={'h-6 px-3'}
-                onClick={(e) => {
-                  e.stopPropagation()
+                onClick={e => {
+                  e.stopPropagation();
                   navigate({
                     to: './$objectId/edit',
                     params: {
-                      objectId: row.original.id,
-                    },
-                  })
+                      objectId: row.original.id
+                    }
+                  });
                 }}
               >
                 <EditIcon className={'h-3 w-3'} />
               </Button>
               <Button
                 className={'h-6 px-3'}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleDuplicateObject(row.original.id)
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDuplicateObject(row.original.id);
                 }}
               >
                 <CopyIcon className={'h-3 w-3'} />
@@ -172,29 +171,29 @@ function Component() {
               <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   confirm('Bạn chắc chắn muốn xóa đối tượng này?', () => {
-                    deleteObject.mutate(row.original.id)
-                  })
+                    deleteObject.mutate(row.original.id);
+                  });
                 }}
               >
                 <XIcon className={'h-3 w-3'} />
               </Button>
             </div>
-          )
+          );
         },
-        header: () => 'Thao tác',
+        header: () => 'Thao tác'
       }),
       columnHelper.accessor('name', {
-        cell: (info) => info.getValue(),
+        cell: info => info.getValue(),
         header: () => 'Tên đối tượng',
-        footer: (info) => info.column.id,
-        size: 300,
+        footer: info => info.column.id,
+        size: 300
       }),
       columnHelper.accessor('active', {
-        cell: (info) => (
+        cell: info => (
           <div className="flex justify-center">
             {info.getValue() ? (
               <CheckIcon className="h-4 w-4 text-green-500" />
@@ -204,15 +203,15 @@ function Component() {
           </div>
         ),
         header: () => 'Kích hoạt',
-        footer: (info) => info.column.id,
-        size: 100,
+        footer: info => info.column.id,
+        size: 100
       }),
 
       columnHelper.accessor('type', {
-        cell: (info) => {
-          const type = info.getValue()
+        cell: info => {
+          const type = info.getValue();
           const badgeStyle =
-            'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap'
+            'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap';
 
           switch (type) {
             case ObjectTypeOptions.Task:
@@ -220,41 +219,41 @@ function Component() {
                 <span className={cn(badgeStyle, 'bg-green-500')}>
                   Công việc
                 </span>
-              )
+              );
             case ObjectTypeOptions.Request:
               return (
                 <span className={cn(badgeStyle, 'bg-red-500')}>Yêu cầu</span>
-              )
+              );
             case ObjectTypeOptions.Price:
               return (
                 <span className={cn(badgeStyle, 'bg-blue-500')}>Báo giá</span>
-              )
+              );
             case ObjectTypeOptions.Document:
               return (
                 <span className={cn(badgeStyle, 'bg-purple-500')}>
                   Tài liệu
                 </span>
-              )
+              );
             default:
               return (
                 <span className={cn(badgeStyle, 'bg-gray-500')}>{type}</span>
-              )
+              );
           }
         },
         header: () => 'Loại',
-        footer: (info) => info.column.id,
-        size: 100,
+        footer: info => info.column.id,
+        size: 100
       }),
-      columnHelper.accessor((row) => row.expand?.process?.name, {
+      columnHelper.accessor(row => row.expand?.process?.name, {
         id: 'processName',
-        cell: (info) => info.getValue() || '',
+        cell: info => info.getValue() || '',
         header: () => 'Quy trình',
-        footer: (info) => info.column.id,
-        size: 150,
+        footer: info => info.column.id,
+        size: 150
       }),
 
       columnHelper.accessor('base', {
-        cell: (info) => (
+        cell: info => (
           <div className="flex justify-center">
             {info.getValue() ? (
               <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
@@ -264,45 +263,45 @@ function Component() {
           </div>
         ),
         header: () => 'Cơ bản',
-        footer: (info) => info.column.id,
-        size: 100,
+        footer: info => info.column.id,
+        size: 100
       }),
       columnHelper.accessor('description', {
-        cell: (info) => info.getValue() || '',
+        cell: info => info.getValue() || '',
         header: () => 'Mô tả',
-        footer: (info) => info.column.id,
-      }),
+        footer: info => info.column.id
+      })
     ],
-    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm],
-  )
+    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm]
+  );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     data: listObjects.data || [],
     state: {
-      rowSelection,
+      rowSelection
     },
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-  })
+    onRowSelectionChange: setRowSelection
+  });
 
   const handleActivateSelected = useCallback(() => {
     const selectedIds = Object.keys(rowSelection)
-      .map((index) => {
-        const row = table.getRowModel().rows.find((row) => row.id === index)
-        return row?.original.id
+      .map(index => {
+        const row = table.getRowModel().rows.find(row => row.id === index);
+        return row?.original.id;
       })
-      .filter(Boolean) as string[]
+      .filter(Boolean) as string[];
 
-    if (selectedIds.length === 0) return
+    if (selectedIds.length === 0) return;
 
     confirm('Bạn có chắc chắn muốn kích hoạt các đối tượng đã chọn?', () => {
-      activateObjects.mutate(selectedIds)
-    })
-  }, [activateObjects, confirm, rowSelection, table])
+      activateObjects.mutate(selectedIds);
+    });
+  }, [activateObjects, confirm, rowSelection, table]);
 
-  const selectedRows = Object.keys(rowSelection).length
+  const selectedRows = Object.keys(rowSelection).length;
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -314,7 +313,7 @@ function Component() {
             className={'flex gap-1'}
             onClick={() =>
               navigate({
-                to: './new',
+                to: './new'
               })
             }
           >
@@ -339,7 +338,7 @@ function Component() {
             <Table
               style={{
                 width: '100%',
-                tableLayout: 'fixed',
+                tableLayout: 'fixed'
               }}
             >
               <TableHeader
@@ -347,25 +346,25 @@ function Component() {
                 style={{
                   position: 'sticky',
                   top: 0,
-                  zIndex: 2,
+                  zIndex: 2
                 }}
               >
-                {table.getHeaderGroups().map((headerGroup) => (
+                {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                    {headerGroup.headers.map((header) => (
+                    {headerGroup.headers.map(header => (
                       <TableHead
                         key={header.id}
                         className={'text-appWhite whitespace-nowrap'}
                         style={{
                           width: header.getSize(),
-                          maxWidth: header.getSize(),
+                          maxWidth: header.getSize()
                         }}
                       >
                         {header.isPlaceholder ? null : (
                           <>
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                           </>
                         )}
@@ -376,34 +375,34 @@ function Component() {
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row) => (
+                  table.getRowModel().rows.map(row => (
                     <TableRow
                       key={row.id}
                       className={cn(
                         'cursor-pointer last:border-b-0',
-                        row.getIsSelected() && 'bg-blue-50',
+                        row.getIsSelected() && 'bg-blue-50'
                       )}
                       onClick={() => {
                         navigate({
                           to: './$objectId/edit',
                           params: {
-                            objectId: row.original.id,
-                          },
-                        })
+                            objectId: row.original.id
+                          }
+                        });
                       }}
                     >
-                      {row.getVisibleCells().map((cell) => (
+                      {row.getVisibleCells().map(cell => (
                         <TableCell
                           key={cell.id}
                           className={'truncate text-left'}
                           style={{
                             width: cell.column.getSize(),
-                            maxWidth: cell.column.getSize(),
+                            maxWidth: cell.column.getSize()
                           }}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext(),
+                            cell.getContext()
                           )}
                         </TableCell>
                       ))}
@@ -425,5 +424,5 @@ function Component() {
         </div>
       </div>
     </div>
-  )
+  );
 }

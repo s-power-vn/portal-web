@@ -9,11 +9,12 @@ import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
 import type { Flow, FlowType } from '.';
+import { SelectEmployee } from '../employee';
 
 type FlowFormValues = {
   id: string;
   action: string;
-  approve: boolean;
+  approver: string[];
   type: FlowType;
 };
 
@@ -21,7 +22,7 @@ const schema = yup
   .object({
     id: yup.string().required('ID flow là bắt buộc'),
     action: yup.string().default(''),
-    approve: yup.boolean().default(false),
+    approver: yup.array().of(yup.string().defined()).default([]),
     type: yup
       .string()
       .oneOf(['default', 'straight', 'step', 'smoothstep'])
@@ -45,13 +46,14 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors, dirtyFields }
   } = useForm<FlowFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
       id: '',
       action: '',
-      approve: false,
+      approver: [],
       type: 'smoothstep'
     }
   });
@@ -62,7 +64,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
         {
           id: selectedFlow.id,
           action: selectedFlow.action ?? '',
-          approve: selectedFlow.approve ?? false,
+          approver: selectedFlow.approver ?? [],
           type: selectedFlow.type ?? 'smoothstep'
         },
         {
@@ -74,7 +76,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
         {
           id: '',
           action: '',
-          approve: false,
+          approver: [],
           type: 'smoothstep'
         },
         {
@@ -90,7 +92,7 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
       const dirtyKeys = Object.keys(dirtyFields) as Array<keyof FlowFormValues>;
 
       if (dirtyKeys.includes('action')) updates.action = values.action;
-      if (dirtyKeys.includes('approve')) updates.approve = values.approve;
+      if (dirtyKeys.includes('approver')) updates.approver = values.approver;
       if (dirtyKeys.includes('type')) updates.type = values.type;
 
       onFlowUpdate?.(selectedFlow.id, updates);
@@ -152,15 +154,26 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register('approve', {
-                    onChange: () => handleSubmit(onSubmit)()
-                  })}
-                  className="border-input bg-background ring-offset-background focus-visible:ring-ring h-4 w-4 rounded border focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+              <div>
+                <label className="text-sm font-medium">Người phê duyệt</label>
+                <SelectEmployee
+                  multiple={true}
+                  value={watch('approver')}
+                  onChange={value => {
+                    const newValue = Array.isArray(value)
+                      ? value
+                      : [value].filter(Boolean);
+
+                    setValue('approver', newValue, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true
+                    });
+
+                    handleSubmit(onSubmit)();
+                  }}
+                  className="w-full"
                 />
-                <label className="text-sm font-medium">Yêu cầu phê duyệt</label>
               </div>
             </div>
           ) : (

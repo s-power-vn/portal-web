@@ -1,8 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DepartmentData } from 'libs/api/src/api/department';
 import _ from 'lodash';
-import { NetworkIcon, Plus, Trash2, User } from 'lucide-react';
-import { api } from 'portal-api';
+import { NetworkIcon, Plus, Trash2, UsersIcon } from 'lucide-react';
+import { DepartmentData, api } from 'portal-api';
 import * as yup from 'yup';
 
 import {
@@ -256,7 +255,7 @@ const ConditionBlock = memo(
         {isEmployeeCondition(condition) && (
           <div className="mt-2">
             <div className="mb-2 flex items-center gap-1 text-sm font-medium">
-              <User className="h-4 w-4" />
+              <UsersIcon className="h-4 w-4" />
               Nhân viên
             </div>
             <div>

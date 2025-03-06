@@ -1,17 +1,16 @@
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { ProcessDbData } from 'libs/api/src/api/process'
-import { CopyIcon, PlusIcon, XIcon } from 'lucide-react'
-import { api } from 'portal-api'
+  useReactTable
+} from '@tanstack/react-table';
+import { CopyIcon, PlusIcon, XIcon } from 'lucide-react';
+import { ProcessDbData, api } from 'portal-api';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { formatDateTime } from '@minhdtb/storeo-core'
+import { formatDateTime } from '@minhdtb/storeo-core';
 import {
   Badge,
   Button,
@@ -27,48 +26,48 @@ import {
   TooltipTrigger,
   showModal,
   success,
-  useConfirm,
-} from '@minhdtb/storeo-theme'
+  useConfirm
+} from '@minhdtb/storeo-theme';
 
-import { EmployeeDisplay, PageHeader } from '../../../../components'
-import { ApplyProcessForm } from '../../../../components/domains/process/form/apply-process-form'
-import { useInvalidateQueries } from '../../../../hooks'
+import { EmployeeDisplay, PageHeader } from '../../../../components';
+import { ApplyProcessForm } from '../../../../components/domains/process/form/apply-process-form';
+import { useInvalidateQueries } from '../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_authenticated/settings/operation/process',
+  '/_authenticated/settings/operation/process'
 )({
   component: Component,
-  beforeLoad: () => ({ title: 'Quản lý quy trình' }),
-})
+  beforeLoad: () => ({ title: 'Quản lý quy trình' })
+});
 
 function Component() {
-  const { data: process } = api.process.listFull.useSuspenseQuery()
-  const navigate = useNavigate({ from: Route.fullPath })
-  const invalidates = useInvalidateQueries()
+  const { data: process } = api.process.listFull.useSuspenseQuery();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const invalidates = useInvalidateQueries();
 
   const handleAddProcess = useCallback(() => {
     navigate({
-      to: './new',
-    })
-  }, [navigate])
+      to: './new'
+    });
+  }, [navigate]);
 
   const deleteProcess = api.process.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa quy trình thành công')
-      invalidates([api.process.listFull.getKey()])
-    },
-  })
+      success('Xóa quy trình thành công');
+      invalidates([api.process.listFull.getKey()]);
+    }
+  });
 
   const duplicateProcess = api.process.duplicate.useMutation({
     onSuccess: async () => {
-      success('Nhân bản quy trình thành công')
-      invalidates([api.process.listFull.getKey()])
-    },
-  })
+      success('Nhân bản quy trình thành công');
+      invalidates([api.process.listFull.getKey()]);
+    }
+  });
 
-  const { confirm } = useConfirm()
+  const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<ProcessDbData>()
+  const columnHelper = createColumnHelper<ProcessDbData>();
 
   const handleApplyProcess = useCallback((processId: string) => {
     showModal({
@@ -77,37 +76,37 @@ function Component() {
         <ApplyProcessForm
           processId={processId}
           onSuccess={() => {
-            close()
+            close();
             invalidates([
               api.process.listFull.getKey(),
-              api.process.byId.getKey(),
-            ])
+              api.process.byId.getKey()
+            ]);
           }}
           onCancel={close}
         />
-      ),
-    })
-  }, [])
+      )
+    });
+  }, []);
 
   const handleDuplicateProcess = useCallback(
     (processId: string) => {
       confirm('Bạn có chắc chắn muốn nhân bản quy trình này?', () => {
-        duplicateProcess.mutate(processId)
-      })
+        duplicateProcess.mutate(processId);
+      });
     },
-    [confirm, duplicateProcess],
-  )
+    [confirm, duplicateProcess]
+  );
 
   const columns = [
     columnHelper.display({
       id: 'index',
-      cell: (info) => (
+      cell: info => (
         <div className={'flex items-center justify-center'}>
           {info.row.index + 1}
         </div>
       ),
       header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30,
+      size: 30
     }),
     columnHelper.display({
       size: 180,
@@ -117,18 +116,18 @@ function Component() {
           <div className={'flex gap-1'}>
             <Button
               className={'flex h-6 gap-1 px-3 text-xs'}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleApplyProcess(row.original.id)
+              onClick={e => {
+                e.stopPropagation();
+                handleApplyProcess(row.original.id);
               }}
             >
               Áp dụng
             </Button>
             <Button
               className={'h-6 px-3'}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleDuplicateProcess(row.original.id)
+              onClick={e => {
+                e.stopPropagation();
+                handleDuplicateProcess(row.original.id);
               }}
             >
               <CopyIcon className={'h-3 w-3'} />
@@ -136,45 +135,45 @@ function Component() {
             <Button
               variant={'destructive'}
               className={'h-6 px-3'}
-              onClick={(e) => {
-                e.stopPropagation()
+              onClick={e => {
+                e.stopPropagation();
                 confirm('Bạn chắc chắn muốn xóa quy trình này?', () => {
-                  deleteProcess.mutate(row.original.id)
-                })
+                  deleteProcess.mutate(row.original.id);
+                });
               }}
             >
               <XIcon className={'h-3 w-3'} />
             </Button>
           </div>
-        )
+        );
       },
-      header: () => 'Thao tác',
+      header: () => 'Thao tác'
     }),
     columnHelper.accessor('name', {
-      cell: (info) => info.getValue(),
+      cell: info => info.getValue(),
       header: () => 'Tên quy trình',
-      footer: (info) => info.column.id,
-      size: 300,
+      footer: info => info.column.id,
+      size: 300
     }),
     columnHelper.accessor('expand.object_via_process', {
-      cell: (info) => {
-        const objects = info.getValue()
+      cell: info => {
+        const objects = info.getValue();
         if (!objects || objects.length === 0) {
           return (
             <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
-          )
+          );
         }
 
         // Display up to 3 badges, then show a count for the rest
-        const displayLimit = 3
-        const hasMore = objects.length > displayLimit
+        const displayLimit = 3;
+        const hasMore = objects.length > displayLimit;
         const displayObjects = hasMore
           ? objects.slice(0, displayLimit)
-          : objects
+          : objects;
 
         return (
           <div className="flex flex-wrap gap-1">
-            {displayObjects.map((object) => (
+            {displayObjects.map(object => (
               <Badge
                 key={object.id}
                 className="bg-appBlueLight text-appWhite text-xs"
@@ -192,7 +191,7 @@ function Component() {
                   </TooltipTrigger>
                   <TooltipContent>
                     <div className="p-1">
-                      {objects.slice(displayLimit).map((object) => (
+                      {objects.slice(displayLimit).map(object => (
                         <div
                           key={object.id}
                           className="whitespace-nowrap text-xs"
@@ -206,35 +205,35 @@ function Component() {
               </TooltipProvider>
             )}
           </div>
-        )
+        );
       },
       header: () => 'Đối tượng áp dụng',
-      footer: (info) => info.column.id,
-      size: 200,
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('createdBy', {
-      cell: (info) => <EmployeeDisplay employeeId={info.getValue()} />,
+      cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
       header: () => 'Người tạo',
-      footer: (info) => info.column.id,
-      size: 200,
+      footer: info => info.column.id,
+      size: 200
     }),
     columnHelper.accessor('created', {
-      cell: (info) => formatDateTime(info.getValue()),
+      cell: info => formatDateTime(info.getValue()),
       header: () => 'Ngày tạo',
-      footer: (info) => info.column.id,
+      footer: info => info.column.id
     }),
     columnHelper.accessor('updated', {
-      cell: (info) => formatDateTime(info.getValue()),
+      cell: info => formatDateTime(info.getValue()),
       header: () => 'Ngày cập nhật',
-      footer: (info) => info.column.id,
-    }),
-  ]
+      footer: info => info.column.id
+    })
+  ];
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: process || [],
-  })
+    data: process || []
+  });
 
   return (
     <>
@@ -257,7 +256,7 @@ function Component() {
               <Table
                 style={{
                   width: '100%',
-                  tableLayout: 'fixed',
+                  tableLayout: 'fixed'
                 }}
               >
                 <TableHeader
@@ -265,28 +264,28 @@ function Component() {
                   style={{
                     position: 'sticky',
                     top: 0,
-                    zIndex: 2,
+                    zIndex: 2
                   }}
                 >
-                  {table.getHeaderGroups().map((headerGroup) => (
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
                       key={headerGroup.id}
                       className={'hover:bg-appBlue'}
                     >
-                      {headerGroup.headers.map((header) => (
+                      {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
                           className={'text-appWhite whitespace-nowrap'}
                           style={{
                             width: header.getSize(),
-                            maxWidth: header.getSize(),
+                            maxWidth: header.getSize()
                           }}
                         >
                           {header.isPlaceholder ? null : (
                             <>
                               {flexRender(
                                 header.column.columnDef.header,
-                                header.getContext(),
+                                header.getContext()
                               )}
                             </>
                           )}
@@ -297,7 +296,7 @@ function Component() {
                 </TableHeader>
                 <TableBody>
                   {table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map((row) => (
+                    table.getRowModel().rows.map(row => (
                       <TableRow
                         key={row.id}
                         className={'cursor-pointer last:border-b-0'}
@@ -305,23 +304,23 @@ function Component() {
                           navigate({
                             to: './$processId/edit',
                             params: {
-                              processId: row.original.id,
-                            },
-                          })
+                              processId: row.original.id
+                            }
+                          });
                         }}
                       >
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getVisibleCells().map(cell => (
                           <TableCell
                             key={cell.id}
                             className={'truncate text-left'}
                             style={{
                               width: cell.column.getSize(),
-                              maxWidth: cell.column.getSize(),
+                              maxWidth: cell.column.getSize()
                             }}
                           >
                             {flexRender(
                               cell.column.columnDef.cell,
-                              cell.getContext(),
+                              cell.getContext()
                             )}
                           </TableCell>
                         ))}
@@ -344,5 +343,5 @@ function Component() {
         </div>
       </div>
     </>
-  )
+  );
 }

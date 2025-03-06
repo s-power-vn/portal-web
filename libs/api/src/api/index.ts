@@ -1,25 +1,36 @@
 import { authApi } from './auth';
-import { commentApi } from './comment';
-import { customerApi } from './customer';
-import { departmentApi } from './department';
-import { detailApi, detailImportApi, detailInfoApi } from './detail';
-import type { UserData } from './employee';
-import { employeeApi } from './employee';
-import { issueApi } from './issue';
-import { materialApi } from './material';
-import { objectApi } from './object';
-import { priceApi } from './price';
-import { processApi } from './process';
-import type { ProjectData } from './project';
-import { projectApi } from './project';
-import type { RequestData, RequestDetailData } from './request';
-import { requestApi, requestDetailApi } from './request';
-import { supplierApi } from './supplier';
+import { commentApi } from './domain/comment';
+import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
+import { IssueData, issueApi } from './domain/issue';
+import { priceApi } from './domain/price';
+import type { ProjectData } from './domain/project';
+import { projectApi } from './domain/project';
+import type { RequestData, RequestDetailData } from './domain/request';
+import { requestApi, requestDetailApi } from './domain/request';
+import { userApi } from './domain/user';
+import {
+  ChatChannel,
+  ChatChannelWithTeam,
+  ChatMessage,
+  ChatMessageWithSender,
+  ChatRoom,
+  ChatRoomWithDetails,
+  ChatTeam,
+  chatApi
+} from './messenger/chat';
+import { customerApi } from './setting/general/customer';
+import { DepartmentData, departmentApi } from './setting/general/department';
+import type { UserData } from './setting/general/employee';
+import { employeeApi } from './setting/general/employee';
+import { materialApi } from './setting/general/material';
+import { supplierApi } from './setting/general/supplier';
+import { ObjectData, objectApi } from './setting/operation/object';
+import { ProcessDbData, processApi } from './setting/operation/process';
 import { ListSchema } from './types';
-import { userApi } from './user';
 
 export const api = {
   auth: authApi,
+  chat: chatApi,
   comment: commentApi,
   customer: customerApi,
   department: departmentApi,
@@ -39,6 +50,24 @@ export const api = {
   user: userApi
 };
 
-export type { ProjectData, RequestData, RequestDetailData, UserData };
+export type {
+  ChatChannel,
+  ChatChannelWithTeam,
+  ChatMessage,
+  ChatMessageWithSender,
+  ChatRoom,
+  ChatRoomWithDetails,
+  ChatTeam,
+  DepartmentData,
+  IssueData,
+  ObjectData,
+  ProcessDbData,
+  ProjectData,
+  RequestData,
+  RequestDetailData,
+  UserData
+};
 
 export { ListSchema };
+
+export * from './messenger/chat';

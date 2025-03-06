@@ -31,9 +31,11 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { EmployeeDisplay } from '../employee';
 import { ProcessData, extractStatus, isDoneNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
+import { IssueAssigneeDisplay } from './issue-assignee-display';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';
 
@@ -208,7 +210,8 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
         </ThemeButton>
         <Show
           when={
-            client.authStore.model?.id === issue.data.assignee && !isInDoneState
+            client.authStore.record?.id === issue.data.assignee &&
+            !isInDoneState
           }
         >
           <DropdownMenu>
@@ -270,16 +273,16 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Người tạo
             </span>
             <span className={'truncate'}>
-              {issue.data.expand?.createdBy.name}
+              <EmployeeDisplay employeeId={issue.data.expand?.createdBy.id} />
             </span>
           </div>
           <div className={'flex w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Người xử lý
             </span>
-            <span className={'truncate'}>
-              {issue.data.expand?.assignee.name}
-            </span>
+            <div className="flex justify-end">
+              <IssueAssigneeDisplay issueId={issueId} maxVisible={2} />
+            </div>
           </div>
         </div>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>

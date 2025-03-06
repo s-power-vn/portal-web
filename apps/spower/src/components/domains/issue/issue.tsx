@@ -1,3 +1,4 @@
+import { ObjectData } from 'libs/api/src/api/setting/operation/object';
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import {
@@ -21,10 +22,21 @@ export type IssueProps = {
   issueId: string;
 };
 
+interface ExpandType {
+  object?: ObjectData;
+  [key: string]: unknown;
+}
+
 const IssueComponent: FC<IssueProps> = ({ issueId }) => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
+
+  const expand = (issue.data.expand || {}) as ExpandType;
+  const objectData = expand.object;
+  const assignees = issue.data.assignees || [];
+
+  const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
 
   return (
     <div
@@ -39,18 +51,14 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
     >
       <IssueSummary issueId={issueId} />
       <Switch fallback={<div className={`p-2`}></div>}>
-        <Match
-          when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
-        >
+        <Match when={objectData?.type === ObjectTypeOptions.Request}>
           <RequestDisplay issueId={issueId} />
         </Match>
-        <Match
-          when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
-        >
+        <Match when={objectData?.type === ObjectTypeOptions.Price}>
           <PriceDisplay issueId={issueId} />
         </Match>
       </Switch>
-      <Show when={client.authStore.record?.id === issue.data.assignee}>
+      <Show when={isUserAssigned}>
         <IssueAction issueId={issueId} />
       </Show>
       <IssueComment issueId={issueId} />

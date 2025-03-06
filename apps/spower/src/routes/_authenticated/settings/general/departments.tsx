@@ -12,9 +12,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { DepartmentData } from 'libs/api/src/api/department';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
+import { DepartmentData, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 

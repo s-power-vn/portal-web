@@ -1,5 +1,5 @@
 import { api } from 'portal-api';
-import { object, string } from 'yup';
+import { array, object, string } from 'yup';
 
 import type { FC } from 'react';
 
@@ -10,7 +10,9 @@ import { SelectEmployeeByConditionField } from '../../employee';
 
 const schema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
-  assignee: string().required('Hãy chọn nhân viên'),
+  assignees: array()
+    .of(string().required('Hãy chọn ít nhất một nhân viên'))
+    .required('Hãy chọn ít nhất một nhân viên'),
   status: string().required('Hãy chọn status')
 });
 
@@ -23,7 +25,7 @@ export type ForwardIssueFormProps = BusinessFormProps & {
 
 export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
   const forwardIssue = api.issue.forward.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       success('Chuyển tiếp thành công');
       props.onSuccess?.();
     },
@@ -39,7 +41,9 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
       onSuccess={values => {
         forwardIssue.mutate({
           id: props.issueId,
-          ...values
+          assignees: values.assignees ?? [],
+          status: values.status,
+          note: values.note
         });
       }}
       defaultValues={{
@@ -50,11 +54,12 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
     >
       <SelectEmployeeByConditionField
         schema={schema}
-        name={'assignee'}
+        name="assignees"
         title={props.title}
         options={{
           className: 'w-full',
-          condition: props.condition
+          condition: props.condition,
+          multiple: true
         }}
       />
       <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />

@@ -64,8 +64,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
     <>
       <div
         className={cn(
-          'box-border flex min-w-40 items-center justify-center gap-2 rounded border bg-white p-2 text-xs shadow-sm transition-all',
-          data.active ? 'border-appError border-2' : 'border-gray-200',
+          'box-border flex min-w-40 items-center justify-center gap-2 rounded border-2 bg-white p-2 text-xs shadow-sm transition-all',
+          data.active ? 'border-appError' : 'border-gray-200',
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
           data.clicked ? 'ring-2 ring-gray-200' : ''
         )}

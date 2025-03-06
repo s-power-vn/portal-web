@@ -55,7 +55,7 @@ function getNodes(
     });
 
     const isApprove = data.flows.some(
-      flow => flow.from.node === id && flow.approve
+      flow => flow.from.node === id && flow.approver && flow.approver.length > 0
     );
 
     return {

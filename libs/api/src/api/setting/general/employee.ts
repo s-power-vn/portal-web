@@ -3,7 +3,7 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { ListParams } from './types';
+import type { ListParams } from '../../types';
 
 export type UserData = UserResponse<{
   department: DepartmentResponse;

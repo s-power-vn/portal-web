@@ -2,6 +2,7 @@ export * from './form/forward-issue-form';
 export * from './form/return-issue-form';
 export * from './issue';
 export * from './issue-action';
+export * from './issue-assignee-display';
 export * from './issue-attachment';
 export * from './issue-badge';
 export * from './issue-comment';

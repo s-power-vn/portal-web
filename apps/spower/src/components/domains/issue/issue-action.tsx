@@ -81,7 +81,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         status: it.id,
         action: it.action,
         toNode: nodeInfo,
-        isApprove: it.approve ?? false
+        isApprove: !!(it.approver && it.approver.length > 0)
       };
     });
   }, [currentNode]);

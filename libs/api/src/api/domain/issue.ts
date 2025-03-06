@@ -7,9 +7,9 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { UserData } from './employee';
-import { ObjectData } from './object';
-import { ListParams } from './types';
+import { UserData } from '../setting/general/employee';
+import { ObjectData } from '../setting/operation/object';
+import { ListParams } from '../types';
 
 export type IssueData = IssueResponse<
   Record<string, string>[],
@@ -41,7 +41,7 @@ export const issueApi = router('issue', {
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
-        && assignee = "${client.authStore.record?.id}"
+        && assignees ?~ '${client.authStore.record?.id}'
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
           expand: `object, object.process, issueFile_via_issue`,
@@ -77,21 +77,8 @@ export const issueApi = router('issue', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, assignee, object, object.process, issueFile_via_issue`
+        expand: `createdBy, object, object.process, issueFile_via_issue`
       })
-  }),
-  updateTitle: router.mutation({
-    mutationFn: async ({
-      title,
-      issueId
-    }: {
-      title: string;
-      issueId: string;
-    }) => {
-      return await client.collection('issue').update(issueId, {
-        title
-      });
-    }
   }),
   update: router.mutation({
     mutationFn: (
@@ -110,7 +97,7 @@ export const issueApi = router('issue', {
   forward: router.mutation({
     mutationFn: (params: {
       id: string;
-      assignee: string;
+      assignees: string[];
       status: string;
       note?: string;
     }) => {
