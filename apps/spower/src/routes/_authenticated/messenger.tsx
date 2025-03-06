@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageHeader, PrivateChat } from '../../components';
+import { DirectChat, PageHeader } from '../../components';
 
 const Component = () => {
   return (
@@ -8,7 +8,7 @@ const Component = () => {
       <div className="flex-none">
         <PageHeader title="Tin nhắn" />
       </div>
-      <PrivateChat />
+      <DirectChat />
     </div>
   );
 };

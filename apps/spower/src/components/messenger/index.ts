@@ -5,7 +5,7 @@ export * from './form/new-chat-form';
 export * from './message-list';
 export * from './message-list-item';
 export * from './messenger-badge';
-export * from './private-chat';
+export * from './direct-chat';
 export * from './skeleton';
 export * from './team-chat';
 export * from './utils';

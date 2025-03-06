@@ -1,6 +1,6 @@
 import { PlusCircle } from 'lucide-react';
-import { MsgChat, api, subscribeChats } from 'portal-api';
-import { UserResponse, getUser } from 'portal-core';
+import { api, subscribeChats } from 'portal-api';
+import { getUser } from 'portal-core';
 
 import { FC, useEffect, useMemo } from 'react';
 
@@ -8,26 +8,23 @@ import { Button } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../hooks';
 import { ChatListItem } from './chat-list-item';
+import { selectedChatIdSignal } from './utils';
 
 export type ChatListProps = {
   userId: string;
-  selectedChatId: string | undefined;
-  setSelectedChatId: (chatId: string) => void;
   onNewChat: () => void;
-  getOtherParticipant: (chat?: MsgChat) => UserResponse | undefined;
+  onSelectChat: (chatId: string) => void;
 };
 
 export const ChatList: FC<ChatListProps> = ({
   userId,
-  selectedChatId,
-  setSelectedChatId,
   onNewChat,
-  getOtherParticipant
+  onSelectChat
 }) => {
   const user = getUser();
   const invalidates = useInvalidateQueries();
 
-  const { data: chatsData } = api.chat.listPrivateChats.useSuspenseQuery({
+  const { data: chatsData } = api.chat.listDirectChats.useSuspenseQuery({
     variables: {
       userId
     }
@@ -36,6 +33,14 @@ export const ChatList: FC<ChatListProps> = ({
   const allChats = useMemo(() => {
     const chats = chatsData?.items || [];
     return [...chats].sort((a, b) => {
+      // First, prioritize chats with messages
+      const aHasMessage = !!a.expand?.lastMessage;
+      const bHasMessage = !!b.expand?.lastMessage;
+
+      if (aHasMessage && !bHasMessage) return -1;
+      if (!aHasMessage && bHasMessage) return 1;
+
+      // Then sort by time
       const aTime = a.expand?.lastMessage?.created
         ? new Date(a.expand.lastMessage.created).getTime()
         : new Date(a.updated).getTime();
@@ -56,7 +61,7 @@ export const ChatList: FC<ChatListProps> = ({
     subscribeChats(user.id, value => {
       invalidates([api.chat.getChat.getKey(value.record.id)]);
       if (allChats.find(chat => chat.id === value.record.id) === undefined) {
-        invalidates([api.chat.listPrivateChats.getKey({ userId: user.id })]);
+        invalidates([api.chat.listDirectChats.getKey({ userId: user.id })]);
       }
     }).then(unsub => {
       unsubscribe = unsub;
@@ -75,9 +80,8 @@ export const ChatList: FC<ChatListProps> = ({
         <ChatListItem
           key={chat.id}
           chatId={chat.id}
-          isSelected={selectedChatId === chat.id}
-          onClick={() => setSelectedChatId(chat.id)}
-          getOtherParticipant={getOtherParticipant}
+          isSelected={selectedChatIdSignal.value === chat.id}
+          onClick={() => onSelectChat(chat.id)}
         />
       ))}
 

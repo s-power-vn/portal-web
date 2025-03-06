@@ -1,24 +1,28 @@
 import { User as UserIcon } from 'lucide-react';
-import { MsgChat, api } from 'portal-api';
-import { Collections, UserResponse, getImageUrl, getUser } from 'portal-core';
+import { api } from 'portal-api';
+import { Collections, getImageUrl, getUser } from 'portal-core';
 
 import { FC, memo, useMemo } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
+import {
+  getFirstOtherParticipant,
+  getOtherParticipants,
+  isGroupChatType
+} from './utils';
+
 export type ChatListItemProps = {
   chatId: string;
   isSelected: boolean;
   onClick: () => void;
-  getOtherParticipant: (chat?: MsgChat) => UserResponse | undefined;
 };
 
 export const ChatListItemComponent: FC<ChatListItemProps> = ({
   chatId,
   isSelected,
-  onClick,
-  getOtherParticipant
+  onClick
 }) => {
   const user = getUser();
 
@@ -37,7 +41,17 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
     return unreadCount.data && unreadCount.data > 0;
   }, [unreadCount]);
 
-  const otherParticipant = getOtherParticipant(chat);
+  const isGroupChat = useMemo(() => {
+    return isGroupChatType(chat);
+  }, [chat]);
+
+  const otherParticipants = useMemo(() => {
+    return getOtherParticipants(chat, user?.id);
+  }, [chat, user?.id]);
+
+  const otherParticipant = useMemo(() => {
+    return getFirstOtherParticipant(otherParticipants);
+  }, [otherParticipants]);
 
   return (
     <div
@@ -48,18 +62,49 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
-        <Avatar className={'h-8 w-8'}>
-          <AvatarImage
-            src={getImageUrl(
-              Collections.User,
-              otherParticipant?.id,
-              otherParticipant?.avatar
+        {isGroupChat ? (
+          <div className="relative h-8 w-8">
+            {otherParticipants.slice(0, 2).map((participant, index) => (
+              <Avatar
+                key={participant.id}
+                className={cn(
+                  'absolute h-6 w-6 border border-white',
+                  index === 0 && 'left-0 top-0',
+                  index === 1 && 'bottom-0 right-0'
+                )}
+              >
+                <AvatarImage
+                  src={getImageUrl(
+                    Collections.User,
+                    participant.id,
+                    participant.avatar
+                  )}
+                />
+                <AvatarFallback>
+                  <UserIcon className="h-3 w-3" />
+                </AvatarFallback>
+              </Avatar>
+            ))}
+            {otherParticipants.length > 2 && (
+              <div className="bg-primary absolute bottom-0 right-0 flex h-3 w-3 items-center justify-center rounded-full text-[8px] text-white">
+                +{otherParticipants.length - 2}
+              </div>
             )}
-          />
-          <AvatarFallback className={'text-sm'}>
-            <UserIcon />
-          </AvatarFallback>
-        </Avatar>
+          </div>
+        ) : (
+          <Avatar className={'h-8 w-8'}>
+            <AvatarImage
+              src={getImageUrl(
+                Collections.User,
+                otherParticipant?.id,
+                otherParticipant?.avatar
+              )}
+            />
+            <AvatarFallback className={'text-sm'}>
+              <UserIcon />
+            </AvatarFallback>
+          </Avatar>
+        )}
         <div className="flex w-full flex-col overflow-hidden">
           <div className="flex min-w-0">
             <span
@@ -68,7 +113,9 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                 hasNewMessage && 'font-bold'
               )}
             >
-              {otherParticipant?.name}
+              {isGroupChat
+                ? chat.name || `Nhóm (${otherParticipants.length} người)`
+                : otherParticipant?.name}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm text-gray-500">
@@ -78,10 +125,12 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                 hasNewMessage && 'font-bold'
               )}
             >
-              {chat?.expand?.lastMessage?.content}
+              {chat?.expand?.lastMessage?.content || (
+                <span className="text-gray-400">Chưa có tin nhắn</span>
+              )}
             </span>
             <span className="text-xs">
-              {chat?.expand?.lastMessage && (
+              {chat?.expand?.lastMessage ? (
                 <span className="text-xs text-gray-500">
                   {new Date(chat.expand.lastMessage.created).toLocaleTimeString(
                     [],
@@ -90,6 +139,13 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                       minute: '2-digit'
                     }
                   )}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">
+                  {new Date(chat.updated).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                 </span>
               )}
             </span>

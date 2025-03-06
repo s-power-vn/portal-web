@@ -282,7 +282,7 @@ export type MsgChannelRecord = {
 	description?: string
 	id: string
 	name?: string
-	team?: RecordIdString
+	team: RecordIdString
 	type?: MsgChannelTypeOptions
 	updated?: IsoDateString
 }
@@ -295,8 +295,10 @@ export enum MsgChatTypeOptions {
 export type MsgChatRecord<TpinnedMessages = unknown> = {
 	channel?: RecordIdString
 	created?: IsoDateString
+	hash: string
 	id: string
 	lastMessage?: RecordIdString
+	name?: string
 	participants?: RecordIdString[]
 	pinnedMessages?: null | TpinnedMessages
 	team?: RecordIdString
@@ -310,14 +312,14 @@ export enum MsgMessageTypeOptions {
 	"Sticker" = "Sticker",
 }
 export type MsgMessageRecord<Tmetadata = unknown> = {
-	chat?: RecordIdString
+	chat: RecordIdString
 	content?: string
 	created?: IsoDateString
 	file?: string
 	id: string
 	metadata?: null | Tmetadata
 	replyTo?: RecordIdString
-	sender?: RecordIdString
+	sender: RecordIdString
 	type?: MsgMessageTypeOptions
 	updated?: IsoDateString
 }
@@ -332,13 +334,13 @@ export type MsgReactionRecord = {
 }
 
 export type MsgSettingRecord = {
-	chat?: RecordIdString
+	chat: RecordIdString
 	created?: IsoDateString
 	id: string
 	lastRead?: IsoDateString
 	mute?: boolean
 	updated?: IsoDateString
-	user?: RecordIdString
+	user: RecordIdString
 }
 
 export type MsgTeamRecord = {

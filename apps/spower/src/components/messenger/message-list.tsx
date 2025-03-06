@@ -3,20 +3,18 @@ import { Loader } from 'lucide-react';
 import { MsgMessage, api, subscribeMessages } from 'portal-api';
 import { getUser } from 'portal-core';
 
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 
 import { useInvalidateQueries } from '../../hooks';
 import { MessageListItem } from './message-list-item';
 import { Skeleton } from './skeleton';
-import { scrollToBottomSignal } from './utils';
+import { scrollToBottomSignal, selectedChatIdSignal } from './utils';
 
-export type MessageListProps = {
-  chatId: string;
-};
+export type MessageListProps = {};
 
-export const MessageList: FC<MessageListProps> = ({ chatId }) => {
+export const MessageList: FC<MessageListProps> = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
   const prevHeightRef = useRef<number>(0);
@@ -24,11 +22,12 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   const currentUser = getUser();
   const invalidates = useInvalidateQueries();
   const perPage = 20;
+  const [hasEnoughContent, setHasEnoughContent] = useState(false);
 
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
 
   const { data: chat } = api.chat.getChat.useSuspenseQuery({
-    variables: chatId
+    variables: selectedChatIdSignal.value
   });
 
   const scrollToBottom = useCallback(() => {
@@ -127,6 +126,29 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
     }
   }, [allMessages, isFetchingNextPage, scrollToBottom]);
 
+  // Check if content is enough to scroll
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const checkContentHeight = () => {
+      setHasEnoughContent(container.scrollHeight > container.clientHeight);
+    };
+
+    checkContentHeight();
+
+    // Create a ResizeObserver to detect changes in the container's size
+    const resizeObserver = new ResizeObserver(() => {
+      checkContentHeight();
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [allMessages]);
+
   useEffect(() => {
     if (!chat) return;
 
@@ -163,10 +185,12 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   useEffect(() => {
     let unsubscribe: () => void;
 
-    subscribeMessages(chatId, value => {
-      const chatId = value.record.chat;
-      if (chatId === chat?.id) {
-        markChatAsRead.mutate(chatId);
+    if (!selectedChatIdSignal.value) return;
+
+    subscribeMessages(selectedChatIdSignal.value, value => {
+      const currentChatId = value.record.chat;
+      if (currentChatId === selectedChatIdSignal.value) {
+        markChatAsRead.mutate(selectedChatIdSignal.value);
       }
     }).then(unsub => {
       unsubscribe = unsub;
@@ -177,7 +201,7 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
         unsubscribe();
       }
     };
-  }, [chatId]);
+  }, [selectedChatIdSignal.value]);
 
   useEffect(() => {
     isInitialLoadRef.current = true;
@@ -202,7 +226,10 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 h-full overflow-y-auto pr-4"
+      className={cn(
+        'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 h-full overflow-y-auto py-2 pr-4',
+        !hasEnoughContent && 'flex flex-col'
+      )}
       onScroll={handleScroll}
     >
       {isFetchingNextPage && (
@@ -224,7 +251,7 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
           </p>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className={cn('space-y-1', !hasEnoughContent && 'mt-auto')}>
           {allMessages.map((message, index) => {
             const previousMessage =
               index > 0 ? allMessages[index - 1] : undefined;
