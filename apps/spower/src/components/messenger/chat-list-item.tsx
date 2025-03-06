@@ -1,8 +1,8 @@
 import { User as UserIcon } from 'lucide-react';
 import { MsgChat, api } from 'portal-api';
-import { Collections, getImageUrl, getUser } from 'portal-core';
+import { Collections, UserResponse, getImageUrl, getUser } from 'portal-core';
 
-import { FC, useMemo } from 'react';
+import { FC, memo, useMemo } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
@@ -11,10 +11,10 @@ export type ChatListItemProps = {
   chatId: string;
   isSelected: boolean;
   onClick: () => void;
-  getOtherParticipant: (chat?: MsgChat) => any;
+  getOtherParticipant: (chat?: MsgChat) => UserResponse | undefined;
 };
 
-export const ChatListItem: FC<ChatListItemProps> = ({
+export const ChatListItemComponent: FC<ChatListItemProps> = ({
   chatId,
   isSelected,
   onClick,
@@ -28,7 +28,8 @@ export const ChatListItem: FC<ChatListItemProps> = ({
 
   const unreadCount = api.chat.getUnreadCount.useSuspenseQuery({
     variables: {
-      userId: user?.id
+      userId: user?.id,
+      chatId
     }
   });
 
@@ -51,8 +52,8 @@ export const ChatListItem: FC<ChatListItemProps> = ({
           <AvatarImage
             src={getImageUrl(
               Collections.User,
-              otherParticipant.id,
-              otherParticipant.avatar
+              otherParticipant?.id,
+              otherParticipant?.avatar
             )}
           />
           <AvatarFallback className={'text-sm'}>
@@ -67,7 +68,7 @@ export const ChatListItem: FC<ChatListItemProps> = ({
                 hasNewMessage && 'font-bold'
               )}
             >
-              {otherParticipant.name}
+              {otherParticipant?.name}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm text-gray-500">
@@ -98,3 +99,13 @@ export const ChatListItem: FC<ChatListItemProps> = ({
     </div>
   );
 };
+
+export const ChatListItem = memo(
+  ChatListItemComponent,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.chatId === nextProps.chatId &&
+      prevProps.isSelected === nextProps.isSelected
+    );
+  }
+);

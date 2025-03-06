@@ -1,16 +1,15 @@
 import { PlusCircle, Send } from 'lucide-react';
-import { MsgChat, api, subscribeChats, subscribeMessages } from 'portal-api';
+import { MsgChat, api } from 'portal-api';
 import {
   MsgChatTypeOptions,
   MsgMessageTypeOptions,
   getUser
 } from 'portal-core';
 
-import { FC, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, Suspense, useCallback, useRef, useState } from 'react';
 
 import { Button, Textarea, showModal } from '@minhdtb/storeo-theme';
 
-import { useInvalidateQueries } from '../../hooks';
 import { ChatHeader } from './chat-header';
 import { ChatList } from './chat-list';
 import { NewChatForm } from './form/new-chat-form';
@@ -21,30 +20,33 @@ import { triggerScrollToBottom } from './utils';
 export const PrivateChat: FC = () => {
   const currentUser = getUser();
   const currentUserId = currentUser?.id || '';
-  const invalidates = useInvalidateQueries();
 
-  const [selectedChat, setSelectedChat] = useState<MsgChat>();
+  const [selectedChatId, setSelectedChatId] = useState<string>();
   const [newMessage, setNewMessage] = useState('');
   const lastKeypressTime = useRef<number>(0);
+  const lastSelectedChatIdRef = useRef<string | undefined>();
 
   const createChat = api.chat.createChat.useMutation();
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
   const sendMessage = api.chat.sendMessage.useMutation();
 
   const handleSelectChat = useCallback(
-    (chat: MsgChat) => {
-      setSelectedChat(chat);
-      markChatAsRead.mutate(chat.id);
+    (chatId: string) => {
+      if (chatId !== lastSelectedChatIdRef.current) {
+        setSelectedChatId(chatId);
+        markChatAsRead.mutate(chatId);
+        lastSelectedChatIdRef.current = chatId;
+      }
     },
     [markChatAsRead]
   );
 
   const handleSendMessage = useCallback(() => {
-    if (!newMessage.trim() || !selectedChat) return;
+    if (!newMessage.trim() || !selectedChatId) return;
 
     sendMessage.mutate(
       {
-        chatId: selectedChat.id,
+        chatId: selectedChatId,
         content: newMessage,
         type: MsgMessageTypeOptions.Text
       },
@@ -55,7 +57,7 @@ export const PrivateChat: FC = () => {
         }
       }
     );
-  }, [newMessage, selectedChat, sendMessage]);
+  }, [newMessage, selectedChatId, sendMessage]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -86,7 +88,7 @@ export const PrivateChat: FC = () => {
               participants: values?.users ?? []
             });
 
-            handleSelectChat(result);
+            handleSelectChat(result.id);
             close();
           }}
           onCancel={close}
@@ -96,51 +98,13 @@ export const PrivateChat: FC = () => {
   }, [createChat, handleSelectChat]);
 
   const getOtherParticipant = useCallback(
-    (chat: MsgChat) => {
-      if (!chat.expand?.participants) return null;
+    (chat?: MsgChat) => {
+      if (!chat?.expand?.participants) return undefined;
 
       return chat.expand.participants.find((p: any) => p.id !== currentUserId);
     },
     [currentUserId]
   );
-
-  useEffect(() => {
-    if (!selectedChat) return;
-
-    let unsubscribe: () => void;
-
-    subscribeMessages(selectedChat.id, () => {
-      markChatAsRead.mutate(selectedChat.id);
-    }).then(unsub => {
-      unsubscribe = unsub;
-    });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [selectedChat, markChatAsRead]);
-
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    let unsubscribe: () => void;
-
-    subscribeChats(currentUserId, () => {
-      invalidates([
-        api.chat.listPrivateChats.getKey({ userId: currentUserId })
-      ]);
-    }).then(unsub => {
-      unsubscribe = unsub;
-    });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [currentUserId, invalidates]);
 
   return (
     <div className="flex h-full w-full overflow-hidden">
@@ -168,8 +132,8 @@ export const PrivateChat: FC = () => {
           >
             <ChatList
               userId={currentUserId}
-              selectedChat={selectedChat}
-              setSelectedChat={handleSelectChat}
+              selectedChatId={selectedChatId}
+              setSelectedChatId={handleSelectChat}
               onNewChat={handleNewChat}
               getOtherParticipant={getOtherParticipant}
             />
@@ -177,11 +141,11 @@ export const PrivateChat: FC = () => {
         </div>
       </div>
       <div className="flex h-full w-3/4 flex-col overflow-hidden">
-        {selectedChat ? (
+        {selectedChatId ? (
           <>
             <div className="flex-none">
               <ChatHeader
-                chat={selectedChat}
+                chatId={selectedChatId}
                 getOtherParticipant={getOtherParticipant}
               />
             </div>
@@ -195,7 +159,7 @@ export const PrivateChat: FC = () => {
                   </div>
                 }
               >
-                <MessageList chat={selectedChat} />
+                <MessageList chatId={selectedChatId} />
               </Suspense>
             </div>
             <div className="flex-none border-t bg-white p-3">

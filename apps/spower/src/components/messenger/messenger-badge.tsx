@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import { Loader } from 'lucide-react';
 import { api, subscribeChats, subscribeSettings } from 'portal-api';
 import { cn, getUser } from 'portal-core';
 
-import { FC, Suspense, useEffect } from 'react';
+import { FC, Suspense, useCallback, useEffect } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Badge } from '@minhdtb/storeo-theme';
@@ -23,13 +24,20 @@ const BadgeComponent: FC<MessageBadgeProps> = ({ className }) => {
     }
   });
 
+  const debouncedInvalidate = useCallback(
+    _.debounce((userId: string) => {
+      invalidates([api.chat.getUnreadCount.getKey({ userId })]);
+    }, 200),
+    [invalidates]
+  );
+
   useEffect(() => {
     if (!user?.id) return;
 
     let unsubscribe: () => void;
 
-    subscribeChats(user.id, () => {
-      invalidates([api.chat.getUnreadCount.getKey({ userId: user.id })]);
+    subscribeChats(user.id, value => {
+      debouncedInvalidate(user.id);
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -38,8 +46,9 @@ const BadgeComponent: FC<MessageBadgeProps> = ({ className }) => {
       if (unsubscribe) {
         unsubscribe();
       }
+      debouncedInvalidate.cancel();
     };
-  }, [user?.id, invalidates]);
+  }, [user?.id, debouncedInvalidate]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -47,8 +56,7 @@ const BadgeComponent: FC<MessageBadgeProps> = ({ className }) => {
     let unsubscribe: () => void;
 
     subscribeSettings(user.id, () => {
-      console.log('subscribeSettings');
-      invalidates([api.chat.getUnreadCount.getKey({ userId: user.id })]);
+      debouncedInvalidate(user.id);
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -57,8 +65,9 @@ const BadgeComponent: FC<MessageBadgeProps> = ({ className }) => {
       if (unsubscribe) {
         unsubscribe();
       }
+      debouncedInvalidate.cancel();
     };
-  }, [user?.id, invalidates]);
+  }, [user?.id, debouncedInvalidate]);
 
   return (
     <Show fallback="" when={unreadCount.data && unreadCount.data > 0}>

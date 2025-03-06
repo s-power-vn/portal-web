@@ -1,20 +1,24 @@
 import { User as UserIcon } from 'lucide-react';
-import { MsgChat } from 'portal-api';
-import { Collections, getImageUrl } from 'portal-core';
+import { MsgChat, api } from 'portal-api';
+import { Collections, UserResponse, getImageUrl } from 'portal-core';
 
 import { FC } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
 export type ChatHeaderProps = {
-  chat: MsgChat;
-  getOtherParticipant: (chat: MsgChat) => any;
+  chatId: string;
+  getOtherParticipant: (chat?: MsgChat) => UserResponse | undefined;
 };
 
 export const ChatHeader: FC<ChatHeaderProps> = ({
-  chat,
+  chatId,
   getOtherParticipant
 }) => {
+  const { data: chat } = api.chat.getChat.useSuspenseQuery({
+    variables: chatId
+  });
+
   const otherParticipant = getOtherParticipant(chat);
 
   return (
@@ -23,8 +27,8 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
         <AvatarImage
           src={getImageUrl(
             Collections.User,
-            otherParticipant.id,
-            otherParticipant.avatar
+            otherParticipant?.id,
+            otherParticipant?.avatar
           )}
         />
         <AvatarFallback>
@@ -32,7 +36,9 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
         </AvatarFallback>
       </Avatar>
       <div>
-        <h3 className="text-sm font-medium">{otherParticipant.name}</h3>
+        <h3 className="text-sm font-medium">
+          {otherParticipant?.name || 'Tên không xác định'}
+        </h3>
       </div>
     </div>
   );

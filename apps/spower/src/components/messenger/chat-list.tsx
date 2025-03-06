@@ -1,27 +1,32 @@
 import { PlusCircle } from 'lucide-react';
-import { MsgChat, api } from 'portal-api';
+import { MsgChat, api, subscribeChats } from 'portal-api';
+import { UserResponse, getUser } from 'portal-core';
 
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { Button } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../hooks';
 import { ChatListItem } from './chat-list-item';
 
 export type ChatListProps = {
   userId: string;
-  selectedChat: MsgChat | undefined;
-  setSelectedChat: (chat: MsgChat) => void;
+  selectedChatId: string | undefined;
+  setSelectedChatId: (chatId: string) => void;
   onNewChat: () => void;
-  getOtherParticipant: (chat: any) => any;
+  getOtherParticipant: (chat?: MsgChat) => UserResponse | undefined;
 };
 
 export const ChatList: FC<ChatListProps> = ({
   userId,
-  selectedChat,
-  setSelectedChat,
+  selectedChatId,
+  setSelectedChatId,
   onNewChat,
   getOtherParticipant
 }) => {
+  const user = getUser();
+  const invalidates = useInvalidateQueries();
+
   const { data: chatsData } = api.chat.listPrivateChats.useSuspenseQuery({
     variables: {
       userId
@@ -43,14 +48,35 @@ export const ChatList: FC<ChatListProps> = ({
     });
   }, [chatsData]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    let unsubscribe: () => void;
+
+    subscribeChats(user.id, value => {
+      invalidates([api.chat.getChat.getKey(value.record.id)]);
+      if (allChats.find(chat => chat.id === value.record.id) === undefined) {
+        invalidates([api.chat.listPrivateChats.getKey({ userId: user.id })]);
+      }
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user?.id, invalidates]);
+
   return (
     <div className="h-full overflow-y-auto">
       {allChats.map(chat => (
         <ChatListItem
           key={chat.id}
           chatId={chat.id}
-          isSelected={selectedChat?.id === chat.id}
-          onClick={() => setSelectedChat(chat)}
+          isSelected={selectedChatId === chat.id}
+          onClick={() => setSelectedChatId(chat.id)}
           getOtherParticipant={getOtherParticipant}
         />
       ))}

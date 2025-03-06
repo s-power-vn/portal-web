@@ -403,13 +403,19 @@ export const chatApi = router('chat', {
       try {
         const settings = await client
           .collection<MsgSetting>(Collections.MsgSetting)
-          .getFirstListItem(`user = "${currentUser}" && chat = "${chatId}"`);
-
-        return client
-          .collection<MsgSetting>(Collections.MsgSetting)
-          .update(settings.id, {
-            lastRead: now
+          .getFirstListItem(`user = "${currentUser}" && chat = "${chatId}"`, {
+            requestKey: null
           });
+
+        return client.collection<MsgSetting>(Collections.MsgSetting).update(
+          settings.id,
+          {
+            lastRead: now
+          },
+          {
+            requestKey: null
+          }
+        );
       } catch (error) {
         return client.collection<MsgSetting>(Collections.MsgSetting).create({
           user: currentUser,
@@ -422,13 +428,23 @@ export const chatApi = router('chat', {
   }),
 
   getUnreadCount: router.query({
-    fetcher: async (params: { userId?: string }) => {
+    fetcher: async (params: { userId?: string; chatId?: string }) => {
       if (params.userId) {
-        const unread = await client
-          .collection<MsgUnreadResponse<number>>(Collections.MsgUnread)
-          .getFirstListItem(`userId = "${params.userId}"`);
+        try {
+          let filter = `userId = "${params.userId}"`;
+          if (params.chatId) filter += ` && chatId = "${params.chatId}"`;
 
-        return unread?.unreadCount;
+          const unread = await client
+            .collection<MsgUnreadResponse<number>>(Collections.MsgUnread)
+            .getFullList({
+              filter,
+              requestKey: null
+            });
+
+          return unread.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
+        } catch (error) {
+          return 0;
+        }
       }
 
       return 0;
@@ -436,7 +452,10 @@ export const chatApi = router('chat', {
   })
 });
 
-export const subscribeMessages = (chatId: string, callback: () => void) => {
+export const subscribeMessages = (
+  chatId: string,
+  callback: (value: RecordSubscription<MsgMessage>) => void
+) => {
   return client
     .collection<MsgMessage>(Collections.MsgMessage)
     .subscribe(`*`, callback, {
@@ -467,7 +486,10 @@ export const subscribeToTeam = (teamId: string, callback: () => void) => {
     .subscribe(`id="${teamId}"`, callback);
 };
 
-export const subscribeSettings = (userId: string, callback: () => void) => {
+export const subscribeSettings = (
+  userId: string,
+  callback: (value: RecordSubscription<MsgSetting>) => void
+) => {
   return client
     .collection<MsgSetting>(Collections.MsgSetting)
     .subscribe(`*`, callback, {

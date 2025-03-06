@@ -1,9 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
-import { MsgChat, api, subscribeMessages } from 'portal-api';
+import { MsgMessage, api, subscribeMessages } from 'portal-api';
 import { getUser } from 'portal-core';
 
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+
+import { cn } from '@minhdtb/storeo-core';
 
 import { useInvalidateQueries } from '../../hooks';
 import { MessageListItem } from './message-list-item';
@@ -11,10 +13,10 @@ import { Skeleton } from './skeleton';
 import { scrollToBottomSignal } from './utils';
 
 export type MessageListProps = {
-  chat?: MsgChat;
+  chatId: string;
 };
 
-export const MessageList: FC<MessageListProps> = ({ chat }) => {
+export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
   const prevHeightRef = useRef<number>(0);
@@ -22,6 +24,12 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
   const currentUser = getUser();
   const invalidates = useInvalidateQueries();
   const perPage = 20;
+
+  const markChatAsRead = api.chat.markChatAsRead.useMutation();
+
+  const { data: chat } = api.chat.getChat.useSuspenseQuery({
+    variables: chatId
+  });
 
   const scrollToBottom = useCallback(() => {
     const container = messagesContainerRef.current;
@@ -38,25 +46,20 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
     scrollToBottom();
   }, [scrollToBottomSignal.value, scrollToBottom]);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch: refetchMessages
-  } = useInfiniteQuery({
-    queryKey: api.chat.listMessages.getKey({ chatId: chat?.id || '' }),
-    queryFn: ({ pageParam = 1 }) =>
-      api.chat.listMessages.fetcher({
-        chatId: chat?.id || '',
-        page: pageParam,
-        perPage
-      }),
-    getNextPageParam: lastPage =>
-      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
-    initialPageParam: 1,
-    enabled: !!chat?.id
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: api.chat.listMessages.getKey({ chatId: chat?.id || '' }),
+      queryFn: ({ pageParam = 1 }) =>
+        api.chat.listMessages.fetcher({
+          chatId: chat?.id || '',
+          page: pageParam,
+          perPage
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1,
+      enabled: !!chat?.id
+    });
 
   const allMessages = useMemo(
     () => data?.pages.flatMap(page => page.items).reverse() ?? [],
@@ -158,10 +161,41 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
   }, [chat, invalidates, scrollToBottom]);
 
   useEffect(() => {
+    let unsubscribe: () => void;
+
+    subscribeMessages(chatId, value => {
+      const chatId = value.record.chat;
+      if (chatId === chat?.id) {
+        markChatAsRead.mutate(chatId);
+      }
+    }).then(unsub => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [chatId]);
+
+  useEffect(() => {
     isInitialLoadRef.current = true;
     scrollPositionRef.current = 0;
     prevHeightRef.current = 0;
   }, [chat?.id]);
+
+  const shouldGroupMessages = (current: MsgMessage, previous?: MsgMessage) => {
+    if (!previous) return false;
+    if (previous.sender !== current.sender) return false;
+
+    const currentTime = new Date(current.created);
+    const previousTime = new Date(previous.created);
+    const diffInMinutes =
+      (currentTime.getTime() - previousTime.getTime()) / (1000 * 60);
+
+    return diffInMinutes <= 1;
+  };
 
   if (!chat) return null;
 
@@ -177,22 +211,42 @@ export const MessageList: FC<MessageListProps> = ({ chat }) => {
         </div>
       )}
 
-      {allMessages.length === 0 ? (
+      {isFetching && !isFetchingNextPage && allMessages.length === 0 ? (
         <div className="space-y-3">
           <Skeleton className="h-16 w-3/4" />
           <Skeleton className="ml-auto h-16 w-3/4" />
           <Skeleton className="h-16 w-3/4" />
         </div>
+      ) : allMessages.length === 0 ? (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-muted-foreground text-center">
+            Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
+          </p>
+        </div>
       ) : (
-        <>
-          {allMessages.map(message => (
-            <MessageListItem
-              key={message.id}
-              message={message}
-              isCurrentUser={message.sender === currentUser?.id}
-            />
-          ))}
-        </>
+        <div className="space-y-1">
+          {allMessages.map((message, index) => {
+            const previousMessage =
+              index > 0 ? allMessages[index - 1] : undefined;
+            const isGrouped = shouldGroupMessages(message, previousMessage);
+
+            return (
+              <div
+                key={message.id}
+                className={cn(
+                  isGrouped ? 'mt-0.5' : 'mt-2',
+                  index === 0 && 'mt-0'
+                )}
+              >
+                <MessageListItem
+                  message={message}
+                  isCurrentUser={message.sender === currentUser?.id}
+                  previousMessage={previousMessage}
+                />
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
