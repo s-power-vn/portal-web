@@ -1,4 +1,4 @@
-import { Edit2, User as UserIcon } from 'lucide-react';
+import { Edit2, User as UserIcon, Users } from 'lucide-react';
 import { api } from 'portal-api';
 import { Collections, getImageUrl, getUser } from 'portal-core';
 
@@ -10,6 +10,10 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Input,
   Tooltip,
   TooltipContent,
@@ -169,12 +173,50 @@ export const ChatHeader: FC<ChatHeaderProps> = () => {
                 </>
               )}
             </div>
-            <p
-              className="max-w-[200px] truncate text-xs text-gray-500"
-              title={participantNames}
-            >
-              {participantNames}
-            </p>
+            <div className="flex items-center gap-1">
+              <p
+                className="max-w-[160px] truncate text-xs text-gray-500"
+                title={participantNames}
+              >
+                {participantNames}
+              </p>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <div
+                    className="ring-offset-background hover:bg-muted hover:text-muted-foreground focus-visible:ring-ring inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    title="Xem danh sách thành viên"
+                  >
+                    <Users className="h-3 w-3" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="max-h-[300px] overflow-y-auto"
+                  side="bottom"
+                  align="start"
+                  sideOffset={2}
+                >
+                  {otherParticipants.map(participant => (
+                    <DropdownMenuItem key={participant.id} className="py-2">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage
+                            src={getImageUrl(
+                              Collections.User,
+                              participant.id,
+                              participant.avatar
+                            )}
+                          />
+                          <AvatarFallback>
+                            <UserIcon className="h-3 w-3" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm">{participant.name}</span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </>
       ) : (
