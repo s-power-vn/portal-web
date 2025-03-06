@@ -9,13 +9,12 @@ import type { RequestData, RequestDetailData } from './domain/request';
 import { requestApi, requestDetailApi } from './domain/request';
 import { userApi } from './domain/user';
 import {
-  ChatChannel,
-  ChatChannelWithTeam,
-  ChatMessage,
-  ChatMessageWithSender,
-  ChatRoom,
-  ChatRoomWithDetails,
-  ChatTeam,
+  MsgChannel,
+  MsgChat,
+  MsgMessage,
+  MsgReaction,
+  MsgSetting,
+  MsgTeam,
   chatApi
 } from './messenger/chat';
 import { customerApi } from './setting/general/customer';
@@ -51,15 +50,14 @@ export const api = {
 };
 
 export type {
-  ChatChannel,
-  ChatChannelWithTeam,
-  ChatMessage,
-  ChatMessageWithSender,
-  ChatRoom,
-  ChatRoomWithDetails,
-  ChatTeam,
   DepartmentData,
   IssueData,
+  MsgChannel,
+  MsgChat,
+  MsgMessage,
+  MsgReaction,
+  MsgSetting,
+  MsgTeam,
   ObjectData,
   ProcessDbData,
   ProjectData,
