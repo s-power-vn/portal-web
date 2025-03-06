@@ -4,6 +4,8 @@ import { FC, useCallback } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 
+import { formatMessageTime } from './utils';
+
 export type MessageListItemProps = {
   message: MsgMessage;
   isCurrentUser: boolean;
@@ -42,34 +44,8 @@ export const MessageListItem: FC<MessageListItemProps> = ({
     return diffInMinutes <= 1;
   }, [message.created, message.sender, previousMessage]);
 
-  const formatMessageTime = useCallback((date: Date) => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const messageDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-    const timeString = date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    if (messageDate.getTime() === today.getTime()) {
-      return timeString;
-    } else if (messageDate.getTime() === yesterday.getTime()) {
-      return `Hôm qua ${timeString}`;
-    } else {
-      return `${date.getDate()}/${date.getMonth() + 1} ${timeString}`;
-    }
-  }, []);
-
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col text-sm">
       {shouldShowTimestamp() && (
         <div
           className={cn(
@@ -77,7 +53,7 @@ export const MessageListItem: FC<MessageListItemProps> = ({
             isCurrentUser ? 'pr-1 text-right' : 'pl-1 text-left'
           )}
         >
-          {formatMessageTime(new Date(message.created))}
+          {formatMessageTime(new Date(message.created), true)}
         </div>
       )}
       <div
