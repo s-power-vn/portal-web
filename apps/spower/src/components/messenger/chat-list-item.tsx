@@ -125,10 +125,12 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                 hasNewMessage && 'font-bold'
               )}
             >
-              {chat?.expand?.lastMessage?.content}
+              {chat?.expand?.lastMessage?.content || (
+                <span className="text-gray-400">Chưa có tin nhắn</span>
+              )}
             </span>
             <span className="text-xs">
-              {chat?.expand?.lastMessage && (
+              {chat?.expand?.lastMessage ? (
                 <span className="text-xs text-gray-500">
                   {new Date(chat.expand.lastMessage.created).toLocaleTimeString(
                     [],
@@ -137,6 +139,13 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                       minute: '2-digit'
                     }
                   )}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">
+                  {new Date(chat.updated).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                 </span>
               )}
             </span>

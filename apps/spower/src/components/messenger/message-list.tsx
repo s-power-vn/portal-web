@@ -3,7 +3,7 @@ import { Loader } from 'lucide-react';
 import { MsgMessage, api, subscribeMessages } from 'portal-api';
 import { getUser } from 'portal-core';
 
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 
@@ -22,6 +22,7 @@ export const MessageList: FC<MessageListProps> = () => {
   const currentUser = getUser();
   const invalidates = useInvalidateQueries();
   const perPage = 20;
+  const [hasEnoughContent, setHasEnoughContent] = useState(false);
 
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
 
@@ -125,6 +126,29 @@ export const MessageList: FC<MessageListProps> = () => {
     }
   }, [allMessages, isFetchingNextPage, scrollToBottom]);
 
+  // Check if content is enough to scroll
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const checkContentHeight = () => {
+      setHasEnoughContent(container.scrollHeight > container.clientHeight);
+    };
+
+    checkContentHeight();
+
+    // Create a ResizeObserver to detect changes in the container's size
+    const resizeObserver = new ResizeObserver(() => {
+      checkContentHeight();
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [allMessages]);
+
   useEffect(() => {
     if (!chat) return;
 
@@ -202,7 +226,10 @@ export const MessageList: FC<MessageListProps> = () => {
   return (
     <div
       ref={messagesContainerRef}
-      className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 h-full overflow-y-auto pr-4"
+      className={cn(
+        'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 h-full overflow-y-auto py-2 pr-4',
+        !hasEnoughContent && 'flex flex-col'
+      )}
       onScroll={handleScroll}
     >
       {isFetchingNextPage && (
@@ -224,7 +251,7 @@ export const MessageList: FC<MessageListProps> = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className={cn('space-y-1', !hasEnoughContent && 'mt-auto')}>
           {allMessages.map((message, index) => {
             const previousMessage =
               index > 0 ? allMessages[index - 1] : undefined;

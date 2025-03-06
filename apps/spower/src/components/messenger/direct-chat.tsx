@@ -132,7 +132,7 @@ export const DirectChat: FC = () => {
             <div className="flex-none">
               <ChatHeader />
             </div>
-            <div className="flex-1 overflow-y-auto bg-gray-50 pl-4 pr-0">
+            <div className="flex flex-1 flex-col justify-end overflow-y-auto bg-gray-50 pl-4 pr-0">
               <Suspense
                 fallback={
                   <div className="space-y-3 p-4">
