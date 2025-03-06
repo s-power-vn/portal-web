@@ -47,7 +47,7 @@ export const IssueBadge: FC<IssueBadgeProps> = props => {
   return (
     <Suspense
       fallback={
-        <span className="mr-1">
+        <span className="text-appBlue rounded-full bg-white">
           <Loader className={'h-3 w-3 animate-spin'} />
         </span>
       }
