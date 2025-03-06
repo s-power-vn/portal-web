@@ -188,6 +188,7 @@ export const MessageList: FC<MessageListProps> = () => {
     if (!selectedChatIdSignal.value) return;
 
     subscribeMessages(selectedChatIdSignal.value, value => {
+      invalidates([api.chat.listDirectChats.getKey()]);
       const currentChatId = value.record.chat;
       if (currentChatId === selectedChatIdSignal.value) {
         markChatAsRead.mutate(selectedChatIdSignal.value);

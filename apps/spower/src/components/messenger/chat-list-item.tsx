@@ -125,7 +125,31 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                 hasNewMessage && 'font-bold'
               )}
             >
-              {chat?.expand?.lastMessage?.content || (
+              {chat?.expand?.lastMessage ? (
+                <>
+                  {chat.expand.lastMessage.expand?.sender && (
+                    <>
+                      {isGroupChat ? (
+                        <span className="font-medium text-gray-700">
+                          {chat.expand.lastMessage.expand.sender.id === user?.id
+                            ? 'Bạn: '
+                            : `${chat.expand.lastMessage.expand.sender.name}: `}
+                        </span>
+                      ) : (
+                        <>
+                          {chat.expand.lastMessage.expand.sender.id ===
+                            user?.id && (
+                            <span className="font-medium text-gray-700">
+                              Bạn:{' '}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {chat.expand.lastMessage.content}
+                </>
+              ) : (
                 <span className="text-gray-400">Chưa có tin nhắn</span>
               )}
             </span>

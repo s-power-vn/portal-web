@@ -78,7 +78,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
                 <Show when={!!badge}>
                   <div
                     className={cn(
-                      `absolute left-2 top-2 transition-opacity`,
+                      `absolute inset-0 flex items-center justify-center transition-opacity`,
                       collapsed ? `opacity-100` : 'w-0 opacity-0 '
                     )}
                   >

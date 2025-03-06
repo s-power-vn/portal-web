@@ -33,14 +33,12 @@ export const ChatList: FC<ChatListProps> = ({
   const allChats = useMemo(() => {
     const chats = chatsData?.items || [];
     return [...chats].sort((a, b) => {
-      // First, prioritize chats with messages
       const aHasMessage = !!a.expand?.lastMessage;
       const bHasMessage = !!b.expand?.lastMessage;
 
       if (aHasMessage && !bHasMessage) return -1;
       if (!aHasMessage && bHasMessage) return 1;
 
-      // Then sort by time
       const aTime = a.expand?.lastMessage?.created
         ? new Date(a.expand.lastMessage.created).getTime()
         : new Date(a.updated).getTime();
@@ -59,10 +57,10 @@ export const ChatList: FC<ChatListProps> = ({
     let unsubscribe: () => void;
 
     subscribeChats(user.id, value => {
-      invalidates([api.chat.getChat.getKey(value.record.id)]);
-      if (allChats.find(chat => chat.id === value.record.id) === undefined) {
-        invalidates([api.chat.listDirectChats.getKey({ userId: user.id })]);
-      }
+      invalidates([
+        api.chat.getChat.getKey(value.record.id),
+        api.chat.listDirectChats.getKey()
+      ]);
     }).then(unsub => {
       unsubscribe = unsub;
     });
