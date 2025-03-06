@@ -36,7 +36,8 @@ export const NewChatForm: FC<NewChatFormProps> = ({ onSuccess, onCancel }) => {
             values.users.length > 1
               ? MsgChatTypeOptions.Group
               : MsgChatTypeOptions.Private,
-          participants: values?.users ?? []
+          participants: values?.users ?? [],
+          name: values.users.length > 1 ? 'Nhóm chat' : undefined
         })
       }
       onCancel={onCancel}

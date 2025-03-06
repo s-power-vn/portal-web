@@ -295,9 +295,10 @@ export enum MsgChatTypeOptions {
 export type MsgChatRecord<TpinnedMessages = unknown> = {
 	channel?: RecordIdString
 	created?: IsoDateString
-	hash?: string
+	hash: string
 	id: string
 	lastMessage?: RecordIdString
+	name?: string
 	participants?: RecordIdString[]
 	pinnedMessages?: null | TpinnedMessages
 	team?: RecordIdString

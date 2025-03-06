@@ -17,7 +17,7 @@ import {
   triggerScrollToBottom
 } from './utils';
 
-export const PrivateChat: FC = () => {
+export const DirectChat: FC = () => {
   const currentUser = getUser();
   const currentUserId = currentUser?.id || '';
 

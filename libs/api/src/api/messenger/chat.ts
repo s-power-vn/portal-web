@@ -200,6 +200,7 @@ export const chatApi = router('chat', {
       participants: string[];
       teamId?: string;
       channelId?: string;
+      name?: string;
     }) => {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
@@ -232,6 +233,7 @@ export const chatApi = router('chat', {
         team: params.teamId || '',
         channel: params.channelId || '',
         pinnedMessages: [],
+        name: params.name || '',
         hash
       };
 
@@ -239,19 +241,14 @@ export const chatApi = router('chat', {
     }
   }),
 
-  updateChat: router.mutation({
-    mutationFn: (data: {
-      id: string;
-      participants?: string[];
-      pinnedMessages?: string[];
-    }) => {
+  updateChatName: router.mutation({
+    mutationFn: (params: { id: string; name: string }) => {
       const updateData: Record<string, any> = {};
-      if (data.participants) updateData.participants = data.participants;
-      if (data.pinnedMessages) updateData.pinnedMessages = data.pinnedMessages;
+      if (params.name) updateData.name = params.name;
 
       return client
         .collection<MsgChat>(Collections.MsgChat)
-        .update(data.id, updateData);
+        .update(params.id, updateData);
     }
   }),
 

@@ -114,7 +114,7 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
               )}
             >
               {isGroupChat
-                ? `Nhóm (${otherParticipants.length} người)`
+                ? chat.name || `Nhóm (${otherParticipants.length} người)`
                 : otherParticipant?.name}
             </span>
           </div>

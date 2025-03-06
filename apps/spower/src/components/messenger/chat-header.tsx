@@ -1,18 +1,21 @@
-import { User as UserIcon } from 'lucide-react';
+import { Edit2, User as UserIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { Collections, getImageUrl, getUser } from 'portal-core';
 
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Button,
+  Input,
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
+  success
 } from '@minhdtb/storeo-theme';
 
 import {
@@ -27,10 +30,33 @@ export type ChatHeaderProps = {};
 
 export const ChatHeader: FC<ChatHeaderProps> = () => {
   const currentUser = getUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [chatName, setChatName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: chat } = api.chat.getChat.useSuspenseQuery({
     variables: selectedChatIdSignal.value
   });
+
+  const updateChatName = api.chat.updateChatName.useMutation({
+    onSuccess: () => {
+      success('Cập nhật tên nhóm chat thành công');
+      setIsEditing(false);
+    }
+  });
+
+  useEffect(() => {
+    if (chat) {
+      setChatName(chat.name || 'Nhóm chat');
+    }
+  }, [chat]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
 
   const isGroupChat = useMemo(() => {
     return isGroupChatType(chat);
@@ -51,6 +77,18 @@ export const ChatHeader: FC<ChatHeaderProps> = () => {
   const participantNames = useMemo(() => {
     return getParticipantNames(otherParticipants);
   }, [otherParticipants]);
+
+  const handleSaveChatName = () => {
+    if (chat && chatName.trim() !== '' && chatName.trim() !== chat.name) {
+      updateChatName.mutate({
+        id: chat.id,
+        name: chatName.trim()
+      });
+    } else {
+      setIsEditing(false);
+      setChatName(chat.name);
+    }
+  };
 
   return (
     <div className="flex items-center border-b p-3">
@@ -100,7 +138,37 @@ export const ChatHeader: FC<ChatHeaderProps> = () => {
             )}
           </div>
           <div>
-            <h3 className="text-sm font-medium">Nhóm chat</h3>
+            <div className="flex items-center gap-1">
+              {isEditing ? (
+                <Input
+                  ref={inputRef}
+                  value={chatName}
+                  onChange={e => setChatName(e.target.value)}
+                  onBlur={handleSaveChatName}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      handleSaveChatName();
+                    } else if (e.key === 'Escape') {
+                      setIsEditing(false);
+                      setChatName(chat.name);
+                    }
+                  }}
+                  className="h-6 w-[180px] text-sm font-medium"
+                />
+              ) : (
+                <>
+                  <h3 className="text-sm font-medium">{chat.name}</h3>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit2 className="h-3 w-3" />
+                  </Button>
+                </>
+              )}
+            </div>
             <p
               className="max-w-[200px] truncate text-xs text-gray-500"
               title={participantNames}
