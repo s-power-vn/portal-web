@@ -13,7 +13,13 @@ import { useCallback } from 'react';
 import { cn } from '@minhdtb/storeo-core';
 import { Button, showModal } from '@minhdtb/storeo-theme';
 
-import { Header, Sidebar, SidebarItem, useSidebar } from '../components';
+import {
+  Header,
+  MessengerBadge,
+  Sidebar,
+  SidebarItem,
+  useSidebar
+} from '../components';
 import { IssueBadge } from '../components/domains/issue/issue-badge';
 import { NewProjectForm } from '../components/domains/project/form/new-project-form';
 import { useInvalidateQueries } from '../hooks';
@@ -79,6 +85,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           <SidebarItem
             to={'/messenger'}
             icon={<MessageSquareTextIcon width={22} height={22} />}
+            badge={<MessengerBadge />}
           ></SidebarItem>
           <SidebarItem
             to={'/project'}

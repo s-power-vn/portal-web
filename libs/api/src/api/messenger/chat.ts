@@ -1,3 +1,4 @@
+import { RecordSubscription } from 'pocketbase';
 import {
   Collections,
   MsgChannelResponse,
@@ -443,7 +444,10 @@ export const subscribeMessages = (chatId: string, callback: () => void) => {
     });
 };
 
-export const subscribeChats = (userId: string, callback: () => void) => {
+export const subscribeChats = (
+  userId: string,
+  callback: (value: RecordSubscription<MsgChat>) => void
+) => {
   return client
     .collection<MsgChat>(Collections.MsgChat)
     .subscribe(`*`, callback, {

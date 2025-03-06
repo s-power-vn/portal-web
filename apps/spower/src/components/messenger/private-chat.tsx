@@ -37,7 +37,6 @@ import {
 
 import { useInvalidateQueries } from '../../hooks';
 import { NewChatForm } from './form/new-chat-form';
-import { MessengerBadge } from './messenger-badge';
 
 const Skeleton: FC<{ className?: string }> = ({ className }) => {
   return <div className={cn('animate-pulse rounded bg-gray-200', className)} />;
@@ -104,6 +103,98 @@ const ChatHeader: FC<ChatHeaderProps> = ({ chat, getOtherParticipant }) => {
   );
 };
 
+export type ChatListItemProps = {
+  chatId: string;
+  isSelected: boolean;
+  onClick: () => void;
+  getOtherParticipant: (chat?: MsgChat) => any;
+};
+
+const ChatListItem: FC<ChatListItemProps> = ({
+  chatId,
+  isSelected,
+  onClick,
+  getOtherParticipant
+}) => {
+  const user = getUser();
+
+  const { data: chat } = api.chat.getChat.useSuspenseQuery({
+    variables: chatId
+  });
+
+  const unreadCount = api.chat.getUnreadCount.useSuspenseQuery({
+    variables: {
+      userId: user?.id
+    }
+  });
+
+  const hasNewMessage = useMemo(() => {
+    return unreadCount.data && unreadCount.data > 0;
+  }, [unreadCount]);
+
+  const otherParticipant = getOtherParticipant(chat);
+
+  return (
+    <div
+      className={cn(
+        'm-2 cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
+        isSelected && 'bg-gray-100'
+      )}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-2">
+        <Avatar className={'h-8 w-8'}>
+          <AvatarImage
+            src={getImageUrl(
+              Collections.User,
+              otherParticipant.id,
+              otherParticipant.avatar
+            )}
+          />
+          <AvatarFallback className={'text-sm'}>
+            <UserIcon />
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex min-w-0">
+            <span
+              className={cn(
+                'overflow-hidden text-ellipsis whitespace-nowrap text-sm',
+                hasNewMessage && 'font-bold'
+              )}
+            >
+              {otherParticipant.name}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            <span
+              className={cn(
+                'flex-1 overflow-hidden truncate text-xs italic',
+                hasNewMessage && 'font-bold'
+              )}
+            >
+              {chat?.expand?.lastMessage?.content}
+            </span>
+            <span className="text-xs">
+              {chat?.expand?.lastMessage && (
+                <span className="text-xs text-gray-500">
+                  {new Date(chat.expand.lastMessage.created).toLocaleTimeString(
+                    [],
+                    {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }
+                  )}
+                </span>
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export type ChatListProps = {
   userId: string;
   selectedChat: MsgChat | undefined;
@@ -123,7 +214,7 @@ export const ChatList: FC<ChatListProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const invalidates = useInvalidateQueries();
 
-  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: api.chat.listPrivateChats.getKey({ userId }),
     queryFn: ({ pageParam = 1 }) =>
       api.chat.listPrivateChats.fetcher({
@@ -146,11 +237,11 @@ export const ChatList: FC<ChatListProps> = ({
       const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
       const distanceToBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (distanceToBottom < 50 && hasNextPage && !isFetching) {
+      if (distanceToBottom < 50 && hasNextPage) {
         fetchNextPage();
       }
     },
-    [fetchNextPage, hasNextPage, isFetching]
+    [fetchNextPage, hasNextPage]
   );
 
   useEffect(() => {
@@ -158,8 +249,13 @@ export const ChatList: FC<ChatListProps> = ({
 
     let unsubscribe: () => void;
 
-    subscribeChats(userId, () => {
-      invalidates([api.chat.listPrivateChats.getKey({ userId })]);
+    subscribeChats(userId, value => {
+      if (value.action === 'create') {
+        invalidates([api.chat.listPrivateChats.getKey({ userId })]);
+      } else {
+        console.log('update', value.record.id);
+        invalidates([api.chat.getChat.getKey(value.record.id)]);
+      }
     }).then(unsub => {
       unsubscribe = unsub;
     });
@@ -182,62 +278,17 @@ export const ChatList: FC<ChatListProps> = ({
         if (!otherParticipant) return null;
 
         return (
-          <div
+          <ChatListItem
             key={chat.id}
-            className={cn(
-              'm-2 cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
-              selectedChat?.id === chat.id && 'bg-gray-100'
-            )}
+            chatId={chat.id}
+            isSelected={selectedChat?.id === chat.id}
             onClick={() => setSelectedChat(chat)}
-          >
-            <div className="relative flex items-center gap-2">
-              <MessengerBadge className="absolute right-0 top-1/2 z-50 -translate-y-1/2" />
-              <Avatar className={'h-8 w-8'}>
-                <AvatarImage
-                  src={getImageUrl(
-                    Collections.User,
-                    otherParticipant.id,
-                    otherParticipant.avatar
-                  )}
-                />
-                <AvatarFallback className={'text-sm'}>
-                  <UserIcon />
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex w-full flex-col overflow-hidden">
-                <div className="flex min-w-0">
-                  <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
-                    {otherParticipant.name}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                    {chat.expand?.lastMessage?.content}
-                  </span>
-                  <span className="text-xs">
-                    {chat.expand?.lastMessage && (
-                      <span className="text-xs text-gray-500">
-                        {new Date(
-                          chat.expand.lastMessage.created
-                        ).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+            getOtherParticipant={getOtherParticipant}
+          />
         );
       })}
-      {isFetching && (
-        <div className="flex items-center justify-center py-2">
-          <Loader className="h-4 w-4 animate-spin" />
-        </div>
-      )}
-      {allChats.length === 0 && !isFetching && (
+
+      {allChats.length === 0 && (
         <div className="flex h-40 items-center justify-center">
           <div className="text-center">
             <p className="text-sm text-gray-500">Chưa có cuộc trò chuyện nào</p>
