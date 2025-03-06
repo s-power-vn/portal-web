@@ -1,9 +1,10 @@
-import { getUser } from 'portal-core';
-import { InferType, array, object, string } from 'yup';
+import { MsgChat, api } from 'portal-api';
+import { MsgChatTypeOptions, getUser } from 'portal-core';
+import { array, object, string } from 'yup';
 
 import { FC } from 'react';
 
-import { BusinessFormProps, Form } from '@minhdtb/storeo-theme';
+import { BusinessFormProps, Form, error } from '@minhdtb/storeo-theme';
 
 import { SelectEmployeeByConditionField } from '../../domains';
 
@@ -14,15 +15,30 @@ const schema = object().shape({
     .required('Vui lòng chọn ít nhất 1 người dùng')
 });
 
-export type NewChatFormProps = BusinessFormProps<InferType<typeof schema>>;
+export type NewChatFormProps = BusinessFormProps<MsgChat>;
 
 export const NewChatForm: FC<NewChatFormProps> = ({ onSuccess, onCancel }) => {
   const currentUser = getUser();
 
+  const createChat = api.chat.createChat.useMutation({
+    onSuccess,
+    onError: () => {
+      error('Lỗi khi tạo cuộc trò chuyện');
+    }
+  });
+
   return (
     <Form
       schema={schema}
-      onSuccess={onSuccess}
+      onSuccess={values =>
+        createChat.mutate({
+          type:
+            values.users.length > 1
+              ? MsgChatTypeOptions.Group
+              : MsgChatTypeOptions.Private,
+          participants: values?.users ?? []
+        })
+      }
       onCancel={onCancel}
       onError={e => {
         console.log(e);

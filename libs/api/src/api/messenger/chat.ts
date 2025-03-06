@@ -154,12 +154,12 @@ export const chatApi = router('chat', {
     }
   }),
 
-  listPrivateChats: router.query({
+  listDirectChats: router.query({
     fetcher: (params: { userId: string; page?: number; perPage?: number }) => {
       return client
         .collection<MsgChat>(Collections.MsgChat)
         .getList(params.page || 1, params.perPage || 20, {
-          filter: `participants ?~ "${params.userId}" && type = "${MsgChatTypeOptions.Private}"`,
+          filter: `participants ?~ "${params.userId}" && (type = "${MsgChatTypeOptions.Private}" || type = "${MsgChatTypeOptions.Group}")`,
           expand: 'lastMessage,lastMessage.sender,participants',
           sort: '-updated'
         });
@@ -195,7 +195,7 @@ export const chatApi = router('chat', {
   }),
 
   createChat: router.mutation({
-    mutationFn: async (data: {
+    mutationFn: async (params: {
       type: MsgChatTypeOptions;
       participants: string[];
       teamId?: string;
@@ -204,17 +204,35 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      // Make sure current user is included
-      if (!data.participants.includes(currentUser)) {
-        data.participants.push(currentUser);
+      if (!params.participants.includes(currentUser)) {
+        params.participants.push(currentUser);
+      }
+
+      const stringParticipants = params.participants.sort().join(',');
+
+      const encoder = new TextEncoder();
+      const data = encoder.encode(stringParticipants);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const chat = await client
+        .collection<MsgChat>(Collections.MsgChat)
+        .getFullList({
+          filter: `hash = "${hash}"`
+        });
+
+      if (chat.length > 0) {
+        return chat[0];
       }
 
       const chatData: Record<string, any> = {
-        type: data.type,
-        participants: data.participants,
-        team: data.teamId || '',
-        channel: data.channelId || '',
-        pinnedMessages: []
+        type: params.type,
+        participants: params.participants,
+        team: params.teamId || '',
+        channel: params.channelId || '',
+        pinnedMessages: [],
+        hash
       };
 
       return client.collection<MsgChat>(Collections.MsgChat).create(chatData);

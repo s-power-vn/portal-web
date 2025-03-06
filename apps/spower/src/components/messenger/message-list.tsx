@@ -10,13 +10,11 @@ import { cn } from '@minhdtb/storeo-core';
 import { useInvalidateQueries } from '../../hooks';
 import { MessageListItem } from './message-list-item';
 import { Skeleton } from './skeleton';
-import { scrollToBottomSignal } from './utils';
+import { scrollToBottomSignal, selectedChatIdSignal } from './utils';
 
-export type MessageListProps = {
-  chatId: string;
-};
+export type MessageListProps = {};
 
-export const MessageList: FC<MessageListProps> = ({ chatId }) => {
+export const MessageList: FC<MessageListProps> = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
   const prevHeightRef = useRef<number>(0);
@@ -28,7 +26,7 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
 
   const { data: chat } = api.chat.getChat.useSuspenseQuery({
-    variables: chatId
+    variables: selectedChatIdSignal.value
   });
 
   const scrollToBottom = useCallback(() => {
@@ -163,10 +161,12 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
   useEffect(() => {
     let unsubscribe: () => void;
 
-    subscribeMessages(chatId, value => {
-      const chatId = value.record.chat;
-      if (chatId === chat?.id) {
-        markChatAsRead.mutate(chatId);
+    if (!selectedChatIdSignal.value) return;
+
+    subscribeMessages(selectedChatIdSignal.value, value => {
+      const currentChatId = value.record.chat;
+      if (currentChatId === selectedChatIdSignal.value) {
+        markChatAsRead.mutate(selectedChatIdSignal.value);
       }
     }).then(unsub => {
       unsubscribe = unsub;
@@ -177,7 +177,7 @@ export const MessageList: FC<MessageListProps> = ({ chatId }) => {
         unsubscribe();
       }
     };
-  }, [chatId]);
+  }, [selectedChatIdSignal.value]);
 
   useEffect(() => {
     isInitialLoadRef.current = true;

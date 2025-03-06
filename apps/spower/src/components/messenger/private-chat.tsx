@@ -1,12 +1,8 @@
 import { PlusCircle, Send } from 'lucide-react';
-import { MsgChat, api } from 'portal-api';
-import {
-  MsgChatTypeOptions,
-  MsgMessageTypeOptions,
-  getUser
-} from 'portal-core';
+import { api } from 'portal-api';
+import { MsgMessageTypeOptions, getUser } from 'portal-core';
 
-import { FC, Suspense, useCallback, useRef, useState } from 'react';
+import { FC, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button, Textarea, showModal } from '@minhdtb/storeo-theme';
 
@@ -15,38 +11,42 @@ import { ChatList } from './chat-list';
 import { NewChatForm } from './form/new-chat-form';
 import { MessageList } from './message-list';
 import { Skeleton } from './skeleton';
-import { triggerScrollToBottom } from './utils';
+import {
+  selectedChatIdSignal,
+  setSelectedChatId,
+  triggerScrollToBottom
+} from './utils';
 
 export const PrivateChat: FC = () => {
   const currentUser = getUser();
   const currentUserId = currentUser?.id || '';
 
-  const [selectedChatId, setSelectedChatId] = useState<string>();
   const [newMessage, setNewMessage] = useState('');
   const lastKeypressTime = useRef<number>(0);
-  const lastSelectedChatIdRef = useRef<string | undefined>();
 
-  const createChat = api.chat.createChat.useMutation();
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
   const sendMessage = api.chat.sendMessage.useMutation();
 
+  useEffect(() => {
+    return () => {
+      selectedChatIdSignal.value = undefined;
+    };
+  }, []);
+
   const handleSelectChat = useCallback(
     (chatId: string) => {
-      if (chatId !== lastSelectedChatIdRef.current) {
-        setSelectedChatId(chatId);
-        markChatAsRead.mutate(chatId);
-        lastSelectedChatIdRef.current = chatId;
-      }
+      setSelectedChatId(chatId);
+      markChatAsRead.mutate(chatId);
     },
     [markChatAsRead]
   );
 
   const handleSendMessage = useCallback(() => {
-    if (!newMessage.trim() || !selectedChatId) return;
+    if (!newMessage.trim() || !selectedChatIdSignal.value) return;
 
     sendMessage.mutate(
       {
-        chatId: selectedChatId,
+        chatId: selectedChatIdSignal.value,
         content: newMessage,
         type: MsgMessageTypeOptions.Text
       },
@@ -57,7 +57,7 @@ export const PrivateChat: FC = () => {
         }
       }
     );
-  }, [newMessage, selectedChatId, sendMessage]);
+  }, [newMessage, sendMessage]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -82,35 +82,23 @@ export const PrivateChat: FC = () => {
       title: 'Tạo cuộc trò chuyện mới',
       children: ({ close }) => (
         <NewChatForm
-          onSuccess={async values => {
-            const result = await createChat.mutateAsync({
-              type: MsgChatTypeOptions.Private,
-              participants: values?.users ?? []
-            });
-
-            handleSelectChat(result.id);
+          onSuccess={values => {
+            if (values) {
+              handleSelectChat(values.id);
+            }
             close();
           }}
           onCancel={close}
         />
       )
     });
-  }, [createChat, handleSelectChat]);
-
-  const getOtherParticipant = useCallback(
-    (chat?: MsgChat) => {
-      if (!chat?.expand?.participants) return undefined;
-
-      return chat.expand.participants.find((p: any) => p.id !== currentUserId);
-    },
-    [currentUserId]
-  );
+  }, [handleSelectChat]);
 
   return (
     <div className="flex h-full w-full overflow-hidden">
       <div className="flex h-full w-1/4 flex-col overflow-hidden border-r">
         <div className="flex flex-none items-center justify-between border-b p-3">
-          <h2 className="text-sm font-semibold">Tin nhắn</h2>
+          <h2 className="text-sm font-semibold">Tin nhắn trực tiếp</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -132,22 +120,17 @@ export const PrivateChat: FC = () => {
           >
             <ChatList
               userId={currentUserId}
-              selectedChatId={selectedChatId}
-              setSelectedChatId={handleSelectChat}
               onNewChat={handleNewChat}
-              getOtherParticipant={getOtherParticipant}
+              onSelectChat={handleSelectChat}
             />
           </Suspense>
         </div>
       </div>
       <div className="flex h-full w-3/4 flex-col overflow-hidden">
-        {selectedChatId ? (
+        {selectedChatIdSignal.value ? (
           <>
             <div className="flex-none">
-              <ChatHeader
-                chatId={selectedChatId}
-                getOtherParticipant={getOtherParticipant}
-              />
+              <ChatHeader />
             </div>
             <div className="flex-1 overflow-y-auto bg-gray-50 pl-4 pr-0">
               <Suspense
@@ -159,7 +142,7 @@ export const PrivateChat: FC = () => {
                   </div>
                 }
               >
-                <MessageList chatId={selectedChatId} />
+                <MessageList />
               </Suspense>
             </div>
             <div className="flex-none border-t bg-white p-3">

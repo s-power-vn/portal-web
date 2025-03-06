@@ -36,7 +36,7 @@ const BadgeComponent: FC<MessageBadgeProps> = ({ className }) => {
 
     let unsubscribe: () => void;
 
-    subscribeChats(user.id, value => {
+    subscribeChats(user.id, () => {
       debouncedInvalidate(user.id);
     }).then(unsub => {
       unsubscribe = unsub;
