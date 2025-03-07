@@ -41,10 +41,8 @@ export const NewChatForm: FC<NewChatFormProps> = ({ onSuccess, onCancel }) => {
         })
       }
       onCancel={onCancel}
-      onError={e => {
-        console.log(e);
-      }}
       className="flex flex-col gap-3"
+      loading={createChat.isPending}
     >
       <SelectEmployeeByConditionField
         schema={schema}

@@ -1,10 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, Send } from 'lucide-react';
 import { api } from 'portal-api';
 import { MsgMessageTypeOptions, getUser } from 'portal-core';
 
 import { FC, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, Textarea, showModal } from '@minhdtb/storeo-theme';
+import { Button, Textarea, error, showModal } from '@minhdtb/storeo-theme';
 
 import { ChatHeader } from './chat-header';
 import { ChatList } from './chat-list';
@@ -20,6 +21,7 @@ import {
 export const DirectChat: FC = () => {
   const currentUser = getUser();
   const currentUserId = currentUser?.id || '';
+  const queryClient = useQueryClient();
 
   const [newMessage, setNewMessage] = useState('');
   const lastKeypressTime = useRef<number>(0);
@@ -44,33 +46,88 @@ export const DirectChat: FC = () => {
   const handleSendMessage = useCallback(() => {
     if (!newMessage.trim() || !selectedChatIdSignal.value) return;
 
+    const chatId = selectedChatIdSignal.value;
+    const messageContent = newMessage;
+    const messageType = MsgMessageTypeOptions.Text;
+
+    setNewMessage('');
+
+    const optimisticMessage = {
+      id: `temp-${Date.now()}`,
+      content: messageContent,
+      type: messageType,
+      created: new Date().toISOString(),
+      sender: currentUserId,
+      chat: chatId,
+      expand: {
+        sender: currentUser
+      },
+      updated: new Date().toISOString(),
+      file: '',
+      replyTo: '',
+      metadata: null
+    };
+
+    const queryKey = api.chat.listMessages.getKey({ chatId });
+
     sendMessage.mutate(
       {
-        chatId: selectedChatIdSignal.value,
-        content: newMessage,
-        type: MsgMessageTypeOptions.Text
+        chatId,
+        content: messageContent,
+        type: messageType
       },
       {
-        onSuccess: () => {
-          setNewMessage('');
+        onMutate: async () => {
+          await queryClient.cancelQueries({ queryKey });
+
+          const previousMessages = queryClient.getQueryData(queryKey);
+
+          queryClient.setQueryData(queryKey, (old: any) => {
+            if (!old || !old.pages || !old.pages.length) return old;
+
+            const newPages = [...old.pages];
+
+            const firstPage = { ...newPages[0] };
+            firstPage.items = [optimisticMessage, ...firstPage.items];
+            newPages[0] = firstPage;
+
+            return {
+              ...old,
+              pages: newPages
+            };
+          });
+
           triggerScrollToBottom();
+
+          return { previousMessages };
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey });
+          triggerScrollToBottom();
+        },
+        onError: (
+          err: Error,
+          _: {
+            chatId: string;
+            content: string;
+            type: MsgMessageTypeOptions;
+          },
+          context: { previousMessages: any } | undefined
+        ) => {
+          if (context?.previousMessages) {
+            queryClient.setQueryData(queryKey, context.previousMessages);
+          }
+          error(`Gửi tin nhắn thất bại: ${err.message}`);
         }
-      }
+      } as any
     );
-  }, [newMessage, sendMessage]);
+  }, [newMessage, sendMessage, currentUser, currentUserId, queryClient]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         e.stopPropagation();
-
-        const now = Date.now();
-        if (now - lastKeypressTime.current < 100) {
-          return;
-        }
-        lastKeypressTime.current = now;
-
         handleSendMessage();
       }
     },
