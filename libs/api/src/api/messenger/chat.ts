@@ -5,8 +5,8 @@ import {
   MsgChannelTypeOptions,
   MsgChatResponse,
   MsgChatTypeOptions,
+  MsgMessageRecord,
   MsgMessageResponse,
-  MsgMessageTypeOptions,
   MsgReactionResponse,
   MsgSettingResponse,
   MsgTeamResponse,
@@ -265,42 +265,12 @@ export const chatApi = router('chat', {
   }),
 
   sendMessage: router.mutation({
-    mutationFn: (data: {
-      chatId: string;
-      content: string;
-      type?: MsgMessageTypeOptions;
-      file?: string;
-      replyTo?: string;
-      metadata?: Record<string, any>;
-    }) => {
-      const currentUser = client.authStore.record?.id;
-      if (!currentUser) throw new Error('User not authenticated');
-
-      client.collection<MsgChat>(Collections.MsgChat).update(data.chatId, {
-        updated: new Date().toISOString()
+    mutationFn: (data: Partial<MsgMessageRecord>) => {
+      return client.send('/send-message', {
+        method: 'POST',
+        body: data,
+        requestKey: null
       });
-
-      const messageData: Record<string, any> = {
-        chat: data.chatId,
-        sender: currentUser,
-        content: data.content,
-        type: data.type || MsgMessageTypeOptions.Text,
-        file: data.file || '',
-        replyTo: data.replyTo || '',
-        metadata: data.metadata || null
-      };
-
-      return client
-        .collection<MsgMessage>(Collections.MsgMessage)
-        .create(messageData)
-        .then(async message => {
-          await client
-            .collection<MsgChat>(Collections.MsgChat)
-            .update(data.chatId, {
-              lastMessage: message.id
-            });
-          return message;
-        });
     }
   }),
 
