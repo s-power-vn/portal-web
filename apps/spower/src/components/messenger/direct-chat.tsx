@@ -34,7 +34,7 @@ export const DirectChat: FC = () => {
         type: variables.type,
         created: new Date().toISOString(),
         sender: currentUserId,
-        chat: variables.chatId,
+        chat: variables.chat,
         expand: {
           sender: currentUser
         },
@@ -45,14 +45,12 @@ export const DirectChat: FC = () => {
       };
 
       const queryKey = api.chat.listMessages.getKey({
-        chatId: variables.chatId
+        chatId: variables.chat
       });
 
       await queryClient.cancelQueries({ queryKey });
 
       const previousMessages = queryClient.getQueryData(queryKey);
-
-      console.log('previousMessages', previousMessages);
 
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old || !old.pages || !old.pages.length) return old;
@@ -75,7 +73,7 @@ export const DirectChat: FC = () => {
     },
     onSuccess: (_, variables) => {
       const queryKey = api.chat.listMessages.getKey({
-        chatId: variables.chatId
+        chatId: variables.chat
       });
 
       queryClient.invalidateQueries({ queryKey });
@@ -84,7 +82,7 @@ export const DirectChat: FC = () => {
     onError: (err, variables, context) => {
       if (context?.previousMessages) {
         const queryKey = api.chat.listMessages.getKey({
-          chatId: variables.chatId
+          chatId: variables.chat
         });
         queryClient.setQueryData(queryKey, context.previousMessages);
       }
@@ -117,7 +115,7 @@ export const DirectChat: FC = () => {
     setNewMessage('');
 
     sendMessage.mutate({
-      chatId,
+      chat: chatId,
       content: messageContent,
       type: messageType
     });
