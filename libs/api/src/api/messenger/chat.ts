@@ -266,9 +266,15 @@ export const chatApi = router('chat', {
 
   sendMessage: router.mutation({
     mutationFn: (data: Partial<MsgMessageRecord>) => {
+      const currentUser = client.authStore.record?.id;
+      if (!currentUser) throw new Error('User not authenticated');
+
       return client.send('/send-message', {
         method: 'POST',
-        body: data,
+        body: {
+          ...data,
+          sender: currentUser
+        },
         requestKey: null
       });
     }
