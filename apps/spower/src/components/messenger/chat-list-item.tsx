@@ -8,6 +8,7 @@ import { cn } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
 import {
+  formatMessageTime,
   getFirstOtherParticipant,
   getOtherParticipants,
   isGroupChatType
@@ -156,20 +157,11 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
             <span className="text-xs">
               {chat?.expand?.lastMessage ? (
                 <span className="text-xs text-gray-500">
-                  {new Date(chat.expand.lastMessage.created).toLocaleTimeString(
-                    [],
-                    {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    }
-                  )}
+                  {formatMessageTime(new Date(chat.expand.lastMessage.created))}
                 </span>
               ) : (
                 <span className="text-xs text-gray-400">
-                  {new Date(chat.updated).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  {formatMessageTime(new Date(chat.updated))}
                 </span>
               )}
             </span>

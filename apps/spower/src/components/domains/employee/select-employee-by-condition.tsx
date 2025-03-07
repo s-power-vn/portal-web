@@ -16,8 +16,8 @@ export const SelectEmployeeByCondition: FC<
       {...props}
       value={props.value}
       onChange={props.onChange}
-      placeholder="Chọn nhân viên"
-      emptyText="Không tìm thấy nhân viên"
+      placeholder={props.placeholder ?? 'Chọn nhân viên'}
+      emptyText={props.emptyText ?? 'Không tìm thấy nhân viên'}
       queryKey={['employees', props.condition ?? '']}
       queryFn={async ({ search, page }) => {
         const filter = props.condition
