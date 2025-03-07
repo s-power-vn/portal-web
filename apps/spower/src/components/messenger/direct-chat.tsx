@@ -3,7 +3,7 @@ import { PlusCircle, Send } from 'lucide-react';
 import { api } from 'portal-api';
 import { MsgMessageTypeOptions, getUser } from 'portal-core';
 
-import { FC, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, Suspense, useCallback, useEffect, useState } from 'react';
 
 import { Button, Textarea, error, showModal } from '@minhdtb/storeo-theme';
 
@@ -24,10 +24,74 @@ export const DirectChat: FC = () => {
   const queryClient = useQueryClient();
 
   const [newMessage, setNewMessage] = useState('');
-  const lastKeypressTime = useRef<number>(0);
 
   const markChatAsRead = api.chat.markChatAsRead.useMutation();
-  const sendMessage = api.chat.sendMessage.useMutation();
+  const sendMessage = api.chat.sendMessage.useMutation({
+    onMutate: async variables => {
+      const optimisticMessage = {
+        id: `temp-${Date.now()}`,
+        content: variables.content,
+        type: variables.type,
+        created: new Date().toISOString(),
+        sender: currentUserId,
+        chat: variables.chatId,
+        expand: {
+          sender: currentUser
+        },
+        updated: new Date().toISOString(),
+        file: '',
+        replyTo: '',
+        metadata: null
+      };
+
+      const queryKey = api.chat.listMessages.getKey({
+        chatId: variables.chatId
+      });
+
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousMessages = queryClient.getQueryData(queryKey);
+
+      console.log('previousMessages', previousMessages);
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old || !old.pages || !old.pages.length) return old;
+
+        const newPages = [...old.pages];
+
+        const firstPage = { ...newPages[0] };
+        firstPage.items = [optimisticMessage, ...firstPage.items];
+        newPages[0] = firstPage;
+
+        return {
+          ...old,
+          pages: newPages
+        };
+      });
+
+      triggerScrollToBottom();
+
+      return { previousMessages };
+    },
+    onSuccess: (_, variables) => {
+      const queryKey = api.chat.listMessages.getKey({
+        chatId: variables.chatId
+      });
+
+      queryClient.invalidateQueries({ queryKey });
+      triggerScrollToBottom();
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousMessages) {
+        const queryKey = api.chat.listMessages.getKey({
+          chatId: variables.chatId
+        });
+        queryClient.setQueryData(queryKey, context.previousMessages);
+      }
+
+      error(`Gửi tin nhắn thất bại: ${err.message}`);
+    }
+  });
 
   useEffect(() => {
     return () => {
@@ -52,76 +116,12 @@ export const DirectChat: FC = () => {
 
     setNewMessage('');
 
-    const optimisticMessage = {
-      id: `temp-${Date.now()}`,
+    sendMessage.mutate({
+      chatId,
       content: messageContent,
-      type: messageType,
-      created: new Date().toISOString(),
-      sender: currentUserId,
-      chat: chatId,
-      expand: {
-        sender: currentUser
-      },
-      updated: new Date().toISOString(),
-      file: '',
-      replyTo: '',
-      metadata: null
-    };
-
-    const queryKey = api.chat.listMessages.getKey({ chatId });
-
-    sendMessage.mutate(
-      {
-        chatId,
-        content: messageContent,
-        type: messageType
-      },
-      {
-        onMutate: async () => {
-          await queryClient.cancelQueries({ queryKey });
-
-          const previousMessages = queryClient.getQueryData(queryKey);
-
-          queryClient.setQueryData(queryKey, (old: any) => {
-            if (!old || !old.pages || !old.pages.length) return old;
-
-            const newPages = [...old.pages];
-
-            const firstPage = { ...newPages[0] };
-            firstPage.items = [optimisticMessage, ...firstPage.items];
-            newPages[0] = firstPage;
-
-            return {
-              ...old,
-              pages: newPages
-            };
-          });
-
-          triggerScrollToBottom();
-
-          return { previousMessages };
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey });
-          triggerScrollToBottom();
-        },
-        onError: (
-          err: Error,
-          _: {
-            chatId: string;
-            content: string;
-            type: MsgMessageTypeOptions;
-          },
-          context: { previousMessages: any } | undefined
-        ) => {
-          if (context?.previousMessages) {
-            queryClient.setQueryData(queryKey, context.previousMessages);
-          }
-          error(`Gửi tin nhắn thất bại: ${err.message}`);
-        }
-      } as any
-    );
-  }, [newMessage, sendMessage, currentUser, currentUserId, queryClient]);
+      type: messageType
+    });
+  }, [newMessage, sendMessage, currentUserId]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {

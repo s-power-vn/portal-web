@@ -276,10 +276,6 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      client.collection<MsgChat>(Collections.MsgChat).update(data.chatId, {
-        updated: new Date().toISOString()
-      });
-
       const messageData: Record<string, any> = {
         chat: data.chatId,
         sender: currentUser,
