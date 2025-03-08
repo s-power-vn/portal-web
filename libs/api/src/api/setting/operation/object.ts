@@ -1,14 +1,11 @@
-import {
-  Collections,
-  ObjectResponse,
-  ProcessResponse,
-  client
-} from 'portal-core';
+import { Collections, ObjectResponse, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
+import { ProcessDbData } from './process';
+
 export type ObjectData = ObjectResponse<{
-  process: ProcessResponse;
+  process: ProcessDbData;
 }>;
 
 export const objectApi = router('object', {

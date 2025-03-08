@@ -13,7 +13,7 @@ import { ListParams } from '../types';
 
 export type IssueData = IssueResponse<
   Record<string, string>[],
-  string[],
+  any[],
   {
     createdBy: UserData;
     assignee: UserData;
