@@ -210,7 +210,8 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
         </ThemeButton>
         <Show
           when={
-            client.authStore.record?.id === issue.data.assignee &&
+            client.authStore.record?.id &&
+            issue.data.assignees?.includes(client.authStore.record.id) &&
             !isInDoneState
           }
         >
@@ -281,7 +282,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Người xử lý
             </span>
             <div className="flex justify-end">
-              <IssueAssigneeDisplay issueId={issueId} maxVisible={2} />
+              <IssueAssigneeDisplay issueId={issueId} maxVisible={1} />
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { ObjectData } from 'libs/api/src/api/object';
 import {
   CheckIcon,
   DollarSignIcon,
@@ -6,7 +5,7 @@ import {
   PlusIcon,
   ShoppingCartIcon
 } from 'lucide-react';
-import { api } from 'portal-api';
+import { ObjectData, api } from 'portal-api';
 import { ObjectTypeOptions } from 'portal-core';
 
 import type { FC } from 'react';
@@ -46,8 +45,8 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
             <NewRequestForm
               projectId={projectId}
               objectId={objectId}
-              onSuccess={async () => {
-                await invalidates([
+              onSuccess={() => {
+                invalidates([
                   api.issue.list.getKey({
                     projectId
                   }),

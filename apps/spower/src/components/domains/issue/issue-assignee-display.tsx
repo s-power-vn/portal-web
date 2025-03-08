@@ -12,13 +12,12 @@ export type IssueAssigneeDisplayProps = {
 
 const IssueAssigneeComponent: FC<IssueAssigneeDisplayProps> = ({
   issueId,
-  maxVisible = 2
+  maxVisible = 1
 }) => {
   const issue = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
 
-  // Use assignees directly from the issue record
   const assignees = issue.data.assignees || [];
 
   return (

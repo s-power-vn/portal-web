@@ -15,7 +15,6 @@ import {
   TooltipTrigger
 } from '@minhdtb/storeo-theme';
 
-// Helper component to display a single employee
 const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
   const query = useSuspenseQuery({
     queryKey: ['getEmployee', employeeId],
@@ -23,7 +22,7 @@ const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
   });
 
   return query.data ? (
-    <div className={'flex items-center gap-2 whitespace-nowrap'}>
+    <div className={'flex items-center justify-end gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
         <AvatarImage
           src={getImageUrl(Collections.User, query.data.id, query.data.avatar)}
@@ -120,7 +119,10 @@ const Component = ({
               {!showAll && (
                 <div className="flex flex-col gap-1">
                   {sortedUserIds.slice(visibleAssignees).map(userId => (
-                    <Suspense key={userId} fallback={<div>Loading...</div>}>
+                    <Suspense
+                      key={userId}
+                      fallback={<Loader className={'h-4 w-4 animate-spin'} />}
+                    >
                       <EmployeeItem employeeId={userId} />
                     </Suspense>
                   ))}
@@ -137,7 +139,6 @@ const Component = ({
 export const MultipleEmployeeDisplay: FC<
   MultipleEmployeeDisplayProps
 > = props => {
-  // Check if we have either assigneeIds or issueAssignData
   const hasAssignees =
     (props.assigneeIds && props.assigneeIds.length > 0) ||
     (props.issueAssignData && props.issueAssignData.length > 0);

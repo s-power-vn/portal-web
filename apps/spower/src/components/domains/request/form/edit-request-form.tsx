@@ -138,8 +138,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
   return (
     <Form
       schema={schema}
-      onSubmit={values => {
-        console.log(values);
+      onSuccess={values => {
         update.mutate({
           ...values,
           id: issueId,
