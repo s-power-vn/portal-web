@@ -1,5 +1,4 @@
 import { api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 import { boolean, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -49,7 +48,7 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
           ...values,
           id: objectId,
           process: values.process || undefined,
-          type: values.type as ObjectTypeOptions
+          type: values.type
         };
         updateObject.mutate(formData);
       }}
@@ -57,7 +56,7 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
       defaultValues={{
         name: objectData?.name || '',
         description: objectData?.description || '',
-        type: objectData?.type || ObjectTypeOptions.Task,
+        type: objectData?.type || '',
         process: objectData?.process || null,
         active: objectData?.active ?? true
       }}

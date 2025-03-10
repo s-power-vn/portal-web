@@ -1,14 +1,14 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { FilesIcon, ShoppingCartIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
+import { FilesIcon } from 'lucide-react';
+import { IssueData, ListSchema, api } from 'portal-api';
 
-import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
+import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
+  DynamicIcon,
   EmployeeDisplay,
   IssueAssigneeDisplay,
   IssueDeadlineStatus,
@@ -21,16 +21,20 @@ const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
-  const issues = api.issue.listRequest.useSuspenseQuery({
+
+  const objectTypes = api.objectType.listFull.useSuspenseQuery();
+
+  const requestType = objectTypes.data?.find(type => type.name === 'Request');
+
+  const issues = api.issue.listByObjectType.useSuspenseQuery({
     variables: {
       ...search,
-      projectId
+      projectId,
+      objectTypeId: requestType?.id
     }
   });
 
-  // Use the actual data type from the API response
-  type IssueItem = (typeof issues.data.items)[0];
-  const columnHelper = createColumnHelper<IssueItem>();
+  const columnHelper = createColumnHelper<IssueData>();
 
   const columns = [
     columnHelper.display({
@@ -40,23 +44,20 @@ const Component = () => {
       size: 50
     }),
     columnHelper.accessor('title', {
-      cell: info => (
-        <div className={'flex w-full min-w-0 items-center gap-2'}>
-          <Switch fallback={<span></span>}>
-            <Match
-              when={
-                info.row.original.expand?.object.type ===
-                ObjectTypeOptions.Request
-              }
-            >
-              <ShoppingCartIcon
-                className={'h-4 w-4 flex-shrink-0 text-red-500'}
-              />
-            </Match>
-          </Switch>
-          <span className={'truncate'}>{info.getValue()}</span>
-        </div>
-      ),
+      cell: info => {
+        const typeObject = info.row.original.expand?.object.expand?.type;
+
+        return (
+          <div className={'flex w-full min-w-0 items-center gap-2'}>
+            <DynamicIcon
+              svgContent={typeObject?.icon}
+              className={'h-4 w-4 flex-shrink-0'}
+              style={{ color: typeObject?.color || '#6b7280' }}
+            />
+            <span className={'truncate'}>{info.getValue()}</span>
+          </div>
+        );
+      },
       header: () => 'Nội dung',
       footer: info => info.column.id,
       size: 400,
@@ -69,7 +70,7 @@ const Component = () => {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('assignee', {
+    columnHelper.accessor('assignees', {
       cell: ({ row }) => (
         <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
       ),
@@ -198,15 +199,22 @@ export const Route = createFileRoute(
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({
+  loader: async ({
     deps: { search },
     context: { queryClient },
     params: { projectId }
-  }) =>
-    queryClient?.ensureQueryData(
-      api.issue.list.getOptions({
+  }) => {
+    const objectTypes = await queryClient?.ensureQueryData(
+      api.objectType.listFull.getOptions()
+    );
+    const requestType = objectTypes?.find(type => type.name === 'Request');
+
+    return queryClient?.ensureQueryData(
+      api.issue.listByObjectType.getOptions({
         ...search,
-        projectId
+        projectId,
+        objectTypeId: requestType?.id
       })
-    )
+    );
+  }
 });

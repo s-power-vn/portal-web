@@ -14,7 +14,8 @@ import {
   SettingsIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
+
+import { useMemo } from 'react';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
@@ -22,23 +23,37 @@ import { Button } from '@minhdtb/storeo-theme';
 import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
+// Create a temporary variable to use within the component
+const ThisRoute = createFileRoute('/_authenticated/project/$projectId')();
+
 const Component = () => {
   const matchRoute = useMatchRoute();
   const params = matchRoute({ to: '/project/$projectId/settings' });
-  const { projectId } = Route.useParams();
+  const { projectId } = ThisRoute.useParams();
   const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
-  const navigate = useNavigate({ from: Route.fullPath });
+  const navigate = useNavigate({ from: '/project/$projectId' });
 
-  const listObjects = api.object.listFullActive.useQuery();
+  const listObjects = api.object.listFullActive.useSuspenseQuery();
+  const objectTypes = api.objectType.listFull.useQuery();
+
+  // Create a map of object types by name for efficient lookup
+  const typeMap = useMemo(() => {
+    if (!objectTypes.data) return new Map();
+
+    return new Map(objectTypes.data.map(type => [type.name, type]));
+  }, [objectTypes.data]);
+
+  const requestType = typeMap.get('Request');
+  const priceType = typeMap.get('Price');
 
   const hasRequest = listObjects.data?.some(
-    object => object.type === ObjectTypeOptions.Request
+    object => object.type === requestType?.id
   );
 
   const hasPrice = listObjects.data?.some(
-    object => object.type === ObjectTypeOptions.Price
+    object => object.type === priceType?.id
   );
 
   return (

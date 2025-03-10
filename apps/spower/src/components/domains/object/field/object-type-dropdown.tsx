@@ -1,4 +1,4 @@
-import { ObjectTypeOptions } from 'portal-core';
+import { api } from 'portal-api';
 
 import type { FC } from 'react';
 import { useMemo } from 'react';
@@ -11,26 +11,17 @@ export type ObjectTypeDropdownProps = Omit<SelectInputProps, 'items'>;
 export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = ({
   ...props
 }) => {
+  const objectTypes = api.objectType.listFull.useSuspenseQuery();
+
   const items = useMemo(
-    () => [
-      {
-        value: ObjectTypeOptions.Request,
-        label: 'Yêu cầu'
-      },
-      {
-        value: ObjectTypeOptions.Price,
-        label: 'Báo giá'
-      },
-      {
-        value: ObjectTypeOptions.Task,
-        label: 'Công việc'
-      },
-      {
-        value: ObjectTypeOptions.Document,
-        label: 'Tài liệu'
-      }
-    ],
-    []
+    () =>
+      objectTypes.data?.map(type => ({
+        value: type.id,
+        label: type.name || '',
+        icon: type.icon,
+        color: type.color
+      })) || [],
+    [objectTypes.data]
   );
 
   return <SelectInput items={items} {...props} />;

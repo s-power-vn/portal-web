@@ -31,6 +31,7 @@ export enum Collections {
 	MsgTeam = "msgTeam",
 	MsgUnread = "msgUnread",
 	Object = "object",
+	ObjectType = "objectType",
 	Price = "price",
 	PriceDetail = "priceDetail",
 	Process = "process",
@@ -227,6 +228,7 @@ export enum IssueDeadlineStatusOptions {
 }
 export type IssueRecord<Tapprover = unknown, TlastAssignee = unknown> = {
 	approver?: null | Tapprover
+	assignedDate?: IsoDateString
 	assignees?: RecordIdString[]
 	changed?: IsoDateString
 	code?: string
@@ -366,12 +368,6 @@ export type MsgUnreadRecord<TunreadCount = unknown> = {
 	userId?: RecordIdString
 }
 
-export enum ObjectTypeOptions {
-	"Request" = "Request",
-	"Price" = "Price",
-	"Task" = "Task",
-	"Document" = "Document",
-}
 export type ObjectRecord = {
 	active?: boolean
 	base?: boolean
@@ -380,7 +376,17 @@ export type ObjectRecord = {
 	id: string
 	name: string
 	process?: RecordIdString
-	type: ObjectTypeOptions
+	type: RecordIdString
+	updated?: IsoDateString
+}
+
+export type ObjectTypeRecord = {
+	color?: string
+	created?: IsoDateString
+	description?: string
+	icon?: string
+	id: string
+	name?: string
 	updated?: IsoDateString
 }
 
@@ -414,6 +420,7 @@ export type ProcessRecord<Tprocess = unknown> = {
 	done?: string
 	id: string
 	name: string
+	objectType: RecordIdString
 	process?: null | Tprocess
 	updated?: IsoDateString
 }
@@ -522,6 +529,7 @@ export type MsgSettingResponse<Texpand = unknown> = Required<MsgSettingRecord> &
 export type MsgTeamResponse<Texpand = unknown> = Required<MsgTeamRecord> & BaseSystemFields<Texpand>
 export type MsgUnreadResponse<TunreadCount = unknown, Texpand = unknown> = Required<MsgUnreadRecord<TunreadCount>> & BaseSystemFields<Texpand>
 export type ObjectResponse<Texpand = unknown> = Required<ObjectRecord> & BaseSystemFields<Texpand>
+export type ObjectTypeResponse<Texpand = unknown> = Required<ObjectTypeRecord> & BaseSystemFields<Texpand>
 export type PriceResponse<Texpand = unknown> = Required<PriceRecord> & BaseSystemFields<Texpand>
 export type PriceDetailResponse<Tprices = unknown, Texpand = unknown> = Required<PriceDetailRecord<Tprices>> & BaseSystemFields<Texpand>
 export type ProcessResponse<Tprocess = unknown, Texpand = unknown> = Required<ProcessRecord<Tprocess>> & BaseSystemFields<Texpand>
@@ -561,6 +569,7 @@ export type CollectionRecords = {
 	msgTeam: MsgTeamRecord
 	msgUnread: MsgUnreadRecord
 	object: ObjectRecord
+	objectType: ObjectTypeRecord
 	price: PriceRecord
 	priceDetail: PriceDetailRecord
 	process: ProcessRecord
@@ -599,6 +608,7 @@ export type CollectionResponses = {
 	msgTeam: MsgTeamResponse
 	msgUnread: MsgUnreadResponse
 	object: ObjectResponse
+	objectType: ObjectTypeResponse
 	price: PriceResponse
 	priceDetail: PriceDetailResponse
 	process: ProcessResponse
@@ -640,6 +650,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'msgTeam'): RecordService<MsgTeamResponse>
 	collection(idOrName: 'msgUnread'): RecordService<MsgUnreadResponse>
 	collection(idOrName: 'object'): RecordService<ObjectResponse>
+	collection(idOrName: 'objectType'): RecordService<ObjectTypeResponse>
 	collection(idOrName: 'price'): RecordService<PriceResponse>
 	collection(idOrName: 'priceDetail'): RecordService<PriceDetailResponse>
 	collection(idOrName: 'process'): RecordService<ProcessResponse>

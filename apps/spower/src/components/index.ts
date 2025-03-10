@@ -4,6 +4,7 @@ export * from './combobox';
 export * from './domains';
 export * from './file';
 export * from './header';
+export * from './icon';
 export * from './image';
 export * from './messenger';
 export * from './sidebar';

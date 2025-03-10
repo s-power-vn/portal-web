@@ -1,8 +1,8 @@
 import { api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 import { boolean, object, string } from 'yup';
 
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -26,6 +26,15 @@ const schema = object().shape({
 export type NewObjectFormProps = BusinessFormProps;
 
 export const NewObjectForm: FC<NewObjectFormProps> = props => {
+  const [defaultType, setDefaultType] = useState<string>('');
+  const { data: objectTypes } = api.objectType.listFull.useSuspenseQuery();
+
+  useEffect(() => {
+    if (objectTypes && objectTypes.length > 0) {
+      setDefaultType(objectTypes[0].id);
+    }
+  }, [objectTypes]);
+
   const createObject = api.object.create.useMutation({
     onSuccess: async () => {
       success('Thêm đối tượng thành công');
@@ -40,7 +49,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         const formData = {
           ...values,
           process: values.process || undefined,
-          type: values.type as ObjectTypeOptions
+          type: values.type
         };
         createObject.mutate(formData);
       }}
@@ -48,7 +57,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       defaultValues={{
         name: '',
         description: '',
-        type: ObjectTypeOptions.Request,
+        type: defaultType,
         process: null,
         active: false
       }}

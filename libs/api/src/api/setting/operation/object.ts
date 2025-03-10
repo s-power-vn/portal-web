@@ -1,10 +1,16 @@
-import { Collections, ObjectResponse, client } from 'portal-core';
+import {
+  Collections,
+  ObjectResponse,
+  ObjectTypeResponse,
+  client
+} from 'portal-core';
 
 import { router } from 'react-query-kit';
 
 import { ProcessDbData } from './process';
 
 export type ObjectData = ObjectResponse<{
+  type: ObjectTypeResponse;
   process: ProcessDbData;
 }>;
 
@@ -12,20 +18,20 @@ export const objectApi = router('object', {
   listFull: router.query({
     fetcher: () =>
       client.collection<ObjectData>(Collections.Object).getFullList({
-        expand: `process`
+        expand: `process, type`
       })
   }),
   listFullActive: router.query({
     fetcher: () =>
       client.collection<ObjectData>(Collections.Object).getFullList({
-        expand: `process`,
+        expand: `process, type`,
         filter: `active = true`
       })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ObjectData>(Collections.Object).getOne(id, {
-        expand: `process`
+        expand: `process, type`
       })
   }),
   create: router.mutation({

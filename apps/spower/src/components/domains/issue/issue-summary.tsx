@@ -1,23 +1,21 @@
 import { useRouter } from '@tanstack/react-router';
 import {
-  CircleDollarSignIcon,
   CopyIcon,
   Edit3,
   LinkIcon,
   Loader,
   MoreHorizontalIcon,
   RefreshCw,
-  ShoppingCartIcon,
   Trash2,
   Undo2Icon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { ObjectTypeOptions, client } from 'portal-core';
+import { client } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, useCallback } from 'react';
 
-import { Match, Show, Switch, formatDateTime } from '@minhdtb/storeo-core';
+import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
   Button,
   DropdownMenu,
@@ -31,6 +29,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { DynamicIcon } from '../../icon/dynamic-icon';
 import { EmployeeDisplay } from '../employee';
 import { ProcessData, extractStatus, isDoneNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
@@ -43,13 +42,23 @@ export type IssueSummaryProps = {
   issueId: string;
 };
 
+// Helper component to render the appropriate icon
+const ObjectTypeIcon = ({ objectType }: { objectType?: any }) => {
+  if (!objectType) return null;
+
+  return (
+    <DynamicIcon
+      svgContent={objectType.icon}
+      className={'h-4 w-4'}
+      style={{ color: objectType.color || '#6b7280' }}
+    />
+  );
+};
+
 const SummaryComponent: FC<IssueSummaryProps> = props => {
   const { issueId } = props;
-
-  const invalidates = useInvalidateQueries();
-
   const router = useRouter();
-
+  const invalidates = useInvalidateQueries();
   const { confirm } = useConfirm();
 
   const issue = api.issue.byId.useSuspenseQuery({
@@ -69,7 +78,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const deleteIssue = api.issue.delete.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.listRequest.getKey(),
+        api.issue.listByObjectType.getKey(),
         api.issue.listMine.getKey()
       ]);
 
@@ -80,7 +89,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const resetIssue = api.issue.reset.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.listRequest.getKey(),
+        api.issue.listByObjectType.getKey(),
         api.issue.listMine.getKey()
       ]);
 
@@ -90,20 +99,13 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
 
   const handleEditIssue = useCallback(() => {
     showModal({
-      title: 'Sửa công việc',
+      title: 'Chỉnh sửa công việc',
       className: 'flex min-w-[1000px] flex-col',
-      children: ({ close }) => (
-        <Switch
-          fallback={
-            <div className={`p-2`}>
-              <Loader className={'h-6 w-6 animate-spin'} />
-            </div>
-          }
-        >
-          <Match
-            when={issue.data.expand?.object.type === ObjectTypeOptions.Request}
-          >
-            <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
+      description: 'Chỉnh sửa thông tin công việc',
+      children: ({ close }) => {
+        return (
+          <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
+            {issue.data.expand?.object.expand?.type.name === 'Request' ? (
               <EditRequestForm
                 issueId={issueId}
                 onSuccess={() => {
@@ -115,12 +117,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
                 }}
                 onCancel={close}
               />
-            </Suspense>
-          </Match>
-          <Match
-            when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
-          >
-            <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
+            ) : issue.data.expand?.object.expand?.type.name === 'Price' ? (
               <EditPriceForm
                 issueId={issueId}
                 onSuccess={() => {
@@ -132,23 +129,27 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
                 }}
                 onCancel={close}
               />
-            </Suspense>
-          </Match>
-        </Switch>
-      )
+            ) : (
+              <div className={`p-2`}>
+                <Loader className={'h-6 w-6 animate-spin'} />
+              </div>
+            )}
+          </Suspense>
+        );
+      }
     });
-  }, [invalidates, issue.data.expand?.object.type, issueId]);
+  }, [invalidates, issueId]);
 
   const handleResetIssue = useCallback(() => {
-    confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () =>
-      resetIssue.mutate({ id: issueId })
-    );
+    confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () => {
+      resetIssue.mutate({ id: issueId });
+    });
   }, [confirm, issueId, resetIssue]);
 
   const handleDeleteIssue = useCallback(() => {
-    confirm('Bạn chắc chắn muốn xóa công việc này?', () =>
-      deleteIssue.mutate(issueId)
-    );
+    confirm('Bạn chắc chắn muốn xóa công việc này?', () => {
+      deleteIssue.mutate(issueId);
+    });
   }, [confirm, deleteIssue, issueId]);
 
   const handleCopyTitle = useCallback(() => {
@@ -174,20 +175,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           <Undo2Icon className={'h-4 w-4'} />
         </Button>
         <span className={'flex flex-1 items-center gap-1 text-base font-bold'}>
-          <Switch fallback={<span></span>}>
-            <Match
-              when={issue.data.expand?.object.type === ObjectTypeOptions.Price}
-            >
-              <CircleDollarSignIcon className={'h-4 w-4 text-blue-500'} />
-            </Match>
-            <Match
-              when={
-                issue.data.expand?.object.type === ObjectTypeOptions.Request
-              }
-            >
-              <ShoppingCartIcon className={'h-4 w-4 text-red-500'} />
-            </Match>
-          </Switch>
+          <ObjectTypeIcon objectType={issue.data.expand?.object.expand?.type} />
           {issue.data.title}
         </span>
         <ThemeButton

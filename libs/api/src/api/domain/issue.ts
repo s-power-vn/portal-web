@@ -31,7 +31,7 @@ export const issueApi = router('issue', {
           filter: `project = "${search?.projectId}"
           && title ~ "${search?.filter ?? ''}"
           && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
@@ -44,40 +44,29 @@ export const issueApi = router('issue', {
         && assignees ?~ '${client.authStore.record?.id}'
         && title ~ "${search?.filter ?? ''}"
         && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
-  listRequest: router.query({
-    fetcher: (search?: ListParams & { projectId: string }) =>
+  listByObjectType: router.query({
+    fetcher: (
+      search?: ListParams & { projectId: string; objectTypeId?: string }
+    ) =>
       client
         .collection<IssueData>(Collections.Issue)
         .getList(search?.pageIndex, search?.pageSize, {
           filter: `project = "${search?.projectId}"
         && title ~ "${search?.filter ?? ''}"
-        && object.type = "Request"
+        && object.type = "${search?.objectTypeId ?? ''}"
         && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
-          sort: '-changed'
-        })
-  }),
-  listPrice: router.query({
-    fetcher: (search?: ListParams & { projectId: string }) =>
-      client
-        .collection<IssueData>(Collections.Issue)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${search?.projectId}"
-        && title ~ "${search?.filter ?? ''}"
-        && object.type = "Price"
-        && deleted = false`,
-          expand: `object, object.process, issueFile_via_issue`,
+          expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, object, object.process, issueFile_via_issue`
+        expand: `createdBy, object, object.type, object.process, issueFile_via_issue`
       })
   }),
   update: router.mutation({

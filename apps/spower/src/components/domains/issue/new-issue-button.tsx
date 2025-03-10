@@ -1,17 +1,9 @@
-import {
-  CheckIcon,
-  DollarSignIcon,
-  FileTextIcon,
-  PlusIcon,
-  ShoppingCartIcon
-} from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { Match, Switch } from '@minhdtb/storeo-core';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +14,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { DynamicIcon } from '../../icon/dynamic-icon';
 import { NewPriceForm } from '../price';
 import { NewRequestForm } from '../request';
 
@@ -32,6 +25,13 @@ export type NewIssueButtonProps = {
 export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const invalidates = useInvalidateQueries();
   const listObjects = api.object.listFullActive.useSuspenseQuery();
+  const objectTypes = api.objectType.listFull.useQuery();
+
+  const typeMap = useMemo(() => {
+    if (!objectTypes.data) return new Map();
+
+    return new Map(objectTypes.data.map(type => [type.id, type]));
+  }, [objectTypes.data]);
 
   const handleNewRequestClick = useCallback(
     (objectId: string) => {
@@ -53,7 +53,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
                   api.issue.listMine.getKey({
                     projectId
                   }),
-                  api.issue.listRequest.getKey({
+                  api.issue.listByObjectType.getKey({
                     projectId
                   })
                 ]);
@@ -71,24 +71,24 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const handleNewPriceRequestClick = useCallback(
     (objectId: string) => {
       showModal({
-        title: 'Tạo yêu cầu đơn giá',
+        title: 'Tạo đề nghị báo giá',
         className: 'flex min-w-[1000px] flex-col',
         description:
-          'Tạo yêu cầu đơn giá mới. Cho phép chọn từ danh sách hạng mục',
+          'Tạo đề nghị báo giá mới. Cho phép chọn từ danh sách hạng mục',
         children: ({ close }) => {
           return (
             <NewPriceForm
               projectId={projectId}
               objectId={objectId}
-              onSuccess={async () => {
-                await invalidates([
+              onSuccess={() => {
+                invalidates([
                   api.issue.list.getKey({
                     projectId
                   }),
                   api.issue.listMine.getKey({
                     projectId
                   }),
-                  api.issue.listRequest.getKey({
+                  api.issue.listByObjectType.getKey({
                     projectId
                   })
                 ]);
@@ -105,21 +105,17 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
 
   const handleObjectClick = useCallback(
     (object: ObjectData) => {
-      switch (object.type) {
-        case ObjectTypeOptions.Request:
-          handleNewRequestClick(object.id);
-          break;
-        case ObjectTypeOptions.Price:
-          handleNewPriceRequestClick(object.id);
-          break;
-        case ObjectTypeOptions.Document:
-          break;
-        case ObjectTypeOptions.Task:
-          break;
+      const type = typeMap.get(object.type)?.name;
+
+      if (type === 'Request') {
+        handleNewRequestClick(object.id);
+      } else if (type === 'Price') {
+        handleNewPriceRequestClick(object.id);
       }
     },
-    [handleNewRequestClick, handleNewPriceRequestClick]
+    [handleNewRequestClick, handleNewPriceRequestClick, typeMap]
   );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -135,28 +131,23 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
         sideOffset={2}
       >
         {listObjects.data?.length ? (
-          listObjects.data?.map(object => (
-            <DropdownMenuItem
-              key={object.id}
-              onClick={() => handleObjectClick(object)}
-            >
-              <Switch>
-                <Match when={object.type === ObjectTypeOptions.Request}>
-                  <ShoppingCartIcon className="mr-2 h-4 w-4 text-red-500" />
-                </Match>
-                <Match when={object.type === ObjectTypeOptions.Price}>
-                  <DollarSignIcon className="mr-2 h-4 w-4 text-blue-500" />
-                </Match>
-                <Match when={object.type === ObjectTypeOptions.Document}>
-                  <FileTextIcon className="mr-2 h-4 w-4 text-green-500" />
-                </Match>
-                <Match when={object.type === ObjectTypeOptions.Task}>
-                  <CheckIcon className="mr-2 h-4 w-4 text-purple-500" />
-                </Match>
-              </Switch>
-              {object.name}
-            </DropdownMenuItem>
-          ))
+          listObjects.data?.map(object => {
+            const type = typeMap.get(object.type);
+
+            return (
+              <DropdownMenuItem
+                key={object.id}
+                onClick={() => handleObjectClick(object)}
+              >
+                <DynamicIcon
+                  svgContent={type?.icon}
+                  className="mr-2 h-4 w-4"
+                  style={{ color: type?.color || '#6b7280' }}
+                />
+                {object.name}
+              </DropdownMenuItem>
+            );
+          })
         ) : (
           <DropdownMenuItem>
             <span className="text-xs text-gray-500">
