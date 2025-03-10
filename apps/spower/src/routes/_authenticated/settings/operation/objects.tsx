@@ -213,20 +213,19 @@ function Component() {
           if (!objectType) return null;
 
           const badgeStyle =
-            'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap';
+            'rounded-full px-2 py-1 text-xs font-medium text-white whitespace-nowrap';
 
           return (
             <span
               className={cn(badgeStyle)}
               style={{ backgroundColor: objectType.color || '#888888' }}
             >
-              {objectType.name || 'Unknown'}
+              {objectType.display || 'Không xác định'}
             </span>
           );
         },
         header: () => 'Loại',
-        footer: info => info.column.id,
-        size: 100
+        footer: info => info.column.id
       }),
       columnHelper.accessor(row => row.expand?.process?.name, {
         id: 'processName',

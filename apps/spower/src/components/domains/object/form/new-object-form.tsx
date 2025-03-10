@@ -13,6 +13,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
 const schema = object().shape({
@@ -48,7 +49,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       onSuccess={values => {
         const formData = {
           ...values,
-          process: values.process || undefined,
+          process: values.process || '',
           type: values.type
         };
         createObject.mutate(formData);
@@ -58,7 +59,6 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         name: '',
         description: '',
         type: defaultType,
-        process: null,
         active: false
       }}
       loading={createObject.isPending}
@@ -82,7 +82,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         title={'Loại đối tượng'}
         options={{}}
       />
-      <TextField
+      <ProcessDropdownField
         schema={schema}
         name={'process'}
         title={'Quy trình'}

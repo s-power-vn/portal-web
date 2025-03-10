@@ -12,6 +12,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
 const schema = object().shape({
@@ -47,9 +48,10 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
         const formData = {
           ...values,
           id: objectId,
-          process: values.process || undefined,
+          process: values.process || '',
           type: values.type
         };
+
         updateObject.mutate(formData);
       }}
       onCancel={props.onCancel}
@@ -57,7 +59,7 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
         name: objectData?.name || '',
         description: objectData?.description || '',
         type: objectData?.type || '',
-        process: objectData?.process || null,
+        process: objectData?.process,
         active: objectData?.active ?? true
       }}
       loading={updateObject.isPending}
@@ -83,7 +85,7 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
           disabled: true
         }}
       />
-      <TextField
+      <ProcessDropdownField
         schema={schema}
         name={'process'}
         title={'Quy trình'}
