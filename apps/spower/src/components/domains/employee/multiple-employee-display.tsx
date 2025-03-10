@@ -1,54 +1,55 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { Loader, UserIcon, UsersIcon } from 'lucide-react';
-import { Collections, client, getImageUrl, getUser } from 'portal-core';
+import { api } from 'portal-api';
+import { Collections, getImageUrl, getUser } from 'portal-core';
 
 import type { FC } from 'react';
-import { Fragment, Suspense, useMemo, useState } from 'react';
+import { Suspense, useMemo } from 'react';
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@minhdtb/storeo-theme';
 
-// Helper component to display a single employee
 const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
-  const query = useSuspenseQuery({
-    queryKey: ['getEmployee', employeeId],
-    queryFn: () => client.collection('user').getOne(employeeId)
+  const employee = api.employee.byId.useSuspenseQuery({
+    variables: employeeId
   });
 
-  return query.data ? (
-    <div className={'flex items-center gap-2 whitespace-nowrap'}>
+  return (
+    <div className={'flex items-center justify-end gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
         <AvatarImage
-          src={getImageUrl(Collections.User, query.data.id, query.data.avatar)}
+          src={getImageUrl(
+            Collections.User,
+            employee.data.id,
+            employee.data.avatar
+          )}
         />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span className={'truncate'}>{query.data.name}</span>
+      <span className={'truncate'}>{employee.data.name}</span>
     </div>
-  ) : null;
+  );
 };
 
 export type MultipleEmployeeDisplayProps = {
   assigneeIds?: string[];
-  issueAssignData?: any[]; // Maintaining for backward compatibility
+  issueAssignData?: any[];
   maxVisible?: number;
 };
 
 const Component = ({
   assigneeIds = [],
   issueAssignData = [],
-  maxVisible = 1
+  maxVisible = 3
 }: MultipleEmployeeDisplayProps) => {
-  // Use assigneeIds if provided, otherwise extract from issueAssignData for backward compatibility
   const userIds =
     assigneeIds.length > 0
       ? assigneeIds
@@ -56,12 +57,9 @@ const Component = ({
           .map(item => item.expand?.assign?.id || '')
           .filter(Boolean);
 
-  const [showAll, setShowAll] = useState(false);
   const totalAssignees = userIds.length;
-  const visibleAssignees = showAll
-    ? totalAssignees
-    : Math.min(maxVisible, totalAssignees);
-  const hasMoreAssignees = totalAssignees > visibleAssignees;
+  const visibleAvatars = Math.min(maxVisible, totalAssignees);
+  const hasMoreAssignees = totalAssignees > visibleAvatars;
 
   const currentUser = getUser();
 
@@ -78,66 +76,82 @@ const Component = ({
     });
   }, [userIds, currentUser]);
 
+  const firstUserId = sortedUserIds[0];
+
   if (totalAssignees === 0) {
     return (
-      <div className="text-muted-foreground text-xs italic">
+      <div className="text-muted-foreground text-sm italic">
         Chưa có người được phân công
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-1">
-      {sortedUserIds.slice(0, visibleAssignees).map((userId, index) => (
-        <Fragment key={userId}>
-          <Suspense fallback={<Loader className={'h-4 w-4 animate-spin'} />}>
-            <EmployeeItem employeeId={userId} />
-          </Suspense>
-        </Fragment>
-      ))}
-
+    <div className="flex items-center justify-between">
+      {firstUserId && (
+        <Suspense fallback={<Loader className={'h-4 w-4 animate-spin'} />}>
+          <FirstEmployee employeeId={firstUserId} />
+        </Suspense>
+      )}
       {hasMoreAssignees && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowAll(!showAll);
-                }}
-                className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs"
-              >
-                <UsersIcon className="h-3 w-3" />
-                <span>
-                  {showAll
-                    ? 'Thu gọn'
-                    : `+${totalAssignees - visibleAssignees} người khác`}
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              {!showAll && (
-                <div className="flex flex-col gap-1">
-                  {sortedUserIds.slice(visibleAssignees).map(userId => (
-                    <Suspense key={userId} fallback={<div>Loading...</div>}>
-                      <EmployeeItem employeeId={userId} />
-                    </Suspense>
-                  ))}
-                </div>
-              )}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <div
+              className="ring-offset-background hover:bg-muted hover:text-muted-foreground focus-visible:ring-ring ml-1 inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              title="Xem danh sách người được phân công"
+            >
+              <UsersIcon className="h-4 w-4" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="max-h-[300px] overflow-y-auto"
+            side="bottom"
+            align="start"
+            sideOffset={2}
+          >
+            {sortedUserIds.map(userId => (
+              <DropdownMenuItem key={userId} className="py-2">
+                <Suspense
+                  fallback={<Loader className={'h-4 w-4 animate-spin'} />}
+                >
+                  <EmployeeItem employeeId={userId} />
+                </Suspense>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
 };
 
+const FirstEmployee = ({ employeeId }: { employeeId: string }) => {
+  const employee = api.employee.byId.useSuspenseQuery({
+    variables: employeeId
+  });
+
+  return employee ? (
+    <div className={'flex items-center gap-2 whitespace-nowrap'}>
+      <Avatar className={'h-6 w-6'}>
+        <AvatarImage
+          src={getImageUrl(
+            Collections.User,
+            employee.data.id,
+            employee.data.avatar
+          )}
+        />
+        <AvatarFallback className={'text-sm'}>
+          <UserIcon />
+        </AvatarFallback>
+      </Avatar>
+      <span className={'truncate'}>{employee.data.name}</span>
+    </div>
+  ) : null;
+};
+
 export const MultipleEmployeeDisplay: FC<
   MultipleEmployeeDisplayProps
 > = props => {
-  // Check if we have either assigneeIds or issueAssignData
   const hasAssignees =
     (props.assigneeIds && props.assigneeIds.length > 0) ||
     (props.issueAssignData && props.issueAssignData.length > 0);

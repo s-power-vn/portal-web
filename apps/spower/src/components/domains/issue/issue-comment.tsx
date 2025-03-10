@@ -30,19 +30,19 @@ const CommentComponent: FC<IssueCommentProps> = props => {
                     <AvatarImage
                       src={getImageUrl(
                         Collections.User,
-                        it.expand.createdBy.id,
-                        it.expand.createdBy.avatar
+                        it.expand?.createdBy.id,
+                        it.expand?.createdBy.avatar
                       )}
                     />
                     <AvatarFallback className={'text-sm'}>
-                      {it.expand.createdBy.name.split(' ')[0][0]}
+                      {it.expand?.createdBy.name.split(' ')[0][0]}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className={'flex flex-col gap-1'}>
                   <div className={'flex items-center gap-2'}>
                     <div className={'text-sm font-bold'}>
-                      {it.expand.createdBy.name}
+                      {it.expand?.createdBy.name}
                     </div>
                     <div
                       className={
@@ -52,7 +52,10 @@ const CommentComponent: FC<IssueCommentProps> = props => {
                       <CalendarIcon className={'h-3 w-3'} />
                       {timeSince(new Date(Date.parse(it.created)))}
                     </div>
-                    <IssueStatusText issueId={props.issueId} />
+                    <IssueStatusText
+                      issueId={props.issueId}
+                      status={it.status}
+                    />
                   </div>
                   <div className={'text-sm'}>{it.content}</div>
                 </div>

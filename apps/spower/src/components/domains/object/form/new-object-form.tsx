@@ -1,8 +1,8 @@
 import { api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 import { boolean, object, string } from 'yup';
 
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -13,6 +13,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
 const schema = object().shape({
@@ -26,6 +27,15 @@ const schema = object().shape({
 export type NewObjectFormProps = BusinessFormProps;
 
 export const NewObjectForm: FC<NewObjectFormProps> = props => {
+  const [defaultType, setDefaultType] = useState<string>('');
+  const { data: objectTypes } = api.objectType.listFull.useSuspenseQuery();
+
+  useEffect(() => {
+    if (objectTypes && objectTypes.length > 0) {
+      setDefaultType(objectTypes[0].id);
+    }
+  }, [objectTypes]);
+
   const createObject = api.object.create.useMutation({
     onSuccess: async () => {
       success('Thêm đối tượng thành công');
@@ -39,8 +49,8 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       onSuccess={values => {
         const formData = {
           ...values,
-          process: values.process || undefined,
-          type: values.type as ObjectTypeOptions
+          process: values.process || '',
+          type: values.type
         };
         createObject.mutate(formData);
       }}
@@ -48,8 +58,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       defaultValues={{
         name: '',
         description: '',
-        type: ObjectTypeOptions.Request,
-        process: null,
+        type: defaultType,
         active: false
       }}
       loading={createObject.isPending}
@@ -73,7 +82,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         title={'Loại đối tượng'}
         options={{}}
       />
-      <TextField
+      <ProcessDropdownField
         schema={schema}
         name={'process'}
         title={'Quy trình'}

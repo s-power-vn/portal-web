@@ -9,7 +9,6 @@ import {
 } from '@tanstack/react-table';
 import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 
 import { useCallback, useMemo, useState } from 'react';
 
@@ -207,42 +206,26 @@ function Component() {
         size: 100
       }),
 
-      columnHelper.accessor('type', {
+      columnHelper.accessor(row => row.expand?.type, {
+        id: 'type',
         cell: info => {
-          const type = info.getValue();
-          const badgeStyle =
-            'rounded-full px-2 py-0.5 text-xs font-medium text-white whitespace-nowrap';
+          const objectType = info.getValue();
+          if (!objectType) return null;
 
-          switch (type) {
-            case ObjectTypeOptions.Task:
-              return (
-                <span className={cn(badgeStyle, 'bg-green-500')}>
-                  Công việc
-                </span>
-              );
-            case ObjectTypeOptions.Request:
-              return (
-                <span className={cn(badgeStyle, 'bg-red-500')}>Yêu cầu</span>
-              );
-            case ObjectTypeOptions.Price:
-              return (
-                <span className={cn(badgeStyle, 'bg-blue-500')}>Báo giá</span>
-              );
-            case ObjectTypeOptions.Document:
-              return (
-                <span className={cn(badgeStyle, 'bg-purple-500')}>
-                  Tài liệu
-                </span>
-              );
-            default:
-              return (
-                <span className={cn(badgeStyle, 'bg-gray-500')}>{type}</span>
-              );
-          }
+          const badgeStyle =
+            'rounded-full px-2 py-1 text-xs font-medium text-white whitespace-nowrap';
+
+          return (
+            <span
+              className={cn(badgeStyle)}
+              style={{ backgroundColor: objectType.color || '#888888' }}
+            >
+              {objectType.display || 'Không xác định'}
+            </span>
+          );
         },
         header: () => 'Loại',
-        footer: info => info.column.id,
-        size: 100
+        footer: info => info.column.id
       }),
       columnHelper.accessor(row => row.expand?.process?.name, {
         id: 'processName',

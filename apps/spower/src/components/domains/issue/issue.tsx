@@ -1,16 +1,12 @@
 import { ObjectData } from 'libs/api/src/api/setting/operation/object';
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
-import {
-  IssueDeadlineStatusOptions,
-  ObjectTypeOptions,
-  client
-} from 'portal-core';
+import { IssueDeadlineStatusOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense } from 'react';
 
-import { Match, Show, Switch, cn } from '@minhdtb/storeo-core';
+import { Show, cn } from '@minhdtb/storeo-core';
 
 import { PriceDisplay } from '../price';
 import { RequestDisplay } from '../request';
@@ -38,10 +34,25 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
 
   const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
 
+  // Get the appropriate component based on object type
+  const getContentComponent = () => {
+    if (!objectData?.expand?.type) return <div className={`p-2`}></div>;
+
+    const typeName = objectData.expand.type.name;
+
+    if (typeName === 'Request') {
+      return <RequestDisplay issueId={issueId} />;
+    } else if (typeName === 'Price') {
+      return <PriceDisplay issueId={issueId} />;
+    }
+
+    return <div className={`p-2`}></div>;
+  };
+
   return (
     <div
       className={cn(
-        ``,
+        'flex flex-col gap-2 rounded-md border',
         issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal
           ? 'border-t-appSuccess border-t-4'
           : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning
@@ -50,14 +61,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
       )}
     >
       <IssueSummary issueId={issueId} />
-      <Switch fallback={<div className={`p-2`}></div>}>
-        <Match when={objectData?.type === ObjectTypeOptions.Request}>
-          <RequestDisplay issueId={issueId} />
-        </Match>
-        <Match when={objectData?.type === ObjectTypeOptions.Price}>
-          <PriceDisplay issueId={issueId} />
-        </Match>
-      </Switch>
+      {getContentComponent()}
       <Show when={isUserAssigned}>
         <IssueAction issueId={issueId} />
       </Show>

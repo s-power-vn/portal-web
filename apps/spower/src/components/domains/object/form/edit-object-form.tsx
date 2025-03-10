@@ -1,5 +1,4 @@
 import { api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 import { boolean, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -13,6 +12,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
 const schema = object().shape({
@@ -48,17 +48,18 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
         const formData = {
           ...values,
           id: objectId,
-          process: values.process || undefined,
-          type: values.type as ObjectTypeOptions
+          process: values.process || '',
+          type: values.type
         };
+
         updateObject.mutate(formData);
       }}
       onCancel={props.onCancel}
       defaultValues={{
         name: objectData?.name || '',
         description: objectData?.description || '',
-        type: objectData?.type || ObjectTypeOptions.Task,
-        process: objectData?.process || null,
+        type: objectData?.type || '',
+        process: objectData?.process,
         active: objectData?.active ?? true
       }}
       loading={updateObject.isPending}
@@ -84,7 +85,7 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
           disabled: true
         }}
       />
-      <TextField
+      <ProcessDropdownField
         schema={schema}
         name={'process'}
         title={'Quy trình'}

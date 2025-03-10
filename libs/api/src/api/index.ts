@@ -24,6 +24,7 @@ import { employeeApi } from './setting/general/employee';
 import { materialApi } from './setting/general/material';
 import { supplierApi } from './setting/general/supplier';
 import { ObjectData, objectApi } from './setting/operation/object';
+import { ObjectTypeData, objectTypeApi } from './setting/operation/objectType';
 import { ProcessDbData, processApi } from './setting/operation/process';
 import { ListSchema } from './types';
 
@@ -40,6 +41,7 @@ export const api = {
   issue: issueApi,
   material: materialApi,
   object: objectApi,
+  objectType: objectTypeApi,
   price: priceApi,
   process: processApi,
   project: projectApi,
@@ -59,6 +61,7 @@ export type {
   MsgSetting,
   MsgTeam,
   ObjectData,
+  ObjectTypeData,
   ProcessDbData,
   ProjectData,
   RequestData,

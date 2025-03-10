@@ -8,6 +8,7 @@ import { ProcessData, extractStatus, getNode } from '../flow';
 
 export type IssueStatusTextProps = {
   issueId: string;
+  status: string;
 };
 
 const StatusTextComponent: FC<IssueStatusTextProps> = props => {
@@ -19,7 +20,7 @@ const StatusTextComponent: FC<IssueStatusTextProps> = props => {
 
   const process = issueObject?.expand?.process;
 
-  const extracted = extractStatus(issue.data.status);
+  const extracted = extractStatus(props.status);
   const from = getNode(process?.process as ProcessData, extracted?.from);
   const to = getNode(process?.process as ProcessData, extracted?.to);
 

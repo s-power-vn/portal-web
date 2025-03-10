@@ -1,14 +1,14 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { CircleDollarSignIcon, FilesIcon } from 'lucide-react';
+import { FilesIcon } from 'lucide-react';
 import { IssueData, ListSchema, api } from 'portal-api';
-import { ObjectTypeOptions } from 'portal-core';
 
-import { Match, Switch, formatDateTime } from '@minhdtb/storeo-core';
+import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
 import {
+  DynamicIcon,
   EmployeeDisplay,
   IssueAssigneeDisplay,
   IssueDeadlineStatus,
@@ -17,14 +17,24 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
+const ThisRoute = createFileRoute(
+  '/_authenticated/project/$projectId/issues/price/'
+)();
+
 const Component = () => {
-  const { projectId } = Route.useParams();
-  const navigate = useNavigate({ from: Route.fullPath });
-  const search = Route.useSearch();
-  const issues = api.issue.listPrice.useSuspenseQuery({
+  const { projectId } = ThisRoute.useParams();
+  const navigate = useNavigate({ from: ThisRoute.fullPath });
+  const search = ThisRoute.useSearch();
+
+  const objectTypes = api.objectType.listFull.useSuspenseQuery();
+
+  const priceType = objectTypes.data?.find(type => type.name === 'Price');
+
+  const issues = api.issue.listByObjectType.useSuspenseQuery({
     variables: {
       ...search,
-      projectId
+      projectId,
+      objectTypeId: priceType?.id
     }
   });
 
@@ -38,26 +48,25 @@ const Component = () => {
       size: 50
     }),
     columnHelper.accessor('title', {
-      cell: info => (
-        <div className={'flex w-full min-w-0 items-center gap-2'}>
-          <Switch fallback={<span></span>}>
-            <Match
-              when={
-                info.row.original.expand?.object.type ===
-                ObjectTypeOptions.Price
-              }
-            >
-              <CircleDollarSignIcon
-                className={'h-4 w-4 flex-shrink-0 text-blue-500'}
-              />
-            </Match>
-          </Switch>
-          <span className={'truncate'}>{info.getValue()}</span>
-        </div>
-      ),
+      cell: info => {
+        const typeObject = info.row.original.expand?.object.expand?.type;
+
+        return (
+          <div className={'flex w-full min-w-0 items-center gap-2'}>
+            <DynamicIcon
+              svgContent={typeObject?.icon}
+              className={'h-4 w-4 flex-shrink-0'}
+              style={{ color: typeObject?.color || '#6b7280' }}
+            />
+            <span className={'truncate'}>{info.getValue()}</span>
+          </div>
+        );
+      },
       header: () => 'Nội dung',
       footer: info => info.column.id,
-      size: 400
+      size: 400,
+      minSize: 400,
+      maxSize: 400
     }),
     columnHelper.accessor('deadlineStatus', {
       cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
@@ -65,7 +74,7 @@ const Component = () => {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('assignee', {
+    columnHelper.accessor('assignees', {
       cell: ({ row }) => (
         <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
       ),
@@ -194,15 +203,23 @@ export const Route = createFileRoute(
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({
+  loader: async ({
     deps: { search },
     context: { queryClient },
     params: { projectId }
-  }) =>
-    queryClient?.ensureQueryData(
-      api.issue.list.getOptions({
+  }) => {
+    const objectTypes = await queryClient?.ensureQueryData(
+      api.objectType.listFull.getOptions()
+    );
+
+    const priceType = objectTypes?.find(type => type.name === 'Price');
+
+    return queryClient?.ensureQueryData(
+      api.issue.listByObjectType.getOptions({
         ...search,
-        projectId
+        projectId,
+        objectTypeId: priceType?.id
       })
-    )
+    );
+  }
 });
