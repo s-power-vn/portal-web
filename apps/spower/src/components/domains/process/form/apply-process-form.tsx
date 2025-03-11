@@ -9,11 +9,7 @@ import { BusinessFormProps, Form, error, success } from '@minhdtb/storeo-theme';
 import { ObjectMultiselectField } from '../../object/field/object-multiselect-field';
 
 const schema = object().shape({
-  objects: array().of(
-    object({
-      id: string().required()
-    })
-  )
+  objects: array().of(string().required())
 });
 
 export type ApplyProcessFormProps = BusinessFormProps & {
@@ -45,12 +41,11 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
       className={'flex flex-col gap-3'}
       defaultValues={{
         objects:
-          process.data.expand?.object_via_process?.map(object => ({
-            id: object.id
-          })) ?? []
+          process.data.expand?.object_via_process?.map(object => object.id) ??
+          []
       }}
       onSuccess={values => {
-        const objectIds = (values.objects || []).map(obj => obj.id);
+        const objectIds = values.objects || [];
         applyProcess.mutate({
           processId,
           objectIds
@@ -59,7 +54,7 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
     >
       <div className={'flex gap-2'}>
         <div className={'whitespace-nowrap text-sm font-medium'}>
-          Quy trình đang áp dụng:{' '}
+          Quy trình:{' '}
         </div>
         <p className={'text-sm text-red-500'}>
           {process.data.name}
@@ -76,6 +71,9 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
         name="objects"
         title="Đối tượng áp dụng"
         className={'w-full'}
+        options={{
+          multiple: true
+        }}
       />
     </Form>
   );

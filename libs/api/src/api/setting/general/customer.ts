@@ -20,6 +20,17 @@ export const customerApi = router('customer', {
   byId: router.query({
     fetcher: (id: string) => client.collection(Collections.Customer).getOne(id)
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection(Collections.Customer).getFullList({
+        filter: `id ~ "${ids.join('" || id ~ "')}"`
+      });
+    }
+  }),
   create: router.mutation({
     mutationFn: (params: CustomerRecord) =>
       client.collection(Collections.Customer).create(params)

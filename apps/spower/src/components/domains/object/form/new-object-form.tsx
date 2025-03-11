@@ -6,11 +6,11 @@ import { useEffect, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  CheckField,
-  Form,
-  TextField,
-  TextareaField,
-  success
+    CheckField,
+    Form,
+    TextField,
+    TextareaField,
+    success
 } from '@minhdtb/storeo-theme';
 
 import { ProcessDropdownField } from '../../process';
@@ -28,7 +28,8 @@ export type NewObjectFormProps = BusinessFormProps;
 
 export const NewObjectForm: FC<NewObjectFormProps> = props => {
   const [defaultType, setDefaultType] = useState<string>('');
-  const { data: objectTypes } = api.objectType.listFull.useSuspenseQuery();
+  const { data: objectTypesResult } = api.objectType.list.useSuspenseQuery();
+  const objectTypes = objectTypesResult?.items || [];
 
   useEffect(() => {
     if (objectTypes && objectTypes.length > 0) {

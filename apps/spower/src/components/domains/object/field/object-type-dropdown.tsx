@@ -1,45 +1,56 @@
 import { api } from 'portal-api';
 
-import type { FC } from 'react';
-import { useMemo } from 'react';
+import { type FC, useCallback } from 'react';
 
-import type { SelectInputItem, SelectInputProps } from '@minhdtb/storeo-theme';
-import { SelectInput } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
-import { DynamicIcon } from '../../../icon';
+export type ObjectTypeDropdownProps = Partial<ComboboxProps>;
 
-export type ObjectTypeDropdownProps = Omit<SelectInputProps, 'items'>;
+export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = props => {
+  const lookupFn = useCallback(async (ids: string | string[]) => {
+    const result = Array.isArray(ids)
+      ? await api.objectType.byIds.fetcher(ids)
+      : await api.objectType.byId.fetcher(ids);
+    return Array.isArray(result)
+      ? result.map(it => ({
+          label: it.display || '',
+          value: it.id
+        }))
+      : {
+          label: result.display || '',
+          value: result.id
+        };
+  }, []);
 
-export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = ({
-  ...props
-}) => {
-  const objectTypes = api.objectType.listFull.useSuspenseQuery();
+  const queryFn = useCallback(
+    async ({ search, page }: { search?: string; page?: number }) => {
+      const result = await api.objectType.list.fetcher({
+        filter: search ?? '',
+        pageIndex: page ?? 1,
+        pageSize: 10
+      });
 
-  const items = useMemo(
-    () =>
-      objectTypes.data?.map(type => ({
-        value: type.id,
-        label: type.display || '',
-        meta: {
-          icon: type.icon,
-          color: type.color
-        }
-      })) || [],
-    [objectTypes.data]
+      return {
+        items: result.items.map(type => ({
+          label: type.display || '',
+          value: type.id,
+          subLabel: '',
+          group: ''
+        })),
+        hasMore: result.page < result.totalPages
+      };
+    },
+    []
   );
 
   return (
-    <SelectInput items={items} {...props} showSearch>
-      {(item: SelectInputItem<{ icon: string; color: string }>) => (
-        <div className="flex items-center gap-2 text-sm">
-          <DynamicIcon
-            svgContent={item.meta?.icon}
-            className={'h-4 w-4 flex-shrink-0'}
-            style={{ color: item.meta?.color || '#6b7280' }}
-          />
-          {item.label}
-        </div>
-      )}
-    </SelectInput>
+    <Combobox
+      {...props}
+      placeholder={props.placeholder ?? 'Chọn loại đối tượng'}
+      emptyText={props.emptyText ?? 'Không tìm thấy loại đối tượng'}
+      queryKey={['objectTypes']}
+      queryFn={queryFn}
+      lookupFn={lookupFn}
+    />
   );
 };

@@ -21,7 +21,7 @@ function RouteComponent() {
 
   const handleSuccess = useCallback(() => {
     history.back();
-    invalidates([api.process.listFull.getKey()]);
+    invalidates([api.process.list.getKey()]);
   }, [history, invalidates]);
 
   const handleCancel = useCallback(() => {

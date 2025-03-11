@@ -6,12 +6,6 @@ import { router } from 'react-query-kit';
 import type { ListParams } from '../../types';
 
 export const materialApi = router('material', {
-  listFull: router.query({
-    fetcher: () =>
-      client.collection(Collections.Material).getFullList({
-        sort: '-created'
-      })
-  }),
   list: router.query({
     fetcher: (params?: ListParams) => {
       const filter = `(name ~ "${params?.filter ?? ''}" || code ~ "${params?.filter ?? ''}")`;
@@ -28,11 +22,19 @@ export const materialApi = router('material', {
   }),
   create: router.mutation({
     mutationFn: (params: Partial<MaterialRecord>) =>
-      client.collection(Collections.Material).create(params)
+      client.collection(Collections.Material).create({
+        name: params.name,
+        code: params.code,
+        unit: params.unit
+      })
   }),
   update: router.mutation({
     mutationFn: (params: Partial<MaterialRecord> & { id: string }) =>
-      client.collection(Collections.Material).update(params.id, params)
+      client.collection(Collections.Material).update(params.id, {
+        name: params.name,
+        code: params.code,
+        unit: params.unit
+      })
   }),
   delete: router.mutation({
     mutationFn: (id: string) =>

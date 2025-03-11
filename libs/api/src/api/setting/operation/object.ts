@@ -7,6 +7,7 @@ import {
 
 import { router } from 'react-query-kit';
 
+import { ListParams } from '../../types';
 import { ProcessDbData } from './process';
 
 export type ObjectData = ObjectResponse<{
@@ -15,24 +16,42 @@ export type ObjectData = ObjectResponse<{
 }>;
 
 export const objectApi = router('object', {
-  listFull: router.query({
-    fetcher: () =>
-      client.collection<ObjectData>(Collections.Object).getFullList({
-        expand: `process, type`
-      })
+  list: router.query({
+    fetcher: (params?: ListParams) =>
+      client
+        .collection<ObjectData>(Collections.Object)
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter ?? '',
+          expand: `process, type`
+        })
   }),
-  listFullActive: router.query({
-    fetcher: () =>
-      client.collection<ObjectData>(Collections.Object).getFullList({
-        expand: `process, type`,
-        filter: `active = true`
-      })
+  listActive: router.query({
+    fetcher: (params?: ListParams) =>
+      client
+        .collection<ObjectData>(Collections.Object)
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter:
+            (params?.filter ? `${params.filter} && ` : '') + `active = true`,
+          expand: `process, type`
+        })
   }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ObjectData>(Collections.Object).getOne(id, {
         expand: `process, type`
       })
+  }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection<ObjectData>(Collections.Object).getFullList({
+        filter: ids.map(id => `id = "${id}"`).join(' || '),
+        expand: `process, type`
+      });
+    }
   }),
   create: router.mutation({
     mutationFn: (params: Partial<ObjectResponse>) =>

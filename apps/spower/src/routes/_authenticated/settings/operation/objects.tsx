@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   RowSelectionState,
@@ -7,14 +7,23 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { CheckIcon, CopyIcon, EditIcon, PlusIcon, XIcon } from 'lucide-react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+  CheckIcon,
+  CopyIcon,
+  EditIcon,
+  Loader,
+  PlusIcon,
+  XIcon
+} from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
+  DebouncedInput,
   Table,
   TableBody,
   TableCell,
@@ -35,7 +44,7 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.object.listFull.getOptions()),
+    queryClient?.ensureQueryData(api.object.list.getOptions()),
   beforeLoad: () => {
     return {
       title: 'Quản lý đối tượng'
@@ -44,22 +53,37 @@ export const Route = createFileRoute(
 });
 
 function Component() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
-  const listObjects = api.object.listFull.useSuspenseQuery();
+  const [search, setSearch] = useState<string | undefined>();
   const invalidates = useInvalidateQueries();
+  const parentRef = useRef<HTMLDivElement>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: api.object.list.getKey({ filter: search ?? '' }),
+      queryFn: ({ pageParam = 1 }) =>
+        api.object.list.fetcher({
+          filter: search ?? '',
+          pageIndex: pageParam,
+          pageSize: 20
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1
+    });
+
+  const objects = useMemo(
+    () => data?.pages.flatMap(page => page.items) || [],
+    [data]
+  );
 
   const columnHelper = createColumnHelper<ObjectData>();
 
   const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
       success('Xóa đối tượng thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.object.listFull.getKey()
-        })
-      ]);
+      invalidates([api.object.list.getKey({ filter: search ?? '' })]);
     },
     onError: () => {
       error('Xóa đối tượng thất bại');
@@ -69,21 +93,10 @@ function Component() {
   const duplicateObject = api.object.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản đối tượng thành công');
-      invalidates([api.object.listFull.getKey()]);
+      invalidates([api.object.list.getKey({ filter: search ?? '' })]);
     },
     onError: () => {
       error('Nhân bản đối tượng thất bại');
-    }
-  });
-
-  const activateObjects = api.object.actives.useMutation({
-    onSuccess: async () => {
-      success('Kích hoạt đối tượng thành công');
-      setRowSelection({});
-      invalidates([api.object.listFull.getKey()]);
-    },
-    onError: () => {
-      error('Kích hoạt đối tượng thất bại');
     }
   });
 
@@ -261,7 +274,7 @@ function Component() {
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: listObjects.data || [],
+    data: objects,
     state: {
       rowSelection
     },
@@ -269,22 +282,50 @@ function Component() {
     onRowSelectionChange: setRowSelection
   });
 
-  const handleActivateSelected = useCallback(() => {
-    const selectedIds = Object.keys(rowSelection)
-      .map(index => {
-        const row = table.getRowModel().rows.find(row => row.id === index);
-        return row?.original.id;
-      })
-      .filter(Boolean) as string[];
+  const { rows } = table.getRowModel();
 
-    if (selectedIds.length === 0) return;
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
 
-    confirm('Bạn có chắc chắn muốn kích hoạt các đối tượng đã chọn?', () => {
-      activateObjects.mutate(selectedIds);
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      if (
+        scrollHeight - scrollTop - clientHeight < 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  const handleNavigateToEdit = useCallback(
+    (objectId: string) => {
+      navigate({
+        to: './$objectId/edit',
+        params: {
+          objectId
+        }
+      });
+    },
+    [navigate]
+  );
+
+  const handleAddObject = useCallback(() => {
+    navigate({
+      to: './new'
     });
-  }, [activateObjects, confirm, rowSelection, table]);
+  }, [navigate]);
 
-  const selectedRows = Object.keys(rowSelection).length;
+  const handleSearchChange = useCallback((value: string | undefined) => {
+    setSearch(value);
+  }, []);
 
   return (
     <div className={'flex h-full flex-col'}>
@@ -292,117 +333,170 @@ function Component() {
       <PageHeader title={'Quản lý đối tượng'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button
-            className={'flex gap-1'}
-            onClick={() =>
-              navigate({
-                to: './new'
-              })
-            }
-          >
+          <Button className={'flex gap-1'} onClick={handleAddObject}>
             <PlusIcon className={'h-5 w-5'} />
             Thêm đối tượng
           </Button>
-          <Button
-            className={'flex gap-1'}
-            onClick={handleActivateSelected}
-            disabled={selectedRows === 0}
-          >
-            <CheckIcon className={'h-4 w-4'} />
-            Kích hoạt ({selectedRows})
-          </Button>
+          <DebouncedInput
+            value={search}
+            className={'h-9 w-56'}
+            placeholder={'Tìm kiếm...'}
+            onChange={handleSearchChange}
+          />
         </div>
         <div
           className={
             'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
           }
         >
-          <div className="absolute inset-0 overflow-auto">
-            <Table
-              style={{
-                width: '100%',
-                tableLayout: 'fixed'
-              }}
-            >
-              <TableHeader
-                className={'bg-appBlueLight'}
+          <div
+            className="absolute inset-0 overflow-auto"
+            ref={parentRef}
+            onScroll={handleScroll}
+          >
+            {isLoading ? (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <Table
                 style={{
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 2
+                  width: '100%',
+                  tableLayout: 'fixed'
                 }}
+                className="relative"
               >
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className={'text-appWhite whitespace-nowrap'}
-                        style={{
-                          width: header.getSize(),
-                          maxWidth: header.getSize()
-                        }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map(row => (
+                <TableHeader
+                  className={'bg-appBlueLight'}
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2
+                  }}
+                >
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
-                      key={row.id}
-                      className={cn(
-                        'cursor-pointer last:border-b-0',
-                        row.getIsSelected() && 'bg-blue-50'
-                      )}
-                      onClick={() => {
-                        navigate({
-                          to: './$objectId/edit',
-                          params: {
-                            objectId: row.original.id
-                          }
-                        });
-                      }}
+                      key={headerGroup.id}
+                      className={'hover:bg-appBlue'}
                     >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={'truncate text-left'}
+                      {headerGroup.headers.map(header => (
+                        <TableHead
+                          key={header.id}
+                          className={`text-appWhite whitespace-nowrap ${
+                            header.column.id === 'select' ||
+                            header.column.id === 'index'
+                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                              : header.column.id === 'name'
+                                ? 'bg-appBlueLight sticky left-[70px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                : ''
+                          }`}
                           style={{
-                            width: cell.column.getSize(),
-                            maxWidth: cell.column.getSize()
+                            width: header.getSize(),
+                            maxWidth: header.getSize(),
+                            left:
+                              header.column.id === 'select'
+                                ? 0
+                                : header.column.id === 'index'
+                                  ? 40
+                                  : header.column.id === 'name'
+                                    ? 70
+                                    : 'auto'
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
                           )}
-                        </TableCell>
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow className={'border-b-0'}>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
-                    >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableHeader>
+                <TableBody
+                  className={'relative'}
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`
+                  }}
+                >
+                  {rows.length ? (
+                    virtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={virtualRow.key}
+                          className={cn(
+                            'absolute w-full cursor-pointer last:border-b-0',
+                            row.getIsSelected() && 'bg-blue-50'
+                          )}
+                          data-index={virtualRow.index}
+                          ref={virtualizer.measureElement}
+                          style={{
+                            transform: `translateY(${virtualRow.start}px)`
+                          }}
+                          onClick={() => handleNavigateToEdit(row.original.id)}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              className={`truncate text-left ${
+                                cell.column.id === 'select' ||
+                                cell.column.id === 'index'
+                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                  : cell.column.id === 'name'
+                                    ? 'sticky left-[70px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                    : ''
+                              }`}
+                              style={{
+                                width: cell.column.getSize(),
+                                maxWidth: cell.column.getSize(),
+                                left:
+                                  cell.column.id === 'select'
+                                    ? 0
+                                    : cell.column.id === 'index'
+                                      ? 40
+                                      : cell.column.id === 'name'
+                                        ? 70
+                                        : 'auto',
+                                backgroundColor:
+                                  row.getIsSelected() &&
+                                  (cell.column.id === 'select' ||
+                                    cell.column.id === 'index' ||
+                                    cell.column.id === 'name')
+                                    ? '#EBF5FF'
+                                    : ''
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow className={'border-b-0'}>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-16 text-center"
+                      >
+                        Không có dữ liệu.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
+            {isFetchingNextPage && (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            )}
           </div>
         </div>
       </div>

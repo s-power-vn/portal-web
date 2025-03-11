@@ -95,7 +95,6 @@ const schema = yup.object().shape({
 type ConditionBlockProps = {
   condition: SubCondition;
   index: number;
-  departments: DepartmentData[];
   formErrors: ConditionErrors;
   formSubmitted: boolean;
   showEmployeeError: boolean;
@@ -109,7 +108,6 @@ const ConditionBlock = memo(
   ({
     condition,
     index,
-    departments,
     formSubmitted,
     showEmployeeError,
     showDepartmentError,
@@ -131,13 +129,23 @@ const ConditionBlock = memo(
       }
     }, [condition]);
 
-    const currentDepartment = useMemo(
-      () =>
-        departments.find(
-          dept => isDepartmentCondition(condition) && dept.id === localDeptId
-        ),
-      [departments, condition, localDeptId]
-    );
+    let currentDepartment: DepartmentData | undefined;
+    try {
+      const queryId =
+        isDepartmentCondition(condition) && localDeptId
+          ? localDeptId
+          : 'non-existent-id';
+
+      const { data } = api.department.byId.useSuspenseQuery({
+        variables: queryId
+      });
+
+      if (isDepartmentCondition(condition) && localDeptId) {
+        currentDepartment = data;
+      }
+    } catch (error) {
+      currentDepartment = undefined;
+    }
 
     const departmentRoles = useMemo(
       () => currentDepartment?.roles || [],
@@ -145,15 +153,16 @@ const ConditionBlock = memo(
     );
 
     const handleDepartmentChange = useCallback(
-      (value: string) => {
-        setLocalDeptId(value);
+      (value: string | string[]) => {
+        const departmentId = Array.isArray(value) ? value[0] || '' : value;
+        setLocalDeptId(departmentId);
         setLocalRole('');
 
-        if (value) {
+        if (departmentId) {
           clearError('department', index);
         }
 
-        setValue(`conditions.${index}.departmentId`, value, {
+        setValue(`conditions.${index}.departmentId`, departmentId, {
           shouldValidate: true,
           shouldDirty: true,
           shouldTouch: true
@@ -225,7 +234,7 @@ const ConditionBlock = memo(
               </label>
               <DepartmentDropdown
                 value={localDeptId}
-                onChange={value => handleDepartmentChange(value as string)}
+                onChange={handleDepartmentChange}
                 showClear={false}
               />
               {formSubmitted && showDepartmentError && !localDeptId && (
@@ -240,10 +249,12 @@ const ConditionBlock = memo(
                 Chức danh
               </label>
               <RoleDropdown
-                items={departmentRoles.map(role => ({
-                  value: role.id,
-                  label: role.name
-                }))}
+                items={departmentRoles.map(
+                  (role: { id: string; name: string }) => ({
+                    value: role.id,
+                    label: role.name
+                  })
+                )}
                 value={localRole}
                 onChange={value => handleRoleChange(value as string)}
                 placeholder="Chọn chức danh"
@@ -331,10 +342,6 @@ const ConditionBlock = memo(
         return false;
       }
     } else {
-      return false;
-    }
-
-    if (prevProps.departments.length !== nextProps.departments.length) {
       return false;
     }
 
@@ -623,8 +630,6 @@ export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
     }
   }, [handleSubmit, onSubmit, watchConditions]);
 
-  const departments = api.department.listFull.useSuspenseQuery();
-
   const clearError = useCallback(
     (type: 'department' | 'employee', index: number) => {
       setValidationErrors(prev => {
@@ -662,7 +667,6 @@ export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
                 key={field.id}
                 condition={condition}
                 index={index}
-                departments={departments.data}
                 formErrors={errors as unknown as ConditionErrors}
                 formSubmitted={formSubmitted}
                 showEmployeeError={showEmployeeError}

@@ -387,7 +387,7 @@ export type ObjectTypeRecord = {
 	display?: string
 	icon?: string
 	id: string
-	name?: string
+	name: string
 	updated?: IsoDateString
 }
 

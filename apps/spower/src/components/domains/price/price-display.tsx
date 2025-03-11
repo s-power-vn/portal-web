@@ -97,7 +97,7 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
     [price.data]
   );
 
-  const { data: suppliers = [] } = api.supplier.listByIds.useSuspenseQuery({
+  const { data: suppliers = [] } = api.supplier.byIds.useSuspenseQuery({
     variables: supplierIds
   });
 

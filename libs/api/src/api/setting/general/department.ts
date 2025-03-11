@@ -17,12 +17,6 @@ export type DepartmentData = DepartmentResponse<
 >;
 
 export const departmentApi = router('department', {
-  listFull: router.query({
-    fetcher: () =>
-      client.collection<DepartmentData>(Collections.Department).getFullList({
-        sort: '-created'
-      })
-  }),
   list: router.query({
     fetcher: (params?: ListParams) => {
       const filter = params?.filter ? `name ~ "${params.filter}"` : '';
@@ -37,6 +31,19 @@ export const departmentApi = router('department', {
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<DepartmentData>(Collections.Department).getOne(id)
+  }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client
+        .collection<DepartmentData>(Collections.Department)
+        .getFullList({
+          filter: `id ~ "${ids.join('" || id ~ "')}"`
+        });
+    }
   }),
   create: router.mutation({
     mutationFn: (params: Partial<DepartmentRecord>) =>

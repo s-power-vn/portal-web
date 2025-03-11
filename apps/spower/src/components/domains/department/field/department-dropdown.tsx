@@ -1,27 +1,54 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
-import type { FC } from 'react';
-import { useMemo } from 'react';
+import { type FC, useCallback } from 'react';
 
-import type { SelectInputProps } from '@minhdtb/storeo-theme';
-import { SelectInput } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
-export type DepartmentDropdownProps = Omit<SelectInputProps, 'items'>;
+export type DepartmentDropdownProps = Partial<ComboboxProps>;
 
-export const DepartmentDropdown: FC<DepartmentDropdownProps> = ({
-  ...props
-}) => {
-  const listDepartments = api.department.listFull.useQuery();
+export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
+  const lookupFn = useCallback(async (ids: string | string[]) => {
+    const result = Array.isArray(ids)
+      ? await api.department.byIds.fetcher(ids)
+      : await api.department.byId.fetcher(ids);
+    return Array.isArray(result)
+      ? result.map(it => ({
+          label: it.name,
+          value: it.id
+        }))
+      : {
+          label: result.name,
+          value: result.id
+        };
+  }, []);
 
-  const items = useMemo(
-    () =>
-      _.map(listDepartments.data, ({ id, name }) => ({
-        value: id,
-        label: name
-      })),
-    [listDepartments.data]
+  const queryFn = useCallback(
+    async ({ search, page }: { search?: string; page?: number }) => {
+      const result = await api.department.list.fetcher({
+        filter: search ?? '',
+        pageIndex: page ?? 1,
+        pageSize: 10
+      });
+
+      return {
+        items: result.items.map(it => ({
+          label: it.name,
+          value: it.id
+        })),
+        hasMore: result.page < result.totalPages
+      };
+    },
+    []
   );
 
-  return <SelectInput items={items} {...props} />;
+  return (
+    <Combobox
+      {...props}
+      placeholder={props.placeholder ?? 'Chọn phòng ban'}
+      emptyText={props.emptyText ?? 'Không tìm thấy phòng ban'}
+      queryKey={['departments']}
+      queryFn={queryFn}
+      lookupFn={lookupFn}
+    />
+  );
 };

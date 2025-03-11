@@ -1,19 +1,20 @@
-import { PlusIcon } from 'lucide-react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Loader, PlusIcon } from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DebouncedInput,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ThemeButton,
   showModal
 } from '@minhdtb/storeo-theme';
 
-import { useInvalidateQueries } from '../../../hooks';
+import { useIntersectionObserver, useInvalidateQueries } from '../../../hooks';
 import { DynamicIcon } from '../../icon/dynamic-icon';
 import { NewPriceForm } from '../price';
 import { NewRequestForm } from '../request';
@@ -24,14 +25,71 @@ export type NewIssueButtonProps = {
 
 export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const invalidates = useInvalidateQueries();
-  const listObjects = api.object.listFullActive.useSuspenseQuery();
-  const objectTypes = api.objectType.listFull.useQuery();
+  const [search, setSearch] = useState<string>('');
+  const [open, setOpen] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+    useInfiniteQuery({
+      queryKey: api.object.listActive.getKey({
+        filter: `name ~ "${search}"`
+      }),
+      queryFn: ({ pageParam = 1 }) =>
+        api.object.listActive.fetcher({
+          filter: `name ~ "${search}"`,
+          pageIndex: pageParam,
+          pageSize: 10
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1,
+      enabled: open
+    });
+
+  const listObjects = useMemo(
+    () => data?.pages.flatMap(page => page.items) || [],
+    [data]
+  );
+
+  useEffect(() => {
+    if (open) {
+      refetch();
+    }
+  }, [open, refetch]);
+
+  const handleScroll = useCallback(() => {
+    if (!loadMoreRef.current || !scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const loadMoreElement = loadMoreRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const loadMoreRect = loadMoreElement.getBoundingClientRect();
+
+    if (
+      loadMoreRect.top >= containerRect.top &&
+      loadMoreRect.bottom <= containerRect.bottom &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useIntersectionObserver({
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: !!hasNextPage && !isFetchingNextPage && open
+  });
+
+  const { data: objectTypesResult } = api.objectType.list.useQuery();
+  const objectTypes = objectTypesResult?.items || [];
 
   const typeMap = useMemo(() => {
-    if (!objectTypes.data) return new Map();
+    if (!objectTypes.length) return new Map();
 
-    return new Map(objectTypes.data.map(type => [type.id, type]));
-  }, [objectTypes.data]);
+    return new Map(objectTypes.map(type => [type.id, type]));
+  }, [objectTypes]);
 
   const handleNewRequestClick = useCallback(
     (objectId: string) => {
@@ -109,53 +167,84 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
 
       if (type === 'Request') {
         handleNewRequestClick(object.id);
+        setOpen(false);
       } else if (type === 'Price') {
         handleNewPriceRequestClick(object.id);
+        setOpen(false);
       }
     },
     [handleNewRequestClick, handleNewPriceRequestClick, typeMap]
   );
 
+  const handleSearchChange = useCallback((value: string | undefined) => {
+    setSearch(value || '');
+  }, []);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <ThemeButton className={'flex gap-1'}>
           <PlusIcon className={'h-5 w-5'} />
-          Thêm công việc
+          Tạo công việc mới
         </ThemeButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56"
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-56 p-0"
         side="bottom"
         align="start"
         sideOffset={2}
       >
-        {listObjects.data?.length ? (
-          listObjects.data?.map(object => {
-            const type = typeMap.get(object.type);
+        <div className="p-2">
+          <DebouncedInput
+            value={search}
+            className={'h-8 w-full'}
+            placeholder={'Tìm kiếm loại công việc...'}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <>
+          <div
+            className="max-h-[300px] overflow-y-auto"
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+          >
+            {listObjects.length ? (
+              listObjects.map(object => {
+                const type = typeMap.get(object.type);
 
-            return (
-              <DropdownMenuItem
-                key={object.id}
-                onClick={() => handleObjectClick(object)}
+                return (
+                  <div
+                    key={object.id}
+                    className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center px-2 py-1.5 text-sm outline-none"
+                    onClick={() => handleObjectClick(object)}
+                  >
+                    <DynamicIcon
+                      svgContent={type?.icon}
+                      className="mr-2 h-4 w-4"
+                      style={{ color: type?.color || '#6b7280' }}
+                    />
+                    {object.name}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="px-2 py-1.5 text-xs text-gray-500">
+                Không có đối tượng tạo công việc
+              </div>
+            )}
+            {hasNextPage && (
+              <div
+                ref={loadMoreRef}
+                className="flex h-8 w-full items-center justify-center text-xs text-gray-500"
               >
-                <DynamicIcon
-                  svgContent={type?.icon}
-                  className="mr-2 h-4 w-4"
-                  style={{ color: type?.color || '#6b7280' }}
-                />
-                {object.name}
-              </DropdownMenuItem>
-            );
-          })
-        ) : (
-          <DropdownMenuItem>
-            <span className="text-xs text-gray-500">
-              Không có đối tượng tạo công việc
-            </span>
-          </DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+                {isFetchingNextPage && (
+                  <Loader className="h-4 w-4 animate-spin" />
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      </PopoverContent>
+    </Popover>
   );
 };

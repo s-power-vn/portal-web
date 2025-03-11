@@ -38,6 +38,17 @@ export const employeeApi = router('employee', {
         expand: 'department'
       })
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection<UserData>(Collections.User).getFullList({
+        filter: `id ~ "${ids.join('" || id ~ "')}"`
+      });
+    }
+  }),
   create: router.mutation({
     mutationFn: (params: Partial<UserRecord> & { password: string }) =>
       client.send('/create-employee', {

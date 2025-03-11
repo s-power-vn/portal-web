@@ -13,10 +13,10 @@ const Component = () => {
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
 
-  const onSuccessHandler = useCallback(() => {
+  const handleSuccess = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.object.listFull.getKey()]);
+    invalidates([api.object.list.getKey()]);
   }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
@@ -35,7 +35,7 @@ const Component = () => {
       }}
       id={'new-object-modal'}
     >
-      <NewObjectForm onSuccess={onSuccessHandler} onCancel={onCancelHandler} />
+      <NewObjectForm onSuccess={handleSuccess} onCancel={onCancelHandler} />
     </Modal>
   );
 };

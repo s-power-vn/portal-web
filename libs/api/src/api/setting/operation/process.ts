@@ -1,11 +1,14 @@
 import {
   Collections,
   ObjectResponse,
+  ProcessRecord,
   ProcessResponse,
   client
 } from 'portal-core';
 
 import { router } from 'react-query-kit';
+
+import { ListParams } from '../../types';
 
 export type ProcessDbData = ProcessResponse<
   {},
@@ -15,11 +18,13 @@ export type ProcessDbData = ProcessResponse<
 >;
 
 export const processApi = router('process', {
-  listFull: router.query({
-    fetcher: () => {
-      return client.collection<ProcessDbData>(Collections.Process).getFullList({
-        expand: 'object_via_process'
-      });
+  list: router.query({
+    fetcher: (params?: ListParams) => {
+      return client
+        .collection<ProcessDbData>(Collections.Process)
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          expand: 'object_via_process'
+        });
     }
   }),
   byId: router.query({
@@ -29,26 +34,38 @@ export const processApi = router('process', {
       });
     }
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection<ProcessDbData>(Collections.Process).getFullList({
+        filter: `id ~ "${ids.join('" || id ~ "')}"`
+      });
+    }
+  }),
   create: router.mutation({
-    mutationFn: (data: Partial<ProcessResponse>) => {
-      return client
-        .collection<ProcessResponse>(Collections.Process)
-        .create(data);
+    mutationFn: (params: Partial<ProcessRecord>) => {
+      if (!params.name) {
+        throw new Error('Thiếu tên quy trình');
+      }
+
+      return client.collection(Collections.Process).create(params);
     }
   }),
   update: router.mutation({
-    mutationFn: ({
-      id,
-      ...data
-    }: Partial<ProcessResponse> & { id: string }) => {
-      return client
-        .collection<ProcessResponse>(Collections.Process)
-        .update(id, data);
+    mutationFn: (params: Partial<ProcessRecord>) => {
+      if (!params.id) {
+        throw new Error('Thiếu id quy trình');
+      }
+
+      return client.collection(Collections.Process).update(params.id, params);
     }
   }),
   delete: router.mutation({
     mutationFn: (id: string) => {
-      return client.collection<ProcessResponse>(Collections.Process).delete(id);
+      return client.collection(Collections.Process).delete(id);
     }
   }),
   apply: router.mutation({
@@ -61,10 +78,10 @@ export const processApi = router('process', {
   }),
   duplicate: router.mutation({
     mutationFn: (id: string) => {
-      return client.send('/duplicate-process', {
+      return client.send('/api/process/duplicate', {
         method: 'POST',
         body: {
-          processId: id
+          id
         }
       });
     }

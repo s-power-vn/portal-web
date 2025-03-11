@@ -1,21 +1,56 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
-import { MultiSelectList, MultiSelectListProps } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
-export type ObjectMultiselectProps = Omit<MultiSelectListProps, 'items'>;
+export type ObjectMultiselectProps = Partial<ComboboxProps>;
 
-export const ObjectMultiselect: FC<ObjectMultiselectProps> = ({ ...props }) => {
-  const listObjects = api.object.listFull.useQuery();
+export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
+  const lookupFn = useCallback(async (ids: string | string[]) => {
+    const result = Array.isArray(ids)
+      ? await api.object.byIds.fetcher(ids)
+      : await api.object.byId.fetcher(ids);
+    return Array.isArray(result)
+      ? result.map(it => ({
+          label: it.name,
+          value: it.id
+        }))
+      : {
+          label: result.name,
+          value: result.id
+        };
+  }, []);
 
-  const items = _.map(listObjects.data, object => ({
-    id: object.id,
-    name: object.name,
-    sub: object.process !== '' ? 'Đã áp dụng' : '',
-    category: object.expand?.objectType?.name || ''
-  }));
+  const queryFn = useCallback(
+    async ({ search, page }: { search?: string; page?: number }) => {
+      const result = await api.object.list.fetcher({
+        filter: search ?? '',
+        pageIndex: page ?? 1,
+        pageSize: 10
+      });
 
-  return <MultiSelectList {...props} items={items} />;
+      return {
+        items: result.items.map(object => ({
+          label: object.name,
+          value: object.id,
+          subLabel: object.process !== '' ? 'Đã áp dụng' : '',
+          group: object.expand?.type?.display || ''
+        })),
+        hasMore: result.page < result.totalPages
+      };
+    },
+    []
+  );
+
+  return (
+    <Combobox
+      {...props}
+      placeholder={props.placeholder ?? 'Chọn đối tượng'}
+      emptyText={props.emptyText ?? 'Không tìm thấy đối tượng'}
+      queryKey={['objects']}
+      queryFn={queryFn}
+      lookupFn={lookupFn}
+    />
+  );
 };
