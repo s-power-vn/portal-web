@@ -26,9 +26,9 @@ const Component = () => {
   const navigate = useNavigate({ from: ThisRoute.fullPath });
   const search = ThisRoute.useSearch();
 
-  const objectTypes = api.objectType.listFull.useSuspenseQuery();
-
-  const priceType = objectTypes.data?.find(type => type.name === 'Price');
+  const { data: priceType } = api.objectType.byType.useSuspenseQuery({
+    variables: 'Price'
+  });
 
   const issues = api.issue.listByObjectType.useSuspenseQuery({
     variables: {
@@ -208,11 +208,9 @@ export const Route = createFileRoute(
     context: { queryClient },
     params: { projectId }
   }) => {
-    const objectTypes = await queryClient?.ensureQueryData(
-      api.objectType.listFull.getOptions()
+    const priceType = await queryClient?.ensureQueryData(
+      api.objectType.byType.getOptions('Price')
     );
-
-    const priceType = objectTypes?.find(type => type.name === 'Price');
 
     return queryClient?.ensureQueryData(
       api.issue.listByObjectType.getOptions({

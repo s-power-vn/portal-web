@@ -1,21 +1,39 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
 import { FC } from 'react';
 
-import { MultiSelectList, MultiSelectListProps } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
-export type ObjectMultiselectProps = Omit<MultiSelectListProps, 'items'>;
+export type ObjectMultiselectProps = Partial<ComboboxProps>;
 
-export const ObjectMultiselect: FC<ObjectMultiselectProps> = ({ ...props }) => {
-  const listObjects = api.object.listFull.useQuery();
+export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
+  return (
+    <Combobox
+      value={props.value}
+      onChange={props.onChange}
+      placeholder="Chọn đối tượng"
+      emptyText="Không tìm thấy đối tượng"
+      queryKey={['objects']}
+      queryFn={async ({ search, page }) => {
+        const result = await api.object.list.fetcher({
+          filter: search ?? '',
+          pageIndex: page ?? 1,
+          pageSize: 10
+        });
 
-  const items = _.map(listObjects.data, object => ({
-    id: object.id,
-    name: object.name,
-    sub: object.process !== '' ? 'Đã áp dụng' : '',
-    category: object.expand?.objectType?.name || ''
-  }));
-
-  return <MultiSelectList {...props} items={items} />;
+        return {
+          items: result.items.map(object => ({
+            label: object.name,
+            value: object.id,
+            subLabel: object.process !== '' ? 'Đã áp dụng' : '',
+            group: object.expand?.type?.name || ''
+          })),
+          hasMore: result.page < result.totalPages
+        };
+      }}
+      className={props.className}
+      showGroups={true}
+      multiple={true}
+    />
+  );
 };

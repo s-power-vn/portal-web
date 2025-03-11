@@ -17,10 +17,7 @@ const Component = () => {
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([
-      api.object.byId.getKey(objectId),
-      api.object.listFull.getKey()
-    ]);
+    invalidates([api.object.list.getKey(), api.object.byId.getKey(objectId)]);
   }, [history, invalidates, objectId]);
 
   const onCancelHandler = useCallback(() => {

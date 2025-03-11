@@ -15,8 +15,6 @@ import {
 } from 'lucide-react';
 import { api } from 'portal-api';
 
-import { useMemo } from 'react';
-
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
@@ -35,26 +33,39 @@ const Component = () => {
   });
   const navigate = useNavigate({ from: '/project/$projectId' });
 
-  const listObjects = api.object.listFullActive.useSuspenseQuery();
-  const objectTypes = api.objectType.listFull.useQuery();
+  // Truy vấn trực tiếp các object types theo tên
+  const { data: requestType } = api.objectType.byType.useSuspenseQuery({
+    variables: 'Request'
+  });
 
-  // Create a map of object types by name for efficient lookup
-  const typeMap = useMemo(() => {
-    if (!objectTypes.data) return new Map();
+  const { data: priceType } = api.objectType.byType.useSuspenseQuery({
+    variables: 'Price'
+  });
 
-    return new Map(objectTypes.data.map(type => [type.name, type]));
-  }, [objectTypes.data]);
+  // Kiểm tra có tồn tại object thuộc loại Request không
+  const { data: requestObjects } = requestType
+    ? api.object.listActive.useSuspenseQuery({
+        variables: {
+          filter: `type = "${requestType.id}"`,
+          pageIndex: 1,
+          pageSize: 1
+        }
+      })
+    : { data: null };
 
-  const requestType = typeMap.get('Request');
-  const priceType = typeMap.get('Price');
+  // Kiểm tra có tồn tại object thuộc loại Price không
+  const { data: priceObjects } = priceType
+    ? api.object.listActive.useSuspenseQuery({
+        variables: {
+          filter: `type = "${priceType.id}"`,
+          pageIndex: 1,
+          pageSize: 1
+        }
+      })
+    : { data: null };
 
-  const hasRequest = listObjects.data?.some(
-    object => object.type === requestType?.id
-  );
-
-  const hasPrice = listObjects.data?.some(
-    object => object.type === priceType?.id
-  );
+  const hasRequest = (requestObjects?.totalItems ?? 0) > 0;
+  const hasPrice = (priceObjects?.totalItems ?? 0) > 0;
 
   return (
     <div className={'flex h-full flex-col'}>

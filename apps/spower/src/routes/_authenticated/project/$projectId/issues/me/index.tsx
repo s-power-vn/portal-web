@@ -199,9 +199,6 @@ export const Route = createFileRoute(
     context: { queryClient },
     params: { projectId }
   }) => {
-    // Ensure objectTypes are loaded first
-    await queryClient?.ensureQueryData(api.objectType.listFull.getOptions());
-
     return queryClient?.ensureQueryData(
       api.issue.listMine.getOptions({
         ...search,

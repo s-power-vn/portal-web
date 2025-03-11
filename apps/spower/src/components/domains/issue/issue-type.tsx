@@ -17,25 +17,34 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
     variables: issueId
   });
 
-  const objectTypes = api.objectType.listFull.useQuery();
+  const objectTypeId = issue.data.expand?.object.type;
 
-  // Find the matched object type
-  const matchedType = objectTypes.data?.find(
-    type => type.id === issue.data.expand?.object.type
-  );
+  let objectType = null;
+  try {
+    const queryId = objectTypeId || 'non-existent-id';
+    const { data } = api.objectType.byId.useSuspenseQuery({
+      variables: queryId
+    });
+
+    if (objectTypeId) {
+      objectType = data;
+    }
+  } catch (error) {
+    objectType = null;
+  }
 
   const style =
     'rounded-full px-2 py-1 text-xs text-white flex items-center gap-1';
 
   return (
     <div className={'flex items-center whitespace-nowrap'}>
-      {matchedType ? (
+      {objectType ? (
         <span
           className={cn(style, className)}
-          style={{ backgroundColor: matchedType.color || '#6b7280' }}
+          style={{ backgroundColor: objectType.color || '#6b7280' }}
         >
           <DynamicIcon
-            svgContent={matchedType.icon}
+            svgContent={objectType.icon}
             className="h-3 w-3"
             style={{ color: 'white' }}
           />

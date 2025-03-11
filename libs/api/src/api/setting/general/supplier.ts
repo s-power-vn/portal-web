@@ -18,11 +18,16 @@ export const supplierApi = router('supplier', {
     }
   }),
   listByIds: router.query({
-    fetcher: (ids: string[]) =>
-      client.collection(Collections.Supplier).getFullList({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection(Collections.Supplier).getFullList({
         filter: ids.map(id => `id = "${id}"`).join(' || '),
         sort: '-created'
-      })
+      });
+    }
   }),
   byId: router.query({
     fetcher: (id: string) => client.collection(Collections.Supplier).getOne(id)

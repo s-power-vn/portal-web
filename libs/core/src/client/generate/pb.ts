@@ -421,7 +421,7 @@ export type ProcessRecord<Tprocess = unknown> = {
 	done?: string
 	id: string
 	name: string
-	objectType: RecordIdString[]
+	objectType: RecordIdString
 	process?: null | Tprocess
 	updated?: IsoDateString
 }
