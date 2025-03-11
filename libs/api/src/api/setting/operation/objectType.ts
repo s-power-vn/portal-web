@@ -15,12 +15,6 @@ export const objectTypeApi = router('objectType', {
           filter: params?.filter ?? ''
         })
   }),
-  listFull: router.query({
-    fetcher: () =>
-      client
-        .collection<ObjectTypeData>(Collections.ObjectType)
-        .getFullList({ sort: 'name' })
-  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ObjectTypeData>(Collections.ObjectType).getOne(id)
