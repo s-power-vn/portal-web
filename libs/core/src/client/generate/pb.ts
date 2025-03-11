@@ -387,7 +387,7 @@ export type ObjectTypeRecord = {
 	display?: string
 	icon?: string
 	id: string
-	name?: string
+	name: string
 	updated?: IsoDateString
 }
 
@@ -421,7 +421,7 @@ export type ProcessRecord<Tprocess = unknown> = {
 	done?: string
 	id: string
 	name: string
-	objectType: RecordIdString
+	objectType: RecordIdString[]
 	process?: null | Tprocess
 	updated?: IsoDateString
 }

@@ -37,7 +37,7 @@ function RouteComponent() {
         processId={processId}
         onSuccess={() => {
           invalidates([
-            api.process.listFull.getKey(),
+            api.process.list.getKey(),
             api.process.byId.getKey(processId)
           ]);
           history.back();

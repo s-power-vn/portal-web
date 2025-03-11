@@ -1,3 +1,4 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -8,7 +9,7 @@ import {
 import { CopyIcon, PlusIcon, XIcon } from 'lucide-react';
 import { ProcessDbData, api } from 'portal-api';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -31,7 +32,10 @@ import {
 
 import { EmployeeDisplay, PageHeader } from '../../../../components';
 import { ApplyProcessForm } from '../../../../components/domains/process/form/apply-process-form';
-import { useInvalidateQueries } from '../../../../hooks';
+import {
+  useIntersectionObserver,
+  useInvalidateQueries
+} from '../../../../hooks';
 
 export const Route = createFileRoute(
   '/_authenticated/settings/operation/process'
@@ -41,9 +45,36 @@ export const Route = createFileRoute(
 });
 
 function Component() {
-  const { data: process } = api.process.listFull.useSuspenseQuery();
   const navigate = useNavigate({ from: Route.fullPath });
+  const [search, setSearch] = useState<string | undefined>();
   const invalidates = useInvalidateQueries();
+  const parentRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: api.process.list.getKey({ filter: search ?? '' }),
+      queryFn: ({ pageParam = 1 }) =>
+        api.process.list.fetcher({
+          filter: search ?? '',
+          pageIndex: pageParam,
+          pageSize: 20
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1
+    });
+
+  const processes = useMemo(
+    () => data?.pages.flatMap(page => page.items) || [],
+    [data]
+  );
+
+  useIntersectionObserver({
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: !!hasNextPage && !isFetchingNextPage
+  });
 
   const handleAddProcess = useCallback(() => {
     navigate({
@@ -54,14 +85,14 @@ function Component() {
   const deleteProcess = api.process.delete.useMutation({
     onSuccess: async () => {
       success('Xóa quy trình thành công');
-      invalidates([api.process.listFull.getKey()]);
+      invalidates([api.process.list.getKey({ filter: search ?? '' })]);
     }
   });
 
   const duplicateProcess = api.process.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản quy trình thành công');
-      invalidates([api.process.listFull.getKey()]);
+      invalidates([api.process.list.getKey({ filter: search ?? '' })]);
     }
   });
 
@@ -78,7 +109,7 @@ function Component() {
           onSuccess={() => {
             close();
             invalidates([
-              api.process.listFull.getKey(),
+              api.process.list.getKey({ filter: search ?? '' }),
               api.process.byId.getKey()
             ]);
           }}
@@ -95,6 +126,27 @@ function Component() {
       });
     },
     [confirm, duplicateProcess]
+  );
+
+  const handleDeleteProcess = useCallback(
+    (id: string) => {
+      confirm('Bạn có chắc chắn muốn xóa quy trình này không?', () => {
+        deleteProcess.mutate(id);
+      });
+    },
+    [deleteProcess]
+  );
+
+  const handleEditProcess = useCallback(
+    (id: string) => {
+      navigate({
+        to: './$processId/edit',
+        params: {
+          processId: id
+        }
+      });
+    },
+    [navigate]
   );
 
   const columns = [
@@ -137,9 +189,7 @@ function Component() {
               className={'h-6 px-3'}
               onClick={e => {
                 e.stopPropagation();
-                confirm('Bạn chắc chắn muốn xóa quy trình này?', () => {
-                  deleteProcess.mutate(row.original.id);
-                });
+                handleDeleteProcess(row.original.id);
               }}
             >
               <XIcon className={'h-3 w-3'} />
@@ -232,13 +282,13 @@ function Component() {
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: process || []
+    data: processes || []
   });
 
   return (
     <>
       <Outlet />
-      <div className={'flex h-full flex-col'}>
+      <div className={'flex h-full flex-col'} ref={parentRef}>
         <PageHeader title={'Quản lý quy trình'} />
         <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
           <div className={'flex gap-2'}>
@@ -301,12 +351,7 @@ function Component() {
                         key={row.id}
                         className={'cursor-pointer last:border-b-0'}
                         onClick={() => {
-                          navigate({
-                            to: './$processId/edit',
-                            params: {
-                              processId: row.original.id
-                            }
-                          });
+                          handleEditProcess(row.original.id);
                         }}
                       >
                         {row.getVisibleCells().map(cell => (
