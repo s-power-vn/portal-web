@@ -17,7 +17,7 @@ export const supplierApi = router('supplier', {
         });
     }
   }),
-  listByIds: router.query({
+  byIds: router.query({
     fetcher: (ids: string[]) => {
       if (ids.length === 0) {
         return [];

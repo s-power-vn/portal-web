@@ -34,6 +34,17 @@ export const processApi = router('process', {
       });
     }
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection<ProcessDbData>(Collections.Process).getFullList({
+        filter: `id ~ "${ids.join('" || id ~ "')}"`
+      });
+    }
+  }),
   create: router.mutation({
     mutationFn: (params: Partial<ProcessRecord>) => {
       if (!params.name) {

@@ -71,6 +71,9 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
         name="objects"
         title="Đối tượng áp dụng"
         className={'w-full'}
+        options={{
+          multiple: true
+        }}
       />
     </Form>
   );

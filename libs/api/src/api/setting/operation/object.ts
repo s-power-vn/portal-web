@@ -41,6 +41,18 @@ export const objectApi = router('object', {
         expand: `process, type`
       })
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client.collection<ObjectData>(Collections.Object).getFullList({
+        filter: ids.map(id => `id = "${id}"`).join(' || '),
+        expand: `process, type`
+      });
+    }
+  }),
   create: router.mutation({
     mutationFn: (params: Partial<ObjectResponse>) =>
       client.collection<ObjectData>(Collections.Object).create(params)

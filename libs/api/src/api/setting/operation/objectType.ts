@@ -25,6 +25,19 @@ export const objectTypeApi = router('objectType', {
     fetcher: (id: string) =>
       client.collection<ObjectTypeData>(Collections.ObjectType).getOne(id)
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client
+        .collection<ObjectTypeData>(Collections.ObjectType)
+        .getFullList({
+          filter: `id ~ "${ids.join('" || id ~ "')}"`
+        });
+    }
+  }),
   byType: router.query({
     fetcher: (typeName: string) =>
       client

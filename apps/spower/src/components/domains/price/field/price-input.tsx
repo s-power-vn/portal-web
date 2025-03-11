@@ -199,7 +199,7 @@ export const PriceInput: FC<PriceInputProps> = ({
     setInternalData(calculateTotals(toInternalData(data), supplierIds));
   }, [data, supplierIds]);
 
-  const { data: suppliers = [] } = api.supplier.listByIds.useSuspenseQuery({
+  const { data: suppliers = [] } = api.supplier.byIds.useSuspenseQuery({
     variables: supplierIds
   });
 

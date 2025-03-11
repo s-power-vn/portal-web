@@ -1,16 +1,15 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { PlusIcon } from 'lucide-react';
+import { Loader, PlusIcon } from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   DebouncedInput,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ThemeButton,
   showModal
 } from '@minhdtb/storeo-theme';
@@ -29,8 +28,9 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useInfiniteQuery({
       queryKey: api.object.listActive.getKey({
         filter: `name ~ "${search}"`
@@ -44,13 +44,37 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
       getNextPageParam: lastPage =>
         lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
       initialPageParam: 1,
-      enabled: open // Only fetch when dropdown is open
+      enabled: open
     });
 
   const listObjects = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
+
+  useEffect(() => {
+    if (open) {
+      refetch();
+    }
+  }, [open, refetch]);
+
+  const handleScroll = useCallback(() => {
+    if (!loadMoreRef.current || !scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const loadMoreElement = loadMoreRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const loadMoreRect = loadMoreElement.getBoundingClientRect();
+
+    if (
+      loadMoreRect.top >= containerRect.top &&
+      loadMoreRect.bottom <= containerRect.bottom &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useIntersectionObserver({
     target: loadMoreRef,
@@ -143,8 +167,10 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
 
       if (type === 'Request') {
         handleNewRequestClick(object.id);
+        setOpen(false);
       } else if (type === 'Price') {
         handleNewPriceRequestClick(object.id);
+        setOpen(false);
       }
     },
     [handleNewRequestClick, handleNewPriceRequestClick, typeMap]
@@ -155,15 +181,15 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   }, []);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <ThemeButton className={'flex gap-1'}>
           <PlusIcon className={'h-5 w-5'} />
           Tạo công việc mới
         </ThemeButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56"
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-56 p-0"
         side="bottom"
         align="start"
         sideOffset={2}
@@ -172,18 +198,23 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
           <DebouncedInput
             value={search}
             className={'h-8 w-full'}
-            placeholder={'Tìm kiếm...'}
+            placeholder={'Tìm kiếm loại công việc...'}
             onChange={handleSearchChange}
           />
         </div>
-        <div className="max-h-[300px] overflow-y-auto">
+        <div
+          className="max-h-[300px] overflow-y-auto"
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+        >
           {listObjects.length ? (
             listObjects.map(object => {
               const type = typeMap.get(object.type);
 
               return (
-                <DropdownMenuItem
+                <div
                   key={object.id}
+                  className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center px-2 py-1.5 text-sm outline-none"
                   onClick={() => handleObjectClick(object)}
                 >
                   <DynamicIcon
@@ -192,26 +223,26 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
                     style={{ color: type?.color || '#6b7280' }}
                   />
                   {object.name}
-                </DropdownMenuItem>
+                </div>
               );
             })
           ) : (
-            <DropdownMenuItem>
-              <span className="text-xs text-gray-500">
-                Không có đối tượng tạo công việc
-              </span>
-            </DropdownMenuItem>
+            <div className="px-2 py-1.5 text-xs text-gray-500">
+              Không có đối tượng tạo công việc
+            </div>
           )}
           {hasNextPage && (
             <div
               ref={loadMoreRef}
               className="flex h-8 w-full items-center justify-center text-xs text-gray-500"
             >
-              {isFetchingNextPage ? 'Đang tải...' : 'Tải thêm'}
+              {isFetchingNextPage && (
+                <Loader className="h-4 w-4 animate-spin" />
+              )}
             </div>
           )}
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverContent>
+    </Popover>
   );
 };

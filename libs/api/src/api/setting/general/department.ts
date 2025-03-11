@@ -32,6 +32,19 @@ export const departmentApi = router('department', {
     fetcher: (id: string) =>
       client.collection<DepartmentData>(Collections.Department).getOne(id)
   }),
+  byIds: router.query({
+    fetcher: (ids: string[]) => {
+      if (ids.length === 0) {
+        return [];
+      }
+
+      return client
+        .collection<DepartmentData>(Collections.Department)
+        .getFullList({
+          filter: `id ~ "${ids.join('" || id ~ "')}"`
+        });
+    }
+  }),
   create: router.mutation({
     mutationFn: (params: Partial<DepartmentRecord>) =>
       client.collection(Collections.Department).create({

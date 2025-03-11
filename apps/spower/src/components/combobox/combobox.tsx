@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { CheckIcon, ChevronsUpDown, Loader, X } from 'lucide-react';
 
 import * as React from 'react';
-import { useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@minhdtb/storeo-core';
 import {
@@ -45,6 +45,9 @@ export type ComboboxProps = {
   align?: Align;
   showClear?: boolean;
   multiple?: boolean;
+  lookupFn?: (
+    values: string | string[]
+  ) => Promise<ComboboxItem | ComboboxItem[] | undefined>;
 };
 
 export function Combobox({
@@ -59,15 +62,15 @@ export function Combobox({
   showGroups = true,
   showClear = true,
   align = 'start',
-  multiple = false
+  multiple = false,
+  lookupFn
 }: ComboboxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState('');
-  const [selectedItem, setSelectedItem] = React.useState<
-    ComboboxItem | undefined
-  >();
-  const [selectedItems, setSelectedItems] = React.useState<ComboboxItem[]>([]);
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [selectedItem, setSelectedItem] = useState<ComboboxItem | undefined>();
+  const [selectedItems, setSelectedItems] = useState<ComboboxItem[]>([]);
+  const [isLookingUp, setIsLookingUp] = useState(false);
 
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
@@ -88,25 +91,71 @@ export function Combobox({
     [allItems]
   );
 
-  // Update selected items when value changes or when items are loaded
-  React.useEffect(() => {
-    if (value && allItems.length > 0) {
+  useEffect(() => {
+    if (!value) {
+      if (multiple) {
+        setSelectedItems([]);
+      } else {
+        setSelectedItem(undefined);
+      }
+      return;
+    }
+
+    if (lookupFn) {
+      setIsLookingUp(true);
+      lookupFn(value)
+        .then(result => {
+          if (result) {
+            if (multiple) {
+              const lookupItems = Array.isArray(result) ? result : [result];
+              setSelectedItems(lookupItems);
+            } else {
+              const item = Array.isArray(result) ? result[0] : result;
+              setSelectedItem(item);
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error looking up items:', error);
+        })
+        .finally(() => {
+          setIsLookingUp(false);
+        });
+    }
+
+    if (allItems.length > 0) {
       if (multiple) {
         const values = value as string[];
-        const items = values
+
+        const foundItems = values
           .map(v => allItems.find(it => it.value === v))
           .filter(Boolean) as ComboboxItem[];
-        setSelectedItems(items);
+
+        if (foundItems.length > 0) {
+          setSelectedItems(prevItems => {
+            const newItems = [...prevItems];
+
+            for (const foundItem of foundItems) {
+              if (!newItems.some(item => item.value === foundItem.value)) {
+                newItems.push(foundItem);
+              }
+            }
+
+            return newItems;
+          });
+        }
       } else {
-        const found = allItems.find(it => it.value === value);
+        const singleValue = value as string;
+        const found = allItems.find(it => it.value === singleValue);
+
         if (found) {
           setSelectedItem(found);
         }
       }
     }
-  }, [value, allItems, multiple]);
+  }, [value, allItems, multiple, lookupFn]);
 
-  const handleScroll = React.useCallback(
+  const handleScroll = useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
       if (
@@ -120,7 +169,7 @@ export function Combobox({
     [fetchNextPage, hasNextPage, isFetching]
   );
 
-  const handleClear = React.useCallback(
+  const handleClear = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       if (multiple) {
@@ -134,7 +183,7 @@ export function Combobox({
     [onChange, multiple]
   );
 
-  const handleRemoveItem = React.useCallback(
+  const handleRemoveItem = useCallback(
     (e: React.MouseEvent, item: ComboboxItem) => {
       e.stopPropagation();
       const newItems = selectedItems.filter(it => it.value !== item.value);
@@ -144,7 +193,21 @@ export function Combobox({
     [selectedItems, onChange]
   );
 
-  const displayContent = React.useMemo(() => {
+  const displayContent = useMemo(() => {
+    const showLoading =
+      isLookingUp &&
+      ((multiple && selectedItems.length === 0) ||
+        (!multiple && !selectedItem));
+
+    if (showLoading) {
+      return (
+        <div className="flex items-center gap-2">
+          <Loader className="h-3 w-3 animate-spin" />
+          <span className="text-muted-foreground">Đang tải...</span>
+        </div>
+      );
+    }
+
     if (multiple && selectedItems.length > 0) {
       return (
         <div className="flex w-full flex-wrap items-start gap-1 pr-4">
@@ -167,7 +230,14 @@ export function Combobox({
     return (
       <span className="!truncate">{selectedItem?.label ?? placeholder}</span>
     );
-  }, [multiple, selectedItems, selectedItem, placeholder, handleRemoveItem]);
+  }, [
+    multiple,
+    selectedItems,
+    selectedItem,
+    placeholder,
+    handleRemoveItem,
+    isLookingUp
+  ]);
 
   return (
     <div ref={containerRef} className={'flex-1'}>

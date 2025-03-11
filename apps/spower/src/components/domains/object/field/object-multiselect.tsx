@@ -1,39 +1,56 @@
 import { api } from 'portal-api';
 
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import { Combobox, ComboboxProps } from '../../../combobox';
 
 export type ObjectMultiselectProps = Partial<ComboboxProps>;
 
 export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
+  const lookupFn = useCallback(async (ids: string | string[]) => {
+    const result = Array.isArray(ids)
+      ? await api.object.byIds.fetcher(ids)
+      : await api.object.byId.fetcher(ids);
+    return Array.isArray(result)
+      ? result.map(it => ({
+          label: it.name,
+          value: it.id
+        }))
+      : {
+          label: result.name,
+          value: result.id
+        };
+  }, []);
+
+  const queryFn = useCallback(
+    async ({ search, page }: { search?: string; page?: number }) => {
+      const result = await api.object.list.fetcher({
+        filter: search ?? '',
+        pageIndex: page ?? 1,
+        pageSize: 10
+      });
+
+      return {
+        items: result.items.map(object => ({
+          label: object.name,
+          value: object.id,
+          subLabel: object.process !== '' ? 'Đã áp dụng' : '',
+          group: object.expand?.type?.display || ''
+        })),
+        hasMore: result.page < result.totalPages
+      };
+    },
+    []
+  );
+
   return (
     <Combobox
-      value={props.value}
-      onChange={props.onChange}
-      placeholder="Chọn đối tượng"
-      emptyText="Không tìm thấy đối tượng"
+      {...props}
+      placeholder={props.placeholder ?? 'Chọn đối tượng'}
+      emptyText={props.emptyText ?? 'Không tìm thấy đối tượng'}
       queryKey={['objects']}
-      queryFn={async ({ search, page }) => {
-        const result = await api.object.list.fetcher({
-          filter: search ?? '',
-          pageIndex: page ?? 1,
-          pageSize: 10
-        });
-
-        return {
-          items: result.items.map(object => ({
-            label: object.name,
-            value: object.id,
-            subLabel: object.process !== '' ? 'Đã áp dụng' : '',
-            group: object.expand?.type?.display || ''
-          })),
-          hasMore: result.page < result.totalPages
-        };
-      }}
-      className={props.className}
-      showGroups={true}
-      multiple={true}
+      queryFn={queryFn}
+      lookupFn={lookupFn}
     />
   );
 };
