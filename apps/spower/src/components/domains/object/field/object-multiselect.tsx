@@ -26,7 +26,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
             label: object.name,
             value: object.id,
             subLabel: object.process !== '' ? 'Đã áp dụng' : '',
-            group: object.expand?.type?.name || ''
+            group: object.expand?.type?.display || ''
           })),
           hasMore: result.page < result.totalPages
         };

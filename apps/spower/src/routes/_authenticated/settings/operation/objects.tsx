@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   CheckIcon,
   CopyIcon,
@@ -22,6 +23,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
+  DebouncedInput,
   Table,
   TableBody,
   TableCell,
@@ -35,10 +37,7 @@ import {
 
 import { PageHeader } from '../../../../components';
 import { IndeterminateCheckbox } from '../../../../components/checkbox';
-import {
-  useIntersectionObserver,
-  useInvalidateQueries
-} from '../../../../hooks';
+import { useInvalidateQueries } from '../../../../hooks';
 
 export const Route = createFileRoute(
   '/_authenticated/settings/operation/objects'
@@ -58,7 +57,6 @@ function Component() {
   const [search, setSearch] = useState<string | undefined>();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -79,12 +77,6 @@ function Component() {
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
-
-  useIntersectionObserver({
-    target: loadMoreRef,
-    onIntersect: fetchNextPage,
-    enabled: !!hasNextPage && !isFetchingNextPage
-  });
 
   const columnHelper = createColumnHelper<ObjectData>();
 
@@ -290,125 +282,223 @@ function Component() {
     onRowSelectionChange: setRowSelection
   });
 
+  const { rows } = table.getRowModel();
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      if (
+        scrollHeight - scrollTop - clientHeight < 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  const handleNavigateToEdit = useCallback(
+    (objectId: string) => {
+      navigate({
+        to: './$objectId/edit',
+        params: {
+          objectId
+        }
+      });
+    },
+    [navigate]
+  );
+
+  const handleAddObject = useCallback(() => {
+    navigate({
+      to: './new'
+    });
+  }, [navigate]);
+
+  const handleSearchChange = useCallback((value: string | undefined) => {
+    setSearch(value);
+  }, []);
+
   return (
-    <div className="flex h-full flex-col" ref={parentRef}>
+    <div className={'flex h-full flex-col'}>
       <Outlet />
       <PageHeader title={'Quản lý đối tượng'} />
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Tìm kiếm đối tượng"
-            className="h-10 rounded-md border border-gray-300 px-3 py-2"
-            value={search || ''}
-            onChange={e => setSearch(e.target.value)}
+      <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
+        <div className={'flex gap-2'}>
+          <Button className={'flex gap-1'} onClick={handleAddObject}>
+            <PlusIcon className={'h-5 w-5'} />
+            Thêm đối tượng
+          </Button>
+          <DebouncedInput
+            value={search}
+            className={'h-9 w-56'}
+            placeholder={'Tìm kiếm...'}
+            onChange={handleSearchChange}
           />
         </div>
-        <Button
-          className={'flex gap-1'}
-          onClick={() => navigate({ to: './new' })}
+        <div
+          className={
+            'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
+          }
         >
-          <PlusIcon className={'h-5 w-5'} />
-          Thêm đối tượng
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-hidden">
-        <Table
-          style={{
-            width: '100%',
-            tableLayout: 'fixed'
-          }}
-        >
-          <TableHeader
-            className={'bg-appBlueLight'}
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2
-            }}
+          <div
+            className="absolute inset-0 overflow-auto"
+            ref={parentRef}
+            onScroll={handleScroll}
           >
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={'text-appWhite whitespace-nowrap'}
-                    style={{
-                      width: header.getSize(),
-                      maxWidth: header.getSize()
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </>
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className={cn(
-                    'cursor-pointer last:border-b-0',
-                    row.getIsSelected() && 'bg-blue-50'
-                  )}
-                  onClick={() => {
-                    navigate({
-                      to: './$objectId/edit',
-                      params: {
-                        objectId: row.original.id
-                      }
-                    });
+            {isLoading ? (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <Table
+                style={{
+                  width: '100%',
+                  tableLayout: 'fixed'
+                }}
+                className="relative"
+              >
+                <TableHeader
+                  className={'bg-appBlueLight'}
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2
                   }}
                 >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className={'truncate text-left'}
-                      style={{
-                        width: cell.column.getSize(),
-                        maxWidth: cell.column.getSize()
-                      }}
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className={'hover:bg-appBlue'}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                      {headerGroup.headers.map(header => (
+                        <TableHead
+                          key={header.id}
+                          className={`text-appWhite whitespace-nowrap ${
+                            header.column.id === 'select' ||
+                            header.column.id === 'index'
+                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                              : header.column.id === 'name'
+                                ? 'bg-appBlueLight sticky left-[70px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                : ''
+                          }`}
+                          style={{
+                            width: header.getSize(),
+                            maxWidth: header.getSize(),
+                            left:
+                              header.column.id === 'select'
+                                ? 0
+                                : header.column.id === 'index'
+                                  ? 40
+                                  : header.column.id === 'name'
+                                    ? 70
+                                    : 'auto'
+                          }}
+                        >
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
+                          )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
                   ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow className={'border-b-0'}>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-16 text-center"
+                </TableHeader>
+                <TableBody
+                  className={'relative'}
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`
+                  }}
                 >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
+                  {rows.length ? (
+                    virtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={virtualRow.key}
+                          className={cn(
+                            'absolute w-full cursor-pointer last:border-b-0',
+                            row.getIsSelected() && 'bg-blue-50'
+                          )}
+                          data-index={virtualRow.index}
+                          ref={virtualizer.measureElement}
+                          style={{
+                            transform: `translateY(${virtualRow.start}px)`
+                          }}
+                          onClick={() => handleNavigateToEdit(row.original.id)}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              className={`truncate text-left ${
+                                cell.column.id === 'select' ||
+                                cell.column.id === 'index'
+                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                  : cell.column.id === 'name'
+                                    ? 'sticky left-[70px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                    : ''
+                              }`}
+                              style={{
+                                width: cell.column.getSize(),
+                                maxWidth: cell.column.getSize(),
+                                left:
+                                  cell.column.id === 'select'
+                                    ? 0
+                                    : cell.column.id === 'index'
+                                      ? 40
+                                      : cell.column.id === 'name'
+                                        ? 70
+                                        : 'auto',
+                                backgroundColor:
+                                  row.getIsSelected() &&
+                                  (cell.column.id === 'select' ||
+                                    cell.column.id === 'index' ||
+                                    cell.column.id === 'name')
+                                    ? '#EBF5FF'
+                                    : ''
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow className={'border-b-0'}>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-16 text-center"
+                      >
+                        Không có dữ liệu.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             )}
-          </TableBody>
-        </Table>
-
-        {(isFetchingNextPage || isLoading) && (
-          <div className="flex justify-center py-4">
-            <Loader className="h-6 w-6 animate-spin text-gray-500" />
+            {isFetchingNextPage && (
+              <div className="flex h-20 items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            )}
           </div>
-        )}
-
-        {hasNextPage && !isFetchingNextPage && (
-          <div ref={loadMoreRef} className="h-10" />
-        )}
+        </div>
       </div>
     </div>
   );
