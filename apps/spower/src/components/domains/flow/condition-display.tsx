@@ -158,7 +158,8 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
     [parsedConditions]
   );
 
-  const { data: departments } = api.department.listFull.useSuspenseQuery();
+  const { data: departmentsResult } = api.department.list.useSuspenseQuery();
+  const departments = departmentsResult?.items || [];
 
   const { data: employees } = api.employee.listByCondition.useSuspenseQuery({
     variables: {

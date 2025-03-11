@@ -17,12 +17,6 @@ export type DepartmentData = DepartmentResponse<
 >;
 
 export const departmentApi = router('department', {
-  listFull: router.query({
-    fetcher: () =>
-      client.collection<DepartmentData>(Collections.Department).getFullList({
-        sort: '-created'
-      })
-  }),
   list: router.query({
     fetcher: (params?: ListParams) => {
       const filter = params?.filter ? `name ~ "${params.filter}"` : '';

@@ -1,27 +1,37 @@
-import _ from 'lodash';
 import { api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useMemo } from 'react';
 
-import type { SelectInputProps } from '@minhdtb/storeo-theme';
-import { SelectInput } from '@minhdtb/storeo-theme';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
-export type DepartmentDropdownProps = Omit<SelectInputProps, 'items'>;
+export type DepartmentDropdownProps = Partial<ComboboxProps>;
 
-export const DepartmentDropdown: FC<DepartmentDropdownProps> = ({
-  ...props
-}) => {
-  const listDepartments = api.department.listFull.useQuery();
+export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
+  return (
+    <Combobox
+      value={props.value}
+      onChange={props.onChange}
+      placeholder="Chọn phòng ban"
+      emptyText="Không tìm thấy phòng ban"
+      queryKey={['departments']}
+      queryFn={async ({ search, page }) => {
+        const result = await api.department.list.fetcher({
+          filter: search ?? '',
+          pageIndex: page ?? 1,
+          pageSize: 10
+        });
 
-  const items = useMemo(
-    () =>
-      _.map(listDepartments.data, ({ id, name }) => ({
-        value: id,
-        label: name
-      })),
-    [listDepartments.data]
+        return {
+          items: result.items.map(it => ({
+            label: it.name,
+            value: it.id
+          })),
+          hasMore: result.page < result.totalPages
+        };
+      }}
+      className={props.className}
+      showGroups={false}
+      multiple={props.multiple}
+    />
   );
-
-  return <SelectInput items={items} {...props} />;
 };
