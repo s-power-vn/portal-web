@@ -202,46 +202,48 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
             onChange={handleSearchChange}
           />
         </div>
-        <div
-          className="max-h-[300px] overflow-y-auto"
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-        >
-          {listObjects.length ? (
-            listObjects.map(object => {
-              const type = typeMap.get(object.type);
+        <>
+          <div
+            className="max-h-[300px] overflow-y-auto"
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+          >
+            {listObjects.length ? (
+              listObjects.map(object => {
+                const type = typeMap.get(object.type);
 
-              return (
-                <div
-                  key={object.id}
-                  className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center px-2 py-1.5 text-sm outline-none"
-                  onClick={() => handleObjectClick(object)}
-                >
-                  <DynamicIcon
-                    svgContent={type?.icon}
-                    className="mr-2 h-4 w-4"
-                    style={{ color: type?.color || '#6b7280' }}
-                  />
-                  {object.name}
-                </div>
-              );
-            })
-          ) : (
-            <div className="px-2 py-1.5 text-xs text-gray-500">
-              Không có đối tượng tạo công việc
-            </div>
-          )}
-          {hasNextPage && (
-            <div
-              ref={loadMoreRef}
-              className="flex h-8 w-full items-center justify-center text-xs text-gray-500"
-            >
-              {isFetchingNextPage && (
-                <Loader className="h-4 w-4 animate-spin" />
-              )}
-            </div>
-          )}
-        </div>
+                return (
+                  <div
+                    key={object.id}
+                    className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center px-2 py-1.5 text-sm outline-none"
+                    onClick={() => handleObjectClick(object)}
+                  >
+                    <DynamicIcon
+                      svgContent={type?.icon}
+                      className="mr-2 h-4 w-4"
+                      style={{ color: type?.color || '#6b7280' }}
+                    />
+                    {object.name}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="px-2 py-1.5 text-xs text-gray-500">
+                Không có đối tượng tạo công việc
+              </div>
+            )}
+            {hasNextPage && (
+              <div
+                ref={loadMoreRef}
+                className="flex h-8 w-full items-center justify-center text-xs text-gray-500"
+              >
+                {isFetchingNextPage && (
+                  <Loader className="h-4 w-4 animate-spin" />
+                )}
+              </div>
+            )}
+          </div>
+        </>
       </PopoverContent>
     </Popover>
   );
