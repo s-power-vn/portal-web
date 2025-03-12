@@ -1,11 +1,28 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { createColumnHelper } from '@tanstack/react-table';
-import { FilesIcon } from 'lucide-react';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { FilesIcon, Loader } from 'lucide-react';
 import { IssueData, ListSchema, api } from 'portal-api';
 
+import { useCallback, useMemo, useRef, useState } from 'react';
+
 import { formatDateTime } from '@minhdtb/storeo-core';
-import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
+import {
+  DebouncedInput,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@minhdtb/storeo-theme';
 
 import {
   DynamicIcon,
@@ -20,14 +37,31 @@ import {
 const Component = () => {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
-  const search = Route.useSearch();
+  const [search, setSearch] = useState<string | undefined>();
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const issues = api.issue.listMine.useSuspenseQuery({
-    variables: {
-      ...search,
-      projectId
-    }
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: api.issue.listMine.getKey({
+        filter: search ?? '',
+        projectId
+      }),
+      queryFn: ({ pageParam = 1 }) =>
+        api.issue.listMine.fetcher({
+          filter: search ?? '',
+          pageIndex: pageParam,
+          pageSize: 20,
+          projectId
+        }),
+      getNextPageParam: lastPage =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      initialPageParam: 1
+    });
+
+  const issues = useMemo(
+    () => data?.pages.flatMap(page => page.items) || [],
+    [data]
+  );
 
   const columnHelper = createColumnHelper<IssueData>();
 
@@ -56,14 +90,12 @@ const Component = () => {
         );
       },
       header: () => 'Nội dung',
-      footer: info => info.column.id,
-      size: 400
+      footer: info => info.column.id
     }),
     columnHelper.accessor('deadlineStatus', {
       cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
       header: () => 'Tiến độ',
-      footer: info => info.column.id,
-      size: 200
+      footer: info => info.column.id
     }),
     columnHelper.accessor('assignees', {
       cell: ({ row }) => (
@@ -83,14 +115,13 @@ const Component = () => {
       },
       header: () => '',
       footer: info => info.column.id,
-      size: 100
+      size: 50
     }),
     columnHelper.display({
       id: 'state',
       cell: ({ row }) => <IssueStatus issueId={row.original.id} />,
       header: () => 'Trạng thái',
-      footer: info => info.column.id,
-      size: 200
+      footer: info => info.column.id
     }),
     columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
@@ -104,8 +135,7 @@ const Component = () => {
       id: 'object',
       cell: ({ row }) => <IssueType issueId={row.original.id} />,
       header: () => 'Loại',
-      footer: info => info.column.id,
-      size: 200
+      footer: info => info.column.id
     }),
     columnHelper.accessor('created', {
       cell: ({ row }) => formatDateTime(row.original.created),
@@ -121,66 +151,191 @@ const Component = () => {
     })
   ];
 
+  const table = useReactTable({
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    data: issues
+  });
+
+  const { rows } = table.getRowModel();
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+    overscan: 20
+  });
+
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+      if (
+        scrollHeight - scrollTop - clientHeight < 20 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
   return (
-    <div className={'flex flex-col gap-2 p-2'}>
+    <div className={'flex h-full flex-col gap-2 p-2'}>
       <div className={'flex items-center justify-between gap-2'}>
         <NewIssueButton projectId={projectId} />
         <DebouncedInput
-          value={search.filter}
+          value={search}
           className={'h-8 w-56'}
           placeholder={'Tìm kiếm...'}
-          onChange={value =>
-            navigate({
-              to: '.',
-              search: {
-                ...search,
-                filter: value ?? ''
-              }
-            })
-          }
+          onChange={value => setSearch(value)}
         />
       </div>
-      <CommonTable
-        data={issues.data?.items ?? []}
-        columns={columns}
-        rowCount={issues.data?.totalItems}
-        pageCount={issues.data?.totalPages}
-        pageIndex={search.pageIndex}
-        pageSize={search.pageSize}
-        onRowClick={row =>
-          navigate({
-            to: './$issueId',
-            params: {
-              issueId: row.original.id
-            }
-          })
+      <div
+        className={
+          'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
         }
-        onPageNext={() =>
-          navigate({
-            to: '.',
-            search: prev => {
-              return { ...prev, pageIndex: prev.pageIndex + 1 };
-            }
-          })
-        }
-        onPagePrev={() =>
-          navigate({
-            to: '.',
-            search: prev => {
-              return { ...prev, pageIndex: prev.pageIndex - 1 };
-            }
-          })
-        }
-        onPageSizeChange={pageSize =>
-          navigate({
-            to: '.',
-            search: {
-              ...search,
-              pageSize
-            }
-          })
-        }
-      ></CommonTable>
+      >
+        <div
+          className="absolute inset-0 overflow-auto"
+          ref={parentRef}
+          onScroll={handleScroll}
+        >
+          {isLoading ? (
+            <div className="flex h-20 items-center justify-center">
+              <Loader className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <Table
+              style={{
+                width: '100%',
+                tableLayout: 'fixed'
+              }}
+              className="relative"
+            >
+              <TableHeader
+                className={'bg-appBlueLight'}
+                style={{
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 2
+                }}
+              >
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead
+                        key={header.id}
+                        className={`text-appWhite whitespace-nowrap ${
+                          header.column.id === 'index'
+                            ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                            : header.column.id === 'title'
+                              ? 'bg-appBlueLight sticky left-[50px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                              : ''
+                        }`}
+                        style={{
+                          width: header.getSize(),
+                          maxWidth: header.getSize(),
+                          left:
+                            header.column.id === 'index'
+                              ? 0
+                              : header.column.id === 'title'
+                                ? 50
+                                : 'auto'
+                        }}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </>
+                        )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody
+                className={'relative'}
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`
+                }}
+              >
+                {rows.length ? (
+                  virtualizer.getVirtualItems().map(virtualRow => {
+                    const row = rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        key={virtualRow.key}
+                        className={
+                          'group absolute w-full cursor-pointer hover:bg-gray-50'
+                        }
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        style={{
+                          transform: `translateY(${virtualRow.start}px)`
+                        }}
+                        onClick={() =>
+                          navigate({
+                            to: './$issueId',
+                            params: {
+                              issueId: row.original.id
+                            }
+                          })
+                        }
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell
+                            key={cell.id}
+                            className={`truncate text-left ${
+                              cell.column.id === 'index'
+                                ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-gray-50'
+                                : cell.column.id === 'title'
+                                  ? 'sticky left-[50px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-gray-50'
+                                  : ''
+                            }`}
+                            style={{
+                              width: cell.column.getSize(),
+                              maxWidth: cell.column.getSize(),
+                              left:
+                                cell.column.id === 'index'
+                                  ? 0
+                                  : cell.column.id === 'title'
+                                    ? 50
+                                    : 'auto'
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow className={'border-b-0'}>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-16 text-center"
+                    >
+                      Không có dữ liệu.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
+          {isFetchingNextPage && (
+            <div className="flex h-20 items-center justify-center">
+              <Loader className="h-6 w-6 animate-spin" />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -193,17 +348,5 @@ export const Route = createFileRoute(
     ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
-  },
-  loader: async ({
-    deps: { search },
-    context: { queryClient },
-    params: { projectId }
-  }) => {
-    return queryClient?.ensureQueryData(
-      api.issue.listMine.getOptions({
-        ...search,
-        projectId
-      })
-    );
   }
 });

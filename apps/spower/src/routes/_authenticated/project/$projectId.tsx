@@ -53,7 +53,6 @@ const Component = () => {
       })
     : { data: null };
 
-  // Kiểm tra có tồn tại object thuộc loại Price không
   const { data: priceObjects } = priceType
     ? api.object.listActive.useSuspenseQuery({
         variables: {
@@ -100,7 +99,7 @@ const Component = () => {
           </Button>
         </div>
       </div>
-      <div className={'flex w-full flex-1 overflow-hidden'}>
+      <div className={'flex flex-1 overflow-hidden'}>
         <Show
           when={params}
           fallback={
@@ -145,10 +144,8 @@ const Component = () => {
                   )}
                 </SidebarGroup>
               </Sidebar>
-              <div className={'flex min-h-0 flex-1 flex-col'}>
-                <div className={'flex-1 overflow-auto'}>
-                  <Outlet />
-                </div>
+              <div className={'flex-1 overflow-auto'}>
+                <Outlet />
               </div>
             </>
           }
