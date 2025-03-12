@@ -233,7 +233,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
       </div>
       <div className={'mr-2 flex w-full gap-6'}>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Ngày tạo
             </span>
@@ -241,7 +241,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               {formatDateTime(issue.data.created)}
             </span>
           </div>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Ngày tạo
             </span>
@@ -249,7 +249,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               {formatDateTime(issue.data.created)}
             </span>
           </div>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Số phiếu
             </span>
@@ -257,7 +257,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           </div>
         </div>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Người tạo
             </span>
@@ -265,7 +265,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               <EmployeeDisplay employeeId={issue.data.expand?.createdBy.id} />
             </span>
           </div>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Người xử lý
             </span>
@@ -275,7 +275,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           </div>
         </div>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Ngày bắt đầu
             </span>
@@ -283,7 +283,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               {formatDateTime(issue.data.startDate)}
             </span>
           </div>
-          <div className={'flex w-full items-center justify-between gap-2'}>
+          <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Ngày kết thúc
             </span>
@@ -293,7 +293,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           </div>
         </div>
       </div>
-      <div className={'flex w-full justify-end gap-2'}>
+      <div className={'flex h-6 w-full justify-end gap-2'}>
         <IssueDeadlineStatus className={'font-bold'} issueId={issueId} />
         <IssueStatus
           className={'px-3 py-1.5 text-xs font-bold'}
