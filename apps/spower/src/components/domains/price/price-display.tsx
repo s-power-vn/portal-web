@@ -7,16 +7,15 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { PaperclipIcon, PrinterIcon } from 'lucide-react';
+import { PrinterIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import type {
-  IssueFileResponse,
   IssueResponse,
   PriceResponse,
   ProjectResponse,
   UserResponse
 } from 'portal-core';
-import { BASE_URL, Collections, client } from 'portal-core';
+import { BASE_URL, client } from 'portal-core';
 import printJS from 'print-js';
 
 import { type FC, useCallback, useMemo } from 'react';
@@ -30,14 +29,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { IssueAttachment } from '../issue';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {
@@ -385,207 +379,152 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
     issue.data
   ]);
 
-  const handleDownload = useCallback(
-    async (fileId: string, fileName: string) => {
-      const file = await client
-        .collection<IssueFileResponse>(Collections.IssueFile)
-        .getOne(fileId);
-
-      const fileUrl = client.files.getURL(file, file.upload);
-
-      const response = await fetch(fileUrl, {
-        headers: {
-          Authorization: 'Bearer ' + client.authStore.token
-        }
-      });
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    },
-    []
-  );
-
   return (
-    <div className={'bg-appWhite flex flex-col'}>
-      <div className={'flex items-center justify-between p-2'}>
+    <div className={'bg-appWhite flex flex-col gap-2 p-2'}>
+      <div className={'flex items-center justify-between'}>
         <div className={'flex gap-2'}>
           <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
           </Button>
         </div>
       </div>
-      <Tabs defaultValue={'detail'}>
-        <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
-          <TabsTrigger value="detail" asChild>
-            <div className={'cursor-pointer select-none'}>Nội dung</div>
-          </TabsTrigger>
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
-            <TabsTrigger value="attachment" asChild>
-              <div className={'flex cursor-pointer select-none gap-1'}>
-                <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
-                File đính kèm
-              </div>
-            </TabsTrigger>
-          )}
-        </TabsList>
-        <TabsContent value="detail" className={'mt-0'}>
-          <div className={'flex flex-col gap-2 p-2'}>
-            <div
-              className={
-                'border-appBlue overflow-x-auto rounded-md border pb-2'
-              }
-            >
-              <Table className="border-collapse">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 30 }}
-                    >
-                      STT
-                    </TableHead>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 40 }}
-                    >
-                      ID
-                    </TableHead>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 300 }}
-                    >
-                      Mô tả công việc mời thầu
-                    </TableHead>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 100 }}
-                    >
-                      Khối lượng
-                    </TableHead>
-                    <TableHead
-                      rowSpan={2}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 50 }}
-                    >
-                      Đơn vị tính
-                    </TableHead>
-                    <TableHead
-                      colSpan={1 + suppliers!.length}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                    >
-                      Đơn giá
-                    </TableHead>
-                    <TableHead
-                      colSpan={1 + suppliers!.length}
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                    >
-                      Thành tiền
-                    </TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 100 }}
-                    >
-                      Dự toán
-                    </TableHead>
-                    {suppliers!.map(supplier => (
-                      <TableHead
-                        key={`price-${supplier.id}`}
-                        className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                        style={{ width: 120 }}
-                      >
-                        {supplier.name}
-                      </TableHead>
-                    ))}
-                    <TableHead
-                      className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                      style={{ width: 100 }}
-                    >
-                      Dự toán
-                    </TableHead>
-                    {suppliers!.map(supplier => (
-                      <TableHead
-                        key={`total-${supplier.id}`}
-                        className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
-                        style={{ width: 120 }}
-                      >
-                        {supplier.name}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map(row => {
-                      return (
-                        <TableRow
-                          key={row.id}
-                          className={cn('group w-full cursor-pointer', {
-                            'bg-gray-50':
+      <div className={'border-appBlue overflow-x-auto rounded-md border pb-2'}>
+        <Table className="border-collapse">
+          <TableHeader>
+            <TableRow>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 30 }}
+              >
+                STT
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 40 }}
+              >
+                ID
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 300 }}
+              >
+                Mô tả công việc mời thầu
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 100 }}
+              >
+                Khối lượng
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 50 }}
+              >
+                Đơn vị tính
+              </TableHead>
+              <TableHead
+                colSpan={1 + suppliers!.length}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+              >
+                Đơn giá
+              </TableHead>
+              <TableHead
+                colSpan={1 + suppliers!.length}
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+              >
+                Thành tiền
+              </TableHead>
+            </TableRow>
+            <TableRow>
+              <TableHead
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 100 }}
+              >
+                Dự toán
+              </TableHead>
+              {suppliers!.map(supplier => (
+                <TableHead
+                  key={`price-${supplier.id}`}
+                  className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                  style={{ width: 120 }}
+                >
+                  {supplier.name}
+                </TableHead>
+              ))}
+              <TableHead
+                className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                style={{ width: 100 }}
+              >
+                Dự toán
+              </TableHead>
+              {suppliers!.map(supplier => (
+                <TableHead
+                  key={`total-${supplier.id}`}
+                  className="bg-appBlueLight text-appWhite relative whitespace-nowrap p-2 text-center after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b after:border-r after:content-['']"
+                  style={{ width: 120 }}
+                >
+                  {supplier.name}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={cn('group w-full cursor-pointer', {
+                      'bg-gray-50':
+                        row.original.isSubTotal ||
+                        row.original.isVAT ||
+                        row.original.isFinalTotal
+                    })}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize()
+                        }}
+                        className={cn(
+                          'bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[""]',
+                          {
+                            'text-right': typeof cell.getValue() === 'number',
+                            'font-semibold':
                               row.original.isSubTotal ||
                               row.original.isVAT ||
                               row.original.isFinalTotal
-                          })}
-                        >
-                          {row.getVisibleCells().map(cell => (
-                            <TableCell
-                              key={cell.id}
-                              style={{
-                                width: cell.column.getSize()
-                              }}
-                              className={cn(
-                                'bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[""]',
-                                {
-                                  'text-right':
-                                    typeof cell.getValue() === 'number',
-                                  'font-semibold':
-                                    row.original.isSubTotal ||
-                                    row.original.isVAT ||
-                                    row.original.isFinalTotal
-                                }
-                              )}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    })
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="text-center after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-['']"
+                          }
+                        )}
                       >
-                        Không có dữ liệu.
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="attachment">
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
-            <IssueAttachment issueId={issueId} />
-          )}
-        </TabsContent>
-      </Tabs>
+                    ))}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-['']"
+                >
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

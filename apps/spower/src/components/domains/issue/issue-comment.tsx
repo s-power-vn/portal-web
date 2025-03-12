@@ -23,10 +23,7 @@ const CommentComponent: FC<IssueCommentProps> = props => {
     <div className={'flex flex-col gap-2 border-t'}>
       <div className={'flex flex-col gap-2'}>
         {comments.data.map(it => (
-          <div
-            className={'relative flex border-b p-2 last:border-b-0'}
-            key={it.id}
-          >
+          <div className={'flex border-b p-2 last:border-b-0'} key={it.id}>
             <div className={'flex flex-col pr-3'}>
               <Avatar className="h-8 w-8">
                 <AvatarImage

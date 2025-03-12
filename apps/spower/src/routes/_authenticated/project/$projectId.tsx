@@ -71,7 +71,7 @@ const Component = () => {
     <div className={'flex h-full flex-col'}>
       <div
         className={
-          'flex h-[50px] w-full items-center justify-between border-b p-1'
+          'flex h-[50px] w-full flex-shrink-0 items-center justify-between border-b p-1'
         }
       >
         <div className={'flex flex-1 flex-col truncate'}>
@@ -100,7 +100,7 @@ const Component = () => {
           </Button>
         </div>
       </div>
-      <div className={'flex h-full w-full'}>
+      <div className={'flex w-full flex-1 overflow-hidden'}>
         <Show
           when={params}
           fallback={
@@ -145,8 +145,10 @@ const Component = () => {
                   )}
                 </SidebarGroup>
               </Sidebar>
-              <div className={'w-full flex-1 overflow-auto'}>
-                <Outlet />
+              <div className={'flex min-h-0 flex-1 flex-col'}>
+                <div className={'flex-1 overflow-auto'}>
+                  <Outlet />
+                </div>
               </div>
             </>
           }

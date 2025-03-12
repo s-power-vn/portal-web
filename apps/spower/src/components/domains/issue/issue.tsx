@@ -1,5 +1,5 @@
 import { ObjectData } from 'libs/api/src/api/setting/operation/object';
-import { Loader } from 'lucide-react';
+import { Loader, PaperclipIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, client } from 'portal-core';
 
@@ -7,10 +7,17 @@ import type { FC } from 'react';
 import { Suspense } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from '@minhdtb/storeo-theme';
 
 import { PriceDisplay } from '../price';
 import { RequestDisplay } from '../request';
 import { IssueAction } from './issue-action';
+import { IssueAttachment } from './issue-attachment';
 import { IssueComment } from './issue-comment';
 import { IssueSummary } from './issue-summary';
 
@@ -60,7 +67,29 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
       )}
     >
       <IssueSummary issueId={issueId} />
-      {getContentComponent()}
+      <Tabs defaultValue={'detail'}>
+        <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
+          <TabsTrigger value="detail" asChild>
+            <div className={'cursor-pointer select-none'}>Nội dung</div>
+          </TabsTrigger>
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <TabsTrigger value="attachment" asChild>
+              <div className={'flex cursor-pointer select-none gap-1'}>
+                <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
+                File đính kèm
+              </div>
+            </TabsTrigger>
+          )}
+        </TabsList>
+        <TabsContent value="detail" className={'mt-0'}>
+          {getContentComponent()}
+        </TabsContent>
+        <TabsContent value="attachment">
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <IssueAttachment issueId={issueId} />
+          )}
+        </TabsContent>
+      </Tabs>
       <Show when={isUserAssigned}>
         <IssueAction issueId={issueId} />
       </Show>
