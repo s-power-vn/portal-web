@@ -132,7 +132,7 @@ const FirstEmployee = ({ employeeId }: { employeeId: string }) => {
 
   return employee ? (
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
-      <Avatar className={'h-6 w-6'}>
+      <Avatar className={'h-5 w-5'}>
         <AvatarImage
           src={getImageUrl(
             Collections.User,

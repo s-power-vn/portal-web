@@ -90,7 +90,8 @@ const Component = () => {
         );
       },
       header: () => 'Nội dung',
-      footer: info => info.column.id
+      footer: info => info.column.id,
+      size: 250
     }),
     columnHelper.accessor('deadlineStatus', {
       cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
@@ -211,7 +212,6 @@ const Component = () => {
                 width: '100%',
                 tableLayout: 'fixed'
               }}
-              className="relative"
             >
               <TableHeader
                 className={'bg-appBlueLight'}
@@ -222,26 +222,14 @@ const Component = () => {
                 }}
               >
                 {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
+                  <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
                     {headerGroup.headers.map(header => (
                       <TableHead
                         key={header.id}
-                        className={`text-appWhite whitespace-nowrap ${
-                          header.column.id === 'index'
-                            ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                            : header.column.id === 'title'
-                              ? 'bg-appBlueLight sticky left-[50px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                              : ''
-                        }`}
+                        className={'text-appWhite whitespace-nowrap'}
                         style={{
                           width: header.getSize(),
-                          maxWidth: header.getSize(),
-                          left:
-                            header.column.id === 'index'
-                              ? 0
-                              : header.column.id === 'title'
-                                ? 50
-                                : 'auto'
+                          maxWidth: header.getSize()
                         }}
                       >
                         {header.isPlaceholder ? null : (
@@ -269,9 +257,7 @@ const Component = () => {
                     return (
                       <TableRow
                         key={virtualRow.key}
-                        className={
-                          'group absolute w-full cursor-pointer hover:bg-gray-50'
-                        }
+                        className={'absolute w-full cursor-pointer'}
                         data-index={virtualRow.index}
                         ref={virtualizer.measureElement}
                         style={{
@@ -289,22 +275,10 @@ const Component = () => {
                         {row.getVisibleCells().map(cell => (
                           <TableCell
                             key={cell.id}
-                            className={`truncate text-left ${
-                              cell.column.id === 'index'
-                                ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-gray-50'
-                                : cell.column.id === 'title'
-                                  ? 'sticky left-[50px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-gray-50'
-                                  : ''
-                            }`}
+                            className={'truncate text-left'}
                             style={{
                               width: cell.column.getSize(),
-                              maxWidth: cell.column.getSize(),
-                              left:
-                                cell.column.id === 'index'
-                                  ? 0
-                                  : cell.column.id === 'title'
-                                    ? 50
-                                    : 'auto'
+                              maxWidth: cell.column.getSize()
                             }}
                           >
                             {flexRender(

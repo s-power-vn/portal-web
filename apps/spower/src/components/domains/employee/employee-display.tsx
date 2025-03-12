@@ -15,7 +15,7 @@ const Component = ({ employeeId }: { employeeId: string }) => {
 
   return query.data ? (
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
-      <Avatar className={'h-6 w-6'}>
+      <Avatar className={'h-5 w-5'}>
         <AvatarImage
           src={getImageUrl(Collections.User, query.data.id, query.data.avatar)}
         />
