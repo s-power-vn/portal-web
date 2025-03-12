@@ -73,9 +73,9 @@ export type DashboardLayoutProps = {
 
 export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <div className={'flex h-screen w-full flex-col overflow-hidden'}>
+    <>
       <Header />
-      <div className={'flex w-full flex-1 overflow-hidden'}>
+      <div className={'flex flex-1 overflow-hidden'}>
         <Sidebar uid={'dashboard'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem
@@ -97,8 +97,8 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon={<SettingsIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>
-        <div className={'h-full w-full flex-1 overflow-hidden'}>{children}</div>
+        <div className={'flex flex-1 flex-col overflow-hidden'}>{children}</div>
       </div>
-    </div>
+    </>
   );
 };

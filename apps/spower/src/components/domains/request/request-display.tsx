@@ -9,17 +9,10 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import {
-  PaperclipIcon,
-  PrinterIcon,
-  SquareMinusIcon,
-  SquarePlusIcon
-} from 'lucide-react';
+import { PrinterIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import {
   BASE_URL,
-  Collections,
-  IssueFileResponse,
   TreeData,
   arrayToTree,
   client,
@@ -41,14 +34,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { IssueAttachment } from '../issue';
 import { ADMIN_ID } from '../project';
 import { RequestDocument } from './request-document';
 
@@ -83,7 +71,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
 
   const v = useMemo<RequestDetailItem[]>(() => {
     return _.chain(
-      request.data ? request.data?.expand.requestDetail_via_request : []
+      request.data ? request.data?.expand?.requestDetail_via_request : []
     )
       .map(it => {
         const { customLevel, customUnit, customTitle } = it;
@@ -264,14 +252,14 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     showLoading();
     const html = await compile(
       <RequestDocument
-        project={request.data?.expand.project.name}
-        code={request.data?.expand.issue.code}
-        bidding={request.data?.expand.project.bidding}
-        requester={request.data?.expand.issue.expand.createdBy.name}
+        project={request.data?.expand?.project.name}
+        code={request.data?.expand?.issue.code}
+        bidding={request.data?.expand?.project.bidding}
+        requester={request.data?.expand?.issue.expand?.createdBy.name}
         department={
-          request.data?.expand.issue.expand.createdBy.expand.department.name
+          request.data?.expand?.issue.expand?.createdBy.expand?.department.name
         }
-        content={request.data?.expand.issue.title}
+        content={request.data?.expand?.issue.title}
         data={v}
         approvers={issue.data?.approver?.map(it => ({
           userId: it.userId,
@@ -305,144 +293,86 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
       .finally(() => hideLoading());
   }, [request.data, v, showLoading, hideLoading, issue.data]);
 
-  const handleDownload = useCallback(
-    async (fileId: string, fileName: string) => {
-      const file = await client
-        .collection<IssueFileResponse>(Collections.IssueFile)
-        .getOne(fileId);
-
-      const fileUrl = client.files.getURL(file, file.upload);
-
-      const response = await fetch(fileUrl, {
-        headers: {
-          Authorization: 'Bearer ' + client.authStore.token
-        }
-      });
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    },
-    []
-  );
-
   return (
-    <div className={'bg-appWhite flex flex-col'}>
-      <div className={'flex items-center justify-between p-2'}>
+    <div className={'bg-appWhite flex flex-col gap-2 p-2'}>
+      <div className={'flex items-center justify-between'}>
         <div className={'flex gap-2'}>
           <Button className={'text-appWhite'} size="icon" onClick={handlePrint}>
             <PrinterIcon className={'h-4 w-4'} />
           </Button>
         </div>
       </div>
-      <Tabs defaultValue={'detail'}>
-        <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
-          <TabsTrigger value="detail" asChild>
-            <div className={'cursor-pointer select-none'}>Nội dung</div>
-          </TabsTrigger>
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
-            <TabsTrigger value="attachment" asChild>
-              <div className={'flex cursor-pointer select-none gap-1'}>
-                <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
-                File đính kèm
-              </div>
-            </TabsTrigger>
-          )}
-        </TabsList>
-        <TabsContent value="detail">
-          <div className={'flex flex-col gap-2 px-2'}>
-            <div
-              className={
-                'border-appBlue overflow-x-auto rounded-md border pb-2'
-              }
-            >
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map(header => {
-                        return (
-                          <TableHead
-                            key={header.id}
-                            colSpan={header.colSpan}
-                            style={{
-                              width: header.getSize()
-                            }}
-                            className={`bg-appBlueLight text-appWhite whitespace-nowrap border-r p-1 text-center after:absolute
+      <div className={'border-appBlue overflow-x-auto rounded-md border pb-2'}>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        width: header.getSize()
+                      }}
+                      className={`bg-appBlueLight text-appWhite whitespace-nowrap border-r p-1 text-center after:absolute
                           after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:border-r-0 last:after:border-r-0`}
-                          >
-                            {header.isPlaceholder ? null : (
-                              <>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </>
-                            )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map(row => {
+                    >
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
+                      )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={'group w-full cursor-pointer'}
+                  >
+                    {row.getVisibleCells().map(cell => {
                       return (
-                        <TableRow
-                          key={row.id}
-                          className={'group w-full cursor-pointer'}
-                        >
-                          {row.getVisibleCells().map(cell => {
-                            return (
-                              <TableCell
-                                key={cell.id}
-                                style={{
-                                  ...getCommonPinningStyles(cell.column),
-                                  width: cell.column.getSize()
-                                }}
-                                className={cn(
-                                  `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            ...getCommonPinningStyles(cell.column),
+                            width: cell.column.getSize()
+                          }}
+                          className={cn(
+                            `bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight p-1 text-xs after:absolute
                                  after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`
-                                )}
-                              >
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
-                                )}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
+                          )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
                       );
-                    })
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className={'text-center'}
-                      >
-                        Không có dữ liệu.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="attachment">
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
-            <IssueAttachment issueId={issueId} />
-          )}
-        </TabsContent>
-      </Tabs>
+                    })}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className={'text-center'}>
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

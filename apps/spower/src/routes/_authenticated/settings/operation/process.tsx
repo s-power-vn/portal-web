@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { CopyIcon, PlusIcon, XIcon } from 'lucide-react';
+import { CopyIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ProcessDbData, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -303,86 +303,92 @@ function Component() {
             }
           >
             <div className="absolute inset-0 overflow-auto">
-              <Table
-                style={{
-                  width: '100%',
-                  tableLayout: 'fixed'
-                }}
-              >
-                <TableHeader
-                  className={'bg-appBlueLight'}
+              {isLoading ? (
+                <div className="flex h-20 items-center justify-center">
+                  <Loader className="h-6 w-6 animate-spin" />
+                </div>
+              ) : (
+                <Table
                   style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 2
+                    width: '100%',
+                    tableLayout: 'fixed'
                   }}
                 >
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className={'hover:bg-appBlue'}
-                    >
-                      {headerGroup.headers.map(header => (
-                        <TableHead
-                          key={header.id}
-                          className={'text-appWhite whitespace-nowrap'}
-                          style={{
-                            width: header.getSize(),
-                            maxWidth: header.getSize()
-                          }}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <>
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </>
-                          )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map(row => (
+                  <TableHeader
+                    className={'bg-appBlueLight'}
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 2
+                    }}
+                  >
+                    {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
-                        key={row.id}
-                        className={'cursor-pointer last:border-b-0'}
-                        onClick={() => {
-                          handleEditProcess(row.original.id);
-                        }}
+                        key={headerGroup.id}
+                        className={'hover:bg-appBlue'}
                       >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell
-                            key={cell.id}
-                            className={'truncate text-left'}
+                        {headerGroup.headers.map(header => (
+                          <TableHead
+                            key={header.id}
+                            className={'text-appWhite whitespace-nowrap'}
                             style={{
-                              width: cell.column.getSize(),
-                              maxWidth: cell.column.getSize()
+                              width: header.getSize(),
+                              maxWidth: header.getSize()
                             }}
                           >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
+                            {header.isPlaceholder ? null : (
+                              <>
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                              </>
                             )}
-                          </TableCell>
+                          </TableHead>
                         ))}
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow className={'border-b-0'}>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="h-16 text-center"
-                      >
-                        Không có dữ liệu.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.length ? (
+                      table.getRowModel().rows.map(row => (
+                        <TableRow
+                          key={row.id}
+                          className={'cursor-pointer last:border-b-0'}
+                          onClick={() => {
+                            handleEditProcess(row.original.id);
+                          }}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell
+                              key={cell.id}
+                              className={'truncate text-left'}
+                              style={{
+                                width: cell.column.getSize(),
+                                maxWidth: cell.column.getSize()
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow className={'border-b-0'}>
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-16 text-center"
+                        >
+                          Không có dữ liệu.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              )}
             </div>
           </div>
         </div>

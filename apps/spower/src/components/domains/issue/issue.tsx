@@ -1,5 +1,5 @@
 import { ObjectData } from 'libs/api/src/api/setting/operation/object';
-import { Loader } from 'lucide-react';
+import { Loader, PaperclipIcon } from 'lucide-react';
 import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, client } from 'portal-core';
 
@@ -7,10 +7,17 @@ import type { FC } from 'react';
 import { Suspense } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from '@minhdtb/storeo-theme';
 
 import { PriceDisplay } from '../price';
 import { RequestDisplay } from '../request';
 import { IssueAction } from './issue-action';
+import { IssueAttachment } from './issue-attachment';
 import { IssueComment } from './issue-comment';
 import { IssueSummary } from './issue-summary';
 
@@ -34,7 +41,6 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
 
   const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
 
-  // Get the appropriate component based on object type
   const getContentComponent = () => {
     if (!objectData?.expand?.type) return <div className={`p-2`}></div>;
 
@@ -52,7 +58,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 rounded-md border',
+        'flex flex-col rounded-md border',
         issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal
           ? 'border-t-appSuccess border-t-4'
           : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning
@@ -61,7 +67,29 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
       )}
     >
       <IssueSummary issueId={issueId} />
-      {getContentComponent()}
+      <Tabs defaultValue={'detail'}>
+        <TabsList className="grid w-full grid-cols-4 gap-1 rounded-none">
+          <TabsTrigger value="detail" asChild>
+            <div className={'cursor-pointer select-none'}>Nội dung</div>
+          </TabsTrigger>
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <TabsTrigger value="attachment" asChild>
+              <div className={'flex cursor-pointer select-none gap-1'}>
+                <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
+                File đính kèm
+              </div>
+            </TabsTrigger>
+          )}
+        </TabsList>
+        <TabsContent value="detail" className={'mt-0'}>
+          {getContentComponent()}
+        </TabsContent>
+        <TabsContent value="attachment">
+          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+            <IssueAttachment issueId={issueId} />
+          )}
+        </TabsContent>
+      </Tabs>
       <Show when={isUserAssigned}>
         <IssueAction issueId={issueId} />
       </Show>
