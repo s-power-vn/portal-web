@@ -434,8 +434,8 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
             </TabsTrigger>
           )}
         </TabsList>
-        <TabsContent value="detail">
-          <div className={'flex flex-col gap-2 px-2'}>
+        <TabsContent value="detail" className={'mt-0'}>
+          <div className={'flex flex-col gap-2 p-2'}>
             <div
               className={
                 'border-appBlue overflow-x-auto rounded-md border pb-2'

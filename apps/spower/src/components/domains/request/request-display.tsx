@@ -83,7 +83,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
 
   const v = useMemo<RequestDetailItem[]>(() => {
     return _.chain(
-      request.data ? request.data?.expand.requestDetail_via_request : []
+      request.data ? request.data?.expand?.requestDetail_via_request : []
     )
       .map(it => {
         const { customLevel, customUnit, customTitle } = it;
@@ -264,14 +264,14 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     showLoading();
     const html = await compile(
       <RequestDocument
-        project={request.data?.expand.project.name}
-        code={request.data?.expand.issue.code}
-        bidding={request.data?.expand.project.bidding}
-        requester={request.data?.expand.issue.expand.createdBy.name}
+        project={request.data?.expand?.project.name}
+        code={request.data?.expand?.issue.code}
+        bidding={request.data?.expand?.project.bidding}
+        requester={request.data?.expand?.issue.expand?.createdBy.name}
         department={
-          request.data?.expand.issue.expand.createdBy.expand.department.name
+          request.data?.expand?.issue.expand?.createdBy.expand?.department.name
         }
-        content={request.data?.expand.issue.title}
+        content={request.data?.expand?.issue.title}
         data={v}
         approvers={issue.data?.approver?.map(it => ({
           userId: it.userId,
@@ -355,8 +355,8 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
             </TabsTrigger>
           )}
         </TabsList>
-        <TabsContent value="detail">
-          <div className={'flex flex-col gap-2 px-2'}>
+        <TabsContent value="detail" className={'mt-0'}>
+          <div className={'flex flex-col gap-2 p-2'}>
             <div
               className={
                 'border-appBlue overflow-x-auto rounded-md border pb-2'

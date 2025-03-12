@@ -34,7 +34,6 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
 
   const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
 
-  // Get the appropriate component based on object type
   const getContentComponent = () => {
     if (!objectData?.expand?.type) return <div className={`p-2`}></div>;
 
@@ -52,7 +51,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 rounded-md border',
+        'flex flex-col rounded-md border',
         issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal
           ? 'border-t-appSuccess border-t-4'
           : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning

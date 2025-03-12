@@ -224,7 +224,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
   );
 
   return (
-    <div className={'mt-1 flex flex-col gap-3 border-b p-2'}>
+    <div className={'flex flex-col gap-3 border-t p-2'}>
       <Show when={isApproveNodeActive}>
         <div className="flex items-center gap-2">
           <Checkbox
