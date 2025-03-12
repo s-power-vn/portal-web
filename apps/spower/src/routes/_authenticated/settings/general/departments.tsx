@@ -321,9 +321,7 @@ function Component() {
                       return (
                         <TableRow
                           key={virtualRow.key}
-                          className={
-                            'absolute w-full cursor-pointer last:border-b-0'
-                          }
+                          className={'absolute w-full cursor-pointer'}
                           data-index={virtualRow.index}
                           ref={virtualizer.measureElement}
                           style={{
