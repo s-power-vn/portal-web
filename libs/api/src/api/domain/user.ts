@@ -11,7 +11,6 @@ export const userApi = router('user', {
     }) => {
       const formData = new FormData();
       if (params.avatar && typeof params.avatar !== 'string') {
-        console.log('xxx', params.avatar);
         formData.append('avatar', params.avatar);
       }
       if (params.name) {

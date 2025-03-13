@@ -149,7 +149,6 @@ export const StEditor: FC<StEditorProps> = ({
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && onSubmit) {
       e.preventDefault();
-      console.log('Enter key pressed');
       onSubmit();
     }
   };
