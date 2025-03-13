@@ -7,7 +7,6 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { FilesIcon, Loader } from 'lucide-react';
 import { IssueData, ListSchema, api } from 'portal-api';
 
@@ -69,8 +68,7 @@ const Component = () => {
     columnHelper.display({
       id: 'index',
       cell: info => info.row.index + 1,
-      header: () => '#',
-      size: 50
+      header: () => '#'
     }),
     columnHelper.accessor('title', {
       cell: info => {
@@ -91,7 +89,7 @@ const Component = () => {
       },
       header: () => 'Nội dung',
       footer: info => info.column.id,
-      size: 250
+      maxSize: 300
     }),
     columnHelper.accessor('deadlineStatus', {
       cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
@@ -103,8 +101,7 @@ const Component = () => {
         <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
       ),
       header: () => 'Người thực hiện',
-      footer: info => info.column.id,
-      size: 200
+      footer: info => info.column.id
     }),
     columnHelper.display({
       id: 'expand.issueFile_via_issue',
@@ -115,8 +112,7 @@ const Component = () => {
         ) : null;
       },
       header: () => '',
-      footer: info => info.column.id,
-      size: 50
+      footer: info => info.column.id
     }),
     columnHelper.display({
       id: 'state',
@@ -129,8 +125,7 @@ const Component = () => {
         <EmployeeDisplay employeeId={row.original.createdBy} />
       ),
       header: () => 'Người tạo',
-      footer: info => info.column.id,
-      size: 200
+      footer: info => info.column.id
     }),
     columnHelper.display({
       id: 'object',
@@ -141,14 +136,12 @@ const Component = () => {
     columnHelper.accessor('created', {
       cell: ({ row }) => formatDateTime(row.original.created),
       header: () => 'Ngày tạo',
-      footer: info => info.column.id,
-      size: 150
+      footer: info => info.column.id
     }),
     columnHelper.accessor('updated', {
       cell: ({ row }) => formatDateTime(row.original.updated),
       header: () => 'Ngày cập nhật',
-      footer: info => info.column.id,
-      size: 150
+      footer: info => info.column.id
     })
   ];
 
@@ -159,13 +152,6 @@ const Component = () => {
   });
 
   const { rows } = table.getRowModel();
-
-  const virtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 50,
-    overscan: 20
-  });
 
   const handleScroll = useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
@@ -194,121 +180,101 @@ const Component = () => {
       </div>
       <div
         className={
-          'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
+          'border-appBlue relative min-h-0 flex-1 overflow-auto rounded-md border'
         }
+        onScroll={handleScroll}
       >
-        <div
-          className="absolute inset-0 overflow-auto"
-          ref={parentRef}
-          onScroll={handleScroll}
-        >
-          {isLoading ? (
-            <div className="flex h-20 items-center justify-center">
-              <Loader className="h-6 w-6 animate-spin" />
-            </div>
-          ) : (
-            <Table
+        {isLoading ? (
+          <div className="flex h-20 items-center justify-center">
+            <Loader className="h-6 w-6 animate-spin" />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader
+              className={'bg-appBlueLight'}
               style={{
-                width: '100%',
-                tableLayout: 'fixed'
+                position: 'sticky',
+                top: 0,
+                zIndex: 2
               }}
             >
-              <TableHeader
-                className={'bg-appBlueLight'}
-                style={{
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 2
-                }}
-              >
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className={'text-appWhite whitespace-nowrap'}
-                        style={{
-                          width: header.getSize(),
-                          maxWidth: header.getSize()
-                        }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </>
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody
-                className={'relative'}
-                style={{
-                  height: `${virtualizer.getTotalSize()}px`
-                }}
-              >
-                {rows.length ? (
-                  virtualizer.getVirtualItems().map(virtualRow => {
-                    const row = rows[virtualRow.index];
-                    return (
-                      <TableRow
-                        key={virtualRow.key}
-                        className={'absolute w-full cursor-pointer'}
-                        data-index={virtualRow.index}
-                        ref={virtualizer.measureElement}
-                        style={{
-                          transform: `translateY(${virtualRow.start}px)`
-                        }}
-                        onClick={() =>
-                          navigate({
-                            to: './$issueId',
-                            params: {
-                              issueId: row.original.id
-                            }
-                          })
-                        }
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell
-                            key={cell.id}
-                            className={'truncate text-left'}
-                            style={{
-                              width: cell.column.getSize(),
-                              maxWidth: cell.column.getSize()
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow className={'border-b-0'}>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-16 text-center"
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className={'text-appWhite whitespace-nowrap'}
+                      style={{
+                        width: 'auto',
+                        maxWidth: header.column.columnDef.maxSize
+                      }}
                     >
-                      Không có dữ liệu.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
-          {isFetchingNextPage && (
-            <div className="flex h-20 items-center justify-center">
-              <Loader className="h-6 w-6 animate-spin" />
-            </div>
-          )}
-        </div>
+                      {header.isPlaceholder ? null : (
+                        <>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </>
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {rows.length ? (
+                rows.map(row => {
+                  return (
+                    <TableRow
+                      key={row.id}
+                      className={'w-full cursor-pointer'}
+                      data-index={row.index}
+                      onClick={() =>
+                        navigate({
+                          to: './$issueId',
+                          params: {
+                            issueId: row.original.id
+                          }
+                        })
+                      }
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell
+                          key={cell.id}
+                          className={'truncate text-left'}
+                          style={{
+                            width: 'auto',
+                            maxWidth: cell.column.columnDef.maxSize
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow className={'border-b-0'}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
+        {isFetchingNextPage && (
+          <div className="flex h-20 items-center justify-center">
+            <Loader className="h-6 w-6 animate-spin" />
+          </div>
+        )}
       </div>
     </div>
   );

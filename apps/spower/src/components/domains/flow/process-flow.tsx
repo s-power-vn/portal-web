@@ -41,10 +41,10 @@ export const extractStatus = (status?: string) => {
 };
 
 export const getNode = (
-  processData: ProcessData,
+  processData?: ProcessData,
   nodeId?: string
 ): Node | undefined => {
-  return processData.nodes.find((it: Node) => it.id === nodeId);
+  return processData?.nodes?.find((it: Node) => it.id === nodeId);
 };
 
 export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
