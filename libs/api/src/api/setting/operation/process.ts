@@ -53,6 +53,8 @@ export const processApi = router('process', {
         throw new Error('Thiếu tên quy trình');
       }
 
+      params.createdBy = client.authStore.record?.id;
+
       return client.collection(Collections.Process).create(params);
     }
   }),
@@ -80,10 +82,11 @@ export const processApi = router('process', {
   }),
   duplicate: router.mutation({
     mutationFn: (id: string) => {
-      return client.send('/api/process/duplicate', {
+      console.log('id', id);
+      return client.send('/duplicate-process', {
         method: 'POST',
         body: {
-          id
+          processId: id
         }
       });
     }

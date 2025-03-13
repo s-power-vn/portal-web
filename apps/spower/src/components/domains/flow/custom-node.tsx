@@ -69,8 +69,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           data.active ? 'border-appError' : 'border-gray-200',
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
           data.clicked ? 'ring-2 ring-gray-200' : '',
-          data.type === 'start' ? 'border-green-500' : '',
-          data.type === 'finished' ? 'border-purple-500' : ''
+          data.type === 'start' ? 'bg-green-50' : '',
+          data.type === 'finished' ? 'bg-purple-50' : ''
         )}
       >
         <Show when={data.active}>
