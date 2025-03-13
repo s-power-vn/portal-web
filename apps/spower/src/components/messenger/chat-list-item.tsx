@@ -14,6 +14,10 @@ import {
   isGroupChatType
 } from './utils';
 
+const stripHtml = (html: string) => {
+  return html.replace(/<\/?[^>]+(>|$)/g, '');
+};
+
 export type ChatListItemProps = {
   chatId: string;
   isSelected: boolean;
@@ -53,6 +57,12 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
   const otherParticipant = useMemo(() => {
     return getFirstOtherParticipant(otherParticipants);
   }, [otherParticipants]);
+
+  // Xử lý nội dung tin nhắn cuối cùng để loại bỏ HTML tags
+  const lastMessageContent = useMemo(() => {
+    if (!chat?.expand?.lastMessage?.content) return '';
+    return stripHtml(chat.expand.lastMessage.content);
+  }, [chat?.expand?.lastMessage?.content]);
 
   return (
     <div
@@ -148,7 +158,7 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
                       )}
                     </>
                   )}
-                  {chat.expand.lastMessage.content}
+                  {lastMessageContent}
                 </>
               ) : (
                 <span className="text-gray-400">Chưa có tin nhắn</span>

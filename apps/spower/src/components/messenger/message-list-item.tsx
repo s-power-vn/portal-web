@@ -71,7 +71,7 @@ export const MessageListItem: FC<MessageListItemProps> = ({
               : 'border border-gray-200 bg-gray-100 text-gray-800'
           )}
         >
-          <div>{message.content}</div>
+          <div dangerouslySetInnerHTML={{ __html: message.content }} />
         </div>
       </div>
     </div>
