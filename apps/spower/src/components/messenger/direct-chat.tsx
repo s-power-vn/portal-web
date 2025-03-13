@@ -5,8 +5,9 @@ import { MsgMessageTypeOptions, getUser } from 'portal-core';
 
 import { FC, Suspense, useCallback, useEffect, useState } from 'react';
 
-import { Button, Textarea, error, showModal } from '@minhdtb/storeo-theme';
+import { Button, error, showModal } from '@minhdtb/storeo-theme';
 
+import { StEditor } from '../ui/editor';
 import { ChatHeader } from './chat-header';
 import { ChatList } from './chat-list';
 import { NewChatForm } from './form/new-chat-form';
@@ -112,25 +113,14 @@ export const DirectChat: FC = () => {
     const messageContent = newMessage;
     const messageType = MsgMessageTypeOptions.Text;
 
-    setNewMessage('');
-
     sendMessage.mutate({
       chat: chatId,
       content: messageContent,
       type: messageType
     });
-  }, [newMessage, sendMessage, currentUserId]);
 
-  const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSendMessage();
-      }
-    },
-    [handleSendMessage]
-  );
+    setNewMessage('');
+  }, [newMessage, sendMessage, currentUserId]);
 
   const handleNewChat = useCallback(() => {
     showModal({
@@ -202,12 +192,11 @@ export const DirectChat: FC = () => {
             </div>
             <div className="flex-none border-t bg-white p-3">
               <div className="flex items-center gap-2">
-                <Textarea
-                  className="flex-1 border-none shadow-none"
-                  placeholder="Nhập tin nhắn..."
+                <StEditor
                   value={newMessage}
-                  onChange={e => setNewMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
+                  onChange={setNewMessage}
+                  onSubmit={handleSendMessage}
+                  placeholder="Nhập tin nhắn..."
                 />
                 <Button
                   size="icon"
