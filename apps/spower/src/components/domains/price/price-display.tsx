@@ -32,6 +32,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
+import { ProcessData } from '../flow/types';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {
@@ -336,6 +337,12 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
         }
         content={price.data?.expand?.issue?.title}
         data={priceDetails}
+        processData={
+          (issue.data.expand?.object?.expand?.process?.process || {
+            nodes: [],
+            flows: []
+          }) as ProcessData
+        }
         suppliers={suppliers?.map(s => ({
           id: s.id,
           name: s.name

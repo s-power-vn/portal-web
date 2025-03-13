@@ -1,5 +1,4 @@
 import { api } from 'portal-api';
-import { client } from 'portal-core';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -12,8 +11,11 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { ObjectTypeDropdownField } from '../../object';
+
 const schema = object().shape({
-  name: string().required('Tên quy trình là bắt buộc')
+  name: string().required('Tên quy trình là bắt buộc'),
+  objectType: string().required('Loại đối tượng là bắt buộc')
 });
 
 export type NewProcessFormProps = BusinessFormProps;
@@ -33,19 +35,24 @@ export const NewProcessForm: FC<NewProcessFormProps> = props => {
     <Form
       schema={schema}
       {...props}
-      onSuccess={values =>
+      onSuccess={values => {
         createProcess.mutate({
-          ...values,
-          createdBy: client.authStore.record?.id
-        })
-      }
+          ...values
+        });
+      }}
       defaultValues={{
-        name: ''
+        name: '',
+        objectType: ''
       }}
       className="flex flex-col gap-3"
       loading={createProcess.isPending}
     >
-      <TextField schema={schema} name={'name'} title={'Tên quy trình'} />
+      <TextField schema={schema} name="name" title="Tên quy trình" />
+      <ObjectTypeDropdownField
+        schema={schema}
+        name="objectType"
+        title="Loại đối tượng"
+      />
     </Form>
   );
 };

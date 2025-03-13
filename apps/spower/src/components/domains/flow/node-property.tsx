@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { uuidv7 } from '@kripod/uuidv7';
 import {
   ArrowDownToLineIcon,
   ArrowLeftToLineIcon,
@@ -25,14 +26,21 @@ import {
 
 import { ConditionDisplay } from './condition-display';
 import { ConditionGenerator } from './condition-generator';
-import type { Node, Point, PointRole } from './types';
+import type { Node, NodeType, OperationType, Point, PointRole } from './types';
+
+// Hàm cắt ngắn ID
+const truncateId = (id: string, startChars = 8, endChars = 8) => {
+  if (!id || id.length <= startChars + endChars) return id;
+  return `${id.substring(0, startChars)}...${id.substring(id.length - endChars)}`;
+};
 
 type NodeFormValues = {
   id: string;
   name: string;
   description: string;
   condition: string;
-  done: boolean;
+  type: NodeType;
+  operationType: OperationType;
   points: Point[];
 };
 
@@ -42,7 +50,8 @@ const schema = yup
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
     condition: yup.string().default(''),
-    done: yup.boolean().default(false),
+    type: yup.string().oneOf(['start', 'finished', 'normal']).default('normal'),
+    operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
     points: yup
       .array()
       .of(
@@ -85,7 +94,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       condition: '',
-      done: false,
+      type: 'normal',
+      operationType: 'manual',
       points: []
     }
   });
@@ -100,7 +110,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         condition: rest.condition || '',
-        done: rest.done || false,
+        type: rest.type,
+        operationType: rest.operationType,
         points: Array.isArray(rest.points) ? rest.points : []
       };
       reset(formValues);
@@ -120,7 +131,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
 
   const addPoint = () => {
     const newPoints = [...points];
-    const newId = `p${newPoints.length + 1}`;
+    const uniqueId = uuidv7().replace(/-/g, '');
+    const newId = `p_${uniqueId}`;
     newPoints.push({ id: newId, type: 'right' });
     setValue('points', newPoints, { shouldDirty: true });
     handleSubmit(onSubmit)();
@@ -172,8 +184,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
             <div className="space-y-2">
               <div>
                 <label className="text-sm font-medium">ID</label>
-                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
-                  {watch('id')}
+                <div className="border-input bg-secondary/20 flex h-10 w-full items-center rounded-md border px-3 py-2 text-sm">
+                  <div className="w-full truncate">{watch('id')}</div>
                 </div>
                 {errors.id && (
                   <p className="text-destructive mt-1 text-sm">
@@ -273,34 +285,42 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium">Trạng thái</label>
+                <label className="text-sm font-medium">Loại nút</label>
                 <div className="mt-2 flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    {...register('done')}
-                    onChange={e => {
-                      setValue('done', e.target.checked);
-                      handleSubmit(onSubmit)();
-                    }}
-                    className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                  />
-                  <span className="text-sm">Đã hoàn thành</span>
+                  <span className="text-sm text-gray-500">
+                    {watch('type') === 'start'
+                      ? 'Bắt đầu'
+                      : watch('type') === 'finished'
+                        ? 'Hoàn thành'
+                        : 'Bình thường'}
+                  </span>
                 </div>
               </div>
               <div className="mt-2">
                 <div className="flex items-end justify-between">
                   <label className="text-sm font-medium">Điểm nối</label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addPoint}
-                    className="mb-2 h-8"
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Thêm điểm nối
-                  </Button>
+                  {(watch('type') === 'normal' || points.length < 2) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addPoint}
+                      className="mb-2 h-8"
+                      disabled={
+                        watch('type') !== 'normal' && points.length >= 2
+                      }
+                    >
+                      <Plus className="mr-1 h-4 w-4" />
+                      Thêm điểm nối
+                    </Button>
+                  )}
                 </div>
+                {watch('type') !== 'normal' && (
+                  <div className="mb-2 text-xs text-gray-500">
+                    Tối đa 2 điểm nối cho nút{' '}
+                    {watch('type') === 'start' ? 'bắt đầu' : 'hoàn thành'}
+                  </div>
+                )}
                 <div className="space-y-2">
                   {points?.map((point, index) => (
                     <div key={point.id} className="flex items-center gap-2">
@@ -353,6 +373,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                         size="icon"
                         onClick={() => removePoint(index)}
                         className="h-10 w-10"
+                        disabled={
+                          watch('type') !== 'normal' && points.length <= 1
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

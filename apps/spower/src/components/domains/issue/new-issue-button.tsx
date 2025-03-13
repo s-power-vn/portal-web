@@ -30,22 +30,29 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useInfiniteQuery({
-      queryKey: api.object.listActive.getKey({
-        filter: `name ~ "${search}"`
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching,
+    isRefetching,
+    refetch
+  } = useInfiniteQuery({
+    queryKey: api.object.listActive.getKey({
+      filter: `name ~ "${search}"`
+    }),
+    queryFn: ({ pageParam = 1 }) =>
+      api.object.listActive.fetcher({
+        filter: `name ~ "${search}"`,
+        pageIndex: pageParam,
+        pageSize: 10
       }),
-      queryFn: ({ pageParam = 1 }) =>
-        api.object.listActive.fetcher({
-          filter: `name ~ "${search}"`,
-          pageIndex: pageParam,
-          pageSize: 10
-        }),
-      getNextPageParam: lastPage =>
-        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
-      initialPageParam: 1,
-      enabled: open
-    });
+    getNextPageParam: lastPage =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialPageParam: 1,
+    enabled: open
+  });
 
   const listObjects = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
@@ -198,7 +205,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
           <DebouncedInput
             value={search}
             className={'h-8 w-full'}
-            placeholder={'Tìm kiếm loại công việc...'}
+            placeholder={'Tìm loại công việc...'}
             onChange={handleSearchChange}
           />
         </div>
@@ -208,7 +215,11 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
             ref={scrollContainerRef}
             onScroll={handleScroll}
           >
-            {listObjects.length ? (
+            {isFetching || isRefetching ? (
+              <div className="flex h-8 w-full items-center justify-center text-xs text-gray-500">
+                <Loader className="h-4 w-4 animate-spin" />
+              </div>
+            ) : listObjects.length ? (
               listObjects.map(object => {
                 const type = typeMap.get(object.type);
 

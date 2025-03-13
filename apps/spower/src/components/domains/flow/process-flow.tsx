@@ -44,9 +44,6 @@ export const getNode = (
   processData: ProcessData,
   nodeId?: string
 ): Node | undefined => {
-  if (!nodeId || !processData?.nodes?.length) {
-    return undefined;
-  }
   return processData.nodes.find((it: Node) => it.id === nodeId);
 };
 
@@ -57,19 +54,21 @@ export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
   return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
-export const isDoneNode = (processData: ProcessData, nodeId?: string) => {
+export const isFinishedNode = (processData: ProcessData, nodeId?: string) => {
   if (!nodeId || !processData?.nodes?.length) return false;
   const node = getNode(processData, nodeId);
-  return node?.done || false;
+  return node?.type === 'finished' || false;
 };
 
-export const getDoneFlows = (processData: ProcessData) => {
+export const getFinishedFlows = (processData: ProcessData) => {
   if (!processData?.nodes?.length || !processData?.flows?.length) {
     return [];
   }
-  const doneNodes = processData.nodes.filter((node: Node) => node.done);
+  const finishedNodes = processData.nodes.filter(
+    (node: Node) => node.type === 'finished'
+  );
   return processData.flows.filter((flow: Flow) =>
-    doneNodes.some((node: Node) => flow.to.node === node.id)
+    finishedNodes.some((node: Node) => flow.to.node === node.id)
   );
 };
 
@@ -104,7 +103,7 @@ function getNodes(
   const extract = extractStatus(status);
 
   return processData.nodes.map((node: Node) => {
-    const { id, x, y, points, done, ...rest } = node;
+    const { id, x, y, points, type, operationType, ...rest } = node;
 
     const mappedPoints = points.map((point: Point) => ({
       ...point,
@@ -140,7 +139,8 @@ function getNodes(
         ...rest,
         nodeId: id,
         isApprove,
-        done,
+        type,
+        operationType,
         points: pointsWithRoles,
         active: extract?.to ? id === extract.to : id === extract?.from,
         selected: id === selectedNode,

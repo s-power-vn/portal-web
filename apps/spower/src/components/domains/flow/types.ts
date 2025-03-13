@@ -8,12 +8,17 @@ export type Point = {
   role?: PointRole;
 };
 
+export type NodeType = 'start' | 'finished' | 'normal';
+
+export type OperationType = 'auto' | 'manual';
+
 export type Node = {
   id: string;
   name: string;
   description?: string;
   condition?: string;
-  done: boolean;
+  type: NodeType;
+  operationType: OperationType;
   x: number;
   y: number;
   points: Point[];

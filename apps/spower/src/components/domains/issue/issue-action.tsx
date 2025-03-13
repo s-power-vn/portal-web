@@ -17,7 +17,7 @@ import {
   getNode,
   getNodeFromFlows,
   isApproveNode,
-  isDoneNode
+  isFinishedNode
 } from '../flow';
 import { FinishIssueForm } from './form/finish-issue-form';
 
@@ -142,7 +142,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         }
       }
 
-      if (isDoneNode(process?.process as ProcessData, flow.to)) {
+      if (isFinishedNode(process?.process as ProcessData, flow.to)) {
         showModal({
           title: flow.action ?? `Hoàn thành`,
           children: ({ close }) => {
@@ -250,7 +250,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 key={item.to}
                 onClick={() => forwardNodeClick(item)}
                 className={cn(
-                  isDoneNode(process?.process as ProcessData, item.to) &&
+                  isFinishedNode(process?.process as ProcessData, item.to) &&
                     'bg-appSuccess'
                 )}
               >

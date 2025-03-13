@@ -9,7 +9,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@minhdtb/storeo-theme';
 
 import './editor.css';
 
-// Danh sách emoji phổ biến
 const commonEmojis = [
   '😀',
   '😃',

@@ -9,7 +9,7 @@ import type { FC } from 'react';
 import { For, Show, formatNumber } from '@minhdtb/storeo-core';
 
 import { isApproveNode } from '../flow';
-import processData from '../flow/process.json';
+import { ProcessData } from '../flow/types';
 import { PriceDetailItem } from './price-display';
 
 export type PriceDocumentProps = {
@@ -20,6 +20,7 @@ export type PriceDocumentProps = {
   department?: string;
   content?: string;
   data: PriceDetailItem[];
+  processData: ProcessData;
   suppliers?: Array<{
     id: string;
     name: string;
@@ -281,8 +282,8 @@ export const PriceDocument: FC<PriceDocumentProps> = props => {
         <div className={'mt-8 flex items-start justify-between'}>
           <div className={'flex gap-4'}>
             <For
-              each={processData.price.nodes.filter(node =>
-                isApproveNode('price', node.id)
+              each={props.processData.nodes.filter(node =>
+                isApproveNode(props.processData, node.id)
               )}
             >
               {node => {
