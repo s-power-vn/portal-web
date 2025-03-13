@@ -1,6 +1,6 @@
 import {
   Collections,
-  ObjectResponse,
+  ObjectTypeResponse,
   ProcessRecord,
   ProcessResponse,
   client
@@ -9,11 +9,13 @@ import {
 import { router } from 'react-query-kit';
 
 import { ListParams } from '../../types';
+import { ObjectData } from './object';
 
 export type ProcessDbData = ProcessResponse<
   {},
   {
-    object_via_process: ObjectResponse[];
+    objectType: ObjectTypeResponse;
+    object_via_process: ObjectData[];
   }
 >;
 
@@ -23,14 +25,14 @@ export const processApi = router('process', {
       return client
         .collection<ProcessDbData>(Collections.Process)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          expand: 'object_via_process'
+          expand: 'objectType, object_via_process, object_via_process.type'
         });
     }
   }),
   byId: router.query({
     fetcher: (id: string) => {
       return client.collection<ProcessDbData>(Collections.Process).getOne(id, {
-        expand: 'object_via_process'
+        expand: 'objectType, object_via_process'
       });
     }
   }),

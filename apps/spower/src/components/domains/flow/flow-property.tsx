@@ -111,8 +111,8 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">ID</label>
-                <div className="border-input bg-secondary/20 flex h-10 items-center rounded-md border px-3 py-2 text-sm">
-                  {watch('id')}
+                <div className="border-input bg-secondary/20 flex h-10 w-full items-center rounded-md border px-3 py-2 text-sm">
+                  <div className="w-full truncate">{watch('id')}</div>
                 </div>
                 {errors.id && (
                   <p className="text-destructive mt-1 text-sm">

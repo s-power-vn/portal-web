@@ -45,6 +45,7 @@ export type ComboboxProps = {
   align?: Align;
   showClear?: boolean;
   multiple?: boolean;
+  disabled?: boolean;
   lookupFn?: (
     values: string | string[]
   ) => Promise<ComboboxItem | ComboboxItem[] | undefined>;
@@ -63,6 +64,7 @@ export function Combobox({
   showClear = true,
   align = 'start',
   multiple = false,
+  disabled = false,
   lookupFn
 }: ComboboxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -239,14 +241,25 @@ export function Combobox({
     isLookingUp
   ]);
 
+  const handleOpenChange = useCallback(
+    (isOpen: boolean) => {
+      if (disabled) {
+        return;
+      }
+      setOpen(isOpen);
+    },
+    [disabled]
+  );
+
   return (
     <div ref={containerRef} className={'flex-1'}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <ThemeButton
             variant="outline"
             role="combobox"
             aria-expanded={open}
+            disabled={disabled}
             className={cn(
               'relative h-auto min-h-10 w-full p-1.5 text-sm font-normal',
               'flex flex-wrap items-center gap-1',
@@ -255,12 +268,14 @@ export function Combobox({
                 (selectedItem && !multiple)
                 ? 'text-appBlack'
                 : 'text-muted-foreground',
+              disabled && 'cursor-not-allowed opacity-50',
               className
             )}
           >
             {displayContent}
             <div className="absolute right-2 flex items-center gap-1">
               {showClear &&
+                !disabled &&
                 ((multiple && selectedItems.length > 0) ||
                   (!multiple && selectedItem)) && (
                   <div

@@ -205,16 +205,35 @@ function Component() {
       footer: info => info.column.id,
       size: 300
     }),
-    columnHelper.accessor('expand.object_via_process', {
+    columnHelper.accessor('objectType', {
       cell: info => {
-        const objects = info.getValue();
+        const objectType = info.row.original.expand?.objectType;
+        if (!objectType) {
+          return null;
+        }
+        return (
+          <Badge
+            className="text-appWhite text-xs"
+            style={{ backgroundColor: objectType.color }}
+          >
+            {objectType.display}
+          </Badge>
+        );
+      },
+      header: () => 'Loại đối tượng',
+      footer: info => info.column.id,
+      size: 200
+    }),
+    columnHelper.display({
+      id: 'objects',
+      cell: info => {
+        const objects = info.row.original.expand?.object_via_process;
         if (!objects || objects.length === 0) {
           return (
             <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
           );
         }
 
-        // Display up to 3 badges, then show a count for the rest
         const displayLimit = 3;
         const hasMore = objects.length > displayLimit;
         const displayObjects = hasMore
@@ -226,7 +245,8 @@ function Component() {
             {displayObjects.map(object => (
               <Badge
                 key={object.id}
-                className="bg-appBlueLight text-appWhite text-xs"
+                className=" text-appWhite text-xs"
+                style={{ backgroundColor: object.expand?.type.color }}
               >
                 {object.name}
               </Badge>
@@ -257,7 +277,7 @@ function Component() {
           </div>
         );
       },
-      header: () => 'Đối tượng áp dụng',
+      header: () => 'Đang áp dụng',
       footer: info => info.column.id,
       size: 200
     }),

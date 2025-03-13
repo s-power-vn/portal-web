@@ -1,3 +1,4 @@
+import { uuidv7 } from '@kripod/uuidv7';
 import {
   Background,
   Controls,
@@ -12,7 +13,12 @@ import {
   useUpdateNodeInternals
 } from '@xyflow/react';
 import _ from 'lodash';
-import { GripVertical, PlusIcon } from 'lucide-react';
+import {
+  CheckIcon,
+  GripVertical,
+  PlayIcon,
+  PlusCircleIcon
+} from 'lucide-react';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -23,7 +29,14 @@ import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
 import { NodeProperty } from './node-property';
 import { PropertySidebar } from './property-sidebar';
-import type { Flow, Node, PointRole, ProcessData } from './types';
+import type {
+  Flow,
+  Node,
+  NodeType,
+  Point,
+  PointRole,
+  ProcessData
+} from './types';
 
 function getNodes(
   data: ProcessData,
@@ -253,10 +266,13 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
               // Generate flow ID
               const baseId = `${sourcePoint.nodeId}-${nodeId}`;
-              const existingFlows = flowData.flows.filter(flow =>
-                flow.id.startsWith(baseId)
-              );
+              const existingFlows = flowData.flows.filter(flow => {
+                // Lấy phần trước dấu # đầu tiên
+                const flowBaseId = flow.id.split('#')[0];
+                return flowBaseId === baseId;
+              });
               const newFlowNumber = existingFlows.length + 1;
+              // Không thêm UUID vào ID để đảm bảo tính tương thích với hàm extractStatus
               const newFlowId = `${baseId}#${newFlowNumber}`;
 
               const newFlow: Flow = {
@@ -326,6 +342,22 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     (nodeId: string, updates: Partial<Node>) => {
       let updatedNodes = flowData.nodes.map(node => {
         if (node.id === nodeId) {
+          // For start and finished nodes, limit to maximum 2 points
+          if (
+            (node.type === 'start' || node.type === 'finished') &&
+            updates.points
+          ) {
+            // If more than 2 points, limit to 2
+            if (updates.points.length > 2) {
+              return {
+                ...node,
+                ...updates,
+                points: updates.points.slice(0, 2)
+              };
+            }
+            // Otherwise, allow the update
+            return { ...node, ...updates };
+          }
           return { ...node, ...updates };
         }
         return node;
@@ -422,6 +454,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
   const handleNodeDelete = useCallback(
     async (nodeId: string) => {
+      const nodeToDelete = flowData.nodes.find(node => node.id === nodeId);
       const updatedNodes = flowData.nodes.filter(node => node.id !== nodeId);
       const updatedFlows = flowData.flows.filter(
         flow => flow.from.node !== nodeId && flow.to.node !== nodeId
@@ -440,70 +473,67 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     [flowData, updateFlowData, onLayout]
   );
 
-  const handleConnect = useCallback(
-    (params: {
-      source: string | null;
-      sourceHandle: string | null;
-      target: string | null;
-      targetHandle: string | null;
-    }) => {
-      if (
-        !params.source ||
-        !params.target ||
-        !params.sourceHandle ||
-        !params.targetHandle
-      ) {
+  const onConnect = useCallback(
+    (params: any) => {
+      const sourceNode = flowData.nodes.find(node => node.id === params.source);
+      const targetNode = flowData.nodes.find(node => node.id === params.target);
+
+      if (!sourceNode || !targetNode) {
         return;
       }
 
-      const sourceNodeId = params.source;
-      const targetNodeId = params.target;
-      const sourcePointId = params.sourceHandle.split('#')[1];
-      const targetPointId = params.targetHandle.split('#')[1];
-
-      // Check if flow already exists
-      const flowExists = flowData.flows.some(
-        flow =>
-          flow.from.node === sourceNodeId &&
-          flow.from.point === sourcePointId &&
-          flow.to.node === targetNodeId &&
-          flow.to.point === targetPointId
+      const sourcePoint = sourceNode.points.find(
+        point => point.id === params.sourceHandle
+      );
+      const targetPoint = targetNode.points.find(
+        point => point.id === params.targetHandle
       );
 
-      if (flowExists) {
+      if (!sourcePoint || !targetPoint) {
         return;
       }
 
-      // Generate flow ID
-      const baseId = `${sourceNodeId}-${targetNodeId}`;
-      const existingFlows = flowData.flows.filter(flow =>
-        flow.id.startsWith(baseId)
-      );
-      const newFlowNumber = existingFlows.length + 1;
-      const newFlowId = `${baseId}#${newFlowNumber}`;
+      // Tạo ID cơ bản cho flow
+      const baseId = `${sourceNode.id}-${targetNode.id}`;
+
+      // Tìm số thứ tự lớn nhất hiện tại cho flow giữa hai node này
+      let maxFlowNumber = 0;
+      flowData.flows.forEach(flow => {
+        if (flow.id.startsWith(baseId)) {
+          const parts = flow.id.split('#');
+          if (parts.length === 2) {
+            const flowNumber = parseInt(parts[1], 10);
+            if (!isNaN(flowNumber) && flowNumber > maxFlowNumber) {
+              maxFlowNumber = flowNumber;
+            }
+          }
+        }
+      });
+
+      // Tạo ID mới với UUID v7 không có dấu gạch ngang
+      const uniqueId = uuidv7().replace(/-/g, '');
+      const newFlowId = `${baseId}__${uniqueId}#${maxFlowNumber + 1}`;
 
       const newFlow: Flow = {
         id: newFlowId,
         from: {
-          node: sourceNodeId,
-          point: sourcePointId
+          node: sourceNode.id,
+          point: sourcePoint.id
         },
         to: {
-          node: targetNodeId,
-          point: targetPointId
+          node: targetNode.id,
+          point: targetPoint.id
         }
       };
 
       const updatedData: ProcessData = {
         ...flowData,
-        nodes: flowData.nodes,
         flows: [...flowData.flows, newFlow]
       };
 
       updateFlowData(updatedData);
-      onLayout();
     },
-    [flowData, updateFlowData, onLayout]
+    [flowData, updateFlowData]
   );
 
   const startResizing = useCallback((e: React.MouseEvent) => {
@@ -560,45 +590,78 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     };
   }, [handleFitView]);
 
-  const handleAddNode = useCallback(() => {
-    const newNodeId = `n${flowData.nodes.length + 1}`;
+  const handleAddNode = useCallback(
+    (nodeType: NodeType = 'normal') => {
+      // Tạo ID sử dụng UUID v7 và loại bỏ dấu gạch ngang
+      const uniqueId = uuidv7().replace(/-/g, '');
+      const newNodeId = `n_${uniqueId}`;
 
-    // Get the current viewport to position the node at the center
-    const { x, y, zoom } = reactFlowInstance.getViewport();
-    const reactFlowBounds = ref.current?.getBoundingClientRect();
+      // Get the current viewport to position the node at the center
+      const { x, y, zoom } = reactFlowInstance.getViewport();
+      const reactFlowBounds = ref.current?.getBoundingClientRect();
 
-    // Calculate the center position in the viewport
-    let centerX = 0;
-    let centerY = 0;
+      // Calculate the center position in the viewport
+      let centerX = 0;
+      let centerY = 0;
 
-    if (reactFlowBounds) {
-      // Convert screen coordinates to flow coordinates
-      centerX = (reactFlowBounds.width / 2 - x) / zoom;
-      centerY = (reactFlowBounds.height / 2 - y) / zoom;
+      if (reactFlowBounds) {
+        // Convert screen coordinates to flow coordinates
+        centerX = (reactFlowBounds.width / 2 - x) / zoom;
+        centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
-      // Snap to grid if needed (multiples of 15)
-      centerX = Math.round(centerX / 15) * 15;
-      centerY = Math.round(centerY / 15) * 15;
-    }
+        // Snap to grid if needed (multiples of 15)
+        centerX = Math.round(centerX / 15) * 15;
+        centerY = Math.round(centerY / 15) * 15;
+      }
 
-    const newNode: Node = {
-      id: newNodeId,
-      name: `Nút ${flowData.nodes.length + 1}`,
-      type: 'normal',
-      operationType: 'manual',
-      x: centerX,
-      y: centerY,
-      points: []
-    };
+      // Default points based on node type
+      let defaultPoints: Point[] = [];
 
-    const updatedData: ProcessData = {
-      ...flowData,
-      nodes: [...flowData.nodes, newNode]
-    };
+      if (nodeType === 'start') {
+        // Start nodes default with right and bottom points
+        defaultPoints = [
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'right' },
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'bottom' }
+        ];
+      } else if (nodeType === 'finished') {
+        // Finished nodes default with left and top points
+        defaultPoints = [
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'left' },
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'top' }
+        ];
+      } else {
+        // Normal nodes can have multiple points in any position
+        defaultPoints = [
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'left' },
+          { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'right' }
+        ];
+      }
 
-    updateFlowData(updatedData);
-    onLayout();
-  }, [flowData, updateFlowData, onLayout, reactFlowInstance]);
+      const newNode: Node = {
+        id: newNodeId,
+        name:
+          nodeType === 'start'
+            ? 'Bắt đầu'
+            : nodeType === 'finished'
+              ? 'Hoàn thành'
+              : `Nút ${flowData.nodes.length + 1}`,
+        type: nodeType,
+        operationType: 'manual',
+        x: centerX,
+        y: centerY,
+        points: defaultPoints
+      };
+
+      const updatedData: ProcessData = {
+        ...flowData,
+        nodes: [...flowData.nodes, newNode]
+      };
+
+      updateFlowData(updatedData);
+      onLayout();
+    },
+    [flowData, updateFlowData, onLayout, reactFlowInstance]
+  );
 
   const handleNodesChange = useCallback(
     (changes: any[]) => {
@@ -633,6 +696,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     [flowData, updateFlowData, onNodesChange]
   );
 
+  const hasStartNode = useMemo(() => {
+    return flowData.nodes.some(node => node.type === 'start');
+  }, [flowData.nodes]);
+
+  const hasFinishedNode = useMemo(() => {
+    return flowData.nodes.some(node => node.type === 'finished');
+  }, [flowData.nodes]);
+
   return (
     <div className="flex h-full overflow-hidden rounded-lg border">
       <div className="flex-1 overflow-hidden border-r" ref={ref}>
@@ -644,7 +715,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           onEdgeClick={handleEdgeClick}
-          onConnect={handleConnect}
+          onConnect={onConnect}
           connectOnClick={false}
           nodesConnectable={false}
           edgesFocusable={false}
@@ -665,14 +736,40 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         >
           <Background color="#CBD5E1" gap={15} size={2} />
           <Controls />
-          <div className="absolute left-4 top-4 z-10">
+          <div className="absolute left-4 top-4 z-10 flex gap-2">
             <Button
               className="bg-appBlue text-appWhite hover:bg-appBlue/90 flex gap-1 text-xs"
-              onClick={handleAddNode}
+              onClick={() => handleAddNode('normal')}
               type="button"
             >
-              <PlusIcon className="h-4 w-4" />
-              <span className="font-medium">Thêm nút</span>
+              <PlusCircleIcon className="h-4 w-4" />
+              <span className="font-medium">Nút thường</span>
+            </Button>
+            <Button
+              className="text-appWhite flex gap-1 bg-green-600 text-xs hover:bg-green-600/90 disabled:bg-gray-400 disabled:opacity-100"
+              onClick={() => handleAddNode('start')}
+              type="button"
+              disabled={hasStartNode}
+              title={
+                hasStartNode ? 'Đã tồn tại nút bắt đầu' : 'Thêm nút bắt đầu'
+              }
+            >
+              <PlayIcon className="h-4 w-4" />
+              <span className="font-medium">Nút bắt đầu</span>
+            </Button>
+            <Button
+              className="text-appWhite flex gap-1 bg-purple-600 text-xs hover:bg-purple-600/90 disabled:bg-gray-400 disabled:opacity-100"
+              onClick={() => handleAddNode('finished')}
+              type="button"
+              disabled={hasFinishedNode}
+              title={
+                hasFinishedNode
+                  ? 'Đã tồn tại nút hoàn thành'
+                  : 'Thêm nút hoàn thành'
+              }
+            >
+              <CheckIcon className="h-4 w-4" />
+              <span className="font-medium">Nút hoàn thành</span>
             </Button>
           </div>
         </ReactFlow>

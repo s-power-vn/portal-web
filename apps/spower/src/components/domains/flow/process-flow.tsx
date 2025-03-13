@@ -44,9 +44,6 @@ export const getNode = (
   processData: ProcessData,
   nodeId?: string
 ): Node | undefined => {
-  if (!nodeId || !processData?.nodes?.length) {
-    return undefined;
-  }
   return processData.nodes.find((it: Node) => it.id === nodeId);
 };
 

@@ -13,6 +13,7 @@
     "@faker-js/faker": "^8.4.1",
     "@fileforge/react-print": "^0.1.142",
     "@hookform/resolvers": "^3.3.4",
+    "@kripod/uuidv7": "^0.3.4",
     "@minhdtb/storeo-core": "^0.0.4",
     "@minhdtb/storeo-theme": "^1.0.30",
     "@preact/signals-react": "^2.0.0",

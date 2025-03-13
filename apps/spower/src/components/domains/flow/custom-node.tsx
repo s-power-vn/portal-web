@@ -1,6 +1,6 @@
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import _ from 'lodash';
-import { CheckCircle2Icon } from 'lucide-react';
+import { CheckCircle2Icon, CheckIcon, PlayIcon } from 'lucide-react';
 
 import { FC, useMemo } from 'react';
 
@@ -68,18 +68,27 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           'box-border flex min-w-40 items-center justify-center gap-2 rounded border-2 bg-white p-2 text-xs shadow-sm transition-all',
           data.active ? 'border-appError' : 'border-gray-200',
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
-          data.clicked ? 'ring-2 ring-gray-200' : ''
+          data.clicked ? 'ring-2 ring-gray-200' : '',
+          data.type === 'start' ? 'border-green-500' : '',
+          data.type === 'finished' ? 'border-purple-500' : ''
         )}
       >
         <Show when={data.active}>
           <div className={'bg-appError h-3 w-3 rounded-full'}></div>
         </Show>
+
+        <Show when={data.type === 'start'}>
+          <PlayIcon className="h-4 w-4 text-green-500" />
+        </Show>
+
         <span>{data.name}</span>
+
         <Show when={data.isApprove}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
         </Show>
+
         <Show when={data.type === 'finished'}>
-          <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
+          <CheckIcon className="h-4 w-4 text-purple-500" />
         </Show>
       </div>
       {leftPoints.reverse().map((point, index) => (
