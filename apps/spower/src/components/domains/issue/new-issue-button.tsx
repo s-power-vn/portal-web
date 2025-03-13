@@ -205,7 +205,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
           <DebouncedInput
             value={search}
             className={'h-8 w-full'}
-            placeholder={'Tìm kiếm loại công việc...'}
+            placeholder={'Tìm loại công việc...'}
             onChange={handleSearchChange}
           />
         </div>

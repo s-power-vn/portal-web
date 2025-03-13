@@ -51,7 +51,9 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
       className="flex h-full w-full flex-col gap-3"
       onSuccess={values => {
         const processData = values.process as ProcessData;
-        const doneNode = processData?.nodes?.find(node => node.done === true);
+        const doneNode = processData?.nodes?.find(
+          node => node.type === 'finished'
+        );
 
         updateProcess.mutate({
           id: processId,

@@ -37,6 +37,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
+import { ProcessData } from '../flow/types';
 import { ADMIN_ID } from '../project';
 import { RequestDocument } from './request-document';
 
@@ -261,6 +262,12 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         }
         content={request.data?.expand?.issue.title}
         data={v}
+        processData={
+          (issue.data.expand?.object?.expand?.process?.process || {
+            nodes: [],
+            flows: []
+          }) as ProcessData
+        }
         approvers={issue.data?.approver?.map(it => ({
           userId: it.userId,
           userName: it.userName,

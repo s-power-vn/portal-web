@@ -328,10 +328,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         if (node.id === nodeId) {
           return { ...node, ...updates };
         }
-        // If current node is being marked as done, set all other nodes to not done
-        if (updates.done === true) {
-          return { ...node, done: false };
-        }
         return node;
       });
 
@@ -588,7 +584,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     const newNode: Node = {
       id: newNodeId,
       name: `Nút ${flowData.nodes.length + 1}`,
-      done: false,
+      type: 'normal',
+      operationType: 'manual',
       x: centerX,
       y: centerY,
       points: []

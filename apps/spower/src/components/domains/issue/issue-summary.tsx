@@ -31,7 +31,7 @@ import {
 import { useInvalidateQueries } from '../../../hooks';
 import { DynamicIcon } from '../../icon/dynamic-icon';
 import { EmployeeDisplay } from '../employee';
-import { ProcessData, extractStatus, isDoneNode } from '../flow';
+import { ProcessData, extractStatus, isFinishedNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueAssigneeDisplay } from './issue-assignee-display';
@@ -70,7 +70,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const process = issueObject?.expand?.process;
 
   const statusInfo = extractStatus(issue.data.status);
-  const isInDoneState = isDoneNode(
+  const isInDoneState = isFinishedNode(
     process?.process as ProcessData,
     statusInfo?.to
   );

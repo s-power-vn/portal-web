@@ -25,14 +25,15 @@ import {
 
 import { ConditionDisplay } from './condition-display';
 import { ConditionGenerator } from './condition-generator';
-import type { Node, Point, PointRole } from './types';
+import type { Node, NodeType, OperationType, Point, PointRole } from './types';
 
 type NodeFormValues = {
   id: string;
   name: string;
   description: string;
   condition: string;
-  done: boolean;
+  type: NodeType;
+  operationType: OperationType;
   points: Point[];
 };
 
@@ -42,7 +43,8 @@ const schema = yup
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
     condition: yup.string().default(''),
-    done: yup.boolean().default(false),
+    type: yup.string().oneOf(['start', 'finished', 'normal']).default('normal'),
+    operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
     points: yup
       .array()
       .of(
@@ -85,7 +87,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       condition: '',
-      done: false,
+      type: 'normal',
+      operationType: 'manual',
       points: []
     }
   });
@@ -100,7 +103,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         condition: rest.condition || '',
-        done: rest.done || false,
+        type: rest.type,
+        operationType: rest.operationType,
         points: Array.isArray(rest.points) ? rest.points : []
       };
       reset(formValues);
@@ -273,18 +277,15 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium">Trạng thái</label>
+                <label className="text-sm font-medium">Loại nút</label>
                 <div className="mt-2 flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    {...register('done')}
-                    onChange={e => {
-                      setValue('done', e.target.checked);
-                      handleSubmit(onSubmit)();
-                    }}
-                    className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
-                  />
-                  <span className="text-sm">Đã hoàn thành</span>
+                  <span className="text-sm text-gray-500">
+                    {watch('type') === 'start'
+                      ? 'Bắt đầu'
+                      : watch('type') === 'finished'
+                        ? 'Hoàn thành'
+                        : 'Bình thường'}
+                  </span>
                 </div>
               </div>
               <div className="mt-2">

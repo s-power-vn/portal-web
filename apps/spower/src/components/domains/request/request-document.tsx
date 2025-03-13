@@ -9,7 +9,7 @@ import type { FC } from 'react';
 import { For, Show, formatDate } from '@minhdtb/storeo-core';
 
 import { isApproveNode } from '../flow';
-import processData from '../flow/process.json';
+import { ProcessData } from '../flow/types';
 import { RequestDetailItem } from './request-display';
 
 export type RequestDocumentProps = {
@@ -20,6 +20,7 @@ export type RequestDocumentProps = {
   department?: string;
   content?: string;
   data: RequestDetailItem[];
+  processData: ProcessData;
   approvers?: Array<{
     userId: string;
     userName: string;
@@ -317,8 +318,8 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
         <div className={'mt-8 flex items-start justify-between'}>
           <div className={'flex gap-4'}>
             <For
-              each={processData.request.nodes.filter(node =>
-                isApproveNode('request', node.id)
+              each={props.processData.nodes.filter(node =>
+                isApproveNode(props.processData, node.id)
               )}
             >
               {node => {

@@ -6,7 +6,7 @@ import { FC, useMemo } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
-import type { PointRole } from './types';
+import type { NodeType, OperationType, PointRole } from './types';
 
 export type CustomNodeProps = NodeProps<
   Node<{
@@ -15,7 +15,8 @@ export type CustomNodeProps = NodeProps<
     description: string;
     active: boolean;
     isApprove: boolean;
-    done: boolean;
+    type: NodeType;
+    operationType: OperationType;
     selected: boolean;
     clicked: boolean;
     points: {
@@ -77,7 +78,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
         <Show when={data.isApprove}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
         </Show>
-        <Show when={data.done}>
+        <Show when={data.type === 'finished'}>
           <div className={'bg-appSuccess h-3 w-3 rounded-full'}></div>
         </Show>
       </div>
