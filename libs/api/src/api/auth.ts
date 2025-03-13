@@ -18,6 +18,7 @@ export const authApi = router(`auth`, {
   }),
   logout: router.mutation({
     mutationFn: async () => {
+      await client.realtime.unsubscribe();
       return client.authStore.clear();
     }
   })

@@ -67,7 +67,7 @@ export const MessageListItem: FC<MessageListItemProps> = ({
             'max-w-[75%] rounded-lg px-4 py-1.5',
             isCloseMessage() ? 'rounded-t-md' : '',
             isCurrentUser
-              ? 'bg-appBlue text-white'
+              ? 'bg-appBlueLight text-white'
               : 'border border-gray-200 bg-gray-100 text-gray-800'
           )}
         >

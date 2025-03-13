@@ -58,7 +58,6 @@ export const ChatListItemComponent: FC<ChatListItemProps> = ({
     return getFirstOtherParticipant(otherParticipants);
   }, [otherParticipants]);
 
-  // Xử lý nội dung tin nhắn cuối cùng để loại bỏ HTML tags
   const lastMessageContent = useMemo(() => {
     if (!chat?.expand?.lastMessage?.content) return '';
     return stripHtml(chat.expand.lastMessage.content);
