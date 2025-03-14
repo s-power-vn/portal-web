@@ -2,6 +2,7 @@ import type {
   DetailResponse,
   ProjectResponse,
   RequestDetailResponse,
+  RequestFinishedResponse,
   RequestResponse,
   SupplierResponse
 } from 'portal-core';
@@ -25,36 +26,27 @@ export type RequestData = RequestResponse<{
   issue: IssueData;
 }>;
 
+export type FinishedRequestData = RequestFinishedResponse<{
+  issue: IssueData;
+}>;
+
 export const requestApi = router('request', {
   listFinished: router.query({
     fetcher: async ({
       projectId,
-      filter,
       pageIndex,
-      pageSize,
-      statuses = []
+      pageSize
     }: {
       projectId: string;
-      statuses?: string[];
-      filter?: string;
       pageIndex?: number;
       pageSize?: number;
     }) => {
-      const statusFilter = statuses
-        ? statuses?.map(status => `issue.status = "${status}"`).join('||')
-        : '';
-
       return await client
-        .collection<RequestData>(Collections.Request)
+        .collection<FinishedRequestData>(Collections.RequestFinished)
         .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter: ` ${statusFilter ? `(${statusFilter}) &&` : ''} issue.deleted = false && issue.title ~ "${filter ?? ''}" && project = "${projectId}"`,
-          sort: 'created',
-          expand:
-            'requestDetail_via_request.detail,' +
-            'issue.createdBy,' +
-            'issue.createdBy.department,' +
-            'issue.assignee,' +
-            'project'
+          filter: `project = "${projectId}"`,
+          expand: 'issue',
+          sort: '-changed'
         });
     }
   }),

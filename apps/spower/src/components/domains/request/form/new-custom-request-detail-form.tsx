@@ -21,7 +21,7 @@ export const NewCustomRequestDetailForm: FC<
   return (
     <Form
       schema={schema}
-      onSubmit={props.onSubmit}
+      onSuccess={props.onSubmit}
       onCancel={props.onCancel}
       className={'flex flex-col gap-3'}
       defaultValues={{

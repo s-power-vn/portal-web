@@ -48,7 +48,7 @@ const schema = object().shape({
       test: function (value) {
         if (!value) return false;
         const suppliers = value.flatMap(item =>
-          item.prices ? Object.keys(item.prices) : []
+          item?.prices ? Object.keys(item.prices) : []
         );
         return suppliers.length > 0;
       }
@@ -96,7 +96,10 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
         code: issue.data?.code,
         startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
         endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
-        data: price.data?.expand.priceDetail_via_price,
+        data: price.data?.expand?.priceDetail_via_price?.map(it => ({
+          id: it.id,
+          prices: it.prices ?? {}
+        })),
         attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
           id: it.id,
           name: it.name,
@@ -105,7 +108,7 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
         }))
       }}
       className={'flex flex-col gap-4'}
-      onSubmit={value => {
+      onSuccess={value => {
         update.mutate({
           ...value,
           id: issueId,
