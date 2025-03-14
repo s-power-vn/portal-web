@@ -33,6 +33,9 @@ export const PickSuppliersForm: FC<PickSuppliersFormProps> = ({
         schema={schema}
         name={'suppliers'}
         title={'Nhà cung cấp'}
+        options={{
+          multiple: true
+        }}
       />
     </Form>
   );
