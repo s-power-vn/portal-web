@@ -39,6 +39,7 @@ export enum Collections {
 	Request = "request",
 	RequestDetail = "requestDetail",
 	RequestDetailInfo = "requestDetailInfo",
+	RequestFinished = "requestFinished",
 	Supplier = "supplier",
 	Template = "template",
 	User = "user",
@@ -468,6 +469,14 @@ export type RequestDetailInfoRecord = {
 	requestVolume?: number
 }
 
+export type RequestFinishedRecord = {
+	changed?: IsoDateString
+	id: string
+	issue?: RecordIdString
+	project: RecordIdString
+	request?: RecordIdString
+}
+
 export type SupplierRecord = {
 	address?: string
 	code?: string
@@ -539,6 +548,7 @@ export type ProjectResponse<Texpand = unknown> = Required<ProjectRecord> & BaseS
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type RequestDetailResponse<Texpand = unknown> = Required<RequestDetailRecord> & BaseSystemFields<Texpand>
 export type RequestDetailInfoResponse<Texpand = unknown> = Required<RequestDetailInfoRecord> & BaseSystemFields<Texpand>
+export type RequestFinishedResponse<Texpand = unknown> = Required<RequestFinishedRecord> & BaseSystemFields<Texpand>
 export type SupplierResponse<Texpand = unknown> = Required<SupplierRecord> & BaseSystemFields<Texpand>
 export type TemplateResponse<Texpand = unknown> = Required<TemplateRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -579,6 +589,7 @@ export type CollectionRecords = {
 	request: RequestRecord
 	requestDetail: RequestDetailRecord
 	requestDetailInfo: RequestDetailInfoRecord
+	requestFinished: RequestFinishedRecord
 	supplier: SupplierRecord
 	template: TemplateRecord
 	user: UserRecord
@@ -618,6 +629,7 @@ export type CollectionResponses = {
 	request: RequestResponse
 	requestDetail: RequestDetailResponse
 	requestDetailInfo: RequestDetailInfoResponse
+	requestFinished: RequestFinishedResponse
 	supplier: SupplierResponse
 	template: TemplateResponse
 	user: UserResponse
@@ -660,6 +672,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'request'): RecordService<RequestResponse>
 	collection(idOrName: 'requestDetail'): RecordService<RequestDetailResponse>
 	collection(idOrName: 'requestDetailInfo'): RecordService<RequestDetailInfoResponse>
+	collection(idOrName: 'requestFinished'): RecordService<RequestFinishedResponse>
 	collection(idOrName: 'supplier'): RecordService<SupplierResponse>
 	collection(idOrName: 'template'): RecordService<TemplateResponse>
 	collection(idOrName: 'user'): RecordService<UserResponse>

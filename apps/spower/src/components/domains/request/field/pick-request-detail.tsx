@@ -50,7 +50,7 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
 
   const v = useMemo<RequestDetailItem[]>(() => {
     return _.chain(
-      request.data ? request.data?.expand.requestDetail_via_request : []
+      request.data ? request.data?.expand?.requestDetail_via_request : []
     )
       .map(it => {
         const { customLevel, customUnit, customTitle } = it;

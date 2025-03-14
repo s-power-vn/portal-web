@@ -32,7 +32,7 @@ export const PickFinishedRequestDetailForm: FC<
   return (
     <Form
       schema={schema}
-      onSubmit={onSuccess}
+      onSuccess={onSuccess}
       onCancel={onCancel}
       className={'flex flex-col gap-3'}
       defaultValues={{
@@ -46,7 +46,11 @@ export const PickFinishedRequestDetailForm: FC<
         title={'Yêu cầu đã hoàn thành'}
         options={{
           projectId,
-          onChange: setSelectedRequestId
+          onChange: (value: string | string[]) => {
+            if (!Array.isArray(value)) {
+              setSelectedRequestId(value);
+            }
+          }
         }}
       />
       <PickRequestDetailField
