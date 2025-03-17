@@ -10,60 +10,60 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
+import { Route as rootRoute } from './routes/root'
 import { Route as LoginImport } from './routes/login'
-import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as PrivateImport } from './routes/private'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedProjectImport } from './routes/_authenticated/project'
-import { Route as AuthenticatedMessengerImport } from './routes/_authenticated/messenger'
-import { Route as AuthenticatedHomeImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
-import { Route as AuthenticatedProjectIndexImport } from './routes/_authenticated/project/index'
-import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated/user/profile'
-import { Route as AuthenticatedSettingsOperationImport } from './routes/_authenticated/settings/operation'
-import { Route as AuthenticatedSettingsGeneralImport } from './routes/_authenticated/settings/general'
-import { Route as AuthenticatedProjectProjectIdImport } from './routes/_authenticated/project/$projectId'
-import { Route as AuthenticatedSettingsOperationIndexImport } from './routes/_authenticated/settings/operation/index'
-import { Route as AuthenticatedSettingsGeneralIndexImport } from './routes/_authenticated/settings/general/index'
-import { Route as AuthenticatedProjectProjectIdIndexImport } from './routes/_authenticated/project/$projectId/index'
-import { Route as AuthenticatedSettingsOperationProcessImport } from './routes/_authenticated/settings/operation/process'
-import { Route as AuthenticatedSettingsOperationObjectsImport } from './routes/_authenticated/settings/operation/objects'
-import { Route as AuthenticatedSettingsGeneralSuppliersImport } from './routes/_authenticated/settings/general/suppliers'
-import { Route as AuthenticatedSettingsGeneralMaterialsImport } from './routes/_authenticated/settings/general/materials'
-import { Route as AuthenticatedSettingsGeneralEmployeesImport } from './routes/_authenticated/settings/general/employees'
-import { Route as AuthenticatedSettingsGeneralDepartmentsImport } from './routes/_authenticated/settings/general/departments'
-import { Route as AuthenticatedSettingsGeneralCustomersImport } from './routes/_authenticated/settings/general/customers'
-import { Route as AuthenticatedProjectProjectIdSettingsImport } from './routes/_authenticated/project/$projectId/settings'
-import { Route as AuthenticatedProjectProjectIdIssuesImport } from './routes/_authenticated/project/$projectId/issues'
-import { Route as AuthenticatedProjectProjectIdContractImport } from './routes/_authenticated/project/$projectId/contract'
-import { Route as AuthenticatedProjectProjectIdIssuesIndexImport } from './routes/_authenticated/project/$projectId/issues/index'
-import { Route as AuthenticatedProjectProjectIdContractIndexImport } from './routes/_authenticated/project/$projectId/contract/index'
-import { Route as AuthenticatedSettingsOperationProcessNewImport } from './routes/_authenticated/settings/operation/process/new'
-import { Route as AuthenticatedSettingsOperationObjectsNewImport } from './routes/_authenticated/settings/operation/objects/new'
-import { Route as AuthenticatedSettingsGeneralSuppliersNewImport } from './routes/_authenticated/settings/general/suppliers/new'
-import { Route as AuthenticatedSettingsGeneralMaterialsNewImport } from './routes/_authenticated/settings/general/materials/new'
-import { Route as AuthenticatedSettingsGeneralEmployeesNewImport } from './routes/_authenticated/settings/general/employees/new'
-import { Route as AuthenticatedSettingsGeneralDepartmentsNewImport } from './routes/_authenticated/settings/general/departments/new'
-import { Route as AuthenticatedSettingsGeneralCustomersNewImport } from './routes/_authenticated/settings/general/customers/new'
-import { Route as AuthenticatedProjectProjectIdIssuesRequestImport } from './routes/_authenticated/project/$projectId/issues/request'
-import { Route as AuthenticatedProjectProjectIdIssuesPriceImport } from './routes/_authenticated/project/$projectId/issues/price'
-import { Route as AuthenticatedProjectProjectIdIssuesMeImport } from './routes/_authenticated/project/$projectId/issues/me'
-import { Route as AuthenticatedProjectProjectIdContractMonitoringImport } from './routes/_authenticated/project/$projectId/contract/monitoring'
-import { Route as AuthenticatedProjectProjectIdContractInputImport } from './routes/_authenticated/project/$projectId/contract/input'
-import { Route as AuthenticatedProjectProjectIdIssuesRequestIndexImport } from './routes/_authenticated/project/$projectId/issues/request/index'
-import { Route as AuthenticatedProjectProjectIdIssuesPriceIndexImport } from './routes/_authenticated/project/$projectId/issues/price/index'
-import { Route as AuthenticatedProjectProjectIdIssuesMeIndexImport } from './routes/_authenticated/project/$projectId/issues/me/index'
-import { Route as AuthenticatedSettingsOperationProcessProcessIdEditImport } from './routes/_authenticated/settings/operation/process/$processId/edit'
-import { Route as AuthenticatedSettingsOperationObjectsObjectIdEditImport } from './routes/_authenticated/settings/operation/objects/$objectId/edit'
-import { Route as AuthenticatedSettingsGeneralSuppliersSupplierIdEditImport } from './routes/_authenticated/settings/general/suppliers/$supplierId/edit'
-import { Route as AuthenticatedSettingsGeneralMaterialsMaterialIdEditImport } from './routes/_authenticated/settings/general/materials/$materialId/edit'
-import { Route as AuthenticatedSettingsGeneralEmployeesEmployeeIdEditImport } from './routes/_authenticated/settings/general/employees/$employeeId/edit'
-import { Route as AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditImport } from './routes/_authenticated/settings/general/departments/$departmentId/edit'
-import { Route as AuthenticatedSettingsGeneralCustomersCustomerIdEditImport } from './routes/_authenticated/settings/general/customers/$customerId/edit'
-import { Route as AuthenticatedProjectProjectIdIssuesRequestIssueIdImport } from './routes/_authenticated/project/$projectId/issues/request/$issueId'
-import { Route as AuthenticatedProjectProjectIdIssuesPriceIssueIdImport } from './routes/_authenticated/project/$projectId/issues/price/$issueId'
-import { Route as AuthenticatedProjectProjectIdIssuesMeIssueIdImport } from './routes/_authenticated/project/$projectId/issues/me/$issueId'
+import { Route as PrivateSettingsImport } from './routes/private/settings'
+import { Route as PrivateProjectImport } from './routes/private/project'
+import { Route as PrivateProfileImport } from './routes/private/profile'
+import { Route as PrivateMessengerImport } from './routes/private/messenger'
+import { Route as PrivateHomeImport } from './routes/private/home'
+import { Route as PrivateSettingsIndexImport } from './routes/private/settings/index'
+import { Route as PrivateProjectIndexImport } from './routes/private/project/index'
+import { Route as PrivateSettingsOperationImport } from './routes/private/settings/operation'
+import { Route as PrivateSettingsGeneralImport } from './routes/private/settings/general'
+import { Route as PrivateProjectProjectIdImport } from './routes/private/project/$projectId'
+import { Route as PrivateSettingsOperationIndexImport } from './routes/private/settings/operation/index'
+import { Route as PrivateSettingsGeneralIndexImport } from './routes/private/settings/general/index'
+import { Route as PrivateProjectProjectIdIndexImport } from './routes/private/project/$projectId/index'
+import { Route as PrivateSettingsOperationProcessImport } from './routes/private/settings/operation/process'
+import { Route as PrivateSettingsOperationObjectsImport } from './routes/private/settings/operation/objects'
+import { Route as PrivateSettingsGeneralSuppliersImport } from './routes/private/settings/general/suppliers'
+import { Route as PrivateSettingsGeneralMaterialsImport } from './routes/private/settings/general/materials'
+import { Route as PrivateSettingsGeneralEmployeesImport } from './routes/private/settings/general/employees'
+import { Route as PrivateSettingsGeneralDepartmentsImport } from './routes/private/settings/general/departments'
+import { Route as PrivateSettingsGeneralCustomersImport } from './routes/private/settings/general/customers'
+import { Route as PrivateProjectProjectIdSettingsImport } from './routes/private/project/$projectId/settings'
+import { Route as PrivateProjectProjectIdIssuesImport } from './routes/private/project/$projectId/issues'
+import { Route as PrivateProjectProjectIdContractImport } from './routes/private/project/$projectId/contract'
+import { Route as PrivateProjectProjectIdIssuesIndexImport } from './routes/private/project/$projectId/issues/index'
+import { Route as PrivateProjectProjectIdContractIndexImport } from './routes/private/project/$projectId/contract/index'
+import { Route as PrivateSettingsOperationProcessNewImport } from './routes/private/settings/operation/process/new'
+import { Route as PrivateSettingsOperationObjectsNewImport } from './routes/private/settings/operation/objects/new'
+import { Route as PrivateSettingsGeneralSuppliersNewImport } from './routes/private/settings/general/suppliers/new'
+import { Route as PrivateSettingsGeneralMaterialsNewImport } from './routes/private/settings/general/materials/new'
+import { Route as PrivateSettingsGeneralEmployeesNewImport } from './routes/private/settings/general/employees/new'
+import { Route as PrivateSettingsGeneralDepartmentsNewImport } from './routes/private/settings/general/departments/new'
+import { Route as PrivateSettingsGeneralCustomersNewImport } from './routes/private/settings/general/customers/new'
+import { Route as PrivateProjectProjectIdIssuesRequestImport } from './routes/private/project/$projectId/issues/request'
+import { Route as PrivateProjectProjectIdIssuesPriceImport } from './routes/private/project/$projectId/issues/price'
+import { Route as PrivateProjectProjectIdIssuesMeImport } from './routes/private/project/$projectId/issues/me'
+import { Route as PrivateProjectProjectIdContractMonitoringImport } from './routes/private/project/$projectId/contract/monitoring'
+import { Route as PrivateProjectProjectIdContractInputImport } from './routes/private/project/$projectId/contract/input'
+import { Route as PrivateProjectProjectIdIssuesRequestIndexImport } from './routes/private/project/$projectId/issues/request/index'
+import { Route as PrivateProjectProjectIdIssuesPriceIndexImport } from './routes/private/project/$projectId/issues/price/index'
+import { Route as PrivateProjectProjectIdIssuesMeIndexImport } from './routes/private/project/$projectId/issues/me/index'
+import { Route as PrivateSettingsOperationProcessProcessIdEditImport } from './routes/private/settings/operation/process/$processId/edit'
+import { Route as PrivateSettingsOperationObjectsObjectIdEditImport } from './routes/private/settings/operation/objects/$objectId/edit'
+import { Route as PrivateSettingsGeneralSuppliersSupplierIdEditImport } from './routes/private/settings/general/suppliers/$supplierId/edit'
+import { Route as PrivateSettingsGeneralMaterialsMaterialIdEditImport } from './routes/private/settings/general/materials/$materialId/edit'
+import { Route as PrivateSettingsGeneralEmployeesEmployeeIdEditImport } from './routes/private/settings/general/employees/$employeeId/edit'
+import { Route as PrivateSettingsGeneralDepartmentsDepartmentIdEditImport } from './routes/private/settings/general/departments/$departmentId/edit'
+import { Route as PrivateSettingsGeneralCustomersCustomerIdEditImport } from './routes/private/settings/general/customers/$customerId/edit'
+import { Route as PrivateProjectProjectIdIssuesRequestIssueIdImport } from './routes/private/project/$projectId/issues/request/$issueId'
+import { Route as PrivateProjectProjectIdIssuesPriceIssueIdImport } from './routes/private/project/$projectId/issues/price/$issueId'
+import { Route as PrivateProjectProjectIdIssuesMeIssueIdImport } from './routes/private/project/$projectId/issues/me/$issueId'
 
 // Create/Update Routes
 
@@ -73,8 +73,8 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedRoute = AuthenticatedImport.update({
-  id: '/_authenticated',
+const PrivateRoute = PrivateImport.update({
+  id: '/_private',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -84,349 +84,344 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
+const PrivateSettingsRoute = PrivateSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => PrivateRoute,
 } as any)
 
-const AuthenticatedProjectRoute = AuthenticatedProjectImport.update({
+const PrivateProjectRoute = PrivateProjectImport.update({
   id: '/project',
   path: '/project',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => PrivateRoute,
 } as any)
 
-const AuthenticatedMessengerRoute = AuthenticatedMessengerImport.update({
+const PrivateProfileRoute = PrivateProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PrivateRoute,
+} as any)
+
+const PrivateMessengerRoute = PrivateMessengerImport.update({
   id: '/messenger',
   path: '/messenger',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => PrivateRoute,
 } as any)
 
-const AuthenticatedHomeRoute = AuthenticatedHomeImport.update({
+const PrivateHomeRoute = PrivateHomeImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => PrivateRoute,
 } as any)
 
-const AuthenticatedSettingsIndexRoute = AuthenticatedSettingsIndexImport.update(
-  {
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedSettingsRoute,
-  } as any,
-)
-
-const AuthenticatedProjectIndexRoute = AuthenticatedProjectIndexImport.update({
+const PrivateSettingsIndexRoute = PrivateSettingsIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedProjectRoute,
+  getParentRoute: () => PrivateSettingsRoute,
 } as any)
 
-const AuthenticatedUserProfileRoute = AuthenticatedUserProfileImport.update({
-  id: '/user/profile',
-  path: '/user/profile',
-  getParentRoute: () => AuthenticatedRoute,
+const PrivateProjectIndexRoute = PrivateProjectIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PrivateProjectRoute,
 } as any)
 
-const AuthenticatedSettingsOperationRoute =
-  AuthenticatedSettingsOperationImport.update({
-    id: '/operation',
-    path: '/operation',
-    getParentRoute: () => AuthenticatedSettingsRoute,
-  } as any)
+const PrivateSettingsOperationRoute = PrivateSettingsOperationImport.update({
+  id: '/operation',
+  path: '/operation',
+  getParentRoute: () => PrivateSettingsRoute,
+} as any)
 
-const AuthenticatedSettingsGeneralRoute =
-  AuthenticatedSettingsGeneralImport.update({
-    id: '/general',
-    path: '/general',
-    getParentRoute: () => AuthenticatedSettingsRoute,
-  } as any)
+const PrivateSettingsGeneralRoute = PrivateSettingsGeneralImport.update({
+  id: '/general',
+  path: '/general',
+  getParentRoute: () => PrivateSettingsRoute,
+} as any)
 
-const AuthenticatedProjectProjectIdRoute =
-  AuthenticatedProjectProjectIdImport.update({
-    id: '/$projectId',
-    path: '/$projectId',
-    getParentRoute: () => AuthenticatedProjectRoute,
-  } as any)
+const PrivateProjectProjectIdRoute = PrivateProjectProjectIdImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => PrivateProjectRoute,
+} as any)
 
-const AuthenticatedSettingsOperationIndexRoute =
-  AuthenticatedSettingsOperationIndexImport.update({
+const PrivateSettingsOperationIndexRoute =
+  PrivateSettingsOperationIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedSettingsOperationRoute,
+    getParentRoute: () => PrivateSettingsOperationRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralIndexRoute =
-  AuthenticatedSettingsGeneralIndexImport.update({
+const PrivateSettingsGeneralIndexRoute =
+  PrivateSettingsGeneralIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIndexRoute =
-  AuthenticatedProjectProjectIdIndexImport.update({
+const PrivateProjectProjectIdIndexRoute =
+  PrivateProjectProjectIdIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+    getParentRoute: () => PrivateProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedSettingsOperationProcessRoute =
-  AuthenticatedSettingsOperationProcessImport.update({
+const PrivateSettingsOperationProcessRoute =
+  PrivateSettingsOperationProcessImport.update({
     id: '/process',
     path: '/process',
-    getParentRoute: () => AuthenticatedSettingsOperationRoute,
+    getParentRoute: () => PrivateSettingsOperationRoute,
   } as any)
 
-const AuthenticatedSettingsOperationObjectsRoute =
-  AuthenticatedSettingsOperationObjectsImport.update({
+const PrivateSettingsOperationObjectsRoute =
+  PrivateSettingsOperationObjectsImport.update({
     id: '/objects',
     path: '/objects',
-    getParentRoute: () => AuthenticatedSettingsOperationRoute,
+    getParentRoute: () => PrivateSettingsOperationRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralSuppliersRoute =
-  AuthenticatedSettingsGeneralSuppliersImport.update({
+const PrivateSettingsGeneralSuppliersRoute =
+  PrivateSettingsGeneralSuppliersImport.update({
     id: '/suppliers',
     path: '/suppliers',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralMaterialsRoute =
-  AuthenticatedSettingsGeneralMaterialsImport.update({
+const PrivateSettingsGeneralMaterialsRoute =
+  PrivateSettingsGeneralMaterialsImport.update({
     id: '/materials',
     path: '/materials',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralEmployeesRoute =
-  AuthenticatedSettingsGeneralEmployeesImport.update({
+const PrivateSettingsGeneralEmployeesRoute =
+  PrivateSettingsGeneralEmployeesImport.update({
     id: '/employees',
     path: '/employees',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralDepartmentsRoute =
-  AuthenticatedSettingsGeneralDepartmentsImport.update({
+const PrivateSettingsGeneralDepartmentsRoute =
+  PrivateSettingsGeneralDepartmentsImport.update({
     id: '/departments',
     path: '/departments',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralCustomersRoute =
-  AuthenticatedSettingsGeneralCustomersImport.update({
+const PrivateSettingsGeneralCustomersRoute =
+  PrivateSettingsGeneralCustomersImport.update({
     id: '/customers',
     path: '/customers',
-    getParentRoute: () => AuthenticatedSettingsGeneralRoute,
+    getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdSettingsRoute =
-  AuthenticatedProjectProjectIdSettingsImport.update({
+const PrivateProjectProjectIdSettingsRoute =
+  PrivateProjectProjectIdSettingsImport.update({
     id: '/settings',
     path: '/settings',
-    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+    getParentRoute: () => PrivateProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesRoute =
-  AuthenticatedProjectProjectIdIssuesImport.update({
+const PrivateProjectProjectIdIssuesRoute =
+  PrivateProjectProjectIdIssuesImport.update({
     id: '/issues',
     path: '/issues',
-    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+    getParentRoute: () => PrivateProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdContractRoute =
-  AuthenticatedProjectProjectIdContractImport.update({
+const PrivateProjectProjectIdContractRoute =
+  PrivateProjectProjectIdContractImport.update({
     id: '/contract',
     path: '/contract',
-    getParentRoute: () => AuthenticatedProjectProjectIdRoute,
+    getParentRoute: () => PrivateProjectProjectIdRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesIndexRoute =
-  AuthenticatedProjectProjectIdIssuesIndexImport.update({
+const PrivateProjectProjectIdIssuesIndexRoute =
+  PrivateProjectProjectIdIssuesIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdContractIndexRoute =
-  AuthenticatedProjectProjectIdContractIndexImport.update({
+const PrivateProjectProjectIdContractIndexRoute =
+  PrivateProjectProjectIdContractIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
+    getParentRoute: () => PrivateProjectProjectIdContractRoute,
   } as any)
 
-const AuthenticatedSettingsOperationProcessNewRoute =
-  AuthenticatedSettingsOperationProcessNewImport.update({
+const PrivateSettingsOperationProcessNewRoute =
+  PrivateSettingsOperationProcessNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsOperationProcessRoute,
+    getParentRoute: () => PrivateSettingsOperationProcessRoute,
   } as any)
 
-const AuthenticatedSettingsOperationObjectsNewRoute =
-  AuthenticatedSettingsOperationObjectsNewImport.update({
+const PrivateSettingsOperationObjectsNewRoute =
+  PrivateSettingsOperationObjectsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsOperationObjectsRoute,
+    getParentRoute: () => PrivateSettingsOperationObjectsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralSuppliersNewRoute =
-  AuthenticatedSettingsGeneralSuppliersNewImport.update({
+const PrivateSettingsGeneralSuppliersNewRoute =
+  PrivateSettingsGeneralSuppliersNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsGeneralSuppliersRoute,
+    getParentRoute: () => PrivateSettingsGeneralSuppliersRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralMaterialsNewRoute =
-  AuthenticatedSettingsGeneralMaterialsNewImport.update({
+const PrivateSettingsGeneralMaterialsNewRoute =
+  PrivateSettingsGeneralMaterialsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsGeneralMaterialsRoute,
+    getParentRoute: () => PrivateSettingsGeneralMaterialsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralEmployeesNewRoute =
-  AuthenticatedSettingsGeneralEmployeesNewImport.update({
+const PrivateSettingsGeneralEmployeesNewRoute =
+  PrivateSettingsGeneralEmployeesNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsGeneralEmployeesRoute,
+    getParentRoute: () => PrivateSettingsGeneralEmployeesRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralDepartmentsNewRoute =
-  AuthenticatedSettingsGeneralDepartmentsNewImport.update({
+const PrivateSettingsGeneralDepartmentsNewRoute =
+  PrivateSettingsGeneralDepartmentsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsGeneralDepartmentsRoute,
+    getParentRoute: () => PrivateSettingsGeneralDepartmentsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralCustomersNewRoute =
-  AuthenticatedSettingsGeneralCustomersNewImport.update({
+const PrivateSettingsGeneralCustomersNewRoute =
+  PrivateSettingsGeneralCustomersNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedSettingsGeneralCustomersRoute,
+    getParentRoute: () => PrivateSettingsGeneralCustomersRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesRequestRoute =
-  AuthenticatedProjectProjectIdIssuesRequestImport.update({
+const PrivateProjectProjectIdIssuesRequestRoute =
+  PrivateProjectProjectIdIssuesRequestImport.update({
     id: '/request',
     path: '/request',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesPriceRoute =
-  AuthenticatedProjectProjectIdIssuesPriceImport.update({
+const PrivateProjectProjectIdIssuesPriceRoute =
+  PrivateProjectProjectIdIssuesPriceImport.update({
     id: '/price',
     path: '/price',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesMeRoute =
-  AuthenticatedProjectProjectIdIssuesMeImport.update({
+const PrivateProjectProjectIdIssuesMeRoute =
+  PrivateProjectProjectIdIssuesMeImport.update({
     id: '/me',
     path: '/me',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdContractMonitoringRoute =
-  AuthenticatedProjectProjectIdContractMonitoringImport.update({
+const PrivateProjectProjectIdContractMonitoringRoute =
+  PrivateProjectProjectIdContractMonitoringImport.update({
     id: '/monitoring',
     path: '/monitoring',
-    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
+    getParentRoute: () => PrivateProjectProjectIdContractRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdContractInputRoute =
-  AuthenticatedProjectProjectIdContractInputImport.update({
+const PrivateProjectProjectIdContractInputRoute =
+  PrivateProjectProjectIdContractInputImport.update({
     id: '/input',
     path: '/input',
-    getParentRoute: () => AuthenticatedProjectProjectIdContractRoute,
+    getParentRoute: () => PrivateProjectProjectIdContractRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesRequestIndexRoute =
-  AuthenticatedProjectProjectIdIssuesRequestIndexImport.update({
+const PrivateProjectProjectIdIssuesRequestIndexRoute =
+  PrivateProjectProjectIdIssuesRequestIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRequestRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRequestRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesPriceIndexRoute =
-  AuthenticatedProjectProjectIdIssuesPriceIndexImport.update({
+const PrivateProjectProjectIdIssuesPriceIndexRoute =
+  PrivateProjectProjectIdIssuesPriceIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesPriceRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesPriceRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesMeIndexRoute =
-  AuthenticatedProjectProjectIdIssuesMeIndexImport.update({
+const PrivateProjectProjectIdIssuesMeIndexRoute =
+  PrivateProjectProjectIdIssuesMeIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesMeRoute,
   } as any)
 
-const AuthenticatedSettingsOperationProcessProcessIdEditRoute =
-  AuthenticatedSettingsOperationProcessProcessIdEditImport.update({
+const PrivateSettingsOperationProcessProcessIdEditRoute =
+  PrivateSettingsOperationProcessProcessIdEditImport.update({
     id: '/$processId/edit',
     path: '/$processId/edit',
-    getParentRoute: () => AuthenticatedSettingsOperationProcessRoute,
+    getParentRoute: () => PrivateSettingsOperationProcessRoute,
   } as any)
 
-const AuthenticatedSettingsOperationObjectsObjectIdEditRoute =
-  AuthenticatedSettingsOperationObjectsObjectIdEditImport.update({
+const PrivateSettingsOperationObjectsObjectIdEditRoute =
+  PrivateSettingsOperationObjectsObjectIdEditImport.update({
     id: '/$objectId/edit',
     path: '/$objectId/edit',
-    getParentRoute: () => AuthenticatedSettingsOperationObjectsRoute,
+    getParentRoute: () => PrivateSettingsOperationObjectsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute =
-  AuthenticatedSettingsGeneralSuppliersSupplierIdEditImport.update({
+const PrivateSettingsGeneralSuppliersSupplierIdEditRoute =
+  PrivateSettingsGeneralSuppliersSupplierIdEditImport.update({
     id: '/$supplierId/edit',
     path: '/$supplierId/edit',
-    getParentRoute: () => AuthenticatedSettingsGeneralSuppliersRoute,
+    getParentRoute: () => PrivateSettingsGeneralSuppliersRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute =
-  AuthenticatedSettingsGeneralMaterialsMaterialIdEditImport.update({
+const PrivateSettingsGeneralMaterialsMaterialIdEditRoute =
+  PrivateSettingsGeneralMaterialsMaterialIdEditImport.update({
     id: '/$materialId/edit',
     path: '/$materialId/edit',
-    getParentRoute: () => AuthenticatedSettingsGeneralMaterialsRoute,
+    getParentRoute: () => PrivateSettingsGeneralMaterialsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute =
-  AuthenticatedSettingsGeneralEmployeesEmployeeIdEditImport.update({
+const PrivateSettingsGeneralEmployeesEmployeeIdEditRoute =
+  PrivateSettingsGeneralEmployeesEmployeeIdEditImport.update({
     id: '/$employeeId/edit',
     path: '/$employeeId/edit',
-    getParentRoute: () => AuthenticatedSettingsGeneralEmployeesRoute,
+    getParentRoute: () => PrivateSettingsGeneralEmployeesRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute =
-  AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditImport.update({
+const PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute =
+  PrivateSettingsGeneralDepartmentsDepartmentIdEditImport.update({
     id: '/$departmentId/edit',
     path: '/$departmentId/edit',
-    getParentRoute: () => AuthenticatedSettingsGeneralDepartmentsRoute,
+    getParentRoute: () => PrivateSettingsGeneralDepartmentsRoute,
   } as any)
 
-const AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute =
-  AuthenticatedSettingsGeneralCustomersCustomerIdEditImport.update({
+const PrivateSettingsGeneralCustomersCustomerIdEditRoute =
+  PrivateSettingsGeneralCustomersCustomerIdEditImport.update({
     id: '/$customerId/edit',
     path: '/$customerId/edit',
-    getParentRoute: () => AuthenticatedSettingsGeneralCustomersRoute,
+    getParentRoute: () => PrivateSettingsGeneralCustomersRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute =
-  AuthenticatedProjectProjectIdIssuesRequestIssueIdImport.update({
+const PrivateProjectProjectIdIssuesRequestIssueIdRoute =
+  PrivateProjectProjectIdIssuesRequestIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesRequestRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesRequestRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute =
-  AuthenticatedProjectProjectIdIssuesPriceIssueIdImport.update({
+const PrivateProjectProjectIdIssuesPriceIssueIdRoute =
+  PrivateProjectProjectIdIssuesPriceIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesPriceRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesPriceRoute,
   } as any)
 
-const AuthenticatedProjectProjectIdIssuesMeIssueIdRoute =
-  AuthenticatedProjectProjectIdIssuesMeIssueIdImport.update({
+const PrivateProjectProjectIdIssuesMeIssueIdRoute =
+  PrivateProjectProjectIdIssuesMeIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => AuthenticatedProjectProjectIdIssuesMeRoute,
+    getParentRoute: () => PrivateProjectProjectIdIssuesMeRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -440,11 +435,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated': {
-      id: '/_authenticated'
+    '/_private': {
+      id: '/_private'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof PrivateImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -454,871 +449,863 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated/home': {
-      id: '/_authenticated/home'
+    '/_private/home': {
+      id: '/_private/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof AuthenticatedHomeImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof PrivateHomeImport
+      parentRoute: typeof PrivateImport
     }
-    '/_authenticated/messenger': {
-      id: '/_authenticated/messenger'
+    '/_private/messenger': {
+      id: '/_private/messenger'
       path: '/messenger'
       fullPath: '/messenger'
-      preLoaderRoute: typeof AuthenticatedMessengerImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof PrivateMessengerImport
+      parentRoute: typeof PrivateImport
     }
-    '/_authenticated/project': {
-      id: '/_authenticated/project'
+    '/_private/profile': {
+      id: '/_private/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof PrivateProfileImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/project': {
+      id: '/_private/project'
       path: '/project'
       fullPath: '/project'
-      preLoaderRoute: typeof AuthenticatedProjectImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof PrivateProjectImport
+      parentRoute: typeof PrivateImport
     }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
+    '/_private/settings': {
+      id: '/_private/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof PrivateSettingsImport
+      parentRoute: typeof PrivateImport
     }
-    '/_authenticated/project/$projectId': {
-      id: '/_authenticated/project/$projectId'
+    '/_private/project/$projectId': {
+      id: '/_private/project/$projectId'
       path: '/$projectId'
       fullPath: '/project/$projectId'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdImport
-      parentRoute: typeof AuthenticatedProjectImport
+      preLoaderRoute: typeof PrivateProjectProjectIdImport
+      parentRoute: typeof PrivateProjectImport
     }
-    '/_authenticated/settings/general': {
-      id: '/_authenticated/settings/general'
+    '/_private/settings/general': {
+      id: '/_private/settings/general'
       path: '/general'
       fullPath: '/settings/general'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralImport
-      parentRoute: typeof AuthenticatedSettingsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralImport
+      parentRoute: typeof PrivateSettingsImport
     }
-    '/_authenticated/settings/operation': {
-      id: '/_authenticated/settings/operation'
+    '/_private/settings/operation': {
+      id: '/_private/settings/operation'
       path: '/operation'
       fullPath: '/settings/operation'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationImport
-      parentRoute: typeof AuthenticatedSettingsImport
+      preLoaderRoute: typeof PrivateSettingsOperationImport
+      parentRoute: typeof PrivateSettingsImport
     }
-    '/_authenticated/user/profile': {
-      id: '/_authenticated/user/profile'
-      path: '/user/profile'
-      fullPath: '/user/profile'
-      preLoaderRoute: typeof AuthenticatedUserProfileImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/project/': {
-      id: '/_authenticated/project/'
+    '/_private/project/': {
+      id: '/_private/project/'
       path: '/'
       fullPath: '/project/'
-      preLoaderRoute: typeof AuthenticatedProjectIndexImport
-      parentRoute: typeof AuthenticatedProjectImport
+      preLoaderRoute: typeof PrivateProjectIndexImport
+      parentRoute: typeof PrivateProjectImport
     }
-    '/_authenticated/settings/': {
-      id: '/_authenticated/settings/'
+    '/_private/settings/': {
+      id: '/_private/settings/'
       path: '/'
       fullPath: '/settings/'
-      preLoaderRoute: typeof AuthenticatedSettingsIndexImport
-      parentRoute: typeof AuthenticatedSettingsImport
+      preLoaderRoute: typeof PrivateSettingsIndexImport
+      parentRoute: typeof PrivateSettingsImport
     }
-    '/_authenticated/project/$projectId/contract': {
-      id: '/_authenticated/project/$projectId/contract'
+    '/_private/project/$projectId/contract': {
+      id: '/_private/project/$projectId/contract'
       path: '/contract'
       fullPath: '/project/$projectId/contract'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractImport
-      parentRoute: typeof AuthenticatedProjectProjectIdImport
+      preLoaderRoute: typeof PrivateProjectProjectIdContractImport
+      parentRoute: typeof PrivateProjectProjectIdImport
     }
-    '/_authenticated/project/$projectId/issues': {
-      id: '/_authenticated/project/$projectId/issues'
+    '/_private/project/$projectId/issues': {
+      id: '/_private/project/$projectId/issues'
       path: '/issues'
       fullPath: '/project/$projectId/issues'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesImport
-      parentRoute: typeof AuthenticatedProjectProjectIdImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesImport
+      parentRoute: typeof PrivateProjectProjectIdImport
     }
-    '/_authenticated/project/$projectId/settings': {
-      id: '/_authenticated/project/$projectId/settings'
+    '/_private/project/$projectId/settings': {
+      id: '/_private/project/$projectId/settings'
       path: '/settings'
       fullPath: '/project/$projectId/settings'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdSettingsImport
-      parentRoute: typeof AuthenticatedProjectProjectIdImport
+      preLoaderRoute: typeof PrivateProjectProjectIdSettingsImport
+      parentRoute: typeof PrivateProjectProjectIdImport
     }
-    '/_authenticated/settings/general/customers': {
-      id: '/_authenticated/settings/general/customers'
+    '/_private/settings/general/customers': {
+      id: '/_private/settings/general/customers'
       path: '/customers'
       fullPath: '/settings/general/customers'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralCustomersImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralCustomersImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/general/departments': {
-      id: '/_authenticated/settings/general/departments'
+    '/_private/settings/general/departments': {
+      id: '/_private/settings/general/departments'
       path: '/departments'
       fullPath: '/settings/general/departments'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralDepartmentsImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/general/employees': {
-      id: '/_authenticated/settings/general/employees'
+    '/_private/settings/general/employees': {
+      id: '/_private/settings/general/employees'
       path: '/employees'
       fullPath: '/settings/general/employees'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralEmployeesImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/general/materials': {
-      id: '/_authenticated/settings/general/materials'
+    '/_private/settings/general/materials': {
+      id: '/_private/settings/general/materials'
       path: '/materials'
       fullPath: '/settings/general/materials'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralMaterialsImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/general/suppliers': {
-      id: '/_authenticated/settings/general/suppliers'
+    '/_private/settings/general/suppliers': {
+      id: '/_private/settings/general/suppliers'
       path: '/suppliers'
       fullPath: '/settings/general/suppliers'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralSuppliersImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/operation/objects': {
-      id: '/_authenticated/settings/operation/objects'
+    '/_private/settings/operation/objects': {
+      id: '/_private/settings/operation/objects'
       path: '/objects'
       fullPath: '/settings/operation/objects'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationObjectsImport
-      parentRoute: typeof AuthenticatedSettingsOperationImport
+      preLoaderRoute: typeof PrivateSettingsOperationObjectsImport
+      parentRoute: typeof PrivateSettingsOperationImport
     }
-    '/_authenticated/settings/operation/process': {
-      id: '/_authenticated/settings/operation/process'
+    '/_private/settings/operation/process': {
+      id: '/_private/settings/operation/process'
       path: '/process'
       fullPath: '/settings/operation/process'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationProcessImport
-      parentRoute: typeof AuthenticatedSettingsOperationImport
+      preLoaderRoute: typeof PrivateSettingsOperationProcessImport
+      parentRoute: typeof PrivateSettingsOperationImport
     }
-    '/_authenticated/project/$projectId/': {
-      id: '/_authenticated/project/$projectId/'
+    '/_private/project/$projectId/': {
+      id: '/_private/project/$projectId/'
       path: '/'
       fullPath: '/project/$projectId/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIndexImport
+      parentRoute: typeof PrivateProjectProjectIdImport
     }
-    '/_authenticated/settings/general/': {
-      id: '/_authenticated/settings/general/'
+    '/_private/settings/general/': {
+      id: '/_private/settings/general/'
       path: '/'
       fullPath: '/settings/general/'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralIndexImport
-      parentRoute: typeof AuthenticatedSettingsGeneralImport
+      preLoaderRoute: typeof PrivateSettingsGeneralIndexImport
+      parentRoute: typeof PrivateSettingsGeneralImport
     }
-    '/_authenticated/settings/operation/': {
-      id: '/_authenticated/settings/operation/'
+    '/_private/settings/operation/': {
+      id: '/_private/settings/operation/'
       path: '/'
       fullPath: '/settings/operation/'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationIndexImport
-      parentRoute: typeof AuthenticatedSettingsOperationImport
+      preLoaderRoute: typeof PrivateSettingsOperationIndexImport
+      parentRoute: typeof PrivateSettingsOperationImport
     }
-    '/_authenticated/project/$projectId/contract/input': {
-      id: '/_authenticated/project/$projectId/contract/input'
+    '/_private/project/$projectId/contract/input': {
+      id: '/_private/project/$projectId/contract/input'
       path: '/input'
       fullPath: '/project/$projectId/contract/input'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractInputImport
-      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
+      preLoaderRoute: typeof PrivateProjectProjectIdContractInputImport
+      parentRoute: typeof PrivateProjectProjectIdContractImport
     }
-    '/_authenticated/project/$projectId/contract/monitoring': {
-      id: '/_authenticated/project/$projectId/contract/monitoring'
+    '/_private/project/$projectId/contract/monitoring': {
+      id: '/_private/project/$projectId/contract/monitoring'
       path: '/monitoring'
       fullPath: '/project/$projectId/contract/monitoring'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractMonitoringImport
-      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
+      preLoaderRoute: typeof PrivateProjectProjectIdContractMonitoringImport
+      parentRoute: typeof PrivateProjectProjectIdContractImport
     }
-    '/_authenticated/project/$projectId/issues/me': {
-      id: '/_authenticated/project/$projectId/issues/me'
+    '/_private/project/$projectId/issues/me': {
+      id: '/_private/project/$projectId/issues/me'
       path: '/me'
       fullPath: '/project/$projectId/issues/me'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issues/price': {
-      id: '/_authenticated/project/$projectId/issues/price'
+    '/_private/project/$projectId/issues/price': {
+      id: '/_private/project/$projectId/issues/price'
       path: '/price'
       fullPath: '/project/$projectId/issues/price'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issues/request': {
-      id: '/_authenticated/project/$projectId/issues/request'
+    '/_private/project/$projectId/issues/request': {
+      id: '/_private/project/$projectId/issues/request'
       path: '/request'
       fullPath: '/project/$projectId/issues/request'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesImport
     }
-    '/_authenticated/settings/general/customers/new': {
-      id: '/_authenticated/settings/general/customers/new'
+    '/_private/settings/general/customers/new': {
+      id: '/_private/settings/general/customers/new'
       path: '/new'
       fullPath: '/settings/general/customers/new'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralCustomersNewImport
-      parentRoute: typeof AuthenticatedSettingsGeneralCustomersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralCustomersNewImport
+      parentRoute: typeof PrivateSettingsGeneralCustomersImport
     }
-    '/_authenticated/settings/general/departments/new': {
-      id: '/_authenticated/settings/general/departments/new'
+    '/_private/settings/general/departments/new': {
+      id: '/_private/settings/general/departments/new'
       path: '/new'
       fullPath: '/settings/general/departments/new'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralDepartmentsNewImport
-      parentRoute: typeof AuthenticatedSettingsGeneralDepartmentsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsNewImport
+      parentRoute: typeof PrivateSettingsGeneralDepartmentsImport
     }
-    '/_authenticated/settings/general/employees/new': {
-      id: '/_authenticated/settings/general/employees/new'
+    '/_private/settings/general/employees/new': {
+      id: '/_private/settings/general/employees/new'
       path: '/new'
       fullPath: '/settings/general/employees/new'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralEmployeesNewImport
-      parentRoute: typeof AuthenticatedSettingsGeneralEmployeesImport
+      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesNewImport
+      parentRoute: typeof PrivateSettingsGeneralEmployeesImport
     }
-    '/_authenticated/settings/general/materials/new': {
-      id: '/_authenticated/settings/general/materials/new'
+    '/_private/settings/general/materials/new': {
+      id: '/_private/settings/general/materials/new'
       path: '/new'
       fullPath: '/settings/general/materials/new'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralMaterialsNewImport
-      parentRoute: typeof AuthenticatedSettingsGeneralMaterialsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsNewImport
+      parentRoute: typeof PrivateSettingsGeneralMaterialsImport
     }
-    '/_authenticated/settings/general/suppliers/new': {
-      id: '/_authenticated/settings/general/suppliers/new'
+    '/_private/settings/general/suppliers/new': {
+      id: '/_private/settings/general/suppliers/new'
       path: '/new'
       fullPath: '/settings/general/suppliers/new'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralSuppliersNewImport
-      parentRoute: typeof AuthenticatedSettingsGeneralSuppliersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersNewImport
+      parentRoute: typeof PrivateSettingsGeneralSuppliersImport
     }
-    '/_authenticated/settings/operation/objects/new': {
-      id: '/_authenticated/settings/operation/objects/new'
+    '/_private/settings/operation/objects/new': {
+      id: '/_private/settings/operation/objects/new'
       path: '/new'
       fullPath: '/settings/operation/objects/new'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationObjectsNewImport
-      parentRoute: typeof AuthenticatedSettingsOperationObjectsImport
+      preLoaderRoute: typeof PrivateSettingsOperationObjectsNewImport
+      parentRoute: typeof PrivateSettingsOperationObjectsImport
     }
-    '/_authenticated/settings/operation/process/new': {
-      id: '/_authenticated/settings/operation/process/new'
+    '/_private/settings/operation/process/new': {
+      id: '/_private/settings/operation/process/new'
       path: '/new'
       fullPath: '/settings/operation/process/new'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationProcessNewImport
-      parentRoute: typeof AuthenticatedSettingsOperationProcessImport
+      preLoaderRoute: typeof PrivateSettingsOperationProcessNewImport
+      parentRoute: typeof PrivateSettingsOperationProcessImport
     }
-    '/_authenticated/project/$projectId/contract/': {
-      id: '/_authenticated/project/$projectId/contract/'
+    '/_private/project/$projectId/contract/': {
+      id: '/_private/project/$projectId/contract/'
       path: '/'
       fullPath: '/project/$projectId/contract/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdContractIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdContractImport
+      preLoaderRoute: typeof PrivateProjectProjectIdContractIndexImport
+      parentRoute: typeof PrivateProjectProjectIdContractImport
     }
-    '/_authenticated/project/$projectId/issues/': {
-      id: '/_authenticated/project/$projectId/issues/'
+    '/_private/project/$projectId/issues/': {
+      id: '/_private/project/$projectId/issues/'
       path: '/'
       fullPath: '/project/$projectId/issues/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesIndexImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesImport
     }
-    '/_authenticated/project/$projectId/issues/me/$issueId': {
-      id: '/_authenticated/project/$projectId/issues/me/$issueId'
+    '/_private/project/$projectId/issues/me/$issueId': {
+      id: '/_private/project/$projectId/issues/me/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/me/$issueId'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeIssueIdImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesMeImport
     }
-    '/_authenticated/project/$projectId/issues/price/$issueId': {
-      id: '/_authenticated/project/$projectId/issues/price/$issueId'
+    '/_private/project/$projectId/issues/price/$issueId': {
+      id: '/_private/project/$projectId/issues/price/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/price/$issueId'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceIssueIdImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesPriceImport
     }
-    '/_authenticated/project/$projectId/issues/request/$issueId': {
-      id: '/_authenticated/project/$projectId/issues/request/$issueId'
+    '/_private/project/$projectId/issues/request/$issueId': {
+      id: '/_private/project/$projectId/issues/request/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/request/$issueId'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestIssueIdImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesRequestImport
     }
-    '/_authenticated/settings/general/customers/$customerId/edit': {
-      id: '/_authenticated/settings/general/customers/$customerId/edit'
+    '/_private/settings/general/customers/$customerId/edit': {
+      id: '/_private/settings/general/customers/$customerId/edit'
       path: '/$customerId/edit'
       fullPath: '/settings/general/customers/$customerId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralCustomersCustomerIdEditImport
-      parentRoute: typeof AuthenticatedSettingsGeneralCustomersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralCustomersCustomerIdEditImport
+      parentRoute: typeof PrivateSettingsGeneralCustomersImport
     }
-    '/_authenticated/settings/general/departments/$departmentId/edit': {
-      id: '/_authenticated/settings/general/departments/$departmentId/edit'
+    '/_private/settings/general/departments/$departmentId/edit': {
+      id: '/_private/settings/general/departments/$departmentId/edit'
       path: '/$departmentId/edit'
       fullPath: '/settings/general/departments/$departmentId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditImport
-      parentRoute: typeof AuthenticatedSettingsGeneralDepartmentsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditImport
+      parentRoute: typeof PrivateSettingsGeneralDepartmentsImport
     }
-    '/_authenticated/settings/general/employees/$employeeId/edit': {
-      id: '/_authenticated/settings/general/employees/$employeeId/edit'
+    '/_private/settings/general/employees/$employeeId/edit': {
+      id: '/_private/settings/general/employees/$employeeId/edit'
       path: '/$employeeId/edit'
       fullPath: '/settings/general/employees/$employeeId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralEmployeesEmployeeIdEditImport
-      parentRoute: typeof AuthenticatedSettingsGeneralEmployeesImport
+      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesEmployeeIdEditImport
+      parentRoute: typeof PrivateSettingsGeneralEmployeesImport
     }
-    '/_authenticated/settings/general/materials/$materialId/edit': {
-      id: '/_authenticated/settings/general/materials/$materialId/edit'
+    '/_private/settings/general/materials/$materialId/edit': {
+      id: '/_private/settings/general/materials/$materialId/edit'
       path: '/$materialId/edit'
       fullPath: '/settings/general/materials/$materialId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralMaterialsMaterialIdEditImport
-      parentRoute: typeof AuthenticatedSettingsGeneralMaterialsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsMaterialIdEditImport
+      parentRoute: typeof PrivateSettingsGeneralMaterialsImport
     }
-    '/_authenticated/settings/general/suppliers/$supplierId/edit': {
-      id: '/_authenticated/settings/general/suppliers/$supplierId/edit'
+    '/_private/settings/general/suppliers/$supplierId/edit': {
+      id: '/_private/settings/general/suppliers/$supplierId/edit'
       path: '/$supplierId/edit'
       fullPath: '/settings/general/suppliers/$supplierId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralSuppliersSupplierIdEditImport
-      parentRoute: typeof AuthenticatedSettingsGeneralSuppliersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersSupplierIdEditImport
+      parentRoute: typeof PrivateSettingsGeneralSuppliersImport
     }
-    '/_authenticated/settings/operation/objects/$objectId/edit': {
-      id: '/_authenticated/settings/operation/objects/$objectId/edit'
+    '/_private/settings/operation/objects/$objectId/edit': {
+      id: '/_private/settings/operation/objects/$objectId/edit'
       path: '/$objectId/edit'
       fullPath: '/settings/operation/objects/$objectId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationObjectsObjectIdEditImport
-      parentRoute: typeof AuthenticatedSettingsOperationObjectsImport
+      preLoaderRoute: typeof PrivateSettingsOperationObjectsObjectIdEditImport
+      parentRoute: typeof PrivateSettingsOperationObjectsImport
     }
-    '/_authenticated/settings/operation/process/$processId/edit': {
-      id: '/_authenticated/settings/operation/process/$processId/edit'
+    '/_private/settings/operation/process/$processId/edit': {
+      id: '/_private/settings/operation/process/$processId/edit'
       path: '/$processId/edit'
       fullPath: '/settings/operation/process/$processId/edit'
-      preLoaderRoute: typeof AuthenticatedSettingsOperationProcessProcessIdEditImport
-      parentRoute: typeof AuthenticatedSettingsOperationProcessImport
+      preLoaderRoute: typeof PrivateSettingsOperationProcessProcessIdEditImport
+      parentRoute: typeof PrivateSettingsOperationProcessImport
     }
-    '/_authenticated/project/$projectId/issues/me/': {
-      id: '/_authenticated/project/$projectId/issues/me/'
+    '/_private/project/$projectId/issues/me/': {
+      id: '/_private/project/$projectId/issues/me/'
       path: '/'
       fullPath: '/project/$projectId/issues/me/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesMeImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeIndexImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesMeImport
     }
-    '/_authenticated/project/$projectId/issues/price/': {
-      id: '/_authenticated/project/$projectId/issues/price/'
+    '/_private/project/$projectId/issues/price/': {
+      id: '/_private/project/$projectId/issues/price/'
       path: '/'
       fullPath: '/project/$projectId/issues/price/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesPriceImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceIndexImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesPriceImport
     }
-    '/_authenticated/project/$projectId/issues/request/': {
-      id: '/_authenticated/project/$projectId/issues/request/'
+    '/_private/project/$projectId/issues/request/': {
+      id: '/_private/project/$projectId/issues/request/'
       path: '/'
       fullPath: '/project/$projectId/issues/request/'
-      preLoaderRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIndexImport
-      parentRoute: typeof AuthenticatedProjectProjectIdIssuesRequestImport
+      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestIndexImport
+      parentRoute: typeof PrivateProjectProjectIdIssuesRequestImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthenticatedProjectProjectIdContractRouteChildren {
-  AuthenticatedProjectProjectIdContractInputRoute: typeof AuthenticatedProjectProjectIdContractInputRoute
-  AuthenticatedProjectProjectIdContractMonitoringRoute: typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  AuthenticatedProjectProjectIdContractIndexRoute: typeof AuthenticatedProjectProjectIdContractIndexRoute
+interface PrivateProjectProjectIdContractRouteChildren {
+  PrivateProjectProjectIdContractInputRoute: typeof PrivateProjectProjectIdContractInputRoute
+  PrivateProjectProjectIdContractMonitoringRoute: typeof PrivateProjectProjectIdContractMonitoringRoute
+  PrivateProjectProjectIdContractIndexRoute: typeof PrivateProjectProjectIdContractIndexRoute
 }
 
-const AuthenticatedProjectProjectIdContractRouteChildren: AuthenticatedProjectProjectIdContractRouteChildren =
+const PrivateProjectProjectIdContractRouteChildren: PrivateProjectProjectIdContractRouteChildren =
   {
-    AuthenticatedProjectProjectIdContractInputRoute:
-      AuthenticatedProjectProjectIdContractInputRoute,
-    AuthenticatedProjectProjectIdContractMonitoringRoute:
-      AuthenticatedProjectProjectIdContractMonitoringRoute,
-    AuthenticatedProjectProjectIdContractIndexRoute:
-      AuthenticatedProjectProjectIdContractIndexRoute,
+    PrivateProjectProjectIdContractInputRoute:
+      PrivateProjectProjectIdContractInputRoute,
+    PrivateProjectProjectIdContractMonitoringRoute:
+      PrivateProjectProjectIdContractMonitoringRoute,
+    PrivateProjectProjectIdContractIndexRoute:
+      PrivateProjectProjectIdContractIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdContractRouteWithChildren =
-  AuthenticatedProjectProjectIdContractRoute._addFileChildren(
-    AuthenticatedProjectProjectIdContractRouteChildren,
+const PrivateProjectProjectIdContractRouteWithChildren =
+  PrivateProjectProjectIdContractRoute._addFileChildren(
+    PrivateProjectProjectIdContractRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdIssuesMeRouteChildren {
-  AuthenticatedProjectProjectIdIssuesMeIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  AuthenticatedProjectProjectIdIssuesMeIndexRoute: typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
+interface PrivateProjectProjectIdIssuesMeRouteChildren {
+  PrivateProjectProjectIdIssuesMeIssueIdRoute: typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
+  PrivateProjectProjectIdIssuesMeIndexRoute: typeof PrivateProjectProjectIdIssuesMeIndexRoute
 }
 
-const AuthenticatedProjectProjectIdIssuesMeRouteChildren: AuthenticatedProjectProjectIdIssuesMeRouteChildren =
+const PrivateProjectProjectIdIssuesMeRouteChildren: PrivateProjectProjectIdIssuesMeRouteChildren =
   {
-    AuthenticatedProjectProjectIdIssuesMeIssueIdRoute:
-      AuthenticatedProjectProjectIdIssuesMeIssueIdRoute,
-    AuthenticatedProjectProjectIdIssuesMeIndexRoute:
-      AuthenticatedProjectProjectIdIssuesMeIndexRoute,
+    PrivateProjectProjectIdIssuesMeIssueIdRoute:
+      PrivateProjectProjectIdIssuesMeIssueIdRoute,
+    PrivateProjectProjectIdIssuesMeIndexRoute:
+      PrivateProjectProjectIdIssuesMeIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdIssuesMeRouteWithChildren =
-  AuthenticatedProjectProjectIdIssuesMeRoute._addFileChildren(
-    AuthenticatedProjectProjectIdIssuesMeRouteChildren,
+const PrivateProjectProjectIdIssuesMeRouteWithChildren =
+  PrivateProjectProjectIdIssuesMeRoute._addFileChildren(
+    PrivateProjectProjectIdIssuesMeRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdIssuesPriceRouteChildren {
-  AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
-  AuthenticatedProjectProjectIdIssuesPriceIndexRoute: typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
+interface PrivateProjectProjectIdIssuesPriceRouteChildren {
+  PrivateProjectProjectIdIssuesPriceIssueIdRoute: typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
+  PrivateProjectProjectIdIssuesPriceIndexRoute: typeof PrivateProjectProjectIdIssuesPriceIndexRoute
 }
 
-const AuthenticatedProjectProjectIdIssuesPriceRouteChildren: AuthenticatedProjectProjectIdIssuesPriceRouteChildren =
+const PrivateProjectProjectIdIssuesPriceRouteChildren: PrivateProjectProjectIdIssuesPriceRouteChildren =
   {
-    AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute:
-      AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute,
-    AuthenticatedProjectProjectIdIssuesPriceIndexRoute:
-      AuthenticatedProjectProjectIdIssuesPriceIndexRoute,
+    PrivateProjectProjectIdIssuesPriceIssueIdRoute:
+      PrivateProjectProjectIdIssuesPriceIssueIdRoute,
+    PrivateProjectProjectIdIssuesPriceIndexRoute:
+      PrivateProjectProjectIdIssuesPriceIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren =
-  AuthenticatedProjectProjectIdIssuesPriceRoute._addFileChildren(
-    AuthenticatedProjectProjectIdIssuesPriceRouteChildren,
+const PrivateProjectProjectIdIssuesPriceRouteWithChildren =
+  PrivateProjectProjectIdIssuesPriceRoute._addFileChildren(
+    PrivateProjectProjectIdIssuesPriceRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdIssuesRequestRouteChildren {
-  AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
-  AuthenticatedProjectProjectIdIssuesRequestIndexRoute: typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
+interface PrivateProjectProjectIdIssuesRequestRouteChildren {
+  PrivateProjectProjectIdIssuesRequestIssueIdRoute: typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
+  PrivateProjectProjectIdIssuesRequestIndexRoute: typeof PrivateProjectProjectIdIssuesRequestIndexRoute
 }
 
-const AuthenticatedProjectProjectIdIssuesRequestRouteChildren: AuthenticatedProjectProjectIdIssuesRequestRouteChildren =
+const PrivateProjectProjectIdIssuesRequestRouteChildren: PrivateProjectProjectIdIssuesRequestRouteChildren =
   {
-    AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute:
-      AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute,
-    AuthenticatedProjectProjectIdIssuesRequestIndexRoute:
-      AuthenticatedProjectProjectIdIssuesRequestIndexRoute,
+    PrivateProjectProjectIdIssuesRequestIssueIdRoute:
+      PrivateProjectProjectIdIssuesRequestIssueIdRoute,
+    PrivateProjectProjectIdIssuesRequestIndexRoute:
+      PrivateProjectProjectIdIssuesRequestIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren =
-  AuthenticatedProjectProjectIdIssuesRequestRoute._addFileChildren(
-    AuthenticatedProjectProjectIdIssuesRequestRouteChildren,
+const PrivateProjectProjectIdIssuesRequestRouteWithChildren =
+  PrivateProjectProjectIdIssuesRequestRoute._addFileChildren(
+    PrivateProjectProjectIdIssuesRequestRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdIssuesRouteChildren {
-  AuthenticatedProjectProjectIdIssuesMeRoute: typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
-  AuthenticatedProjectProjectIdIssuesPriceRoute: typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
-  AuthenticatedProjectProjectIdIssuesRequestRoute: typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
-  AuthenticatedProjectProjectIdIssuesIndexRoute: typeof AuthenticatedProjectProjectIdIssuesIndexRoute
+interface PrivateProjectProjectIdIssuesRouteChildren {
+  PrivateProjectProjectIdIssuesMeRoute: typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
+  PrivateProjectProjectIdIssuesPriceRoute: typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
+  PrivateProjectProjectIdIssuesRequestRoute: typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
+  PrivateProjectProjectIdIssuesIndexRoute: typeof PrivateProjectProjectIdIssuesIndexRoute
 }
 
-const AuthenticatedProjectProjectIdIssuesRouteChildren: AuthenticatedProjectProjectIdIssuesRouteChildren =
+const PrivateProjectProjectIdIssuesRouteChildren: PrivateProjectProjectIdIssuesRouteChildren =
   {
-    AuthenticatedProjectProjectIdIssuesMeRoute:
-      AuthenticatedProjectProjectIdIssuesMeRouteWithChildren,
-    AuthenticatedProjectProjectIdIssuesPriceRoute:
-      AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren,
-    AuthenticatedProjectProjectIdIssuesRequestRoute:
-      AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren,
-    AuthenticatedProjectProjectIdIssuesIndexRoute:
-      AuthenticatedProjectProjectIdIssuesIndexRoute,
+    PrivateProjectProjectIdIssuesMeRoute:
+      PrivateProjectProjectIdIssuesMeRouteWithChildren,
+    PrivateProjectProjectIdIssuesPriceRoute:
+      PrivateProjectProjectIdIssuesPriceRouteWithChildren,
+    PrivateProjectProjectIdIssuesRequestRoute:
+      PrivateProjectProjectIdIssuesRequestRouteWithChildren,
+    PrivateProjectProjectIdIssuesIndexRoute:
+      PrivateProjectProjectIdIssuesIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdIssuesRouteWithChildren =
-  AuthenticatedProjectProjectIdIssuesRoute._addFileChildren(
-    AuthenticatedProjectProjectIdIssuesRouteChildren,
+const PrivateProjectProjectIdIssuesRouteWithChildren =
+  PrivateProjectProjectIdIssuesRoute._addFileChildren(
+    PrivateProjectProjectIdIssuesRouteChildren,
   )
 
-interface AuthenticatedProjectProjectIdRouteChildren {
-  AuthenticatedProjectProjectIdContractRoute: typeof AuthenticatedProjectProjectIdContractRouteWithChildren
-  AuthenticatedProjectProjectIdIssuesRoute: typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
-  AuthenticatedProjectProjectIdSettingsRoute: typeof AuthenticatedProjectProjectIdSettingsRoute
-  AuthenticatedProjectProjectIdIndexRoute: typeof AuthenticatedProjectProjectIdIndexRoute
+interface PrivateProjectProjectIdRouteChildren {
+  PrivateProjectProjectIdContractRoute: typeof PrivateProjectProjectIdContractRouteWithChildren
+  PrivateProjectProjectIdIssuesRoute: typeof PrivateProjectProjectIdIssuesRouteWithChildren
+  PrivateProjectProjectIdSettingsRoute: typeof PrivateProjectProjectIdSettingsRoute
+  PrivateProjectProjectIdIndexRoute: typeof PrivateProjectProjectIdIndexRoute
 }
 
-const AuthenticatedProjectProjectIdRouteChildren: AuthenticatedProjectProjectIdRouteChildren =
+const PrivateProjectProjectIdRouteChildren: PrivateProjectProjectIdRouteChildren =
   {
-    AuthenticatedProjectProjectIdContractRoute:
-      AuthenticatedProjectProjectIdContractRouteWithChildren,
-    AuthenticatedProjectProjectIdIssuesRoute:
-      AuthenticatedProjectProjectIdIssuesRouteWithChildren,
-    AuthenticatedProjectProjectIdSettingsRoute:
-      AuthenticatedProjectProjectIdSettingsRoute,
-    AuthenticatedProjectProjectIdIndexRoute:
-      AuthenticatedProjectProjectIdIndexRoute,
+    PrivateProjectProjectIdContractRoute:
+      PrivateProjectProjectIdContractRouteWithChildren,
+    PrivateProjectProjectIdIssuesRoute:
+      PrivateProjectProjectIdIssuesRouteWithChildren,
+    PrivateProjectProjectIdSettingsRoute: PrivateProjectProjectIdSettingsRoute,
+    PrivateProjectProjectIdIndexRoute: PrivateProjectProjectIdIndexRoute,
   }
 
-const AuthenticatedProjectProjectIdRouteWithChildren =
-  AuthenticatedProjectProjectIdRoute._addFileChildren(
-    AuthenticatedProjectProjectIdRouteChildren,
+const PrivateProjectProjectIdRouteWithChildren =
+  PrivateProjectProjectIdRoute._addFileChildren(
+    PrivateProjectProjectIdRouteChildren,
   )
 
-interface AuthenticatedProjectRouteChildren {
-  AuthenticatedProjectProjectIdRoute: typeof AuthenticatedProjectProjectIdRouteWithChildren
-  AuthenticatedProjectIndexRoute: typeof AuthenticatedProjectIndexRoute
+interface PrivateProjectRouteChildren {
+  PrivateProjectProjectIdRoute: typeof PrivateProjectProjectIdRouteWithChildren
+  PrivateProjectIndexRoute: typeof PrivateProjectIndexRoute
 }
 
-const AuthenticatedProjectRouteChildren: AuthenticatedProjectRouteChildren = {
-  AuthenticatedProjectProjectIdRoute:
-    AuthenticatedProjectProjectIdRouteWithChildren,
-  AuthenticatedProjectIndexRoute: AuthenticatedProjectIndexRoute,
+const PrivateProjectRouteChildren: PrivateProjectRouteChildren = {
+  PrivateProjectProjectIdRoute: PrivateProjectProjectIdRouteWithChildren,
+  PrivateProjectIndexRoute: PrivateProjectIndexRoute,
 }
 
-const AuthenticatedProjectRouteWithChildren =
-  AuthenticatedProjectRoute._addFileChildren(AuthenticatedProjectRouteChildren)
-
-interface AuthenticatedSettingsGeneralCustomersRouteChildren {
-  AuthenticatedSettingsGeneralCustomersNewRoute: typeof AuthenticatedSettingsGeneralCustomersNewRoute
-  AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute: typeof AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute
-}
-
-const AuthenticatedSettingsGeneralCustomersRouteChildren: AuthenticatedSettingsGeneralCustomersRouteChildren =
-  {
-    AuthenticatedSettingsGeneralCustomersNewRoute:
-      AuthenticatedSettingsGeneralCustomersNewRoute,
-    AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute:
-      AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute,
-  }
-
-const AuthenticatedSettingsGeneralCustomersRouteWithChildren =
-  AuthenticatedSettingsGeneralCustomersRoute._addFileChildren(
-    AuthenticatedSettingsGeneralCustomersRouteChildren,
-  )
-
-interface AuthenticatedSettingsGeneralDepartmentsRouteChildren {
-  AuthenticatedSettingsGeneralDepartmentsNewRoute: typeof AuthenticatedSettingsGeneralDepartmentsNewRoute
-  AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute: typeof AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute
-}
-
-const AuthenticatedSettingsGeneralDepartmentsRouteChildren: AuthenticatedSettingsGeneralDepartmentsRouteChildren =
-  {
-    AuthenticatedSettingsGeneralDepartmentsNewRoute:
-      AuthenticatedSettingsGeneralDepartmentsNewRoute,
-    AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute:
-      AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute,
-  }
-
-const AuthenticatedSettingsGeneralDepartmentsRouteWithChildren =
-  AuthenticatedSettingsGeneralDepartmentsRoute._addFileChildren(
-    AuthenticatedSettingsGeneralDepartmentsRouteChildren,
-  )
-
-interface AuthenticatedSettingsGeneralEmployeesRouteChildren {
-  AuthenticatedSettingsGeneralEmployeesNewRoute: typeof AuthenticatedSettingsGeneralEmployeesNewRoute
-  AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute: typeof AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute
-}
-
-const AuthenticatedSettingsGeneralEmployeesRouteChildren: AuthenticatedSettingsGeneralEmployeesRouteChildren =
-  {
-    AuthenticatedSettingsGeneralEmployeesNewRoute:
-      AuthenticatedSettingsGeneralEmployeesNewRoute,
-    AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute:
-      AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute,
-  }
-
-const AuthenticatedSettingsGeneralEmployeesRouteWithChildren =
-  AuthenticatedSettingsGeneralEmployeesRoute._addFileChildren(
-    AuthenticatedSettingsGeneralEmployeesRouteChildren,
-  )
-
-interface AuthenticatedSettingsGeneralMaterialsRouteChildren {
-  AuthenticatedSettingsGeneralMaterialsNewRoute: typeof AuthenticatedSettingsGeneralMaterialsNewRoute
-  AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute: typeof AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute
-}
-
-const AuthenticatedSettingsGeneralMaterialsRouteChildren: AuthenticatedSettingsGeneralMaterialsRouteChildren =
-  {
-    AuthenticatedSettingsGeneralMaterialsNewRoute:
-      AuthenticatedSettingsGeneralMaterialsNewRoute,
-    AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute:
-      AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute,
-  }
-
-const AuthenticatedSettingsGeneralMaterialsRouteWithChildren =
-  AuthenticatedSettingsGeneralMaterialsRoute._addFileChildren(
-    AuthenticatedSettingsGeneralMaterialsRouteChildren,
-  )
-
-interface AuthenticatedSettingsGeneralSuppliersRouteChildren {
-  AuthenticatedSettingsGeneralSuppliersNewRoute: typeof AuthenticatedSettingsGeneralSuppliersNewRoute
-  AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute: typeof AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute
-}
-
-const AuthenticatedSettingsGeneralSuppliersRouteChildren: AuthenticatedSettingsGeneralSuppliersRouteChildren =
-  {
-    AuthenticatedSettingsGeneralSuppliersNewRoute:
-      AuthenticatedSettingsGeneralSuppliersNewRoute,
-    AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute:
-      AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute,
-  }
-
-const AuthenticatedSettingsGeneralSuppliersRouteWithChildren =
-  AuthenticatedSettingsGeneralSuppliersRoute._addFileChildren(
-    AuthenticatedSettingsGeneralSuppliersRouteChildren,
-  )
-
-interface AuthenticatedSettingsGeneralRouteChildren {
-  AuthenticatedSettingsGeneralCustomersRoute: typeof AuthenticatedSettingsGeneralCustomersRouteWithChildren
-  AuthenticatedSettingsGeneralDepartmentsRoute: typeof AuthenticatedSettingsGeneralDepartmentsRouteWithChildren
-  AuthenticatedSettingsGeneralEmployeesRoute: typeof AuthenticatedSettingsGeneralEmployeesRouteWithChildren
-  AuthenticatedSettingsGeneralMaterialsRoute: typeof AuthenticatedSettingsGeneralMaterialsRouteWithChildren
-  AuthenticatedSettingsGeneralSuppliersRoute: typeof AuthenticatedSettingsGeneralSuppliersRouteWithChildren
-  AuthenticatedSettingsGeneralIndexRoute: typeof AuthenticatedSettingsGeneralIndexRoute
-}
-
-const AuthenticatedSettingsGeneralRouteChildren: AuthenticatedSettingsGeneralRouteChildren =
-  {
-    AuthenticatedSettingsGeneralCustomersRoute:
-      AuthenticatedSettingsGeneralCustomersRouteWithChildren,
-    AuthenticatedSettingsGeneralDepartmentsRoute:
-      AuthenticatedSettingsGeneralDepartmentsRouteWithChildren,
-    AuthenticatedSettingsGeneralEmployeesRoute:
-      AuthenticatedSettingsGeneralEmployeesRouteWithChildren,
-    AuthenticatedSettingsGeneralMaterialsRoute:
-      AuthenticatedSettingsGeneralMaterialsRouteWithChildren,
-    AuthenticatedSettingsGeneralSuppliersRoute:
-      AuthenticatedSettingsGeneralSuppliersRouteWithChildren,
-    AuthenticatedSettingsGeneralIndexRoute:
-      AuthenticatedSettingsGeneralIndexRoute,
-  }
-
-const AuthenticatedSettingsGeneralRouteWithChildren =
-  AuthenticatedSettingsGeneralRoute._addFileChildren(
-    AuthenticatedSettingsGeneralRouteChildren,
-  )
-
-interface AuthenticatedSettingsOperationObjectsRouteChildren {
-  AuthenticatedSettingsOperationObjectsNewRoute: typeof AuthenticatedSettingsOperationObjectsNewRoute
-  AuthenticatedSettingsOperationObjectsObjectIdEditRoute: typeof AuthenticatedSettingsOperationObjectsObjectIdEditRoute
-}
-
-const AuthenticatedSettingsOperationObjectsRouteChildren: AuthenticatedSettingsOperationObjectsRouteChildren =
-  {
-    AuthenticatedSettingsOperationObjectsNewRoute:
-      AuthenticatedSettingsOperationObjectsNewRoute,
-    AuthenticatedSettingsOperationObjectsObjectIdEditRoute:
-      AuthenticatedSettingsOperationObjectsObjectIdEditRoute,
-  }
-
-const AuthenticatedSettingsOperationObjectsRouteWithChildren =
-  AuthenticatedSettingsOperationObjectsRoute._addFileChildren(
-    AuthenticatedSettingsOperationObjectsRouteChildren,
-  )
-
-interface AuthenticatedSettingsOperationProcessRouteChildren {
-  AuthenticatedSettingsOperationProcessNewRoute: typeof AuthenticatedSettingsOperationProcessNewRoute
-  AuthenticatedSettingsOperationProcessProcessIdEditRoute: typeof AuthenticatedSettingsOperationProcessProcessIdEditRoute
-}
-
-const AuthenticatedSettingsOperationProcessRouteChildren: AuthenticatedSettingsOperationProcessRouteChildren =
-  {
-    AuthenticatedSettingsOperationProcessNewRoute:
-      AuthenticatedSettingsOperationProcessNewRoute,
-    AuthenticatedSettingsOperationProcessProcessIdEditRoute:
-      AuthenticatedSettingsOperationProcessProcessIdEditRoute,
-  }
-
-const AuthenticatedSettingsOperationProcessRouteWithChildren =
-  AuthenticatedSettingsOperationProcessRoute._addFileChildren(
-    AuthenticatedSettingsOperationProcessRouteChildren,
-  )
-
-interface AuthenticatedSettingsOperationRouteChildren {
-  AuthenticatedSettingsOperationObjectsRoute: typeof AuthenticatedSettingsOperationObjectsRouteWithChildren
-  AuthenticatedSettingsOperationProcessRoute: typeof AuthenticatedSettingsOperationProcessRouteWithChildren
-  AuthenticatedSettingsOperationIndexRoute: typeof AuthenticatedSettingsOperationIndexRoute
-}
-
-const AuthenticatedSettingsOperationRouteChildren: AuthenticatedSettingsOperationRouteChildren =
-  {
-    AuthenticatedSettingsOperationObjectsRoute:
-      AuthenticatedSettingsOperationObjectsRouteWithChildren,
-    AuthenticatedSettingsOperationProcessRoute:
-      AuthenticatedSettingsOperationProcessRouteWithChildren,
-    AuthenticatedSettingsOperationIndexRoute:
-      AuthenticatedSettingsOperationIndexRoute,
-  }
-
-const AuthenticatedSettingsOperationRouteWithChildren =
-  AuthenticatedSettingsOperationRoute._addFileChildren(
-    AuthenticatedSettingsOperationRouteChildren,
-  )
-
-interface AuthenticatedSettingsRouteChildren {
-  AuthenticatedSettingsGeneralRoute: typeof AuthenticatedSettingsGeneralRouteWithChildren
-  AuthenticatedSettingsOperationRoute: typeof AuthenticatedSettingsOperationRouteWithChildren
-  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
-}
-
-const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
-  AuthenticatedSettingsGeneralRoute:
-    AuthenticatedSettingsGeneralRouteWithChildren,
-  AuthenticatedSettingsOperationRoute:
-    AuthenticatedSettingsOperationRouteWithChildren,
-  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
-}
-
-const AuthenticatedSettingsRouteWithChildren =
-  AuthenticatedSettingsRoute._addFileChildren(
-    AuthenticatedSettingsRouteChildren,
-  )
-
-interface AuthenticatedRouteChildren {
-  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedMessengerRoute: typeof AuthenticatedMessengerRoute
-  AuthenticatedProjectRoute: typeof AuthenticatedProjectRouteWithChildren
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
-  AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
-}
-
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedMessengerRoute: AuthenticatedMessengerRoute,
-  AuthenticatedProjectRoute: AuthenticatedProjectRouteWithChildren,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
-  AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
-}
-
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
+const PrivateProjectRouteWithChildren = PrivateProjectRoute._addFileChildren(
+  PrivateProjectRouteChildren,
 )
+
+interface PrivateSettingsGeneralCustomersRouteChildren {
+  PrivateSettingsGeneralCustomersNewRoute: typeof PrivateSettingsGeneralCustomersNewRoute
+  PrivateSettingsGeneralCustomersCustomerIdEditRoute: typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
+}
+
+const PrivateSettingsGeneralCustomersRouteChildren: PrivateSettingsGeneralCustomersRouteChildren =
+  {
+    PrivateSettingsGeneralCustomersNewRoute:
+      PrivateSettingsGeneralCustomersNewRoute,
+    PrivateSettingsGeneralCustomersCustomerIdEditRoute:
+      PrivateSettingsGeneralCustomersCustomerIdEditRoute,
+  }
+
+const PrivateSettingsGeneralCustomersRouteWithChildren =
+  PrivateSettingsGeneralCustomersRoute._addFileChildren(
+    PrivateSettingsGeneralCustomersRouteChildren,
+  )
+
+interface PrivateSettingsGeneralDepartmentsRouteChildren {
+  PrivateSettingsGeneralDepartmentsNewRoute: typeof PrivateSettingsGeneralDepartmentsNewRoute
+  PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute: typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
+}
+
+const PrivateSettingsGeneralDepartmentsRouteChildren: PrivateSettingsGeneralDepartmentsRouteChildren =
+  {
+    PrivateSettingsGeneralDepartmentsNewRoute:
+      PrivateSettingsGeneralDepartmentsNewRoute,
+    PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute:
+      PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute,
+  }
+
+const PrivateSettingsGeneralDepartmentsRouteWithChildren =
+  PrivateSettingsGeneralDepartmentsRoute._addFileChildren(
+    PrivateSettingsGeneralDepartmentsRouteChildren,
+  )
+
+interface PrivateSettingsGeneralEmployeesRouteChildren {
+  PrivateSettingsGeneralEmployeesNewRoute: typeof PrivateSettingsGeneralEmployeesNewRoute
+  PrivateSettingsGeneralEmployeesEmployeeIdEditRoute: typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
+}
+
+const PrivateSettingsGeneralEmployeesRouteChildren: PrivateSettingsGeneralEmployeesRouteChildren =
+  {
+    PrivateSettingsGeneralEmployeesNewRoute:
+      PrivateSettingsGeneralEmployeesNewRoute,
+    PrivateSettingsGeneralEmployeesEmployeeIdEditRoute:
+      PrivateSettingsGeneralEmployeesEmployeeIdEditRoute,
+  }
+
+const PrivateSettingsGeneralEmployeesRouteWithChildren =
+  PrivateSettingsGeneralEmployeesRoute._addFileChildren(
+    PrivateSettingsGeneralEmployeesRouteChildren,
+  )
+
+interface PrivateSettingsGeneralMaterialsRouteChildren {
+  PrivateSettingsGeneralMaterialsNewRoute: typeof PrivateSettingsGeneralMaterialsNewRoute
+  PrivateSettingsGeneralMaterialsMaterialIdEditRoute: typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
+}
+
+const PrivateSettingsGeneralMaterialsRouteChildren: PrivateSettingsGeneralMaterialsRouteChildren =
+  {
+    PrivateSettingsGeneralMaterialsNewRoute:
+      PrivateSettingsGeneralMaterialsNewRoute,
+    PrivateSettingsGeneralMaterialsMaterialIdEditRoute:
+      PrivateSettingsGeneralMaterialsMaterialIdEditRoute,
+  }
+
+const PrivateSettingsGeneralMaterialsRouteWithChildren =
+  PrivateSettingsGeneralMaterialsRoute._addFileChildren(
+    PrivateSettingsGeneralMaterialsRouteChildren,
+  )
+
+interface PrivateSettingsGeneralSuppliersRouteChildren {
+  PrivateSettingsGeneralSuppliersNewRoute: typeof PrivateSettingsGeneralSuppliersNewRoute
+  PrivateSettingsGeneralSuppliersSupplierIdEditRoute: typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
+}
+
+const PrivateSettingsGeneralSuppliersRouteChildren: PrivateSettingsGeneralSuppliersRouteChildren =
+  {
+    PrivateSettingsGeneralSuppliersNewRoute:
+      PrivateSettingsGeneralSuppliersNewRoute,
+    PrivateSettingsGeneralSuppliersSupplierIdEditRoute:
+      PrivateSettingsGeneralSuppliersSupplierIdEditRoute,
+  }
+
+const PrivateSettingsGeneralSuppliersRouteWithChildren =
+  PrivateSettingsGeneralSuppliersRoute._addFileChildren(
+    PrivateSettingsGeneralSuppliersRouteChildren,
+  )
+
+interface PrivateSettingsGeneralRouteChildren {
+  PrivateSettingsGeneralCustomersRoute: typeof PrivateSettingsGeneralCustomersRouteWithChildren
+  PrivateSettingsGeneralDepartmentsRoute: typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
+  PrivateSettingsGeneralEmployeesRoute: typeof PrivateSettingsGeneralEmployeesRouteWithChildren
+  PrivateSettingsGeneralMaterialsRoute: typeof PrivateSettingsGeneralMaterialsRouteWithChildren
+  PrivateSettingsGeneralSuppliersRoute: typeof PrivateSettingsGeneralSuppliersRouteWithChildren
+  PrivateSettingsGeneralIndexRoute: typeof PrivateSettingsGeneralIndexRoute
+}
+
+const PrivateSettingsGeneralRouteChildren: PrivateSettingsGeneralRouteChildren =
+  {
+    PrivateSettingsGeneralCustomersRoute:
+      PrivateSettingsGeneralCustomersRouteWithChildren,
+    PrivateSettingsGeneralDepartmentsRoute:
+      PrivateSettingsGeneralDepartmentsRouteWithChildren,
+    PrivateSettingsGeneralEmployeesRoute:
+      PrivateSettingsGeneralEmployeesRouteWithChildren,
+    PrivateSettingsGeneralMaterialsRoute:
+      PrivateSettingsGeneralMaterialsRouteWithChildren,
+    PrivateSettingsGeneralSuppliersRoute:
+      PrivateSettingsGeneralSuppliersRouteWithChildren,
+    PrivateSettingsGeneralIndexRoute: PrivateSettingsGeneralIndexRoute,
+  }
+
+const PrivateSettingsGeneralRouteWithChildren =
+  PrivateSettingsGeneralRoute._addFileChildren(
+    PrivateSettingsGeneralRouteChildren,
+  )
+
+interface PrivateSettingsOperationObjectsRouteChildren {
+  PrivateSettingsOperationObjectsNewRoute: typeof PrivateSettingsOperationObjectsNewRoute
+  PrivateSettingsOperationObjectsObjectIdEditRoute: typeof PrivateSettingsOperationObjectsObjectIdEditRoute
+}
+
+const PrivateSettingsOperationObjectsRouteChildren: PrivateSettingsOperationObjectsRouteChildren =
+  {
+    PrivateSettingsOperationObjectsNewRoute:
+      PrivateSettingsOperationObjectsNewRoute,
+    PrivateSettingsOperationObjectsObjectIdEditRoute:
+      PrivateSettingsOperationObjectsObjectIdEditRoute,
+  }
+
+const PrivateSettingsOperationObjectsRouteWithChildren =
+  PrivateSettingsOperationObjectsRoute._addFileChildren(
+    PrivateSettingsOperationObjectsRouteChildren,
+  )
+
+interface PrivateSettingsOperationProcessRouteChildren {
+  PrivateSettingsOperationProcessNewRoute: typeof PrivateSettingsOperationProcessNewRoute
+  PrivateSettingsOperationProcessProcessIdEditRoute: typeof PrivateSettingsOperationProcessProcessIdEditRoute
+}
+
+const PrivateSettingsOperationProcessRouteChildren: PrivateSettingsOperationProcessRouteChildren =
+  {
+    PrivateSettingsOperationProcessNewRoute:
+      PrivateSettingsOperationProcessNewRoute,
+    PrivateSettingsOperationProcessProcessIdEditRoute:
+      PrivateSettingsOperationProcessProcessIdEditRoute,
+  }
+
+const PrivateSettingsOperationProcessRouteWithChildren =
+  PrivateSettingsOperationProcessRoute._addFileChildren(
+    PrivateSettingsOperationProcessRouteChildren,
+  )
+
+interface PrivateSettingsOperationRouteChildren {
+  PrivateSettingsOperationObjectsRoute: typeof PrivateSettingsOperationObjectsRouteWithChildren
+  PrivateSettingsOperationProcessRoute: typeof PrivateSettingsOperationProcessRouteWithChildren
+  PrivateSettingsOperationIndexRoute: typeof PrivateSettingsOperationIndexRoute
+}
+
+const PrivateSettingsOperationRouteChildren: PrivateSettingsOperationRouteChildren =
+  {
+    PrivateSettingsOperationObjectsRoute:
+      PrivateSettingsOperationObjectsRouteWithChildren,
+    PrivateSettingsOperationProcessRoute:
+      PrivateSettingsOperationProcessRouteWithChildren,
+    PrivateSettingsOperationIndexRoute: PrivateSettingsOperationIndexRoute,
+  }
+
+const PrivateSettingsOperationRouteWithChildren =
+  PrivateSettingsOperationRoute._addFileChildren(
+    PrivateSettingsOperationRouteChildren,
+  )
+
+interface PrivateSettingsRouteChildren {
+  PrivateSettingsGeneralRoute: typeof PrivateSettingsGeneralRouteWithChildren
+  PrivateSettingsOperationRoute: typeof PrivateSettingsOperationRouteWithChildren
+  PrivateSettingsIndexRoute: typeof PrivateSettingsIndexRoute
+}
+
+const PrivateSettingsRouteChildren: PrivateSettingsRouteChildren = {
+  PrivateSettingsGeneralRoute: PrivateSettingsGeneralRouteWithChildren,
+  PrivateSettingsOperationRoute: PrivateSettingsOperationRouteWithChildren,
+  PrivateSettingsIndexRoute: PrivateSettingsIndexRoute,
+}
+
+const PrivateSettingsRouteWithChildren = PrivateSettingsRoute._addFileChildren(
+  PrivateSettingsRouteChildren,
+)
+
+interface PrivateRouteChildren {
+  PrivateHomeRoute: typeof PrivateHomeRoute
+  PrivateMessengerRoute: typeof PrivateMessengerRoute
+  PrivateProfileRoute: typeof PrivateProfileRoute
+  PrivateProjectRoute: typeof PrivateProjectRouteWithChildren
+  PrivateSettingsRoute: typeof PrivateSettingsRouteWithChildren
+}
+
+const PrivateRouteChildren: PrivateRouteChildren = {
+  PrivateHomeRoute: PrivateHomeRoute,
+  PrivateMessengerRoute: PrivateMessengerRoute,
+  PrivateProfileRoute: PrivateProfileRoute,
+  PrivateProjectRoute: PrivateProjectRouteWithChildren,
+  PrivateSettingsRoute: PrivateSettingsRouteWithChildren,
+}
+
+const PrivateRouteWithChildren =
+  PrivateRoute._addFileChildren(PrivateRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof PrivateRouteWithChildren
   '/login': typeof LoginRoute
-  '/home': typeof AuthenticatedHomeRoute
-  '/messenger': typeof AuthenticatedMessengerRoute
-  '/project': typeof AuthenticatedProjectRouteWithChildren
-  '/settings': typeof AuthenticatedSettingsRouteWithChildren
-  '/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
-  '/settings/general': typeof AuthenticatedSettingsGeneralRouteWithChildren
-  '/settings/operation': typeof AuthenticatedSettingsOperationRouteWithChildren
-  '/user/profile': typeof AuthenticatedUserProfileRoute
-  '/project/': typeof AuthenticatedProjectIndexRoute
-  '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractRouteWithChildren
-  '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
-  '/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof AuthenticatedSettingsGeneralCustomersRouteWithChildren
-  '/settings/general/departments': typeof AuthenticatedSettingsGeneralDepartmentsRouteWithChildren
-  '/settings/general/employees': typeof AuthenticatedSettingsGeneralEmployeesRouteWithChildren
-  '/settings/general/materials': typeof AuthenticatedSettingsGeneralMaterialsRouteWithChildren
-  '/settings/general/suppliers': typeof AuthenticatedSettingsGeneralSuppliersRouteWithChildren
-  '/settings/operation/objects': typeof AuthenticatedSettingsOperationObjectsRouteWithChildren
-  '/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
-  '/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
-  '/settings/general/': typeof AuthenticatedSettingsGeneralIndexRoute
-  '/settings/operation/': typeof AuthenticatedSettingsOperationIndexRoute
-  '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
-  '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
-  '/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
-  '/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
-  '/settings/general/customers/new': typeof AuthenticatedSettingsGeneralCustomersNewRoute
-  '/settings/general/departments/new': typeof AuthenticatedSettingsGeneralDepartmentsNewRoute
-  '/settings/general/employees/new': typeof AuthenticatedSettingsGeneralEmployeesNewRoute
-  '/settings/general/materials/new': typeof AuthenticatedSettingsGeneralMaterialsNewRoute
-  '/settings/general/suppliers/new': typeof AuthenticatedSettingsGeneralSuppliersNewRoute
-  '/settings/operation/objects/new': typeof AuthenticatedSettingsOperationObjectsNewRoute
-  '/settings/operation/process/new': typeof AuthenticatedSettingsOperationProcessNewRoute
-  '/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
-  '/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
-  '/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/settings/general/materials/$materialId/edit': typeof AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute
-  '/settings/general/suppliers/$supplierId/edit': typeof AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof AuthenticatedSettingsOperationObjectsObjectIdEditRoute
-  '/settings/operation/process/$processId/edit': typeof AuthenticatedSettingsOperationProcessProcessIdEditRoute
-  '/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
-  '/project/$projectId/issues/price/': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
-  '/project/$projectId/issues/request/': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
+  '/home': typeof PrivateHomeRoute
+  '/messenger': typeof PrivateMessengerRoute
+  '/profile': typeof PrivateProfileRoute
+  '/project': typeof PrivateProjectRouteWithChildren
+  '/settings': typeof PrivateSettingsRouteWithChildren
+  '/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
+  '/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
+  '/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
+  '/project/': typeof PrivateProjectIndexRoute
+  '/settings/': typeof PrivateSettingsIndexRoute
+  '/project/$projectId/contract': typeof PrivateProjectProjectIdContractRouteWithChildren
+  '/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
+  '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
+  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
+  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
+  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
+  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
+  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
+  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
+  '/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
+  '/settings/general/': typeof PrivateSettingsGeneralIndexRoute
+  '/settings/operation/': typeof PrivateSettingsOperationIndexRoute
+  '/project/$projectId/contract/input': typeof PrivateProjectProjectIdContractInputRoute
+  '/project/$projectId/contract/monitoring': typeof PrivateProjectProjectIdContractMonitoringRoute
+  '/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
+  '/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
+  '/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
+  '/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
+  '/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
+  '/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
+  '/settings/general/materials/new': typeof PrivateSettingsGeneralMaterialsNewRoute
+  '/settings/general/suppliers/new': typeof PrivateSettingsGeneralSuppliersNewRoute
+  '/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
+  '/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
+  '/project/$projectId/contract/': typeof PrivateProjectProjectIdContractIndexRoute
+  '/project/$projectId/issues/': typeof PrivateProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
+  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
+  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
+  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
+  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
+  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof PrivateRouteWithChildren
   '/login': typeof LoginRoute
-  '/home': typeof AuthenticatedHomeRoute
-  '/messenger': typeof AuthenticatedMessengerRoute
-  '/user/profile': typeof AuthenticatedUserProfileRoute
-  '/project': typeof AuthenticatedProjectIndexRoute
-  '/settings': typeof AuthenticatedSettingsIndexRoute
-  '/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof AuthenticatedSettingsGeneralCustomersRouteWithChildren
-  '/settings/general/departments': typeof AuthenticatedSettingsGeneralDepartmentsRouteWithChildren
-  '/settings/general/employees': typeof AuthenticatedSettingsGeneralEmployeesRouteWithChildren
-  '/settings/general/materials': typeof AuthenticatedSettingsGeneralMaterialsRouteWithChildren
-  '/settings/general/suppliers': typeof AuthenticatedSettingsGeneralSuppliersRouteWithChildren
-  '/settings/operation/objects': typeof AuthenticatedSettingsOperationObjectsRouteWithChildren
-  '/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
-  '/project/$projectId': typeof AuthenticatedProjectProjectIdIndexRoute
-  '/settings/general': typeof AuthenticatedSettingsGeneralIndexRoute
-  '/settings/operation': typeof AuthenticatedSettingsOperationIndexRoute
-  '/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
-  '/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  '/settings/general/customers/new': typeof AuthenticatedSettingsGeneralCustomersNewRoute
-  '/settings/general/departments/new': typeof AuthenticatedSettingsGeneralDepartmentsNewRoute
-  '/settings/general/employees/new': typeof AuthenticatedSettingsGeneralEmployeesNewRoute
-  '/settings/general/materials/new': typeof AuthenticatedSettingsGeneralMaterialsNewRoute
-  '/settings/general/suppliers/new': typeof AuthenticatedSettingsGeneralSuppliersNewRoute
-  '/settings/operation/objects/new': typeof AuthenticatedSettingsOperationObjectsNewRoute
-  '/settings/operation/process/new': typeof AuthenticatedSettingsOperationProcessNewRoute
-  '/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractIndexRoute
-  '/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
-  '/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/settings/general/materials/$materialId/edit': typeof AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute
-  '/settings/general/suppliers/$supplierId/edit': typeof AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof AuthenticatedSettingsOperationObjectsObjectIdEditRoute
-  '/settings/operation/process/$processId/edit': typeof AuthenticatedSettingsOperationProcessProcessIdEditRoute
-  '/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
-  '/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
-  '/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
+  '/home': typeof PrivateHomeRoute
+  '/messenger': typeof PrivateMessengerRoute
+  '/profile': typeof PrivateProfileRoute
+  '/project': typeof PrivateProjectIndexRoute
+  '/settings': typeof PrivateSettingsIndexRoute
+  '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
+  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
+  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
+  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
+  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
+  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
+  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
+  '/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/project/$projectId': typeof PrivateProjectProjectIdIndexRoute
+  '/settings/general': typeof PrivateSettingsGeneralIndexRoute
+  '/settings/operation': typeof PrivateSettingsOperationIndexRoute
+  '/project/$projectId/contract/input': typeof PrivateProjectProjectIdContractInputRoute
+  '/project/$projectId/contract/monitoring': typeof PrivateProjectProjectIdContractMonitoringRoute
+  '/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
+  '/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
+  '/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
+  '/settings/general/materials/new': typeof PrivateSettingsGeneralMaterialsNewRoute
+  '/settings/general/suppliers/new': typeof PrivateSettingsGeneralSuppliersNewRoute
+  '/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
+  '/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
+  '/project/$projectId/contract': typeof PrivateProjectProjectIdContractIndexRoute
+  '/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
+  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
+  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
+  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
+  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
+  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_private': typeof PrivateRouteWithChildren
   '/login': typeof LoginRoute
-  '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/messenger': typeof AuthenticatedMessengerRoute
-  '/_authenticated/project': typeof AuthenticatedProjectRouteWithChildren
-  '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
-  '/_authenticated/project/$projectId': typeof AuthenticatedProjectProjectIdRouteWithChildren
-  '/_authenticated/settings/general': typeof AuthenticatedSettingsGeneralRouteWithChildren
-  '/_authenticated/settings/operation': typeof AuthenticatedSettingsOperationRouteWithChildren
-  '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
-  '/_authenticated/project/': typeof AuthenticatedProjectIndexRoute
-  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/_authenticated/project/$projectId/contract': typeof AuthenticatedProjectProjectIdContractRouteWithChildren
-  '/_authenticated/project/$projectId/issues': typeof AuthenticatedProjectProjectIdIssuesRouteWithChildren
-  '/_authenticated/project/$projectId/settings': typeof AuthenticatedProjectProjectIdSettingsRoute
-  '/_authenticated/settings/general/customers': typeof AuthenticatedSettingsGeneralCustomersRouteWithChildren
-  '/_authenticated/settings/general/departments': typeof AuthenticatedSettingsGeneralDepartmentsRouteWithChildren
-  '/_authenticated/settings/general/employees': typeof AuthenticatedSettingsGeneralEmployeesRouteWithChildren
-  '/_authenticated/settings/general/materials': typeof AuthenticatedSettingsGeneralMaterialsRouteWithChildren
-  '/_authenticated/settings/general/suppliers': typeof AuthenticatedSettingsGeneralSuppliersRouteWithChildren
-  '/_authenticated/settings/operation/objects': typeof AuthenticatedSettingsOperationObjectsRouteWithChildren
-  '/_authenticated/settings/operation/process': typeof AuthenticatedSettingsOperationProcessRouteWithChildren
-  '/_authenticated/project/$projectId/': typeof AuthenticatedProjectProjectIdIndexRoute
-  '/_authenticated/settings/general/': typeof AuthenticatedSettingsGeneralIndexRoute
-  '/_authenticated/settings/operation/': typeof AuthenticatedSettingsOperationIndexRoute
-  '/_authenticated/project/$projectId/contract/input': typeof AuthenticatedProjectProjectIdContractInputRoute
-  '/_authenticated/project/$projectId/contract/monitoring': typeof AuthenticatedProjectProjectIdContractMonitoringRoute
-  '/_authenticated/project/$projectId/issues/me': typeof AuthenticatedProjectProjectIdIssuesMeRouteWithChildren
-  '/_authenticated/project/$projectId/issues/price': typeof AuthenticatedProjectProjectIdIssuesPriceRouteWithChildren
-  '/_authenticated/project/$projectId/issues/request': typeof AuthenticatedProjectProjectIdIssuesRequestRouteWithChildren
-  '/_authenticated/settings/general/customers/new': typeof AuthenticatedSettingsGeneralCustomersNewRoute
-  '/_authenticated/settings/general/departments/new': typeof AuthenticatedSettingsGeneralDepartmentsNewRoute
-  '/_authenticated/settings/general/employees/new': typeof AuthenticatedSettingsGeneralEmployeesNewRoute
-  '/_authenticated/settings/general/materials/new': typeof AuthenticatedSettingsGeneralMaterialsNewRoute
-  '/_authenticated/settings/general/suppliers/new': typeof AuthenticatedSettingsGeneralSuppliersNewRoute
-  '/_authenticated/settings/operation/objects/new': typeof AuthenticatedSettingsOperationObjectsNewRoute
-  '/_authenticated/settings/operation/process/new': typeof AuthenticatedSettingsOperationProcessNewRoute
-  '/_authenticated/project/$projectId/contract/': typeof AuthenticatedProjectProjectIdContractIndexRoute
-  '/_authenticated/project/$projectId/issues/': typeof AuthenticatedProjectProjectIdIssuesIndexRoute
-  '/_authenticated/project/$projectId/issues/me/$issueId': typeof AuthenticatedProjectProjectIdIssuesMeIssueIdRoute
-  '/_authenticated/project/$projectId/issues/price/$issueId': typeof AuthenticatedProjectProjectIdIssuesPriceIssueIdRoute
-  '/_authenticated/project/$projectId/issues/request/$issueId': typeof AuthenticatedProjectProjectIdIssuesRequestIssueIdRoute
-  '/_authenticated/settings/general/customers/$customerId/edit': typeof AuthenticatedSettingsGeneralCustomersCustomerIdEditRoute
-  '/_authenticated/settings/general/departments/$departmentId/edit': typeof AuthenticatedSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/_authenticated/settings/general/employees/$employeeId/edit': typeof AuthenticatedSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/_authenticated/settings/general/materials/$materialId/edit': typeof AuthenticatedSettingsGeneralMaterialsMaterialIdEditRoute
-  '/_authenticated/settings/general/suppliers/$supplierId/edit': typeof AuthenticatedSettingsGeneralSuppliersSupplierIdEditRoute
-  '/_authenticated/settings/operation/objects/$objectId/edit': typeof AuthenticatedSettingsOperationObjectsObjectIdEditRoute
-  '/_authenticated/settings/operation/process/$processId/edit': typeof AuthenticatedSettingsOperationProcessProcessIdEditRoute
-  '/_authenticated/project/$projectId/issues/me/': typeof AuthenticatedProjectProjectIdIssuesMeIndexRoute
-  '/_authenticated/project/$projectId/issues/price/': typeof AuthenticatedProjectProjectIdIssuesPriceIndexRoute
-  '/_authenticated/project/$projectId/issues/request/': typeof AuthenticatedProjectProjectIdIssuesRequestIndexRoute
+  '/_private/home': typeof PrivateHomeRoute
+  '/_private/messenger': typeof PrivateMessengerRoute
+  '/_private/profile': typeof PrivateProfileRoute
+  '/_private/project': typeof PrivateProjectRouteWithChildren
+  '/_private/settings': typeof PrivateSettingsRouteWithChildren
+  '/_private/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
+  '/_private/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
+  '/_private/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
+  '/_private/project/': typeof PrivateProjectIndexRoute
+  '/_private/settings/': typeof PrivateSettingsIndexRoute
+  '/_private/project/$projectId/contract': typeof PrivateProjectProjectIdContractRouteWithChildren
+  '/_private/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
+  '/_private/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
+  '/_private/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
+  '/_private/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
+  '/_private/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
+  '/_private/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
+  '/_private/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
+  '/_private/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
+  '/_private/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/_private/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
+  '/_private/settings/general/': typeof PrivateSettingsGeneralIndexRoute
+  '/_private/settings/operation/': typeof PrivateSettingsOperationIndexRoute
+  '/_private/project/$projectId/contract/input': typeof PrivateProjectProjectIdContractInputRoute
+  '/_private/project/$projectId/contract/monitoring': typeof PrivateProjectProjectIdContractMonitoringRoute
+  '/_private/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
+  '/_private/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
+  '/_private/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
+  '/_private/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
+  '/_private/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
+  '/_private/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
+  '/_private/settings/general/materials/new': typeof PrivateSettingsGeneralMaterialsNewRoute
+  '/_private/settings/general/suppliers/new': typeof PrivateSettingsGeneralSuppliersNewRoute
+  '/_private/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
+  '/_private/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
+  '/_private/project/$projectId/contract/': typeof PrivateProjectProjectIdContractIndexRoute
+  '/_private/project/$projectId/issues/': typeof PrivateProjectProjectIdIssuesIndexRoute
+  '/_private/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
+  '/_private/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
+  '/_private/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
+  '/_private/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
+  '/_private/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
+  '/_private/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
+  '/_private/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
+  '/_private/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
+  '/_private/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
+  '/_private/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/_private/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
+  '/_private/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
+  '/_private/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1329,12 +1316,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/messenger'
+    | '/profile'
     | '/project'
     | '/settings'
     | '/project/$projectId'
     | '/settings/general'
     | '/settings/operation'
-    | '/user/profile'
     | '/project/'
     | '/settings/'
     | '/project/$projectId/contract'
@@ -1384,7 +1371,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/home'
     | '/messenger'
-    | '/user/profile'
+    | '/profile'
     | '/project'
     | '/settings'
     | '/project/$projectId/settings'
@@ -1425,70 +1412,70 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_authenticated'
+    | '/_private'
     | '/login'
-    | '/_authenticated/home'
-    | '/_authenticated/messenger'
-    | '/_authenticated/project'
-    | '/_authenticated/settings'
-    | '/_authenticated/project/$projectId'
-    | '/_authenticated/settings/general'
-    | '/_authenticated/settings/operation'
-    | '/_authenticated/user/profile'
-    | '/_authenticated/project/'
-    | '/_authenticated/settings/'
-    | '/_authenticated/project/$projectId/contract'
-    | '/_authenticated/project/$projectId/issues'
-    | '/_authenticated/project/$projectId/settings'
-    | '/_authenticated/settings/general/customers'
-    | '/_authenticated/settings/general/departments'
-    | '/_authenticated/settings/general/employees'
-    | '/_authenticated/settings/general/materials'
-    | '/_authenticated/settings/general/suppliers'
-    | '/_authenticated/settings/operation/objects'
-    | '/_authenticated/settings/operation/process'
-    | '/_authenticated/project/$projectId/'
-    | '/_authenticated/settings/general/'
-    | '/_authenticated/settings/operation/'
-    | '/_authenticated/project/$projectId/contract/input'
-    | '/_authenticated/project/$projectId/contract/monitoring'
-    | '/_authenticated/project/$projectId/issues/me'
-    | '/_authenticated/project/$projectId/issues/price'
-    | '/_authenticated/project/$projectId/issues/request'
-    | '/_authenticated/settings/general/customers/new'
-    | '/_authenticated/settings/general/departments/new'
-    | '/_authenticated/settings/general/employees/new'
-    | '/_authenticated/settings/general/materials/new'
-    | '/_authenticated/settings/general/suppliers/new'
-    | '/_authenticated/settings/operation/objects/new'
-    | '/_authenticated/settings/operation/process/new'
-    | '/_authenticated/project/$projectId/contract/'
-    | '/_authenticated/project/$projectId/issues/'
-    | '/_authenticated/project/$projectId/issues/me/$issueId'
-    | '/_authenticated/project/$projectId/issues/price/$issueId'
-    | '/_authenticated/project/$projectId/issues/request/$issueId'
-    | '/_authenticated/settings/general/customers/$customerId/edit'
-    | '/_authenticated/settings/general/departments/$departmentId/edit'
-    | '/_authenticated/settings/general/employees/$employeeId/edit'
-    | '/_authenticated/settings/general/materials/$materialId/edit'
-    | '/_authenticated/settings/general/suppliers/$supplierId/edit'
-    | '/_authenticated/settings/operation/objects/$objectId/edit'
-    | '/_authenticated/settings/operation/process/$processId/edit'
-    | '/_authenticated/project/$projectId/issues/me/'
-    | '/_authenticated/project/$projectId/issues/price/'
-    | '/_authenticated/project/$projectId/issues/request/'
+    | '/_private/home'
+    | '/_private/messenger'
+    | '/_private/profile'
+    | '/_private/project'
+    | '/_private/settings'
+    | '/_private/project/$projectId'
+    | '/_private/settings/general'
+    | '/_private/settings/operation'
+    | '/_private/project/'
+    | '/_private/settings/'
+    | '/_private/project/$projectId/contract'
+    | '/_private/project/$projectId/issues'
+    | '/_private/project/$projectId/settings'
+    | '/_private/settings/general/customers'
+    | '/_private/settings/general/departments'
+    | '/_private/settings/general/employees'
+    | '/_private/settings/general/materials'
+    | '/_private/settings/general/suppliers'
+    | '/_private/settings/operation/objects'
+    | '/_private/settings/operation/process'
+    | '/_private/project/$projectId/'
+    | '/_private/settings/general/'
+    | '/_private/settings/operation/'
+    | '/_private/project/$projectId/contract/input'
+    | '/_private/project/$projectId/contract/monitoring'
+    | '/_private/project/$projectId/issues/me'
+    | '/_private/project/$projectId/issues/price'
+    | '/_private/project/$projectId/issues/request'
+    | '/_private/settings/general/customers/new'
+    | '/_private/settings/general/departments/new'
+    | '/_private/settings/general/employees/new'
+    | '/_private/settings/general/materials/new'
+    | '/_private/settings/general/suppliers/new'
+    | '/_private/settings/operation/objects/new'
+    | '/_private/settings/operation/process/new'
+    | '/_private/project/$projectId/contract/'
+    | '/_private/project/$projectId/issues/'
+    | '/_private/project/$projectId/issues/me/$issueId'
+    | '/_private/project/$projectId/issues/price/$issueId'
+    | '/_private/project/$projectId/issues/request/$issueId'
+    | '/_private/settings/general/customers/$customerId/edit'
+    | '/_private/settings/general/departments/$departmentId/edit'
+    | '/_private/settings/general/employees/$employeeId/edit'
+    | '/_private/settings/general/materials/$materialId/edit'
+    | '/_private/settings/general/suppliers/$supplierId/edit'
+    | '/_private/settings/operation/objects/$objectId/edit'
+    | '/_private/settings/operation/process/$processId/edit'
+    | '/_private/project/$projectId/issues/me/'
+    | '/_private/project/$projectId/issues/price/'
+    | '/_private/project/$projectId/issues/request/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  PrivateRoute: typeof PrivateRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  PrivateRoute: PrivateRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 
@@ -1500,307 +1487,307 @@ export const routeTree = rootRoute
 {
   "routes": {
     "__root__": {
-      "filePath": "__root.tsx",
+      "filePath": "./root.tsx",
       "children": [
         "/",
-        "/_authenticated",
+        "/_private",
         "/login"
       ]
     },
     "/": {
-      "filePath": "index.tsx"
+      "filePath": "./index.tsx"
     },
-    "/_authenticated": {
-      "filePath": "_authenticated.tsx",
+    "/_private": {
+      "filePath": "./private.tsx",
       "children": [
-        "/_authenticated/home",
-        "/_authenticated/messenger",
-        "/_authenticated/project",
-        "/_authenticated/settings",
-        "/_authenticated/user/profile"
+        "/_private/home",
+        "/_private/messenger",
+        "/_private/profile",
+        "/_private/project",
+        "/_private/settings"
       ]
     },
     "/login": {
-      "filePath": "login.tsx"
+      "filePath": "./login.tsx"
     },
-    "/_authenticated/home": {
-      "filePath": "_authenticated/home.tsx",
-      "parent": "/_authenticated"
+    "/_private/home": {
+      "filePath": "./private/home.tsx",
+      "parent": "/_private"
     },
-    "/_authenticated/messenger": {
-      "filePath": "_authenticated/messenger.tsx",
-      "parent": "/_authenticated"
+    "/_private/messenger": {
+      "filePath": "./private/messenger.tsx",
+      "parent": "/_private"
     },
-    "/_authenticated/project": {
-      "filePath": "_authenticated/project.tsx",
-      "parent": "/_authenticated",
+    "/_private/profile": {
+      "filePath": "./private/profile.tsx",
+      "parent": "/_private"
+    },
+    "/_private/project": {
+      "filePath": "./private/project.tsx",
+      "parent": "/_private",
       "children": [
-        "/_authenticated/project/$projectId",
-        "/_authenticated/project/"
+        "/_private/project/$projectId",
+        "/_private/project/"
       ]
     },
-    "/_authenticated/settings": {
-      "filePath": "_authenticated/settings.tsx",
-      "parent": "/_authenticated",
+    "/_private/settings": {
+      "filePath": "./private/settings.tsx",
+      "parent": "/_private",
       "children": [
-        "/_authenticated/settings/general",
-        "/_authenticated/settings/operation",
-        "/_authenticated/settings/"
+        "/_private/settings/general",
+        "/_private/settings/operation",
+        "/_private/settings/"
       ]
     },
-    "/_authenticated/project/$projectId": {
-      "filePath": "_authenticated/project/$projectId.tsx",
-      "parent": "/_authenticated/project",
+    "/_private/project/$projectId": {
+      "filePath": "./private/project/$projectId.tsx",
+      "parent": "/_private/project",
       "children": [
-        "/_authenticated/project/$projectId/contract",
-        "/_authenticated/project/$projectId/issues",
-        "/_authenticated/project/$projectId/settings",
-        "/_authenticated/project/$projectId/"
+        "/_private/project/$projectId/contract",
+        "/_private/project/$projectId/issues",
+        "/_private/project/$projectId/settings",
+        "/_private/project/$projectId/"
       ]
     },
-    "/_authenticated/settings/general": {
-      "filePath": "_authenticated/settings/general.tsx",
-      "parent": "/_authenticated/settings",
+    "/_private/settings/general": {
+      "filePath": "./private/settings/general.tsx",
+      "parent": "/_private/settings",
       "children": [
-        "/_authenticated/settings/general/customers",
-        "/_authenticated/settings/general/departments",
-        "/_authenticated/settings/general/employees",
-        "/_authenticated/settings/general/materials",
-        "/_authenticated/settings/general/suppliers",
-        "/_authenticated/settings/general/"
+        "/_private/settings/general/customers",
+        "/_private/settings/general/departments",
+        "/_private/settings/general/employees",
+        "/_private/settings/general/materials",
+        "/_private/settings/general/suppliers",
+        "/_private/settings/general/"
       ]
     },
-    "/_authenticated/settings/operation": {
-      "filePath": "_authenticated/settings/operation.tsx",
-      "parent": "/_authenticated/settings",
+    "/_private/settings/operation": {
+      "filePath": "./private/settings/operation.tsx",
+      "parent": "/_private/settings",
       "children": [
-        "/_authenticated/settings/operation/objects",
-        "/_authenticated/settings/operation/process",
-        "/_authenticated/settings/operation/"
+        "/_private/settings/operation/objects",
+        "/_private/settings/operation/process",
+        "/_private/settings/operation/"
       ]
     },
-    "/_authenticated/user/profile": {
-      "filePath": "_authenticated/user/profile.tsx",
-      "parent": "/_authenticated"
+    "/_private/project/": {
+      "filePath": "./private/project/index.tsx",
+      "parent": "/_private/project"
     },
-    "/_authenticated/project/": {
-      "filePath": "_authenticated/project/index.tsx",
-      "parent": "/_authenticated/project"
+    "/_private/settings/": {
+      "filePath": "./private/settings/index.tsx",
+      "parent": "/_private/settings"
     },
-    "/_authenticated/settings/": {
-      "filePath": "_authenticated/settings/index.tsx",
-      "parent": "/_authenticated/settings"
-    },
-    "/_authenticated/project/$projectId/contract": {
-      "filePath": "_authenticated/project/$projectId/contract.tsx",
-      "parent": "/_authenticated/project/$projectId",
+    "/_private/project/$projectId/contract": {
+      "filePath": "./private/project/$projectId/contract.tsx",
+      "parent": "/_private/project/$projectId",
       "children": [
-        "/_authenticated/project/$projectId/contract/input",
-        "/_authenticated/project/$projectId/contract/monitoring",
-        "/_authenticated/project/$projectId/contract/"
+        "/_private/project/$projectId/contract/input",
+        "/_private/project/$projectId/contract/monitoring",
+        "/_private/project/$projectId/contract/"
       ]
     },
-    "/_authenticated/project/$projectId/issues": {
-      "filePath": "_authenticated/project/$projectId/issues.tsx",
-      "parent": "/_authenticated/project/$projectId",
+    "/_private/project/$projectId/issues": {
+      "filePath": "./private/project/$projectId/issues.tsx",
+      "parent": "/_private/project/$projectId",
       "children": [
-        "/_authenticated/project/$projectId/issues/me",
-        "/_authenticated/project/$projectId/issues/price",
-        "/_authenticated/project/$projectId/issues/request",
-        "/_authenticated/project/$projectId/issues/"
+        "/_private/project/$projectId/issues/me",
+        "/_private/project/$projectId/issues/price",
+        "/_private/project/$projectId/issues/request",
+        "/_private/project/$projectId/issues/"
       ]
     },
-    "/_authenticated/project/$projectId/settings": {
-      "filePath": "_authenticated/project/$projectId/settings.tsx",
-      "parent": "/_authenticated/project/$projectId"
+    "/_private/project/$projectId/settings": {
+      "filePath": "./private/project/$projectId/settings.tsx",
+      "parent": "/_private/project/$projectId"
     },
-    "/_authenticated/settings/general/customers": {
-      "filePath": "_authenticated/settings/general/customers.tsx",
-      "parent": "/_authenticated/settings/general",
+    "/_private/settings/general/customers": {
+      "filePath": "./private/settings/general/customers.tsx",
+      "parent": "/_private/settings/general",
       "children": [
-        "/_authenticated/settings/general/customers/new",
-        "/_authenticated/settings/general/customers/$customerId/edit"
+        "/_private/settings/general/customers/new",
+        "/_private/settings/general/customers/$customerId/edit"
       ]
     },
-    "/_authenticated/settings/general/departments": {
-      "filePath": "_authenticated/settings/general/departments.tsx",
-      "parent": "/_authenticated/settings/general",
+    "/_private/settings/general/departments": {
+      "filePath": "./private/settings/general/departments.tsx",
+      "parent": "/_private/settings/general",
       "children": [
-        "/_authenticated/settings/general/departments/new",
-        "/_authenticated/settings/general/departments/$departmentId/edit"
+        "/_private/settings/general/departments/new",
+        "/_private/settings/general/departments/$departmentId/edit"
       ]
     },
-    "/_authenticated/settings/general/employees": {
-      "filePath": "_authenticated/settings/general/employees.tsx",
-      "parent": "/_authenticated/settings/general",
+    "/_private/settings/general/employees": {
+      "filePath": "./private/settings/general/employees.tsx",
+      "parent": "/_private/settings/general",
       "children": [
-        "/_authenticated/settings/general/employees/new",
-        "/_authenticated/settings/general/employees/$employeeId/edit"
+        "/_private/settings/general/employees/new",
+        "/_private/settings/general/employees/$employeeId/edit"
       ]
     },
-    "/_authenticated/settings/general/materials": {
-      "filePath": "_authenticated/settings/general/materials.tsx",
-      "parent": "/_authenticated/settings/general",
+    "/_private/settings/general/materials": {
+      "filePath": "./private/settings/general/materials.tsx",
+      "parent": "/_private/settings/general",
       "children": [
-        "/_authenticated/settings/general/materials/new",
-        "/_authenticated/settings/general/materials/$materialId/edit"
+        "/_private/settings/general/materials/new",
+        "/_private/settings/general/materials/$materialId/edit"
       ]
     },
-    "/_authenticated/settings/general/suppliers": {
-      "filePath": "_authenticated/settings/general/suppliers.tsx",
-      "parent": "/_authenticated/settings/general",
+    "/_private/settings/general/suppliers": {
+      "filePath": "./private/settings/general/suppliers.tsx",
+      "parent": "/_private/settings/general",
       "children": [
-        "/_authenticated/settings/general/suppliers/new",
-        "/_authenticated/settings/general/suppliers/$supplierId/edit"
+        "/_private/settings/general/suppliers/new",
+        "/_private/settings/general/suppliers/$supplierId/edit"
       ]
     },
-    "/_authenticated/settings/operation/objects": {
-      "filePath": "_authenticated/settings/operation/objects.tsx",
-      "parent": "/_authenticated/settings/operation",
+    "/_private/settings/operation/objects": {
+      "filePath": "./private/settings/operation/objects.tsx",
+      "parent": "/_private/settings/operation",
       "children": [
-        "/_authenticated/settings/operation/objects/new",
-        "/_authenticated/settings/operation/objects/$objectId/edit"
+        "/_private/settings/operation/objects/new",
+        "/_private/settings/operation/objects/$objectId/edit"
       ]
     },
-    "/_authenticated/settings/operation/process": {
-      "filePath": "_authenticated/settings/operation/process.tsx",
-      "parent": "/_authenticated/settings/operation",
+    "/_private/settings/operation/process": {
+      "filePath": "./private/settings/operation/process.tsx",
+      "parent": "/_private/settings/operation",
       "children": [
-        "/_authenticated/settings/operation/process/new",
-        "/_authenticated/settings/operation/process/$processId/edit"
+        "/_private/settings/operation/process/new",
+        "/_private/settings/operation/process/$processId/edit"
       ]
     },
-    "/_authenticated/project/$projectId/": {
-      "filePath": "_authenticated/project/$projectId/index.tsx",
-      "parent": "/_authenticated/project/$projectId"
+    "/_private/project/$projectId/": {
+      "filePath": "./private/project/$projectId/index.tsx",
+      "parent": "/_private/project/$projectId"
     },
-    "/_authenticated/settings/general/": {
-      "filePath": "_authenticated/settings/general/index.tsx",
-      "parent": "/_authenticated/settings/general"
+    "/_private/settings/general/": {
+      "filePath": "./private/settings/general/index.tsx",
+      "parent": "/_private/settings/general"
     },
-    "/_authenticated/settings/operation/": {
-      "filePath": "_authenticated/settings/operation/index.tsx",
-      "parent": "/_authenticated/settings/operation"
+    "/_private/settings/operation/": {
+      "filePath": "./private/settings/operation/index.tsx",
+      "parent": "/_private/settings/operation"
     },
-    "/_authenticated/project/$projectId/contract/input": {
-      "filePath": "_authenticated/project/$projectId/contract/input.tsx",
-      "parent": "/_authenticated/project/$projectId/contract"
+    "/_private/project/$projectId/contract/input": {
+      "filePath": "./private/project/$projectId/contract/input.tsx",
+      "parent": "/_private/project/$projectId/contract"
     },
-    "/_authenticated/project/$projectId/contract/monitoring": {
-      "filePath": "_authenticated/project/$projectId/contract/monitoring.tsx",
-      "parent": "/_authenticated/project/$projectId/contract"
+    "/_private/project/$projectId/contract/monitoring": {
+      "filePath": "./private/project/$projectId/contract/monitoring.tsx",
+      "parent": "/_private/project/$projectId/contract"
     },
-    "/_authenticated/project/$projectId/issues/me": {
-      "filePath": "_authenticated/project/$projectId/issues/me.tsx",
-      "parent": "/_authenticated/project/$projectId/issues",
+    "/_private/project/$projectId/issues/me": {
+      "filePath": "./private/project/$projectId/issues/me.tsx",
+      "parent": "/_private/project/$projectId/issues",
       "children": [
-        "/_authenticated/project/$projectId/issues/me/$issueId",
-        "/_authenticated/project/$projectId/issues/me/"
+        "/_private/project/$projectId/issues/me/$issueId",
+        "/_private/project/$projectId/issues/me/"
       ]
     },
-    "/_authenticated/project/$projectId/issues/price": {
-      "filePath": "_authenticated/project/$projectId/issues/price.tsx",
-      "parent": "/_authenticated/project/$projectId/issues",
+    "/_private/project/$projectId/issues/price": {
+      "filePath": "./private/project/$projectId/issues/price.tsx",
+      "parent": "/_private/project/$projectId/issues",
       "children": [
-        "/_authenticated/project/$projectId/issues/price/$issueId",
-        "/_authenticated/project/$projectId/issues/price/"
+        "/_private/project/$projectId/issues/price/$issueId",
+        "/_private/project/$projectId/issues/price/"
       ]
     },
-    "/_authenticated/project/$projectId/issues/request": {
-      "filePath": "_authenticated/project/$projectId/issues/request.tsx",
-      "parent": "/_authenticated/project/$projectId/issues",
+    "/_private/project/$projectId/issues/request": {
+      "filePath": "./private/project/$projectId/issues/request.tsx",
+      "parent": "/_private/project/$projectId/issues",
       "children": [
-        "/_authenticated/project/$projectId/issues/request/$issueId",
-        "/_authenticated/project/$projectId/issues/request/"
+        "/_private/project/$projectId/issues/request/$issueId",
+        "/_private/project/$projectId/issues/request/"
       ]
     },
-    "/_authenticated/settings/general/customers/new": {
-      "filePath": "_authenticated/settings/general/customers/new.tsx",
-      "parent": "/_authenticated/settings/general/customers"
+    "/_private/settings/general/customers/new": {
+      "filePath": "./private/settings/general/customers/new.tsx",
+      "parent": "/_private/settings/general/customers"
     },
-    "/_authenticated/settings/general/departments/new": {
-      "filePath": "_authenticated/settings/general/departments/new.tsx",
-      "parent": "/_authenticated/settings/general/departments"
+    "/_private/settings/general/departments/new": {
+      "filePath": "./private/settings/general/departments/new.tsx",
+      "parent": "/_private/settings/general/departments"
     },
-    "/_authenticated/settings/general/employees/new": {
-      "filePath": "_authenticated/settings/general/employees/new.tsx",
-      "parent": "/_authenticated/settings/general/employees"
+    "/_private/settings/general/employees/new": {
+      "filePath": "./private/settings/general/employees/new.tsx",
+      "parent": "/_private/settings/general/employees"
     },
-    "/_authenticated/settings/general/materials/new": {
-      "filePath": "_authenticated/settings/general/materials/new.tsx",
-      "parent": "/_authenticated/settings/general/materials"
+    "/_private/settings/general/materials/new": {
+      "filePath": "./private/settings/general/materials/new.tsx",
+      "parent": "/_private/settings/general/materials"
     },
-    "/_authenticated/settings/general/suppliers/new": {
-      "filePath": "_authenticated/settings/general/suppliers/new.tsx",
-      "parent": "/_authenticated/settings/general/suppliers"
+    "/_private/settings/general/suppliers/new": {
+      "filePath": "./private/settings/general/suppliers/new.tsx",
+      "parent": "/_private/settings/general/suppliers"
     },
-    "/_authenticated/settings/operation/objects/new": {
-      "filePath": "_authenticated/settings/operation/objects/new.tsx",
-      "parent": "/_authenticated/settings/operation/objects"
+    "/_private/settings/operation/objects/new": {
+      "filePath": "./private/settings/operation/objects/new.tsx",
+      "parent": "/_private/settings/operation/objects"
     },
-    "/_authenticated/settings/operation/process/new": {
-      "filePath": "_authenticated/settings/operation/process/new.tsx",
-      "parent": "/_authenticated/settings/operation/process"
+    "/_private/settings/operation/process/new": {
+      "filePath": "./private/settings/operation/process/new.tsx",
+      "parent": "/_private/settings/operation/process"
     },
-    "/_authenticated/project/$projectId/contract/": {
-      "filePath": "_authenticated/project/$projectId/contract/index.tsx",
-      "parent": "/_authenticated/project/$projectId/contract"
+    "/_private/project/$projectId/contract/": {
+      "filePath": "./private/project/$projectId/contract/index.tsx",
+      "parent": "/_private/project/$projectId/contract"
     },
-    "/_authenticated/project/$projectId/issues/": {
-      "filePath": "_authenticated/project/$projectId/issues/index.tsx",
-      "parent": "/_authenticated/project/$projectId/issues"
+    "/_private/project/$projectId/issues/": {
+      "filePath": "./private/project/$projectId/issues/index.tsx",
+      "parent": "/_private/project/$projectId/issues"
     },
-    "/_authenticated/project/$projectId/issues/me/$issueId": {
-      "filePath": "_authenticated/project/$projectId/issues/me/$issueId.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/me"
+    "/_private/project/$projectId/issues/me/$issueId": {
+      "filePath": "./private/project/$projectId/issues/me/$issueId.tsx",
+      "parent": "/_private/project/$projectId/issues/me"
     },
-    "/_authenticated/project/$projectId/issues/price/$issueId": {
-      "filePath": "_authenticated/project/$projectId/issues/price/$issueId.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/price"
+    "/_private/project/$projectId/issues/price/$issueId": {
+      "filePath": "./private/project/$projectId/issues/price/$issueId.tsx",
+      "parent": "/_private/project/$projectId/issues/price"
     },
-    "/_authenticated/project/$projectId/issues/request/$issueId": {
-      "filePath": "_authenticated/project/$projectId/issues/request/$issueId.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/request"
+    "/_private/project/$projectId/issues/request/$issueId": {
+      "filePath": "./private/project/$projectId/issues/request/$issueId.tsx",
+      "parent": "/_private/project/$projectId/issues/request"
     },
-    "/_authenticated/settings/general/customers/$customerId/edit": {
-      "filePath": "_authenticated/settings/general/customers/$customerId/edit.tsx",
-      "parent": "/_authenticated/settings/general/customers"
+    "/_private/settings/general/customers/$customerId/edit": {
+      "filePath": "./private/settings/general/customers/$customerId/edit.tsx",
+      "parent": "/_private/settings/general/customers"
     },
-    "/_authenticated/settings/general/departments/$departmentId/edit": {
-      "filePath": "_authenticated/settings/general/departments/$departmentId/edit.tsx",
-      "parent": "/_authenticated/settings/general/departments"
+    "/_private/settings/general/departments/$departmentId/edit": {
+      "filePath": "./private/settings/general/departments/$departmentId/edit.tsx",
+      "parent": "/_private/settings/general/departments"
     },
-    "/_authenticated/settings/general/employees/$employeeId/edit": {
-      "filePath": "_authenticated/settings/general/employees/$employeeId/edit.tsx",
-      "parent": "/_authenticated/settings/general/employees"
+    "/_private/settings/general/employees/$employeeId/edit": {
+      "filePath": "./private/settings/general/employees/$employeeId/edit.tsx",
+      "parent": "/_private/settings/general/employees"
     },
-    "/_authenticated/settings/general/materials/$materialId/edit": {
-      "filePath": "_authenticated/settings/general/materials/$materialId/edit.tsx",
-      "parent": "/_authenticated/settings/general/materials"
+    "/_private/settings/general/materials/$materialId/edit": {
+      "filePath": "./private/settings/general/materials/$materialId/edit.tsx",
+      "parent": "/_private/settings/general/materials"
     },
-    "/_authenticated/settings/general/suppliers/$supplierId/edit": {
-      "filePath": "_authenticated/settings/general/suppliers/$supplierId/edit.tsx",
-      "parent": "/_authenticated/settings/general/suppliers"
+    "/_private/settings/general/suppliers/$supplierId/edit": {
+      "filePath": "./private/settings/general/suppliers/$supplierId/edit.tsx",
+      "parent": "/_private/settings/general/suppliers"
     },
-    "/_authenticated/settings/operation/objects/$objectId/edit": {
-      "filePath": "_authenticated/settings/operation/objects/$objectId/edit.tsx",
-      "parent": "/_authenticated/settings/operation/objects"
+    "/_private/settings/operation/objects/$objectId/edit": {
+      "filePath": "./private/settings/operation/objects/$objectId/edit.tsx",
+      "parent": "/_private/settings/operation/objects"
     },
-    "/_authenticated/settings/operation/process/$processId/edit": {
-      "filePath": "_authenticated/settings/operation/process/$processId/edit.tsx",
-      "parent": "/_authenticated/settings/operation/process"
+    "/_private/settings/operation/process/$processId/edit": {
+      "filePath": "./private/settings/operation/process/$processId/edit.tsx",
+      "parent": "/_private/settings/operation/process"
     },
-    "/_authenticated/project/$projectId/issues/me/": {
-      "filePath": "_authenticated/project/$projectId/issues/me/index.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/me"
+    "/_private/project/$projectId/issues/me/": {
+      "filePath": "./private/project/$projectId/issues/me/index.tsx",
+      "parent": "/_private/project/$projectId/issues/me"
     },
-    "/_authenticated/project/$projectId/issues/price/": {
-      "filePath": "_authenticated/project/$projectId/issues/price/index.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/price"
+    "/_private/project/$projectId/issues/price/": {
+      "filePath": "./private/project/$projectId/issues/price/index.tsx",
+      "parent": "/_private/project/$projectId/issues/price"
     },
-    "/_authenticated/project/$projectId/issues/request/": {
-      "filePath": "_authenticated/project/$projectId/issues/request/index.tsx",
-      "parent": "/_authenticated/project/$projectId/issues/request"
+    "/_private/project/$projectId/issues/request/": {
+      "filePath": "./private/project/$projectId/issues/request/index.tsx",
+      "parent": "/_private/project/$projectId/issues/request"
     }
   }
 }

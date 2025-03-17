@@ -28,7 +28,7 @@ export const HeaderMenu = () => {
   const handleProfile = useCallback(
     () =>
       navigate({
-        to: '/user/profile'
+        to: '/profile'
       }),
     [navigate]
   );

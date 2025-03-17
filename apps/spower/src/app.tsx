@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  ErrorComponentProps,
   RouterProvider,
   createRouter,
   parseSearchWith,
@@ -10,6 +11,8 @@ import { parse, stringify } from 'zipson';
 
 import { ModalProvider, error } from '@minhdtb/storeo-theme';
 
+import { Error } from './components/error';
+import { ErrorBoundary } from './components/error-boundary';
 import { routeTree } from './routes.gen';
 
 export function decodeFromBinary(str: string): string {
@@ -50,6 +53,24 @@ const router = createRouter({
       <Loader className={'h-6 w-6 animate-spin'} />
     </div>
   ),
+  defaultNotFoundComponent: () => (
+    <div className="flex h-full w-full items-center justify-center bg-gray-50">
+      <Error
+        title="404 - Không tìm thấy trang"
+        message="Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển."
+      />
+    </div>
+  ),
+  defaultErrorComponent: (props: ErrorComponentProps) => (
+    <div className="flex h-full w-full items-center justify-center bg-gray-50">
+      <Error
+        title="Lỗi"
+        message={
+          props.error.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.'
+        }
+      />
+    </div>
+  ),
   parseSearch: parseSearchWith(value =>
     parse(decodeURIComponent(decodeFromBinary(value)))
   ),
@@ -67,10 +88,12 @@ declare module '@tanstack/react-router' {
 
 export const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ModalProvider>
-        <RouterProvider router={router} />
-      </ModalProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <RouterProvider router={router} />
+        </ModalProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
