@@ -50,6 +50,9 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.10.8
         version: 3.10.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/virtual-file-routes':
+        specifier: ^1.114.12
+        version: 1.114.12
       '@tiptap/extension-placeholder':
         specifier: ^2.11.5
         version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)
@@ -147,6 +150,9 @@ importers:
       '@tailwindcss/forms':
         specifier: ^0.5.7
         version: 0.5.7(tailwindcss@3.4.17(ts-node@10.9.1(@swc/core@1.4.17(@swc/helpers@0.5.15))(@types/node@18.16.9)(typescript@5.7.3)))
+      '@tanstack/react-query-devtools':
+        specifier: ^5.68.0
+        version: 5.68.0(@tanstack/react-query@5.64.1(react@18.3.1))(react@18.3.1)
       '@tanstack/router-cli':
         specifier: ^1.105.0
         version: 1.105.0(@tanstack/react-router@1.97.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -2351,6 +2357,15 @@ packages:
   '@tanstack/query-core@5.64.1':
     resolution: {integrity: sha512-978Wx4Wl4UJZbmvU/rkaM9cQtXXrbhK0lsz/UZhYIbyKYA8E4LdomTwyh2GHZ4oU0BKKoDH4YlKk2VscCUgNmg==}
 
+  '@tanstack/query-devtools@5.67.2':
+    resolution: {integrity: sha512-O4QXFFd7xqp6EX7sdvc9tsVO8nm4lpWBqwpgjpVLW5g7IeOY6VnS/xvs/YzbRhBVkKTMaJMOUGU7NhSX+YGoNg==}
+
+  '@tanstack/react-query-devtools@5.68.0':
+    resolution: {integrity: sha512-h9ArHkfa7SD5eGnJ9h+9M5uYWBdeVeY+WalrtGLCAtJJvHx6/RrtbbzxeoEQbPyx3f0kPcwJ58DGQ+7CBXelpg==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.68.0
+      react: ^18 || ^19
+
   '@tanstack/react-query@5.64.1':
     resolution: {integrity: sha512-vW5ggHpIO2Yjj44b4sB+Fd3cdnlMJppXRBJkEHvld6FXh3j5dwWJoQo7mGtKI2RbSFyiyu/PhGAy0+Vv5ev9Eg==}
     peerDependencies:
@@ -2442,12 +2457,8 @@ packages:
   '@tanstack/virtual-core@3.10.8':
     resolution: {integrity: sha512-PBu00mtt95jbKFi6Llk9aik8bnR3tR/oQP1o3TSi+iG//+Q2RTIzCEgKkHG8BB86kxMNW6O8wku+Lmi+QFR6jA==}
 
-  '@tanstack/virtual-file-routes@1.97.0':
-    resolution: {integrity: sha512-UsLBb+ALvxbRTYMlx3WJ36oq13Ps4n8tcN8biFrtiCbA8TiS0sgSAOr0lPQpzQqZuVSjscPjX43ciKf33hvkQw==}
-    engines: {node: '>=12'}
-
-  '@tanstack/virtual-file-routes@1.99.0':
-    resolution: {integrity: sha512-XvX8bfdo4CYiCW+ItVdBfCorh3PwQFqYqd7ll+XKWiWOJpqUGIG7VlziVavARZpUySiY2VBlHadiUYS7jhgjRg==}
+  '@tanstack/virtual-file-routes@1.114.12':
+    resolution: {integrity: sha512-aR13V1kSE/kUkP4a8snmqvj82OUlR5Q/rzxICmObLCsERGfzikUc4wquOy1d/RzJgsLb8o+FiOjSWynt4T7Jhg==}
     engines: {node: '>=12'}
 
   '@testing-library/dom@9.3.4':
@@ -10282,6 +10293,14 @@ snapshots:
 
   '@tanstack/query-core@5.64.1': {}
 
+  '@tanstack/query-devtools@5.67.2': {}
+
+  '@tanstack/react-query-devtools@5.68.0(@tanstack/react-query@5.64.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-devtools': 5.67.2
+      '@tanstack/react-query': 5.64.1(react@18.3.1)
+      react: 18.3.1
+
   '@tanstack/react-query@5.64.1(react@18.3.1)':
     dependencies:
       '@tanstack/query-core': 5.64.1
@@ -10336,7 +10355,7 @@ snapshots:
 
   '@tanstack/router-generator@1.105.0(@tanstack/react-router@1.97.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tanstack/virtual-file-routes': 1.99.0
+      '@tanstack/virtual-file-routes': 1.114.12
       prettier: 3.5.1
       tsx: 4.19.2
       zod: 3.24.2
@@ -10345,7 +10364,7 @@ snapshots:
 
   '@tanstack/router-generator@1.97.0(@tanstack/react-router@1.97.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tanstack/virtual-file-routes': 1.97.0
+      '@tanstack/virtual-file-routes': 1.114.12
       prettier: 3.4.2
       tsx: 4.19.2
       zod: 3.23.8
@@ -10363,7 +10382,7 @@ snapshots:
       '@babel/traverse': 7.26.5
       '@babel/types': 7.26.5
       '@tanstack/router-generator': 1.97.0(@tanstack/react-router@1.97.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tanstack/virtual-file-routes': 1.97.0
+      '@tanstack/virtual-file-routes': 1.114.12
       '@types/babel__core': 7.20.5
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
@@ -10398,9 +10417,7 @@ snapshots:
 
   '@tanstack/virtual-core@3.10.8': {}
 
-  '@tanstack/virtual-file-routes@1.97.0': {}
-
-  '@tanstack/virtual-file-routes@1.99.0': {}
+  '@tanstack/virtual-file-routes@1.114.12': {}
 
   '@testing-library/dom@9.3.4':
     dependencies:
