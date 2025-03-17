@@ -15,22 +15,22 @@ import { Error } from './components/error';
 import { ErrorBoundary } from './components/error-boundary';
 import { routeTree } from './routes.gen';
 
-export function decodeFromBinary(str: string): string {
+function decodeFromBinary(str: string): string {
   return decodeURIComponent(
-    Array.prototype.map
-      .call(atob(str), function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
+    Buffer.from(str, 'base64')
+      .toString()
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
       .join('')
   );
 }
 
-export function encodeToBinary(str: string): string {
-  return btoa(
-    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-      return String.fromCharCode(parseInt(p1, 16));
-    })
-  );
+function encodeToBinary(str: string): string {
+  return Buffer.from(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
+      String.fromCharCode(parseInt(p1, 16))
+    )
+  ).toString('base64');
 }
 
 const queryClient = new QueryClient({
@@ -71,13 +71,11 @@ const router = createRouter({
       />
     </div>
   ),
-  parseSearch: parseSearchWith(value =>
-    parse(decodeURIComponent(decodeFromBinary(value)))
-  ),
+  defaultPreload: 'intent',
+  parseSearch: parseSearchWith(value => parse(decodeFromBinary(value))),
   stringifySearch: stringifySearchWith(value =>
-    encodeToBinary(encodeURIComponent(stringify(value)))
-  ),
-  defaultPreload: 'intent'
+    encodeToBinary(stringify(value))
+  )
 });
 
 declare module '@tanstack/react-router' {

@@ -7,9 +7,9 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { CopyIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ProcessDbData, api } from 'portal-api';
+import { ListSchema, ProcessDbData, api } from 'portal-api';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -39,22 +39,28 @@ import {
 
 export const Route = createFileRoute('/_private/settings/operation/process')({
   component: Component,
+  validateSearch: input => ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(api.process.list.getOptions(deps.search)),
   beforeLoad: () => ({ title: 'Quản lý quy trình' })
 });
 
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.process.list.getKey({ filter: search ?? '' }),
+      queryKey: api.process.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
         api.process.list.fetcher({
-          filter: search ?? '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -76,21 +82,22 @@ function Component() {
 
   const handleAddProcess = useCallback(() => {
     navigate({
-      to: './new'
+      to: './new',
+      search
     });
-  }, [navigate]);
+  }, [navigate, search]);
 
   const deleteProcess = api.process.delete.useMutation({
     onSuccess: async () => {
       success('Xóa quy trình thành công');
-      invalidates([api.process.list.getKey({ filter: search ?? '' })]);
+      invalidates([api.process.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
   const duplicateProcess = api.process.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản quy trình thành công');
-      invalidates([api.process.list.getKey({ filter: search ?? '' })]);
+      invalidates([api.process.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
@@ -98,24 +105,27 @@ function Component() {
 
   const columnHelper = createColumnHelper<ProcessDbData>();
 
-  const handleApplyProcess = useCallback((processId: string) => {
-    showModal({
-      title: 'Áp dụng quy trình',
-      children: ({ close }) => (
-        <ApplyProcessForm
-          processId={processId}
-          onSuccess={() => {
-            close();
-            invalidates([
-              api.process.list.getKey({ filter: search ?? '' }),
-              api.process.byId.getKey()
-            ]);
-          }}
-          onCancel={close}
-        />
-      )
-    });
-  }, []);
+  const handleApplyProcess = useCallback(
+    (processId: string) => {
+      showModal({
+        title: 'Áp dụng quy trình',
+        children: ({ close }) => (
+          <ApplyProcessForm
+            processId={processId}
+            onSuccess={() => {
+              close();
+              invalidates([
+                api.process.list.getKey({ filter: search.filter ?? '' }),
+                api.process.byId.getKey()
+              ]);
+            }}
+            onCancel={close}
+          />
+        )
+      });
+    },
+    [search, invalidates]
+  );
 
   const handleDuplicateProcess = useCallback(
     (processId: string) => {
@@ -141,7 +151,8 @@ function Component() {
         to: './$processId/edit',
         params: {
           processId: id
-        }
+        },
+        search
       });
     },
     [navigate]

@@ -16,7 +16,7 @@ import {
   PlusIcon,
   XIcon
 } from 'lucide-react';
-import { ObjectData, api } from 'portal-api';
+import { ListSchema, ObjectData, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -41,8 +41,12 @@ import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute('/_private/settings/operation/objects')({
   component: Component,
-  loader: ({ context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.object.list.getOptions()),
+  validateSearch: input => ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(api.object.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý đối tượng'
@@ -52,17 +56,17 @@ export const Route = createFileRoute('/_private/settings/operation/objects')({
 
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.object.list.getKey({ filter: search ?? '' }),
+      queryKey: api.object.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
         api.object.list.fetcher({
-          filter: search ?? '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -81,7 +85,7 @@ function Component() {
   const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
       success('Xóa đối tượng thành công');
-      invalidates([api.object.list.getKey({ filter: search ?? '' })]);
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
     },
     onError: () => {
       error('Xóa đối tượng thất bại');
@@ -91,7 +95,7 @@ function Component() {
   const duplicateObject = api.object.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản đối tượng thành công');
-      invalidates([api.object.list.getKey({ filter: search ?? '' })]);
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
     },
     onError: () => {
       error('Nhân bản đối tượng thất bại');
@@ -163,7 +167,8 @@ function Component() {
                     to: './$objectId/edit',
                     params: {
                       objectId: row.original.id
-                    }
+                    },
+                    search
                   });
                 }}
               >
@@ -309,20 +314,28 @@ function Component() {
         to: './$objectId/edit',
         params: {
           objectId
-        }
+        },
+        search
       });
     },
-    [navigate]
+    [navigate, search]
   );
 
   const handleAddObject = useCallback(() => {
     navigate({
-      to: './new'
+      to: './new',
+      search
     });
-  }, [navigate]);
+  }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
@@ -336,7 +349,7 @@ function Component() {
             Thêm đối tượng
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}

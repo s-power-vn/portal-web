@@ -7,4 +7,4 @@ export const ListSchema = object().shape({
   filter: string().optional().default('')
 });
 
-export type ListParams = InferType<typeof ListSchema>;
+export type ListParams = Partial<InferType<typeof ListSchema>>;

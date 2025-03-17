@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -12,7 +11,7 @@ import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
 import type { SupplierResponse } from 'portal-core';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import {
   Button,
@@ -32,19 +31,12 @@ import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute('/_private/settings/general/suppliers')({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
-      api.supplier.list.getOptions({
-        filter: deps.search.filter,
-        pageIndex: 1,
-        pageSize: 20
-      })
-    ),
+    queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhà cung cấp'
@@ -54,16 +46,16 @@ export const Route = createFileRoute('/_private/settings/general/suppliers')({
 
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.supplier.list.getKey({ filter: search ?? '' }),
+      queryKey: api.supplier.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
         api.supplier.list.fetcher({
-          filter: search ?? '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -80,7 +72,7 @@ function Component() {
   const deleteSupplier = api.supplier.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhà cung cấp thành công');
-      invalidates([api.supplier.list.getKey({ filter: search ?? '' })]);
+      invalidates([api.supplier.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
@@ -222,7 +214,13 @@ function Component() {
   }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
@@ -236,7 +234,7 @@ function Component() {
             Thêm nhà cung cấp
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}
