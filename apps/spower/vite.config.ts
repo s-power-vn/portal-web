@@ -2,11 +2,10 @@
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
-import { join } from 'path';
 import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig, normalizePath } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -54,8 +53,10 @@ export default defineConfig({
       }
     }),
     TanStackRouterVite({
-      routesDirectory: join(__dirname, 'src/routes'),
-      generatedRouteTree: join(__dirname, 'src/routes.gen.ts')
+      routesDirectory: path.join(__dirname, 'src/routes'),
+      generatedRouteTree: path.join(__dirname, 'src/routes.gen.ts'),
+      target: 'react',
+      virtualRouteConfig: './src/routes.ts'
     }),
     viteStaticCopy({
       targets: [

@@ -38,7 +38,7 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import { Route } from '../../../routes/_authenticated/project/$projectId';
+import { Route } from '../../../routes/private/project/$projectId';
 
 export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
 
