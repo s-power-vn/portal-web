@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -9,10 +8,10 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
+import type { UserData } from 'portal-api';
 import { ListSchema, api } from 'portal-api';
-import type { MaterialResponse } from 'portal-core';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { FC, Suspense, useCallback, useMemo, useRef } from 'react';
 
 import {
   Button,
@@ -27,45 +26,61 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/materials'
-)({
+export const Route = createFileRoute('/_private/settings/general/employees')({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
-      api.material.list.getOptions({
-        filter: deps.search.filter,
-        pageIndex: 1,
-        pageSize: 20
-      })
-    ),
+    queryClient?.ensureQueryData(api.employee.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý danh mục vật tư'
+      title: 'Quản lý nhân viên'
     };
   }
 });
 
+export type RoleNameDisplayProps = {
+  departmentId?: string;
+  roleId?: string;
+};
+
+export const RoleNameDisplay: FC<RoleNameDisplayProps> = ({
+  departmentId,
+  roleId
+}) => {
+  if (!departmentId || !roleId) return <span>-</span>;
+
+  const department = api.department.byId.useSuspenseQuery({
+    variables: departmentId
+  });
+
+  const role = useMemo(() => {
+    if (department.data?.roles && Array.isArray(department.data.roles)) {
+      return department.data.roles.find(r => r.id === roleId);
+    }
+    return undefined;
+  }, [department.data, roleId]);
+
+  return <span>{role?.name || roleId}</span>;
+};
+
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({ filter: search ?? '' }),
+      queryKey: api.employee.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.material.list.fetcher({
-          filter: search ?? '',
+        api.employee.list.fetcher({
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -74,21 +89,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const materials = useMemo(
+  const employees = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteMaterial = api.material.delete.useMutation({
+  const deleteEmployee = api.employee.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa vật tư thành công');
-      invalidates([api.material.list.getKey({ filter: search ?? '' })]);
+      success('Xóa nhân viên thành công');
+      invalidates([api.employee.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<MaterialResponse>();
+  const columnHelper = createColumnHelper<UserData>();
 
   const columns = useMemo(
     () => [
@@ -106,25 +121,44 @@ function Component() {
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên vật tư',
+        header: () => 'Họ tên',
         footer: info => info.column.id,
-        size: 300
+        size: 300,
+        id: 'name'
       }),
-      columnHelper.accessor('code', {
+      columnHelper.accessor('phone', {
         cell: info => info.getValue(),
-        header: () => 'Mã vật tư',
+        header: () => 'Số điện thoại',
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('unit', {
+      columnHelper.accessor('email', {
         cell: info => info.getValue(),
-        header: () => 'Đơn vị',
+        header: () => 'Email',
         footer: info => info.column.id,
-        size: 100
+        size: 200
       }),
-      columnHelper.accessor('note', {
-        cell: info => info.getValue(),
-        header: () => 'Ghi chú',
+      columnHelper.accessor('department', {
+        cell: ({ row }) => {
+          return row.original.expand?.department.name;
+        },
+        header: () => 'Phòng ban',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('role', {
+        cell: ({ row }) => {
+          const departmentId = row.original.expand?.department.id;
+          const roleId = row.original.role;
+
+          return (
+            <Suspense
+              fallback={<span className="text-gray-400">Loading...</span>}
+            >
+              <RoleNameDisplay departmentId={departmentId} roleId={roleId} />
+            </Suspense>
+          );
+        },
+        header: () => 'Chức danh',
         footer: info => info.column.id
       }),
       columnHelper.display({
@@ -137,9 +171,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$materialId/edit',
+                    to: './$employeeId/edit',
                     params: {
-                      materialId: row.original.id
+                      employeeId: row.original.id
                     },
                     search
                   });
@@ -153,8 +187,8 @@ function Component() {
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
-                    deleteMaterial.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
+                    deleteEmployee.mutate(row.original.id);
                   });
                 }}
               >
@@ -163,17 +197,16 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác',
-        size: 120
+        header: () => 'Thao tác'
       })
     ],
-    [columnHelper, navigate, confirm, deleteMaterial, search]
+    [columnHelper, navigate, confirm, deleteEmployee, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: materials
+    data: employees
   });
 
   const { rows } = table.getRowModel();
@@ -200,11 +233,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (materialId: string) => {
+    (employeeId: string) => {
       navigate({
-        to: './$materialId/edit',
+        to: './$employeeId/edit',
         params: {
-          materialId
+          employeeId
         },
         search
       });
@@ -212,7 +245,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddMaterial = useCallback(() => {
+  const handleAddEmployee = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -220,21 +253,27 @@ function Component() {
   }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý danh mục vật tư'} />
+      <PageHeader title={'Quản lý nhân viên'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddMaterial}>
+          <Button className={'flex gap-1'} onClick={handleAddEmployee}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm vật tư
+            Thêm nhân viên
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}
@@ -260,6 +299,7 @@ function Component() {
                   width: '100%',
                   tableLayout: 'fixed'
                 }}
+                className="relative"
               >
                 <TableHeader
                   className={'bg-appBlueLight'}
@@ -277,7 +317,13 @@ function Component() {
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className={'text-appWhite whitespace-nowrap'}
+                          className={`text-appWhite whitespace-nowrap ${
+                            header.column.id === 'index'
+                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                              : header.column.id === 'name'
+                                ? 'bg-appBlueLight sticky left-[30px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                : ''
+                          }`}
                           style={{
                             width: header.getSize(),
                             maxWidth: header.getSize()
@@ -319,7 +365,13 @@ function Component() {
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={'truncate text-left'}
+                              className={`truncate text-left ${
+                                cell.column.id === 'index'
+                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                  : cell.column.id === 'name'
+                                    ? 'sticky left-[30px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                    : ''
+                              }`}
                               style={{
                                 width: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()

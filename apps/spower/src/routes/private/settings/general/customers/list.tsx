@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -10,9 +9,9 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { SupplierResponse } from 'portal-core';
+import type { CustomerResponse } from 'portal-core';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import {
   Button,
@@ -27,45 +26,36 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/suppliers'
-)({
+export const Route = createFileRoute('/_private/settings/general/customers')({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
-      api.supplier.list.getOptions({
-        filter: deps.search.filter,
-        pageIndex: 1,
-        pageSize: 20
-      })
-    ),
+    queryClient?.ensureQueryData(api.customer.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhà cung cấp'
+      title: 'Quản lý chủ đầu tư'
     };
   }
 });
 
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.supplier.list.getKey({ filter: search ?? '' }),
+      queryKey: api.customer.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.supplier.list.fetcher({
-          filter: search ?? '',
+        api.customer.list.fetcher({
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -74,21 +64,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const suppliers = useMemo(
+  const customers = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteSupplier = api.supplier.delete.useMutation({
+  const deleteCustomer = api.customer.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhà cung cấp thành công');
-      invalidates([api.supplier.list.getKey({ filter: search ?? '' })]);
+      success('Xóa chủ đầu tư thành công');
+      invalidates([api.customer.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<SupplierResponse>();
+  const columnHelper = createColumnHelper<CustomerResponse>();
 
   const columns = useMemo(
     () => [
@@ -106,7 +96,7 @@ function Component() {
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên nhà cung cấp',
+        header: () => 'Tên chủ đầu tư',
         footer: info => info.column.id,
         size: 300
       }),
@@ -142,9 +132,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$supplierId/edit',
+                    to: './$customerId/edit',
                     params: {
-                      supplierId: row.original.id
+                      customerId: row.original.id
                     },
                     search
                   });
@@ -158,8 +148,8 @@ function Component() {
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa nhà cung cấp này?', () => {
-                    deleteSupplier.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
+                    deleteCustomer.mutate(row.original.id);
                   });
                 }}
               >
@@ -171,13 +161,13 @@ function Component() {
         header: () => 'Thao tác'
       })
     ],
-    [columnHelper, navigate, confirm, deleteSupplier, search]
+    [columnHelper, navigate, confirm, deleteCustomer, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: suppliers
+    data: customers
   });
 
   const { rows } = table.getRowModel();
@@ -204,11 +194,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (supplierId: string) => {
+    (customerId: string) => {
       navigate({
-        to: './$supplierId/edit',
+        to: './$customerId/edit',
         params: {
-          supplierId
+          customerId
         },
         search
       });
@@ -216,7 +206,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddSupplier = useCallback(() => {
+  const handleAddCustomer = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -224,21 +214,27 @@ function Component() {
   }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý nhà cung cấp'} />
+      <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddSupplier}>
+          <Button className={'flex gap-1'} onClick={handleAddCustomer}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm nhà cung cấp
+            Thêm chủ đầu tư
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}

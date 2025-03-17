@@ -1,23 +1,26 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
-  Outlet,
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
-import {
+  RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import type { UserData } from 'portal-api';
-import { ListSchema, api } from 'portal-api';
+import {
+  CheckIcon,
+  CopyIcon,
+  EditIcon,
+  Loader,
+  PlusIcon,
+  XIcon
+} from 'lucide-react';
+import { ListSchema, ObjectData, api } from 'portal-api';
 
-import { FC, Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
   DebouncedInput,
@@ -27,74 +30,43 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  error,
   success,
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { IndeterminateCheckbox } from '../../../../../components/checkbox';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/employees'
-)({
+export const Route = createFileRoute('/_private/settings/operation/objects')({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
-      api.employee.list.getOptions({
-        filter: deps.search.filter,
-        pageIndex: 1,
-        pageSize: 20
-      })
-    ),
+    queryClient?.ensureQueryData(api.object.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhân viên'
+      title: 'Quản lý đối tượng'
     };
   }
 });
 
-export type RoleNameDisplayProps = {
-  departmentId?: string;
-  roleId?: string;
-};
-
-export const RoleNameDisplay: FC<RoleNameDisplayProps> = ({
-  departmentId,
-  roleId
-}) => {
-  if (!departmentId || !roleId) return <span>-</span>;
-
-  const department = api.department.byId.useSuspenseQuery({
-    variables: departmentId
-  });
-
-  const role = useMemo(() => {
-    if (department.data?.roles && Array.isArray(department.data.roles)) {
-      return department.data.roles.find(r => r.id === roleId);
-    }
-    return undefined;
-  }, [department.data, roleId]);
-
-  return <span>{role?.name || roleId}</span>;
-};
-
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.employee.list.getKey({ filter: search ?? '' }),
+      queryKey: api.object.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.employee.list.fetcher({
-          filter: search ?? '',
+        api.object.list.fetcher({
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -103,24 +75,73 @@ function Component() {
       initialPageParam: 1
     });
 
-  const employees = useMemo(
+  const objects = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteEmployee = api.employee.delete.useMutation({
+  const columnHelper = createColumnHelper<ObjectData>();
+
+  const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhân viên thành công');
-      invalidates([api.employee.list.getKey({ filter: search ?? '' })]);
+      success('Xóa đối tượng thành công');
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+    },
+    onError: () => {
+      error('Xóa đối tượng thất bại');
+    }
+  });
+
+  const duplicateObject = api.object.duplicate.useMutation({
+    onSuccess: async () => {
+      success('Nhân bản đối tượng thành công');
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+    },
+    onError: () => {
+      error('Nhân bản đối tượng thất bại');
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<UserData>();
+  const handleDuplicateObject = useCallback(
+    (objectId: string) => {
+      confirm('Bạn có chắc chắn muốn nhân bản đối tượng này?', () => {
+        duplicateObject.mutate(objectId);
+      });
+    },
+    [confirm, duplicateObject]
+  );
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: 'select',
+        cell: ({ row }) => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler()
+              }}
+            />
+          </div>
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler()
+              }}
+            />
+          </div>
+        ),
+        size: 40
+      }),
       columnHelper.display({
         id: 'index',
         cell: info => (
@@ -133,48 +154,6 @@ function Component() {
         ),
         size: 30
       }),
-      columnHelper.accessor('name', {
-        cell: info => info.getValue(),
-        header: () => 'Họ tên',
-        footer: info => info.column.id,
-        size: 300,
-        id: 'name'
-      }),
-      columnHelper.accessor('phone', {
-        cell: info => info.getValue(),
-        header: () => 'Số điện thoại',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('email', {
-        cell: info => info.getValue(),
-        header: () => 'Email',
-        footer: info => info.column.id,
-        size: 200
-      }),
-      columnHelper.accessor('department', {
-        cell: ({ row }) => {
-          return row.original.expand?.department.name;
-        },
-        header: () => 'Phòng ban',
-        footer: info => info.column.id
-      }),
-      columnHelper.accessor('role', {
-        cell: ({ row }) => {
-          const departmentId = row.original.expand?.department.id;
-          const roleId = row.original.role;
-
-          return (
-            <Suspense
-              fallback={<span className="text-gray-400">Loading...</span>}
-            >
-              <RoleNameDisplay departmentId={departmentId} roleId={roleId} />
-            </Suspense>
-          );
-        },
-        header: () => 'Chức danh',
-        footer: info => info.column.id
-      }),
       columnHelper.display({
         id: 'actions',
         cell: ({ row }) => {
@@ -185,9 +164,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$employeeId/edit',
+                    to: './$objectId/edit',
                     params: {
-                      employeeId: row.original.id
+                      objectId: row.original.id
                     },
                     search
                   });
@@ -196,13 +175,22 @@ function Component() {
                 <EditIcon className={'h-3 w-3'} />
               </Button>
               <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDuplicateObject(row.original.id);
+                }}
+              >
+                <CopyIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
-                    deleteEmployee.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa đối tượng này?', () => {
+                    deleteObject.mutate(row.original.id);
                   });
                 }}
               >
@@ -212,15 +200,89 @@ function Component() {
           );
         },
         header: () => 'Thao tác'
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên đối tượng',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('active', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <CheckIcon className="h-4 w-4 text-green-500" />
+            ) : (
+              ''
+            )}
+          </div>
+        ),
+        header: () => 'Kích hoạt',
+        footer: info => info.column.id,
+        size: 100
+      }),
+
+      columnHelper.accessor(row => row.expand?.type, {
+        id: 'type',
+        cell: info => {
+          const objectType = info.getValue();
+          if (!objectType) return null;
+
+          const badgeStyle =
+            'rounded-full px-2 py-1 text-xs font-medium text-white whitespace-nowrap';
+
+          return (
+            <span
+              className={cn(badgeStyle)}
+              style={{ backgroundColor: objectType.color || '#888888' }}
+            >
+              {objectType.display || 'Không xác định'}
+            </span>
+          );
+        },
+        header: () => 'Loại',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor(row => row.expand?.process?.name, {
+        id: 'processName',
+        cell: info => info.getValue() || '',
+        header: () => 'Quy trình',
+        footer: info => info.column.id,
+        size: 150
+      }),
+
+      columnHelper.accessor('base', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                Cơ bản
+              </span>
+            ) : null}
+          </div>
+        ),
+        header: () => 'Cơ bản',
+        footer: info => info.column.id,
+        size: 100
+      }),
+      columnHelper.accessor('description', {
+        cell: info => info.getValue() || '',
+        header: () => 'Mô tả',
+        footer: info => info.column.id
       })
     ],
-    [columnHelper, navigate, confirm, deleteEmployee, search]
+    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: employees
+    data: objects,
+    state: {
+      rowSelection
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection
   });
 
   const { rows } = table.getRowModel();
@@ -247,11 +309,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (employeeId: string) => {
+    (objectId: string) => {
       navigate({
-        to: './$employeeId/edit',
+        to: './$objectId/edit',
         params: {
-          employeeId
+          objectId
         },
         search
       });
@@ -259,7 +321,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddEmployee = useCallback(() => {
+  const handleAddObject = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -267,21 +329,27 @@ function Component() {
   }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý nhân viên'} />
+      <PageHeader title={'Quản lý đối tượng'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddEmployee}>
+          <Button className={'flex gap-1'} onClick={handleAddObject}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm nhân viên
+            Thêm đối tượng
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}
@@ -326,15 +394,24 @@ function Component() {
                         <TableHead
                           key={header.id}
                           className={`text-appWhite whitespace-nowrap ${
+                            header.column.id === 'select' ||
                             header.column.id === 'index'
                               ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
                               : header.column.id === 'name'
-                                ? 'bg-appBlueLight sticky left-[30px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                ? 'bg-appBlueLight sticky left-[70px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
                                 : ''
                           }`}
                           style={{
                             width: header.getSize(),
-                            maxWidth: header.getSize()
+                            maxWidth: header.getSize(),
+                            left:
+                              header.column.id === 'select'
+                                ? 0
+                                : header.column.id === 'index'
+                                  ? 40
+                                  : header.column.id === 'name'
+                                    ? 70
+                                    : 'auto'
                           }}
                         >
                           {header.isPlaceholder ? null : (
@@ -362,7 +439,10 @@ function Component() {
                       return (
                         <TableRow
                           key={virtualRow.key}
-                          className={'absolute w-full cursor-pointer'}
+                          className={cn(
+                            'absolute w-full cursor-pointer last:border-b-0',
+                            row.getIsSelected() && 'bg-blue-50'
+                          )}
                           data-index={virtualRow.index}
                           ref={virtualizer.measureElement}
                           style={{
@@ -374,15 +454,31 @@ function Component() {
                             <TableCell
                               key={cell.id}
                               className={`truncate text-left ${
+                                cell.column.id === 'select' ||
                                 cell.column.id === 'index'
                                   ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
                                   : cell.column.id === 'name'
-                                    ? 'sticky left-[30px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                                    ? 'sticky left-[70px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
                                     : ''
                               }`}
                               style={{
                                 width: cell.column.getSize(),
-                                maxWidth: cell.column.getSize()
+                                maxWidth: cell.column.getSize(),
+                                left:
+                                  cell.column.id === 'select'
+                                    ? 0
+                                    : cell.column.id === 'index'
+                                      ? 40
+                                      : cell.column.id === 'name'
+                                        ? 70
+                                        : 'auto',
+                                backgroundColor:
+                                  row.getIsSelected() &&
+                                  (cell.column.id === 'select' ||
+                                    cell.column.id === 'index' ||
+                                    cell.column.id === 'name')
+                                    ? '#EBF5FF'
+                                    : ''
                               }}
                             >
                               {flexRender(

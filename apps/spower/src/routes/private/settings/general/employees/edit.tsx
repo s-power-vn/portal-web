@@ -5,8 +5,8 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditEmployeeForm } from '../../../../../../components';
-import { useInvalidateQueries } from '../../../../../../hooks';
+import { EditEmployeeForm } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
   '/_private/settings/general/employees/$employeeId/edit'

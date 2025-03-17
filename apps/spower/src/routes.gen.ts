@@ -27,13 +27,13 @@ import { Route as PrivateProjectProjectIdImport } from './routes/private/project
 import { Route as PrivateSettingsOperationIndexImport } from './routes/private/settings/operation/index'
 import { Route as PrivateSettingsGeneralIndexImport } from './routes/private/settings/general/index'
 import { Route as PrivateProjectProjectIdIndexImport } from './routes/private/project/$projectId/index'
-import { Route as PrivateSettingsOperationProcessImport } from './routes/private/settings/operation/process'
-import { Route as PrivateSettingsOperationObjectsImport } from './routes/private/settings/operation/objects'
-import { Route as PrivateSettingsGeneralSuppliersImport } from './routes/private/settings/general/suppliers'
-import { Route as PrivateSettingsGeneralMaterialsImport } from './routes/private/settings/general/materials'
-import { Route as PrivateSettingsGeneralEmployeesImport } from './routes/private/settings/general/employees'
-import { Route as PrivateSettingsGeneralDepartmentsImport } from './routes/private/settings/general/departments'
-import { Route as PrivateSettingsGeneralCustomersImport } from './routes/private/settings/general/customers'
+import { Route as PrivateSettingsOperationProcessListImport } from './routes/private/settings/operation/process/list'
+import { Route as PrivateSettingsOperationObjectsListImport } from './routes/private/settings/operation/objects/list'
+import { Route as PrivateSettingsGeneralSuppliersListImport } from './routes/private/settings/general/suppliers/list'
+import { Route as PrivateSettingsGeneralMaterialsListImport } from './routes/private/settings/general/materials/list'
+import { Route as PrivateSettingsGeneralEmployeesListImport } from './routes/private/settings/general/employees/list'
+import { Route as PrivateSettingsGeneralDepartmentsListImport } from './routes/private/settings/general/departments/list'
+import { Route as PrivateSettingsGeneralCustomersListImport } from './routes/private/settings/general/customers/list'
 import { Route as PrivateProjectProjectIdSettingsImport } from './routes/private/project/$projectId/settings'
 import { Route as PrivateProjectProjectIdIssuesImport } from './routes/private/project/$projectId/issues'
 import { Route as PrivateProjectProjectIdContractImport } from './routes/private/project/$projectId/contract'
@@ -54,13 +54,13 @@ import { Route as PrivateProjectProjectIdContractInputImport } from './routes/pr
 import { Route as PrivateProjectProjectIdIssuesRequestIndexImport } from './routes/private/project/$projectId/issues/request/index'
 import { Route as PrivateProjectProjectIdIssuesPriceIndexImport } from './routes/private/project/$projectId/issues/price/index'
 import { Route as PrivateProjectProjectIdIssuesMeIndexImport } from './routes/private/project/$projectId/issues/me/index'
-import { Route as PrivateSettingsOperationProcessProcessIdEditImport } from './routes/private/settings/operation/process/$processId/edit'
-import { Route as PrivateSettingsOperationObjectsObjectIdEditImport } from './routes/private/settings/operation/objects/$objectId/edit'
-import { Route as PrivateSettingsGeneralSuppliersSupplierIdEditImport } from './routes/private/settings/general/suppliers/$supplierId/edit'
-import { Route as PrivateSettingsGeneralMaterialsMaterialIdEditImport } from './routes/private/settings/general/materials/$materialId/edit'
-import { Route as PrivateSettingsGeneralEmployeesEmployeeIdEditImport } from './routes/private/settings/general/employees/$employeeId/edit'
-import { Route as PrivateSettingsGeneralDepartmentsDepartmentIdEditImport } from './routes/private/settings/general/departments/$departmentId/edit'
-import { Route as PrivateSettingsGeneralCustomersCustomerIdEditImport } from './routes/private/settings/general/customers/$customerId/edit'
+import { Route as PrivateSettingsOperationProcessEditImport } from './routes/private/settings/operation/process/edit'
+import { Route as PrivateSettingsOperationObjectsEditImport } from './routes/private/settings/operation/objects/edit'
+import { Route as PrivateSettingsGeneralSuppliersEditImport } from './routes/private/settings/general/suppliers/edit'
+import { Route as PrivateSettingsGeneralMaterialsEditImport } from './routes/private/settings/general/materials/edit'
+import { Route as PrivateSettingsGeneralEmployeesEditImport } from './routes/private/settings/general/employees/edit'
+import { Route as PrivateSettingsGeneralDepartmentsEditImport } from './routes/private/settings/general/departments/edit'
+import { Route as PrivateSettingsGeneralCustomersEditImport } from './routes/private/settings/general/customers/edit'
 import { Route as PrivateProjectProjectIdIssuesRequestIssueIdImport } from './routes/private/project/$projectId/issues/request/$issueId'
 import { Route as PrivateProjectProjectIdIssuesPriceIssueIdImport } from './routes/private/project/$projectId/issues/price/$issueId'
 import { Route as PrivateProjectProjectIdIssuesMeIssueIdImport } from './routes/private/project/$projectId/issues/me/$issueId'
@@ -165,50 +165,50 @@ const PrivateProjectProjectIdIndexRoute =
     getParentRoute: () => PrivateProjectProjectIdRoute,
   } as any)
 
-const PrivateSettingsOperationProcessRoute =
-  PrivateSettingsOperationProcessImport.update({
+const PrivateSettingsOperationProcessListRoute =
+  PrivateSettingsOperationProcessListImport.update({
     id: '/process',
     path: '/process',
     getParentRoute: () => PrivateSettingsOperationRoute,
   } as any)
 
-const PrivateSettingsOperationObjectsRoute =
-  PrivateSettingsOperationObjectsImport.update({
+const PrivateSettingsOperationObjectsListRoute =
+  PrivateSettingsOperationObjectsListImport.update({
     id: '/objects',
     path: '/objects',
     getParentRoute: () => PrivateSettingsOperationRoute,
   } as any)
 
-const PrivateSettingsGeneralSuppliersRoute =
-  PrivateSettingsGeneralSuppliersImport.update({
+const PrivateSettingsGeneralSuppliersListRoute =
+  PrivateSettingsGeneralSuppliersListImport.update({
     id: '/suppliers',
     path: '/suppliers',
     getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralMaterialsRoute =
-  PrivateSettingsGeneralMaterialsImport.update({
+const PrivateSettingsGeneralMaterialsListRoute =
+  PrivateSettingsGeneralMaterialsListImport.update({
     id: '/materials',
     path: '/materials',
     getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralEmployeesRoute =
-  PrivateSettingsGeneralEmployeesImport.update({
+const PrivateSettingsGeneralEmployeesListRoute =
+  PrivateSettingsGeneralEmployeesListImport.update({
     id: '/employees',
     path: '/employees',
     getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralDepartmentsRoute =
-  PrivateSettingsGeneralDepartmentsImport.update({
+const PrivateSettingsGeneralDepartmentsListRoute =
+  PrivateSettingsGeneralDepartmentsListImport.update({
     id: '/departments',
     path: '/departments',
     getParentRoute: () => PrivateSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralCustomersRoute =
-  PrivateSettingsGeneralCustomersImport.update({
+const PrivateSettingsGeneralCustomersListRoute =
+  PrivateSettingsGeneralCustomersListImport.update({
     id: '/customers',
     path: '/customers',
     getParentRoute: () => PrivateSettingsGeneralRoute,
@@ -253,49 +253,49 @@ const PrivateSettingsOperationProcessNewRoute =
   PrivateSettingsOperationProcessNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsOperationProcessRoute,
+    getParentRoute: () => PrivateSettingsOperationProcessListRoute,
   } as any)
 
 const PrivateSettingsOperationObjectsNewRoute =
   PrivateSettingsOperationObjectsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsOperationObjectsRoute,
+    getParentRoute: () => PrivateSettingsOperationObjectsListRoute,
   } as any)
 
 const PrivateSettingsGeneralSuppliersNewRoute =
   PrivateSettingsGeneralSuppliersNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralSuppliersRoute,
+    getParentRoute: () => PrivateSettingsGeneralSuppliersListRoute,
   } as any)
 
 const PrivateSettingsGeneralMaterialsNewRoute =
   PrivateSettingsGeneralMaterialsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralMaterialsRoute,
+    getParentRoute: () => PrivateSettingsGeneralMaterialsListRoute,
   } as any)
 
 const PrivateSettingsGeneralEmployeesNewRoute =
   PrivateSettingsGeneralEmployeesNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralEmployeesRoute,
+    getParentRoute: () => PrivateSettingsGeneralEmployeesListRoute,
   } as any)
 
 const PrivateSettingsGeneralDepartmentsNewRoute =
   PrivateSettingsGeneralDepartmentsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralDepartmentsRoute,
+    getParentRoute: () => PrivateSettingsGeneralDepartmentsListRoute,
   } as any)
 
 const PrivateSettingsGeneralCustomersNewRoute =
   PrivateSettingsGeneralCustomersNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralCustomersRoute,
+    getParentRoute: () => PrivateSettingsGeneralCustomersListRoute,
   } as any)
 
 const PrivateProjectProjectIdIssuesRequestRoute =
@@ -354,53 +354,53 @@ const PrivateProjectProjectIdIssuesMeIndexRoute =
     getParentRoute: () => PrivateProjectProjectIdIssuesMeRoute,
   } as any)
 
-const PrivateSettingsOperationProcessProcessIdEditRoute =
-  PrivateSettingsOperationProcessProcessIdEditImport.update({
+const PrivateSettingsOperationProcessEditRoute =
+  PrivateSettingsOperationProcessEditImport.update({
     id: '/$processId/edit',
     path: '/$processId/edit',
-    getParentRoute: () => PrivateSettingsOperationProcessRoute,
+    getParentRoute: () => PrivateSettingsOperationProcessListRoute,
   } as any)
 
-const PrivateSettingsOperationObjectsObjectIdEditRoute =
-  PrivateSettingsOperationObjectsObjectIdEditImport.update({
+const PrivateSettingsOperationObjectsEditRoute =
+  PrivateSettingsOperationObjectsEditImport.update({
     id: '/$objectId/edit',
     path: '/$objectId/edit',
-    getParentRoute: () => PrivateSettingsOperationObjectsRoute,
+    getParentRoute: () => PrivateSettingsOperationObjectsListRoute,
   } as any)
 
-const PrivateSettingsGeneralSuppliersSupplierIdEditRoute =
-  PrivateSettingsGeneralSuppliersSupplierIdEditImport.update({
+const PrivateSettingsGeneralSuppliersEditRoute =
+  PrivateSettingsGeneralSuppliersEditImport.update({
     id: '/$supplierId/edit',
     path: '/$supplierId/edit',
-    getParentRoute: () => PrivateSettingsGeneralSuppliersRoute,
+    getParentRoute: () => PrivateSettingsGeneralSuppliersListRoute,
   } as any)
 
-const PrivateSettingsGeneralMaterialsMaterialIdEditRoute =
-  PrivateSettingsGeneralMaterialsMaterialIdEditImport.update({
+const PrivateSettingsGeneralMaterialsEditRoute =
+  PrivateSettingsGeneralMaterialsEditImport.update({
     id: '/$materialId/edit',
     path: '/$materialId/edit',
-    getParentRoute: () => PrivateSettingsGeneralMaterialsRoute,
+    getParentRoute: () => PrivateSettingsGeneralMaterialsListRoute,
   } as any)
 
-const PrivateSettingsGeneralEmployeesEmployeeIdEditRoute =
-  PrivateSettingsGeneralEmployeesEmployeeIdEditImport.update({
+const PrivateSettingsGeneralEmployeesEditRoute =
+  PrivateSettingsGeneralEmployeesEditImport.update({
     id: '/$employeeId/edit',
     path: '/$employeeId/edit',
-    getParentRoute: () => PrivateSettingsGeneralEmployeesRoute,
+    getParentRoute: () => PrivateSettingsGeneralEmployeesListRoute,
   } as any)
 
-const PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute =
-  PrivateSettingsGeneralDepartmentsDepartmentIdEditImport.update({
+const PrivateSettingsGeneralDepartmentsEditRoute =
+  PrivateSettingsGeneralDepartmentsEditImport.update({
     id: '/$departmentId/edit',
     path: '/$departmentId/edit',
-    getParentRoute: () => PrivateSettingsGeneralDepartmentsRoute,
+    getParentRoute: () => PrivateSettingsGeneralDepartmentsListRoute,
   } as any)
 
-const PrivateSettingsGeneralCustomersCustomerIdEditRoute =
-  PrivateSettingsGeneralCustomersCustomerIdEditImport.update({
+const PrivateSettingsGeneralCustomersEditRoute =
+  PrivateSettingsGeneralCustomersEditImport.update({
     id: '/$customerId/edit',
     path: '/$customerId/edit',
-    getParentRoute: () => PrivateSettingsGeneralCustomersRoute,
+    getParentRoute: () => PrivateSettingsGeneralCustomersListRoute,
   } as any)
 
 const PrivateProjectProjectIdIssuesRequestIssueIdRoute =
@@ -544,49 +544,49 @@ declare module '@tanstack/react-router' {
       id: '/_private/settings/general/customers'
       path: '/customers'
       fullPath: '/settings/general/customers'
-      preLoaderRoute: typeof PrivateSettingsGeneralCustomersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralCustomersListImport
       parentRoute: typeof PrivateSettingsGeneralImport
     }
     '/_private/settings/general/departments': {
       id: '/_private/settings/general/departments'
       path: '/departments'
       fullPath: '/settings/general/departments'
-      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsListImport
       parentRoute: typeof PrivateSettingsGeneralImport
     }
     '/_private/settings/general/employees': {
       id: '/_private/settings/general/employees'
       path: '/employees'
       fullPath: '/settings/general/employees'
-      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesImport
+      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesListImport
       parentRoute: typeof PrivateSettingsGeneralImport
     }
     '/_private/settings/general/materials': {
       id: '/_private/settings/general/materials'
       path: '/materials'
       fullPath: '/settings/general/materials'
-      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsListImport
       parentRoute: typeof PrivateSettingsGeneralImport
     }
     '/_private/settings/general/suppliers': {
       id: '/_private/settings/general/suppliers'
       path: '/suppliers'
       fullPath: '/settings/general/suppliers'
-      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersListImport
       parentRoute: typeof PrivateSettingsGeneralImport
     }
     '/_private/settings/operation/objects': {
       id: '/_private/settings/operation/objects'
       path: '/objects'
       fullPath: '/settings/operation/objects'
-      preLoaderRoute: typeof PrivateSettingsOperationObjectsImport
+      preLoaderRoute: typeof PrivateSettingsOperationObjectsListImport
       parentRoute: typeof PrivateSettingsOperationImport
     }
     '/_private/settings/operation/process': {
       id: '/_private/settings/operation/process'
       path: '/process'
       fullPath: '/settings/operation/process'
-      preLoaderRoute: typeof PrivateSettingsOperationProcessImport
+      preLoaderRoute: typeof PrivateSettingsOperationProcessListImport
       parentRoute: typeof PrivateSettingsOperationImport
     }
     '/_private/project/$projectId/': {
@@ -650,49 +650,49 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/settings/general/customers/new'
       preLoaderRoute: typeof PrivateSettingsGeneralCustomersNewImport
-      parentRoute: typeof PrivateSettingsGeneralCustomersImport
+      parentRoute: typeof PrivateSettingsGeneralCustomersListImport
     }
     '/_private/settings/general/departments/new': {
       id: '/_private/settings/general/departments/new'
       path: '/new'
       fullPath: '/settings/general/departments/new'
       preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsNewImport
-      parentRoute: typeof PrivateSettingsGeneralDepartmentsImport
+      parentRoute: typeof PrivateSettingsGeneralDepartmentsListImport
     }
     '/_private/settings/general/employees/new': {
       id: '/_private/settings/general/employees/new'
       path: '/new'
       fullPath: '/settings/general/employees/new'
       preLoaderRoute: typeof PrivateSettingsGeneralEmployeesNewImport
-      parentRoute: typeof PrivateSettingsGeneralEmployeesImport
+      parentRoute: typeof PrivateSettingsGeneralEmployeesListImport
     }
     '/_private/settings/general/materials/new': {
       id: '/_private/settings/general/materials/new'
       path: '/new'
       fullPath: '/settings/general/materials/new'
       preLoaderRoute: typeof PrivateSettingsGeneralMaterialsNewImport
-      parentRoute: typeof PrivateSettingsGeneralMaterialsImport
+      parentRoute: typeof PrivateSettingsGeneralMaterialsListImport
     }
     '/_private/settings/general/suppliers/new': {
       id: '/_private/settings/general/suppliers/new'
       path: '/new'
       fullPath: '/settings/general/suppliers/new'
       preLoaderRoute: typeof PrivateSettingsGeneralSuppliersNewImport
-      parentRoute: typeof PrivateSettingsGeneralSuppliersImport
+      parentRoute: typeof PrivateSettingsGeneralSuppliersListImport
     }
     '/_private/settings/operation/objects/new': {
       id: '/_private/settings/operation/objects/new'
       path: '/new'
       fullPath: '/settings/operation/objects/new'
       preLoaderRoute: typeof PrivateSettingsOperationObjectsNewImport
-      parentRoute: typeof PrivateSettingsOperationObjectsImport
+      parentRoute: typeof PrivateSettingsOperationObjectsListImport
     }
     '/_private/settings/operation/process/new': {
       id: '/_private/settings/operation/process/new'
       path: '/new'
       fullPath: '/settings/operation/process/new'
       preLoaderRoute: typeof PrivateSettingsOperationProcessNewImport
-      parentRoute: typeof PrivateSettingsOperationProcessImport
+      parentRoute: typeof PrivateSettingsOperationProcessListImport
     }
     '/_private/project/$projectId/contract/': {
       id: '/_private/project/$projectId/contract/'
@@ -733,50 +733,50 @@ declare module '@tanstack/react-router' {
       id: '/_private/settings/general/customers/$customerId/edit'
       path: '/$customerId/edit'
       fullPath: '/settings/general/customers/$customerId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralCustomersCustomerIdEditImport
-      parentRoute: typeof PrivateSettingsGeneralCustomersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralCustomersEditImport
+      parentRoute: typeof PrivateSettingsGeneralCustomersListImport
     }
     '/_private/settings/general/departments/$departmentId/edit': {
       id: '/_private/settings/general/departments/$departmentId/edit'
       path: '/$departmentId/edit'
       fullPath: '/settings/general/departments/$departmentId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditImport
-      parentRoute: typeof PrivateSettingsGeneralDepartmentsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsEditImport
+      parentRoute: typeof PrivateSettingsGeneralDepartmentsListImport
     }
     '/_private/settings/general/employees/$employeeId/edit': {
       id: '/_private/settings/general/employees/$employeeId/edit'
       path: '/$employeeId/edit'
       fullPath: '/settings/general/employees/$employeeId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesEmployeeIdEditImport
-      parentRoute: typeof PrivateSettingsGeneralEmployeesImport
+      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesEditImport
+      parentRoute: typeof PrivateSettingsGeneralEmployeesListImport
     }
     '/_private/settings/general/materials/$materialId/edit': {
       id: '/_private/settings/general/materials/$materialId/edit'
       path: '/$materialId/edit'
       fullPath: '/settings/general/materials/$materialId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsMaterialIdEditImport
-      parentRoute: typeof PrivateSettingsGeneralMaterialsImport
+      preLoaderRoute: typeof PrivateSettingsGeneralMaterialsEditImport
+      parentRoute: typeof PrivateSettingsGeneralMaterialsListImport
     }
     '/_private/settings/general/suppliers/$supplierId/edit': {
       id: '/_private/settings/general/suppliers/$supplierId/edit'
       path: '/$supplierId/edit'
       fullPath: '/settings/general/suppliers/$supplierId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersSupplierIdEditImport
-      parentRoute: typeof PrivateSettingsGeneralSuppliersImport
+      preLoaderRoute: typeof PrivateSettingsGeneralSuppliersEditImport
+      parentRoute: typeof PrivateSettingsGeneralSuppliersListImport
     }
     '/_private/settings/operation/objects/$objectId/edit': {
       id: '/_private/settings/operation/objects/$objectId/edit'
       path: '/$objectId/edit'
       fullPath: '/settings/operation/objects/$objectId/edit'
-      preLoaderRoute: typeof PrivateSettingsOperationObjectsObjectIdEditImport
-      parentRoute: typeof PrivateSettingsOperationObjectsImport
+      preLoaderRoute: typeof PrivateSettingsOperationObjectsEditImport
+      parentRoute: typeof PrivateSettingsOperationObjectsListImport
     }
     '/_private/settings/operation/process/$processId/edit': {
       id: '/_private/settings/operation/process/$processId/edit'
       path: '/$processId/edit'
       fullPath: '/settings/operation/process/$processId/edit'
-      preLoaderRoute: typeof PrivateSettingsOperationProcessProcessIdEditImport
-      parentRoute: typeof PrivateSettingsOperationProcessImport
+      preLoaderRoute: typeof PrivateSettingsOperationProcessEditImport
+      parentRoute: typeof PrivateSettingsOperationProcessListImport
     }
     '/_private/project/$projectId/issues/me/': {
       id: '/_private/project/$projectId/issues/me/'
@@ -939,117 +939,117 @@ const PrivateProjectRouteWithChildren = PrivateProjectRoute._addFileChildren(
   PrivateProjectRouteChildren,
 )
 
-interface PrivateSettingsGeneralCustomersRouteChildren {
+interface PrivateSettingsGeneralCustomersListRouteChildren {
   PrivateSettingsGeneralCustomersNewRoute: typeof PrivateSettingsGeneralCustomersNewRoute
-  PrivateSettingsGeneralCustomersCustomerIdEditRoute: typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
+  PrivateSettingsGeneralCustomersEditRoute: typeof PrivateSettingsGeneralCustomersEditRoute
 }
 
-const PrivateSettingsGeneralCustomersRouteChildren: PrivateSettingsGeneralCustomersRouteChildren =
+const PrivateSettingsGeneralCustomersListRouteChildren: PrivateSettingsGeneralCustomersListRouteChildren =
   {
     PrivateSettingsGeneralCustomersNewRoute:
       PrivateSettingsGeneralCustomersNewRoute,
-    PrivateSettingsGeneralCustomersCustomerIdEditRoute:
-      PrivateSettingsGeneralCustomersCustomerIdEditRoute,
+    PrivateSettingsGeneralCustomersEditRoute:
+      PrivateSettingsGeneralCustomersEditRoute,
   }
 
-const PrivateSettingsGeneralCustomersRouteWithChildren =
-  PrivateSettingsGeneralCustomersRoute._addFileChildren(
-    PrivateSettingsGeneralCustomersRouteChildren,
+const PrivateSettingsGeneralCustomersListRouteWithChildren =
+  PrivateSettingsGeneralCustomersListRoute._addFileChildren(
+    PrivateSettingsGeneralCustomersListRouteChildren,
   )
 
-interface PrivateSettingsGeneralDepartmentsRouteChildren {
+interface PrivateSettingsGeneralDepartmentsListRouteChildren {
   PrivateSettingsGeneralDepartmentsNewRoute: typeof PrivateSettingsGeneralDepartmentsNewRoute
-  PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute: typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
+  PrivateSettingsGeneralDepartmentsEditRoute: typeof PrivateSettingsGeneralDepartmentsEditRoute
 }
 
-const PrivateSettingsGeneralDepartmentsRouteChildren: PrivateSettingsGeneralDepartmentsRouteChildren =
+const PrivateSettingsGeneralDepartmentsListRouteChildren: PrivateSettingsGeneralDepartmentsListRouteChildren =
   {
     PrivateSettingsGeneralDepartmentsNewRoute:
       PrivateSettingsGeneralDepartmentsNewRoute,
-    PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute:
-      PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute,
+    PrivateSettingsGeneralDepartmentsEditRoute:
+      PrivateSettingsGeneralDepartmentsEditRoute,
   }
 
-const PrivateSettingsGeneralDepartmentsRouteWithChildren =
-  PrivateSettingsGeneralDepartmentsRoute._addFileChildren(
-    PrivateSettingsGeneralDepartmentsRouteChildren,
+const PrivateSettingsGeneralDepartmentsListRouteWithChildren =
+  PrivateSettingsGeneralDepartmentsListRoute._addFileChildren(
+    PrivateSettingsGeneralDepartmentsListRouteChildren,
   )
 
-interface PrivateSettingsGeneralEmployeesRouteChildren {
+interface PrivateSettingsGeneralEmployeesListRouteChildren {
   PrivateSettingsGeneralEmployeesNewRoute: typeof PrivateSettingsGeneralEmployeesNewRoute
-  PrivateSettingsGeneralEmployeesEmployeeIdEditRoute: typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
+  PrivateSettingsGeneralEmployeesEditRoute: typeof PrivateSettingsGeneralEmployeesEditRoute
 }
 
-const PrivateSettingsGeneralEmployeesRouteChildren: PrivateSettingsGeneralEmployeesRouteChildren =
+const PrivateSettingsGeneralEmployeesListRouteChildren: PrivateSettingsGeneralEmployeesListRouteChildren =
   {
     PrivateSettingsGeneralEmployeesNewRoute:
       PrivateSettingsGeneralEmployeesNewRoute,
-    PrivateSettingsGeneralEmployeesEmployeeIdEditRoute:
-      PrivateSettingsGeneralEmployeesEmployeeIdEditRoute,
+    PrivateSettingsGeneralEmployeesEditRoute:
+      PrivateSettingsGeneralEmployeesEditRoute,
   }
 
-const PrivateSettingsGeneralEmployeesRouteWithChildren =
-  PrivateSettingsGeneralEmployeesRoute._addFileChildren(
-    PrivateSettingsGeneralEmployeesRouteChildren,
+const PrivateSettingsGeneralEmployeesListRouteWithChildren =
+  PrivateSettingsGeneralEmployeesListRoute._addFileChildren(
+    PrivateSettingsGeneralEmployeesListRouteChildren,
   )
 
-interface PrivateSettingsGeneralMaterialsRouteChildren {
+interface PrivateSettingsGeneralMaterialsListRouteChildren {
   PrivateSettingsGeneralMaterialsNewRoute: typeof PrivateSettingsGeneralMaterialsNewRoute
-  PrivateSettingsGeneralMaterialsMaterialIdEditRoute: typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
+  PrivateSettingsGeneralMaterialsEditRoute: typeof PrivateSettingsGeneralMaterialsEditRoute
 }
 
-const PrivateSettingsGeneralMaterialsRouteChildren: PrivateSettingsGeneralMaterialsRouteChildren =
+const PrivateSettingsGeneralMaterialsListRouteChildren: PrivateSettingsGeneralMaterialsListRouteChildren =
   {
     PrivateSettingsGeneralMaterialsNewRoute:
       PrivateSettingsGeneralMaterialsNewRoute,
-    PrivateSettingsGeneralMaterialsMaterialIdEditRoute:
-      PrivateSettingsGeneralMaterialsMaterialIdEditRoute,
+    PrivateSettingsGeneralMaterialsEditRoute:
+      PrivateSettingsGeneralMaterialsEditRoute,
   }
 
-const PrivateSettingsGeneralMaterialsRouteWithChildren =
-  PrivateSettingsGeneralMaterialsRoute._addFileChildren(
-    PrivateSettingsGeneralMaterialsRouteChildren,
+const PrivateSettingsGeneralMaterialsListRouteWithChildren =
+  PrivateSettingsGeneralMaterialsListRoute._addFileChildren(
+    PrivateSettingsGeneralMaterialsListRouteChildren,
   )
 
-interface PrivateSettingsGeneralSuppliersRouteChildren {
+interface PrivateSettingsGeneralSuppliersListRouteChildren {
   PrivateSettingsGeneralSuppliersNewRoute: typeof PrivateSettingsGeneralSuppliersNewRoute
-  PrivateSettingsGeneralSuppliersSupplierIdEditRoute: typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
+  PrivateSettingsGeneralSuppliersEditRoute: typeof PrivateSettingsGeneralSuppliersEditRoute
 }
 
-const PrivateSettingsGeneralSuppliersRouteChildren: PrivateSettingsGeneralSuppliersRouteChildren =
+const PrivateSettingsGeneralSuppliersListRouteChildren: PrivateSettingsGeneralSuppliersListRouteChildren =
   {
     PrivateSettingsGeneralSuppliersNewRoute:
       PrivateSettingsGeneralSuppliersNewRoute,
-    PrivateSettingsGeneralSuppliersSupplierIdEditRoute:
-      PrivateSettingsGeneralSuppliersSupplierIdEditRoute,
+    PrivateSettingsGeneralSuppliersEditRoute:
+      PrivateSettingsGeneralSuppliersEditRoute,
   }
 
-const PrivateSettingsGeneralSuppliersRouteWithChildren =
-  PrivateSettingsGeneralSuppliersRoute._addFileChildren(
-    PrivateSettingsGeneralSuppliersRouteChildren,
+const PrivateSettingsGeneralSuppliersListRouteWithChildren =
+  PrivateSettingsGeneralSuppliersListRoute._addFileChildren(
+    PrivateSettingsGeneralSuppliersListRouteChildren,
   )
 
 interface PrivateSettingsGeneralRouteChildren {
-  PrivateSettingsGeneralCustomersRoute: typeof PrivateSettingsGeneralCustomersRouteWithChildren
-  PrivateSettingsGeneralDepartmentsRoute: typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
-  PrivateSettingsGeneralEmployeesRoute: typeof PrivateSettingsGeneralEmployeesRouteWithChildren
-  PrivateSettingsGeneralMaterialsRoute: typeof PrivateSettingsGeneralMaterialsRouteWithChildren
-  PrivateSettingsGeneralSuppliersRoute: typeof PrivateSettingsGeneralSuppliersRouteWithChildren
+  PrivateSettingsGeneralCustomersListRoute: typeof PrivateSettingsGeneralCustomersListRouteWithChildren
+  PrivateSettingsGeneralDepartmentsListRoute: typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
+  PrivateSettingsGeneralEmployeesListRoute: typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  PrivateSettingsGeneralMaterialsListRoute: typeof PrivateSettingsGeneralMaterialsListRouteWithChildren
+  PrivateSettingsGeneralSuppliersListRoute: typeof PrivateSettingsGeneralSuppliersListRouteWithChildren
   PrivateSettingsGeneralIndexRoute: typeof PrivateSettingsGeneralIndexRoute
 }
 
 const PrivateSettingsGeneralRouteChildren: PrivateSettingsGeneralRouteChildren =
   {
-    PrivateSettingsGeneralCustomersRoute:
-      PrivateSettingsGeneralCustomersRouteWithChildren,
-    PrivateSettingsGeneralDepartmentsRoute:
-      PrivateSettingsGeneralDepartmentsRouteWithChildren,
-    PrivateSettingsGeneralEmployeesRoute:
-      PrivateSettingsGeneralEmployeesRouteWithChildren,
-    PrivateSettingsGeneralMaterialsRoute:
-      PrivateSettingsGeneralMaterialsRouteWithChildren,
-    PrivateSettingsGeneralSuppliersRoute:
-      PrivateSettingsGeneralSuppliersRouteWithChildren,
+    PrivateSettingsGeneralCustomersListRoute:
+      PrivateSettingsGeneralCustomersListRouteWithChildren,
+    PrivateSettingsGeneralDepartmentsListRoute:
+      PrivateSettingsGeneralDepartmentsListRouteWithChildren,
+    PrivateSettingsGeneralEmployeesListRoute:
+      PrivateSettingsGeneralEmployeesListRouteWithChildren,
+    PrivateSettingsGeneralMaterialsListRoute:
+      PrivateSettingsGeneralMaterialsListRouteWithChildren,
+    PrivateSettingsGeneralSuppliersListRoute:
+      PrivateSettingsGeneralSuppliersListRouteWithChildren,
     PrivateSettingsGeneralIndexRoute: PrivateSettingsGeneralIndexRoute,
   }
 
@@ -1058,54 +1058,54 @@ const PrivateSettingsGeneralRouteWithChildren =
     PrivateSettingsGeneralRouteChildren,
   )
 
-interface PrivateSettingsOperationObjectsRouteChildren {
+interface PrivateSettingsOperationObjectsListRouteChildren {
   PrivateSettingsOperationObjectsNewRoute: typeof PrivateSettingsOperationObjectsNewRoute
-  PrivateSettingsOperationObjectsObjectIdEditRoute: typeof PrivateSettingsOperationObjectsObjectIdEditRoute
+  PrivateSettingsOperationObjectsEditRoute: typeof PrivateSettingsOperationObjectsEditRoute
 }
 
-const PrivateSettingsOperationObjectsRouteChildren: PrivateSettingsOperationObjectsRouteChildren =
+const PrivateSettingsOperationObjectsListRouteChildren: PrivateSettingsOperationObjectsListRouteChildren =
   {
     PrivateSettingsOperationObjectsNewRoute:
       PrivateSettingsOperationObjectsNewRoute,
-    PrivateSettingsOperationObjectsObjectIdEditRoute:
-      PrivateSettingsOperationObjectsObjectIdEditRoute,
+    PrivateSettingsOperationObjectsEditRoute:
+      PrivateSettingsOperationObjectsEditRoute,
   }
 
-const PrivateSettingsOperationObjectsRouteWithChildren =
-  PrivateSettingsOperationObjectsRoute._addFileChildren(
-    PrivateSettingsOperationObjectsRouteChildren,
+const PrivateSettingsOperationObjectsListRouteWithChildren =
+  PrivateSettingsOperationObjectsListRoute._addFileChildren(
+    PrivateSettingsOperationObjectsListRouteChildren,
   )
 
-interface PrivateSettingsOperationProcessRouteChildren {
+interface PrivateSettingsOperationProcessListRouteChildren {
   PrivateSettingsOperationProcessNewRoute: typeof PrivateSettingsOperationProcessNewRoute
-  PrivateSettingsOperationProcessProcessIdEditRoute: typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  PrivateSettingsOperationProcessEditRoute: typeof PrivateSettingsOperationProcessEditRoute
 }
 
-const PrivateSettingsOperationProcessRouteChildren: PrivateSettingsOperationProcessRouteChildren =
+const PrivateSettingsOperationProcessListRouteChildren: PrivateSettingsOperationProcessListRouteChildren =
   {
     PrivateSettingsOperationProcessNewRoute:
       PrivateSettingsOperationProcessNewRoute,
-    PrivateSettingsOperationProcessProcessIdEditRoute:
-      PrivateSettingsOperationProcessProcessIdEditRoute,
+    PrivateSettingsOperationProcessEditRoute:
+      PrivateSettingsOperationProcessEditRoute,
   }
 
-const PrivateSettingsOperationProcessRouteWithChildren =
-  PrivateSettingsOperationProcessRoute._addFileChildren(
-    PrivateSettingsOperationProcessRouteChildren,
+const PrivateSettingsOperationProcessListRouteWithChildren =
+  PrivateSettingsOperationProcessListRoute._addFileChildren(
+    PrivateSettingsOperationProcessListRouteChildren,
   )
 
 interface PrivateSettingsOperationRouteChildren {
-  PrivateSettingsOperationObjectsRoute: typeof PrivateSettingsOperationObjectsRouteWithChildren
-  PrivateSettingsOperationProcessRoute: typeof PrivateSettingsOperationProcessRouteWithChildren
+  PrivateSettingsOperationObjectsListRoute: typeof PrivateSettingsOperationObjectsListRouteWithChildren
+  PrivateSettingsOperationProcessListRoute: typeof PrivateSettingsOperationProcessListRouteWithChildren
   PrivateSettingsOperationIndexRoute: typeof PrivateSettingsOperationIndexRoute
 }
 
 const PrivateSettingsOperationRouteChildren: PrivateSettingsOperationRouteChildren =
   {
-    PrivateSettingsOperationObjectsRoute:
-      PrivateSettingsOperationObjectsRouteWithChildren,
-    PrivateSettingsOperationProcessRoute:
-      PrivateSettingsOperationProcessRouteWithChildren,
+    PrivateSettingsOperationObjectsListRoute:
+      PrivateSettingsOperationObjectsListRouteWithChildren,
+    PrivateSettingsOperationProcessListRoute:
+      PrivateSettingsOperationProcessListRouteWithChildren,
     PrivateSettingsOperationIndexRoute: PrivateSettingsOperationIndexRoute,
   }
 
@@ -1166,13 +1166,13 @@ export interface FileRoutesByFullPath {
   '/project/$projectId/contract': typeof PrivateProjectProjectIdContractRouteWithChildren
   '/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
   '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
-  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
-  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
-  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
-  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
-  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
-  '/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
+  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
+  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsListRouteWithChildren
+  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersListRouteWithChildren
+  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
+  '/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
   '/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
   '/settings/general/': typeof PrivateSettingsGeneralIndexRoute
   '/settings/operation/': typeof PrivateSettingsOperationIndexRoute
@@ -1193,13 +1193,13 @@ export interface FileRoutesByFullPath {
   '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
   '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
   '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
-  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
-  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
+  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsEditRoute
+  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersEditRoute
+  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
+  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
   '/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
   '/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
   '/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
@@ -1215,13 +1215,13 @@ export interface FileRoutesByTo {
   '/project': typeof PrivateProjectIndexRoute
   '/settings': typeof PrivateSettingsIndexRoute
   '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
-  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
-  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
-  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
-  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
-  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
-  '/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
+  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
+  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  '/settings/general/materials': typeof PrivateSettingsGeneralMaterialsListRouteWithChildren
+  '/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersListRouteWithChildren
+  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
+  '/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
   '/project/$projectId': typeof PrivateProjectProjectIdIndexRoute
   '/settings/general': typeof PrivateSettingsGeneralIndexRoute
   '/settings/operation': typeof PrivateSettingsOperationIndexRoute
@@ -1239,13 +1239,13 @@ export interface FileRoutesByTo {
   '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
   '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
   '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
-  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
-  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
+  '/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsEditRoute
+  '/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersEditRoute
+  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
+  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
   '/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeIndexRoute
   '/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
   '/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
@@ -1269,13 +1269,13 @@ export interface FileRoutesById {
   '/_private/project/$projectId/contract': typeof PrivateProjectProjectIdContractRouteWithChildren
   '/_private/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
   '/_private/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/_private/settings/general/customers': typeof PrivateSettingsGeneralCustomersRouteWithChildren
-  '/_private/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsRouteWithChildren
-  '/_private/settings/general/employees': typeof PrivateSettingsGeneralEmployeesRouteWithChildren
-  '/_private/settings/general/materials': typeof PrivateSettingsGeneralMaterialsRouteWithChildren
-  '/_private/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersRouteWithChildren
-  '/_private/settings/operation/objects': typeof PrivateSettingsOperationObjectsRouteWithChildren
-  '/_private/settings/operation/process': typeof PrivateSettingsOperationProcessRouteWithChildren
+  '/_private/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
+  '/_private/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
+  '/_private/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  '/_private/settings/general/materials': typeof PrivateSettingsGeneralMaterialsListRouteWithChildren
+  '/_private/settings/general/suppliers': typeof PrivateSettingsGeneralSuppliersListRouteWithChildren
+  '/_private/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
+  '/_private/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
   '/_private/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
   '/_private/settings/general/': typeof PrivateSettingsGeneralIndexRoute
   '/_private/settings/operation/': typeof PrivateSettingsOperationIndexRoute
@@ -1296,13 +1296,13 @@ export interface FileRoutesById {
   '/_private/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
   '/_private/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
   '/_private/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/_private/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersCustomerIdEditRoute
-  '/_private/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsDepartmentIdEditRoute
-  '/_private/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEmployeeIdEditRoute
-  '/_private/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsMaterialIdEditRoute
-  '/_private/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersSupplierIdEditRoute
-  '/_private/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsObjectIdEditRoute
-  '/_private/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessProcessIdEditRoute
+  '/_private/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
+  '/_private/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
+  '/_private/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
+  '/_private/settings/general/materials/$materialId/edit': typeof PrivateSettingsGeneralMaterialsEditRoute
+  '/_private/settings/general/suppliers/$supplierId/edit': typeof PrivateSettingsGeneralSuppliersEditRoute
+  '/_private/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
+  '/_private/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
   '/_private/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
   '/_private/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
   '/_private/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
@@ -1602,7 +1602,7 @@ export const routeTree = rootRoute
       "parent": "/_private/project/$projectId"
     },
     "/_private/settings/general/customers": {
-      "filePath": "./private/settings/general/customers.tsx",
+      "filePath": "./private/settings/general/customers/list.tsx",
       "parent": "/_private/settings/general",
       "children": [
         "/_private/settings/general/customers/new",
@@ -1610,7 +1610,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/general/departments": {
-      "filePath": "./private/settings/general/departments.tsx",
+      "filePath": "./private/settings/general/departments/list.tsx",
       "parent": "/_private/settings/general",
       "children": [
         "/_private/settings/general/departments/new",
@@ -1618,7 +1618,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/general/employees": {
-      "filePath": "./private/settings/general/employees.tsx",
+      "filePath": "./private/settings/general/employees/list.tsx",
       "parent": "/_private/settings/general",
       "children": [
         "/_private/settings/general/employees/new",
@@ -1626,7 +1626,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/general/materials": {
-      "filePath": "./private/settings/general/materials.tsx",
+      "filePath": "./private/settings/general/materials/list.tsx",
       "parent": "/_private/settings/general",
       "children": [
         "/_private/settings/general/materials/new",
@@ -1634,7 +1634,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/general/suppliers": {
-      "filePath": "./private/settings/general/suppliers.tsx",
+      "filePath": "./private/settings/general/suppliers/list.tsx",
       "parent": "/_private/settings/general",
       "children": [
         "/_private/settings/general/suppliers/new",
@@ -1642,7 +1642,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/operation/objects": {
-      "filePath": "./private/settings/operation/objects.tsx",
+      "filePath": "./private/settings/operation/objects/list.tsx",
       "parent": "/_private/settings/operation",
       "children": [
         "/_private/settings/operation/objects/new",
@@ -1650,7 +1650,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_private/settings/operation/process": {
-      "filePath": "./private/settings/operation/process.tsx",
+      "filePath": "./private/settings/operation/process/list.tsx",
       "parent": "/_private/settings/operation",
       "children": [
         "/_private/settings/operation/process/new",
@@ -1750,31 +1750,31 @@ export const routeTree = rootRoute
       "parent": "/_private/project/$projectId/issues/request"
     },
     "/_private/settings/general/customers/$customerId/edit": {
-      "filePath": "./private/settings/general/customers/$customerId/edit.tsx",
+      "filePath": "./private/settings/general/customers/edit.tsx",
       "parent": "/_private/settings/general/customers"
     },
     "/_private/settings/general/departments/$departmentId/edit": {
-      "filePath": "./private/settings/general/departments/$departmentId/edit.tsx",
+      "filePath": "./private/settings/general/departments/edit.tsx",
       "parent": "/_private/settings/general/departments"
     },
     "/_private/settings/general/employees/$employeeId/edit": {
-      "filePath": "./private/settings/general/employees/$employeeId/edit.tsx",
+      "filePath": "./private/settings/general/employees/edit.tsx",
       "parent": "/_private/settings/general/employees"
     },
     "/_private/settings/general/materials/$materialId/edit": {
-      "filePath": "./private/settings/general/materials/$materialId/edit.tsx",
+      "filePath": "./private/settings/general/materials/edit.tsx",
       "parent": "/_private/settings/general/materials"
     },
     "/_private/settings/general/suppliers/$supplierId/edit": {
-      "filePath": "./private/settings/general/suppliers/$supplierId/edit.tsx",
+      "filePath": "./private/settings/general/suppliers/edit.tsx",
       "parent": "/_private/settings/general/suppliers"
     },
     "/_private/settings/operation/objects/$objectId/edit": {
-      "filePath": "./private/settings/operation/objects/$objectId/edit.tsx",
+      "filePath": "./private/settings/operation/objects/edit.tsx",
       "parent": "/_private/settings/operation/objects"
     },
     "/_private/settings/operation/process/$processId/edit": {
-      "filePath": "./private/settings/operation/process/$processId/edit.tsx",
+      "filePath": "./private/settings/operation/process/edit.tsx",
       "parent": "/_private/settings/operation/process"
     },
     "/_private/project/$projectId/issues/me/": {

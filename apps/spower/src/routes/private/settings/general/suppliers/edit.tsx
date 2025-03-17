@@ -5,23 +5,23 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditMaterialForm } from '../../../../../../components';
-import { useInvalidateQueries } from '../../../../../../hooks';
+import { EditSupplierForm } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const { materialId } = Route.useParams();
+  const { supplierId } = Route.useParams();
   const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
     invalidates([
-      api.material.byId.getKey(materialId),
-      api.material.list.getKey()
+      api.supplier.byId.getKey(supplierId),
+      api.supplier.list.getKey()
     ]);
-  }, [history, invalidates, materialId]);
+  }, [history, invalidates, supplierId]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -30,17 +30,17 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Chỉnh sửa vật tư'}
+      title={'Chỉnh sửa nhà cung cấp'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'edit-material-modal'}
+      id={'edit-supplier-modal'}
     >
-      <EditMaterialForm
-        materialId={materialId}
+      <EditSupplierForm
+        supplierId={supplierId}
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -49,9 +49,9 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/settings/general/materials/$materialId/edit'
+  '/_private/settings/general/suppliers/$supplierId/edit'
 )({
   component: Component,
-  loader: ({ context: { queryClient }, params: { materialId } }) =>
-    queryClient?.ensureQueryData(api.material.byId.getOptions(materialId))
+  loader: ({ context: { queryClient }, params: { supplierId } }) =>
+    queryClient?.ensureQueryData(api.supplier.byId.getOptions(supplierId))
 });

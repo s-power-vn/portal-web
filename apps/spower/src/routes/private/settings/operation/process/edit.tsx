@@ -5,8 +5,8 @@ import { useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditProcessForm } from '../../../../../../components';
-import { useInvalidateQueries } from '../../../../../../hooks';
+import { EditProcessForm } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
   '/_private/settings/operation/process/$processId/edit'

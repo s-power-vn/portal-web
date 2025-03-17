@@ -1,10 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import {
-  Outlet,
-  SearchSchemaInput,
-  createFileRoute,
-  useNavigate
-} from '@tanstack/react-router';
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
@@ -13,9 +8,10 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { DepartmentData, ListSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
+import type { SupplierResponse } from 'portal-core';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import {
   Button,
@@ -30,45 +26,36 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/departments'
-)({
+export const Route = createFileRoute('/_private/settings/general/suppliers')({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
-      api.department.list.getOptions({
-        filter: deps.search.filter,
-        pageIndex: 1,
-        pageSize: 20
-      })
-    ),
+    queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
   beforeLoad: () => {
     return {
-      title: 'Quản lý phòng ban'
+      title: 'Quản lý nhà cung cấp'
     };
   }
 });
 
 function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
+  const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.department.list.getKey({ filter: search ?? '' }),
+      queryKey: api.supplier.list.getKey({ filter: search.filter ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.department.list.fetcher({
-          filter: search ?? '',
+        api.supplier.list.fetcher({
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -77,21 +64,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const departments = useMemo(
+  const suppliers = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteDepartment = api.department.delete.useMutation({
+  const deleteSupplier = api.supplier.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa phòng ban thành công');
-      invalidates([api.department.list.getKey({ filter: search ?? '' })]);
+      success('Xóa nhà cung cấp thành công');
+      invalidates([api.supplier.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<DepartmentData>();
+  const columnHelper = createColumnHelper<SupplierResponse>();
 
   const columns = useMemo(
     () => [
@@ -105,42 +92,35 @@ function Component() {
         header: () => (
           <div className={'flex items-center justify-center'}>#</div>
         ),
-        size: 60
+        size: 30
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên phòng ban',
+        header: () => 'Tên nhà cung cấp',
         footer: info => info.column.id,
         size: 300
       }),
-      columnHelper.accessor('description', {
+      columnHelper.accessor('phone', {
         cell: info => info.getValue(),
-        header: () => 'Mô tả',
+        header: () => 'Số điện thoại',
+        footer: info => info.column.id,
+        size: 150
+      }),
+      columnHelper.accessor('email', {
+        cell: info => info.getValue(),
+        header: () => 'Email',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('address', {
+        cell: info => info.getValue(),
+        header: () => 'Địa chỉ',
         footer: info => info.column.id
       }),
-      columnHelper.accessor('roles', {
-        cell: info => {
-          const roles = info.getValue();
-          return (
-            <div className="flex flex-wrap gap-1">
-              {roles && roles.length > 0 ? (
-                roles.map(role => (
-                  <span
-                    key={role.id}
-                    className="bg-appBlueLight text-appWhite rounded-full px-2 py-0.5 text-xs"
-                  >
-                    {role.name}
-                  </span>
-                ))
-              ) : (
-                <span className="text-xs text-gray-400">Không có</span>
-              )}
-            </div>
-          );
-        },
-        header: () => 'Chức danh',
-        footer: info => info.column.id,
-        size: 300
+      columnHelper.accessor('note', {
+        cell: info => info.getValue(),
+        header: () => 'Ghi chú',
+        footer: info => info.column.id
       }),
       columnHelper.display({
         id: 'actions',
@@ -149,11 +129,12 @@ function Component() {
             <div className={'flex gap-1'}>
               <Button
                 className={'h-6 px-3'}
-                onClick={() => {
+                onClick={e => {
+                  e.stopPropagation();
                   navigate({
-                    to: './$departmentId/edit',
+                    to: './$supplierId/edit',
                     params: {
-                      departmentId: row.original.id
+                      supplierId: row.original.id
                     },
                     search
                   });
@@ -164,9 +145,11 @@ function Component() {
               <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
-                onClick={() => {
-                  confirm('Bạn chắc chắn muốn xóa phòng ban này?', () => {
-                    deleteDepartment.mutate(row.original.id);
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  confirm('Bạn chắc chắn muốn xóa nhà cung cấp này?', () => {
+                    deleteSupplier.mutate(row.original.id);
                   });
                 }}
               >
@@ -175,17 +158,16 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác',
-        size: 120
+        header: () => 'Thao tác'
       })
     ],
-    [columnHelper, navigate, confirm, deleteDepartment, search]
+    [columnHelper, navigate, confirm, deleteSupplier, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: departments
+    data: suppliers
   });
 
   const { rows } = table.getRowModel();
@@ -212,11 +194,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (departmentId: string) => {
+    (supplierId: string) => {
       navigate({
-        to: './$departmentId/edit',
+        to: './$supplierId/edit',
         params: {
-          departmentId
+          supplierId
         },
         search
       });
@@ -224,7 +206,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddDepartment = useCallback(() => {
+  const handleAddSupplier = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -232,21 +214,27 @@ function Component() {
   }, [navigate, search]);
 
   const handleSearchChange = useCallback((value: string | undefined) => {
-    setSearch(value);
+    navigate({
+      to: '.',
+      search: {
+        ...search,
+        filter: value ?? ''
+      }
+    });
   }, []);
 
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý phòng ban'} />
+      <PageHeader title={'Quản lý nhà cung cấp'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddDepartment}>
+          <Button className={'flex gap-1'} onClick={handleAddSupplier}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm phòng ban
+            Thêm nhà cung cấp
           </Button>
           <DebouncedInput
-            value={search}
+            value={search.filter}
             className={'h-9 w-56'}
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}
@@ -269,7 +257,7 @@ function Component() {
             ) : (
               <Table
                 style={{
-                  width: table.getTotalSize(),
+                  width: '100%',
                   tableLayout: 'fixed'
                 }}
               >
@@ -292,7 +280,6 @@ function Component() {
                           className={'text-appWhite whitespace-nowrap'}
                           style={{
                             width: header.getSize(),
-                            minWidth: header.getSize(),
                             maxWidth: header.getSize()
                           }}
                         >
@@ -335,7 +322,6 @@ function Component() {
                               className={'truncate text-left'}
                               style={{
                                 width: cell.column.getSize(),
-                                minWidth: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()
                               }}
                             >
