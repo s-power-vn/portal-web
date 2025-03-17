@@ -35,13 +35,11 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { IndeterminateCheckbox } from '../../../../components/checkbox';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { IndeterminateCheckbox } from '../../../../../components/checkbox';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/operation/objects'
-)({
+export const Route = createFileRoute('/_private/settings/operation/objects')({
   component: Component,
   loader: ({ context: { queryClient } }) =>
     queryClient?.ensureQueryData(api.object.list.getOptions()),

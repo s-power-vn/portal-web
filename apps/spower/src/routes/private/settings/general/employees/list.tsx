@@ -31,12 +31,10 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/employees'
-)({
+export const Route = createFileRoute('/_private/settings/general/employees')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     ListSchema.validateSync(input),

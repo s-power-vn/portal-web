@@ -10,7 +10,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { SupplierResponse } from 'portal-core';
+import type { MaterialResponse } from 'portal-core';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -27,12 +27,10 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { PageHeader } from '../../../../components';
-import { useInvalidateQueries } from '../../../../hooks';
+import { PageHeader } from '../../../../../components';
+import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/general/suppliers'
-)({
+export const Route = createFileRoute('/_private/settings/general/materials')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     ListSchema.validateSync(input),
@@ -41,7 +39,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.supplier.list.getOptions({
+      api.material.list.getOptions({
         filter: deps.search.filter,
         pageIndex: 1,
         pageSize: 20
@@ -49,7 +47,7 @@ export const Route = createFileRoute(
     ),
   beforeLoad: () => {
     return {
-      title: 'Quản lý nhà cung cấp'
+      title: 'Quản lý danh mục vật tư'
     };
   }
 });
@@ -62,9 +60,9 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.supplier.list.getKey({ filter: search ?? '' }),
+      queryKey: api.material.list.getKey({ filter: search ?? '' }),
       queryFn: ({ pageParam = 1 }) =>
-        api.supplier.list.fetcher({
+        api.material.list.fetcher({
           filter: search ?? '',
           pageIndex: pageParam,
           pageSize: 20
@@ -74,21 +72,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const suppliers = useMemo(
+  const materials = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteSupplier = api.supplier.delete.useMutation({
+  const deleteMaterial = api.material.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa nhà cung cấp thành công');
-      invalidates([api.supplier.list.getKey({ filter: search ?? '' })]);
+      success('Xóa vật tư thành công');
+      invalidates([api.material.list.getKey({ filter: search ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<SupplierResponse>();
+  const columnHelper = createColumnHelper<MaterialResponse>();
 
   const columns = useMemo(
     () => [
@@ -106,26 +104,21 @@ function Component() {
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên nhà cung cấp',
+        header: () => 'Tên vật tư',
         footer: info => info.column.id,
         size: 300
       }),
-      columnHelper.accessor('phone', {
+      columnHelper.accessor('code', {
         cell: info => info.getValue(),
-        header: () => 'Số điện thoại',
+        header: () => 'Mã vật tư',
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('email', {
+      columnHelper.accessor('unit', {
         cell: info => info.getValue(),
-        header: () => 'Email',
+        header: () => 'Đơn vị',
         footer: info => info.column.id,
-        size: 200
-      }),
-      columnHelper.accessor('address', {
-        cell: info => info.getValue(),
-        header: () => 'Địa chỉ',
-        footer: info => info.column.id
+        size: 100
       }),
       columnHelper.accessor('note', {
         cell: info => info.getValue(),
@@ -142,9 +135,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$supplierId/edit',
+                    to: './$materialId/edit',
                     params: {
-                      supplierId: row.original.id
+                      materialId: row.original.id
                     },
                     search
                   });
@@ -158,8 +151,8 @@ function Component() {
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa nhà cung cấp này?', () => {
-                    deleteSupplier.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
+                    deleteMaterial.mutate(row.original.id);
                   });
                 }}
               >
@@ -168,16 +161,17 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác'
+        header: () => 'Thao tác',
+        size: 120
       })
     ],
-    [columnHelper, navigate, confirm, deleteSupplier, search]
+    [columnHelper, navigate, confirm, deleteMaterial, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: suppliers
+    data: materials
   });
 
   const { rows } = table.getRowModel();
@@ -204,11 +198,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (supplierId: string) => {
+    (materialId: string) => {
       navigate({
-        to: './$supplierId/edit',
+        to: './$materialId/edit',
         params: {
-          supplierId
+          materialId
         },
         search
       });
@@ -216,7 +210,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddSupplier = useCallback(() => {
+  const handleAddMaterial = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -230,12 +224,12 @@ function Component() {
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý nhà cung cấp'} />
+      <PageHeader title={'Quản lý danh mục vật tư'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddSupplier}>
+          <Button className={'flex gap-1'} onClick={handleAddMaterial}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm nhà cung cấp
+            Thêm vật tư
           </Button>
           <DebouncedInput
             value={search}

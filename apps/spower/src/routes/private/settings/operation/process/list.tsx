@@ -30,16 +30,14 @@ import {
   useConfirm
 } from '@minhdtb/storeo-theme';
 
-import { EmployeeDisplay, PageHeader } from '../../../../components';
-import { ApplyProcessForm } from '../../../../components/domains/process/form/apply-process-form';
+import { EmployeeDisplay, PageHeader } from '../../../../../components';
+import { ApplyProcessForm } from '../../../../../components/domains/process/form/apply-process-form';
 import {
   useIntersectionObserver,
   useInvalidateQueries
-} from '../../../../hooks';
+} from '../../../../../hooks';
 
-export const Route = createFileRoute(
-  '/_private/settings/operation/process'
-)({
+export const Route = createFileRoute('/_private/settings/operation/process')({
   component: Component,
   beforeLoad: () => ({ title: 'Quản lý quy trình' })
 });

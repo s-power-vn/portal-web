@@ -49,56 +49,60 @@ export const routes = rootRoute('./root.tsx', [
       index('./private/settings/index.tsx'),
       route('general', './private/settings/general.tsx', [
         index('./private/settings/general/index.tsx'),
-        route('departments', './private/settings/general/departments.tsx', [
-          route('new', './private/settings/general/departments/new.tsx'),
-          route(
-            '$departmentId/edit',
-            './private/settings/general/departments/$departmentId/edit.tsx'
-          )
-        ]),
-        route('employees', './private/settings/general/employees.tsx', [
+        route(
+          'departments',
+          './private/settings/general/departments/list.tsx',
+          [
+            route('new', './private/settings/general/departments/new.tsx'),
+            route(
+              '$departmentId/edit',
+              './private/settings/general/departments/edit.tsx'
+            )
+          ]
+        ),
+        route('employees', './private/settings/general/employees/list.tsx', [
           route('new', './private/settings/general/employees/new.tsx'),
           route(
             '$employeeId/edit',
-            './private/settings/general/employees/$employeeId/edit.tsx'
+            './private/settings/general/employees/edit.tsx'
           )
         ]),
-        route('customers', './private/settings/general/customers.tsx', [
+        route('customers', './private/settings/general/customers/list.tsx', [
           route('new', './private/settings/general/customers/new.tsx'),
           route(
             '$customerId/edit',
-            './private/settings/general/customers/$customerId/edit.tsx'
+            './private/settings/general/customers/edit.tsx'
           )
         ]),
-        route('suppliers', './private/settings/general/suppliers.tsx', [
+        route('suppliers', './private/settings/general/suppliers/list.tsx', [
           route('new', './private/settings/general/suppliers/new.tsx'),
           route(
             '$supplierId/edit',
-            './private/settings/general/suppliers/$supplierId/edit.tsx'
+            './private/settings/general/suppliers/edit.tsx'
           )
         ]),
-        route('materials', './private/settings/general/materials.tsx', [
+        route('materials', './private/settings/general/materials/list.tsx', [
           route('new', './private/settings/general/materials/new.tsx'),
           route(
             '$materialId/edit',
-            './private/settings/general/materials/$materialId/edit.tsx'
+            './private/settings/general/materials/edit.tsx'
           )
         ])
       ]),
       route('operation', './private/settings/operation.tsx', [
         index('./private/settings/operation/index.tsx'),
-        route('objects', './private/settings/operation/objects.tsx', [
+        route('objects', './private/settings/operation/objects/list.tsx', [
           route('new', './private/settings/operation/objects/new.tsx'),
           route(
             '$objectId/edit',
-            './private/settings/operation/objects/$objectId/edit.tsx'
+            './private/settings/operation/objects/edit.tsx'
           )
         ]),
-        route('process', './private/settings/operation/process.tsx', [
+        route('process', './private/settings/operation/process/list.tsx', [
           route('new', './private/settings/operation/process/new.tsx'),
           route(
             '$processId/edit',
-            './private/settings/operation/process/$processId/edit.tsx'
+            './private/settings/operation/process/edit.tsx'
           )
         ])
       ])
