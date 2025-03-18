@@ -107,8 +107,8 @@ function getEdges(data: ProcessData, selectedFlow: Flow | null) {
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        width: 10,
-        height: 10,
+        width: isSelected ? 15 : 20,
+        height: isSelected ? 15 : 20,
         color: isSelected ? '#4B5563' : '#9CA3AF'
       }
     };
