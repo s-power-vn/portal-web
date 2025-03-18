@@ -65,12 +65,14 @@ module.exports = {
         appBlueLight: '#38598b',
         appBlack: '#101820',
         appWhite: '#ffffff',
-        appErrorLight: '#ce3f4b',
         appError: '#CC313D',
+        appErrorLight: '#e64a56',
         appSuccess: '#6AB187',
+        appSuccessLight: '#87c7a3',
         appWarning: '#FFBB00',
-        appGrayLight: '#f3f4f6',
+        appWarningLight: '#ffd766',
         appGray: '#e5e7eb',
+        appGrayLight: '#f3f4f6',
         appGrayDark: '#d1d5db',
         tremor: {
           brand: {

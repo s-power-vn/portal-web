@@ -161,7 +161,7 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
   const { data: departmentsResult } = api.department.list.useSuspenseQuery();
   const departments = departmentsResult?.items || [];
 
-  const { data: employees } = api.employee.listByCondition.useSuspenseQuery({
+  const { data: employees } = api.employee.list.useSuspenseQuery({
     variables: {
       filter: employeeIds.length
         ? employeeIds.map(id => `id = "${id}"`).join(' || ')

@@ -237,9 +237,13 @@ const ActionComponent: FC<IssueActionProps> = props => {
           </label>
         </div>
       </Show>
-      <div className={'flex items-center gap-2'}>
+      <div className={'grid grid-cols-5 gap-2'}>
         <Show when={returnNode}>
-          <Button onClick={returnNodeClick} className="bg-appError">
+          <Button
+            truncate
+            onClick={returnNodeClick}
+            className="bg-appError hover:bg-appErrorLight"
+          >
             {returnNode?.action ?? 'Chuyển trả'}
           </Button>
         </Show>
@@ -247,11 +251,12 @@ const ActionComponent: FC<IssueActionProps> = props => {
           {item => {
             return (
               <Button
+                truncate
                 key={item.to}
                 onClick={() => forwardNodeClick(item)}
                 className={cn(
                   isFinishedNode(process?.process as ProcessData, item.to) &&
-                    'bg-appSuccess'
+                    'bg-appSuccess hover:bg-appSuccessLight'
                 )}
               >
                 {item.action ?? `Chuyển ${item.toNode?.name}`}
