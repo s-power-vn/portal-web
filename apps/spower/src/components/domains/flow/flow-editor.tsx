@@ -109,8 +109,7 @@ function getEdges(data: ProcessData, selectedFlow: Flow | null) {
         type: MarkerType.ArrowClosed,
         width: isSelected ? 13 : 20,
         height: isSelected ? 13 : 20,
-        color: isSelected ? '#CC313D' : '#9CA3AF',
-        zIndex: 1000
+        color: isSelected ? '#CC313D' : '#9CA3AF'
       }
     };
   });
