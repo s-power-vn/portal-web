@@ -12,7 +12,7 @@ export const objectTypeApi = router('objectType', {
       client
         .collection<ObjectTypeData>(Collections.ObjectType)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: params?.filter ?? ''
+          filter: params?.filter
         })
   }),
   byId: router.query({

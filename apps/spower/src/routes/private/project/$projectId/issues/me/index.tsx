@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -10,7 +9,7 @@ import {
 import { FilesIcon, Loader } from 'lucide-react';
 import { IssueData, ListSchema, api } from 'portal-api';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -33,21 +32,37 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
-const Component = () => {
+export const Route = createFileRoute('/_private/project/$projectId/issues/me/')(
+  {
+    component: Component,
+    validateSearch: input => ListSchema.validateSync(input),
+    loaderDeps: ({ search }) => {
+      return { search };
+    },
+    loader: ({ deps, params, context: { queryClient } }) =>
+      queryClient?.ensureQueryData(
+        api.issue.listMine.getOptions({
+          ...deps.search,
+          filter: deps.search.filter ?? '',
+          projectId: params.projectId
+        })
+      )
+  }
+);
+
+function Component() {
   const { projectId } = Route.useParams();
   const navigate = useNavigate({ from: Route.fullPath });
-  const [search, setSearch] = useState<string | undefined>();
-  const parentRef = useRef<HTMLDivElement>(null);
+  const search = Route.useSearch();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: api.issue.listMine.getKey({
-        filter: search ?? '',
-        projectId
+        filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
         api.issue.listMine.fetcher({
-          filter: search ?? '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20,
           projectId
@@ -172,10 +187,18 @@ const Component = () => {
       <div className={'flex items-center justify-between gap-2'}>
         <NewIssueButton projectId={projectId} />
         <DebouncedInput
-          value={search}
+          value={search.filter}
           className={'h-8 w-56'}
           placeholder={'Tìm kiếm...'}
-          onChange={value => setSearch(value)}
+          onChange={value =>
+            navigate({
+              to: '.',
+              search: {
+                ...search,
+                filter: value ?? ''
+              }
+            })
+          }
         />
       </div>
       <div
@@ -278,15 +301,4 @@ const Component = () => {
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/project/$projectId/issues/me/'
-)({
-  component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
-  loaderDeps: ({ search }) => {
-    return { search };
-  }
-});
+}

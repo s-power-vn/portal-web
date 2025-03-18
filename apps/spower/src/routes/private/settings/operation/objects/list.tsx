@@ -46,7 +46,14 @@ export const Route = createFileRoute('/_private/settings/operation/objects')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.object.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(
+      api.object.list.getOptions({
+        ...deps.search,
+        filter: deps.search.filter
+          ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
+          : ''
+      })
+    ),
   beforeLoad: () => {
     return {
       title: 'Quản lý đối tượng'
@@ -63,10 +70,14 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.object.list.getKey({ filter: search.filter ?? '' }),
+      queryKey: api.object.list.getKey({
+        filter: search.filter ?? ''
+      }),
       queryFn: ({ pageParam = 1 }) =>
         api.object.list.fetcher({
-          filter: search.filter ?? '',
+          filter: search.filter
+            ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
+            : '',
           pageIndex: pageParam,
           pageSize: 20
         }),

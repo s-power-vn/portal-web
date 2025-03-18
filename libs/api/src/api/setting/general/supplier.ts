@@ -8,11 +8,10 @@ import type { ListParams } from '../../types';
 export const supplierApi = router('supplier', {
   list: router.query({
     fetcher: (params?: ListParams) => {
-      const filter = `(name ~ "${params?.filter ?? ''}" || email ~ "${params?.filter ?? ''}")`;
       return client
         .collection(Collections.Supplier)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter,
+          filter: params?.filter,
           sort: '-created'
         });
     }

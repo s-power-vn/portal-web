@@ -36,7 +36,14 @@ export const Route = createFileRoute('/_private/settings/general/suppliers')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.supplier.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(
+      api.supplier.list.getOptions({
+        ...deps.search,
+        filter: deps.search.filter
+          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
+          : ''
+      })
+    ),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhà cung cấp'
@@ -52,10 +59,14 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.supplier.list.getKey({ filter: search.filter ?? '' }),
+      queryKey: api.supplier.list.getKey({
+        filter: search.filter ?? ''
+      }),
       queryFn: ({ pageParam = 1 }) =>
         api.supplier.list.fetcher({
-          filter: search.filter ?? '',
+          filter: search.filter
+            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
+            : '',
           pageIndex: pageParam,
           pageSize: 20
         }),
