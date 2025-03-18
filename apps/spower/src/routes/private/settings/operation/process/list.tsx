@@ -44,7 +44,14 @@ export const Route = createFileRoute('/_private/settings/operation/process')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.process.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(
+      api.process.list.getOptions({
+        ...deps.search,
+        filter: deps.search.filter
+          ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
+          : ''
+      })
+    ),
   beforeLoad: () => ({ title: 'Quản lý quy trình' })
 });
 
@@ -57,10 +64,14 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.process.list.getKey({ filter: search.filter ?? '' }),
+      queryKey: api.process.list.getKey({
+        filter: search.filter ?? ''
+      }),
       queryFn: ({ pageParam = 1 }) =>
         api.process.list.fetcher({
-          filter: search.filter ?? '',
+          filter: search.filter
+            ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
+            : '',
           pageIndex: pageParam,
           pageSize: 20
         }),

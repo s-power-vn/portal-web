@@ -36,7 +36,14 @@ export const Route = createFileRoute('/_private/settings/general/materials')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.material.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(
+      api.material.list.getOptions({
+        ...deps.search,
+        filter: deps.search.filter
+          ? `(name ~ "${deps.search.filter}") || (code ~ "${deps.search.filter}")`
+          : ''
+      })
+    ),
   beforeLoad: () => {
     return {
       title: 'Quản lý danh mục vật tư'
@@ -52,10 +59,14 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({ filter: search.filter ?? '' }),
+      queryKey: api.material.list.getKey({
+        filter: search.filter ?? ''
+      }),
       queryFn: ({ pageParam = 1 }) =>
         api.material.list.fetcher({
-          filter: search.filter ?? '',
+          filter: search.filter
+            ? `(name ~ "${search.filter}") || (code ~ "${search.filter}")`
+            : '',
           pageIndex: pageParam,
           pageSize: 20
         }),

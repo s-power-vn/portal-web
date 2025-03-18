@@ -19,11 +19,10 @@ export type DepartmentData = DepartmentResponse<
 export const departmentApi = router('department', {
   list: router.query({
     fetcher: (params?: ListParams) => {
-      const filter = params?.filter ? `name ~ "${params.filter}"` : '';
       return client
         .collection<DepartmentData>(Collections.Department)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter,
+          filter: params?.filter,
           sort: '-created'
         });
     }

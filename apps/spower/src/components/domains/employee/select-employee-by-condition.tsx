@@ -33,7 +33,7 @@ export const SelectEmployeeByCondition: FC<
         ? `(${props.condition}) && (name ~ "${search ?? ''}" || email ~ "${search ?? ''}")`
         : `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`;
 
-      const result = await api.employee.listByCondition.fetcher({
+      const result = await api.employee.list.fetcher({
         filter,
         pageIndex: page ?? 1,
         pageSize: 10

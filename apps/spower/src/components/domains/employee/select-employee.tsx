@@ -24,7 +24,7 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const result = await api.employee.listByCondition.fetcher({
+      const result = await api.employee.list.fetcher({
         filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
         pageIndex: page ?? 1,
         pageSize: 10

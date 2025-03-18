@@ -21,9 +21,7 @@ export const objectApi = router('object', {
       client
         .collection<ObjectData>(Collections.Object)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: params?.filter
-            ? `(name = "${params.filter}") || (description = "${params.filter}")`
-            : '',
+          filter: params?.filter,
           expand: `process, type`
         })
   }),
@@ -33,9 +31,8 @@ export const objectApi = router('object', {
         .collection<ObjectData>(Collections.Object)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
           filter:
-            (params?.filter
-              ? `(name = "${params.filter}") || (description = "${params.filter}") && `
-              : '') + `active = true`,
+            (params?.filter ? `${params.filter} && ` : '') +
+            `( active = true )`,
           expand: `process, type`
         })
   }),

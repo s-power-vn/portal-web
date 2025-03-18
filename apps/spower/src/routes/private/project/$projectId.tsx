@@ -21,7 +21,6 @@ import { Button } from '@minhdtb/storeo-theme';
 import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
-// Create a temporary variable to use within the component
 const ThisRoute = createFileRoute('/_private/project/$projectId')();
 
 const Component = () => {
@@ -33,7 +32,6 @@ const Component = () => {
   });
   const navigate = useNavigate({ from: '/project/$projectId' });
 
-  // Truy vấn trực tiếp các object types theo tên
   const { data: requestType } = api.objectType.byType.useSuspenseQuery({
     variables: 'Request'
   });
@@ -42,7 +40,6 @@ const Component = () => {
     variables: 'Price'
   });
 
-  // Kiểm tra có tồn tại object thuộc loại Request không
   const { data: requestObjects } = requestType
     ? api.object.listActive.useSuspenseQuery({
         variables: {

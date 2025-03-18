@@ -36,7 +36,14 @@ export const Route = createFileRoute('/_private/settings/general/employees')({
     return { search };
   },
   loader: ({ deps, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(api.employee.list.getOptions(deps.search)),
+    queryClient?.ensureQueryData(
+      api.employee.list.getOptions({
+        ...deps.search,
+        filter: deps.search.filter
+          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
+          : ''
+      })
+    ),
   beforeLoad: () => {
     return {
       title: 'Quản lý nhân viên'
@@ -77,10 +84,14 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.employee.list.getKey({ filter: search.filter ?? '' }),
+      queryKey: api.employee.list.getKey({
+        filter: search.filter ?? ''
+      }),
       queryFn: ({ pageParam = 1 }) =>
         api.employee.list.fetcher({
-          filter: search.filter ?? '',
+          filter: search.filter
+            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
+            : '',
           pageIndex: pageParam,
           pageSize: 20
         }),
