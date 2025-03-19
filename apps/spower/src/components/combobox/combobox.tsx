@@ -275,7 +275,7 @@ export function Combobox({
                   <span
                     key={item.value}
                     className={cn(
-                      'bg-appGrayLight border-appGray flex items-center gap-1 rounded-md border px-2 py-1',
+                      'bg-appGrayLight border-appGrayLight flex items-center gap-1 rounded-md border px-2 py-1',
                       !disabled && 'cursor-pointer'
                     )}
                     onClick={e => handleRemoveItem(e, item)}
@@ -320,7 +320,9 @@ export function Combobox({
         <PopoverContent
           className="popover-content p-0"
           style={{
-            width: containerRef.current?.offsetWidth
+            minWidth: containerRef.current?.offsetWidth,
+            width: 'max-content',
+            maxWidth: `${Math.max((containerRef.current?.offsetWidth || 0) * 1.5, 320)}px`
           }}
           container={containerRef.current}
           align={align}
