@@ -5,13 +5,12 @@ import {
   ArrowLeftToLineIcon,
   ArrowRightToLineIcon,
   ArrowUpToLineIcon,
-  Edit,
   Plus,
   Trash2
 } from 'lucide-react';
 import * as yup from 'yup';
 
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import {
@@ -20,25 +19,15 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-  showModal
+  SelectValue
 } from '@minhdtb/storeo-theme';
 
-import { ConditionDisplay } from './condition-display';
-import { ConditionGenerator } from './condition-generator';
 import type { Node, NodeType, OperationType, Point, PointRole } from './types';
-
-// Hàm cắt ngắn ID
-const truncateId = (id: string, startChars = 8, endChars = 8) => {
-  if (!id || id.length <= startChars + endChars) return id;
-  return `${id.substring(0, startChars)}...${id.substring(id.length - endChars)}`;
-};
 
 type NodeFormValues = {
   id: string;
   name: string;
   description: string;
-  condition: string;
   type: NodeType;
   operationType: OperationType;
   points: Point[];
@@ -49,7 +38,6 @@ const schema = yup
     id: yup.string().required(),
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
-    condition: yup.string().default(''),
     type: yup.string().oneOf(['start', 'finished', 'normal']).default('normal'),
     operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
     points: yup
@@ -93,7 +81,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       id: '',
       name: '',
       description: '',
-      condition: '',
       type: 'normal',
       operationType: 'manual',
       points: []
@@ -109,7 +96,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         id: rest.id,
         name: rest.name,
         description: rest.description || '',
-        condition: rest.condition || '',
         type: rest.type,
         operationType: rest.operationType,
         points: Array.isArray(rest.points) ? rest.points : []
@@ -159,23 +145,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     }
   };
 
-  const handleShowConditionGenerator = useCallback(() => {
-    showModal({
-      title: 'Tạo điều kiện',
-      className: 'max-h-[80vh]',
-      children: ({ close }) => (
-        <ConditionGenerator
-          value={watch('condition')}
-          onChange={value => {
-            setValue('condition', value);
-            handleSubmit(onSubmit)();
-            close();
-          }}
-        />
-      )
-    });
-  }, [handleSubmit, setValue, watch, selectedNode]);
-
   return (
     <div className="flex max-h-0 flex-col">
       <div className="flex-1">
@@ -222,65 +191,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 {errors.description && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.description.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Điều kiện</label>
-                <div className="flex flex-col gap-2">
-                  {watch('condition') ? (
-                    <div className="rounded-md border p-2">
-                      <ConditionDisplay condition={watch('condition')} />
-                    </div>
-                  ) : (
-                    <div className="rounded-md border p-2 text-sm text-gray-500">
-                      Không có điều kiện
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-8"
-                      onClick={handleShowConditionGenerator}
-                    >
-                      <Edit size={16} className="mr-1" />
-                      {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
-                    </Button>
-                    {watch('condition') && (
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="h-8"
-                        onClick={() => {
-                          setValue('condition', '');
-                          handleSubmit(onSubmit)();
-                        }}
-                      >
-                        <Trash2 size={16} className="mr-1" />
-                        Xóa điều kiện
-                      </Button>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    <details>
-                      <summary className="cursor-pointer">
-                        Xem chuỗi điều kiện
-                      </summary>
-                      <textarea
-                        {...register('condition')}
-                        onBlur={() => handleSubmit(onSubmit)()}
-                        placeholder="Nhập điều kiện"
-                        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      />
-                    </details>
-                  </div>
-                </div>
-                {errors.condition && (
-                  <p className="text-destructive mt-1 text-sm">
-                    {errors.condition.message}
                   </p>
                 )}
               </div>
@@ -379,7 +289,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
           )}
         </div>
       </div>
-      <div className="border-border bg-background  flex  items-center justify-between border-t p-4">
+      <div className="border-border bg-background flex items-center justify-between border-t p-4">
         <Button
           type="button"
           variant="destructive"

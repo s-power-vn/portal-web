@@ -32,7 +32,6 @@ export const SelectFlowType: FC<SelectFlowTypeProps> = ({
   value,
   onChange
 }) => {
-  console.log(value, selectItems);
   return (
     <SelectInput
       value={value}

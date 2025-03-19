@@ -21,7 +21,7 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
 
   let objectType = null;
   try {
-    const queryId = objectTypeId || 'non-existent-id';
+    const queryId = objectTypeId;
     const { data } = api.objectType.byId.useSuspenseQuery({
       variables: queryId
     });
