@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { CheckIcon, ChevronsUpDown, Loader, X } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, Loader, X } from 'lucide-react';
 
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -261,34 +261,59 @@ export function Combobox({
             aria-expanded={open}
             disabled={disabled}
             className={cn(
-              'relative h-auto min-h-10 w-full p-1.5 text-sm font-normal',
-              'flex flex-wrap items-center gap-1',
-              multiple ? 'justify-start' : 'justify-between',
-              (multiple && selectedItems.length > 0) ||
-                (selectedItem && !multiple)
-                ? 'text-appBlack'
-                : 'text-muted-foreground',
+              'relative h-auto min-h-9 w-full px-3 py-1.5 text-sm font-normal',
+              'flex flex-wrap items-center justify-start gap-1.5',
+              'pr-10',
+              placeholder && !value ? 'text-muted-foreground' : 'text-appBlack',
               disabled && 'cursor-not-allowed opacity-50',
               className
             )}
           >
-            {displayContent}
-            <div className="absolute right-2 flex items-center gap-1">
+            {multiple && selectedItems.length > 0 ? (
+              <div className="flex w-full flex-wrap items-center gap-1.5">
+                {selectedItems.map(item => (
+                  <span
+                    key={item.value}
+                    className={cn(
+                      'bg-appGrayLight border-appGray flex items-center gap-1 rounded-md border px-2 py-1',
+                      !disabled && 'cursor-pointer'
+                    )}
+                    onClick={e => handleRemoveItem(e, item)}
+                  >
+                    <span className="max-w-[200px] truncate text-sm">
+                      {item.label}
+                    </span>
+                    {!disabled && (
+                      <X className="text-appBlack hover:text-appError h-3.5 w-3.5 flex-shrink-0 cursor-pointer" />
+                    )}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className="truncate pr-6">
+                {selectedItem?.label ?? placeholder}
+              </span>
+            )}
+            <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
               {showClear &&
                 !disabled &&
                 ((multiple && selectedItems.length > 0) ||
                   (!multiple && selectedItem)) && (
                   <div
                     className={cn(
-                      `bg-appError flex h-4 w-4 items-center
-                   justify-center rounded-full p-0 text-white shadow`
+                      'bg-appError flex h-4 w-4 items-center justify-center rounded-full text-white shadow hover:opacity-90'
                     )}
                     onClick={handleClear}
                   >
-                    <X className="h-2 w-2" />
+                    <X className="h-2.5 w-2.5" />
                   </div>
                 )}
-              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDownIcon
+                className={cn(
+                  'h-4 w-4 shrink-0 opacity-50',
+                  disabled && 'opacity-30'
+                )}
+              />
             </div>
           </ThemeButton>
         </PopoverTrigger>
@@ -305,11 +330,9 @@ export function Combobox({
               placeholder={searchHint}
               value={search}
               onValueChange={setSearch}
+              className="h-9"
             />
-            <CommandList
-              className="h-48 overflow-y-auto"
-              onScroll={handleScroll}
-            >
+            <CommandList className="h-48">
               <CommandEmpty>
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
@@ -320,70 +343,72 @@ export function Combobox({
                 )}
               </CommandEmpty>
               {!isLoading &&
-                _.keys(normalizedItems).map(key => {
-                  return (
-                    <React.Fragment key={key}>
-                      <CommandGroup heading={showGroups ? key : undefined}>
-                        {normalizedItems[key].map(it => {
-                          const isSelectedInMultiple =
-                            multiple &&
-                            selectedItems.some(item => item.value === it.value);
-                          const isSelectedInSingle =
-                            !multiple && selectedItem?.value === it.value;
+                _.keys(normalizedItems).map(key => (
+                  <React.Fragment key={key}>
+                    <CommandGroup heading={showGroups ? key : undefined}>
+                      {normalizedItems[key].map(it => {
+                        const isSelectedInMultiple =
+                          multiple &&
+                          selectedItems.some(item => item.value === it.value);
+                        const isSelectedInSingle =
+                          !multiple && selectedItem?.value === it.value;
 
-                          return (
-                            <CommandItem
-                              key={it.value}
-                              className={'hover:bg-appGrayLight'}
-                              onSelect={() => {
-                                if (multiple) {
-                                  const isSelected = selectedItems.some(
-                                    item => item.value === it.value
+                        return (
+                          <CommandItem
+                            key={it.value}
+                            className={cn(
+                              'hover:bg-appGrayLight',
+                              disabled &&
+                                'pointer-events-none cursor-not-allowed opacity-50'
+                            )}
+                            onSelect={() => {
+                              if (multiple) {
+                                const isSelected = selectedItems.some(
+                                  item => item.value === it.value
+                                );
+                                let newItems: ComboboxItem[];
+
+                                if (isSelected) {
+                                  newItems = selectedItems.filter(
+                                    item => item.value !== it.value
                                   );
-                                  let newItems: ComboboxItem[];
-
-                                  if (isSelected) {
-                                    newItems = selectedItems.filter(
-                                      item => item.value !== it.value
-                                    );
-                                  } else {
-                                    newItems = [...selectedItems, it];
-                                  }
-
-                                  setSelectedItems(newItems);
-                                  onChange?.(newItems.map(item => item.value));
                                 } else {
-                                  setSelectedItem(it);
-                                  onChange?.(it.value);
-                                  setOpen(false);
+                                  newItems = [...selectedItems, it];
                                 }
-                              }}
-                              value={it.value}
-                            >
-                              <div className="flex items-center gap-1">
-                                <span>{it.label}</span>
-                                {it.subLabel && (
-                                  <span className="text-xs text-gray-400">
-                                    ({it.subLabel})
-                                  </span>
-                                )}
-                              </div>
-                              <CheckIcon
-                                className={cn(
-                                  'ml-auto h-4 w-4',
-                                  isSelectedInMultiple || isSelectedInSingle
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          );
-                        })}
-                      </CommandGroup>
-                      {showGroups ? <CommandSeparator /> : null}
-                    </React.Fragment>
-                  );
-                })}
+
+                                setSelectedItems(newItems);
+                                onChange?.(newItems.map(item => item.value));
+                              } else {
+                                setSelectedItem(it);
+                                onChange?.(it.value);
+                                setOpen(false);
+                              }
+                            }}
+                            value={it.value}
+                          >
+                            <div className="flex items-center gap-1">
+                              <span>{it.label}</span>
+                              {it.subLabel && (
+                                <span className="text-xs text-gray-400">
+                                  ({it.subLabel})
+                                </span>
+                              )}
+                            </div>
+                            <CheckIcon
+                              className={cn(
+                                'ml-auto h-4 w-4',
+                                isSelectedInMultiple || isSelectedInSingle
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                    {showGroups ? <CommandSeparator /> : null}
+                  </React.Fragment>
+                ))}
               {isFetching && (
                 <>
                   <CommandSeparator />

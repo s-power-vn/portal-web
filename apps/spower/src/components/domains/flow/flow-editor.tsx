@@ -103,13 +103,13 @@ function getEdges(data: ProcessData, selectedFlow: Flow | null) {
       type: flow.type ? flow.type : 'smoothstep',
       style: {
         strokeWidth: isSelected ? 2 : 1,
-        stroke: isSelected ? '#4B5563' : '#9CA3AF'
+        stroke: isSelected ? '#CC313D' : '#9CA3AF'
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        width: 10,
-        height: 10,
-        color: isSelected ? '#4B5563' : '#9CA3AF'
+        width: isSelected ? 13 : 20,
+        height: isSelected ? 13 : 20,
+        color: isSelected ? '#CC313D' : '#9CA3AF'
       }
     };
   });

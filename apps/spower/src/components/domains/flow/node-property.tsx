@@ -184,7 +184,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
             <div className="space-y-2">
               <div>
                 <label className="text-sm font-medium">ID</label>
-                <div className="border-input bg-secondary/20 flex h-10 w-full items-center rounded-md border px-3 py-2 text-sm">
+                <div className="border-input bg-appGrayLight flex h-10 w-full items-center rounded-md border px-3 py-2 text-sm">
                   <div className="w-full truncate">{watch('id')}</div>
                 </div>
                 {errors.id && (
@@ -283,18 +283,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                     {errors.condition.message}
                   </p>
                 )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Loại nút</label>
-                <div className="mt-2 flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
-                    {watch('type') === 'start'
-                      ? 'Bắt đầu'
-                      : watch('type') === 'finished'
-                        ? 'Hoàn thành'
-                        : 'Bình thường'}
-                  </span>
-                </div>
               </div>
               <div className="mt-2">
                 <div className="flex items-end justify-between">
