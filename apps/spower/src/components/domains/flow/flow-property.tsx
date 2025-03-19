@@ -27,7 +27,7 @@ const schema = yup
     type: yup
       .string()
       .oneOf(['default', 'straight', 'step', 'smoothstep'])
-      .default('smoothstep')
+      .required('Kiểu đường là bắt buộc')
   })
   .required();
 

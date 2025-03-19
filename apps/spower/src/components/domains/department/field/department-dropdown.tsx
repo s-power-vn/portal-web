@@ -49,6 +49,7 @@ export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
       queryKey={['departments']}
       queryFn={queryFn}
       lookupFn={lookupFn}
+      showGroups={false}
     />
   );
 };
