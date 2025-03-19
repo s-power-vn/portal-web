@@ -16,7 +16,6 @@ export type Node = {
   id: string;
   name: string;
   description?: string;
-  condition?: string;
   type: NodeType;
   operationType: OperationType;
   x: number;
@@ -37,6 +36,7 @@ export type Flow = {
   type?: FlowType;
   action?: string;
   approver?: string[];
+  condition?: string;
 };
 
 export type ProcessData = {

@@ -81,6 +81,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         status: it.id,
         action: it.action,
         toNode: nodeInfo,
+        condition: it.condition,
         isApprove: !!(it.approver && it.approver.length > 0)
       };
     });
@@ -125,8 +126,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
         action?: string;
         status: string;
         to: string;
-        toNode?: { name: string; condition?: string };
+        toNode?: { name: string };
         isApprove: boolean;
+        condition?: string;
       }
     >(
       flow: T
@@ -171,7 +173,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 issueId={props.issueId}
                 title={`${flow.toNode?.name}`}
                 status={flow.status}
-                condition={flow.toNode?.condition}
+                condition={flow.condition}
                 onCancel={close}
                 onSuccess={() => {
                   invalidates([
@@ -191,7 +193,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
   useEffect(() => {
     const approver = issue.data.approver?.find(
-      it => it.userId === client.authStore.model?.id
+      it => it.userId === client.authStore.record?.id
     );
 
     setIsApproved(!!approver);
@@ -205,8 +207,8 @@ const ActionComponent: FC<IssueActionProps> = props => {
           id: props.issueId,
           nodeName: currentNode?.name ?? '',
           nodeId: currentNode?.id ?? '',
-          userId: client.authStore.model?.id ?? '',
-          userName: client.authStore.model?.name ?? ''
+          userId: client.authStore.record?.id ?? '',
+          userName: client.authStore.record?.name ?? ''
         });
       } else {
         unApprove.mutate({

@@ -134,7 +134,7 @@ const ConditionBlock = memo(
       const queryId =
         isDepartmentCondition(condition) && localDeptId
           ? localDeptId
-          : 'non-existent-id';
+          : undefined;
 
       const { data } = api.department.byId.useSuspenseQuery({
         variables: queryId

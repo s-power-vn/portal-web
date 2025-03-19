@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { CheckIcon, ChevronsUpDownIcon, Loader, X } from 'lucide-react';
 
@@ -72,7 +72,6 @@ export function Combobox({
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<ComboboxItem | undefined>();
   const [selectedItems, setSelectedItems] = useState<ComboboxItem[]>([]);
-  const [isLookingUp, setIsLookingUp] = useState(false);
 
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
@@ -82,6 +81,12 @@ export function Combobox({
         lastPage.hasMore ? pages.length + 1 : undefined,
       initialPageParam: 1
     });
+
+  const { data: lookupData, isLoading: isLookingUp } = useQuery({
+    queryKey: ['lookup', value],
+    queryFn: () => lookupFn?.(value as string | string[]),
+    enabled: !!lookupFn && !!value
+  });
 
   const allItems = React.useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
@@ -103,26 +108,16 @@ export function Combobox({
       return;
     }
 
-    if (lookupFn) {
-      setIsLookingUp(true);
-      lookupFn(value)
-        .then(result => {
-          if (result) {
-            if (multiple) {
-              const lookupItems = Array.isArray(result) ? result : [result];
-              setSelectedItems(lookupItems);
-            } else {
-              const item = Array.isArray(result) ? result[0] : result;
-              setSelectedItem(item);
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Error looking up items:', error);
-        })
-        .finally(() => {
-          setIsLookingUp(false);
-        });
+    if (multiple) {
+      const lookupItems = Array.isArray(lookupData)
+        ? lookupData
+        : lookupData
+          ? [lookupData]
+          : [];
+      setSelectedItems(lookupItems);
+    } else {
+      const item = Array.isArray(lookupData) ? lookupData[0] : lookupData;
+      setSelectedItem(item);
     }
 
     if (allItems.length > 0) {
@@ -196,29 +191,23 @@ export function Combobox({
   );
 
   const displayContent = useMemo(() => {
-    const showLoading =
-      isLookingUp &&
-      ((multiple && selectedItems.length === 0) ||
-        (!multiple && !selectedItem));
-
-    if (showLoading) {
+    if (isFetching || isLookingUp) {
       return (
         <div className="flex items-center gap-2">
           <Loader className="h-3 w-3 animate-spin" />
-          <span className="text-muted-foreground">Đang tải...</span>
         </div>
       );
     }
 
     if (multiple && selectedItems.length > 0) {
       return (
-        <div className="flex w-full flex-wrap items-start gap-1 pr-4">
+        <div className="flex flex-wrap items-start gap-1">
           {selectedItems.map(item => (
             <span
               key={item.value}
-              className="bg-appGrayLight border-appGr flex max-w-full items-center gap-1 rounded-md border px-2 py-0.5"
+              className="bg-appGrayLight border-appGr inline-flex max-w-[200px] items-center gap-1 rounded-md border px-2 py-0.5"
             >
-              <span className="max-w-[200px] truncate">{item.label}</span>
+              <span className="truncate">{item.label}</span>
               <X
                 className="text-appBlack hover:text-appError h-3 w-3 flex-shrink-0 cursor-pointer"
                 onClick={e => handleRemoveItem(e, item)}
@@ -238,7 +227,8 @@ export function Combobox({
     selectedItem,
     placeholder,
     handleRemoveItem,
-    isLookingUp
+    isLookingUp,
+    isFetching
   ]);
 
   const handleOpenChange = useCallback(
@@ -269,31 +259,9 @@ export function Combobox({
               className
             )}
           >
-            {multiple && selectedItems.length > 0 ? (
-              <div className="flex w-full flex-wrap items-center gap-1.5">
-                {selectedItems.map(item => (
-                  <span
-                    key={item.value}
-                    className={cn(
-                      'bg-appGrayLight border-appGrayLight flex items-center gap-1 rounded-md border px-2 py-1',
-                      !disabled && 'cursor-pointer'
-                    )}
-                    onClick={e => handleRemoveItem(e, item)}
-                  >
-                    <span className="max-w-[200px] truncate text-sm">
-                      {item.label}
-                    </span>
-                    {!disabled && (
-                      <X className="text-appBlack hover:text-appError h-3.5 w-3.5 flex-shrink-0 cursor-pointer" />
-                    )}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <span className="truncate pr-6">
-                {selectedItem?.label ?? placeholder}
-              </span>
-            )}
+            <div className="flex-1 overflow-hidden">
+              <span className="block truncate">{displayContent}</span>
+            </div>
             <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
               {showClear &&
                 !disabled &&
@@ -334,7 +302,7 @@ export function Combobox({
               onValueChange={setSearch}
               className="h-9"
             />
-            <CommandList className="h-48">
+            <CommandList className="h-48" onScroll={handleScroll}>
               <CommandEmpty>
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
