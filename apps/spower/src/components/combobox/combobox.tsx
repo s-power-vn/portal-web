@@ -75,17 +75,23 @@ export function Combobox({
 
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
-      queryKey: [...queryKey, search],
+      queryKey: search ? [...queryKey, search] : queryKey,
       queryFn: ({ pageParam = 1 }) => queryFn({ search, page: pageParam }),
       getNextPageParam: (lastPage, pages) =>
         lastPage.hasMore ? pages.length + 1 : undefined,
+      refetchOnMount: false,
       initialPageParam: 1
     });
 
   const { data: lookupData, isLoading: isLookingUp } = useQuery({
-    queryKey: ['lookup', value],
+    queryKey: [
+      'lookup',
+      ...(search ? [...queryKey, search] : queryKey),
+      ...(Array.isArray(value) ? value : [value])
+    ],
     queryFn: () => lookupFn?.(value as string | string[]),
-    enabled: !!lookupFn && !!value
+    enabled: !!lookupFn && !!value,
+    refetchOnMount: false
   });
 
   const allItems = React.useMemo(
