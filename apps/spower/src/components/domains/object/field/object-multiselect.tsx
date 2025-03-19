@@ -48,7 +48,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
         hasMore: result.page < result.totalPages
       };
     },
-    []
+    [props.objectType]
   );
 
   return (
@@ -56,7 +56,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn đối tượng'}
       emptyText={props.emptyText ?? 'Không tìm thấy đối tượng'}
-      queryKey={['objects']}
+      queryKey={['objects', props.objectType ?? '']}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />
