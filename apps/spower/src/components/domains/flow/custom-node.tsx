@@ -4,14 +4,20 @@ import {
   CheckCircle2Icon,
   CheckIcon,
   FilterIcon,
-  PlayIcon
+  PlayIcon,
+  ZapIcon
 } from 'lucide-react';
 
 import { FC, useMemo } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
-import type { NodeType, OperationType, PointRole } from './types';
+import type {
+  AutoNodePointType,
+  NodeType,
+  OperationType,
+  PointRole
+} from './types';
 
 export type CustomNodeProps = NodeProps<
   Node<{
@@ -28,6 +34,7 @@ export type CustomNodeProps = NodeProps<
       id: string;
       type: 'top' | 'bottom' | 'right' | 'left';
       role: PointRole;
+      autoType?: AutoNodePointType;
     }[];
     onPointClick: (pointId: string, nodeId: string) => void;
     sourcePoint: { nodeId: string; pointId: string } | null;
@@ -72,12 +79,13 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
     <>
       <div
         className={cn(
-          'box-border flex min-w-40 items-center justify-center gap-2 rounded border-2 bg-white p-2 text-xs shadow-sm transition-all',
+          'relative box-border flex min-h-[40px] min-w-40 items-center justify-center gap-2 rounded border-2 bg-white p-2 text-xs shadow-sm transition-all',
           data.active ? 'border-appError' : 'border-gray-200',
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
           data.clicked ? 'ring-2 ring-gray-200' : '',
           data.type === 'start' ? 'bg-green-50' : '',
-          data.type === 'finished' ? 'bg-purple-50' : ''
+          data.type === 'finished' ? 'bg-purple-50' : '',
+          data.operationType === 'auto' ? 'bg-orange-50' : ''
         )}
       >
         <Show when={data.active}>
@@ -86,6 +94,10 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
 
         <Show when={data.type === 'start'}>
           <PlayIcon className="h-4 w-4 text-green-500" />
+        </Show>
+
+        <Show when={data.operationType === 'auto'}>
+          <ZapIcon className="h-4 w-4 text-orange-500" />
         </Show>
 
         <span>{data.name}</span>
@@ -103,136 +115,212 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
         </Show>
       </div>
       {leftPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Left}
-          id={point.id}
-          className={cn(
-            'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+        <div key={point.id}>
+          <Handle
+            type={
+              point.role === 'source' || point.role === 'unknown'
+                ? 'source'
+                : 'target'
+            }
+            position={Position.Left}
+            id={point.id}
+            className={cn(
+              'origin-center transition-all hover:scale-150',
+              data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+            )}
+            style={{
+              top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
+              opacity: point.role === 'unknown' ? 0.3 : 1,
+              background:
+                data.sourcePoint?.pointId === point.id
+                  ? '#CC313D'
+                  : point.role === 'unknown'
+                    ? '#9CA3AF'
+                    : '#4B5563',
+              cursor: 'pointer',
+              width: '10px',
+              height: '10px',
+              border: '2px solid white',
+              borderRadius: '2px',
+              transform: 'translate(calc(-50% - 2px), -50%)'
+            }}
+            onClick={() => handlePointClick(point.id)}
+          />
+          {point.autoType && (
+            <div
+              className="absolute"
+              style={{
+                left: '5px',
+                top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
+                transform: 'translate(0, -50%)',
+                width: '6px',
+                height: '6px',
+                backgroundColor:
+                  point.autoType === 'input'
+                    ? '#22C55E'
+                    : point.autoType === 'true'
+                      ? '#3B82F6'
+                      : '#EF4444'
+              }}
+            />
           )}
-          style={{
-            top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background:
-              data.sourcePoint?.pointId === point.id
-                ? '#CC313D'
-                : point.role === 'unknown'
-                  ? '#9CA3AF'
-                  : '#4B5563',
-            cursor: 'pointer',
-            width: '10px',
-            height: '10px',
-            border: '2px solid white',
-            borderRadius: '2px',
-            transform: 'translate(calc(-50% - 2px), -50%)'
-          }}
-          onClick={() => handlePointClick(point.id)}
-        />
+        </div>
       ))}
       {topPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Top}
-          id={point.id}
-          className={cn(
-            'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+        <div key={point.id}>
+          <Handle
+            type={
+              point.role === 'source' || point.role === 'unknown'
+                ? 'source'
+                : 'target'
+            }
+            position={Position.Top}
+            id={point.id}
+            className={cn(
+              'origin-center transition-all hover:scale-150',
+              data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+            )}
+            style={{
+              left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
+              opacity: point.role === 'unknown' ? 0.3 : 1,
+              background:
+                data.sourcePoint?.pointId === point.id
+                  ? '#CC313D'
+                  : point.role === 'unknown'
+                    ? '#9CA3AF'
+                    : '#4B5563',
+              cursor: 'pointer',
+              width: '10px',
+              height: '10px',
+              border: '2px solid white',
+              borderRadius: '2px',
+              transform: 'translate(-50%, calc(-50% - 2px))'
+            }}
+            onClick={() => handlePointClick(point.id)}
+          />
+          {point.autoType && (
+            <div
+              className="absolute"
+              style={{
+                left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
+                top: '5px',
+                transform: 'translate(-50%, 0)',
+                width: '6px',
+                height: '6px',
+                backgroundColor:
+                  point.autoType === 'input'
+                    ? '#22C55E'
+                    : point.autoType === 'true'
+                      ? '#3B82F6'
+                      : '#EF4444'
+              }}
+            />
           )}
-          style={{
-            left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background:
-              data.sourcePoint?.pointId === point.id
-                ? '#CC313D'
-                : point.role === 'unknown'
-                  ? '#9CA3AF'
-                  : '#4B5563',
-            cursor: 'pointer',
-            width: '10px',
-            height: '10px',
-            border: '2px solid white',
-            borderRadius: '2px',
-            transform: 'translate(-50%, calc(-50% - 2px))'
-          }}
-          onClick={() => handlePointClick(point.id)}
-        />
+        </div>
       ))}
       {rightPoints.map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Right}
-          id={point.id}
-          className={cn(
-            'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+        <div key={point.id}>
+          <Handle
+            type={
+              point.role === 'source' || point.role === 'unknown'
+                ? 'source'
+                : 'target'
+            }
+            position={Position.Right}
+            id={point.id}
+            className={cn(
+              'origin-center transition-all hover:scale-150',
+              data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+            )}
+            style={{
+              top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
+              opacity: point.role === 'unknown' ? 0.3 : 1,
+              background:
+                data.sourcePoint?.pointId === point.id
+                  ? '#CC313D'
+                  : point.role === 'unknown'
+                    ? '#9CA3AF'
+                    : '#4B5563',
+              cursor: 'pointer',
+              width: '10px',
+              height: '10px',
+              border: '2px solid white',
+              borderRadius: '2px',
+              transform: 'translate(calc(50% + 2px), -50%)'
+            }}
+            onClick={() => handlePointClick(point.id)}
+          />
+          {point.autoType && (
+            <div
+              className="absolute"
+              style={{
+                right: '5px',
+                top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
+                transform: 'translate(0, -50%)',
+                width: '6px',
+                height: '6px',
+                backgroundColor:
+                  point.autoType === 'input'
+                    ? '#22C55E'
+                    : point.autoType === 'true'
+                      ? '#3B82F6'
+                      : '#EF4444'
+              }}
+            />
           )}
-          style={{
-            top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background:
-              data.sourcePoint?.pointId === point.id
-                ? '#CC313D'
-                : point.role === 'unknown'
-                  ? '#9CA3AF'
-                  : '#4B5563',
-            cursor: 'pointer',
-            width: '10px',
-            height: '10px',
-            border: '2px solid white',
-            borderRadius: '2px',
-            transform: 'translate(calc(50% + 2px), -50%)'
-          }}
-          onClick={() => handlePointClick(point.id)}
-        />
+        </div>
       ))}
       {bottomPoints.reverse().map((point, index) => (
-        <Handle
-          key={point.id}
-          type={
-            point.role === 'source' || point.role === 'unknown'
-              ? 'source'
-              : 'target'
-          }
-          position={Position.Bottom}
-          id={point.id}
-          className={cn(
-            'origin-center transition-all hover:scale-150',
-            data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+        <div key={point.id}>
+          <Handle
+            type={
+              point.role === 'source' || point.role === 'unknown'
+                ? 'source'
+                : 'target'
+            }
+            position={Position.Bottom}
+            id={point.id}
+            className={cn(
+              'origin-center transition-all hover:scale-150',
+              data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
+            )}
+            style={{
+              left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
+              opacity: point.role === 'unknown' ? 0.3 : 1,
+              background:
+                data.sourcePoint?.pointId === point.id
+                  ? '#CC313D'
+                  : point.role === 'unknown'
+                    ? '#9CA3AF'
+                    : '#4B5563',
+              cursor: 'pointer',
+              width: '10px',
+              height: '10px',
+              border: '2px solid white',
+              borderRadius: '2px',
+              transform: 'translate(-50%, calc(50% + 2px))'
+            }}
+            onClick={() => handlePointClick(point.id)}
+          />
+          {point.autoType && (
+            <div
+              className="absolute"
+              style={{
+                left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
+                bottom: '5px',
+                transform: 'translate(-50%, 0)',
+                width: '6px',
+                height: '6px',
+                backgroundColor:
+                  point.autoType === 'input'
+                    ? '#22C55E'
+                    : point.autoType === 'true'
+                      ? '#3B82F6'
+                      : '#EF4444'
+              }}
+            />
           )}
-          style={{
-            left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
-            opacity: point.role === 'unknown' ? 0.3 : 1,
-            background:
-              data.sourcePoint?.pointId === point.id
-                ? '#CC313D'
-                : point.role === 'unknown'
-                  ? '#9CA3AF'
-                  : '#4B5563',
-            cursor: 'pointer',
-            width: '10px',
-            height: '10px',
-            border: '2px solid white',
-            borderRadius: '2px',
-            transform: 'translate(-50%, calc(50% + 2px))'
-          }}
-          onClick={() => handlePointClick(point.id)}
-        />
+        </div>
       ))}
     </>
   );

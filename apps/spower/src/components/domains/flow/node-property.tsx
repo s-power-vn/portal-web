@@ -175,6 +175,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     });
   };
 
+  const operationType = watch('operationType');
+  const isAutoNode = operationType === 'auto';
+
   return (
     <div className="flex max-h-0 flex-col">
       <div className="flex-1">
@@ -225,142 +228,147 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium">Điều kiện</label>
-                <div className="flex flex-col gap-2">
-                  {watch('condition') ? (
-                    <div className="rounded-md border p-2">
-                      <ConditionDisplay condition={watch('condition')} />
+                <label className="text-sm font-medium">Điểm kết nối</label>
+                <div className="space-y-1">
+                  {points?.map((point, index) => (
+                    <div key={point.id} className="flex items-center gap-2">
+                      <div className="flex-1 space-y-1">
+                        {isAutoNode && point.autoType && (
+                          <div
+                            className="text-xs font-medium"
+                            style={{
+                              color:
+                                point.autoType === 'input'
+                                  ? '#22C55E'
+                                  : point.autoType === 'true'
+                                    ? '#3B82F6'
+                                    : '#EF4444'
+                            }}
+                          >
+                            {point.autoType === 'input'
+                              ? 'Đầu vào'
+                              : point.autoType === 'true'
+                                ? 'Đúng'
+                                : 'Sai'}
+                          </div>
+                        )}
+                        <Select
+                          value={point.type}
+                          onValueChange={(
+                            value: 'top' | 'bottom' | 'right' | 'left'
+                          ) => {
+                            const newPoints = [...points];
+                            newPoints[index] = { ...point, type: value };
+                            setValue('points', newPoints, {
+                              shouldDirty: true
+                            });
+                            handleSubmit(onSubmit)();
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Chọn vị trí" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="top">
+                              <div className="flex items-center gap-1">
+                                <ArrowUpToLineIcon className="h-4 w-4" />
+                                Trên
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="bottom">
+                              <div className="flex items-center gap-1">
+                                <ArrowDownToLineIcon className="h-4 w-4" />
+                                Dưới
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="left">
+                              <div className="flex items-center gap-1">
+                                <ArrowLeftToLineIcon className="h-4 w-4" />
+                                Trái
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="right">
+                              <div className="flex items-center gap-1">
+                                <ArrowRightToLineIcon className="h-4 w-4" />
+                                Phải
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {!isAutoNode && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => removePoint(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                  ) : (
-                    <div className="rounded-md border p-2 text-sm text-gray-500">
-                      Không có điều kiện
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-8"
-                      onClick={handleShowConditionGenerator}
-                    >
-                      <Edit size={16} className="mr-1" />
-                      {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
-                    </Button>
-                    {watch('condition') && (
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="h-8"
-                        onClick={() => {
-                          setValue('condition', '', {
-                            shouldDirty: true,
-                            shouldTouch: true,
-                            shouldValidate: true
-                          });
-                          handleSubmit(onSubmit)();
-                        }}
-                      >
-                        <Trash2 size={16} className="mr-1" />
-                        Xóa điều kiện
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                {errors.condition && (
-                  <p className="text-destructive mt-1 text-sm">
-                    {errors.condition.message}
-                  </p>
-                )}
-              </div>
-              <div className="mt-2">
-                <div className="flex items-end justify-between">
-                  <label className="text-sm font-medium">Điểm nối</label>
-                  {(watch('type') === 'normal' || points.length < 2) && (
+                  ))}
+                  {!isAutoNode && (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={addPoint}
-                      className="mb-2 h-8"
-                      disabled={
-                        watch('type') !== 'normal' && points.length >= 2
-                      }
                     >
                       <Plus className="mr-1 h-4 w-4" />
-                      Thêm điểm nối
+                      Thêm điểm kết nối
                     </Button>
                   )}
                 </div>
-                {watch('type') !== 'normal' && (
-                  <div className="mb-2 text-xs text-gray-500">
-                    Tối đa 2 điểm nối cho nút{' '}
-                    {watch('type') === 'start' ? 'bắt đầu' : 'hoàn thành'}
-                  </div>
-                )}
-                <div className="space-y-2">
-                  {points?.map((point, index) => (
-                    <div key={point.id} className="flex items-center gap-2">
-                      <Select
-                        value={point.type}
-                        onValueChange={(
-                          value: 'top' | 'bottom' | 'right' | 'left'
-                        ) => {
-                          const newPoints = [...points];
-                          newPoints[index] = { ...point, type: value };
-                          setValue('points', newPoints, {
-                            shouldDirty: true
-                          });
-                          handleSubmit(onSubmit)();
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn vị trí" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="top">
-                            <div className="flex items-center gap-2">
-                              <ArrowUpToLineIcon className="h-4 w-4" />
-                              Trên
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="bottom">
-                            <div className="flex items-center gap-2">
-                              <ArrowDownToLineIcon className="h-4 w-4" />
-                              Dưới
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="right">
-                            <div className="flex items-center gap-2">
-                              <ArrowRightToLineIcon className="h-4 w-4" />
-                              Phải
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="left">
-                            <div className="flex items-center gap-2">
-                              <ArrowLeftToLineIcon className="h-4 w-4" />
-                              Trái
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+              </div>
+              {!isAutoNode && (
+                <div>
+                  <label className="text-sm font-medium">Điều kiện</label>
+                  <div className="flex flex-col gap-2">
+                    {watch('condition') ? (
+                      <div className="rounded-md border p-2">
+                        <ConditionDisplay condition={watch('condition')} />
+                      </div>
+                    ) : (
+                      <div className="rounded-md border p-2 text-sm text-gray-500">
+                        Không có điều kiện
+                      </div>
+                    )}
+                    <div className="flex gap-2">
                       <Button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removePoint(index)}
-                        className="h-10 w-10"
-                        disabled={
-                          watch('type') !== 'normal' && points.length <= 1
-                        }
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        onClick={handleShowConditionGenerator}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Edit size={16} className="mr-1" />
+                        {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
                       </Button>
+                      {watch('condition') && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="h-8"
+                          onClick={() => {
+                            setValue('condition', '', {
+                              shouldDirty: true,
+                              shouldTouch: true,
+                              shouldValidate: true
+                            });
+                            handleSubmit(onSubmit)();
+                          }}
+                        >
+                          <Trash2 size={16} className="mr-1" />
+                          Xóa điều kiện
+                        </Button>
+                      )}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="text-muted-foreground text-center text-sm">
