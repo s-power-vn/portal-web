@@ -79,40 +79,51 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
     <>
       <div
         className={cn(
-          'relative box-border flex min-h-[40px] min-w-40 items-center justify-center gap-2 rounded border-2 bg-white p-2 text-xs shadow-sm transition-all',
+          'relative box-border flex items-center justify-center gap-2 rounded border-2 bg-white shadow-sm transition-all',
           data.active ? 'border-appError' : 'border-gray-200',
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
           data.clicked ? 'ring-2 ring-gray-200' : '',
           data.type === 'start' ? 'bg-green-50' : '',
           data.type === 'finished' ? 'bg-purple-50' : '',
-          data.operationType === 'auto' ? 'bg-orange-50' : ''
+          data.operationType === 'auto'
+            ? 'h-[60px] w-[60px] rotate-45 bg-orange-50'
+            : 'min-h-[40px] min-w-40 p-2 text-xs'
         )}
       >
-        <Show when={data.active}>
-          <div className={'bg-appError h-3 w-3 rounded-full'}></div>
-        </Show>
+        <div
+          className={cn(
+            'flex items-center justify-center gap-2',
+            data.operationType === 'auto' ? 'w-[85px] -rotate-45' : ''
+          )}
+        >
+          <Show when={data.active}>
+            <div className={'bg-appError h-3 w-3 rounded-full'}></div>
+          </Show>
 
-        <Show when={data.type === 'start'}>
-          <PlayIcon className="h-4 w-4 text-green-500" />
-        </Show>
+          <Show when={data.type === 'start'}>
+            <PlayIcon className="h-4 w-4 text-green-500" />
+          </Show>
 
-        <Show when={data.operationType === 'auto'}>
-          <ZapIcon className="h-4 w-4 text-orange-500" />
-        </Show>
+          <Show when={data.operationType === 'auto'}>
+            <ZapIcon className="h-4 w-4 text-orange-500" />
+          </Show>
 
-        <span>{data.name}</span>
+          <Show when={data.operationType !== 'auto'}>
+            <span>{data.name}</span>
+          </Show>
 
-        <Show when={data.condition && !data.isView}>
-          <FilterIcon className="h-4 w-4 text-orange-500" />
-        </Show>
+          <Show when={data.condition && !data.isView}>
+            <FilterIcon className="h-4 w-4 text-orange-500" />
+          </Show>
 
-        <Show when={data.isApprove && !data.isView}>
-          <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
-        </Show>
+          <Show when={data.isApprove && !data.isView}>
+            <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
+          </Show>
 
-        <Show when={data.type === 'finished'}>
-          <CheckIcon className="h-4 w-4 text-purple-500" />
-        </Show>
+          <Show when={data.type === 'finished'}>
+            <CheckIcon className="h-4 w-4 text-purple-500" />
+          </Show>
+        </div>
       </div>
       {leftPoints.reverse().map((point, index) => (
         <div key={point.id}>
@@ -130,7 +141,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             )}
             style={{
               top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-              opacity: point.role === 'unknown' ? 0.3 : 1,
+              opacity: 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -142,7 +153,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               height: '10px',
               border: '2px solid white',
               borderRadius: '2px',
-              transform: 'translate(calc(-50% - 2px), -50%)'
+              transform: `translate(calc(-50% - ${point.autoType ? '8px' : '5px'}), -50%)`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -152,7 +163,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               style={{
                 left: '5px',
                 top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-                transform: 'translate(0, -50%)',
+                transform: `translate(calc(-50% - ${point.autoType ? '5px' : '8px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -181,8 +192,11 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
             )}
             style={{
-              left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
-              opacity: point.role === 'unknown' ? 0.3 : 1,
+              left:
+                data.operationType === 'auto'
+                  ? '50%'
+                  : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
+              opacity: 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -194,7 +208,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               height: '10px',
               border: '2px solid white',
               borderRadius: '2px',
-              transform: 'translate(-50%, calc(-50% - 2px))'
+              transform: `translate(-50%, calc(-50% - ${point.autoType ? '8px' : '5px'}))`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -202,9 +216,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <div
               className="absolute"
               style={{
-                left: `${(index + 1) * (100 / (topPoints.length + 1))}%`,
+                left:
+                  data.operationType === 'auto'
+                    ? '50%'
+                    : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
                 top: '5px',
-                transform: 'translate(-50%, 0)',
+                transform: `translate(-50%, calc(-50% - ${point.autoType ? '5px' : '8px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -233,8 +250,11 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
             )}
             style={{
-              top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-              opacity: point.role === 'unknown' ? 0.3 : 1,
+              top:
+                data.operationType === 'auto'
+                  ? '50%'
+                  : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
+              opacity: 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -246,7 +266,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               height: '10px',
               border: '2px solid white',
               borderRadius: '2px',
-              transform: 'translate(calc(50% + 2px), -50%)'
+              transform: `translate(calc(50% + ${point.autoType ? '8px' : '5px'}), -50%)`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -254,9 +274,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <div
               className="absolute"
               style={{
-                right: '5px',
-                top: `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-                transform: 'translate(0, -50%)',
+                right: '0',
+                top:
+                  data.operationType === 'auto'
+                    ? '50%'
+                    : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
+                transform: `translate(calc(-50% + ${point.autoType ? '5px' : '8px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -285,8 +308,11 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               data.sourcePoint?.pointId === point.id ? 'scale-150' : ''
             )}
             style={{
-              left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
-              opacity: point.role === 'unknown' ? 0.3 : 1,
+              left:
+                data.operationType === 'auto'
+                  ? '50%'
+                  : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
+              opacity: 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -298,7 +324,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               height: '10px',
               border: '2px solid white',
               borderRadius: '2px',
-              transform: 'translate(-50%, calc(50% + 2px))'
+              transform: `translate(-50%, calc(50% + ${point.autoType ? '8px' : '5px'}))`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -306,9 +332,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <div
               className="absolute"
               style={{
-                left: `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
+                left:
+                  data.operationType === 'auto'
+                    ? '50%'
+                    : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
                 bottom: '5px',
-                transform: 'translate(-50%, 0)',
+                transform: `translate(-50%, calc(50% + ${point.autoType ? '5px' : '8px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:

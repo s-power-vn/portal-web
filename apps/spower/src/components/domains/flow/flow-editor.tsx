@@ -667,9 +667,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         centerX = (reactFlowBounds.width / 2 - x) / zoom;
         centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
-        // Snap to grid if needed (multiples of 15)
-        centerX = Math.round(centerX / 15) * 15;
-        centerY = Math.round(centerY / 15) * 15;
+        // Snap to grid with different calculations for auto nodes
+        if (operation === 'auto') {
+          // For auto nodes, adjust position to account for 45-degree rotation
+          centerX = Math.round(centerX / 30) * 30 + 15;
+          centerY = Math.round(centerY / 30) * 30 + 15;
+        } else {
+          // For regular nodes, use normal grid snapping
+          centerX = Math.round(centerX / 30) * 30;
+          centerY = Math.round(centerY / 30) * 30;
+        }
       }
 
       // Default points based on node type
@@ -692,7 +699,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         defaultPoints = [
           {
             id: `p_${uuidv7().replace(/-/g, '')}`,
-            type: 'left', // Input point on the left
+            type: 'top', // Input point on the top
             role: 'target', // Always target for input
             autoType: 'input'
           },
@@ -800,16 +807,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           nodesConnectable={false}
           edgesFocusable={false}
           snapToGrid
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 'inherit'
+          }}
           fitView
           fitViewOptions={fitViewOptions}
           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           minZoom={0.1}
           maxZoom={4}
-          snapGrid={[15, 15]}
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: 'inherit'
-          }}
+          snapGrid={[10, 10]}
           defaultEdgeOptions={{
             style: { strokeWidth: 1, stroke: '#9CA3AF' }
           }}
