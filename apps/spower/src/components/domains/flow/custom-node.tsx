@@ -1,6 +1,11 @@
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import _ from 'lodash';
-import { CheckCircle2Icon, CheckIcon, PlayIcon } from 'lucide-react';
+import {
+  CheckCircle2Icon,
+  CheckIcon,
+  FilterIcon,
+  PlayIcon
+} from 'lucide-react';
 
 import { FC, useMemo } from 'react';
 
@@ -26,6 +31,8 @@ export type CustomNodeProps = NodeProps<
     }[];
     onPointClick: (pointId: string, nodeId: string) => void;
     sourcePoint: { nodeId: string; pointId: string } | null;
+    condition: boolean;
+    isView: boolean;
   }>
 >;
 
@@ -83,7 +90,11 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
 
         <span>{data.name}</span>
 
-        <Show when={data.isApprove}>
+        <Show when={data.condition && !data.isView}>
+          <FilterIcon className="h-4 w-4 text-orange-500" />
+        </Show>
+
+        <Show when={data.isApprove && !data.isView}>
           <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
         </Show>
 

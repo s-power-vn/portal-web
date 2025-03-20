@@ -44,7 +44,7 @@ function getNodes(
   sourcePoint: { nodeId: string; pointId: string } | null
 ) {
   return data.nodes.map(node => {
-    const { id, x, y, points, ...rest } = node;
+    const { id, x, y, points, condition, ...rest } = node;
 
     // Map all points and initialize their roles based on flows
     const mappedPoints = points.map(point => {
@@ -78,6 +78,7 @@ function getNodes(
         ...rest,
         nodeId: id,
         isApprove,
+        condition: !!condition,
         points: mappedPoints,
         active: false,
         selected: selectedNode?.id === id,

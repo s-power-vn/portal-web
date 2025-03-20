@@ -21,6 +21,7 @@ export type Node = {
   x: number;
   y: number;
   points: Point[];
+  condition?: string;
 };
 
 export type Flow = {
@@ -36,7 +37,6 @@ export type Flow = {
   type?: FlowType;
   action?: string;
   approver?: string[];
-  condition?: string;
 };
 
 export type ProcessData = {

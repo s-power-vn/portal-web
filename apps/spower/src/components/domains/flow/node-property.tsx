@@ -5,6 +5,7 @@ import {
   ArrowLeftToLineIcon,
   ArrowRightToLineIcon,
   ArrowUpToLineIcon,
+  Edit,
   Plus,
   Trash2
 } from 'lucide-react';
@@ -19,9 +20,12 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  showModal
 } from '@minhdtb/storeo-theme';
 
+import { ConditionDisplay } from './condition-display';
+import { ConditionGenerator } from './condition-generator';
 import type { Node, NodeType, OperationType, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -31,6 +35,7 @@ type NodeFormValues = {
   type: NodeType;
   operationType: OperationType;
   points: Point[];
+  condition: string;
 };
 
 const schema = yup
@@ -52,7 +57,8 @@ const schema = yup
           role: yup.mixed<PointRole>().optional()
         })
       )
-      .default([])
+      .default([]),
+    condition: yup.string().default('')
   })
   .required();
 
@@ -83,7 +89,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       description: '',
       type: 'normal',
       operationType: 'manual',
-      points: []
+      points: [],
+      condition: ''
     }
   });
 
@@ -98,7 +105,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         description: rest.description || '',
         type: rest.type,
         operationType: rest.operationType,
-        points: Array.isArray(rest.points) ? rest.points : []
+        points: Array.isArray(rest.points) ? rest.points : [],
+        condition: rest.condition || ''
       };
       reset(formValues);
     }
@@ -143,6 +151,28 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         handleSubmit(onSubmit)();
       }
     }
+  };
+
+  const handleShowConditionGenerator = () => {
+    showModal({
+      title: 'Tạo điều kiện',
+      children: ({ close }) => {
+        return (
+          <ConditionGenerator
+            value={watch('condition')}
+            onChange={value => {
+              setValue('condition', value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true
+              });
+              handleSubmit(onSubmit)();
+              close();
+            }}
+          />
+        );
+      }
+    });
   };
 
   return (
@@ -191,6 +221,56 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                 {errors.description && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.description.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Điều kiện</label>
+                <div className="flex flex-col gap-2">
+                  {watch('condition') ? (
+                    <div className="rounded-md border p-2">
+                      <ConditionDisplay condition={watch('condition')} />
+                    </div>
+                  ) : (
+                    <div className="rounded-md border p-2 text-sm text-gray-500">
+                      Không có điều kiện
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8"
+                      onClick={handleShowConditionGenerator}
+                    >
+                      <Edit size={16} className="mr-1" />
+                      {watch('condition') ? 'Sửa điều kiện' : 'Tạo điều kiện'}
+                    </Button>
+                    {watch('condition') && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="h-8"
+                        onClick={() => {
+                          setValue('condition', '', {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true
+                          });
+                          handleSubmit(onSubmit)();
+                        }}
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Xóa điều kiện
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                {errors.condition && (
+                  <p className="text-destructive mt-1 text-sm">
+                    {errors.condition.message}
                   </p>
                 )}
               </div>

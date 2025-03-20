@@ -215,7 +215,6 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
     pointId: string;
   } | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [clickedNode, setClickedNode] = useState<string | null>(null);
 
   const fitViewOptions = useMemo(
     () => ({
@@ -245,15 +244,14 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
       processData,
       status,
       sourcePoint,
-      selectedNode,
-      clickedNode
+      selectedNode
     );
 
-    // Update the onPointClick handler for each node
     const nodesWithHandlers = updatedNodes.map(node => ({
       ...node,
       data: {
         ...node.data,
+        isView: true,
         onPointClick: handlePointClick
       }
     }));
@@ -273,7 +271,6 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
     processData,
     sourcePoint,
     selectedNode,
-    clickedNode,
     handlePointClick
   ]);
 
