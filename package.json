@@ -15,7 +15,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@kripod/uuidv7": "^0.3.4",
     "@minhdtb/storeo-core": "^0.0.4",
-    "@minhdtb/storeo-theme": "^1.0.36",
+    "@minhdtb/storeo-theme": "^1.0.37",
     "@preact/signals-react": "^2.0.0",
     "@react-pdf/renderer": "^3.4.4",
     "@remixicon/react": "^4.2.0",
@@ -105,5 +105,16 @@
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-static-copy": "^1.0.6",
     "vitest": "^1.4.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "esbuild",
+      "nx"
+    ],
+    "ignoredBuiltDependencies": [
+      "canvas",
+      "sqlite3"
+    ]
   }
 }

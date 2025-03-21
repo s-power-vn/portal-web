@@ -26,6 +26,7 @@ import {
 
 import { ConditionDisplay } from './condition-display';
 import { ConditionGenerator } from './condition-generator';
+import { ExpressionEditor } from './expression-editor';
 import type { Node, NodeType, OperationType, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -175,6 +176,30 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     });
   };
 
+  const handleShowConditionEditor = () => {
+    showModal({
+      title: 'Tạo biểu thức điều kiện',
+      className: 'max-w-[calc(100vw-400px)]',
+      children: ({ close }) => {
+        return (
+          <ExpressionEditor
+            value={watch('condition')}
+            onSubmit={value => {
+              setValue('condition', value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true
+              });
+              handleSubmit(onSubmit)();
+              close();
+            }}
+            onClose={close}
+          />
+        );
+      }
+    });
+  };
+
   const operationType = watch('operationType');
   const isAutoNode = operationType === 'auto';
 
@@ -190,7 +215,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   <div className="w-full truncate">{watch('id')}</div>
                 </div>
                 {errors.id && (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className="text-destructive mt-1 line-clamp-2 text-sm">
                     {errors.id.message}
                   </p>
                 )}
@@ -208,7 +233,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 {errors.name && (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className="text-destructive mt-1 line-clamp-2 text-sm">
                     {errors.name.message}
                   </p>
                 )}
@@ -222,7 +247,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm ring-offset-0 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 {errors.description && (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className="text-destructive mt-1 line-clamp-2 text-sm">
                     {errors.description.message}
                   </p>
                 )}
@@ -322,7 +347,57 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   )}
                 </div>
               </div>
-              {!isAutoNode && (
+              {isAutoNode ? (
+                <div>
+                  <label className="text-sm font-medium">
+                    Biểu thức điều kiện
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {watch('condition') ? (
+                      <div className="rounded-md border p-2">
+                        <pre className="max-h-[200px] overflow-y-auto whitespace-pre-wrap break-words text-sm">
+                          {watch('condition')}
+                        </pre>
+                      </div>
+                    ) : (
+                      <div className="rounded-md border p-2 text-sm text-gray-500">
+                        Chưa có biểu thức điều kiện
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        onClick={handleShowConditionEditor}
+                      >
+                        <Edit size={16} className="mr-1" />
+                        {watch('condition') ? 'Sửa biểu thức' : 'Tạo biểu thức'}
+                      </Button>
+                      {watch('condition') && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="h-8"
+                          onClick={() => {
+                            setValue('condition', '', {
+                              shouldDirty: true,
+                              shouldTouch: true,
+                              shouldValidate: true
+                            });
+                            handleSubmit(onSubmit)();
+                          }}
+                        >
+                          <Trash2 size={16} className="mr-1" />
+                          Xóa biểu thức
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
                 <div>
                   <label className="text-sm font-medium">Điều kiện</label>
                   <div className="flex flex-col gap-2">

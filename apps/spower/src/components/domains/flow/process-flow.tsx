@@ -1,5 +1,6 @@
 import {
   Edge,
+  FitViewOptions,
   MarkerType,
   ReactFlow,
   Node as XYFlowNode,
@@ -216,9 +217,8 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
   } | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
-  const fitViewOptions = useMemo(
+  const fitViewOptions: FitViewOptions = useMemo(
     () => ({
-      duration: 200,
       padding: 0.2,
       maxZoom: 1
     }),

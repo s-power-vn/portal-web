@@ -20,6 +20,7 @@ import {
   PlusCircleIcon,
   ZapIcon
 } from 'lucide-react';
+import { setTimeout } from 'timers';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -129,6 +130,7 @@ export type FlowEditorProps = {
 export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const reactFlowInstance = useReactFlow();
   const { fitView } = reactFlowInstance;
+  const isReady = useRef(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState<ProcessData>(
@@ -350,8 +352,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
     // Batch update nodes and edges together
     requestAnimationFrame(() => {
-      setNodes(newNodes);
       setEdges(newEdges);
+      setNodes(newNodes);
     });
   }, [
     flowData,
@@ -791,10 +793,20 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     return flowData.nodes.some(node => node.type === 'finished');
   }, [flowData.nodes]);
 
+  useEffect(() => {
+    // fix lỗi render
+    if (edges.length > 0) {
+      setTimeout(() => {
+        setNodes(_.cloneDeep(nodes));
+      }, 100);
+    }
+  }, [edges]);
+
   return (
     <div className="flex h-full overflow-hidden rounded-lg border">
       <div className="flex-1 overflow-hidden border-r" ref={ref}>
         <ReactFlow
+          key={nodes.length}
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
           edges={edges}

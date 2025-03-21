@@ -87,7 +87,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           data.type === 'finished' ? 'bg-purple-50' : '',
           data.operationType === 'auto'
             ? 'h-[60px] w-[60px] rotate-45 bg-orange-50'
-            : 'min-h-[40px] min-w-40 p-2 text-xs'
+            : 'min-h-[40px] w-[200px] p-2 text-xs'
         )}
       >
         <div
@@ -141,7 +141,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             )}
             style={{
               top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-              opacity: 1,
+              opacity: data.isView ? 0 : 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -152,8 +152,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               width: '10px',
               height: '10px',
               border: '2px solid white',
-              borderRadius: '2px',
-              transform: `translate(calc(-50% - ${point.autoType ? '8px' : '5px'}), -50%)`
+              borderRadius: '50%',
+              transform: `translate(calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -163,7 +163,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               style={{
                 left: '5px',
                 top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-                transform: `translate(calc(-50% - ${point.autoType ? '5px' : '8px'}), -50%)`,
+                transform: `translate(calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -196,7 +196,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 data.operationType === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
-              opacity: 1,
+              opacity: data.isView ? 0 : 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -207,8 +207,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               width: '10px',
               height: '10px',
               border: '2px solid white',
-              borderRadius: '2px',
-              transform: `translate(-50%, calc(-50% - ${point.autoType ? '8px' : '5px'}))`
+              borderRadius: '50%',
+              transform: `translate(-50%, calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -221,7 +221,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                     ? '50%'
                     : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
                 top: '5px',
-                transform: `translate(-50%, calc(-50% - ${point.autoType ? '5px' : '8px'}))`,
+                transform: `translate(-50%, calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -254,7 +254,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 data.operationType === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-              opacity: 1,
+              opacity: data.isView ? 0 : 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -265,8 +265,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               width: '10px',
               height: '10px',
               border: '2px solid white',
-              borderRadius: '2px',
-              transform: `translate(calc(50% + ${point.autoType ? '8px' : '5px'}), -50%)`
+              borderRadius: '50%',
+              transform: `translate(calc(50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -279,7 +279,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                   data.operationType === 'auto'
                     ? '50%'
                     : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-                transform: `translate(calc(-50% + ${point.autoType ? '5px' : '8px'}), -50%)`,
+                transform: `translate(calc(-50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -312,7 +312,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 data.operationType === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
-              opacity: 1,
+              opacity: data.isView ? 0 : 1,
               background:
                 data.sourcePoint?.pointId === point.id
                   ? '#CC313D'
@@ -323,8 +323,8 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               width: '10px',
               height: '10px',
               border: '2px solid white',
-              borderRadius: '2px',
-              transform: `translate(-50%, calc(50% + ${point.autoType ? '8px' : '5px'}))`
+              borderRadius: '50%',
+              transform: `translate(-50%, calc(50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`
             }}
             onClick={() => handlePointClick(point.id)}
           />
@@ -337,7 +337,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                     ? '50%'
                     : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
                 bottom: '5px',
-                transform: `translate(-50%, calc(50% + ${point.autoType ? '5px' : '8px'}))`,
+                transform: `translate(-50%, calc(50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
