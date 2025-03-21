@@ -25,12 +25,21 @@ const BadgeComponent: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
   const invalidates = useInvalidateQueries();
 
   useEffect(() => {
+    let unsubscribe: () => void;
+
     client
       .collection(Collections.Issue)
-      .subscribe('*', () => invalidates([api.issue.userInfo.getKey()]));
+      .subscribe('*', () => {
+        invalidates([api.issue.userInfo.getKey()]);
+      })
+      .then(unsub => {
+        unsubscribe = unsub;
+      });
 
     return () => {
-      client.collection(Collections.Issue).unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, [projectId, invalidates]);
 

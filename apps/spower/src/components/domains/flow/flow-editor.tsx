@@ -17,8 +17,10 @@ import {
   CheckIcon,
   GripVertical,
   PlayIcon,
-  PlusCircleIcon
+  PlusCircleIcon,
+  ZapIcon
 } from 'lucide-react';
+import { setTimeout } from 'timers';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -44,7 +46,7 @@ function getNodes(
   sourcePoint: { nodeId: string; pointId: string } | null
 ) {
   return data.nodes.map(node => {
-    const { id, x, y, points, ...rest } = node;
+    const { id, x, y, points, condition, ...rest } = node;
 
     // Map all points and initialize their roles based on flows
     const mappedPoints = points.map(point => {
@@ -78,6 +80,7 @@ function getNodes(
         ...rest,
         nodeId: id,
         isApprove,
+        condition: !!condition,
         points: mappedPoints,
         active: false,
         selected: selectedNode?.id === id,
@@ -127,6 +130,7 @@ export type FlowEditorProps = {
 export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   const reactFlowInstance = useReactFlow();
   const { fitView } = reactFlowInstance;
+  const isReady = useRef(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState<ProcessData>(
@@ -235,6 +239,13 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           clicked: sourcePoint?.nodeId === node.id,
           onPointClick: (pointId: string, nodeId: string) => {
             if (!sourcePoint) {
+              // Check if the clicked point is an input point - it cannot be a source
+              const clickedPoint = node.data.points.find(
+                p => p.id === pointId.split('#')[1]
+              );
+              if (clickedPoint?.autoType === 'input') {
+                return;
+              }
               setSourcePoint({ nodeId, pointId });
             } else {
               // Check if clicking the same point
@@ -242,6 +253,45 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
                 sourcePoint.nodeId === nodeId &&
                 sourcePoint.pointId === pointId
               ) {
+                setSourcePoint(null);
+                return;
+              }
+
+              // Get source and target points
+              const sourceNode = flowData.nodes.find(
+                n => n.id === sourcePoint.nodeId
+              );
+              const targetNode = flowData.nodes.find(n => n.id === nodeId);
+
+              if (!sourceNode || !targetNode) {
+                setSourcePoint(null);
+                return;
+              }
+
+              const sourcePointData = sourceNode.points.find(
+                p => `${sourceNode.id}#${p.id}` === sourcePoint.pointId
+              );
+              const targetPointData = targetNode.points.find(
+                p => `${targetNode.id}#${p.id}` === pointId
+              );
+
+              if (!sourcePointData || !targetPointData) {
+                setSourcePoint(null);
+                return;
+              }
+
+              // Prevent incorrect connections for auto nodes
+              if (sourcePointData.autoType === 'input') {
+                // Input points can only be targets, not sources
+                setSourcePoint(null);
+                return;
+              }
+
+              if (
+                targetPointData.autoType === 'true' ||
+                targetPointData.autoType === 'false'
+              ) {
+                // True/False points can only be sources, not targets
                 setSourcePoint(null);
                 return;
               }
@@ -267,12 +317,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
               // Generate flow ID
               const baseId = `${sourcePoint.nodeId}-${nodeId}`;
               const existingFlows = flowData.flows.filter(flow => {
-                // Lấy phần trước dấu # đầu tiên
                 const flowBaseId = flow.id.split('#')[0];
                 return flowBaseId === baseId;
               });
               const newFlowNumber = existingFlows.length + 1;
-              // Không thêm UUID vào ID để đảm bảo tính tương thích với hàm extractStatus
               const newFlowId = `${baseId}#${newFlowNumber}`;
 
               const newFlow: Flow = {
@@ -304,8 +352,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
     // Batch update nodes and edges together
     requestAnimationFrame(() => {
-      setNodes(newNodes);
       setEdges(newEdges);
+      setNodes(newNodes);
     });
   }, [
     flowData,
@@ -453,8 +501,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   );
 
   const handleNodeDelete = useCallback(
-    async (nodeId: string) => {
-      const nodeToDelete = flowData.nodes.find(node => node.id === nodeId);
+    (nodeId: string) => {
       const updatedNodes = flowData.nodes.filter(node => node.id !== nodeId);
       const updatedFlows = flowData.flows.filter(
         flow => flow.from.node !== nodeId && flow.to.node !== nodeId
@@ -468,7 +515,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
 
       updateFlowData(updatedData);
       setSelectedNode(null);
-      await onLayout();
+      onLayout();
     },
     [flowData, updateFlowData, onLayout]
   );
@@ -483,13 +530,24 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
       }
 
       const sourcePoint = sourceNode.points.find(
-        point => point.id === params.sourceHandle
+        point => `${sourceNode.id}#${point.id}` === params.sourceHandle
       );
       const targetPoint = targetNode.points.find(
-        point => point.id === params.targetHandle
+        point => `${targetNode.id}#${point.id}` === params.targetHandle
       );
 
       if (!sourcePoint || !targetPoint) {
+        return;
+      }
+
+      // Prevent incorrect connections for auto nodes
+      if (sourcePoint.autoType === 'input') {
+        // Input points can only be targets, not sources
+        return;
+      }
+
+      if (targetPoint.autoType === 'true' || targetPoint.autoType === 'false') {
+        // True/False points can only be sources, not targets
         return;
       }
 
@@ -510,7 +568,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         }
       });
 
-      // Tạo ID mới với UUID v7 không có dấu gạch ngang
       const uniqueId = uuidv7().replace(/-/g, '');
       const newFlowId = `${baseId}__${uniqueId}#${maxFlowNumber + 1}`;
 
@@ -591,7 +648,10 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
   }, [handleFitView]);
 
   const handleAddNode = useCallback(
-    (nodeType: NodeType = 'normal') => {
+    (
+      nodeType: NodeType = 'normal',
+      operation: 'manual' | 'auto' = 'manual'
+    ) => {
       // Tạo ID sử dụng UUID v7 và loại bỏ dấu gạch ngang
       const uniqueId = uuidv7().replace(/-/g, '');
       const newNodeId = `n_${uniqueId}`;
@@ -609,9 +669,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         centerX = (reactFlowBounds.width / 2 - x) / zoom;
         centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
-        // Snap to grid if needed (multiples of 15)
-        centerX = Math.round(centerX / 15) * 15;
-        centerY = Math.round(centerY / 15) * 15;
+        // Snap to grid with different calculations for auto nodes
+        if (operation === 'auto') {
+          // For auto nodes, adjust position to account for 45-degree rotation
+          centerX = Math.round(centerX / 30) * 30 + 15;
+          centerY = Math.round(centerY / 30) * 30 + 15;
+        } else {
+          // For regular nodes, use normal grid snapping
+          centerX = Math.round(centerX / 30) * 30;
+          centerY = Math.round(centerY / 30) * 30;
+        }
       }
 
       // Default points based on node type
@@ -628,6 +695,28 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
         defaultPoints = [
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'left' },
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'top' }
+        ];
+      } else if (operation === 'auto') {
+        // Auto nodes have fixed 3 points with specific roles and types
+        defaultPoints = [
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'top', // Input point on the top
+            role: 'target', // Always target for input
+            autoType: 'input'
+          },
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'right', // True point on the right
+            role: 'source', // Always source for true/false
+            autoType: 'true'
+          },
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'bottom', // False point at the bottom
+            role: 'source', // Always source for true/false
+            autoType: 'false'
+          }
         ];
       } else {
         // Normal nodes can have multiple points in any position
@@ -646,7 +735,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
               ? 'Hoàn thành'
               : `Nút ${flowData.nodes.length + 1}`,
         type: nodeType,
-        operationType: 'manual',
+        operationType: operation,
         x: centerX,
         y: centerY,
         points: defaultPoints
@@ -704,10 +793,20 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
     return flowData.nodes.some(node => node.type === 'finished');
   }, [flowData.nodes]);
 
+  useEffect(() => {
+    // fix lỗi render
+    if (edges.length > 0) {
+      setTimeout(() => {
+        setNodes(_.cloneDeep(nodes));
+      }, 100);
+    }
+  }, [edges]);
+
   return (
     <div className="flex h-full overflow-hidden rounded-lg border">
       <div className="flex-1 overflow-hidden border-r" ref={ref}>
         <ReactFlow
+          key={nodes.length}
           nodeTypes={memoizedNodeTypes}
           nodes={nodes}
           edges={edges}
@@ -720,16 +819,16 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           nodesConnectable={false}
           edgesFocusable={false}
           snapToGrid
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 'inherit'
+          }}
           fitView
           fitViewOptions={fitViewOptions}
           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           minZoom={0.1}
           maxZoom={4}
-          snapGrid={[15, 15]}
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: 'inherit'
-          }}
+          snapGrid={[10, 10]}
           defaultEdgeOptions={{
             style: { strokeWidth: 1, stroke: '#9CA3AF' }
           }}
@@ -738,7 +837,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
           <Controls />
           <div className="absolute left-4 top-4 z-10 flex gap-2">
             <Button
-              className="bg-appBlue text-appWhite hover:bg-appBlue/90 flex gap-1 text-xs"
+              className="flex gap-1 border border-gray-300 bg-white text-xs text-gray-600 hover:bg-gray-100"
               onClick={() => handleAddNode('normal')}
               type="button"
             >
@@ -746,7 +845,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
               <span className="font-medium">Nút thường</span>
             </Button>
             <Button
-              className="text-appWhite flex gap-1 bg-green-600 text-xs hover:bg-green-600/90 disabled:bg-gray-400 disabled:opacity-100"
+              className="text-appWhite flex gap-1 bg-green-600 text-xs hover:bg-green-700 disabled:bg-gray-300 disabled:opacity-100"
               onClick={() => handleAddNode('start')}
               type="button"
               disabled={hasStartNode}
@@ -758,7 +857,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
               <span className="font-medium">Nút bắt đầu</span>
             </Button>
             <Button
-              className="text-appWhite flex gap-1 bg-purple-600 text-xs hover:bg-purple-600/90 disabled:bg-gray-400 disabled:opacity-100"
+              className="text-appWhite flex gap-1 bg-purple-600 text-xs hover:bg-purple-700 disabled:bg-gray-300 disabled:opacity-100"
               onClick={() => handleAddNode('finished')}
               type="button"
               disabled={hasFinishedNode}
@@ -770,6 +869,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
             >
               <CheckIcon className="h-4 w-4" />
               <span className="font-medium">Nút hoàn thành</span>
+            </Button>
+            <Button
+              className="text-appWhite flex gap-1 bg-orange-500 text-xs hover:bg-orange-600"
+              onClick={() => handleAddNode('normal', 'auto')}
+              type="button"
+            >
+              <ZapIcon className="h-4 w-4" />
+              <span className="font-medium">Nút tự động</span>
             </Button>
           </div>
         </ReactFlow>

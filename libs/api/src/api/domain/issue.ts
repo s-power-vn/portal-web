@@ -163,7 +163,8 @@ export const issueApi = router('issue', {
           const infos = await client
             .collection(Collections.IssueUserInfo)
             .getFullList({
-              filter: `user = "${client.authStore.record?.id}"`
+              filter: `user = "${client.authStore.record?.id}"`,
+              requestKey: null
             });
 
           return infos.reduce((acc, item) => acc + item.count, 0);
