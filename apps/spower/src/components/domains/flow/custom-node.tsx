@@ -1,12 +1,6 @@
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import _ from 'lodash';
-import {
-  CheckCircle2Icon,
-  CheckIcon,
-  FilterIcon,
-  PlayIcon,
-  ZapIcon
-} from 'lucide-react';
+import { CheckCircle2Icon, CheckIcon, PlayIcon, ZapIcon } from 'lucide-react';
 
 import { FC, useMemo } from 'react';
 
@@ -112,10 +106,6 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <span>{data.name}</span>
           </Show>
 
-          <Show when={data.condition && !data.isView}>
-            <FilterIcon className="h-4 w-4 text-orange-500" />
-          </Show>
-
           <Show when={data.isApprove && !data.isView}>
             <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
           </Show>
@@ -163,7 +153,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
               style={{
                 left: '5px',
                 top: `${(index + 1) * (100 / (leftPoints.length + 1))}%`,
-                transform: `translate(calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`,
+                transform: `translate(calc(-50% - ${data.isView ? '-5px' : '5px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -221,7 +211,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                     ? '50%'
                     : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
                 top: '5px',
-                transform: `translate(-50%, calc(-50% - ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`,
+                transform: `translate(-50%, calc(-50% - ${data.isView ? '-5px' : '5px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -279,7 +269,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                   data.operationType === 'auto'
                     ? '50%'
                     : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
-                transform: `translate(calc(-50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}), -50%)`,
+                transform: `translate(calc(-50% + ${data.isView ? '-5px' : '5px'}), -50%)`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
@@ -337,7 +327,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                     ? '50%'
                     : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
                 bottom: '5px',
-                transform: `translate(-50%, calc(50% + ${data.isView ? '-5px' : point.autoType ? '8px' : '5px'}))`,
+                transform: `translate(-50%, calc(50% + ${data.isView ? '-5px' : '5px'}))`,
                 width: '6px',
                 height: '6px',
                 backgroundColor:
