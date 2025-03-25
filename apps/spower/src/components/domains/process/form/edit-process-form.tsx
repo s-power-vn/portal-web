@@ -128,6 +128,9 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
         name="process"
         title="Quy trình"
         className="flex-1"
+        options={{
+          objectType: process.data?.expand?.objectType.name
+        }}
       />
     </Form>
   );

@@ -125,9 +125,14 @@ const nodeTypes: NodeTypes = {
 export type FlowEditorProps = {
   value?: ProcessData;
   onChange?: (value: ProcessData) => void;
+  objectType?: string;
 };
 
-export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
+export const FlowEditor: FC<FlowEditorProps> = ({
+  value,
+  onChange,
+  objectType = ''
+}) => {
   const reactFlowInstance = useReactFlow();
   const { fitView } = reactFlowInstance;
   const isReady = useRef(false);
@@ -908,6 +913,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({ value, onChange }) => {
                 selectedNode={selectedNode}
                 onNodeUpdate={handleNodeUpdate}
                 onNodeDelete={handleNodeDelete}
+                objectType={objectType}
               />
             ) : (
               <FlowProperty

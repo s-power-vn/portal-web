@@ -75,7 +75,7 @@ export const processApi = router('process', {
   }),
   apply: router.mutation({
     mutationFn: (params: { processId: string; objectIds: string[] }) => {
-      return client.send('/apply-process', {
+      return client.send('/process/apply', {
         method: 'POST',
         body: params
       });
@@ -83,8 +83,7 @@ export const processApi = router('process', {
   }),
   duplicate: router.mutation({
     mutationFn: (id: string) => {
-      console.log('id', id);
-      return client.send('/duplicate-process', {
+      return client.send('/process/duplicate', {
         method: 'POST',
         body: {
           processId: id

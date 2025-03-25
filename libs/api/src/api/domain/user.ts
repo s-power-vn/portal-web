@@ -25,7 +25,7 @@ export const userApi = router('user', {
       oldPassword: string;
       newPassword: string;
     }) => {
-      return client.send('/change-password', {
+      return client.send('/user/change-password', {
         method: 'PUT',
         body: params
       });

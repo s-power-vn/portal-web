@@ -63,7 +63,7 @@ export const priceApi = router('price', {
         deleted?: boolean;
       }[];
     }) => {
-      const { id } = await client.send('/create-price', {
+      const { id } = await client.send('/price/create', {
         method: 'POST',
         body: params
       });
@@ -128,7 +128,7 @@ export const priceApi = router('price', {
         }
       }
 
-      return client.send('/update-price', {
+      return client.send('/price/update', {
         method: 'POST',
         body: params
       });

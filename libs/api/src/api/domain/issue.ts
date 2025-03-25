@@ -90,7 +90,7 @@ export const issueApi = router('issue', {
       status: string;
       note?: string;
     }) => {
-      return client.send('/issue-forward', {
+      return client.send('/issue/forward', {
         method: 'POST',
         body: params
       });
@@ -102,7 +102,7 @@ export const issueApi = router('issue', {
       status: string;
       note?: string;
     }) => {
-      return client.send('/issue-return', {
+      return client.send('/issue/return', {
         method: 'POST',
         body: params
       });
@@ -114,7 +114,7 @@ export const issueApi = router('issue', {
       status: string;
       note?: string;
     }) => {
-      return client.send('/issue-finish', {
+      return client.send('/issue/finish', {
         method: 'POST',
         body: params
       });
@@ -122,7 +122,7 @@ export const issueApi = router('issue', {
   }),
   reset: router.mutation({
     mutationFn: (params: { id: string }) => {
-      return client.send('/issue-reset', {
+      return client.send('/issue/reset', {
         method: 'POST',
         body: params
       });
@@ -136,7 +136,7 @@ export const issueApi = router('issue', {
       userName: string;
       userId: string;
     }) => {
-      return client.send('/issue-approve', {
+      return client.send('/issue/approve', {
         method: 'POST',
         body: params
       });
@@ -144,7 +144,7 @@ export const issueApi = router('issue', {
   }),
   unApprove: router.mutation({
     mutationFn: (params: { id: string; nodeId: string }) => {
-      return client.send('/issue-unapprove', {
+      return client.send('/issue/unapprove', {
         method: 'POST',
         body: params
       });

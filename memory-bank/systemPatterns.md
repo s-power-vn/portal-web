@@ -51,3 +51,45 @@ libs/
 - Shared core functionality in libs
 - Reusable components in core library
 - API interfaces in dedicated library
+
+## Form Validation Patterns
+
+### Delayed Validation Display
+- Validation errors are not shown immediately on field change
+- Errors only appear after first form submission attempt
+- After first submit, validation runs on field changes
+- This pattern reduces visual noise and improves initial UX
+
+### Sequential Input Display
+- Fields are shown progressively based on dependencies
+- Parent fields are always visible
+- Child fields appear only when parent fields have valid values
+- This pattern guides users through complex forms
+
+## Data Handling Patterns
+
+### DateTime Handling
+- ISO string format for API communication
+- Local date display in UI
+- Consistent parsing and formatting across components
+- Special handling for date ranges in expressions
+
+### Expression Editor Pattern
+- Condition string parsing with regex
+- Operator mapping for different data types
+- Value formatting based on property type
+- Support for complex date range conditions
+
+## UI/UX Patterns
+
+### Form Layout
+- Consistent spacing between form sections
+- Fixed container heights with scrollable content
+- Clear visual hierarchy for nested components
+- Responsive design for various screen sizes
+
+### Error Handling
+- Clear error messages below affected fields
+- Contextual validation based on field dependencies
+- Non-blocking validation for better UX
+- Proper error state management in forms

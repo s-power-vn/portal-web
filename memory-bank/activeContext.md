@@ -1,22 +1,38 @@
 # Active Context
 
 ## Current Focus
-- Initial project setup and documentation
-- Memory Bank initialization
-- Project structure organization
+
+### Expression Editor Improvements
+
+- Fixed operator parsing and display for datetime fields
+- Enhanced form validation to only show after first submit
+- Improved UX with sequential field display:
+  - Property select is always visible
+  - Operator select shows only after property is selected
+  - Value input shows only after operator is selected
+- Added proper spacing between multiple expressions
+- Fixed date parsing and formatting in the expression editor
 
 ## Recent Changes
-- Created Memory Bank documentation
-- Established project structure documentation
-- Defined technical patterns and constraints
+
+- Updated expression editor's validation behavior to be less intrusive
+- Improved the visual hierarchy of expression inputs
+- Fixed bug with datetime operator parsing
 
 ## Next Steps
-1. Review existing codebase
-2. Document current features
-3. Identify areas for improvement
-4. Plan upcoming features
+
+- Consider adding field-level validation states
+- Consider adding animation for sequential field display
+- Add more comprehensive testing for expression parsing
+
+## Active Decisions
+
+- Form validation errors only show after first submit attempt
+- Fields appear sequentially to guide user input
+- Maintain fixed height with scrollable content for multiple expressions
 
 ## Active Considerations
+
 1. Code Organization
    - Maintain clean project structure
    - Follow established patterns
@@ -30,4 +46,4 @@
 3. Documentation
    - Keep Memory Bank updated
    - Document new features and changes
-   - Track progress and decisions 
+   - Track progress and decisions

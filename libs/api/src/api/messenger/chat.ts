@@ -269,7 +269,7 @@ export const chatApi = router('chat', {
       const currentUser = client.authStore.record?.id;
       if (!currentUser) throw new Error('User not authenticated');
 
-      return client.send('/send-message', {
+      return client.send('/message/send', {
         method: 'POST',
         body: {
           ...data,

@@ -40,7 +40,7 @@ export const employeeApi = router('employee', {
   }),
   create: router.mutation({
     mutationFn: (params: Partial<UserRecord> & { password: string }) =>
-      client.send('/create-employee', {
+      client.send('/employee/create', {
         method: 'POST',
         body: params
       })

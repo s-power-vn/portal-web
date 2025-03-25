@@ -6,7 +6,7 @@ import { priceApi } from './domain/price';
 import type { ProjectData } from './domain/project';
 import { projectApi } from './domain/project';
 import type { RequestData, RequestDetailData } from './domain/request';
-import { requestApi, requestDetailApi } from './domain/request';
+import { requestApi } from './domain/request';
 import { userApi } from './domain/user';
 import {
   MsgChannel,
@@ -46,7 +46,6 @@ export const api = {
   process: processApi,
   project: projectApi,
   request: requestApi,
-  requestDetail: requestDetailApi,
   supplier: supplierApi,
   user: userApi
 };

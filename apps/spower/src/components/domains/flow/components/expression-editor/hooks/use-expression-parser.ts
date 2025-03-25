@@ -1,0 +1,134 @@
+import * as yup from 'yup';
+
+import { useCallback, useState } from 'react';
+
+import { ExpressionRowData, ExpressionRowErrors } from '../types';
+import { createEmptyRow, parseCondition } from '../utils';
+
+export const useExpressionParser = (value: string, objectType: string) => {
+  const [rows, setRows] = useState<ExpressionRowData[]>(() =>
+    value ? parseCondition(value, objectType) : [createEmptyRow()]
+  );
+
+  const [errors, setErrors] = useState<Record<string, ExpressionRowErrors>>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const validateRow = useCallback(async (row: ExpressionRowData) => {
+    try {
+      await yup
+        .object<ExpressionRowData>({
+          property: yup.string().required('Thuộc tính là bắt buộc'),
+          propertyType: yup.string().required('Loại thuộc tính là bắt buộc'),
+          operator: yup.string().required('Toán tử là bắt buộc'),
+          value: yup.mixed().when(['operator', 'propertyType'], {
+            is: (operator: string, propertyType: string) =>
+              operator !== 'in' || propertyType !== 'datetime',
+            then: schema => schema.required('Giá trị là bắt buộc'),
+            otherwise: schema => schema
+          }),
+          fromDate: yup
+            .date()
+            .nullable()
+            .when(['operator', 'propertyType'], {
+              is: (operator: string, propertyType: string) =>
+                operator === 'in' && propertyType === 'datetime',
+              then: schema => schema.required('Từ ngày là bắt buộc'),
+              otherwise: schema => schema.nullable()
+            }),
+          toDate: yup
+            .date()
+            .nullable()
+            .when(['operator', 'propertyType'], {
+              is: (operator: string, propertyType: string) =>
+                operator === 'in' && propertyType === 'datetime',
+              then: schema => schema.required('Đến ngày là bắt buộc'),
+              otherwise: schema => schema.nullable()
+            })
+        })
+        .validate(row, { abortEarly: false });
+
+      setErrors(prev => ({ ...prev, [row.id]: {} }));
+      return true;
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        const fieldErrors: ExpressionRowErrors = {};
+        err.inner.forEach(e => {
+          if (e.path) fieldErrors[e.path] = e.message;
+        });
+        setErrors(prev => ({ ...prev, [row.id]: fieldErrors }));
+      }
+      return false;
+    }
+  }, []);
+
+  const handleUpdateRow = useCallback(
+    (id: string, field: keyof ExpressionRowData, value: any) => {
+      setRows(prevRows => {
+        const newRows = prevRows.map(row => {
+          if (row.id === id) {
+            const updatedRow = { ...row, [field]: value };
+
+            // Reset operator and value when property changes
+            if (field === 'property') {
+              updatedRow.operator = '';
+              updatedRow.value = null;
+              updatedRow.fromDate = null;
+              updatedRow.toDate = null;
+            }
+
+            // Reset value when operator changes
+            if (field === 'operator') {
+              updatedRow.value = null;
+              updatedRow.fromDate = null;
+              updatedRow.toDate = null;
+            }
+
+            // Validate the updated row if already submitted
+            if (isSubmitted) {
+              validateRow(updatedRow).catch(console.error);
+            }
+
+            return updatedRow;
+          }
+          return row;
+        });
+
+        return newRows;
+      });
+    },
+    [validateRow, isSubmitted]
+  );
+
+  const handleAddRow = useCallback(() => {
+    const newRow = createEmptyRow();
+    setRows(prevRows => [...prevRows, newRow]);
+    setErrors(prev => ({ ...prev, [newRow.id]: {} }));
+  }, []);
+
+  const handleRemoveRow = useCallback((id: string) => {
+    setRows(prevRows => {
+      const newRows = prevRows.filter(row => row.id !== id);
+      return newRows.length > 0 ? newRows : [createEmptyRow()];
+    });
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      return newErrors;
+    });
+  }, []);
+
+  const validateAllRows = useCallback(async () => {
+    setIsSubmitted(true);
+    const validations = await Promise.all(rows.map(validateRow));
+    return validations.every(Boolean);
+  }, [rows, validateRow]);
+
+  return {
+    rows,
+    errors: isSubmitted ? errors : {},
+    handleUpdateRow,
+    handleAddRow,
+    handleRemoveRow,
+    validateAllRows
+  };
+};

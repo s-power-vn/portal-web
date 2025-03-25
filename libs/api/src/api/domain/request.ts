@@ -7,8 +7,6 @@ import type {
   SupplierResponse
 } from 'portal-core';
 import { Collections, client } from 'portal-core';
-import type { InferType } from 'yup';
-import { number, object, string } from 'yup';
 
 import { router } from 'react-query-kit';
 
@@ -111,7 +109,7 @@ export const requestApi = router('request', {
         deleted?: boolean;
       }[];
     }) => {
-      const { id } = await client.send('/create-request', {
+      const { id } = await client.send('/request/create', {
         method: 'POST',
         body: params
       });
@@ -174,53 +172,10 @@ export const requestApi = router('request', {
         }
       }
 
-      return client.send('/update-request', {
+      return client.send('/request/update', {
         method: 'POST',
         body: params
       });
     }
-  })
-});
-
-export const UpdateRequestDetailPriceSchema = object().shape({
-  supplier: string().required('Hãy chọn nhà cung cấp'),
-  price: number()
-    .required('Hãy nhập đơn giá nhà cung cấp')
-    .transform((_, originalValue) =>
-      Number(originalValue?.toString().replace(/,/g, '.'))
-    )
-    .transform(value => (Number.isNaN(value) ? undefined : value))
-    .typeError('Sai định dạng số')
-    .moreThan(0, 'Đơn giá không thể <= 0')
-});
-
-export type UpdateRequestDetailPriceInput = InferType<
-  typeof UpdateRequestDetailPriceSchema
->;
-
-export const requestDetailApi = router('requestDetail', {
-  byId: router.query({
-    fetcher: (requestDetailId: string) =>
-      client
-        .collection<RequestDetailData>(Collections.RequestDetail)
-        .getOne(requestDetailId, {
-          expand: 'request,detail,request_via_requestDetail.request'
-        })
-  }),
-  updateVolume: router.mutation({
-    mutationFn: (params: { requestDetailId: string }) =>
-      client
-        .collection<RequestDetailData>(Collections.RequestDetail)
-        .update(params.requestDetailId, params)
-  }),
-  updatePrice: router.mutation({
-    mutationFn: (
-      params: UpdateRequestDetailPriceInput & {
-        requestDetailId: string;
-      }
-    ) =>
-      client
-        .collection<RequestDetailData>(Collections.RequestDetail)
-        .update(params.requestDetailId, params)
   })
 });
