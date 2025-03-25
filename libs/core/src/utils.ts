@@ -50,7 +50,7 @@ export async function downloadTemplate(
   const record = await client
     .collection(Collections.Template)
     .getFirstListItem('');
-  const url = client.files.getUrl(record, record[fileName]);
+  const url = client.files.getURL(record, record[fileName]);
   fetch(url, {
     method: 'GET',
     headers: contentType

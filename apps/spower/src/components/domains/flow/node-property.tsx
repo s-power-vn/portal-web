@@ -24,9 +24,9 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { ExpressionEditor } from './components/expression-editor';
 import { ConditionDisplay } from './condition-display';
 import { ConditionGenerator } from './condition-generator';
-import { ExpressionEditor } from './expression-editor';
 import type { Node, NodeType, OperationType, Point, PointRole } from './types';
 
 type NodeFormValues = {
@@ -67,12 +67,14 @@ export type NodePropertyProps = {
   selectedNode: Node | null;
   onNodeUpdate?: (nodeId: string, updates: Partial<Node>) => void;
   onNodeDelete?: (nodeId: string) => void;
+  objectType: string;
 };
 
 export const NodeProperty: FC<NodePropertyProps> = ({
   selectedNode,
   onNodeUpdate,
-  onNodeDelete
+  onNodeDelete,
+  objectType
 }) => {
   const {
     register,
@@ -183,6 +185,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       children: ({ close }) => {
         return (
           <ExpressionEditor
+            objectType={objectType}
             value={watch('condition')}
             onSubmit={value => {
               setValue('condition', value, {

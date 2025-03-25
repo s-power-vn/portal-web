@@ -70,7 +70,7 @@ export const objectApi = router('object', {
   }),
   duplicate: router.mutation({
     mutationFn: (id: string) =>
-      client.send('/duplicate-object', {
+      client.send('/object/duplicate', {
         method: 'POST',
         body: {
           objectId: id
@@ -86,5 +86,21 @@ export const objectApi = router('object', {
           })
         )
       )
+  }),
+  getVariables: router.query({
+    fetcher: async (objectType: string) => {
+      return await client.send<
+        {
+          name: string;
+          type: string;
+          display: string;
+        }[]
+      >('/object/list-variables', {
+        method: 'GET',
+        query: {
+          objectType
+        }
+      });
+    }
   })
 });
