@@ -18,13 +18,17 @@ export const useExpressionParser = (value: string, objectType: string) => {
       await yup
         .object<ExpressionRowData>({
           property: yup.string().required('Thuộc tính là bắt buộc'),
-          propertyType: yup.string().required('Loại thuộc tính là bắt buộc'),
+          propertyType: yup.string().when('property', {
+            is: (property: string) => !!property,
+            then: schema => schema.required('Loại thuộc tính là bắt buộc'),
+            otherwise: schema => schema
+          }),
           operator: yup.string().required('Toán tử là bắt buộc'),
           value: yup.mixed().when(['operator', 'propertyType'], {
             is: (operator: string, propertyType: string) =>
-              operator !== 'in' || propertyType !== 'datetime',
+              operator === 'in' && propertyType === 'datetime' ? false : true,
             then: schema => schema.required('Giá trị là bắt buộc'),
-            otherwise: schema => schema
+            otherwise: schema => schema.nullable()
           }),
           fromDate: yup
             .date()
@@ -38,10 +42,16 @@ export const useExpressionParser = (value: string, objectType: string) => {
           toDate: yup
             .date()
             .nullable()
-            .when(['operator', 'propertyType'], {
-              is: (operator: string, propertyType: string) =>
-                operator === 'in' && propertyType === 'datetime',
-              then: schema => schema.required('Đến ngày là bắt buộc'),
+            .when(['operator', 'propertyType', 'fromDate'], {
+              is: (
+                operator: string,
+                propertyType: string,
+                fromDate: Date | null
+              ) => operator === 'in' && propertyType === 'datetime' && fromDate,
+              then: schema =>
+                schema
+                  .required('Đến ngày là bắt buộc')
+                  .min(yup.ref('fromDate'), 'Đến ngày phải lớn hơn Từ ngày'),
               otherwise: schema => schema.nullable()
             })
         })
@@ -80,6 +90,16 @@ export const useExpressionParser = (value: string, objectType: string) => {
             if (field === 'operator') {
               updatedRow.value = null;
               updatedRow.fromDate = null;
+              updatedRow.toDate = null;
+            }
+
+            // Reset toDate if fromDate is after it
+            if (
+              field === 'fromDate' &&
+              updatedRow.toDate &&
+              updatedRow.fromDate &&
+              updatedRow.fromDate > updatedRow.toDate
+            ) {
               updatedRow.toDate = null;
             }
 

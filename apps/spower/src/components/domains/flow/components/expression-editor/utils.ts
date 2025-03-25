@@ -1,3 +1,5 @@
+import { error } from '@minhdtb/storeo-theme';
+
 import { ExpressionRowData, OperatorType, PropertyType } from './types';
 
 export const createEmptyRow = (): ExpressionRowData => ({
@@ -9,6 +11,39 @@ export const createEmptyRow = (): ExpressionRowData => ({
   fromDate: null,
   toDate: null
 });
+
+const detectPropertyType = (value: string): PropertyType => {
+  // Remove quotes if present
+  const cleanValue =
+    value.startsWith('"') && value.endsWith('"')
+      ? value.substring(1, value.length - 1)
+      : value;
+
+  // Check for ISO date format
+  if (cleanValue.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/)) {
+    try {
+      const date = new Date(cleanValue);
+      if (!isNaN(date.getTime())) {
+        return 'datetime';
+      }
+    } catch (e) {
+      // Not a valid date, continue to other checks
+    }
+  }
+
+  // Check for boolean
+  if (cleanValue === 'true' || cleanValue === 'false') {
+    return 'boolean';
+  }
+
+  // Check for number
+  if (!isNaN(Number(cleanValue))) {
+    return 'number';
+  }
+
+  // Default to string
+  return 'string';
+};
 
 export const formatExpressionValue = (
   value: any,
@@ -36,13 +71,18 @@ export const expressionsToCondition = (
   if (rows.length === 0) return '';
 
   return rows
-    .filter(
-      row =>
-        row.property &&
-        row.operator &&
-        (row.value !== null ||
-          (row.operator === 'in' && row.fromDate && row.toDate))
-    )
+    .filter(row => {
+      // Nếu không có property hoặc operator thì loại bỏ
+      if (!row.property || !row.operator) return false;
+
+      // Nếu là datetime với operator 'in' thì cần có fromDate và toDate
+      if (row.propertyType === 'datetime' && row.operator === 'in') {
+        return row.fromDate && row.toDate;
+      }
+
+      // Các trường hợp khác chỉ cần có value
+      return row.value !== null && row.value !== undefined;
+    })
     .map(row => {
       const { property, operator, value, propertyType, fromDate, toDate } = row;
 
@@ -102,7 +142,9 @@ export const parseCondition = (
             processedIndices.add(index + 1);
           }
         } catch (e) {
-          console.error('Error parsing date range:', e);
+          error(
+            `Lỗi khi phân tích khoảng thời gian: ${e instanceof Error ? e.message : String(e)}`
+          );
         }
       }
     }
@@ -121,40 +163,30 @@ export const parseCondition = (
       const [, property, operator, valueStr] = objectPropertyMatch;
       let parsedValue = valueStr.trim();
 
+      // Detect property type based on value
+      const propertyType = detectPropertyType(parsedValue);
+
       // Remove quotes if present
       if (parsedValue.startsWith('"') && parsedValue.endsWith('"')) {
         parsedValue = parsedValue.substring(1, parsedValue.length - 1);
       }
 
-      // Try to parse date if the value looks like an ISO date string
-      if (
-        parsedValue.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/)
-      ) {
-        try {
-          const date = new Date(parsedValue);
-          if (!isNaN(date.getTime())) {
-            rows.push({
-              id: Math.random().toString(36).substring(2, 9),
-              property,
-              propertyType: 'datetime',
-              operator: operator.trim() as OperatorType,
-              value: date,
-              fromDate: null,
-              toDate: null
-            });
-            return;
-          }
-        } catch (e) {
-          console.error('Error parsing date:', e);
-        }
+      // Convert value based on type
+      let value: any = parsedValue;
+      if (propertyType === 'datetime') {
+        value = new Date(parsedValue);
+      } else if (propertyType === 'boolean') {
+        value = parsedValue === 'true';
+      } else if (propertyType === 'number') {
+        value = Number(parsedValue);
       }
 
       rows.push({
         id: Math.random().toString(36).substring(2, 9),
         property,
-        propertyType: '', // This will be set by the component based on variables
+        propertyType,
         operator: operator.trim() as OperatorType,
-        value: parsedValue,
+        value,
         fromDate: null,
         toDate: null
       });
