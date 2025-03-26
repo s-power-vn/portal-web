@@ -17,9 +17,9 @@ import { UseFormSetValue, useFieldArray, useForm } from 'react-hook-form';
 
 import { Button } from '@minhdtb/storeo-theme';
 
-import { DepartmentDropdown } from '../department';
-import { SelectEmployee } from '../employee';
-import { RoleDropdown } from '../role';
+import { DepartmentDropdown } from '../../../department';
+import { SelectEmployee } from '../../../employee';
+import { RoleDropdown } from '../../../role';
 import { ConditionDisplay } from './condition-display';
 
 type ConditionType = 'department' | 'employee';
@@ -238,7 +238,7 @@ const ConditionBlock = memo(
                 showClear={false}
               />
               {formSubmitted && showDepartmentError && !localDeptId && (
-                <p className="text-destructive mt-1 text-sm">
+                <p className="text-destructive mt-1 text-xs">
                   Phòng ban là bắt buộc
                 </p>
               )}
@@ -283,7 +283,7 @@ const ConditionBlock = memo(
                 showEmployeeError &&
                 isEmployeeCondition(condition) &&
                 condition.employeeIds.length === 0 && (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className="text-destructive mt-1 text-xs">
                     Phải chọn ít nhất một nhân viên
                   </p>
                 )}

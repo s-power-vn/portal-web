@@ -1,6 +1,11 @@
 import { error } from '@minhdtb/storeo-theme';
 
-import { ExpressionRowData, OperatorType, PropertyType } from './types';
+import {
+  ExpressionRowData,
+  OperatorType,
+  PropertyType,
+  PropertyVariable
+} from './types';
 
 export const createEmptyRow = (): ExpressionRowData => ({
   id: Math.random().toString(36).substring(2, 9),
@@ -47,11 +52,17 @@ const detectPropertyType = (value: string): PropertyType => {
 
 export const formatExpressionValue = (
   value: any,
-  type: PropertyType
+  type: PropertyType,
+  operator?: OperatorType
 ): string => {
   if (value === null || value === undefined) return '';
 
   switch (type) {
+    case 'employee':
+      if (operator === 'in' && Array.isArray(value)) {
+        return `"${value.join(',')}"`;
+      }
+      return `"${value}"`;
     case 'string':
       return `"${value}"`;
     case 'datetime':
@@ -98,7 +109,8 @@ export const expressionsToCondition = (
 
       return `${objectType}.${property} ${operator} ${formatExpressionValue(
         value,
-        propertyType as PropertyType
+        propertyType as PropertyType,
+        operator as OperatorType
       )}`;
     })
     .join(' && ');
@@ -106,7 +118,8 @@ export const expressionsToCondition = (
 
 export const parseCondition = (
   condition: string,
-  objectType: string
+  objectType: string,
+  variables: PropertyVariable[]
 ): ExpressionRowData[] => {
   if (!condition) return [createEmptyRow()];
 
@@ -129,10 +142,12 @@ export const parseCondition = (
           const toDate = new Date(nextPart.match(/< "([^"]+)"/)?.[1] || '');
 
           if (property && fromDate && toDate) {
+            const propertyType =
+              variables.find(v => v.name === property)?.type || 'datetime';
             rows.push({
               id: Math.random().toString(36).substring(2, 9),
               property,
-              propertyType: 'datetime',
+              propertyType,
               operator: 'in',
               value: null,
               fromDate,
@@ -163,15 +178,16 @@ export const parseCondition = (
       const [, property, operator, valueStr] = objectPropertyMatch;
       let parsedValue = valueStr.trim();
 
-      // Detect property type based on value
-      const propertyType = detectPropertyType(parsedValue);
+      // Get property type from variables
+      const propertyType =
+        variables.find(v => v.name === property)?.type || 'string';
 
       // Remove quotes if present
       if (parsedValue.startsWith('"') && parsedValue.endsWith('"')) {
         parsedValue = parsedValue.substring(1, parsedValue.length - 1);
       }
 
-      // Convert value based on type
+      // Convert value based on type and operator
       let value: any = parsedValue;
       if (propertyType === 'datetime') {
         value = new Date(parsedValue);
@@ -179,6 +195,8 @@ export const parseCondition = (
         value = parsedValue === 'true';
       } else if (propertyType === 'number') {
         value = Number(parsedValue);
+      } else if (propertyType === 'employee' && operator.trim() === 'in') {
+        value = parsedValue.split(',').map(v => v.trim());
       }
 
       rows.push({

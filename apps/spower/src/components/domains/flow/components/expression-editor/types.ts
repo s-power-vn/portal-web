@@ -1,4 +1,10 @@
-export type PropertyType = 'string' | 'number' | 'datetime' | 'boolean';
+export type PropertyType =
+  | 'string'
+  | 'number'
+  | 'datetime'
+  | 'boolean'
+  | 'employee'
+  | 'department';
 export type OperatorType = '=' | '<>' | '>' | '<' | '>=' | '<=' | 'in';
 
 export type PropertyVariable = {
@@ -12,7 +18,7 @@ export type ExpressionRowData = {
   property: string;
   propertyType: PropertyType | '';
   operator: OperatorType | '';
-  value: string | number | boolean | Date | null;
+  value: string | string[] | number | boolean | Date | null;
   fromDate?: Date | null;
   toDate?: Date | null;
 };

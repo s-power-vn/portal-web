@@ -13,20 +13,14 @@ import {
   useUpdateNodeInternals
 } from '@xyflow/react';
 import _ from 'lodash';
-import {
-  CheckIcon,
-  GripVertical,
-  PlayIcon,
-  PlusCircleIcon,
-  ZapIcon
-} from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { setTimeout } from 'timers';
 
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
-import { Button } from '@minhdtb/storeo-theme';
 
+import { AddNodeButton } from './add-node-button';
 import { CustomNode } from './custom-node';
 import { FlowProperty } from './flow-property';
 import { NodeProperty } from './node-property';
@@ -840,49 +834,12 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         >
           <Background color="#CBD5E1" gap={15} size={2} />
           <Controls />
-          <div className="absolute left-4 top-4 z-10 flex gap-2">
-            <Button
-              className="flex gap-1 border border-gray-300 bg-white text-xs text-gray-600 hover:bg-gray-100"
-              onClick={() => handleAddNode('normal')}
-              type="button"
-            >
-              <PlusCircleIcon className="h-4 w-4" />
-              <span className="font-medium">Nút thường</span>
-            </Button>
-            <Button
-              className="text-appWhite flex gap-1 bg-green-600 text-xs hover:bg-green-700 disabled:bg-gray-300 disabled:opacity-100"
-              onClick={() => handleAddNode('start')}
-              type="button"
-              disabled={hasStartNode}
-              title={
-                hasStartNode ? 'Đã tồn tại nút bắt đầu' : 'Thêm nút bắt đầu'
-              }
-            >
-              <PlayIcon className="h-4 w-4" />
-              <span className="font-medium">Nút bắt đầu</span>
-            </Button>
-            <Button
-              className="text-appWhite flex gap-1 bg-purple-600 text-xs hover:bg-purple-700 disabled:bg-gray-300 disabled:opacity-100"
-              onClick={() => handleAddNode('finished')}
-              type="button"
-              disabled={hasFinishedNode}
-              title={
-                hasFinishedNode
-                  ? 'Đã tồn tại nút hoàn thành'
-                  : 'Thêm nút hoàn thành'
-              }
-            >
-              <CheckIcon className="h-4 w-4" />
-              <span className="font-medium">Nút hoàn thành</span>
-            </Button>
-            <Button
-              className="text-appWhite flex gap-1 bg-orange-500 text-xs hover:bg-orange-600"
-              onClick={() => handleAddNode('normal', 'auto')}
-              type="button"
-            >
-              <ZapIcon className="h-4 w-4" />
-              <span className="font-medium">Nút tự động</span>
-            </Button>
+          <div className="absolute left-4 top-4 z-10">
+            <AddNodeButton
+              onAddNode={handleAddNode}
+              hasStartNode={hasStartNode}
+              hasFinishedNode={hasFinishedNode}
+            />
           </div>
         </ReactFlow>
       </div>

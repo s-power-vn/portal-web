@@ -24,9 +24,11 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
+import {
+  ConditionDisplay,
+  ConditionGenerator
+} from './components/condition-generator';
 import { ExpressionEditor } from './components/expression-editor';
-import { ConditionDisplay } from './condition-display';
-import { ConditionGenerator } from './condition-generator';
 import type { Node, NodeType, OperationType, Point, PointRole } from './types';
 
 type NodeFormValues = {

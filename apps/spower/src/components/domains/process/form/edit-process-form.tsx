@@ -23,7 +23,7 @@ const schema = object().shape({
   process: object()
     .test(
       'has-start-node',
-      'Quy trình phải có ít nhất một nút bắt đầu',
+      'Quy trình phải có nút bắt đầu',
       function (value: any) {
         if (!value || !value.nodes || !Array.isArray(value.nodes)) {
           return false;
@@ -35,7 +35,7 @@ const schema = object().shape({
     )
     .test(
       'has-finished-node',
-      'Quy trình phải có ít nhất một nút hoàn thành',
+      'Quy trình phải có nút hoàn thành',
       function (value: any) {
         if (!value || !value.nodes || !Array.isArray(value.nodes)) {
           return false;
