@@ -1,9 +1,11 @@
 import { Trash2 } from 'lucide-react';
 
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
+import { Match, Switch } from '@minhdtb/storeo-core';
 import { DatePicker, SelectInput } from '@minhdtb/storeo-theme';
 
+import { SelectEmployee } from '../../../employee';
 import { OPERATOR_OPTIONS } from './constants';
 import { ExpressionRowProps, PropertyType } from './types';
 import { ValueInput } from './value-input';
@@ -31,15 +33,21 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
     [variables]
   );
 
-  const handlePropertyChange = (value: string | string[] | undefined) => {
-    if (typeof value === 'string') {
-      const selectedProperty = variables.find(v => v.name === value);
-      if (selectedProperty) {
-        onUpdate(row.id, 'property', value);
-        onUpdate(row.id, 'propertyType', selectedProperty.type);
+  const handlePropertyChange = useCallback(
+    (value: string | string[] | undefined) => {
+      if (typeof value === 'string') {
+        const selectedProperty = variables.find(v => v.name === value);
+        if (selectedProperty) {
+          onUpdate(row.id, 'property', value);
+          onUpdate(row.id, 'propertyType', selectedProperty.type);
+        }
+      } else {
+        onUpdate(row.id, 'property', '');
+        onUpdate(row.id, 'propertyType', '');
       }
-    }
-  };
+    },
+    [variables, onUpdate, row.id]
+  );
 
   const operatorOptions = useMemo(() => {
     if (row.property && !row.propertyType) {
@@ -62,7 +70,7 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-[1fr_1fr_2fr_auto] gap-4">
+      <div className="grid grid-cols-[1fr_125px_2fr_auto] gap-4">
         {/* Property Field */}
         <div className="flex flex-col gap-1">
           <SelectInput<SelectItem>
@@ -75,7 +83,6 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
             <div className="text-xs text-red-500">{errors.property}</div>
           )}
         </div>
-
         {/* Operator Field */}
         <div className="flex flex-col gap-1">
           {row.property && (
@@ -95,8 +102,27 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
 
         {/* Value Field */}
         <div className="flex flex-col gap-1">
-          {row.operator &&
-            (row.operator === 'in' && row.propertyType === 'datetime' ? (
+          <Switch
+            fallback={
+              <>
+                <ValueInput
+                  type={row.propertyType as PropertyType}
+                  value={row.value}
+                  onChange={value => onUpdate(row.id, 'value', value)}
+                />
+                {errors.value && (
+                  <div className="text-xs text-red-500">{errors.value}</div>
+                )}
+              </>
+            }
+          >
+            <Match
+              when={
+                row.operator &&
+                row.operator === 'in' &&
+                row.propertyType === 'datetime'
+              }
+            >
               <div className="flex gap-4">
                 <div className="flex flex-1 flex-col gap-1">
                   <DatePicker
@@ -125,18 +151,26 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
                   )}
                 </div>
               </div>
-            ) : (
-              <>
-                <ValueInput
-                  type={row.propertyType as PropertyType}
-                  value={row.value}
+            </Match>
+            <Match
+              when={
+                row.operator &&
+                row.operator === 'in' &&
+                row.propertyType === 'employee'
+              }
+            >
+              <div className="flex flex-col gap-1">
+                <SelectEmployee
+                  value={row.value as string[]}
                   onChange={value => onUpdate(row.id, 'value', value)}
+                  multiple
                 />
                 {errors.value && (
                   <div className="text-xs text-red-500">{errors.value}</div>
                 )}
-              </>
-            ))}
+              </div>
+            </Match>
+          </Switch>
         </div>
 
         {/* Remove Button */}

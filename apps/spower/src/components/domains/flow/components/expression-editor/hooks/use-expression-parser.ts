@@ -2,12 +2,20 @@ import * as yup from 'yup';
 
 import { useCallback, useState } from 'react';
 
-import { ExpressionRowData, ExpressionRowErrors } from '../types';
+import {
+  ExpressionRowData,
+  ExpressionRowErrors,
+  PropertyVariable
+} from '../types';
 import { createEmptyRow, parseCondition } from '../utils';
 
-export const useExpressionParser = (value: string, objectType: string) => {
+export const useExpressionParser = (
+  value: string,
+  objectType: string,
+  variables: PropertyVariable[]
+) => {
   const [rows, setRows] = useState<ExpressionRowData[]>(() =>
-    value ? parseCondition(value, objectType) : [createEmptyRow()]
+    value ? parseCondition(value, objectType, variables) : [createEmptyRow()]
   );
 
   const [errors, setErrors] = useState<Record<string, ExpressionRowErrors>>({});
@@ -24,12 +32,22 @@ export const useExpressionParser = (value: string, objectType: string) => {
             otherwise: schema => schema
           }),
           operator: yup.string().required('Toán tử là bắt buộc'),
-          value: yup.mixed().when(['operator', 'propertyType'], {
-            is: (operator: string, propertyType: string) =>
-              operator === 'in' && propertyType === 'datetime' ? false : true,
-            then: schema => schema.required('Giá trị là bắt buộc'),
-            otherwise: schema => schema.nullable()
-          }),
+          value: yup
+            .mixed()
+            .when(['operator', 'propertyType'], ([operator, propertyType]) => {
+              if (operator === 'in') {
+                if (propertyType === 'datetime') {
+                  return yup.mixed().nullable();
+                }
+                if (propertyType === 'employee') {
+                  return yup
+                    .array()
+                    .of(yup.string())
+                    .required('Giá trị là bắt buộc');
+                }
+              }
+              return yup.string().required('Giá trị là bắt buộc');
+            }),
           fromDate: yup
             .date()
             .nullable()
@@ -101,6 +119,16 @@ export const useExpressionParser = (value: string, objectType: string) => {
               updatedRow.fromDate > updatedRow.toDate
             ) {
               updatedRow.toDate = null;
+            }
+
+            // Convert comma-separated string to array for employee IN
+            if (
+              field === 'value' &&
+              updatedRow.propertyType === 'employee' &&
+              updatedRow.operator === 'in' &&
+              typeof value === 'string'
+            ) {
+              updatedRow.value = value.split(',').map(v => v.trim());
             }
 
             // Validate the updated row if already submitted

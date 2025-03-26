@@ -268,18 +268,18 @@ export function Combobox({
             <div className="flex-1 overflow-hidden">
               <span className="block truncate">{displayContent}</span>
             </div>
-            <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
+            <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center">
               {showClear &&
                 !disabled &&
                 ((multiple && selectedItems.length > 0) ||
                   (!multiple && selectedItem)) && (
                   <div
                     className={cn(
-                      'bg-appError flex h-4 w-4 items-center justify-center rounded-full text-white shadow hover:opacity-90'
+                      'bg-appErrorLight flex h-3 w-3 items-center justify-center rounded-full text-white shadow hover:opacity-90'
                     )}
                     onClick={handleClear}
                   >
-                    <X className="h-2.5 w-2.5" />
+                    <X className="h-2 w-2" />
                   </div>
                 )}
               <ChevronsUpDownIcon

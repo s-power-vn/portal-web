@@ -27,7 +27,11 @@ export const ExpressionEditor: FC<ExpressionEditorProps> = ({
     handleAddRow,
     handleRemoveRow,
     validateAllRows
-  } = useExpressionParser(value, objectType);
+  } = useExpressionParser(
+    value,
+    objectType,
+    listVariables.data as PropertyVariable[]
+  );
 
   const handleSubmit = useCallback(async () => {
     const isValid = await validateAllRows();

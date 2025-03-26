@@ -15,7 +15,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@kripod/uuidv7": "^0.3.4",
     "@minhdtb/storeo-core": "^0.0.4",
-    "@minhdtb/storeo-theme": "^1.0.37",
+    "@minhdtb/storeo-theme": "^1.0.39",
     "@preact/signals-react": "^2.0.0",
     "@react-pdf/renderer": "^3.4.4",
     "@remixicon/react": "^4.2.0",

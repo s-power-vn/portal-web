@@ -17,9 +17,9 @@ import { UseFormSetValue, useFieldArray, useForm } from 'react-hook-form';
 
 import { Button } from '@minhdtb/storeo-theme';
 
-import { DepartmentDropdown } from '../department';
-import { SelectEmployee } from '../employee';
-import { RoleDropdown } from '../role';
+import { DepartmentDropdown } from '../../../department';
+import { SelectEmployee } from '../../../employee';
+import { RoleDropdown } from '../../../role';
 import { ConditionDisplay } from './condition-display';
 
 type ConditionType = 'department' | 'employee';
