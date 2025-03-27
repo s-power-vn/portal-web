@@ -4,20 +4,20 @@ import { api } from 'portal-api';
 import { client } from 'portal-core';
 
 import type { FC } from 'react';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo } from 'react';
 
 import { For, Show, cn } from '@minhdtb/storeo-core';
-import { Button, Checkbox, error, showModal } from '@minhdtb/storeo-theme';
+import { Button, showModal, useConfirm } from '@minhdtb/storeo-theme';
 
 import { ForwardIssueForm, ReturnIssueForm } from '.';
 import { useInvalidateQueries } from '../../../hooks';
 import {
+  Node,
   ProcessData,
   extractStatus,
   getNode,
   getNodeFromFlows,
-  isApproveNode,
-  isFinishedNode
+  isFinishNode
 } from '../flow';
 import { FinishIssueForm } from './form/finish-issue-form';
 
@@ -27,7 +27,6 @@ export type IssueActionProps = {
 
 const ActionComponent: FC<IssueActionProps> = props => {
   const invalidates = useInvalidateQueries();
-  const [isApproved, setIsApproved] = useState(false);
 
   const issue = api.issue.byId.useSuspenseQuery({
     variables: props.issueId
@@ -50,6 +49,8 @@ const ActionComponent: FC<IssueActionProps> = props => {
       ]);
     }
   });
+
+  const { confirm } = useConfirm();
 
   const issueObject = issue.data.expand?.object;
 
@@ -80,31 +81,29 @@ const ActionComponent: FC<IssueActionProps> = props => {
         to: it.to.node,
         status: it.id,
         action: it.action,
-        toNode: nodeInfo,
-        condition: nodeInfo?.condition,
-        isApprove: !!(it.approver && it.approver.length > 0)
+        toNode: nodeInfo
       };
     });
   }, [currentNode]);
 
   const extracted = extractStatus(issue.data.status);
 
-  const returnNode = toList.find(it => extracted?.from === it.to);
+  const returnFlow = toList.find(it => extracted?.from === it.to);
 
-  const forwardNodes = toList.filter(it => extracted?.from !== it.to);
+  const forwardFlows = toList.filter(it => extracted?.from !== it.to);
 
   const returnNodeClick = useCallback(() => {
-    if (!returnNode) {
+    if (!returnFlow) {
       return;
     }
 
     showModal({
-      title: returnNode?.action ?? 'Chuyển trả',
+      title: returnFlow?.action ?? 'Chuyển trả',
       children: ({ close }) => {
         return (
           <ReturnIssueForm
             issueId={props.issueId}
-            status={returnNode?.status}
+            status={returnFlow?.status}
             onCancel={close}
             onSuccess={() => {
               invalidates([
@@ -117,7 +116,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         );
       }
     });
-  }, [invalidates, props.issueId, returnNode]);
+  }, [invalidates, props.issueId, returnFlow]);
 
   const forwardNodeClick = useCallback(
     <
@@ -126,9 +125,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         action?: string;
         status: string;
         to: string;
-        toNode?: { name: string };
-        isApprove: boolean;
-        condition?: string;
+        toNode?: Node;
       }
     >(
       flow: T
@@ -137,14 +134,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         return;
       }
 
-      if (flow.isApprove) {
-        if (!isApproved) {
-          error('Bạn chưa duyệt công việc này');
-          return;
-        }
-      }
-
-      if (isFinishedNode(process?.process as ProcessData, flow.to)) {
+      if (isFinishNode(process?.process as ProcessData, flow.to)) {
         showModal({
           title: flow.action ?? `Hoàn thành`,
           children: ({ close }) => {
@@ -171,9 +161,8 @@ const ActionComponent: FC<IssueActionProps> = props => {
             return (
               <ForwardIssueForm
                 issueId={props.issueId}
-                title={`${flow.toNode?.name}`}
                 status={flow.status}
-                condition={flow.condition}
+                node={flow.toNode}
                 onCancel={close}
                 onSuccess={() => {
                   invalidates([
@@ -188,85 +177,146 @@ const ActionComponent: FC<IssueActionProps> = props => {
         });
       }
     },
-    [invalidates, props.issueId, isApproved]
+    [invalidates, props.issueId]
   );
-
-  useEffect(() => {
-    const approver = issue.data.approver?.find(
-      it => it.userId === client.authStore.record?.id
-    );
-
-    setIsApproved(!!approver);
-  }, [issue.data.approver]);
 
   const handleApproveChange = useCallback(
     (checked: boolean) => {
-      setIsApproved(checked);
       if (checked) {
-        approve.mutate({
-          id: props.issueId,
-          nodeName: currentNode?.name ?? '',
-          nodeId: currentNode?.id ?? '',
-          userId: client.authStore.record?.id ?? '',
-          userName: client.authStore.record?.name ?? ''
+        confirm('Bạn chắc chắn muốn phê duyệt công việc này?', () => {
+          if (forwardFlows.length === 0) {
+            return;
+          }
+
+          const flow = forwardFlows[0];
+
+          showModal({
+            title: flow.action ?? `Chuyển ${flow.toNode?.name}`,
+            children: ({ close }) => {
+              return (
+                <ForwardIssueForm
+                  issueId={props.issueId}
+                  status={flow.status}
+                  node={flow.toNode}
+                  onCancel={close}
+                  onSuccess={() => {
+                    approve.mutate({
+                      id: props.issueId,
+                      nodeName: currentNode?.name ?? '',
+                      nodeId: currentNode?.id ?? '',
+                      userId: client.authStore.record?.id ?? '',
+                      userName: client.authStore.record?.name ?? ''
+                    });
+
+                    invalidates([
+                      api.issue.byId.getKey(props.issueId),
+                      api.comment.list.getKey(props.issueId)
+                    ]);
+                    close();
+                  }}
+                />
+              );
+            }
+          });
         });
       } else {
-        unApprove.mutate({
-          id: props.issueId,
-          nodeId: currentNode?.id ?? ''
+        confirm('Bạn chắc chắn muốn từ chối công việc này?', () => {
+          if (!returnFlow) {
+            return;
+          }
+
+          showModal({
+            title: returnFlow?.action ?? 'Từ chối',
+            children: ({ close }) => {
+              return (
+                <ReturnIssueForm
+                  issueId={props.issueId}
+                  status={returnFlow?.status}
+                  onCancel={close}
+                  onSuccess={() => {
+                    unApprove.mutate({
+                      id: props.issueId,
+                      nodeId: currentNode?.id ?? ''
+                    });
+
+                    invalidates([
+                      api.issue.byId.getKey(props.issueId),
+                      api.comment.list.getKey(props.issueId)
+                    ]);
+                    close();
+                  }}
+                />
+              );
+            }
+          });
         });
       }
     },
-    [approve, currentNode?.id, currentNode?.name, props.issueId, unApprove]
-  );
-
-  const isApproveNodeActive = isApproveNode(
-    process?.process as ProcessData,
-    currentNode?.id
+    [
+      approve,
+      currentNode?.id,
+      currentNode?.name,
+      props.issueId,
+      unApprove,
+      confirm
+    ]
   );
 
   return (
     <div className={'flex flex-col gap-3 border-t p-2'}>
-      <Show when={isApproveNodeActive}>
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={isApproved}
-            onCheckedChange={handleApproveChange}
-            id="approve-checkbox"
-          />
-          <label htmlFor="approve-checkbox" className="text-sm">
-            {isApproved ? 'Đã duyệt' : 'Chưa duyệt công việc này'}
-          </label>
-        </div>
-      </Show>
-      <div className={'grid grid-cols-5 gap-2'}>
-        <Show when={returnNode}>
-          <Button
-            truncate
-            onClick={returnNodeClick}
-            className="bg-appError hover:bg-appErrorLight"
-          >
-            {returnNode?.action ?? 'Chuyển trả'}
-          </Button>
-        </Show>
-        <For each={forwardNodes}>
-          {item => {
-            return (
+      <Show
+        when={currentNode?.type === 'approval'}
+        fallback={
+          <div className={'grid grid-cols-5 gap-2'}>
+            <Show when={returnFlow}>
               <Button
                 truncate
-                key={item.to}
-                onClick={() => forwardNodeClick(item)}
-                className={cn(
-                  isFinishedNode(process?.process as ProcessData, item.to) &&
+                onClick={returnNodeClick}
+                className={cn([
+                  returnFlow?.toNode?.type === 'normal' &&
+                    'bg-appError hover:bg-appErrorLight',
+                  returnFlow?.toNode?.type === 'finish' &&
                     'bg-appSuccess hover:bg-appSuccessLight'
-                )}
+                ])}
               >
-                {item.action ?? `Chuyển ${item.toNode?.name}`}
+                {returnFlow?.action ?? 'Chuyển trả'}
               </Button>
-            );
-          }}
-        </For>
-      </div>
+            </Show>
+            <For each={forwardFlows}>
+              {item => {
+                return (
+                  <Button
+                    truncate
+                    key={item.to}
+                    onClick={() => forwardNodeClick(item)}
+                    className={cn(
+                      item.toNode?.type === 'finish' &&
+                        'bg-appSuccess hover:bg-appSuccessLight'
+                    )}
+                  >
+                    {item.action ?? `Chuyển ${item.toNode?.name}`}
+                  </Button>
+                );
+              }}
+            </For>
+          </div>
+        }
+      >
+        <div className={'grid grid-cols-5 gap-2'}>
+          <Button
+            className="bg-appSuccess hover:bg-appSuccessLight"
+            onClick={() => handleApproveChange(true)}
+          >
+            Phê duyệt
+          </Button>
+          <Button
+            className="bg-appError hover:bg-appErrorLight"
+            onClick={() => handleApproveChange(false)}
+          >
+            Từ chối
+          </Button>
+        </div>
+      </Show>
     </div>
   );
 };

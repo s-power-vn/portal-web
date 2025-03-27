@@ -55,7 +55,7 @@ export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
   return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
-export const isFinishedNode = (processData: ProcessData, nodeId?: string) => {
+export const isFinishNode = (processData: ProcessData, nodeId?: string) => {
   if (!nodeId || !processData?.nodes?.length) return false;
   const node = getNode(processData, nodeId);
   return node?.type === 'finish' || false;
@@ -71,19 +71,6 @@ export const getFinishedFlows = (processData: ProcessData) => {
   return processData.flows.filter((flow: Flow) =>
     finishedNodes.some((node: Node) => flow.to.node === node.id)
   );
-};
-
-export const isApproveNode = (
-  processData: ProcessData,
-  nodeId?: string
-): boolean => {
-  if (!nodeId || !processData?.flows?.length) {
-    return false;
-  }
-
-  const node = getNode(processData, nodeId);
-
-  return node?.type === 'approval' || false;
 };
 
 function getNodes(
@@ -127,15 +114,12 @@ function getNodes(
       }
     );
 
-    const isApprove = isApproveNode(processData, id);
-
     return {
       id,
       type: 'customNode',
       data: {
         ...rest,
         nodeId: id,
-        isApprove,
         type,
         points: pointsWithRoles,
         active: extract?.to ? id === extract.to : id === extract?.from,

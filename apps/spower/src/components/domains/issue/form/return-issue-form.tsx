@@ -29,7 +29,7 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
 
   return (
     <Form
-      className={'mt-2 flex flex-col gap-4'}
+      className={'flex flex-col gap-3'}
       schema={schema}
       defaultValues={{
         status: props.status

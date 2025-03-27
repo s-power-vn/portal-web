@@ -142,7 +142,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
@@ -159,7 +159,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {topPoints.map((point, index) => (
@@ -197,7 +197,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
@@ -217,7 +217,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {rightPoints.map((point, index) => (
@@ -255,7 +255,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
@@ -275,7 +275,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {bottomPoints.reverse().map((point, index) => (
@@ -313,7 +313,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
@@ -333,7 +333,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
     </>
