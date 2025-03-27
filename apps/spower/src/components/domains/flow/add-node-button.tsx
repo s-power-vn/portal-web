@@ -10,7 +10,7 @@ import { FC, useMemo, useState } from 'react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@minhdtb/storeo-theme';
 
-import { NodeType } from './types';
+import { NodeType, OperationType } from './types';
 
 const NODE_TYPES = [
   {
@@ -37,7 +37,7 @@ const NODE_TYPES = [
     className: 'text-purple-600'
   },
   {
-    id: 'auto',
+    id: 'normal',
     label: 'Tự động',
     icon: ZapIcon,
     operation: 'auto' as const,
@@ -48,17 +48,14 @@ const NODE_TYPES = [
     id: 'approval',
     label: 'Phê duyệt',
     icon: CheckCircle2Icon,
-    operation: 'approval' as const,
+    operation: 'manual' as const,
     description: 'Nút phê duyệt trong quy trình',
     className: 'text-blue-500'
   }
 ];
 
 export type AddNodeButtonProps = {
-  onAddNode: (
-    type: NodeType,
-    operation: 'manual' | 'auto' | 'approval'
-  ) => void;
+  onAddNode: (type: NodeType, operation: OperationType) => void;
   hasStartNode: boolean;
   hasFinishedNode: boolean;
 };

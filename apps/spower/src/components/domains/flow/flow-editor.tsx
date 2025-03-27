@@ -29,6 +29,7 @@ import type {
   Flow,
   Node,
   NodeType,
+  OperationType,
   Point,
   PointRole,
   ProcessData
@@ -642,10 +643,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
   }, [handleFitView]);
 
   const handleAddNode = useCallback(
-    (
-      nodeType: NodeType = 'normal',
-      operation: 'manual' | 'auto' | 'approval' = 'manual'
-    ) => {
+    (nodeType: NodeType = 'normal', operation: OperationType = 'manual') => {
       // Tạo ID sử dụng UUID v7 và loại bỏ dấu gạch ngang
       const uniqueId = uuidv7().replace(/-/g, '');
       const newNodeId = `n_${uniqueId}`;
@@ -664,7 +662,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
         // Snap to grid with different calculations for auto nodes
-        if (operation === 'auto' || operation === 'approval') {
+        if (operation === 'auto' || nodeType === 'approval') {
           // For auto and approval nodes, adjust position to account for 45-degree rotation
           centerX = Math.round(centerX / 30) * 30 + 15;
           centerY = Math.round(centerY / 30) * 30 + 15;
@@ -690,7 +688,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'left' },
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'top' }
         ];
-      } else if (operation === 'auto') {
+      } else if (nodeType === 'normal' && operation === 'auto') {
         // Auto nodes have fixed 3 points with specific roles and types
         defaultPoints = [
           {
@@ -712,7 +710,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
             autoType: 'false'
           }
         ];
-      } else if (operation === 'approval') {
+      } else if (nodeType === 'approval') {
         // Approval nodes have fixed 2 points with specific roles and types
         defaultPoints = [
           {
@@ -736,6 +734,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         ];
       }
 
+      const approvalCount = flowData.nodes.filter(
+        node => node.type === 'approval'
+      ).length;
+
+      const autoCount = flowData.nodes.filter(
+        node => node.type === 'normal' && node.operationType === 'auto'
+      ).length;
+
       const newNode: Node = {
         id: newNodeId,
         name:
@@ -743,15 +749,17 @@ export const FlowEditor: FC<FlowEditorProps> = ({
             ? 'Bắt đầu'
             : nodeType === 'finished'
               ? 'Hoàn thành'
-              : operation === 'approval'
-                ? 'Phê duyệt'
-                : `Nút ${flowData.nodes.length + 1}`,
+              : nodeType === 'approval'
+                ? `Phê duyệt ${approvalCount + 1}`
+                : nodeType === 'normal' && operation === 'auto'
+                  ? `Tự động ${autoCount + 1}`
+                  : `Nút ${flowData.nodes.length + 1}`,
         type: nodeType,
         operationType: operation,
         x: centerX,
         y: centerY,
         points: defaultPoints,
-        approvers: operation === 'approval' ? [] : undefined
+        approvers: nodeType === 'approval' ? [] : undefined
       };
 
       const updatedData: ProcessData = {

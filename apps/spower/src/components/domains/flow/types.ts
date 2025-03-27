@@ -13,7 +13,7 @@ export type Point = {
 
 export type NodeType = 'start' | 'finished' | 'normal' | 'approval';
 
-export type OperationType = 'auto' | 'manual' | 'approval';
+export type OperationType = 'auto' | 'manual';
 
 export type Node = {
   id: string;

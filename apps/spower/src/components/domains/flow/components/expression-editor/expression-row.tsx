@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react';
 
 import { FC, useCallback, useMemo } from 'react';
 
-import { Match, Switch } from '@minhdtb/storeo-core';
+import { Match, Show, Switch } from '@minhdtb/storeo-core';
 import { DatePicker, SelectInput } from '@minhdtb/storeo-theme';
 
 import { SelectEmployee } from '../../../employee';
@@ -83,9 +83,10 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
             <div className="text-xs text-red-500">{errors.property}</div>
           )}
         </div>
+
         {/* Operator Field */}
-        <div className="flex flex-col gap-1">
-          {row.property && (
+        <Show when={row.property}>
+          <div className="flex flex-col gap-1">
             <>
               <SelectInput<SelectItem>
                 placeholder="Chọn toán tử"
@@ -97,81 +98,85 @@ export const ExpressionRow: FC<ExpressionRowProps> = ({
                 <div className="text-xs text-red-500">{errors.operator}</div>
               )}
             </>
-          )}
-        </div>
+          </div>
+        </Show>
 
         {/* Value Field */}
-        <div className="flex flex-col gap-1">
-          <Switch
-            fallback={
-              <>
-                <ValueInput
-                  type={row.propertyType as PropertyType}
-                  value={row.value}
-                  onChange={value => onUpdate(row.id, 'value', value)}
-                />
-                {errors.value && (
-                  <div className="text-xs text-red-500">{errors.value}</div>
-                )}
-              </>
-            }
-          >
-            <Match
-              when={
-                row.operator &&
-                row.operator === 'in' &&
-                row.propertyType === 'datetime'
+        <Show when={row.operator}>
+          <div className="flex flex-col gap-1">
+            <Switch
+              fallback={
+                <>
+                  <ValueInput
+                    type={row.propertyType as PropertyType}
+                    value={row.value}
+                    onChange={value => onUpdate(row.id, 'value', value)}
+                  />
+                  {errors.value && (
+                    <div className="text-xs text-red-500">{errors.value}</div>
+                  )}
+                </>
               }
             >
-              <div className="flex gap-4">
-                <div className="flex flex-1 flex-col gap-1">
-                  <DatePicker
-                    placeholder="Từ ngày"
-                    value={row.fromDate || undefined}
-                    onChange={(date: Date | null | undefined) =>
-                      onUpdate(row.id, 'fromDate', date)
-                    }
+              <Match
+                when={
+                  row.operator &&
+                  row.operator === 'in' &&
+                  row.propertyType === 'datetime'
+                }
+              >
+                <div className="flex gap-4">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <DatePicker
+                      placeholder="Từ ngày"
+                      value={row.fromDate || undefined}
+                      onChange={(date: Date | null | undefined) =>
+                        onUpdate(row.id, 'fromDate', date)
+                      }
+                    />
+                    {errors.fromDate && (
+                      <div className="text-xs text-red-500">
+                        {errors.fromDate}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1">
+                    <DatePicker
+                      placeholder="Đến ngày"
+                      value={row.toDate || undefined}
+                      onChange={(date: Date | null | undefined) =>
+                        onUpdate(row.id, 'toDate', date)
+                      }
+                    />
+                    {errors.toDate && (
+                      <div className="text-xs text-red-500">
+                        {errors.toDate}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Match>
+              <Match
+                when={
+                  row.operator &&
+                  row.operator === 'in' &&
+                  row.propertyType === 'employee'
+                }
+              >
+                <div className="flex flex-col gap-1">
+                  <SelectEmployee
+                    value={row.value as string[]}
+                    onChange={value => onUpdate(row.id, 'value', value)}
+                    multiple
                   />
-                  {errors.fromDate && (
-                    <div className="text-xs text-red-500">
-                      {errors.fromDate}
-                    </div>
+                  {errors.value && (
+                    <div className="text-xs text-red-500">{errors.value}</div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-1">
-                  <DatePicker
-                    placeholder="Đến ngày"
-                    value={row.toDate || undefined}
-                    onChange={(date: Date | null | undefined) =>
-                      onUpdate(row.id, 'toDate', date)
-                    }
-                  />
-                  {errors.toDate && (
-                    <div className="text-xs text-red-500">{errors.toDate}</div>
-                  )}
-                </div>
-              </div>
-            </Match>
-            <Match
-              when={
-                row.operator &&
-                row.operator === 'in' &&
-                row.propertyType === 'employee'
-              }
-            >
-              <div className="flex flex-col gap-1">
-                <SelectEmployee
-                  value={row.value as string[]}
-                  onChange={value => onUpdate(row.id, 'value', value)}
-                  multiple
-                />
-                {errors.value && (
-                  <div className="text-xs text-red-500">{errors.value}</div>
-                )}
-              </div>
-            </Match>
-          </Switch>
-        </div>
+              </Match>
+            </Switch>
+          </div>
+        </Show>
 
         {/* Remove Button */}
         <div className="flex items-center">

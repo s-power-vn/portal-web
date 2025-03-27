@@ -14,7 +14,7 @@ import * as yup from 'yup';
 import { FC, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
-import { Match, Switch } from '@minhdtb/storeo-core';
+import { Match, Show, Switch } from '@minhdtb/storeo-core';
 import {
   Button,
   Select,
@@ -58,10 +58,7 @@ const schema = yup
       .string()
       .oneOf(['start', 'finished', 'normal', 'approval'])
       .default('normal'),
-    operationType: yup
-      .string()
-      .oneOf(['auto', 'manual', 'approval'])
-      .default('manual'),
+    operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
     points: yup
       .array()
       .of(
@@ -226,9 +223,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     });
   };
 
-  const operationType = watch('operationType');
-  const isAutoNode = operationType === 'auto';
-  const isApprovalNode = operationType === 'approval';
+  const isAutoNode =
+    watch('type') === 'normal' && watch('operationType') === 'auto';
+  const isApprovalNode = watch('type') === 'approval';
 
   return (
     <div className="flex max-h-0 flex-col">
@@ -292,9 +289,11 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                               color:
                                 point.autoType === 'input'
                                   ? '#22C55E'
-                                  : point.autoType === 'true'
-                                    ? '#3B82F6'
-                                    : '#EF4444'
+                                  : point.autoType === 'output'
+                                    ? '#EF4444'
+                                    : point.autoType === 'true'
+                                      ? '#3B82F6'
+                                      : '#EF4444'
                             }}
                           >
                             {point.autoType === 'input'
@@ -306,64 +305,66 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                                   : 'Sai'}
                           </div>
                         )}
-                        <Select
-                          value={point.type}
-                          onValueChange={(
-                            value: 'top' | 'bottom' | 'right' | 'left'
-                          ) => {
-                            const newPoints = [...points];
-                            newPoints[index] = { ...point, type: value };
-                            setValue('points', newPoints, {
-                              shouldDirty: true
-                            });
-                            handleSubmit(onSubmit)();
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn vị trí" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="top">
-                              <div className="flex items-center gap-1">
-                                <ArrowUpToLineIcon className="h-4 w-4" />
-                                Trên
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="bottom">
-                              <div className="flex items-center gap-1">
-                                <ArrowDownToLineIcon className="h-4 w-4" />
-                                Dưới
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="left">
-                              <div className="flex items-center gap-1">
-                                <ArrowLeftToLineIcon className="h-4 w-4" />
-                                Trái
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="right">
-                              <div className="flex items-center gap-1">
-                                <ArrowRightToLineIcon className="h-4 w-4" />
-                                Phải
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={point.type}
+                            onValueChange={(
+                              value: 'top' | 'bottom' | 'right' | 'left'
+                            ) => {
+                              const newPoints = [...points];
+                              newPoints[index] = { ...point, type: value };
+                              setValue('points', newPoints, {
+                                shouldDirty: true
+                              });
+                              handleSubmit(onSubmit)();
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Chọn vị trí" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="top">
+                                <div className="flex items-center gap-1">
+                                  <ArrowUpToLineIcon className="h-4 w-4" />
+                                  Trên
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="bottom">
+                                <div className="flex items-center gap-1">
+                                  <ArrowDownToLineIcon className="h-4 w-4" />
+                                  Dưới
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="left">
+                                <div className="flex items-center gap-1">
+                                  <ArrowLeftToLineIcon className="h-4 w-4" />
+                                  Trái
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="right">
+                                <div className="flex items-center gap-1">
+                                  <ArrowRightToLineIcon className="h-4 w-4" />
+                                  Phải
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Show when={!isAutoNode && !isApprovalNode}>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => removePoint(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </Show>
+                        </div>
                       </div>
-                      {!isAutoNode && (
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => removePoint(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
                     </div>
                   ))}
-                  {!isAutoNode && (
+                  <Show when={!isAutoNode && !isApprovalNode}>
                     <Button
                       type="button"
                       variant="outline"
@@ -373,7 +374,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                       <Plus className="mr-1 h-4 w-4" />
                       Thêm điểm kết nối
                     </Button>
-                  )}
+                  </Show>
                 </div>
               </div>
               <Switch
