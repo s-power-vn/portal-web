@@ -17,21 +17,21 @@ export type ProjectData = ProjectResponse<{
 }>;
 
 export const projectApi = router('project', {
+  list: router.query({
+    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) =>
+      client
+        .collection<ProjectData>(Collections.Project)
+        .getList(pageIndex, pageSize, {
+          filter: `(name ~ "${filter ?? ''}" || bidding ~ "${filter ?? ''}")`,
+          expand: 'customer, createdBy',
+          sort: '-created'
+        })
+  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<ProjectData>(Collections.Project).getOne(id, {
         expand: 'customer, createdBy, column_via_project'
       })
-  }),
-  list: router.query({
-    fetcher: (params?: ListParams) =>
-      client
-        .collection<ProjectData>(Collections.Project)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: `(name ~ "${params?.filter ?? ''}" || bidding ~ "${params?.filter ?? ''}")`,
-          expand: 'customer, createdBy',
-          sort: '-created'
-        })
   }),
   create: router.mutation({
     mutationFn: (params: Partial<ProjectResponse>) =>

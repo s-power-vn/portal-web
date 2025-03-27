@@ -11,20 +11,20 @@ export type UserData = UserResponse<{
 
 export const employeeApi = router('employee', {
   list: router.query({
-    fetcher: (params?: ListParams) => {
+    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) => {
       return client
         .collection<UserData>(Collections.User)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: params?.filter,
+        .getList(pageIndex, pageSize, {
+          filter,
           sort: 'department',
           expand: 'department'
         });
     }
   }),
   listFull: router.query({
-    fetcher: (params?: { filter?: string }) => {
+    fetcher: ({ filter }: { filter?: string }) => {
       return client.collection<UserData>(Collections.User).getFullList({
-        filter: params?.filter
+        filter
       });
     }
   }),

@@ -33,8 +33,8 @@ export const requestApi = router('request', {
     fetcher: async ({
       filter,
       projectId,
-      pageIndex,
-      pageSize
+      pageIndex = 1,
+      pageSize = 10
     }: {
       filter?: string;
       projectId: string;
@@ -43,7 +43,7 @@ export const requestApi = router('request', {
     }) => {
       return await client
         .collection<FinishedRequestData>(Collections.RequestFinished)
-        .getList(pageIndex ?? 1, pageSize ?? 10, {
+        .getList(pageIndex, pageSize, {
           filter: filter
             ? `project = "${projectId}" && title ~ ${filter}`
             : `project = "${projectId}"`,
