@@ -46,7 +46,7 @@ export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn quy trình'}
       emptyText={props.emptyText ?? 'Không tìm thấy quy trình'}
-      queryKey={['processes']}
+      queryKey={api.process.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

@@ -55,12 +55,6 @@ export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
   return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
-export const isFinishNode = (processData: ProcessData, nodeId?: string) => {
-  if (!nodeId || !processData?.nodes?.length) return false;
-  const node = getNode(processData, nodeId);
-  return node?.type === 'finish' || false;
-};
-
 export const getFinishedFlows = (processData: ProcessData) => {
   if (!processData?.nodes?.length || !processData?.flows?.length) {
     return [];

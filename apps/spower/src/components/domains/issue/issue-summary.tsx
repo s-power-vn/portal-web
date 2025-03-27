@@ -13,7 +13,7 @@ import { api } from 'portal-api';
 import { client } from 'portal-core';
 
 import type { FC } from 'react';
-import { Suspense, useCallback } from 'react';
+import { Suspense, useCallback, useMemo } from 'react';
 
 import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -31,7 +31,7 @@ import {
 import { useInvalidateQueries } from '../../../hooks';
 import { DynamicIcon } from '../../icon/dynamic-icon';
 import { EmployeeDisplay } from '../employee';
-import { ProcessData, extractStatus, isFinishNode } from '../flow';
+import { ProcessData, extractStatus, getNode } from '../flow';
 import { EditPriceForm } from '../price/form/edit-price-form';
 import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueAssigneeDisplay } from './issue-assignee-display';
@@ -70,10 +70,12 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const process = issueObject?.expand?.process;
 
   const statusInfo = extractStatus(issue.data.status);
-  const isInDoneState = isFinishNode(
-    process?.process as ProcessData,
-    statusInfo?.to
-  );
+
+  const toNode = useMemo(() => {
+    return getNode(process?.process as ProcessData, statusInfo?.to);
+  }, [process, statusInfo]);
+
+  const isInDoneState = toNode?.type === 'finish';
 
   const deleteIssue = api.issue.delete.useMutation({
     onSuccess: () => {

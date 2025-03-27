@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { QueryKey, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { CheckIcon, ChevronsUpDownIcon, Loader, X } from 'lucide-react';
 
@@ -35,7 +35,7 @@ export type ComboboxProps = {
   placeholder?: string;
   emptyText?: string;
   searchHint?: string;
-  queryKey: string[];
+  queryKey: QueryKey;
   queryFn: (params: { search?: string; page?: number }) => Promise<{
     items: ComboboxItem[];
     hasMore: boolean;

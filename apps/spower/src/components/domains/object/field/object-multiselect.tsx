@@ -56,7 +56,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn đối tượng'}
       emptyText={props.emptyText ?? 'Không tìm thấy đối tượng'}
-      queryKey={['objects', props.objectType ?? '']}
+      queryKey={api.object.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

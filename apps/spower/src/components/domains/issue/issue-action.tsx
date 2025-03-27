@@ -16,8 +16,7 @@ import {
   ProcessData,
   extractStatus,
   getNode,
-  getNodeFromFlows,
-  isFinishNode
+  getNodeFromFlows
 } from '../flow';
 import { FinishIssueForm } from './form/finish-issue-form';
 
@@ -108,6 +107,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
             onSuccess={() => {
               invalidates([
                 api.issue.byId.getKey(props.issueId),
+                api.request.listFinished.getKey(),
                 api.comment.list.getKey(props.issueId)
               ]);
               close();
@@ -134,7 +134,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
         return;
       }
 
-      if (isFinishNode(process?.process as ProcessData, flow.to)) {
+      if (flow.toNode?.type === 'finish') {
         showModal({
           title: flow.action ?? `Hoàn thành`,
           children: ({ close }) => {
@@ -168,6 +168,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onSuccess={() => {
                   invalidates([
                     api.issue.byId.getKey(props.issueId),
+                    api.request.listFinished.getKey(),
                     api.comment.list.getKey(props.issueId)
                   ]);
                   close();
@@ -211,6 +212,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
                     invalidates([
                       api.issue.byId.getKey(props.issueId),
+                      api.request.listFinished.getKey(),
                       api.comment.list.getKey(props.issueId)
                     ]);
                     close();
@@ -242,6 +244,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
                     invalidates([
                       api.issue.byId.getKey(props.issueId),
+                      api.request.listFinished.getKey(),
                       api.comment.list.getKey(props.issueId)
                     ]);
                     close();

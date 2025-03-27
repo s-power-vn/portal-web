@@ -475,6 +475,7 @@ export type RequestFinishedRecord = {
 	issue?: RecordIdString
 	project: RecordIdString
 	request?: RecordIdString
+	title: string
 }
 
 export type SupplierRecord = {
