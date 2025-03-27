@@ -17,22 +17,20 @@ export type ObjectData = ObjectResponse<{
 
 export const objectApi = router('object', {
   list: router.query({
-    fetcher: (params?: ListParams) =>
+    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) =>
       client
         .collection<ObjectData>(Collections.Object)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: params?.filter,
+        .getList(pageIndex, pageSize, {
+          filter,
           expand: `process, type`
         })
   }),
   listActive: router.query({
-    fetcher: (params?: ListParams) =>
+    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) =>
       client
         .collection<ObjectData>(Collections.Object)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter:
-            (params?.filter ? `${params.filter} && ` : '') +
-            `( active = true )`,
+        .getList(pageIndex, pageSize, {
+          filter: (filter ? `${filter} && ` : '') + `( active = true )`,
           expand: `process, type`
         })
   }),

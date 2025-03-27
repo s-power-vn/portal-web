@@ -24,40 +24,54 @@ export type IssueData = IssueResponse<
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: (search?: ListParams & { projectId: string }) =>
+    fetcher: ({
+      pageIndex = 1,
+      pageSize = 10,
+      filter,
+      projectId
+    }: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${search?.projectId}"
-          && title ~ "${search?.filter ?? ''}"
+        .getList(pageIndex, pageSize, {
+          filter: `project = "${projectId}"
+          && title ~ "${filter ?? ''}"
           && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   listMine: router.query({
-    fetcher: (search?: ListParams & { projectId: string }) =>
+    fetcher: ({
+      pageIndex = 1,
+      pageSize = 10,
+      filter,
+      projectId
+    }: ListParams & { projectId: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${search?.projectId}"
+        .getList(pageIndex, pageSize, {
+          filter: `project = "${projectId}"
         && assignees ?~ '${client.authStore.record?.id}'
-        && title ~ "${search?.filter ?? ''}"
+        && title ~ "${filter ?? ''}"
         && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
         })
   }),
   listByObjectType: router.query({
-    fetcher: (
-      search?: ListParams & { projectId: string; objectTypeId?: string }
-    ) =>
+    fetcher: ({
+      pageIndex = 1,
+      pageSize = 10,
+      filter,
+      projectId,
+      objectTypeId
+    }: ListParams & { projectId: string; objectTypeId?: string }) =>
       client
         .collection<IssueData>(Collections.Issue)
-        .getList(search?.pageIndex, search?.pageSize, {
-          filter: `project = "${search?.projectId}"
-        && title ~ "${search?.filter ?? ''}"
-        && object.type = "${search?.objectTypeId ?? ''}"
+        .getList(pageIndex, pageSize, {
+          filter: `project = "${projectId}"
+        && title ~ "${filter ?? ''}"
+        && object.type = "${objectTypeId ?? ''}"
         && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
