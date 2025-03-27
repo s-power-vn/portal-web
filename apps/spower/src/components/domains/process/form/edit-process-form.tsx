@@ -42,7 +42,7 @@ const schema = object().shape({
         }
 
         const nodes = value.nodes as Node[];
-        return nodes.some(node => node.type === 'finished');
+        return nodes.some(node => node.type === 'finish');
       }
     )
     .required('Quy trình là bắt buộc')
@@ -81,15 +81,15 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
           node => node.type === 'start'
         );
 
-        const finishedNode = processData?.nodes?.find(
-          node => node.type === 'finished'
+        const finishNode = processData?.nodes?.find(
+          node => node.type === 'finish'
         );
 
         updateProcess.mutate({
           id: processId,
           ...values,
           startNode: startNode?.id || undefined,
-          finishedNode: finishedNode?.id || undefined
+          finishNode: finishNode?.id || undefined
         });
       }}
       defaultValues={{

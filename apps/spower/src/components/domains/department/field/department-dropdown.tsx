@@ -46,7 +46,7 @@ export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn phòng ban'}
       emptyText={props.emptyText ?? 'Không tìm thấy phòng ban'}
-      queryKey={['departments']}
+      queryKey={api.department.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
       showGroups={false}

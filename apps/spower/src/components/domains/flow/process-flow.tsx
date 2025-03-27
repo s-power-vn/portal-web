@@ -55,39 +55,16 @@ export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
   return processData.flows.filter((it: Flow) => it.from.node === nodeId);
 };
 
-export const isFinishedNode = (processData: ProcessData, nodeId?: string) => {
-  if (!nodeId || !processData?.nodes?.length) return false;
-  const node = getNode(processData, nodeId);
-  return node?.type === 'finished' || false;
-};
-
 export const getFinishedFlows = (processData: ProcessData) => {
   if (!processData?.nodes?.length || !processData?.flows?.length) {
     return [];
   }
   const finishedNodes = processData.nodes.filter(
-    (node: Node) => node.type === 'finished'
+    (node: Node) => node.type === 'finish'
   );
   return processData.flows.filter((flow: Flow) =>
     finishedNodes.some((node: Node) => flow.to.node === node.id)
   );
-};
-
-export const isApproveNode = (
-  processData: ProcessData,
-  nodeId?: string
-): boolean => {
-  if (!nodeId || !processData?.flows?.length) {
-    return false;
-  }
-
-  const approvedFlows = processData.flows.filter(
-    (it: Flow) => it.approver && it.approver.length > 0
-  );
-  const fromNodeFlow = approvedFlows.find(
-    (it: Flow) => it.from.node === nodeId
-  );
-  return fromNodeFlow ? true : false;
 };
 
 function getNodes(
@@ -104,7 +81,7 @@ function getNodes(
   const extract = extractStatus(status);
 
   return processData.nodes.map((node: Node) => {
-    const { id, x, y, points, type, operationType, ...rest } = node;
+    const { id, x, y, points, type, ...rest } = node;
 
     const mappedPoints = points.map((point: Point) => ({
       ...point,
@@ -131,17 +108,13 @@ function getNodes(
       }
     );
 
-    const isApprove = isApproveNode(processData, id);
-
     return {
       id,
       type: 'customNode',
       data: {
         ...rest,
         nodeId: id,
-        isApprove,
         type,
-        operationType,
         points: pointsWithRoles,
         active: extract?.to ? id === extract.to : id === extract?.from,
         selected: id === selectedNode,

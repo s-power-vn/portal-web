@@ -276,7 +276,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         }))}
       />
     );
-    fetch(`${BASE_URL}/create-pdf`, {
+    fetch(`${BASE_URL}/pdf/create`, {
       method: 'POST',
       mode: 'cors',
       headers: {

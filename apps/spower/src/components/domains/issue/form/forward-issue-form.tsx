@@ -1,33 +1,37 @@
+import { Loader2 } from 'lucide-react';
 import { api } from 'portal-api';
 import { array, object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextareaField, error, success } from '@minhdtb/storeo-theme';
 
 import { SelectEmployeeByConditionField } from '../../employee';
+import { Node } from '../../flow';
 
-const schema = object().shape({
+const singleSchema = object().shape({
   note: string().required('Hãy nhập ghi chú'),
-  assignees: array()
-    .of(string().required('Hãy chọn ít nhất một nhân viên'))
-    .required('Hãy chọn ít nhất một nhân viên'),
   status: string().required('Hãy chọn status')
 });
 
-export type ForwardIssueFormProps = BusinessFormProps & {
+export type SingleForwardIssueFormProps = BusinessFormProps & {
   issueId: string;
-  title: string;
   status: string;
-  condition?: string;
+  employeeId: string;
 };
 
-export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
+export const SingleForwardIssueForm: FC<SingleForwardIssueFormProps> = ({
+  issueId,
+  employeeId,
+  status,
+  onSuccess,
+  onCancel
+}) => {
   const forwardIssue = api.issue.forward.useMutation({
     onSuccess: () => {
       success('Chuyển tiếp thành công');
-      props.onSuccess?.();
+      onSuccess?.();
     },
     onError: () => {
       error('Chuyển tiếp thất bại');
@@ -36,33 +40,147 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = props => {
 
   return (
     <Form
-      className={'mt-2 flex flex-col gap-4'}
-      schema={schema}
+      className={'flex flex-col gap-3'}
+      schema={singleSchema}
       onSuccess={values => {
         forwardIssue.mutate({
-          id: props.issueId,
+          id: issueId,
+          assignees: [employeeId],
+          status: values.status,
+          note: values.note
+        });
+      }}
+      defaultValues={{
+        status
+      }}
+      onCancel={onCancel}
+      loading={forwardIssue.isPending}
+    >
+      <TextareaField schema={singleSchema} name={'note'} title={'Ghi chú'} />
+    </Form>
+  );
+};
+
+const multipleSchema = object().shape({
+  note: string().required('Hãy nhập ghi chú'),
+  assignees: array()
+    .of(string().required('Hãy chọn ít nhất một nhân viên'))
+    .required('Hãy chọn ít nhất một nhân viên'),
+  status: string().required('Hãy chọn status')
+});
+
+export type MultipleForwardIssueFormProps = BusinessFormProps & {
+  issueId: string;
+  status: string;
+  condition?: string;
+};
+
+export const MultipleForwardIssueForm: FC<MultipleForwardIssueFormProps> = ({
+  issueId,
+  status,
+  condition,
+  onSuccess,
+  onCancel
+}) => {
+  const forwardIssue = api.issue.forward.useMutation({
+    onSuccess: () => {
+      success('Chuyển tiếp thành công');
+      onSuccess?.();
+    },
+    onError: () => {
+      error('Chuyển tiếp thất bại');
+    }
+  });
+
+  return (
+    <Form
+      className={'flex flex-col gap-3'}
+      schema={multipleSchema}
+      onSuccess={values => {
+        forwardIssue.mutate({
+          id: issueId,
           assignees: values.assignees ?? [],
           status: values.status,
           note: values.note
         });
       }}
       defaultValues={{
-        status: props.status
+        status
       }}
-      onCancel={props.onCancel}
+      onCancel={onCancel}
       loading={forwardIssue.isPending}
     >
       <SelectEmployeeByConditionField
-        schema={schema}
-        name="assignees"
-        title={props.title}
+        schema={multipleSchema}
+        name={'assignees'}
+        title={'Nhân viên'}
         options={{
           className: 'w-full',
-          condition: props.condition,
-          multiple: true
+          multiple: true,
+          condition
         }}
       />
-      <TextareaField schema={schema} name={'note'} title={'Ghi chú'} />
+      <TextareaField schema={multipleSchema} name={'note'} title={'Ghi chú'} />
     </Form>
+  );
+};
+
+export type ForwardIssueFormProps = BusinessFormProps & {
+  issueId: string;
+  status: string;
+  node?: Node;
+};
+
+export const ForwardIssueForm: FC<ForwardIssueFormProps> = ({
+  issueId,
+  status,
+  node,
+  onSuccess,
+  onCancel
+}) => {
+  const isAutoForward = node?.type === 'auto';
+  const isApprovalNode = node?.type === 'approval';
+
+  const { data: approvers, isLoading: isLoadingApprovers } =
+    api.employee.byIds.useQuery({
+      variables: node?.approvers ?? [],
+      enabled: isApprovalNode
+    });
+
+  const { data: employees, isLoading: isLoadingEmployees } =
+    api.employee.listFull.useQuery({
+      variables: {
+        filter: node?.condition
+      }
+    });
+
+  const singleEmployee = useMemo(() => {
+    if (isApprovalNode) {
+      return approvers && approvers.length === 1 ? approvers?.[0] : undefined;
+    }
+
+    return employees && employees.length === 1 ? employees[0] : undefined;
+  }, [isApprovalNode, approvers, employees]);
+
+  return isLoadingApprovers || isLoadingEmployees ? (
+    <div className={'flex items-center justify-center'}>
+      <Loader2 className={'h-4 w-4 animate-spin'} />
+    </div>
+  ) : singleEmployee ? (
+    <SingleForwardIssueForm
+      issueId={issueId}
+      status={status}
+      employeeId={singleEmployee.id}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
+    />
+  ) : (
+    <MultipleForwardIssueForm
+      issueId={issueId}
+      status={status}
+      condition={node?.condition}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
+    />
   );
 };

@@ -48,7 +48,7 @@ export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn loại đối tượng'}
       emptyText={props.emptyText ?? 'Không tìm thấy loại đối tượng'}
-      queryKey={['objectTypes']}
+      queryKey={api.objectType.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

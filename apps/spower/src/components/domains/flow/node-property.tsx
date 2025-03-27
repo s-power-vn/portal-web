@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import { FC, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
+import { Match, Show, Switch } from '@minhdtb/storeo-core';
 import {
   Button,
   Select,
@@ -24,21 +25,33 @@ import {
   showModal
 } from '@minhdtb/storeo-theme';
 
+import { SelectEmployee } from '../employee';
 import {
   ConditionDisplay,
   ConditionGenerator
 } from './components/condition-generator';
 import { ExpressionEditor } from './components/expression-editor';
-import type { Node, NodeType, OperationType, Point, PointRole } from './types';
+import type {
+  AutoNodePointType,
+  Node,
+  NodeType,
+  PointRole,
+  PointType
+} from './types';
 
 type NodeFormValues = {
   id: string;
   name: string;
   description: string;
   type: NodeType;
-  operationType: OperationType;
-  points: Point[];
+  points: {
+    id: string;
+    type: PointType;
+    role?: PointRole;
+    autoType?: AutoNodePointType;
+  }[];
   condition: string;
+  approvers: string[];
 };
 
 const schema = yup
@@ -46,8 +59,10 @@ const schema = yup
     id: yup.string().required(),
     name: yup.string().required('Tên node là bắt buộc'),
     description: yup.string().default(''),
-    type: yup.string().oneOf(['start', 'finished', 'normal']).default('normal'),
-    operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
+    type: yup
+      .string()
+      .oneOf(['start', 'finish', 'normal', 'auto', 'approval'])
+      .default('normal'),
     points: yup
       .array()
       .of(
@@ -57,11 +72,16 @@ const schema = yup
             .string()
             .oneOf(['top', 'bottom', 'right', 'left'])
             .required('Loại point là bắt buộc'),
-          role: yup.mixed<PointRole>().optional()
+          role: yup.mixed<PointRole>().optional(),
+          autoType: yup
+            .string()
+            .oneOf(['input', 'true', 'false', 'output', 'reject'] as const)
+            .optional()
         })
       )
       .default([]),
-    condition: yup.string().default('')
+    condition: yup.string().default(''),
+    approvers: yup.array().of(yup.string().defined()).default([])
   })
   .required();
 
@@ -93,9 +113,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       type: 'normal',
-      operationType: 'manual',
       points: [],
-      condition: ''
+      condition: '',
+      approvers: []
     }
   });
 
@@ -109,9 +129,9 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         type: rest.type,
-        operationType: rest.operationType,
         points: Array.isArray(rest.points) ? rest.points : [],
-        condition: rest.condition || ''
+        condition: rest.condition || '',
+        approvers: rest.approvers || []
       };
       reset(formValues);
     }
@@ -205,8 +225,8 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     });
   };
 
-  const operationType = watch('operationType');
-  const isAutoNode = operationType === 'auto';
+  const isAutoNode = watch('type') === 'auto';
+  const isApprovalNode = watch('type') === 'approval';
 
   return (
     <div className="flex max-h-0 flex-col">
@@ -263,83 +283,92 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                   {points?.map((point, index) => (
                     <div key={point.id} className="flex items-center gap-2">
                       <div className="flex-1 space-y-1">
-                        {isAutoNode && point.autoType && (
+                        {(isAutoNode || isApprovalNode) && point.autoType && (
                           <div
                             className="text-xs font-medium"
                             style={{
                               color:
                                 point.autoType === 'input'
                                   ? '#22C55E'
-                                  : point.autoType === 'true'
-                                    ? '#3B82F6'
-                                    : '#EF4444'
+                                  : point.autoType === 'reject'
+                                    ? '#EF4444'
+                                    : point.autoType === 'true' ||
+                                        point.autoType === 'output'
+                                      ? '#3B82F6'
+                                      : '#EF4444'
                             }}
                           >
                             {point.autoType === 'input'
                               ? 'Đầu vào'
-                              : point.autoType === 'true'
-                                ? 'Đúng'
-                                : 'Sai'}
+                              : point.autoType === 'output'
+                                ? 'Phê duyệt'
+                                : point.autoType === 'reject'
+                                  ? 'Từ chối'
+                                  : point.autoType === 'true'
+                                    ? 'Đúng'
+                                    : 'Sai'}
                           </div>
                         )}
-                        <Select
-                          value={point.type}
-                          onValueChange={(
-                            value: 'top' | 'bottom' | 'right' | 'left'
-                          ) => {
-                            const newPoints = [...points];
-                            newPoints[index] = { ...point, type: value };
-                            setValue('points', newPoints, {
-                              shouldDirty: true
-                            });
-                            handleSubmit(onSubmit)();
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn vị trí" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="top">
-                              <div className="flex items-center gap-1">
-                                <ArrowUpToLineIcon className="h-4 w-4" />
-                                Trên
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="bottom">
-                              <div className="flex items-center gap-1">
-                                <ArrowDownToLineIcon className="h-4 w-4" />
-                                Dưới
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="left">
-                              <div className="flex items-center gap-1">
-                                <ArrowLeftToLineIcon className="h-4 w-4" />
-                                Trái
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="right">
-                              <div className="flex items-center gap-1">
-                                <ArrowRightToLineIcon className="h-4 w-4" />
-                                Phải
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={point.type}
+                            onValueChange={(
+                              value: 'top' | 'bottom' | 'right' | 'left'
+                            ) => {
+                              const newPoints = [...points];
+                              newPoints[index] = { ...point, type: value };
+                              setValue('points', newPoints, {
+                                shouldDirty: true
+                              });
+                              handleSubmit(onSubmit)();
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Chọn vị trí" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="top">
+                                <div className="flex items-center gap-1">
+                                  <ArrowUpToLineIcon className="h-4 w-4" />
+                                  Trên
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="bottom">
+                                <div className="flex items-center gap-1">
+                                  <ArrowDownToLineIcon className="h-4 w-4" />
+                                  Dưới
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="left">
+                                <div className="flex items-center gap-1">
+                                  <ArrowLeftToLineIcon className="h-4 w-4" />
+                                  Trái
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="right">
+                                <div className="flex items-center gap-1">
+                                  <ArrowRightToLineIcon className="h-4 w-4" />
+                                  Phải
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Show when={!isAutoNode && !isApprovalNode}>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => removePoint(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </Show>
+                        </div>
                       </div>
-                      {!isAutoNode && (
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => removePoint(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
                     </div>
                   ))}
-                  {!isAutoNode && (
+                  <Show when={!isAutoNode && !isApprovalNode}>
                     <Button
                       type="button"
                       variant="outline"
@@ -349,61 +378,11 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                       <Plus className="mr-1 h-4 w-4" />
                       Thêm điểm kết nối
                     </Button>
-                  )}
+                  </Show>
                 </div>
               </div>
-              {isAutoNode ? (
-                <div>
-                  <label className="text-sm font-medium">
-                    Biểu thức điều kiện
-                  </label>
-                  <div className="flex flex-col gap-2">
-                    {watch('condition') ? (
-                      <div className="rounded-md border p-2">
-                        <pre className="max-h-[200px] overflow-y-auto whitespace-pre-wrap break-words text-sm">
-                          {watch('condition')}
-                        </pre>
-                      </div>
-                    ) : (
-                      <div className="rounded-md border p-2 text-sm text-gray-500">
-                        Chưa có biểu thức điều kiện
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8"
-                        onClick={handleShowConditionEditor}
-                      >
-                        <Edit size={16} className="mr-1" />
-                        {watch('condition') ? 'Sửa biểu thức' : 'Tạo biểu thức'}
-                      </Button>
-                      {watch('condition') && (
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="h-8"
-                          onClick={() => {
-                            setValue('condition', '', {
-                              shouldDirty: true,
-                              shouldTouch: true,
-                              shouldValidate: true
-                            });
-                            handleSubmit(onSubmit)();
-                          }}
-                        >
-                          <Trash2 size={16} className="mr-1" />
-                          Xóa biểu thức
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div>
+              <Switch
+                fallback=<div>
                   <label className="text-sm font-medium">Điều kiện</label>
                   <div className="flex flex-col gap-2">
                     {watch('condition') ? (
@@ -448,7 +427,86 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                     </div>
                   </div>
                 </div>
-              )}
+              >
+                <Match when={isAutoNode}>
+                  <div>
+                    <label className="text-sm font-medium">
+                      Biểu thức điều kiện
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      {watch('condition') ? (
+                        <div className="rounded-md border p-2">
+                          <pre className="max-h-[200px] overflow-y-auto whitespace-pre-wrap break-words text-sm">
+                            {watch('condition')}
+                          </pre>
+                        </div>
+                      ) : (
+                        <div className="rounded-md border p-2 text-sm text-gray-500">
+                          Chưa có biểu thức điều kiện
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8"
+                          onClick={handleShowConditionEditor}
+                        >
+                          <Edit size={16} className="mr-1" />
+                          {watch('condition')
+                            ? 'Sửa biểu thức'
+                            : 'Tạo biểu thức'}
+                        </Button>
+                        {watch('condition') && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="h-8"
+                            onClick={() => {
+                              setValue('condition', '', {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true
+                              });
+                              handleSubmit(onSubmit)();
+                            }}
+                          >
+                            <Trash2 size={16} className="mr-1" />
+                            Xóa biểu thức
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Match>
+                <Match when={isApprovalNode}>
+                  <div>
+                    <label className="text-sm font-medium">
+                      Người phê duyệt
+                    </label>
+                    <SelectEmployee
+                      multiple={true}
+                      value={watch('approvers')}
+                      onChange={value => {
+                        const newValue = Array.isArray(value)
+                          ? value
+                          : [value].filter(Boolean);
+
+                        setValue('approvers', newValue, {
+                          shouldDirty: true,
+                          shouldTouch: true,
+                          shouldValidate: true
+                        });
+
+                        handleSubmit(onSubmit)();
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                </Match>
+              </Switch>
             </div>
           ) : (
             <div className="text-muted-foreground text-center text-sm">

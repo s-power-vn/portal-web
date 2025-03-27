@@ -18,7 +18,7 @@ export type ReturnIssueFormProps = BusinessFormProps & {
 
 export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
   const returnIssue = api.issue.return.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       success('Cập nhật thành công');
       props.onSuccess?.();
     },
@@ -29,7 +29,7 @@ export const ReturnIssueForm: FC<ReturnIssueFormProps> = props => {
 
   return (
     <Form
-      className={'mt-2 flex flex-col gap-4'}
+      className={'flex flex-col gap-3'}
       schema={schema}
       defaultValues={{
         status: props.status

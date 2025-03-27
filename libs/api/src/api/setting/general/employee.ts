@@ -21,6 +21,13 @@ export const employeeApi = router('employee', {
         });
     }
   }),
+  listFull: router.query({
+    fetcher: (params?: { filter?: string }) => {
+      return client.collection<UserData>(Collections.User).getFullList({
+        filter: params?.filter
+      });
+    }
+  }),
   byId: router.query({
     fetcher: (id: string) =>
       client.collection<UserData>(Collections.User).getOne(id, {

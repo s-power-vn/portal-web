@@ -6,12 +6,7 @@ import { FC, useMemo } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 
-import type {
-  AutoNodePointType,
-  NodeType,
-  OperationType,
-  PointRole
-} from './types';
+import type { AutoNodePointType, NodeType, PointRole } from './types';
 
 export type CustomNodeProps = NodeProps<
   Node<{
@@ -19,9 +14,7 @@ export type CustomNodeProps = NodeProps<
     name: string;
     description: string;
     active: boolean;
-    isApprove: boolean;
     type: NodeType;
-    operationType: OperationType;
     selected: boolean;
     clicked: boolean;
     points: {
@@ -78,16 +71,18 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           data.selected ? 'border-gray-400 bg-gray-50 shadow-md' : '',
           data.clicked ? 'ring-2 ring-gray-200' : '',
           data.type === 'start' ? 'bg-green-50' : '',
-          data.type === 'finished' ? 'bg-purple-50' : '',
-          data.operationType === 'auto'
+          data.type === 'finish' ? 'bg-purple-50' : '',
+          data.type === 'auto'
             ? 'h-[60px] w-[60px] rotate-45 bg-orange-50'
-            : 'min-h-[40px] w-[200px] p-2 text-xs'
+            : data.type === 'approval'
+              ? 'h-[60px] w-[60px] bg-blue-50'
+              : 'min-h-[40px] w-[200px] p-2 text-xs'
         )}
       >
         <div
           className={cn(
             'flex items-center justify-center gap-2',
-            data.operationType === 'auto' ? 'w-[85px] -rotate-45' : ''
+            data.type === 'auto' ? 'w-[85px] -rotate-45' : ''
           )}
         >
           <Show when={data.active}>
@@ -98,19 +93,19 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <PlayIcon className="h-4 w-4 text-green-500" />
           </Show>
 
-          <Show when={data.operationType === 'auto'}>
+          <Show when={data.type === 'auto'}>
             <ZapIcon className="h-4 w-4 text-orange-500" />
           </Show>
 
-          <Show when={data.operationType !== 'auto'}>
-            <span>{data.name}</span>
-          </Show>
-
-          <Show when={data.isApprove && !data.isView}>
+          <Show when={data.type === 'approval'}>
             <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
           </Show>
 
-          <Show when={data.type === 'finished'}>
+          <Show when={data.type !== 'auto' && data.type !== 'approval'}>
+            <span>{data.name}</span>
+          </Show>
+
+          <Show when={data.type === 'finish'}>
             <CheckIcon className="h-4 w-4 text-purple-500" />
           </Show>
         </div>
@@ -147,7 +142,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
@@ -159,12 +154,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 backgroundColor:
                   point.autoType === 'input'
                     ? '#22C55E'
-                    : point.autoType === 'true'
+                    : point.autoType === 'true' || point.autoType === 'output'
                       ? '#3B82F6'
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {topPoints.map((point, index) => (
@@ -183,7 +178,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             )}
             style={{
               left:
-                data.operationType === 'auto'
+                data.type === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
               opacity: data.isView ? 0 : 1,
@@ -202,12 +197,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
                 left:
-                  data.operationType === 'auto'
+                  data.type === 'auto'
                     ? '50%'
                     : `${(index + 1) * (100 / (topPoints.length + 1))}%`,
                 top: '5px',
@@ -217,12 +212,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 backgroundColor:
                   point.autoType === 'input'
                     ? '#22C55E'
-                    : point.autoType === 'true'
+                    : point.autoType === 'true' || point.autoType === 'output'
                       ? '#3B82F6'
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {rightPoints.map((point, index) => (
@@ -241,7 +236,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             )}
             style={{
               top:
-                data.operationType === 'auto'
+                data.type === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
               opacity: data.isView ? 0 : 1,
@@ -260,13 +255,13 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
                 right: '0',
                 top:
-                  data.operationType === 'auto'
+                  data.type === 'auto'
                     ? '50%'
                     : `${(index + 1) * (100 / (rightPoints.length + 1))}%`,
                 transform: `translate(calc(-50% + ${data.isView ? '-5px' : '5px'}), -50%)`,
@@ -275,12 +270,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 backgroundColor:
                   point.autoType === 'input'
                     ? '#22C55E'
-                    : point.autoType === 'true'
+                    : point.autoType === 'true' || point.autoType === 'output'
                       ? '#3B82F6'
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
       {bottomPoints.reverse().map((point, index) => (
@@ -299,7 +294,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             )}
             style={{
               left:
-                data.operationType === 'auto'
+                data.type === 'auto'
                   ? '50%'
                   : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
               opacity: data.isView ? 0 : 1,
@@ -318,12 +313,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             }}
             onClick={() => handlePointClick(point.id)}
           />
-          {point.autoType && (
+          <Show when={point.autoType && !data.isView}>
             <div
               className="absolute"
               style={{
                 left:
-                  data.operationType === 'auto'
+                  data.type === 'auto'
                     ? '50%'
                     : `${(index + 1) * (100 / (bottomPoints.length + 1))}%`,
                 bottom: '5px',
@@ -333,12 +328,12 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
                 backgroundColor:
                   point.autoType === 'input'
                     ? '#22C55E'
-                    : point.autoType === 'true'
+                    : point.autoType === 'true' || point.autoType === 'output'
                       ? '#3B82F6'
                       : '#EF4444'
               }}
             />
-          )}
+          </Show>
         </div>
       ))}
     </>

@@ -29,12 +29,12 @@ export const FinishIssueForm: FC<FinishIssueFormProps> = props => {
 
   return (
     <Form
-      className={'mt-2 flex flex-col gap-4'}
+      className={'flex flex-col gap-3'}
       schema={schema}
       defaultValues={{
         status: props.status
       }}
-      onSubmit={values => {
+      onSuccess={values => {
         finishIssue.mutate({
           id: props.issueId,
           ...values

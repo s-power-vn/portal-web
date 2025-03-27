@@ -1,4 +1,10 @@
-import { CheckIcon, PlayIcon, PlusIcon, ZapIcon } from 'lucide-react';
+import {
+  CheckCircle2Icon,
+  CheckIcon,
+  PlayIcon,
+  PlusIcon,
+  ZapIcon
+} from 'lucide-react';
 
 import { FC, useMemo, useState } from 'react';
 
@@ -6,27 +12,30 @@ import { Popover, PopoverContent, PopoverTrigger } from '@minhdtb/storeo-theme';
 
 import { NodeType } from './types';
 
-const NODE_TYPES = [
+const NODE_TYPES: {
+  id: NodeType;
+  label: string;
+  icon: React.ElementType;
+  description: string;
+  className?: string;
+}[] = [
   {
     id: 'normal',
     label: 'Thường',
     icon: PlusIcon,
-    operation: 'manual' as const,
     description: 'Tạo một nút thường trong quy trình'
   },
   {
     id: 'start',
     label: 'Bắt đầu',
     icon: PlayIcon,
-    operation: 'manual' as const,
     description: 'Điểm bắt đầu của quy trình',
     className: 'text-green-600'
   },
   {
-    id: 'finished',
+    id: 'finish',
     label: 'Hoàn thành',
     icon: CheckIcon,
-    operation: 'manual' as const,
     description: 'Điểm kết thúc của quy trình',
     className: 'text-purple-600'
   },
@@ -34,14 +43,20 @@ const NODE_TYPES = [
     id: 'auto',
     label: 'Tự động',
     icon: ZapIcon,
-    operation: 'auto' as const,
     description: 'Nút xử lý tự động trong quy trình',
     className: 'text-orange-500'
+  },
+  {
+    id: 'approval',
+    label: 'Phê duyệt',
+    icon: CheckCircle2Icon,
+    description: 'Nút phê duyệt trong quy trình',
+    className: 'text-blue-500'
   }
 ];
 
 export type AddNodeButtonProps = {
-  onAddNode: (type: NodeType, operation: 'manual' | 'auto') => void;
+  onAddNode: (type: NodeType) => void;
   hasStartNode: boolean;
   hasFinishedNode: boolean;
 };
@@ -56,7 +71,7 @@ export const AddNodeButton: FC<AddNodeButtonProps> = ({
   const filteredNodeTypes = useMemo(() => {
     return NODE_TYPES.filter(type => {
       if (type.id === 'start' && hasStartNode) return false;
-      if (type.id === 'finished' && hasFinishedNode) return false;
+      if (type.id === 'finish' && hasFinishedNode) return false;
       return true;
     });
   }, [hasStartNode, hasFinishedNode]);
@@ -88,10 +103,7 @@ export const AddNodeButton: FC<AddNodeButtonProps> = ({
                 key={type.id}
                 className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center px-2 py-1.5 text-sm outline-none hover:bg-gray-100"
                 onClick={() => {
-                  onAddNode(
-                    type.id === 'auto' ? 'normal' : (type.id as NodeType),
-                    type.operation
-                  );
+                  onAddNode(type.id as NodeType);
                   setOpen(false);
                 }}
                 title={type.description}

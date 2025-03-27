@@ -31,10 +31,12 @@ export type FinishedRequestData = RequestFinishedResponse<{
 export const requestApi = router('request', {
   listFinished: router.query({
     fetcher: async ({
+      filter,
       projectId,
       pageIndex,
       pageSize
     }: {
+      filter?: string;
       projectId: string;
       pageIndex?: number;
       pageSize?: number;
@@ -42,7 +44,9 @@ export const requestApi = router('request', {
       return await client
         .collection<FinishedRequestData>(Collections.RequestFinished)
         .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter: `project = "${projectId}"`,
+          filter: filter
+            ? `project = "${projectId}" && title ~ ${filter}`
+            : `project = "${projectId}"`,
           expand: 'issue',
           sort: '-changed'
         });
