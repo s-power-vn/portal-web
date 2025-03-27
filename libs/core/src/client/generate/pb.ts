@@ -419,7 +419,7 @@ export type ProcessRecord<Tprocess = unknown> = {
 	created?: IsoDateString
 	createdBy: RecordIdString
 	description?: string
-	finishedNode?: string
+	finishNode?: string
 	id: string
 	name: string
 	objectType: RecordIdString

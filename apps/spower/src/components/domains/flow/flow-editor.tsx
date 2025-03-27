@@ -29,7 +29,6 @@ import type {
   Flow,
   Node,
   NodeType,
-  OperationType,
   Point,
   PointRole,
   ProcessData
@@ -291,6 +290,15 @@ export const FlowEditor: FC<FlowEditorProps> = ({
                 return;
               }
 
+              if (
+                targetPointData.autoType === 'output' ||
+                targetPointData.autoType === 'reject'
+              ) {
+                // Output/Reject points can only be targets, not sources
+                setSourcePoint(null);
+                return;
+              }
+
               // Check if flow already exists
               const flowExists = flowData.flows.some(
                 flow =>
@@ -387,7 +395,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         if (node.id === nodeId) {
           // For start and finished nodes, limit to maximum 2 points
           if (
-            (node.type === 'start' || node.type === 'finished') &&
+            (node.type === 'start' || node.type === 'finish') &&
             updates.points
           ) {
             // If more than 2 points, limit to 2
@@ -546,6 +554,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         return;
       }
 
+      if (
+        targetPoint.autoType === 'output' ||
+        targetPoint.autoType === 'reject'
+      ) {
+        // Output/Reject points can only be targets, not sources
+        return;
+      }
+
       // Tạo ID cơ bản cho flow
       const baseId = `${sourceNode.id}-${targetNode.id}`;
 
@@ -643,7 +659,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
   }, [handleFitView]);
 
   const handleAddNode = useCallback(
-    (nodeType: NodeType = 'normal', operation: OperationType = 'manual') => {
+    (nodeType: NodeType = 'normal') => {
       // Tạo ID sử dụng UUID v7 và loại bỏ dấu gạch ngang
       const uniqueId = uuidv7().replace(/-/g, '');
       const newNodeId = `n_${uniqueId}`;
@@ -662,7 +678,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
         // Snap to grid with different calculations for auto nodes
-        if (operation === 'auto' || nodeType === 'approval') {
+        if (nodeType === 'auto' || nodeType === 'approval') {
           // For auto and approval nodes, adjust position to account for 45-degree rotation
           centerX = Math.round(centerX / 30) * 30 + 15;
           centerY = Math.round(centerY / 30) * 30 + 15;
@@ -682,13 +698,13 @@ export const FlowEditor: FC<FlowEditorProps> = ({
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'right' },
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'bottom' }
         ];
-      } else if (nodeType === 'finished') {
+      } else if (nodeType === 'finish') {
         // Finished nodes default with left and top points
         defaultPoints = [
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'left' },
           { id: `p_${uuidv7().replace(/-/g, '')}`, type: 'top' }
         ];
-      } else if (nodeType === 'normal' && operation === 'auto') {
+      } else if (nodeType === 'auto') {
         // Auto nodes have fixed 3 points with specific roles and types
         defaultPoints = [
           {
@@ -699,19 +715,19 @@ export const FlowEditor: FC<FlowEditorProps> = ({
           },
           {
             id: `p_${uuidv7().replace(/-/g, '')}`,
-            type: 'right', // True point on the right
+            type: 'bottom', // True point on the bottom
             role: 'source', // Always source for true/false
             autoType: 'true'
           },
           {
             id: `p_${uuidv7().replace(/-/g, '')}`,
-            type: 'bottom', // False point at the bottom
+            type: 'right', // False point on the right
             role: 'source', // Always source for true/false
             autoType: 'false'
           }
         ];
       } else if (nodeType === 'approval') {
-        // Approval nodes have fixed 2 points with specific roles and types
+        // Approval nodes have fixed 3 points with specific roles and types
         defaultPoints = [
           {
             id: `p_${uuidv7().replace(/-/g, '')}`,
@@ -724,6 +740,12 @@ export const FlowEditor: FC<FlowEditorProps> = ({
             type: 'bottom', // Output point at the bottom
             role: 'source', // Always source for output
             autoType: 'output'
+          },
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'right', // Reject point on the right
+            role: 'source', // Always source for reject
+            autoType: 'reject'
           }
         ];
       } else {
@@ -739,7 +761,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
       ).length;
 
       const autoCount = flowData.nodes.filter(
-        node => node.type === 'normal' && node.operationType === 'auto'
+        node => node.type === 'auto'
       ).length;
 
       const newNode: Node = {
@@ -747,15 +769,14 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         name:
           nodeType === 'start'
             ? 'Bắt đầu'
-            : nodeType === 'finished'
+            : nodeType === 'finish'
               ? 'Hoàn thành'
               : nodeType === 'approval'
                 ? `Phê duyệt ${approvalCount + 1}`
-                : nodeType === 'normal' && operation === 'auto'
+                : nodeType === 'auto'
                   ? `Tự động ${autoCount + 1}`
                   : `Nút ${flowData.nodes.length + 1}`,
         type: nodeType,
-        operationType: operation,
         x: centerX,
         y: centerY,
         points: defaultPoints,
@@ -811,7 +832,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
   }, [flowData.nodes]);
 
   const hasFinishedNode = useMemo(() => {
-    return flowData.nodes.some(node => node.type === 'finished');
+    return flowData.nodes.some(node => node.type === 'finish');
   }, [flowData.nodes]);
 
   useEffect(() => {

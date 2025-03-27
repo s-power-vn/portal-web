@@ -58,7 +58,7 @@ export const getNodeFromFlows = (processData: ProcessData, nodeId?: string) => {
 export const isFinishedNode = (processData: ProcessData, nodeId?: string) => {
   if (!nodeId || !processData?.nodes?.length) return false;
   const node = getNode(processData, nodeId);
-  return node?.type === 'finished' || false;
+  return node?.type === 'finish' || false;
 };
 
 export const getFinishedFlows = (processData: ProcessData) => {
@@ -66,7 +66,7 @@ export const getFinishedFlows = (processData: ProcessData) => {
     return [];
   }
   const finishedNodes = processData.nodes.filter(
-    (node: Node) => node.type === 'finished'
+    (node: Node) => node.type === 'finish'
   );
   return processData.flows.filter((flow: Flow) =>
     finishedNodes.some((node: Node) => flow.to.node === node.id)
@@ -81,13 +81,9 @@ export const isApproveNode = (
     return false;
   }
 
-  const approvedFlows = processData.flows.filter(
-    (it: Flow) => it.approver && it.approver.length > 0
-  );
-  const fromNodeFlow = approvedFlows.find(
-    (it: Flow) => it.from.node === nodeId
-  );
-  return fromNodeFlow ? true : false;
+  const node = getNode(processData, nodeId);
+
+  return node?.type === 'approval' || false;
 };
 
 function getNodes(
@@ -104,7 +100,7 @@ function getNodes(
   const extract = extractStatus(status);
 
   return processData.nodes.map((node: Node) => {
-    const { id, x, y, points, type, operationType, ...rest } = node;
+    const { id, x, y, points, type, ...rest } = node;
 
     const mappedPoints = points.map((point: Point) => ({
       ...point,
@@ -141,7 +137,6 @@ function getNodes(
         nodeId: id,
         isApprove,
         type,
-        operationType,
         points: pointsWithRoles,
         active: extract?.to ? id === extract.to : id === extract?.from,
         selected: id === selectedNode,

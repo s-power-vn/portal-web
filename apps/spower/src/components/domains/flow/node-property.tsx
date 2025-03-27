@@ -31,19 +31,24 @@ import {
   ConditionGenerator
 } from './components/condition-generator';
 import { ExpressionEditor } from './components/expression-editor';
-import type { Node, OperationType, PointRole } from './types';
+import type {
+  AutoNodePointType,
+  Node,
+  NodeType,
+  PointRole,
+  PointType
+} from './types';
 
 type NodeFormValues = {
   id: string;
   name: string;
   description: string;
-  type: 'start' | 'finished' | 'normal' | 'approval';
-  operationType: OperationType;
+  type: NodeType;
   points: {
     id: string;
-    type: 'top' | 'bottom' | 'right' | 'left';
+    type: PointType;
     role?: PointRole;
-    autoType?: 'input' | 'true' | 'false' | 'output';
+    autoType?: AutoNodePointType;
   }[];
   condition: string;
   approvers: string[];
@@ -56,9 +61,8 @@ const schema = yup
     description: yup.string().default(''),
     type: yup
       .string()
-      .oneOf(['start', 'finished', 'normal', 'approval'])
+      .oneOf(['start', 'finish', 'normal', 'auto', 'approval'])
       .default('normal'),
-    operationType: yup.string().oneOf(['auto', 'manual']).default('manual'),
     points: yup
       .array()
       .of(
@@ -71,7 +75,7 @@ const schema = yup
           role: yup.mixed<PointRole>().optional(),
           autoType: yup
             .string()
-            .oneOf(['input', 'true', 'false', 'output'] as const)
+            .oneOf(['input', 'true', 'false', 'output', 'reject'] as const)
             .optional()
         })
       )
@@ -109,7 +113,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
       name: '',
       description: '',
       type: 'normal',
-      operationType: 'manual',
       points: [],
       condition: '',
       approvers: []
@@ -126,7 +129,6 @@ export const NodeProperty: FC<NodePropertyProps> = ({
         name: rest.name,
         description: rest.description || '',
         type: rest.type,
-        operationType: rest.operationType,
         points: Array.isArray(rest.points) ? rest.points : [],
         condition: rest.condition || '',
         approvers: rest.approvers || []
@@ -223,8 +225,7 @@ export const NodeProperty: FC<NodePropertyProps> = ({
     });
   };
 
-  const isAutoNode =
-    watch('type') === 'normal' && watch('operationType') === 'auto';
+  const isAutoNode = watch('type') === 'auto';
   const isApprovalNode = watch('type') === 'approval';
 
   return (
@@ -289,9 +290,10 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                               color:
                                 point.autoType === 'input'
                                   ? '#22C55E'
-                                  : point.autoType === 'output'
+                                  : point.autoType === 'reject'
                                     ? '#EF4444'
-                                    : point.autoType === 'true'
+                                    : point.autoType === 'true' ||
+                                        point.autoType === 'output'
                                       ? '#3B82F6'
                                       : '#EF4444'
                             }}
@@ -299,10 +301,12 @@ export const NodeProperty: FC<NodePropertyProps> = ({
                             {point.autoType === 'input'
                               ? 'Đầu vào'
                               : point.autoType === 'output'
-                                ? 'Đầu ra'
-                                : point.autoType === 'true'
-                                  ? 'Đúng'
-                                  : 'Sai'}
+                                ? 'Phê duyệt'
+                                : point.autoType === 'reject'
+                                  ? 'Từ chối'
+                                  : point.autoType === 'true'
+                                    ? 'Đúng'
+                                    : 'Sai'}
                           </div>
                         )}
                         <div className="flex items-center gap-2">
