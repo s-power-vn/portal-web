@@ -63,17 +63,12 @@ function getNodes(
       };
     });
 
-    const isApprove = data.flows.some(
-      flow => flow.from.node === id && flow.approver && flow.approver.length > 0
-    );
-
     return {
       id,
       type: 'customNode',
       data: {
         ...rest,
         nodeId: id,
-        isApprove,
         condition: !!condition,
         points: mappedPoints,
         active: false,
@@ -649,7 +644,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
   const handleAddNode = useCallback(
     (
       nodeType: NodeType = 'normal',
-      operation: 'manual' | 'auto' = 'manual'
+      operation: 'manual' | 'auto' | 'approval' = 'manual'
     ) => {
       // Tạo ID sử dụng UUID v7 và loại bỏ dấu gạch ngang
       const uniqueId = uuidv7().replace(/-/g, '');
@@ -669,8 +664,8 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         centerY = (reactFlowBounds.height / 2 - y) / zoom;
 
         // Snap to grid with different calculations for auto nodes
-        if (operation === 'auto') {
-          // For auto nodes, adjust position to account for 45-degree rotation
+        if (operation === 'auto' || operation === 'approval') {
+          // For auto and approval nodes, adjust position to account for 45-degree rotation
           centerX = Math.round(centerX / 30) * 30 + 15;
           centerY = Math.round(centerY / 30) * 30 + 15;
         } else {
@@ -717,6 +712,22 @@ export const FlowEditor: FC<FlowEditorProps> = ({
             autoType: 'false'
           }
         ];
+      } else if (operation === 'approval') {
+        // Approval nodes have fixed 2 points with specific roles and types
+        defaultPoints = [
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'top', // Input point on the top
+            role: 'target', // Always target for input
+            autoType: 'input'
+          },
+          {
+            id: `p_${uuidv7().replace(/-/g, '')}`,
+            type: 'bottom', // Output point at the bottom
+            role: 'source', // Always source for output
+            autoType: 'output'
+          }
+        ];
       } else {
         // Normal nodes can have multiple points in any position
         defaultPoints = [
@@ -732,12 +743,15 @@ export const FlowEditor: FC<FlowEditorProps> = ({
             ? 'Bắt đầu'
             : nodeType === 'finished'
               ? 'Hoàn thành'
-              : `Nút ${flowData.nodes.length + 1}`,
+              : operation === 'approval'
+                ? 'Phê duyệt'
+                : `Nút ${flowData.nodes.length + 1}`,
         type: nodeType,
         operationType: operation,
         x: centerX,
         y: centerY,
-        points: defaultPoints
+        points: defaultPoints,
+        approvers: operation === 'approval' ? [] : undefined
       };
 
       const updatedData: ProcessData = {

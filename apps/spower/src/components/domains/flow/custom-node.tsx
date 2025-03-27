@@ -19,7 +19,6 @@ export type CustomNodeProps = NodeProps<
     name: string;
     description: string;
     active: boolean;
-    isApprove: boolean;
     type: NodeType;
     operationType: OperationType;
     selected: boolean;
@@ -81,7 +80,9 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
           data.type === 'finished' ? 'bg-purple-50' : '',
           data.operationType === 'auto'
             ? 'h-[60px] w-[60px] rotate-45 bg-orange-50'
-            : 'min-h-[40px] w-[200px] p-2 text-xs'
+            : data.operationType === 'approval'
+              ? 'h-[60px] w-[60px] bg-blue-50'
+              : 'min-h-[40px] w-[200px] p-2 text-xs'
         )}
       >
         <div
@@ -102,12 +103,16 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
             <ZapIcon className="h-4 w-4 text-orange-500" />
           </Show>
 
-          <Show when={data.operationType !== 'auto'}>
-            <span>{data.name}</span>
+          <Show when={data.operationType === 'approval'}>
+            <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
           </Show>
 
-          <Show when={data.isApprove && !data.isView}>
-            <CheckCircle2Icon className="h-4 w-4 text-blue-500" />
+          <Show
+            when={
+              data.operationType !== 'auto' && data.operationType !== 'approval'
+            }
+          >
+            <span>{data.name}</span>
           </Show>
 
           <Show when={data.type === 'finished'}>

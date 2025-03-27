@@ -1,6 +1,6 @@
 export type PointRole = 'source' | 'target' | 'unknown';
 
-export type AutoNodePointType = 'input' | 'true' | 'false';
+export type AutoNodePointType = 'input' | 'true' | 'false' | 'output';
 
 export type FlowType = 'default' | 'straight' | 'step' | 'smoothstep';
 
@@ -11,9 +11,9 @@ export type Point = {
   autoType?: AutoNodePointType;
 };
 
-export type NodeType = 'start' | 'finished' | 'normal';
+export type NodeType = 'start' | 'finished' | 'normal' | 'approval';
 
-export type OperationType = 'auto' | 'manual';
+export type OperationType = 'auto' | 'manual' | 'approval';
 
 export type Node = {
   id: string;
@@ -25,6 +25,7 @@ export type Node = {
   y: number;
   points: Point[];
   condition?: string;
+  approvers?: string[];
 };
 
 export type Flow = {

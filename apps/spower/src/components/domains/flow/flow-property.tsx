@@ -9,13 +9,11 @@ import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
 
 import type { Flow, FlowType } from '.';
-import { SelectEmployee } from '../employee';
 import { SelectFlowType } from './select-flow-type';
 
 type FlowFormValues = {
   id: string;
   action: string;
-  approver: string[];
   type: FlowType;
 };
 
@@ -23,7 +21,6 @@ const schema = yup
   .object({
     id: yup.string().required('ID flow là bắt buộc'),
     action: yup.string().default(''),
-    approver: yup.array().of(yup.string().defined()).default([]),
     type: yup
       .string()
       .oneOf(['default', 'straight', 'step', 'smoothstep'])
@@ -54,7 +51,6 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
     defaultValues: {
       id: '',
       action: '',
-      approver: [],
       type: 'smoothstep'
     }
   });
@@ -65,7 +61,6 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
         {
           id: selectedFlow.id,
           action: selectedFlow.action ?? '',
-          approver: selectedFlow.approver ?? [],
           type: selectedFlow.type ?? 'smoothstep'
         },
         {
@@ -81,7 +76,6 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
       const dirtyKeys = Object.keys(dirtyFields) as Array<keyof FlowFormValues>;
 
       if (dirtyKeys.includes('action')) updates.action = values.action;
-      if (dirtyKeys.includes('approver')) updates.approver = values.approver;
       if (dirtyKeys.includes('type')) updates.type = values.type;
 
       onFlowUpdate?.(selectedFlow.id, updates);
@@ -143,27 +137,6 @@ export const FlowProperty: FC<FlowPropertyProps> = ({
                     {errors.type.message}
                   </p>
                 )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Người phê duyệt</label>
-                <SelectEmployee
-                  multiple={true}
-                  value={watch('approver')}
-                  onChange={value => {
-                    const newValue = Array.isArray(value)
-                      ? value
-                      : [value].filter(Boolean);
-
-                    setValue('approver', newValue, {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                      shouldValidate: true
-                    });
-
-                    handleSubmit(onSubmit)();
-                  }}
-                  className="w-full"
-                />
               </div>
             </div>
           ) : (

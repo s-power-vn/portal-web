@@ -1,4 +1,10 @@
-import { CheckIcon, PlayIcon, PlusIcon, ZapIcon } from 'lucide-react';
+import {
+  CheckCircle2Icon,
+  CheckIcon,
+  PlayIcon,
+  PlusIcon,
+  ZapIcon
+} from 'lucide-react';
 
 import { FC, useMemo, useState } from 'react';
 
@@ -37,11 +43,22 @@ const NODE_TYPES = [
     operation: 'auto' as const,
     description: 'Nút xử lý tự động trong quy trình',
     className: 'text-orange-500'
+  },
+  {
+    id: 'approval',
+    label: 'Phê duyệt',
+    icon: CheckCircle2Icon,
+    operation: 'approval' as const,
+    description: 'Nút phê duyệt trong quy trình',
+    className: 'text-blue-500'
   }
 ];
 
 export type AddNodeButtonProps = {
-  onAddNode: (type: NodeType, operation: 'manual' | 'auto') => void;
+  onAddNode: (
+    type: NodeType,
+    operation: 'manual' | 'auto' | 'approval'
+  ) => void;
   hasStartNode: boolean;
   hasFinishedNode: boolean;
 };
