@@ -146,6 +146,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onSuccess={() => {
                   invalidates([
                     api.issue.byId.getKey(props.issueId),
+                    api.request.listFinished.getKey(),
                     api.comment.list.getKey(props.issueId)
                   ]);
                   close();
