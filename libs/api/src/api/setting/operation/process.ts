@@ -21,11 +21,11 @@ export type ProcessDbData = ProcessResponse<
 
 export const processApi = router('process', {
   list: router.query({
-    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) => {
+    fetcher: (params?: ListParams) => {
       return client
         .collection<ProcessDbData>(Collections.Process)
-        .getList(pageIndex, pageSize, {
-          filter,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter,
           expand: 'objectType, object_via_process, object_via_process.type'
         });
     }

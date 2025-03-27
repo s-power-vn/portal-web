@@ -8,11 +8,11 @@ export type ObjectTypeData = ObjectTypeResponse;
 
 export const objectTypeApi = router('objectType', {
   list: router.query({
-    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) =>
+    fetcher: (params?: ListParams) =>
       client
         .collection<ObjectTypeData>(Collections.ObjectType)
-        .getList(pageIndex ?? 1, pageSize ?? 10, {
-          filter
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter
         })
   }),
   byId: router.query({

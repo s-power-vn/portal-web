@@ -24,58 +24,47 @@ export type IssueData = IssueResponse<
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: ({
-      pageIndex = 1,
-      pageSize = 10,
-      filter,
-      projectId
-    }: ListParams & { projectId: string }) =>
-      client
+    fetcher: (params?: ListParams & { projectId: string }) => {
+      return client
         .collection<IssueData>(Collections.Issue)
-        .getList(pageIndex, pageSize, {
-          filter: `project = "${projectId}"
-          && title ~ "${filter ?? ''}"
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `project = "${params?.projectId}"
+          && title ~ "${params?.filter ?? ''}"
           && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
-        })
+        });
+    }
   }),
   listMine: router.query({
-    fetcher: ({
-      pageIndex = 1,
-      pageSize = 10,
-      filter,
-      projectId
-    }: ListParams & { projectId: string }) =>
-      client
+    fetcher: (params?: ListParams & { projectId: string }) => {
+      return client
         .collection<IssueData>(Collections.Issue)
-        .getList(pageIndex, pageSize, {
-          filter: `project = "${projectId}"
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `project = "${params?.projectId}"
         && assignees ?~ '${client.authStore.record?.id}'
-        && title ~ "${filter ?? ''}"
+        && title ~ "${params?.filter ?? ''}"
         && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
-        })
+        });
+    }
   }),
   listByObjectType: router.query({
-    fetcher: ({
-      pageIndex = 1,
-      pageSize = 10,
-      filter,
-      projectId,
-      objectTypeId
-    }: ListParams & { projectId: string; objectTypeId?: string }) =>
-      client
+    fetcher: (
+      params?: ListParams & { projectId: string; objectTypeId?: string }
+    ) => {
+      return client
         .collection<IssueData>(Collections.Issue)
-        .getList(pageIndex, pageSize, {
-          filter: `project = "${projectId}"
-        && title ~ "${filter ?? ''}"
-        && object.type = "${objectTypeId ?? ''}"
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `project = "${params?.projectId}"
+        && title ~ "${params?.filter ?? ''}"
+        && object.type = "${params?.objectTypeId ?? ''}"
         && deleted = false`,
           expand: `object, object.type, object.process, issueFile_via_issue`,
           sort: '-changed'
-        })
+        });
+    }
   }),
   byId: router.query({
     fetcher: (id: string) =>

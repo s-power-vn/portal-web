@@ -158,17 +158,12 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
     [parsedConditions]
   );
 
-  const { data: departmentsResult } = api.department.list.useSuspenseQuery();
-  const departments = departmentsResult?.items || [];
+  const { data: departmentsResult } =
+    api.department.listFull.useSuspenseQuery();
+  const departments = departmentsResult || [];
 
-  const { data: employees } = api.employee.list.useSuspenseQuery({
-    variables: {
-      filter: employeeIds.length
-        ? employeeIds.map(id => `id = "${id}"`).join(' || ')
-        : 'id = ""',
-      pageIndex: 1,
-      pageSize: employeeIds.length || 10
-    }
+  const { data: employees } = api.employee.byIds.useSuspenseQuery({
+    variables: employeeIds
   });
 
   if (!condition || !parsedConditions.length) {

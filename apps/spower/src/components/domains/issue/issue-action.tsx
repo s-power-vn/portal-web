@@ -107,7 +107,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
             onSuccess={() => {
               invalidates([
                 api.issue.byId.getKey(props.issueId),
-                api.request.listFinished.getKey(),
+                ['finished-requests'],
                 api.comment.list.getKey(props.issueId)
               ]);
               close();
@@ -146,7 +146,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onSuccess={() => {
                   invalidates([
                     api.issue.byId.getKey(props.issueId),
-                    api.request.listFinished.getKey(),
+                    ['finished-requests'],
                     api.comment.list.getKey(props.issueId)
                   ]);
                   close();
@@ -168,7 +168,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onSuccess={() => {
                   invalidates([
                     api.issue.byId.getKey(props.issueId),
-                    api.request.listFinished.getKey(),
+                    ['finished-requests'],
                     api.comment.list.getKey(props.issueId)
                   ]);
                   close();
@@ -212,7 +212,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
                     invalidates([
                       api.issue.byId.getKey(props.issueId),
-                      api.request.listFinished.getKey(),
+                      ['finished-requests'],
                       api.comment.list.getKey(props.issueId)
                     ]);
                     close();
@@ -244,7 +244,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
                     invalidates([
                       api.issue.byId.getKey(props.issueId),
-                      api.request.listFinished.getKey(),
+                      ['finished-requests'],
                       api.comment.list.getKey(props.issueId)
                     ]);
                     close();

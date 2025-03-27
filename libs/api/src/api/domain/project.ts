@@ -18,14 +18,15 @@ export type ProjectData = ProjectResponse<{
 
 export const projectApi = router('project', {
   list: router.query({
-    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) =>
-      client
+    fetcher: (params?: ListParams) => {
+      return client
         .collection<ProjectData>(Collections.Project)
-        .getList(pageIndex, pageSize, {
-          filter: `(name ~ "${filter ?? ''}" || bidding ~ "${filter ?? ''}")`,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: `(name ~ "${params?.filter ?? ''}" || bidding ~ "${params?.filter ?? ''}")`,
           expand: 'customer, createdBy',
           sort: '-created'
-        })
+        });
+    }
   }),
   byId: router.query({
     fetcher: (id: string) =>

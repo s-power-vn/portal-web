@@ -7,11 +7,11 @@ import type { ListParams } from '../../types';
 
 export const customerApi = router('customer', {
   list: router.query({
-    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) => {
+    fetcher: (params?: ListParams) => {
       return client
         .collection(Collections.Customer)
-        .getList(pageIndex, pageSize, {
-          filter,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter,
           sort: '-created'
         });
     }

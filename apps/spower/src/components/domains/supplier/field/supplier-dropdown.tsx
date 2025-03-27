@@ -45,7 +45,7 @@ export const SupplierDropdown: FC<SupplierDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn nhà cung cấp'}
       emptyText={props.emptyText ?? 'Không tìm thấy nhà cung cấp'}
-      queryKey={api.supplier.list.getKey()}
+      queryKey={['suppliers']}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

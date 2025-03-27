@@ -18,13 +18,20 @@ export type DepartmentData = DepartmentResponse<
 
 export const departmentApi = router('department', {
   list: router.query({
-    fetcher: ({ pageIndex = 1, pageSize = 10, filter }: ListParams) => {
+    fetcher: (params?: ListParams) => {
       return client
         .collection<DepartmentData>(Collections.Department)
-        .getList(pageIndex, pageSize, {
-          filter,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter,
           sort: '-created'
         });
+    }
+  }),
+  listFull: router.query({
+    fetcher: () => {
+      return client
+        .collection<DepartmentData>(Collections.Department)
+        .getFullList();
     }
   }),
   byId: router.query({

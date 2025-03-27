@@ -10,6 +10,7 @@ import { Collections, client } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
+import { ListParams } from '../types';
 import { IssueData } from './issue';
 
 export type RequestDetailData = RequestDetailResponse<{
@@ -30,23 +31,13 @@ export type FinishedRequestData = RequestFinishedResponse<{
 
 export const requestApi = router('request', {
   listFinished: router.query({
-    fetcher: async ({
-      filter,
-      projectId,
-      pageIndex = 1,
-      pageSize = 10
-    }: {
-      filter?: string;
-      projectId: string;
-      pageIndex?: number;
-      pageSize?: number;
-    }) => {
+    fetcher: async (params?: ListParams & { projectId: string }) => {
       return await client
         .collection<FinishedRequestData>(Collections.RequestFinished)
-        .getList(pageIndex, pageSize, {
-          filter: filter
-            ? `project = "${projectId}" && title ~ ${filter}`
-            : `project = "${projectId}"`,
+        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
+          filter: params?.filter
+            ? `project = "${params?.projectId}" && title ~ ${params?.filter}`
+            : `project = "${params?.projectId}"`,
           expand: 'issue',
           sort: '-changed'
         });

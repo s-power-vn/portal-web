@@ -14,7 +14,7 @@ export const SelectFinishedRequest: FC<SelectFinishedRequestProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn yêu cầu mua hàng'}
       emptyText={props.emptyText ?? 'Không tìm thấy yêu cầu mua hàng'}
-      queryKey={api.request.listFinished.getKey()}
+      queryKey={['finished-requests']}
       queryFn={async ({ search, page }) => {
         if (!props.projectId) {
           return {
