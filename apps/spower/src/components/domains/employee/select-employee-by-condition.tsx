@@ -57,7 +57,7 @@ export const SelectEmployeeByCondition: FC<
       {...props}
       placeholder={props.placeholder ?? 'Chọn nhân viên'}
       emptyText={props.emptyText ?? 'Không tìm thấy nhân viên'}
-      queryKey={api.employee.list.getKey()}
+      queryKey={['employees']}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

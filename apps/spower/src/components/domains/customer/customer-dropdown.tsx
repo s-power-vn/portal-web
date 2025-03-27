@@ -46,7 +46,7 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn chủ đầu tư'}
       emptyText={props.emptyText ?? 'Không tìm thấy chủ đầu tư'}
-      queryKey={api.customer.list.getKey()}
+      queryKey={['customers']}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />
