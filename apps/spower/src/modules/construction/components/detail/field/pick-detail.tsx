@@ -32,7 +32,7 @@ import {
   TableRow
 } from '@minhdtb/storeo-theme';
 
-import { IndeterminateCheckbox } from '../../../checkbox';
+import { IndeterminateCheckbox } from '../../../../../components';
 
 export type PickDetailProps = {
   projectId?: string;

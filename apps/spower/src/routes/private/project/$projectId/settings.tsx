@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
+import { client } from 'portal-core';
 import { object, string } from 'yup';
 
 import { useState } from 'react';
@@ -8,8 +9,7 @@ import { useState } from 'react';
 import { Show } from '@minhdtb/storeo-core';
 import { Button, Form, TextareaField, success } from '@minhdtb/storeo-theme';
 
-import { client } from '../../../../../../../libs/core/src';
-import { CustomerDropdownField } from '../../../../components';
+import { CustomerDropdownField } from '../../../../components/domains';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên công trình'),
@@ -124,8 +124,6 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute(
-  '/_private/project/$projectId/settings'
-)({
+export const Route = createFileRoute('/_private/project/$projectId/settings')({
   component: Component
 });

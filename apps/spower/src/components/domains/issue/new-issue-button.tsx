@@ -15,9 +15,9 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useIntersectionObserver, useInvalidateQueries } from '../../../hooks';
+import { NewPriceForm } from '../../../modules/construction/objects/price';
+import { NewRequestForm } from '../../../modules/construction/objects/request';
 import { DynamicIcon } from '../../icon/dynamic-icon';
-import { NewPriceForm } from '../price';
-import { NewRequestForm } from '../request';
 
 export type NewIssueButtonProps = {
   projectId: string;

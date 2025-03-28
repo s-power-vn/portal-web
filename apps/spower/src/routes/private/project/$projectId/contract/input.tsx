@@ -29,8 +29,15 @@ import {
   XIcon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import type { DetailInfoResponse } from 'portal-core';
-import { client, downloadTemplate, maskVolumeString } from 'portal-core';
+import type { DetailInfoResponse, TreeData } from 'portal-core';
+import {
+  arrayToTree,
+  client,
+  compareVersion,
+  downloadTemplate,
+  getCommonPinningStyles,
+  maskVolumeString
+} from 'portal-core';
 
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -55,24 +62,20 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import type { TreeData } from '../../../../../../../../libs/core/src/commons/utils';
-import {
-  arrayToTree,
-  compareVersion,
-  getCommonPinningStyles
-} from '../../../../../../../../libs/core/src/commons/utils';
 import {
   ADMIN_ID,
   ColumnManager,
-  EditDetailForm,
   IndeterminateCheckbox,
-  NewColumnForm,
-  NewDetailForm
+  NewColumnForm
 } from '../../../../../components';
 import {
   useDetailImportStatus,
   useInvalidateQueries
 } from '../../../../../hooks';
+import {
+  EditDetailForm,
+  NewDetailForm
+} from '../../../../../modules/construction/components/detail';
 
 const Component = () => {
   const { projectId } = Route.useParams();

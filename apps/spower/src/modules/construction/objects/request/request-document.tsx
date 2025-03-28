@@ -8,7 +8,7 @@ import type { FC } from 'react';
 
 import { For, Show, formatDate } from '@minhdtb/storeo-core';
 
-import { ProcessData } from '../flow/types';
+import { ProcessData } from '../../../../components';
 import { RequestDetailItem } from './request-display';
 
 export type RequestDocumentProps = {

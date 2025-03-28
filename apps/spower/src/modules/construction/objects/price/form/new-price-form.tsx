@@ -13,7 +13,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../../file';
+import { MultipleFileSelectField } from '../../../../../components/file';
 import { PriceInputField } from '../field/price-input-field';
 
 const schema = object().shape({

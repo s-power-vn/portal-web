@@ -14,7 +14,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../../file';
+import { MultipleFileSelectField } from '../../../../../components';
 import { RequestInputField } from '../field/request-input-field';
 import { RequestDetailItem } from '../request-display';
 

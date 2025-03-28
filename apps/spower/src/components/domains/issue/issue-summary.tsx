@@ -29,11 +29,11 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
+import { EditPriceForm } from '../../../modules/construction/objects/price/form/edit-price-form';
+import { EditRequestForm } from '../../../modules/construction/objects/request';
 import { DynamicIcon } from '../../icon/dynamic-icon';
 import { EmployeeDisplay } from '../employee';
 import { ProcessData, extractStatus, getNode } from '../flow';
-import { EditPriceForm } from '../price/form/edit-price-form';
-import { EditRequestForm } from '../request/form/edit-request-form';
 import { IssueAssigneeDisplay } from './issue-assignee-display';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';

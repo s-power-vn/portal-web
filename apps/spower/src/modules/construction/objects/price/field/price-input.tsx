@@ -26,8 +26,8 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
+import { PickSuppliersForm } from '../../../components/supplier';
 import { PickFinishedRequestDetailForm } from '../../request';
-import { PickSuppliersForm } from '../../supplier';
 
 // Convert interfaces to types
 type PriceInputData = {

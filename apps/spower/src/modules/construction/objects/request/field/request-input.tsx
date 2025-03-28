@@ -25,7 +25,7 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
-import { PickDetailForm } from '../../detail';
+import { PickDetailForm } from '../../../components/detail';
 import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
 import { RequestDetailItem } from '../request-display';
 
@@ -35,7 +35,7 @@ export type RequestInputProps = {
 };
 
 export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
-  const { control, setValue, watch, getValues } = useStoreoForm();
+  const { control, setValue, getValues } = useStoreoForm();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { fields, append, insert, remove } = useFieldArray({

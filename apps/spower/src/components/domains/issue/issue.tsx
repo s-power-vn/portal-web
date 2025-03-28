@@ -14,8 +14,8 @@ import {
   TabsTrigger
 } from '@minhdtb/storeo-theme';
 
-import { PriceDisplay } from '../price';
-import { RequestDisplay } from '../request';
+import { PriceDisplay } from '../../../modules/construction/objects/price';
+import { RequestDisplay } from '../../../modules/construction/objects/request';
 import { IssueAction } from './issue-action';
 import { IssueAttachment } from './issue-attachment';
 import { IssueComment } from './issue-comment';

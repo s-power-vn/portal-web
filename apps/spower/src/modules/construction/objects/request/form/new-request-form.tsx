@@ -1,10 +1,10 @@
 import { api } from 'portal-api';
-import { array, date, object, string } from 'yup';
+import { array, boolean, date, number, object, string } from 'yup';
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
+import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-  BusinessFormProps,
   DatePickerField,
   Form,
   TextField,
@@ -12,8 +12,8 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { MultipleFileSelectField } from '../../../file';
-import { PriceInputField } from '../field/price-input-field';
+import { MultipleFileSelectField } from '../../../../../components';
+import { RequestInputField } from '../field/request-input-field';
 
 const schema = object().shape({
   title: string().required('Hãy nhập nội dung'),
@@ -33,27 +33,30 @@ const schema = object().shape({
         return true;
       }
     }),
-  data: array()
+  details: array()
     .of(
       object().shape({
         id: string().optional(),
-        prices: object().optional()
+        index: string().optional(),
+        note: string().optional(),
+        deliveryDate: date().optional(),
+        hasChild: boolean().optional(),
+        requestVolume: number()
+          .transform((_, originalValue) =>
+            Number(originalValue?.toString().replace(/,/g, '.'))
+          )
+          .typeError('Hãy nhập khối lượng yêu cầu')
+          .when('hasChild', (hasChild, schema) => {
+            return hasChild[0]
+              ? schema
+              : schema
+                  .moreThan(0, 'Hãy nhập khối lượng yêu cầu')
+                  .required('Hãy nhập khối lượng yêu cầu');
+          })
       })
     )
     .min(1, 'Hãy chọn ít nhất 1 hạng mục')
-    .required('Hãy chọn ít nhất 1 hạng mục')
-    .test({
-      name: 'checkSuppliers',
-      message: 'Hãy thêm ít nhất 1 nhà cung cấp',
-      test: function (value) {
-        if (!value) return false;
-        const suppliers = value.flatMap(item =>
-          item?.prices ? Object.keys(item.prices) : []
-        );
-        return suppliers.length > 0;
-      }
-    }),
-  deletedIds: array().of(string()).optional(),
+    .required('Hãy chọn ít nhất 1 hạng mục'),
   attachments: array()
     .of(
       object().shape({
@@ -64,27 +67,16 @@ const schema = object().shape({
     .optional()
 });
 
-export type EditPriceFormProps = BusinessFormProps & {
-  issueId: string;
+export type NewRequestFormProps = BusinessFormProps & {
+  projectId: string;
+  objectId: string;
 };
 
-export const EditPriceForm: FC<EditPriceFormProps> = ({
-  issueId,
-  onCancel,
-  onSuccess
-}) => {
-  const issue = api.issue.byId.useSuspenseQuery({
-    variables: issueId
-  });
-
-  const price = api.price.byIssueId.useSuspenseQuery({
-    variables: issueId
-  });
-
-  const update = api.price.update.useMutation({
-    onSuccess: () => {
-      success('Cập nhật giá thành công');
-      onSuccess?.();
+export const NewRequestForm: FC<NewRequestFormProps> = props => {
+  const createRequest = api.request.create.useMutation({
+    onSuccess: async () => {
+      success('Tạo yêu cầu mua hàng thành công');
+      props.onSuccess?.();
     }
   });
 
@@ -92,32 +84,23 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
     <Form
       schema={schema}
       defaultValues={{
-        title: issue.data?.title,
-        code: issue.data?.code,
-        startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
-        endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
-        data: price.data?.expand?.priceDetail_via_price?.map(it => ({
-          id: it.id,
-          prices: it.prices ?? {}
-        })),
-        attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
-          id: it.id,
-          name: it.name,
-          size: it.size,
-          type: it.type
-        }))
+        title: '',
+        code: '',
+        startDate: new Date(),
+        endDate: undefined,
+        details: [],
+        attachments: []
       }}
       className={'flex flex-col gap-4'}
-      onSuccess={value => {
-        update.mutate({
-          ...value,
-          id: issueId,
-          project: issue.data?.project ?? '',
-          details: value.data ?? []
+      loading={createRequest.isPending}
+      onSuccess={values => {
+        return createRequest.mutate({
+          ...values,
+          project: props.projectId,
+          object: props.objectId
         });
       }}
-      onCancel={onCancel}
-      loading={issue.isLoading || price.isLoading || update.isPending}
+      onCancel={props.onCancel}
     >
       <TextareaField
         schema={schema}
@@ -154,10 +137,10 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
           }}
         />
       </div>
-      <PriceInputField
+      <RequestInputField
         schema={schema}
-        name={'data'}
-        options={{ projectId: issue.data?.project }}
+        name={'details'}
+        options={{ projectId: props.projectId }}
       />
       <MultipleFileSelectField
         schema={schema}

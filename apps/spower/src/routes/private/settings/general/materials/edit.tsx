@@ -5,8 +5,8 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
-import { EditMaterialForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
+import { EditMaterialForm } from '../../../../../modules/construction/components/material';
 
 const Component = () => {
   const [open, setOpen] = useState(true);

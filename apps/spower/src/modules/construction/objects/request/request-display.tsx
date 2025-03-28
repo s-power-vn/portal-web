@@ -37,8 +37,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { ProcessData } from '../flow/types';
-import { ADMIN_ID } from '../project';
+import { ADMIN_ID, ProcessData } from '../../../../components';
 import { RequestDocument } from './request-document';
 
 export type RequestDetailItem = {

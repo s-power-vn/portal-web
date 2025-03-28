@@ -32,7 +32,7 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { ProcessData } from '../flow/types';
+import { ProcessData } from '../../../../components/domains/flow/types';
 import { PriceDocument } from './price-document';
 
 export type PriceDetailItem = {
