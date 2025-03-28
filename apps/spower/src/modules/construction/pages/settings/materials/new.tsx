@@ -6,22 +6,19 @@ import { useCallback, useState } from 'react';
 import { Modal } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../../../hooks';
-import { EditSupplierForm } from '../../../../../modules/construction/components/supplier';
+import { NewMaterialForm } from '../../../components/material';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
-  const { supplierId } = Route.useParams();
   const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([
-      api.supplier.byId.getKey(supplierId),
-      api.supplier.list.getKey()
-    ]);
-  }, [history, invalidates, supplierId]);
+    console.log('onSuccessHandler');
+    invalidates([api.material.list.getKey()]);
+  }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -30,17 +27,16 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Chỉnh sửa nhà cung cấp'}
+      title={'Thêm vật tư'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'edit-supplier-modal'}
+      id={'new-material-modal'}
     >
-      <EditSupplierForm
-        supplierId={supplierId}
+      <NewMaterialForm
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -49,9 +45,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/settings/general/suppliers/$supplierId/edit'
+  '/_private/settings/general/materials/new'
 )({
-  component: Component,
-  loader: ({ context: { queryClient }, params: { supplierId } }) =>
-    queryClient?.ensureQueryData(api.supplier.byId.getOptions(supplierId))
+  component: Component
 });

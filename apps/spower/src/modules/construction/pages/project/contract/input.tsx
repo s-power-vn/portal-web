@@ -75,7 +75,7 @@ import {
 import {
   EditDetailForm,
   NewDetailForm
-} from '../../../../../modules/construction/components/detail';
+} from '../../../components/detail';
 
 const Component = () => {
   const { projectId } = Route.useParams();
