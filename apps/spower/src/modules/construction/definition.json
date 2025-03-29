@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../../../node_modules/@minhdtb/vite-module-generator/schema.json",
   "name": "construction",
   "title": "Xây dựng",
   "description": "Xây dựng",
@@ -18,6 +19,60 @@
       "display": "./objects/price/price-display.tsx",
       "newForm": "./objects/price/form/new-price-form.tsx",
       "editForm": "./objects/price/form/edit-price-form.tsx"
+    }
+  ],
+  "routes": [
+    {
+      "project": [
+        {
+          "name": "contract",
+          "component": "./pages/project/contract.tsx",
+          "children": [
+            {
+              "name": "index",
+              "component": "./pages/project/contract/index.tsx"
+            },
+            {
+              "name": "input",
+              "component": "./pages/project/contract/input.tsx"
+            },
+            {
+              "name": "monitoring",
+              "component": "./pages/project/contract/monitoring.tsx"
+            }
+          ]
+        }
+      ],
+      "settings": [
+        {
+          "name": "suppliers",
+          "component": "./pages/settings/suppliers/list.tsx",
+          "children": [
+            {
+              "name": "new",
+              "component": "./pages/settings/suppliers/new.tsx"
+            },
+            {
+              "name": "$supplierId/edit",
+              "component": "./pages/settings/suppliers/edit.tsx"
+            }
+          ]
+        },
+        {
+          "name": "materials",
+          "component": "./pages/settings/materials/list.tsx",
+          "children": [
+            {
+              "name": "new",
+              "component": "./pages/settings/materials/new.tsx"
+            },
+            {
+              "name": "$materialId/edit",
+              "component": "./pages/settings/materials/edit.tsx"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
