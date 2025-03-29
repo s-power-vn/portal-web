@@ -38,6 +38,12 @@ export default defineConfig({
     host: 'localhost'
   },
 
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
+
   plugins: [
     nodePolyfills(),
     react(),
