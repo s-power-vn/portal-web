@@ -1,9 +1,6 @@
 import { index, layout, rootRoute, route } from '@tanstack/virtual-file-routes';
 
-import {
-  constructionProjectRoutes,
-  constructionSettingsRoutes
-} from './modules/construction/routes';
+import { getProjectRoutes, getSettingsRoutes } from './modules.gen';
 
 export const routes = rootRoute('./root.tsx', [
   index('./index.tsx'),
@@ -39,7 +36,7 @@ export const routes = rootRoute('./root.tsx', [
             )
           ])
         ]),
-        ...constructionProjectRoutes,
+        ...getProjectRoutes(),
         route('settings', './private/project/$projectId/settings.tsx')
       ])
     ]),
@@ -72,7 +69,7 @@ export const routes = rootRoute('./root.tsx', [
             './private/settings/general/employees/edit.tsx'
           )
         ]),
-        ...constructionSettingsRoutes
+        ...getSettingsRoutes()
       ]),
       route('operation', './private/settings/operation.tsx', [
         index('./private/settings/operation/index.tsx'),
