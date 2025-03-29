@@ -42,7 +42,9 @@ export function getObjectDisplayComponent(objectType: string) {
   const path = getObject(objectType).display;
   return () =>
     import(
-      /* @vite-ignore */ import.meta.env.DEV ? `/src/${path}` : `/${path}`
+      /* @vite-ignore */ process.env.NODE_ENV === 'development'
+        ? `/src/${path}`
+        : `/${path}`
     );
 }
 
@@ -50,7 +52,9 @@ export function getObjectNewFormComponent(objectType: string) {
   const path = getObject(objectType).newForm;
   return () =>
     import(
-      /* @vite-ignore */ import.meta.env.DEV ? `/src/${path}` : `/${path}`
+      /* @vite-ignore */ process.env.NODE_ENV === 'development'
+        ? `/src/${path}`
+        : `/${path}`
     );
 }
 
@@ -58,7 +62,9 @@ export function getObjectEditFormComponent(objectType: string) {
   const path = getObject(objectType).editForm;
   return () =>
     import(
-      /* @vite-ignore */ import.meta.env.DEV ? `/src/${path}` : `/${path}`
+      /* @vite-ignore */ process.env.NODE_ENV === 'development'
+        ? `/src/${path}`
+        : `/${path}`
     );
 }
 
