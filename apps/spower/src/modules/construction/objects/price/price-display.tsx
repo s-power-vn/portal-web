@@ -535,3 +535,5 @@ export const PriceDisplay: FC<PriceDisplayProps> = ({ issueId }) => {
     </div>
   );
 };
+
+export default PriceDisplay;

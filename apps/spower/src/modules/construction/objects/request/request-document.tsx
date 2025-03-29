@@ -355,3 +355,5 @@ export const RequestDocument: FC<RequestDocumentProps> = props => {
     </Tailwind>
   );
 };
+
+export default RequestDocument;

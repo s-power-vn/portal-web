@@ -319,3 +319,5 @@ export const PriceDocument: FC<PriceDocumentProps> = props => {
     </Tailwind>
   );
 };
+
+export default PriceDocument;

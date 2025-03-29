@@ -157,10 +157,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
             : undefined
         })),
         attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
-          id: it.id,
-          name: it.name,
-          size: it.size,
-          type: it.type
+          ...it
         }))
       }}
       className={'flex flex-col gap-4'}
@@ -211,3 +208,5 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
     </Form>
   );
 };
+
+export default EditRequestForm;

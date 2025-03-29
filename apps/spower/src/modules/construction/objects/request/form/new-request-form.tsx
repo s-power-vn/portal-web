@@ -150,3 +150,5 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
     </Form>
   );
 };
+
+export default NewRequestForm;

@@ -382,3 +382,5 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     </div>
   );
 };
+
+export default RequestDisplay;

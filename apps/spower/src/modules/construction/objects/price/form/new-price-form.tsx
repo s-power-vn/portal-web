@@ -158,3 +158,5 @@ export const NewPriceForm: FC<NewPriceFormProps> = ({
     </Form>
   );
 };
+
+export default NewPriceForm;

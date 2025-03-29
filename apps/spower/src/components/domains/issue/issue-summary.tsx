@@ -13,7 +13,7 @@ import { api } from 'portal-api';
 import { client } from 'portal-core';
 
 import type { FC } from 'react';
-import { Suspense, useCallback, useMemo } from 'react';
+import { Suspense, lazy, useCallback, useMemo } from 'react';
 
 import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
@@ -29,14 +29,40 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useInvalidateQueries } from '../../../hooks';
-import { EditPriceForm } from '../../../modules/construction/objects/price/form/edit-price-form';
-import { EditRequestForm } from '../../../modules/construction/objects/request';
+import { getObjectEditFormComponent } from '../../../modules.gen';
 import { DynamicIcon } from '../../icon/dynamic-icon';
 import { EmployeeDisplay } from '../employee';
 import { ProcessData, extractStatus, getNode } from '../flow';
 import { IssueAssigneeDisplay } from './issue-assignee-display';
 import { IssueDeadlineStatus } from './issue-deadline-status';
 import { IssueStatus } from './issue-status';
+
+type DynamicObjectEditFormProps = {
+  objectType: string;
+  issueId: string;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+};
+
+const DynamicObjectEditForm: FC<DynamicObjectEditFormProps> = ({
+  objectType,
+  issueId,
+  onSuccess,
+  onCancel
+}) => {
+  const Component = lazy(getObjectEditFormComponent(objectType));
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-4">
+          <Loader className="h-6 w-6 animate-spin" />
+        </div>
+      }
+    >
+      <Component issueId={issueId} onSuccess={onSuccess} onCancel={onCancel} />
+    </Suspense>
+  );
+};
 
 export type IssueSummaryProps = {
   issueId: string;
@@ -106,37 +132,18 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
       description: 'Chỉnh sửa thông tin công việc',
       children: ({ close }) => {
         return (
-          <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
-            {issue.data.expand?.object.expand?.type.name === 'Request' ? (
-              <EditRequestForm
-                issueId={issueId}
-                onSuccess={() => {
-                  invalidates([
-                    api.issue.byId.getKey(issueId),
-                    api.request.byIssueId.getKey(issueId)
-                  ]);
-                  close();
-                }}
-                onCancel={close}
-              />
-            ) : issue.data.expand?.object.expand?.type.name === 'Price' ? (
-              <EditPriceForm
-                issueId={issueId}
-                onSuccess={() => {
-                  invalidates([
-                    api.issue.byId.getKey(issueId),
-                    api.price.byIssueId.getKey(issueId)
-                  ]);
-                  close();
-                }}
-                onCancel={close}
-              />
-            ) : (
-              <div className={`p-2`}>
-                <Loader className={'h-6 w-6 animate-spin'} />
-              </div>
-            )}
-          </Suspense>
+          <DynamicObjectEditForm
+            objectType={issue.data.expand?.object.expand?.type?.name ?? ''}
+            issueId={issueId}
+            onSuccess={() => {
+              invalidates([
+                api.issue.byId.getKey(issueId),
+                api.price.byIssueId.getKey(issueId)
+              ]);
+              close();
+            }}
+            onCancel={close}
+          />
         );
       }
     });

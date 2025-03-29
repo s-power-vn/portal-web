@@ -203,8 +203,6 @@ export const PriceInput: FC<PriceInputProps> = ({
     variables: supplierIds
   });
 
-  console.log(supplierIds, suppliers);
-
   const handleDataChange = (newData: PriceData[]) => {
     const regularData = newData
       .filter(row => !row.isSubTotal && !row.isVAT && !row.isFinalTotal)

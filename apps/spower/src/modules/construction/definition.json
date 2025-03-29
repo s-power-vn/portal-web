@@ -1,0 +1,23 @@
+{
+  "name": "construction",
+  "title": "Xây dựng",
+  "description": "Xây dựng",
+  "objects": [
+    {
+      "name": "Request",
+      "title": "Yêu cầu mua hàng",
+      "description": "Yêu cầu mua hàng",
+      "display": "./objects/request/request-display.tsx",
+      "newForm": "./objects/request/form/new-request-form.tsx",
+      "editForm": "./objects/request/form/edit-request-form.tsx"
+    },
+    {
+      "name": "Price",
+      "title": "Bảng giá",
+      "description": "Bảng giá",
+      "display": "./objects/price/price-display.tsx",
+      "newForm": "./objects/price/form/new-price-form.tsx",
+      "editForm": "./objects/price/form/edit-price-form.tsx"
+    }
+  ]
+}

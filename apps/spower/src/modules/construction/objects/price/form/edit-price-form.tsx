@@ -97,14 +97,11 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
         startDate: new Date(Date.parse(issue.data?.startDate ?? '')),
         endDate: new Date(Date.parse(issue.data?.endDate ?? '')),
         data: price.data?.expand?.priceDetail_via_price?.map(it => ({
-          id: it.id,
+          ...it,
           prices: it.prices ?? {}
         })),
         attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
-          id: it.id,
-          name: it.name,
-          size: it.size,
-          type: it.type
+          ...it
         }))
       }}
       className={'flex flex-col gap-4'}
@@ -167,3 +164,5 @@ export const EditPriceForm: FC<EditPriceFormProps> = ({
     </Form>
   );
 };
+
+export default EditPriceForm;
