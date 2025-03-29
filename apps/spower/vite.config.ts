@@ -34,18 +34,11 @@ export default defineConfig({
   },
 
   preview: {
-    port: 4300,
-    host: 'localhost'
-  },
-
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
+    port: 4000,
+    host: 'localhost',
+    headers: {
+      'Cache-Control': 'no-store'
     }
-  },
-
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
   },
 
   plugins: [
@@ -70,7 +63,8 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         { src: cMapsDir, dest: '' },
-        { src: standardFontsDir, dest: '' }
+        { src: standardFontsDir, dest: '' },
+        { src: path.resolve(__dirname, '../../serve.json'), dest: '' }
       ]
     })
   ],
