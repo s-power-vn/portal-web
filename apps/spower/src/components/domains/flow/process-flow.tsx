@@ -192,7 +192,8 @@ export const ProcessFlow: FC<ProcessFlowProps> = ({
 
   const fitViewOptions: FitViewOptions = useMemo(
     () => ({
-      padding: 0.2,
+      padding: 0,
+      minZoom: 0.6,
       maxZoom: 1
     }),
     []

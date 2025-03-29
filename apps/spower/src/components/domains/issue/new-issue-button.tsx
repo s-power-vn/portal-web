@@ -3,7 +3,15 @@ import { Loader, PlusIcon } from 'lucide-react';
 import { ObjectData, api } from 'portal-api';
 
 import type { FC } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import {
   DebouncedInput,
@@ -15,9 +23,42 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { useIntersectionObserver, useInvalidateQueries } from '../../../hooks';
+import { getObjectNewFormComponent } from '../../../modules.gen';
 import { DynamicIcon } from '../../icon/dynamic-icon';
-import { NewPriceForm } from '../price';
-import { NewRequestForm } from '../request';
+
+type DynamicObjectNewFormProps = {
+  objectType: string;
+  projectId: string;
+  objectId: string;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+};
+
+const DynamicObjectNewForm: FC<DynamicObjectNewFormProps> = ({
+  objectType,
+  projectId,
+  objectId,
+  onSuccess,
+  onCancel
+}) => {
+  const Component = lazy(getObjectNewFormComponent(objectType));
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-4">
+          <Loader className="h-6 w-6 animate-spin" />
+        </div>
+      }
+    >
+      <Component
+        projectId={projectId}
+        objectId={objectId}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+      />
+    </Suspense>
+  );
+};
 
 export type NewIssueButtonProps = {
   projectId: string;
@@ -98,8 +139,8 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     return new Map(objectTypes.map(type => [type.id, type]));
   }, [objectTypes]);
 
-  const handleNewRequestClick = useCallback(
-    (objectId: string) => {
+  const handleNewObjectClick = useCallback(
+    (objectType: string, objectId: string) => {
       showModal({
         title: 'Tạo yêu cầu mua hàng',
         className: 'flex min-w-[1000px] flex-col',
@@ -107,42 +148,8 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
           'Tạo yêu cầu mua hàng mới. Cho phép chọn từ danh sách hạng mục',
         children: ({ close }) => {
           return (
-            <NewRequestForm
-              projectId={projectId}
-              objectId={objectId}
-              onSuccess={() => {
-                invalidates([
-                  api.issue.list.getKey({
-                    projectId
-                  }),
-                  api.issue.listMine.getKey({
-                    projectId
-                  }),
-                  api.issue.listByObjectType.getKey({
-                    projectId
-                  })
-                ]);
-                close();
-              }}
-              onCancel={close}
-            />
-          );
-        }
-      });
-    },
-    [invalidates, projectId]
-  );
-
-  const handleNewPriceRequestClick = useCallback(
-    (objectId: string) => {
-      showModal({
-        title: 'Tạo đề nghị báo giá',
-        className: 'flex min-w-[1000px] flex-col',
-        description:
-          'Tạo đề nghị báo giá mới. Cho phép chọn từ danh sách hạng mục',
-        children: ({ close }) => {
-          return (
-            <NewPriceForm
+            <DynamicObjectNewForm
+              objectType={objectType}
               projectId={projectId}
               objectId={objectId}
               onSuccess={() => {
@@ -171,16 +178,11 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   const handleObjectClick = useCallback(
     (object: ObjectData) => {
       const type = typeMap.get(object.type)?.name;
-
-      if (type === 'Request') {
-        handleNewRequestClick(object.id);
-        setOpen(false);
-      } else if (type === 'Price') {
-        handleNewPriceRequestClick(object.id);
-        setOpen(false);
-      }
+      if (!type) return;
+      handleNewObjectClick(type, object.id);
+      setOpen(false);
     },
-    [handleNewRequestClick, handleNewPriceRequestClick, typeMap]
+    [handleNewObjectClick, typeMap]
   );
 
   const handleSearchChange = useCallback((value: string | undefined) => {

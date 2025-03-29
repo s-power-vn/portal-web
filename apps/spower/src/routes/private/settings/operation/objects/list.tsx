@@ -404,25 +404,10 @@ function Component() {
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className={`text-appWhite whitespace-nowrap ${
-                            header.column.id === 'select' ||
-                            header.column.id === 'index'
-                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                              : header.column.id === 'name'
-                                ? 'bg-appBlueLight sticky left-[70px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                : ''
-                          }`}
+                          className={`text-appWhite whitespace-nowrap`}
                           style={{
                             width: header.getSize(),
-                            maxWidth: header.getSize(),
-                            left:
-                              header.column.id === 'select'
-                                ? 0
-                                : header.column.id === 'index'
-                                  ? 40
-                                  : header.column.id === 'name'
-                                    ? 70
-                                    : 'auto'
+                            maxWidth: header.getSize()
                           }}
                         >
                           {header.isPlaceholder ? null : (
@@ -464,32 +449,13 @@ function Component() {
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={`truncate text-left ${
-                                cell.column.id === 'select' ||
-                                cell.column.id === 'index'
-                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                  : cell.column.id === 'name'
-                                    ? 'sticky left-[70px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                    : ''
-                              }`}
+                              className={`truncate text-left`}
                               style={{
                                 width: cell.column.getSize(),
                                 maxWidth: cell.column.getSize(),
-                                left:
-                                  cell.column.id === 'select'
-                                    ? 0
-                                    : cell.column.id === 'index'
-                                      ? 40
-                                      : cell.column.id === 'name'
-                                        ? 70
-                                        : 'auto',
-                                backgroundColor:
-                                  row.getIsSelected() &&
-                                  (cell.column.id === 'select' ||
-                                    cell.column.id === 'index' ||
-                                    cell.column.id === 'name')
-                                    ? '#EBF5FF'
-                                    : ''
+                                backgroundColor: row.getIsSelected()
+                                  ? '#EBF5FF'
+                                  : ''
                               }}
                             >
                               {flexRender(

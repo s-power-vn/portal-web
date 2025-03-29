@@ -4,7 +4,7 @@ import { api } from 'portal-api';
 import { IssueDeadlineStatusOptions, client } from 'portal-core';
 
 import type { FC } from 'react';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 
 import { Show, cn } from '@minhdtb/storeo-core';
 import {
@@ -14,8 +14,7 @@ import {
   TabsTrigger
 } from '@minhdtb/storeo-theme';
 
-import { PriceDisplay } from '../price';
-import { RequestDisplay } from '../request';
+import { getObjectDisplayComponent } from '../../../modules.gen';
 import { IssueAction } from './issue-action';
 import { IssueAttachment } from './issue-attachment';
 import { IssueComment } from './issue-comment';
@@ -29,6 +28,29 @@ interface ExpandType {
   object?: ObjectData;
   [key: string]: unknown;
 }
+
+type DynamicObjectDisplayProps = {
+  objectType: string;
+  issueId: string;
+};
+
+const DynamicObjectDisplay: FC<DynamicObjectDisplayProps> = ({
+  objectType,
+  issueId
+}) => {
+  const Component = lazy(getObjectDisplayComponent(objectType));
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-4">
+          <Loader className="h-6 w-6 animate-spin" />
+        </div>
+      }
+    >
+      <Component issueId={issueId} />
+    </Suspense>
+  );
+};
 
 const IssueComponent: FC<IssueProps> = ({ issueId }) => {
   const issue = api.issue.byId.useSuspenseQuery({
@@ -45,14 +67,9 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
     if (!objectData?.expand?.type) return <div className={`p-2`}></div>;
 
     const typeName = objectData.expand.type.name;
+    if (!typeName) return <div className={`p-2`}></div>;
 
-    if (typeName === 'Request') {
-      return <RequestDisplay issueId={issueId} />;
-    } else if (typeName === 'Price') {
-      return <PriceDisplay issueId={issueId} />;
-    }
-
-    return <div className={`p-2`}></div>;
+    return <DynamicObjectDisplay objectType={typeName} issueId={issueId} />;
   };
 
   return (

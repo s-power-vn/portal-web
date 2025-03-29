@@ -53,7 +53,6 @@ export default defineConfig({
       }
     }),
     TanStackRouterVite({
-      routesDirectory: path.join(__dirname, 'src/routes'),
       generatedRouteTree: path.join(__dirname, 'src/routes.gen.ts'),
       target: 'react',
       virtualRouteConfig: './src/routes.ts'

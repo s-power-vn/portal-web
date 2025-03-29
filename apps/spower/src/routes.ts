@@ -1,5 +1,10 @@
 import { index, layout, rootRoute, route } from '@tanstack/virtual-file-routes';
 
+import {
+  constructionProjectRoutes,
+  constructionSettingsRoutes
+} from './modules/construction/routes';
+
 export const routes = rootRoute('./root.tsx', [
   index('./index.tsx'),
   route('login', './login.tsx'),
@@ -34,14 +39,7 @@ export const routes = rootRoute('./root.tsx', [
             )
           ])
         ]),
-        route('contract', './private/project/$projectId/contract.tsx', [
-          index('./private/project/$projectId/contract/index.tsx'),
-          route('input', './private/project/$projectId/contract/input.tsx'),
-          route(
-            'monitoring',
-            './private/project/$projectId/contract/monitoring.tsx'
-          )
-        ]),
+        ...constructionProjectRoutes,
         route('settings', './private/project/$projectId/settings.tsx')
       ])
     ]),
@@ -49,6 +47,13 @@ export const routes = rootRoute('./root.tsx', [
       index('./private/settings/index.tsx'),
       route('general', './private/settings/general.tsx', [
         index('./private/settings/general/index.tsx'),
+        route('customers', './private/settings/general/customers/list.tsx', [
+          route('new', './private/settings/general/customers/new.tsx'),
+          route(
+            '$customerId/edit',
+            './private/settings/general/customers/edit.tsx'
+          )
+        ]),
         route(
           'departments',
           './private/settings/general/departments/list.tsx',
@@ -67,27 +72,7 @@ export const routes = rootRoute('./root.tsx', [
             './private/settings/general/employees/edit.tsx'
           )
         ]),
-        route('customers', './private/settings/general/customers/list.tsx', [
-          route('new', './private/settings/general/customers/new.tsx'),
-          route(
-            '$customerId/edit',
-            './private/settings/general/customers/edit.tsx'
-          )
-        ]),
-        route('suppliers', './private/settings/general/suppliers/list.tsx', [
-          route('new', './private/settings/general/suppliers/new.tsx'),
-          route(
-            '$supplierId/edit',
-            './private/settings/general/suppliers/edit.tsx'
-          )
-        ]),
-        route('materials', './private/settings/general/materials/list.tsx', [
-          route('new', './private/settings/general/materials/new.tsx'),
-          route(
-            '$materialId/edit',
-            './private/settings/general/materials/edit.tsx'
-          )
-        ])
+        ...constructionSettingsRoutes
       ]),
       route('operation', './private/settings/operation.tsx', [
         index('./private/settings/operation/index.tsx'),
