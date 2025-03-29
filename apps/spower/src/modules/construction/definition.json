@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../../../node_modules/@minhdtb/vite-module-generator/schema.json",
   "name": "construction",
   "title": "Xây dựng",
   "description": "Xây dựng",

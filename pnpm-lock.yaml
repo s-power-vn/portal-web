@@ -115,8 +115,8 @@ importers:
         version: 0.2.12
     devDependencies:
       '@minhdtb/vite-module-generator':
-        specifier: ^0.0.10
-        version: 0.0.10(@types/node@18.16.9)(terser@5.37.0)
+        specifier: ^0.0.11
+        version: 0.0.11(@types/node@18.16.9)(terser@5.37.0)
       '@nx/eslint':
         specifier: ^20.3.1
         version: 20.3.1(@babel/traverse@7.26.10)(@swc-node/register@1.8.0(@swc/core@1.4.17(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.4.17(@swc/helpers@0.5.15))(@types/node@18.16.9)(@zkochan/js-yaml@0.0.7)(eslint@9.18.0(jiti@1.21.7))(nx@20.3.1(@swc-node/register@1.8.0(@swc/core@1.4.17(@swc/helpers@0.5.15))(@swc/types@0.1.17)(typescript@5.7.3))(@swc/core@1.4.17(@swc/helpers@0.5.15)))
@@ -1666,8 +1666,8 @@ packages:
   '@minhdtb/storeo-theme@1.0.39':
     resolution: {integrity: sha512-RnWfxCJrK4FvTKENqHBoy9qNPdDh3hIbmp7CWo9ti0UFgiJf6ijIiNNDikgnia+B1raqsFqfeeDHUTghlBUbCA==}
 
-  '@minhdtb/vite-module-generator@0.0.10':
-    resolution: {integrity: sha512-qQX8WmWow9U9X4FI8rc5hTv7LBDbwkEmEK7ETdsKUhPwhC6WjNSgfycChJfTsOhQXtdyf8m2DPeLUa9+wvSvLw==}
+  '@minhdtb/vite-module-generator@0.0.11':
+    resolution: {integrity: sha512-bhckEvBed00NtbO3RnNL5tIW4z6VL5vvtgFGsyGG0YENoN/xOoK7ARsAgEi1kcpJjd3r5y7IwB+/tzWhoHfccQ==}
 
   '@module-federation/bridge-react-webpack-plugin@0.7.6':
     resolution: {integrity: sha512-eD1JZDQ+h5WLdA58MmAE1DzLwvFaGJeeam3Tswc/sEUb4QGT86X4Fme+dMTBRYRoAq/tRYql3DlVTFhdmrUVzg==}
@@ -9424,7 +9424,7 @@ snapshots:
 
   '@minhdtb/storeo-theme@1.0.39': {}
 
-  '@minhdtb/vite-module-generator@0.0.10(@types/node@18.16.9)(terser@5.37.0)':
+  '@minhdtb/vite-module-generator@0.0.11(@types/node@18.16.9)(terser@5.37.0)':
     dependencies:
       glob: 11.0.1
       vite: 5.4.11(@types/node@18.16.9)(terser@5.37.0)
