@@ -44,6 +44,10 @@ export default defineConfig({
     }
   },
 
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+  },
+
   plugins: [
     nodePolyfills(),
     react(),
@@ -80,6 +84,9 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
+        assetFileNames: 'assets/[name].[hash][extname]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
         manualChunks: {
           react: [
             'react',

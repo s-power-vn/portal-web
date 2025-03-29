@@ -8,17 +8,18 @@ const modules = [
         id: 'Request',
         title: 'Yêu cầu mua hàng',
         description: 'Yêu cầu mua hàng',
-        display: 'modules/construction/objects/request/request-display',
-        newForm: 'modules/construction/objects/request/form/new-request-form',
-        editForm: 'modules/construction/objects/request/form/edit-request-form'
+        display: './modules/construction/objects/request/request-display',
+        newForm: './modules/construction/objects/request/form/new-request-form',
+        editForm:
+          './modules/construction/objects/request/form/edit-request-form'
       },
       {
         id: 'Price',
         title: 'Bảng giá',
         description: 'Bảng giá',
-        display: 'modules/construction/objects/price/price-display',
-        newForm: 'modules/construction/objects/price/form/new-price-form',
-        editForm: 'modules/construction/objects/price/form/edit-price-form'
+        display: './modules/construction/objects/price/price-display',
+        newForm: './modules/construction/objects/price/form/new-price-form',
+        editForm: './modules/construction/objects/price/form/edit-price-form'
       }
     ]
   }
@@ -44,7 +45,7 @@ export function getObjectDisplayComponent(objectType: string) {
     import(
       /* @vite-ignore */ process.env.NODE_ENV === 'development'
         ? `/src/${path}`
-        : `/${path}`
+        : `./${path}`
     );
 }
 
@@ -54,7 +55,7 @@ export function getObjectNewFormComponent(objectType: string) {
     import(
       /* @vite-ignore */ process.env.NODE_ENV === 'development'
         ? `/src/${path}`
-        : `/${path}`
+        : `./${path}`
     );
 }
 
@@ -64,7 +65,7 @@ export function getObjectEditFormComponent(objectType: string) {
     import(
       /* @vite-ignore */ process.env.NODE_ENV === 'development'
         ? `/src/${path}`
-        : `/${path}`
+        : `./${path}`
     );
 }
 
