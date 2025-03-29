@@ -8,20 +8,19 @@ const modules = [
         id: 'Request',
         title: 'Yêu cầu mua hàng',
         description: 'Yêu cầu mua hàng',
-        display: './modules/construction/objects/request/request-display.tsx',
+        display: '/src/modules/construction/objects/request/request-display',
         newForm:
-          './modules/construction/objects/request/form/new-request-form.tsx',
+          '/src/modules/construction/objects/request/form/new-request-form',
         editForm:
-          './modules/construction/objects/request/form/edit-request-form.tsx'
+          '/src/modules/construction/objects/request/form/edit-request-form'
       },
       {
         id: 'Price',
         title: 'Bảng giá',
         description: 'Bảng giá',
-        display: './modules/construction/objects/price/price-display.tsx',
-        newForm: './modules/construction/objects/price/form/new-price-form.tsx',
-        editForm:
-          './modules/construction/objects/price/form/edit-price-form.tsx'
+        display: '/src/modules/construction/objects/price/price-display',
+        newForm: '/src/modules/construction/objects/price/form/new-price-form',
+        editForm: '/src/modules/construction/objects/price/form/edit-price-form'
       }
     ]
   }
@@ -53,7 +52,6 @@ export function getObjectNewFormComponent(objectType: string) {
 
 export function getObjectEditFormComponent(objectType: string) {
   const path = getObject(objectType).editForm;
-  console.log(path);
   return () => import(/* @vite-ignore */ path);
 }
 
