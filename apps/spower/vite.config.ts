@@ -11,6 +11,8 @@ import { defineConfig, normalizePath } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+import moduleGenerator from '@minhdtb/vite-module-generator';
+
 const require = createRequire(import.meta.url);
 
 const cMapsDir = normalizePath(
@@ -54,6 +56,11 @@ export default defineConfig({
           }
         ]
       }
+    }),
+    moduleGenerator({
+      projectRoot: __dirname,
+      outputFile: 'src/modules.gen.ts',
+      modulesDir: 'src/modules'
     }),
     TanStackRouterVite({
       generatedRouteTree: path.join(__dirname, 'src/routes.gen.ts'),
