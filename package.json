@@ -8,6 +8,7 @@
     "build": "nx build spower",
     "preview": "vite preview --host=0.0.0.0 --port=4000",
     "serve": "serve dist/apps/spower -l 4000 --config ./serve.json",
+    "type": "pgtyped -c pgtyped.config.json",
     "pb": "pocketbase-typegen --url http://localhost:8090 --email minhdtb.83@gmail.com --password Aa123456@@ --out libs/core/src/client/generate/pb.ts"
   },
   "private": true,
@@ -21,6 +22,7 @@
     "@preact/signals-react": "^2.0.0",
     "@react-pdf/renderer": "^3.4.4",
     "@remixicon/react": "^4.2.0",
+    "@supabase/postgrest-js": "^1.19.4",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-query": "^5.68.0",
     "@tanstack/react-router": "^1.114.23",

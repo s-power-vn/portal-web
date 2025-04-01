@@ -4,7 +4,7 @@ import type {
   ProjectResponse,
   UserResponse
 } from 'portal-core';
-import { Collections, client } from 'portal-core';
+import { Collections, client, rest } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
@@ -18,7 +18,19 @@ export type ProjectData = ProjectResponse<{
 
 export const projectApi = router('project', {
   list: router.query({
-    fetcher: (params?: ListParams) => {
+    fetcher: async (params?: ListParams) => {
+      const pageIndex = params?.pageIndex ?? 1;
+      const pageSize = params?.pageSize ?? 10;
+      const from = (pageIndex - 1) * pageSize;
+      const to = from + pageSize;
+      const { data, error } = await rest
+        .from('projects')
+        .select('*')
+        .range(from, to)
+        .order('created', { ascending: false })
+        .or(`name.like.%${params?.filter}%, bidding.like.%${params?.filter}%`);
+      console.log(data, error);
+
       return client
         .collection<ProjectData>(Collections.Project)
         .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
