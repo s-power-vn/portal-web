@@ -52,7 +52,7 @@ function EmailLogin() {
   const router = useRouter();
   const navigate = useNavigate();
 
-  const login = api.auth.login.useMutation({
+  const login = api.user.emailLogin.useMutation({
     onSuccess: () => router.history.push(redirect ?? '/'),
     onError: () => error('Tên đăng nhập hoặc mật khẩu không đúng')
   });

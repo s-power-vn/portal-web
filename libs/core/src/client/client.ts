@@ -6,7 +6,7 @@ export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const client = new PocketBase(BASE_URL) as TypedPocketBase;
 
-export const getUser = (): UserResponse | undefined =>
+export const getUser = () =>
   client.authStore.record
     ? (client.authStore.record as UserResponse)
     : undefined;

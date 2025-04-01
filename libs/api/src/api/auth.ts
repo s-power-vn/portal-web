@@ -1,4 +1,4 @@
-import { Collections, client } from 'portal-core';
+import { Collections, client, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
@@ -18,8 +18,7 @@ export const authApi = router(`auth`, {
   }),
   logout: router.mutation({
     mutationFn: async () => {
-      await client.realtime.unsubscribe();
-      return client.authStore.clear();
+      return client2.auth.signOut();
     }
   })
 });

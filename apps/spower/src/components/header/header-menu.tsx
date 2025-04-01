@@ -22,7 +22,7 @@ export const HeaderMenu = () => {
   const user = getUser();
 
   const logout = api.auth.logout.useMutation({
-    onSuccess: () => navigate({ to: '/login' })
+    onSuccess: () => navigate({ to: '/signin' })
   });
 
   const handleProfile = useCallback(
