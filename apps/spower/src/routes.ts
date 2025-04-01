@@ -4,7 +4,11 @@ import { getProjectRoutes, getSettingsRoutes } from './modules.gen';
 
 export const routes = rootRoute('./root.tsx', [
   index('./index.tsx'),
-  route('login', './login.tsx'),
+  route('email-login', './auth/email-login.tsx'),
+  route('email-input', './auth/email-input.tsx'),
+  route('email-verify', './auth/email-verify.tsx'),
+  route('user-information', './auth/user-information.tsx'),
+  route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
     route('home', './private/home.tsx'),
     route('messenger', './private/messenger.tsx'),

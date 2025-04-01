@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_private')({
   beforeLoad: ({ location }) => {
     if (!client.authStore.isValid) {
       throw redirect({
-        to: '/login',
+        to: '/signin',
         search: {
           redirect: location.href
         }

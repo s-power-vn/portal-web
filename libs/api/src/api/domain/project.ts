@@ -4,7 +4,7 @@ import type {
   ProjectResponse,
   UserResponse
 } from 'portal-core';
-import { Collections, client, rest } from 'portal-core';
+import { Collections, client, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
@@ -23,7 +23,7 @@ export const projectApi = router('project', {
       const pageSize = params?.pageSize ?? 10;
       const from = (pageIndex - 1) * pageSize;
       const to = from + pageSize;
-      const { data, error } = await rest
+      const { data, error } = await client2.rest
         .from('projects')
         .select('*')
         .range(from, to)
