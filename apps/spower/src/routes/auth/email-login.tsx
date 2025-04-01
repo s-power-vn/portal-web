@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { api } from 'portal-api';
-import { client } from 'portal-core';
+import { client2 } from 'portal-core';
 import { object, string } from 'yup';
 
 import {
@@ -34,8 +34,9 @@ export const Route = createFileRoute('/email-login')({
     return search;
   },
   component: EmailLogin,
-  beforeLoad: ({ location }) => {
-    if (client.authStore.isValid) {
+  beforeLoad: async ({ location }) => {
+    await client2.auth.authStateReady();
+    if (client2.auth.currentUser) {
       throw redirect({
         to: '/',
         search: {

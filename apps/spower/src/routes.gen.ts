@@ -11,13 +11,14 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/root'
-import { Route as AuthUserInformationImport } from './routes/auth/user-information'
 import { Route as AuthSigninImport } from './routes/auth/signin'
+import { Route as AuthPasswordInputImport } from './routes/auth/password-input'
 import { Route as AuthEmailVerifyImport } from './routes/auth/email-verify'
 import { Route as AuthEmailLoginImport } from './routes/auth/email-login'
 import { Route as AuthEmailInputImport } from './routes/auth/email-input'
 import { Route as PrivateImport } from './routes/private'
 import { Route as IndexImport } from './routes/index'
+import { Route as PrivateUserInformationImport } from './routes/private/user-information'
 import { Route as PrivateSettingsImport } from './routes/private/settings'
 import { Route as PrivateProjectImport } from './routes/private/project'
 import { Route as PrivateProfileImport } from './routes/private/profile'
@@ -71,15 +72,15 @@ import { Route as PrivateProjectProjectIdIssuesMeIssueIdImport } from './routes/
 
 // Create/Update Routes
 
-const AuthUserInformationRoute = AuthUserInformationImport.update({
-  id: '/user-information',
-  path: '/user-information',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthSigninRoute = AuthSigninImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthPasswordInputRoute = AuthPasswordInputImport.update({
+  id: '/password-input',
+  path: '/password-input',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -110,6 +111,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const PrivateUserInformationRoute = PrivateUserInformationImport.update({
+  id: '/user-information',
+  path: '/user-information',
+  getParentRoute: () => PrivateRoute,
 } as any)
 
 const PrivateSettingsRoute = PrivateSettingsImport.update({
@@ -491,18 +498,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerifyImport
       parentRoute: typeof rootRoute
     }
+    '/password-input': {
+      id: '/password-input'
+      path: '/password-input'
+      fullPath: '/password-input'
+      preLoaderRoute: typeof AuthPasswordInputImport
+      parentRoute: typeof rootRoute
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof AuthSigninImport
-      parentRoute: typeof rootRoute
-    }
-    '/user-information': {
-      id: '/user-information'
-      path: '/user-information'
-      fullPath: '/user-information'
-      preLoaderRoute: typeof AuthUserInformationImport
       parentRoute: typeof rootRoute
     }
     '/_private/home': {
@@ -538,6 +545,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof PrivateSettingsImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/user-information': {
+      id: '/_private/user-information'
+      path: '/user-information'
+      fullPath: '/user-information'
+      preLoaderRoute: typeof PrivateUserInformationImport
       parentRoute: typeof PrivateImport
     }
     '/_private/project/$projectId': {
@@ -1192,6 +1206,7 @@ interface PrivateRouteChildren {
   PrivateProfileRoute: typeof PrivateProfileRoute
   PrivateProjectRoute: typeof PrivateProjectRouteWithChildren
   PrivateSettingsRoute: typeof PrivateSettingsRouteWithChildren
+  PrivateUserInformationRoute: typeof PrivateUserInformationRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
@@ -1200,6 +1215,7 @@ const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateProfileRoute: PrivateProfileRoute,
   PrivateProjectRoute: PrivateProjectRouteWithChildren,
   PrivateSettingsRoute: PrivateSettingsRouteWithChildren,
+  PrivateUserInformationRoute: PrivateUserInformationRoute,
 }
 
 const PrivateRouteWithChildren =
@@ -1211,13 +1227,14 @@ export interface FileRoutesByFullPath {
   '/email-input': typeof AuthEmailInputRoute
   '/email-login': typeof AuthEmailLoginRoute
   '/email-verify': typeof AuthEmailVerifyRoute
+  '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
-  '/user-information': typeof AuthUserInformationRoute
   '/home': typeof PrivateHomeRoute
   '/messenger': typeof PrivateMessengerRoute
   '/profile': typeof PrivateProfileRoute
   '/project': typeof PrivateProjectRouteWithChildren
   '/settings': typeof PrivateSettingsRouteWithChildren
+  '/user-information': typeof PrivateUserInformationRoute
   '/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
   '/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
   '/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
@@ -1271,11 +1288,12 @@ export interface FileRoutesByTo {
   '/email-input': typeof AuthEmailInputRoute
   '/email-login': typeof AuthEmailLoginRoute
   '/email-verify': typeof AuthEmailVerifyRoute
+  '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
-  '/user-information': typeof AuthUserInformationRoute
   '/home': typeof PrivateHomeRoute
   '/messenger': typeof PrivateMessengerRoute
   '/profile': typeof PrivateProfileRoute
+  '/user-information': typeof PrivateUserInformationRoute
   '/project': typeof PrivateProjectIndexRoute
   '/settings': typeof PrivateSettingsIndexRoute
   '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
@@ -1322,13 +1340,14 @@ export interface FileRoutesById {
   '/email-input': typeof AuthEmailInputRoute
   '/email-login': typeof AuthEmailLoginRoute
   '/email-verify': typeof AuthEmailVerifyRoute
+  '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
-  '/user-information': typeof AuthUserInformationRoute
   '/_private/home': typeof PrivateHomeRoute
   '/_private/messenger': typeof PrivateMessengerRoute
   '/_private/profile': typeof PrivateProfileRoute
   '/_private/project': typeof PrivateProjectRouteWithChildren
   '/_private/settings': typeof PrivateSettingsRouteWithChildren
+  '/_private/user-information': typeof PrivateUserInformationRoute
   '/_private/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
   '/_private/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
   '/_private/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
@@ -1384,13 +1403,14 @@ export interface FileRouteTypes {
     | '/email-input'
     | '/email-login'
     | '/email-verify'
+    | '/password-input'
     | '/signin'
-    | '/user-information'
     | '/home'
     | '/messenger'
     | '/profile'
     | '/project'
     | '/settings'
+    | '/user-information'
     | '/project/$projectId'
     | '/settings/general'
     | '/settings/operation'
@@ -1443,11 +1463,12 @@ export interface FileRouteTypes {
     | '/email-input'
     | '/email-login'
     | '/email-verify'
+    | '/password-input'
     | '/signin'
-    | '/user-information'
     | '/home'
     | '/messenger'
     | '/profile'
+    | '/user-information'
     | '/project'
     | '/settings'
     | '/project/$projectId/settings'
@@ -1492,13 +1513,14 @@ export interface FileRouteTypes {
     | '/email-input'
     | '/email-login'
     | '/email-verify'
+    | '/password-input'
     | '/signin'
-    | '/user-information'
     | '/_private/home'
     | '/_private/messenger'
     | '/_private/profile'
     | '/_private/project'
     | '/_private/settings'
+    | '/_private/user-information'
     | '/_private/project/$projectId'
     | '/_private/settings/general'
     | '/_private/settings/operation'
@@ -1553,8 +1575,8 @@ export interface RootRouteChildren {
   AuthEmailInputRoute: typeof AuthEmailInputRoute
   AuthEmailLoginRoute: typeof AuthEmailLoginRoute
   AuthEmailVerifyRoute: typeof AuthEmailVerifyRoute
+  AuthPasswordInputRoute: typeof AuthPasswordInputRoute
   AuthSigninRoute: typeof AuthSigninRoute
-  AuthUserInformationRoute: typeof AuthUserInformationRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1563,8 +1585,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthEmailInputRoute: AuthEmailInputRoute,
   AuthEmailLoginRoute: AuthEmailLoginRoute,
   AuthEmailVerifyRoute: AuthEmailVerifyRoute,
+  AuthPasswordInputRoute: AuthPasswordInputRoute,
   AuthSigninRoute: AuthSigninRoute,
-  AuthUserInformationRoute: AuthUserInformationRoute,
 }
 
 export const routeTree = rootRoute
@@ -1582,8 +1604,8 @@ export const routeTree = rootRoute
         "/email-input",
         "/email-login",
         "/email-verify",
-        "/signin",
-        "/user-information"
+        "/password-input",
+        "/signin"
       ]
     },
     "/": {
@@ -1596,7 +1618,8 @@ export const routeTree = rootRoute
         "/_private/messenger",
         "/_private/profile",
         "/_private/project",
-        "/_private/settings"
+        "/_private/settings",
+        "/_private/user-information"
       ]
     },
     "/email-input": {
@@ -1608,11 +1631,11 @@ export const routeTree = rootRoute
     "/email-verify": {
       "filePath": "./auth/email-verify.tsx"
     },
+    "/password-input": {
+      "filePath": "./auth/password-input.tsx"
+    },
     "/signin": {
       "filePath": "./auth/signin.tsx"
-    },
-    "/user-information": {
-      "filePath": "./auth/user-information.tsx"
     },
     "/_private/home": {
       "filePath": "./private/home.tsx",
@@ -1642,6 +1665,10 @@ export const routeTree = rootRoute
         "/_private/settings/operation",
         "/_private/settings/"
       ]
+    },
+    "/_private/user-information": {
+      "filePath": "./private/user-information.tsx",
+      "parent": "/_private"
     },
     "/_private/project/$projectId": {
       "filePath": "./private/project/$projectId.tsx",

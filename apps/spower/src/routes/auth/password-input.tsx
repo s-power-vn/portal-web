@@ -2,14 +2,16 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { api } from 'portal-api';
 import { client2 } from 'portal-core';
-import { object, string } from 'yup';
+import { object, ref, string } from 'yup';
+
+import { useState } from 'react';
 
 import {
   Button,
   Card,
   CardContent,
   Form,
-  NumericField,
+  PasswordField,
   error,
   success
 } from '@minhdtb/storeo-theme';
@@ -21,13 +23,18 @@ const searchSchema = object().shape({
 });
 
 const schema = object().shape({
-  code: string()
-    .required('Hãy nhập mã xác thực')
-    .matches(/^\d{6}$/, 'Mã xác thực phải có 6 chữ số')
+  password: string()
+    .required('Hãy nhập mật khẩu')
+    .min(8, 'Mật khẩu dài ít nhất 8 ký tự')
+    .matches(/[0-9]/, 'Mật khẩu phải chứa ít nhất 1 chữ số')
+    .matches(/[!@#$%^&*]/, 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt'),
+  passwordConfirmation: string()
+    .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
+    .required('Hãy xác nhận mật khẩu')
 });
 
-export const Route = createFileRoute('/email-verify')({
-  component: EmailVerify,
+export const Route = createFileRoute('/password-input')({
+  component: RouteComponent,
   validateSearch: input => searchSchema.validateSync(input),
   beforeLoad: async ({ location }) => {
     await client2.auth.authStateReady();
@@ -42,21 +49,40 @@ export const Route = createFileRoute('/email-verify')({
   }
 });
 
-function EmailVerify() {
+function RouteComponent() {
   const { email } = Route.useSearch();
   const navigate = useNavigate();
-  const verifyEmailOtp = api.user.verifyEmailOtp.useMutation({
+  const [password, setPassword] = useState('');
+
+  const emailLogin = api.user.emailLogin.useMutation({
     onSuccess: () => {
-      success('Xác thực email thành công');
-      navigate({ to: '/password-input', search: { email } });
+      navigate({
+        to: '/user-information',
+        search: { email }
+      });
     },
     onError: () => {
-      error('Mã xác thực không đúng');
+      error('Có lỗi xảy ra, vui lòng thử lại');
     }
   });
 
-  const handleSubmit = ({ code }: { code: string }) => {
-    verifyEmailOtp.mutate({ email, code });
+  const register = api.user.emailRegister.useMutation({
+    onSuccess: () => {
+      success('Tạo tài khoản thành công');
+      emailLogin.mutate({ email, password });
+    },
+    onError: () => {
+      error('Tạo tài khoản thất bại');
+    }
+  });
+
+  const handleSubmit = ({
+    password: submittedPassword
+  }: {
+    password: string;
+  }) => {
+    setPassword(submittedPassword);
+    register.mutate({ email, password: submittedPassword });
   };
 
   return (
@@ -65,25 +91,28 @@ function EmailVerify() {
         <CardContent className="w-[330px] p-8">
           <div className="mb-6">
             <button
-              onClick={() => navigate({ to: '/email-input' })}
+              onClick={() =>
+                navigate({ to: '/email-verify', search: { email } })
+              }
               className="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
             >
               <ArrowLeft className="h-4 w-4" />
               Quay lại
             </button>
             <h1 className="mb-2 text-2xl font-bold text-gray-800">
-              Xác thực email
+              Tạo mật khẩu
             </h1>
             <p className="text-sm text-gray-600">
-              Nhập mã xác thực đã được gửi đến email của bạn
+              Tạo mật khẩu cho tài khoản của bạn
             </p>
           </div>
           <Form
             schema={schema}
             onSuccess={handleSubmit}
-            loading={verifyEmailOtp.isPending}
+            loading={register.isPending || emailLogin.isPending}
             defaultValues={{
-              code: ''
+              password: '',
+              passwordConfirmation: ''
             }}
             className="flex flex-col gap-4"
             actions={
@@ -91,18 +120,27 @@ function EmailVerify() {
                 className="bg-appBlue hover:bg-appBlueLight mt-2 w-full py-3 font-medium text-white transition-colors"
                 type="submit"
               >
-                Xác nhận
+                Tiếp tục
               </Button>
             }
           >
             <div className="space-y-4">
-              <NumericField
+              <PasswordField
                 schema={schema}
-                name="code"
-                title="Mã xác thực"
+                name="password"
+                title="Mật khẩu"
                 options={{
                   className: 'rounded-lg',
-                  maxLength: 6
+                  autoComplete: 'new-password'
+                }}
+              />
+              <PasswordField
+                schema={schema}
+                name="passwordConfirmation"
+                title="Xác nhận mật khẩu"
+                options={{
+                  className: 'rounded-lg',
+                  autoComplete: 'new-password'
                 }}
               />
             </div>

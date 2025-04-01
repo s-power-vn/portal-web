@@ -1,5 +1,6 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
+import { api } from 'portal-api';
 import { client2 } from 'portal-core';
 import { object, string } from 'yup';
 
@@ -8,7 +9,8 @@ import {
   Card,
   CardContent,
   Form,
-  TextField
+  TextField,
+  error
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
@@ -18,14 +20,36 @@ const schema = object().shape({
 });
 
 export const Route = createFileRoute('/email-input')({
-  component: EmailInput
+  component: EmailInput,
+  beforeLoad: async ({ location }) => {
+    await client2.auth.authStateReady();
+    if (client2.auth.currentUser) {
+      throw redirect({
+        to: '/',
+        search: {
+          redirect: location.href
+        }
+      });
+    }
+  }
 });
 
 function EmailInput() {
   const navigate = useNavigate();
+  const sendEmailOtp = api.user.sendEmailOtp.useMutation({
+    onSuccess: (_, { email }) => {
+      navigate({
+        to: '/email-verify',
+        search: { email }
+      });
+    },
+    onError: () => {
+      error('Gửi mã xác thực thất bại');
+    }
+  });
 
   const handleSubmit = ({ email }: { email: string }) => {
-    client2.api.sendEmailOtp({ email });
+    sendEmailOtp.mutate({ email });
   };
 
   return (
@@ -48,6 +72,7 @@ function EmailInput() {
           <Form
             schema={schema}
             onSuccess={handleSubmit}
+            loading={sendEmailOtp.isPending}
             defaultValues={{
               email: ''
             }}

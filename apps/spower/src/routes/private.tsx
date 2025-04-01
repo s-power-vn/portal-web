@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { client } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { DashboardLayout } from '../layouts';
 
@@ -11,8 +11,9 @@ export const Route = createFileRoute('/_private')({
       </DashboardLayout>
     );
   },
-  beforeLoad: ({ location }) => {
-    if (!client.authStore.isValid) {
+  beforeLoad: async ({ location }) => {
+    await client2.auth.authStateReady();
+    if (!client2.auth.currentUser) {
       throw redirect({
         to: '/signin',
         search: {

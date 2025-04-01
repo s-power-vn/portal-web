@@ -1,12 +1,24 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
+import { client2 } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
 
 export const Route = createFileRoute('/signin')({
-  component: RouteComponent
+  component: RouteComponent,
+  beforeLoad: async ({ location }) => {
+    await client2.auth.authStateReady();
+    if (client2.auth.currentUser) {
+      throw redirect({
+        to: '/',
+        search: {
+          redirect: location.href
+        }
+      });
+    }
+  }
 });
 
 function RouteComponent() {
@@ -31,10 +43,7 @@ function RouteComponent() {
             </Button>
 
             {/* Google Button */}
-            <Button
-              onClick={() => navigate({ to: '/google-login' })}
-              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
-            >
+            <Button className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md">
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -57,10 +66,7 @@ function RouteComponent() {
             </Button>
 
             {/* Facebook Button */}
-            <Button
-              onClick={() => navigate({ to: '/facebook-login' })}
-              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
-            >
+            <Button className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md">
               <svg className="h-5 w-5" fill="#1877F2" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
@@ -68,10 +74,7 @@ function RouteComponent() {
             </Button>
 
             {/* Apple Button */}
-            <Button
-              onClick={() => navigate({ to: '/apple-login' })}
-              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
-            >
+            <Button className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md">
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.94-3.08.47-1.08-.48-2.07-.48-3.21 0-1.44.62-2.2.44-3.08-.47C2.7 15.25 3.27 7.32 9.32 7c1.41.07 2.38.95 3.12.95.74 0 2.12-.9 3.67-.9 1.43.01 2.74.54 3.76 1.53-3.35 2.18-2.81 6.72 1.05 8.42-.85 2.46-2.35 3.86-3.87 4.28zM15.33 6.43c.77-.93 1.35-2.22 1.14-3.53-1.11.07-2.41.75-3.17 1.68-.69.8-1.32 2.08-1.15 3.38 1.23.09 2.48-.69 3.18-1.53z" />
               </svg>

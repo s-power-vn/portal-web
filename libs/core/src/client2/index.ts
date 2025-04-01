@@ -1,6 +1,11 @@
 import { PostgrestClient } from '@supabase/postgrest-js';
 import { initializeApp } from 'firebase/app';
-import { Auth, getAuth } from 'firebase/auth';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword
+} from 'firebase/auth';
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -22,23 +27,41 @@ class ApiClient {
   }
 
   public async sendEmailOtp({ email }: { email: string }) {
-    fetch(`${BASE_URL}/api/email-otp/send`, {
+    const response = await fetch(`${BASE_URL}/api/email-otp/send`, {
       method: 'POST',
       body: JSON.stringify({ email }),
       headers: {
         'Content-Type': 'application/json'
       }
     });
+
+    if (!response.ok) {
+      throw new Error('Không thể gửi mã OTP');
+    }
+
+    return response.json();
   }
 
-  public async verifyEmailOtp({ email, otp }: { email: string; otp: string }) {
-    fetch(`${BASE_URL}/api/email-otp/verify`, {
+  public async verifyEmailOtp({
+    email,
+    code
+  }: {
+    email: string;
+    code: string;
+  }) {
+    const response = await fetch(`${BASE_URL}/api/email-otp/verify`, {
       method: 'POST',
-      body: JSON.stringify({ email, otp }),
+      body: JSON.stringify({ email, code }),
       headers: {
         'Content-Type': 'application/json'
       }
     });
+
+    if (!response.ok) {
+      throw new Error('Không thể xác thực mã OTP');
+    }
+
+    return response.json();
   }
 
   public async registerUserInformation(user: {
@@ -46,7 +69,7 @@ class ApiClient {
     name: string;
     phone: string;
   }) {
-    fetch(`${BASE_URL}/api/user/register`, {
+    const response = await fetch(`${BASE_URL}/api/user/register`, {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
@@ -54,6 +77,12 @@ class ApiClient {
         Authorization: `Bearer ${this.auth.currentUser?.getIdToken()}`
       }
     });
+
+    if (!response.ok) {
+      throw new Error('Không thể đăng ký thông tin người dùng');
+    }
+
+    return response.json();
   }
 
   public async getRestToken({ email }: { email: string }) {
@@ -66,7 +95,51 @@ class ApiClient {
       }
     });
 
+    if (!response.ok) {
+      throw new Error('Không thể lấy token');
+    }
+
     return response.json();
+  }
+
+  public async emailRegister({
+    email,
+    password
+  }: {
+    email: string;
+    password: string;
+  }) {
+    const response = await createUserWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
+
+    if (!response.user) {
+      throw new Error('Không thể đăng ký');
+    }
+
+    return response.user;
+  }
+
+  public async emailLogin({
+    email,
+    password
+  }: {
+    email: string;
+    password: string;
+  }) {
+    const response = await signInWithEmailAndPassword(
+      this.auth,
+      email,
+      password
+    );
+
+    if (!response.user) {
+      throw new Error('Không thể đăng nhập');
+    }
+
+    return response.user;
   }
 }
 

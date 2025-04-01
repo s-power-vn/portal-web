@@ -7,10 +7,11 @@ export const routes = rootRoute('./root.tsx', [
   route('email-login', './auth/email-login.tsx'),
   route('email-input', './auth/email-input.tsx'),
   route('email-verify', './auth/email-verify.tsx'),
-  route('user-information', './auth/user-information.tsx'),
+  route('password-input', './auth/password-input.tsx'),
   route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
     route('home', './private/home.tsx'),
+    route('user-information', './private/user-information.tsx'),
     route('messenger', './private/messenger.tsx'),
     route('project', './private/project.tsx', [
       index('./private/project/index.tsx'),
