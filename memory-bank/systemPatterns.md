@@ -8,7 +8,8 @@ Spower follows a modern frontend architecture with:
 - Component-based development with React
 - State management with React Query
 - Type-safe development with TypeScript
-- API integration with PocketBase
+- API integration with PocketBase and PostgREST
+- Secure database access with Row Level Security
 
 ## Project Structure
 
@@ -26,17 +27,20 @@ libs/
 ## Key Technical Patterns
 
 1. Component Patterns
+
    - Functional components with TypeScript
    - Props interface defined with `type`
    - React Query Kit for API calls
    - Hooks for shared logic
 
 2. State Management
+
    - Tanstack Query for server state
    - React Query Kit for API interfaces
    - Local state with React hooks
 
 3. Routing
+
    - Tanstack Router for type-safe routing
    - Nested routes for complex views
 
@@ -161,3 +165,60 @@ graph TD
 - Conditional rendering based on field visibility
 - Consistent styling with text-xs and text-red-500
 - Clear visual feedback
+
+## Data Access Patterns
+
+### Database Security Model
+
+1. Role Hierarchy
+
+   ```mermaid
+   graph TD
+       A[api] --> B[anon]
+       A --> C[authenticated]
+       A --> D[org_member]
+       A --> E[org_operator]
+       A --> F[org_admin]
+       E --> D
+   ```
+
+2. Row Level Security (RLS)
+
+   - All tables have RLS enabled
+   - Policies enforce organization-based isolation
+   - JWT claims used for user context
+   - Helper functions for claim extraction:
+     - current_user_id()
+     - current_organization_id()
+     - current_jwt_role()
+
+3. Access Control Patterns
+
+   - SELECT policies based on organization_id
+   - INSERT policies with role checks
+   - UPDATE policies with role and organization checks
+   - DELETE policies with elevated role requirements
+
+4. Special Cases
+   - Organizations table: visibility based on creation or membership
+   - Organization members: admin-only management
+   - Message-related tables: complex relationship-based access
+
+### Data Isolation
+
+1. Organization Context
+
+   - Every table includes organization_id
+   - Automatic filtering via RLS policies
+   - Cross-organization data access prevented
+
+2. Role-Based Access
+
+   - org_member: Basic read/write access
+   - org_operator: Enhanced management capabilities
+   - org_admin: Full administrative control
+
+3. JWT Integration
+   - Claims include email, org_id, and role
+   - Claims used for dynamic policy enforcement
+   - Automatic context switching between organizations

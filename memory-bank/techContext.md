@@ -5,12 +5,14 @@
 - React with Vite
 - TypeScript
 - TailwindCSS
+- PostgreSQL with PostgREST
 - PocketBase
 - Nx Monorepo
 
 ## Frameworks and Libraries
 
 1. Core Frameworks
+
    - React
    - Vite
    - Nx
@@ -18,22 +20,29 @@
    - TypeScript
 
 2. Data Management
+
+   - PostgreSQL
+   - PostgREST
    - Tanstack Query
    - React Query Kit
    - PocketBase
 
 3. UI Components
+
    - Shadcn
    - Radix UI
    - Lucide React Icons
 
 4. Routing and Navigation
+
    - Tanstack Router
 
 5. Form Handling
+
    - React Hook Form
 
 6. Data Display
+
    - Tanstack Table
    - Tanstack Virtual
 
@@ -56,18 +65,30 @@
 ## Technical Constraints
 
 1. TypeScript
+
    - Prefer `type` over `interface`
    - Strict type checking
 
 2. Components
+
    - Functional components only
    - Props defined with TypeScript types
    - No code comments policy
 
 3. API Integration
+
    - React Query Kit pattern for API calls
    - PocketBase for backend services
+   - PostgREST for database access
 
 4. Styling
+
    - TailwindCSS for styling
    - Shadcn/Radix for UI components
+
+5. Database Security
+   - Row Level Security (RLS) enabled on all tables
+   - JWT-based authentication
+   - Role-based access control (anon, authenticated, org_member, org_operator, org_admin)
+   - Organization-based data isolation
+   - Helper functions for JWT claims extraction
