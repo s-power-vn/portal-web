@@ -42,7 +42,12 @@ export const userApi = router('user', {
     }
   }),
   registerUserInformation: router.mutation({
-    mutationFn: (params: { email: string; name: string; phone: string }) => {
+    mutationFn: (params: {
+      email: string;
+      name: string;
+      phone?: string;
+      address?: string;
+    }) => {
       return client2.api.registerUserInformation(params);
     }
   }),
@@ -59,6 +64,11 @@ export const userApi = router('user', {
   emailRegister: router.mutation({
     mutationFn: (params: { email: string; password: string }) => {
       return client2.api.emailRegister(params);
+    }
+  }),
+  checkUser: router.query({
+    fetcher: () => {
+      return client2.api.checkUser();
     }
   })
 });

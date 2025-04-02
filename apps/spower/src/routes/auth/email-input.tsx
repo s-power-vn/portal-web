@@ -1,7 +1,6 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { api } from 'portal-api';
-import { client2 } from 'portal-core';
 import { object, string } from 'yup';
 
 import {
@@ -14,6 +13,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
+import { goRootRoute } from './signin';
 
 const schema = object().shape({
   email: string().email('Email không hợp lệ').required('Hãy nhập email')
@@ -21,17 +21,7 @@ const schema = object().shape({
 
 export const Route = createFileRoute('/email-input')({
   component: EmailInput,
-  beforeLoad: async ({ location }) => {
-    await client2.auth.authStateReady();
-    if (client2.auth.currentUser) {
-      throw redirect({
-        to: '/',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
-  }
+  beforeLoad: goRootRoute
 });
 
 function EmailInput() {

@@ -1,5 +1,11 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import {
+  ParsedLocation,
+  createFileRoute,
+  redirect,
+  useNavigate
+} from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
+import { api } from 'portal-api';
 import { client2 } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
@@ -8,17 +14,7 @@ import { CommonLayout } from '../../layouts';
 
 export const Route = createFileRoute('/signin')({
   component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    await client2.auth.authStateReady();
-    if (client2.auth.currentUser) {
-      throw redirect({
-        to: '/',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
-  }
+  beforeLoad: goRootRoute
 });
 
 function RouteComponent() {
@@ -85,4 +81,27 @@ function RouteComponent() {
       </Card>
     </CommonLayout>
   );
+}
+
+export async function goRootRoute({ location }: { location: ParsedLocation }) {
+  await client2.auth.authStateReady();
+  if (client2.auth.currentUser) {
+    try {
+      await api.user.checkUser.fetcher();
+    } catch (error) {
+      throw redirect({
+        to: '/user-information',
+        search: {
+          email: client2.auth.currentUser?.email ?? ''
+        }
+      });
+    }
+
+    throw redirect({
+      to: '/',
+      search: {
+        redirect: location.href
+      }
+    });
+  }
 }

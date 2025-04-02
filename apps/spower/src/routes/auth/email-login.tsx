@@ -1,13 +1,11 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import {
   createFileRoute,
-  redirect,
   useNavigate,
   useRouter
 } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { api } from 'portal-api';
-import { client2 } from 'portal-core';
 import { object, string } from 'yup';
 
 import {
@@ -21,6 +19,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
+import { goRootRoute } from './signin';
 
 const schema = object().shape({
   email: string().email().required('Hãy nhập email'),
@@ -34,17 +33,7 @@ export const Route = createFileRoute('/email-login')({
     return search;
   },
   component: EmailLogin,
-  beforeLoad: async ({ location }) => {
-    await client2.auth.authStateReady();
-    if (client2.auth.currentUser) {
-      throw redirect({
-        to: '/',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
-  }
+  beforeLoad: goRootRoute
 });
 
 function EmailLogin() {

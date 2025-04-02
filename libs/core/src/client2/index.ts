@@ -67,14 +67,16 @@ class ApiClient {
   public async registerUserInformation(user: {
     email: string;
     name: string;
-    phone: string;
+    phone?: string;
+    address?: string;
   }) {
+    const token = await this.auth.currentUser?.getIdToken();
     const response = await fetch(`${BASE_URL}/api/user/register`, {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.auth.currentUser?.getIdToken()}`
+        Authorization: `Bearer ${token}`
       }
     });
 
@@ -140,6 +142,21 @@ class ApiClient {
     }
 
     return response.user;
+  }
+
+  public async checkUser() {
+    const token = await this.auth.currentUser?.getIdToken();
+    const response = await fetch(`${BASE_URL}/api/user/check`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Không thể kiểm tra người dùng');
+    }
+
+    return response.json();
   }
 }
 

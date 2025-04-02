@@ -1,7 +1,6 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { api } from 'portal-api';
-import { client2 } from 'portal-core';
 import { object, ref, string } from 'yup';
 
 import { useState } from 'react';
@@ -17,6 +16,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
+import { goRootRoute } from './signin';
 
 const searchSchema = object().shape({
   email: string().email('Email không hợp lệ').required('Hãy nhập email')
@@ -36,17 +36,7 @@ const schema = object().shape({
 export const Route = createFileRoute('/password-input')({
   component: RouteComponent,
   validateSearch: input => searchSchema.validateSync(input),
-  beforeLoad: async ({ location }) => {
-    await client2.auth.authStateReady();
-    if (client2.auth.currentUser) {
-      throw redirect({
-        to: '/',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
-  }
+  beforeLoad: goRootRoute
 });
 
 function RouteComponent() {
