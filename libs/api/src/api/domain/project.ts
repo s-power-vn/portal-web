@@ -29,7 +29,6 @@ export const projectApi = router('project', {
         .range(from, to)
         .order('created', { ascending: false })
         .or(`name.like.%${params?.filter}%, bidding.like.%${params?.filter}%`);
-      console.log(data, error);
 
       return client
         .collection<ProjectData>(Collections.Project)

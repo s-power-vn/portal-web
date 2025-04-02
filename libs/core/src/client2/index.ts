@@ -7,6 +7,8 @@ import {
   signInWithEmailAndPassword
 } from 'firebase/auth';
 
+import { Database } from './generate/type';
+
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const firebaseConfig = {
@@ -87,13 +89,20 @@ class ApiClient {
     return response.json();
   }
 
-  public async getRestToken({ email }: { email: string }) {
-    const response = await fetch(`${BASE_URL}/api/rest-token`, {
+  public async getRestToken({
+    email,
+    organizationId
+  }: {
+    email: string;
+    organizationId?: string;
+  }) {
+    const token = await this.auth.currentUser?.getIdToken();
+    const response = await fetch(`${BASE_URL}/api/user/rest-token`, {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, organizationId }),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.auth.currentUser?.getIdToken()}`
+        Authorization: `Bearer ${token}`
       }
     });
 
@@ -101,7 +110,11 @@ class ApiClient {
       throw new Error('Không thể lấy token');
     }
 
-    return response.json();
+    const data = await response.json();
+
+    localStorage.setItem('restToken', data.token);
+
+    return data;
   }
 
   public async emailRegister({
@@ -162,13 +175,17 @@ class ApiClient {
 
 export class StoreoClient {
   public readonly auth: Auth;
-  public readonly rest: PostgrestClient;
+  public readonly rest: PostgrestClient<Database>;
   public readonly api: ApiClient;
 
   constructor() {
     const firebaseApp = initializeApp(firebaseConfig);
     this.auth = getAuth(firebaseApp);
-    this.rest = new PostgrestClient(`${BASE_URL}/rest`);
+    this.rest = new PostgrestClient<Database>(`http://localhost:3000`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('restToken')}`
+      }
+    });
     this.api = new ApiClient(this.auth);
   }
 }

@@ -7,7 +7,8 @@ DECLARE
         'projects', 'objects', 'object_types', 'issues', 'details', 'requests', 
         'request_details', 'contracts', 'comments', 'detail_imports', 'templates', 
         'materials', 'prices', 'price_details', 'issue_files', 'processes', 
-        'msg_teams', 'msg_channels', 'msg_chats', 'msg_messages', 'msg_reactions', 'msg_settings'
+        'msg_teams', 'msg_channels', 'msg_chats', 'msg_messages', 'msg_reactions', 'msg_settings',
+        'users'
     ];
     t TEXT;
 BEGIN
@@ -17,8 +18,8 @@ BEGIN
             EXECUTE FORMAT('DROP POLICY IF EXISTS %I ON %I', r.policyname, t);
         END LOOP;
         
-        -- Disable RLS
-        EXECUTE FORMAT('ALTER TABLE IF EXISTS %I DISABLE ROW LEVEL SECURITY', t);
+        -- Ensure RLS is enabled
+        EXECUTE FORMAT('ALTER TABLE IF EXISTS %I ENABLE ROW LEVEL SECURITY', t);
     END LOOP;
     
     -- Drop helper functions
@@ -113,7 +114,8 @@ DECLARE
         'projects', 'objects', 'object_types', 'issues', 'details', 'requests', 
         'request_details', 'contracts', 'comments', 'detail_imports', 'templates', 
         'materials', 'prices', 'price_details', 'issue_files', 'processes', 
-        'msg_teams', 'msg_channels', 'msg_chats', 'msg_messages', 'msg_reactions', 'msg_settings'
+        'msg_teams', 'msg_channels', 'msg_chats', 'msg_messages', 'msg_reactions', 'msg_settings',
+        'users'
     ];
     t TEXT;
 BEGIN
@@ -200,35 +202,6 @@ BEGIN
     END IF;
 END $$;
 
--- 3.5. Bật Row Level Security cho các bảng
-ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE organization_members ENABLE ROW LEVEL SECURITY;
-ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE objects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE object_types ENABLE ROW LEVEL SECURITY;
-ALTER TABLE issues ENABLE ROW LEVEL SECURITY;
-ALTER TABLE details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE requests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE request_details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE detail_imports ENABLE ROW LEVEL SECURITY;
-ALTER TABLE templates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE materials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE prices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE price_details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE issue_files ENABLE ROW LEVEL SECURITY;
-ALTER TABLE processes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_teams ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_channels ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_chats ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_reactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_settings ENABLE ROW LEVEL SECURITY;
-
 -- 4. Cấp quyền basic cho role anon (không đăng nhập)
 DO $$
 BEGIN
@@ -302,19 +275,23 @@ END $$;
 
 -- 9. Tạo các helper function để làm việc với JWT claims
 
+-- Function để tự động set created_by cho organizations
+CREATE OR REPLACE FUNCTION set_organization_creator() 
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Chỉ thực hiện nếu role là authenticated và created_by chưa được set (hoặc NULL)
+  -- Điều này cho phép admin tạo org với created_by khác nếu cần (ít xảy ra)
+  IF current_jwt_role() = 'authenticated' AND NEW.created_by IS NULL THEN
+    NEW.created_by := current_user_id();
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Lấy user_id từ email trong JWT
 CREATE OR REPLACE FUNCTION current_user_id() RETURNS uuid AS $$
-DECLARE
-  user_email text;
-  user_id uuid;
 BEGIN
-  user_email := current_setting('request.jwt.claims', true)::json->>'email';
-  IF user_email IS NULL THEN
-    RETURN NULL;
-  END IF;
-  
-  SELECT id INTO user_id FROM users WHERE email = user_email;
-  RETURN user_id;
+  RETURN (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
@@ -440,7 +417,49 @@ $$ LANGUAGE plpgsql;
 
 -- 11. Áp dụng policy cho từng bảng
 
--- Tất cả các bảng đều có policy SELECT chung
+-- Áp dụng policy cho roles theo yêu cầu
+
+-- POLICY CHO ROLE authenticated
+
+-- Trigger để tự động set created_by khi tạo organization
+DROP TRIGGER IF EXISTS trigger_set_organization_creator ON organizations;
+CREATE TRIGGER trigger_set_organization_creator
+  BEFORE INSERT ON organizations
+  FOR EACH ROW
+  -- Trigger chỉ nên chạy khi role là authenticated để không ảnh hưởng đến các role khác nếu họ tạo org
+  WHEN (current_jwt_role() = 'authenticated') 
+  EXECUTE FUNCTION set_organization_creator();
+
+-- Có quyền tạo organization (tự động thêm created_by từ claim)
+CREATE POLICY insert_organizations_authenticated ON organizations
+    FOR INSERT 
+    WITH CHECK (
+        current_jwt_role() = 'authenticated'
+    );
+
+-- Chỉ list được các organization mà user tạo hoặc được invite
+CREATE POLICY select_organizations_authenticated ON organizations
+    FOR SELECT 
+    USING (
+        created_by = current_user_id() OR
+        EXISTS (
+            SELECT 1 FROM organization_members 
+            WHERE organization_id = organizations.id 
+            AND user_id = current_user_id()
+        )
+    );
+
+-- Policy cho org_member, org_operator, org_admin xem organization hiện tại
+CREATE POLICY select_organizations_member ON organizations
+    FOR SELECT 
+    USING (
+        id = current_organization_id() AND
+        current_jwt_role() IN ('org_member', 'org_operator', 'org_admin')
+    );
+
+-- POLICY CHO ROLE org_member
+-- Có quyền SELECT trên tất cả các bảng trong organization
+SELECT create_select_policy('organization_members');
 SELECT create_select_policy('departments');
 SELECT create_select_policy('customers');
 SELECT create_select_policy('suppliers');
@@ -467,7 +486,7 @@ SELECT create_select_policy('msg_messages');
 SELECT create_select_policy('msg_reactions');
 SELECT create_select_policy('msg_settings');
 
--- Áp dụng policy INSERT/UPDATE cho các bảng mà org_member có thể thao tác
+-- Có quyền INSERT/UPDATE với các bảng quy định
 SELECT create_insert_policy_for_member('comments');
 SELECT create_insert_policy_for_member('contracts');
 SELECT create_insert_policy_for_member('details');
@@ -475,8 +494,6 @@ SELECT create_insert_policy_for_member('detail_imports');
 SELECT create_insert_policy_for_member('issues');
 SELECT create_insert_policy_for_member('issue_files');
 SELECT create_insert_policy_for_member('msg_chats');
-SELECT create_insert_policy_for_member('msg_messages');
-SELECT create_insert_policy_for_member('msg_reactions');
 SELECT create_insert_policy_for_member('msg_settings');
 SELECT create_insert_policy_for_member('prices');
 SELECT create_insert_policy_for_member('price_details');
@@ -491,8 +508,6 @@ SELECT create_update_policy_for_member('detail_imports');
 SELECT create_update_policy_for_member('issues');
 SELECT create_update_policy_for_member('issue_files');
 SELECT create_update_policy_for_member('msg_chats');
-SELECT create_update_policy_for_member('msg_messages');
-SELECT create_update_policy_for_member('msg_reactions');
 SELECT create_update_policy_for_member('msg_settings');
 SELECT create_update_policy_for_member('prices');
 SELECT create_update_policy_for_member('price_details');
@@ -500,7 +515,9 @@ SELECT create_update_policy_for_member('requests');
 SELECT create_update_policy_for_member('request_details');
 SELECT create_update_policy_for_member('templates');
 
--- Áp dụng policy INSERT/UPDATE/DELETE cho các bảng mà org_operator có thể thao tác
+-- POLICY CHO ROLE org_operator
+-- Kế thừa tất cả quyền của org_member
+-- Có thêm quyền INSERT/UPDATE/DELETE với các bảng quy định
 SELECT create_insert_policy_for_operator('customers');
 SELECT create_insert_policy_for_operator('departments');
 SELECT create_insert_policy_for_operator('materials');
@@ -534,67 +551,152 @@ SELECT create_delete_policy_for_operator('objects');
 SELECT create_delete_policy_for_operator('processes');
 SELECT create_delete_policy_for_operator('projects');
 
--- Policy đặc biệt cho organizations
-CREATE POLICY select_organizations ON organizations
-    FOR SELECT 
+-- POLICY CHO ROLE org_admin
+-- Kế thừa tất cả quyền của org_operator
+-- Có quyền UPDATE/DELETE organization và toàn bộ dữ liệu liên quan
+CREATE POLICY update_organizations_admin ON organizations
+    FOR UPDATE 
     USING (
-        -- Chỉ thấy org mình tạo hoặc được invite
-        created_by = current_user_id()
-        OR EXISTS (
+        id = current_organization_id() AND 
+        current_jwt_role() = 'org_admin'
+    );
+
+-- Policy cho user - cho phép mọi người đọc users, nhưng chỉ update thông tin của chính mình
+CREATE POLICY select_users ON users
+    FOR SELECT 
+    USING (true);
+
+CREATE POLICY update_users ON users
+    FOR UPDATE 
+    USING (
+        id = current_user_id()
+    );
+
+-- Không ai có quyền xóa user trực tiếp
+CREATE POLICY delete_users ON users
+    FOR DELETE 
+    USING (false);
+
+CREATE POLICY delete_organizations_admin ON organizations
+    FOR DELETE 
+    USING (
+        id = current_organization_id() AND 
+        current_jwt_role() = 'org_admin' AND
+        (created_by = current_user_id() OR 
+         EXISTS (
             SELECT 1 FROM organization_members 
             WHERE organization_id = organizations.id 
-            AND user_id = current_user_id()
+            AND user_id = current_user_id() 
+            AND role = 'org_admin'
+         ))
+    );
+
+-- Quyền đặc biệt cho organization_members
+CREATE POLICY insert_org_members_admin ON organization_members 
+    FOR INSERT 
+    WITH CHECK (
+        organization_id = current_organization_id() AND
+        current_jwt_role() = 'org_admin'
+    );
+
+CREATE POLICY update_org_members_admin ON organization_members 
+    FOR UPDATE 
+    USING (
+        organization_id = current_organization_id() AND
+        current_jwt_role() = 'org_admin'
+    );
+
+CREATE POLICY delete_org_members_admin ON organization_members 
+    FOR DELETE 
+    USING (
+        organization_id = current_organization_id() AND
+        current_jwt_role() = 'org_admin'
+    );
+
+-- Áp dụng policy DELETE cho tất cả các bảng cho org_admin
+SELECT create_delete_policy_for_admin('comments');
+SELECT create_delete_policy_for_admin('contracts');
+SELECT create_delete_policy_for_admin('details');
+SELECT create_delete_policy_for_admin('detail_imports');
+SELECT create_delete_policy_for_admin('issues');
+SELECT create_delete_policy_for_admin('issue_files');
+SELECT create_delete_policy_for_admin('msg_chats');
+SELECT create_delete_policy_for_admin('msg_messages');
+SELECT create_delete_policy_for_admin('msg_reactions');
+SELECT create_delete_policy_for_admin('msg_settings');
+SELECT create_delete_policy_for_admin('prices');
+SELECT create_delete_policy_for_admin('price_details');
+SELECT create_delete_policy_for_admin('requests');
+SELECT create_delete_policy_for_admin('request_details');
+SELECT create_delete_policy_for_admin('templates');
+
+-- Policy đặc biệt cho msg_messages (không có organization_id)
+-- Thay thế policy mặc định bằng policy dựa trên liên kết với msg_chats
+DROP POLICY IF EXISTS select_msg_messages ON msg_messages;
+CREATE POLICY select_msg_messages ON msg_messages
+    FOR SELECT 
+    USING (
+        EXISTS (
+            SELECT 1 FROM msg_chats 
+            WHERE msg_chats.id = msg_messages.chat
+            AND msg_chats.organization_id = current_organization_id()
+        ) OR organization_id = current_organization_id()
+    );
+
+CREATE POLICY insert_msg_messages_member ON msg_messages
+    FOR INSERT 
+    WITH CHECK (
+        organization_id = current_organization_id() AND
+        current_jwt_role() IN ('org_member', 'org_operator', 'org_admin') AND
+        EXISTS (
+            SELECT 1 FROM msg_chats 
+            WHERE msg_chats.id = chat
+            AND msg_chats.organization_id = current_organization_id()
         )
     );
 
-CREATE POLICY insert_organizations ON organizations
-    FOR INSERT 
-    WITH CHECK (
-        current_jwt_role() = 'authenticated'  -- Chỉ cần authenticated
-        AND created_by = current_user_id()    -- Và phải set created_by là chính mình
-    );
-
-CREATE POLICY update_organizations ON organizations
-    FOR UPDATE 
-    USING (id = current_organization_id() AND current_jwt_role() = 'org_admin');
-
-CREATE POLICY delete_organizations ON organizations
-    FOR DELETE 
-    USING (id = current_organization_id() AND current_jwt_role() = 'org_admin');
-
--- Policy đặc biệt cho organization_members
-CREATE POLICY select_org_members ON organization_members 
-    FOR SELECT 
-    USING (organization_id = current_organization_id());
-
-CREATE POLICY insert_org_members ON organization_members 
-    FOR INSERT 
-    WITH CHECK (
-        organization_id = current_organization_id() AND
-        current_jwt_role() = 'org_admin'
-    );
-
-CREATE POLICY update_org_members ON organization_members 
+CREATE POLICY update_msg_messages_member ON msg_messages
     FOR UPDATE 
     USING (
         organization_id = current_organization_id() AND
-        current_jwt_role() = 'org_admin'
+        current_jwt_role() IN ('org_member', 'org_operator', 'org_admin') AND
+        sender = current_user_id()
     );
-
-CREATE POLICY delete_org_members ON organization_members 
-    FOR DELETE 
-    USING (
-        organization_id = current_organization_id() AND
-        current_jwt_role() = 'org_admin'
-    );
-
--- Policy đặc biệt cho msg_messages (không có organization_id)
--- Lấy organization_id qua liên kết với bảng msg_chats
--- REMOVE OLD COMPLEX POLICIES FOR msg_messages
 
 -- Policy đặc biệt cho msg_reactions (không có organization_id)
--- Lấy organization_id qua liên kết với bảng msg_messages và msg_chats
--- REMOVE OLD COMPLEX POLICIES FOR msg_reactions
+-- Thay thế policy mặc định bằng policy dựa trên liên kết với msg_messages và msg_chats
+DROP POLICY IF EXISTS select_msg_reactions ON msg_reactions;
+CREATE POLICY select_msg_reactions ON msg_reactions
+    FOR SELECT 
+    USING (
+        EXISTS (
+            SELECT 1 FROM msg_messages
+            JOIN msg_chats ON msg_chats.id = msg_messages.chat
+            WHERE msg_messages.id = msg_reactions.message
+            AND msg_chats.organization_id = current_organization_id()
+        ) OR organization_id = current_organization_id() 
+    );
+
+CREATE POLICY insert_msg_reactions_member ON msg_reactions
+    FOR INSERT 
+    WITH CHECK (
+        organization_id = current_organization_id() AND
+        current_jwt_role() IN ('org_member', 'org_operator', 'org_admin') AND
+        EXISTS (
+            SELECT 1 FROM msg_messages
+            JOIN msg_chats ON msg_chats.id = msg_messages.chat
+            WHERE msg_messages.id = message
+            AND msg_chats.organization_id = current_organization_id()
+        )
+    );
+
+CREATE POLICY update_msg_reactions_member ON msg_reactions
+    FOR UPDATE 
+    USING (
+        organization_id = current_organization_id() AND
+        current_jwt_role() IN ('org_member', 'org_operator', 'org_admin') AND
+        "user" = current_user_id()
+    );
 
 -- 12. Cấp quyền thực thi các function
 GRANT EXECUTE ON FUNCTION 
@@ -609,3 +711,6 @@ GRANT EXECUTE ON FUNCTION
     create_delete_policy_for_operator,
     create_delete_policy_for_admin
 TO anon, authenticated, org_member, org_operator, org_admin;
+
+-- Grant execute on the new trigger function
+GRANT EXECUTE ON FUNCTION set_organization_creator() TO authenticated, org_admin;

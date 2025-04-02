@@ -11,6 +11,7 @@ export const routes = rootRoute('./root.tsx', [
   route('user-information', './auth/user-information.tsx'),
   route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
+    route('top', './private/top.tsx'),
     route('home', './private/home.tsx'),
     route('messenger', './private/messenger.tsx'),
     route('project', './private/project.tsx', [

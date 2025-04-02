@@ -21,6 +21,11 @@ async function protectRoute({ location }: { location: ParsedLocation }) {
   }
 
   try {
+    await client2.api.getRestToken({
+      email: client2.auth.currentUser?.email ?? '',
+      organizationId: '1'
+    });
+
     await api.user.checkUser.fetcher();
   } catch (error) {
     throw redirect({

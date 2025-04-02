@@ -19,6 +19,7 @@ import { Route as AuthEmailLoginImport } from './routes/auth/email-login'
 import { Route as AuthEmailInputImport } from './routes/auth/email-input'
 import { Route as PrivateImport } from './routes/private'
 import { Route as IndexImport } from './routes/index'
+import { Route as PrivateTopImport } from './routes/private/top'
 import { Route as PrivateSettingsImport } from './routes/private/settings'
 import { Route as PrivateProjectImport } from './routes/private/project'
 import { Route as PrivateProfileImport } from './routes/private/profile'
@@ -117,6 +118,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const PrivateTopRoute = PrivateTopImport.update({
+  id: '/top',
+  path: '/top',
+  getParentRoute: () => PrivateRoute,
 } as any)
 
 const PrivateSettingsRoute = PrivateSettingsImport.update({
@@ -552,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof PrivateSettingsImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/top': {
+      id: '/_private/top'
+      path: '/top'
+      fullPath: '/top'
+      preLoaderRoute: typeof PrivateTopImport
       parentRoute: typeof PrivateImport
     }
     '/_private/project/$projectId': {
@@ -1206,6 +1220,7 @@ interface PrivateRouteChildren {
   PrivateProfileRoute: typeof PrivateProfileRoute
   PrivateProjectRoute: typeof PrivateProjectRouteWithChildren
   PrivateSettingsRoute: typeof PrivateSettingsRouteWithChildren
+  PrivateTopRoute: typeof PrivateTopRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
@@ -1214,6 +1229,7 @@ const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateProfileRoute: PrivateProfileRoute,
   PrivateProjectRoute: PrivateProjectRouteWithChildren,
   PrivateSettingsRoute: PrivateSettingsRouteWithChildren,
+  PrivateTopRoute: PrivateTopRoute,
 }
 
 const PrivateRouteWithChildren =
@@ -1233,6 +1249,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof PrivateProfileRoute
   '/project': typeof PrivateProjectRouteWithChildren
   '/settings': typeof PrivateSettingsRouteWithChildren
+  '/top': typeof PrivateTopRoute
   '/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
   '/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
   '/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
@@ -1292,6 +1309,7 @@ export interface FileRoutesByTo {
   '/home': typeof PrivateHomeRoute
   '/messenger': typeof PrivateMessengerRoute
   '/profile': typeof PrivateProfileRoute
+  '/top': typeof PrivateTopRoute
   '/project': typeof PrivateProjectIndexRoute
   '/settings': typeof PrivateSettingsIndexRoute
   '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
@@ -1346,6 +1364,7 @@ export interface FileRoutesById {
   '/_private/profile': typeof PrivateProfileRoute
   '/_private/project': typeof PrivateProjectRouteWithChildren
   '/_private/settings': typeof PrivateSettingsRouteWithChildren
+  '/_private/top': typeof PrivateTopRoute
   '/_private/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
   '/_private/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
   '/_private/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
@@ -1409,6 +1428,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/project'
     | '/settings'
+    | '/top'
     | '/project/$projectId'
     | '/settings/general'
     | '/settings/operation'
@@ -1467,6 +1487,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/messenger'
     | '/profile'
+    | '/top'
     | '/project'
     | '/settings'
     | '/project/$projectId/settings'
@@ -1519,6 +1540,7 @@ export interface FileRouteTypes {
     | '/_private/profile'
     | '/_private/project'
     | '/_private/settings'
+    | '/_private/top'
     | '/_private/project/$projectId'
     | '/_private/settings/general'
     | '/_private/settings/operation'
@@ -1619,7 +1641,8 @@ export const routeTree = rootRoute
         "/_private/messenger",
         "/_private/profile",
         "/_private/project",
-        "/_private/settings"
+        "/_private/settings",
+        "/_private/top"
       ]
     },
     "/email-input": {
@@ -1668,6 +1691,10 @@ export const routeTree = rootRoute
         "/_private/settings/operation",
         "/_private/settings/"
       ]
+    },
+    "/_private/top": {
+      "filePath": "./private/top.tsx",
+      "parent": "/_private"
     },
     "/_private/project/$projectId": {
       "filePath": "./private/project/$projectId.tsx",

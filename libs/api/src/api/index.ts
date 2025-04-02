@@ -2,6 +2,7 @@ import { authApi } from './auth';
 import { commentApi } from './domain/comment';
 import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
 import { IssueData, issueApi } from './domain/issue';
+import { organizationApi } from './domain/organization';
 import { priceApi } from './domain/price';
 import type { ProjectData } from './domain/project';
 import { projectApi } from './domain/project';
@@ -42,6 +43,7 @@ export const api = {
   material: materialApi,
   object: objectApi,
   objectType: objectTypeApi,
+  organization: organizationApi,
   price: priceApi,
   process: processApi,
   project: projectApi,
