@@ -5,7 +5,16 @@ import { router } from 'react-query-kit';
 export const organizationApi = router('organization', {
   list: router.query({
     fetcher: () => {
-      return client2.rest.from('organizations').select('*');
+      return client2.rest.from('organizations').select(`
+        id,
+        name,
+        organization_members!organization_id (
+          id,
+          user_id,
+          role,
+          department
+        )
+      `);
     }
   }),
   create: router.mutation({
