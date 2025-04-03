@@ -4,17 +4,35 @@ import { router } from 'react-query-kit';
 
 export const organizationApi = router('organization', {
   list: router.query({
-    fetcher: () => {
-      return client2.rest.from('organizations').select(`
-        id,
-        name,
-        organization_members!organization_id (
-          id,
-          user_id,
-          role,
-          department
+    fetcher: async () => {
+      const userId = localStorage.getItem('userId');
+      const { data, error } = await client2.rest
+        .from('organizations')
+        .select(
+          `
+            id,
+            name,
+            role:organization_members!organization_id (
+              role
+            ),
+            members:organization_members!organization_id (
+              role,
+              user:users!user_id!inner (
+                id,
+                name,
+                email,
+                avatar
+              )
+            )
+          `
         )
-      `);
+        .eq('organization_members.user_id', userId ?? '');
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
     }
   }),
   create: router.mutation({

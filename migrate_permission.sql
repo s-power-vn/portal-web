@@ -14,18 +14,7 @@ BEGIN
     
     -- Handle existing permissions
     BEGIN
-        -- First revoke all grants from api by postgres
-        REVOKE ALL ON ALL TABLES IN SCHEMA public FROM api;
-        REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM api;
-        REVOKE ALL ON SCHEMA public FROM api;
-        
-        -- Revoke role memberships granted by postgres
         EXECUTE 'REVOKE org_member FROM org_operator';
-        EXECUTE 'REVOKE anon FROM api';
-        EXECUTE 'REVOKE authenticated FROM api';
-        EXECUTE 'REVOKE org_admin FROM api';
-        EXECUTE 'REVOKE org_operator FROM api';
-        EXECUTE 'REVOKE org_member FROM api';
     EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'Error handling existing permissions: %', SQLERRM;
     END;
@@ -58,23 +47,17 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'org_member') THEN
         CREATE ROLE org_member NOLOGIN;
     END IF;
-    
-    -- Create database user for PostgREST service if not exists
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'api') THEN
-        CREATE ROLE api WITH LOGIN PASSWORD 'Aa123456@@' NOINHERIT;
-    END IF;
 EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error creating roles: %', SQLERRM;
 END $$;
 
--- Grant role memberships
+-- Set up role hierarchy
 DO $$
 BEGIN
-    GRANT anon TO api;
-    GRANT authenticated TO api;
-    GRANT org_admin TO api;
-    GRANT org_operator TO api;
-    GRANT org_member TO api;
+    GRANT anon TO authenticated;
+    GRANT authenticated TO org_member;
+    GRANT org_member TO org_operator;
+    GRANT org_operator TO org_admin;
 END $$;
 
 -- Grant basic permissions
@@ -86,6 +69,7 @@ BEGIN
     -- Permissions for authenticated
     GRANT USAGE ON SCHEMA public TO authenticated;
     GRANT SELECT, INSERT ON TABLE organizations TO authenticated;
+    GRANT SELECT, INSERT ON TABLE organization_members TO authenticated;
     GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
     
     -- Permissions for org_member
@@ -166,18 +150,35 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION set_organization_creator() 
 RETURNS TRIGGER AS $$
 BEGIN
-  IF current_jwt_role() = 'authenticated' AND NEW.created_by IS NULL THEN
+  -- Set created_by if not set
+  IF NEW.created_by IS NULL THEN
     NEW.created_by := current_user_id();
   END IF;
+  
+  -- Insert into organization_members
+  INSERT INTO organization_members (
+    id,
+    organization_id,
+    user_id,
+    role,
+    created
+  ) VALUES (
+    gen_random_uuid(),
+    NEW.id,
+    current_user_id(),
+    'org_admin',
+    CURRENT_TIMESTAMP
+  );
+  
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger for setting organization creator
 CREATE TRIGGER trigger_set_organization_creator
-  BEFORE INSERT ON organizations
+  AFTER INSERT ON organizations
   FOR EACH ROW
-  WHEN (current_jwt_role() = 'authenticated') 
+  WHEN (current_jwt_role() = 'authenticated')
   EXECUTE FUNCTION set_organization_creator();
 
 -- Grant execute permissions on functions
@@ -188,3 +189,50 @@ GRANT EXECUTE ON FUNCTION
 TO anon, authenticated, org_member, org_operator, org_admin;
 
 GRANT EXECUTE ON FUNCTION set_organization_creator() TO authenticated, org_admin;
+
+-- Enable RLS
+ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE organization_members ENABLE ROW LEVEL SECURITY;
+
+-- Start policy cho role authenticated
+DROP POLICY IF EXISTS authenticated_select_organizations ON organizations;
+CREATE POLICY authenticated_select_organizations ON organizations
+FOR SELECT TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM organization_members
+    WHERE organization_members.organization_id = organizations.id
+    AND organization_members.user_id = current_user_id()
+  )
+);
+
+DROP POLICY IF EXISTS authenticated_insert_organizations ON organizations;
+CREATE POLICY authenticated_insert_organizations ON organizations
+FOR INSERT TO authenticated
+WITH CHECK (true);
+
+CREATE OR REPLACE FUNCTION check_user_organization_access(organization_id uuid, user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM organization_members
+    WHERE organization_id = organization_id
+    AND user_id = user_id
+  );
+$$;
+
+DROP POLICY IF EXISTS authenticated_select_organization_members ON organization_members;
+CREATE POLICY authenticated_select_organization_members ON organization_members
+FOR SELECT TO authenticated
+USING (
+  check_user_organization_access(organization_id, current_user_id())
+);
+
+DROP POLICY IF EXISTS authenticated_insert_organization_members ON organization_members;
+CREATE POLICY authenticated_insert_organization_members ON organization_members
+FOR INSERT TO authenticated
+WITH CHECK (true);
+-- End policy cho role authenticated

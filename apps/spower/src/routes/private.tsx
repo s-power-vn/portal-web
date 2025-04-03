@@ -38,6 +38,13 @@ async function protectRoute({ location }: { location: ParsedLocation }) {
           redirect: location.href
         }
       });
+    } else {
+      redirect({
+        to: '/home',
+        search: {
+          redirect: location.href
+        }
+      });
     }
   } catch (error) {
     throw redirect({

@@ -113,6 +113,7 @@ class ApiClient {
     const data = await response.json();
 
     localStorage.setItem('restToken', data.token);
+    localStorage.setItem('userId', data.user_id);
 
     return data;
   }

@@ -1,9 +1,4 @@
-import {
-  Outlet,
-  ParsedLocation,
-  createFileRoute,
-  redirect
-} from '@tanstack/react-router';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { api } from 'portal-api';
 import { client2 } from 'portal-core';
 
@@ -20,28 +15,12 @@ export const Route = createFileRoute('/_private/_organization')({
   beforeLoad: protectRoute
 });
 
-async function protectRoute({ location }: { location: ParsedLocation }) {
+async function protectRoute() {
   const savedOrganizationId = localStorage.getItem('organizationId');
   if (savedOrganizationId) {
-    const data = await api.user.getRestToken.fetcher({
+    await api.user.getRestToken.fetcher({
       email: client2.auth.currentUser?.email ?? '',
       organizationId: savedOrganizationId
     });
-
-    if (data.token && data.role === 'authenticated') {
-      throw redirect({
-        to: '/top',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
   }
-
-  throw redirect({
-    to: '/top',
-    search: {
-      redirect: location.href
-    }
-  });
 }
