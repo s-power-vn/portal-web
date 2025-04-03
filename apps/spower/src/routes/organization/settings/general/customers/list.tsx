@@ -9,7 +9,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { MaterialResponse } from 'portal-core';
+import type { CustomerResponse } from 'portal-core';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -29,7 +29,7 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/general/materials')({
+export const Route = createFileRoute('/_private/_organization/settings/general/customers')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -37,16 +37,16 @@ export const Route = createFileRoute('/_private/_organization/settings/general/m
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.material.list.getOptions({
+      api.customer.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (code ~ "${deps.search.filter}")`
+          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
           : ''
       })
     ),
   beforeLoad: () => {
     return {
-      title: 'Quản lý danh mục vật tư'
+      title: 'Quản lý chủ đầu tư'
     };
   }
 });
@@ -59,13 +59,13 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({
+      queryKey: api.customer.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.material.list.fetcher({
+        api.customer.list.fetcher({
           filter: search.filter
-            ? `(name ~ "${search.filter}") || (code ~ "${search.filter}")`
+            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
             : '',
           pageIndex: pageParam,
           pageSize: 20
@@ -75,21 +75,21 @@ function Component() {
       initialPageParam: 1
     });
 
-  const materials = useMemo(
+  const customers = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteMaterial = api.material.delete.useMutation({
+  const deleteCustomer = api.customer.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa vật tư thành công');
-      invalidates([api.material.list.getKey({ filter: search.filter ?? '' })]);
+      success('Xóa chủ đầu tư thành công');
+      invalidates([api.customer.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<MaterialResponse>();
+  const columnHelper = createColumnHelper<CustomerResponse>();
 
   const columns = useMemo(
     () => [
@@ -107,21 +107,26 @@ function Component() {
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên vật tư',
+        header: () => 'Tên chủ đầu tư',
         footer: info => info.column.id,
         size: 300
       }),
-      columnHelper.accessor('code', {
+      columnHelper.accessor('phone', {
         cell: info => info.getValue(),
-        header: () => 'Mã vật tư',
+        header: () => 'Số điện thoại',
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('unit', {
+      columnHelper.accessor('email', {
         cell: info => info.getValue(),
-        header: () => 'Đơn vị',
+        header: () => 'Email',
         footer: info => info.column.id,
-        size: 100
+        size: 200
+      }),
+      columnHelper.accessor('address', {
+        cell: info => info.getValue(),
+        header: () => 'Địa chỉ',
+        footer: info => info.column.id
       }),
       columnHelper.accessor('note', {
         cell: info => info.getValue(),
@@ -138,9 +143,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$materialId/edit',
+                    to: './$customerId/edit',
                     params: {
-                      materialId: row.original.id
+                      customerId: row.original.id
                     },
                     search
                   });
@@ -154,8 +159,8 @@ function Component() {
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
-                    deleteMaterial.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa chủ đầu tư này?', () => {
+                    deleteCustomer.mutate(row.original.id);
                   });
                 }}
               >
@@ -164,17 +169,16 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác',
-        size: 120
+        header: () => 'Thao tác'
       })
     ],
-    [columnHelper, navigate, confirm, deleteMaterial, search]
+    [columnHelper, navigate, confirm, deleteCustomer, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: materials
+    data: customers
   });
 
   const { rows } = table.getRowModel();
@@ -201,11 +205,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (materialId: string) => {
+    (customerId: string) => {
       navigate({
-        to: './$materialId/edit',
+        to: './$customerId/edit',
         params: {
-          materialId
+          customerId
         },
         search
       });
@@ -213,7 +217,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddMaterial = useCallback(() => {
+  const handleAddCustomer = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -233,12 +237,12 @@ function Component() {
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý danh mục vật tư'} />
+      <PageHeader title={'Quản lý chủ đầu tư'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddMaterial}>
+          <Button className={'flex gap-1'} onClick={handleAddCustomer}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm vật tư
+            Thêm chủ đầu tư
           </Button>
           <DebouncedInput
             value={search.filter}

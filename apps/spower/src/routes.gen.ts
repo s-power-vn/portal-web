@@ -19,57 +19,59 @@ import { Route as AuthEmailLoginImport } from './routes/auth/email-login'
 import { Route as AuthEmailInputImport } from './routes/auth/email-input'
 import { Route as PrivateImport } from './routes/private'
 import { Route as IndexImport } from './routes/index'
-import { Route as PrivateTopImport } from './routes/private/top'
-import { Route as PrivateSettingsImport } from './routes/private/settings'
-import { Route as PrivateProjectImport } from './routes/private/project'
-import { Route as PrivateProfileImport } from './routes/private/profile'
-import { Route as PrivateMessengerImport } from './routes/private/messenger'
-import { Route as PrivateHomeImport } from './routes/private/home'
-import { Route as PrivateSettingsIndexImport } from './routes/private/settings/index'
-import { Route as PrivateProjectIndexImport } from './routes/private/project/index'
-import { Route as PrivateSettingsOperationImport } from './routes/private/settings/operation'
-import { Route as PrivateSettingsGeneralImport } from './routes/private/settings/general'
-import { Route as PrivateProjectProjectIdImport } from './routes/private/project/$projectId'
-import { Route as PrivateSettingsOperationIndexImport } from './routes/private/settings/operation/index'
-import { Route as PrivateSettingsGeneralIndexImport } from './routes/private/settings/general/index'
-import { Route as PrivateProjectProjectIdIndexImport } from './routes/private/project/$projectId/index'
-import { Route as PrivateSettingsOperationProcessListImport } from './routes/private/settings/operation/process/list'
-import { Route as PrivateSettingsOperationObjectsListImport } from './routes/private/settings/operation/objects/list'
+import { Route as TopImport } from './routes/top'
+import { Route as OrganizationImport } from './routes/organization'
+import { Route as TopTopImport } from './routes/top/top'
+import { Route as OrganizationSettingsImport } from './routes/organization/settings'
+import { Route as OrganizationProjectImport } from './routes/organization/project'
+import { Route as OrganizationProfileImport } from './routes/organization/profile'
+import { Route as OrganizationMessengerImport } from './routes/organization/messenger'
+import { Route as OrganizationHomeImport } from './routes/organization/home'
+import { Route as OrganizationSettingsIndexImport } from './routes/organization/settings/index'
+import { Route as OrganizationProjectIndexImport } from './routes/organization/project/index'
+import { Route as OrganizationSettingsOperationImport } from './routes/organization/settings/operation'
+import { Route as OrganizationSettingsGeneralImport } from './routes/organization/settings/general'
+import { Route as OrganizationProjectProjectIdImport } from './routes/organization/project/$projectId'
+import { Route as OrganizationSettingsOperationIndexImport } from './routes/organization/settings/operation/index'
+import { Route as OrganizationSettingsGeneralIndexImport } from './routes/organization/settings/general/index'
+import { Route as OrganizationProjectProjectIdIndexImport } from './routes/organization/project/$projectId/index'
+import { Route as OrganizationSettingsOperationProcessListImport } from './routes/organization/settings/operation/process/list'
+import { Route as OrganizationSettingsOperationObjectsListImport } from './routes/organization/settings/operation/objects/list'
 import { Route as ModulesConstructionPagesSettingsSuppliersListImport } from './modules/construction/pages/settings/suppliers/list'
 import { Route as ModulesConstructionPagesSettingsMaterialsListImport } from './modules/construction/pages/settings/materials/list'
-import { Route as PrivateSettingsGeneralEmployeesListImport } from './routes/private/settings/general/employees/list'
-import { Route as PrivateSettingsGeneralDepartmentsListImport } from './routes/private/settings/general/departments/list'
-import { Route as PrivateSettingsGeneralCustomersListImport } from './routes/private/settings/general/customers/list'
-import { Route as PrivateProjectProjectIdSettingsImport } from './routes/private/project/$projectId/settings'
-import { Route as PrivateProjectProjectIdIssuesImport } from './routes/private/project/$projectId/issues'
+import { Route as OrganizationSettingsGeneralEmployeesListImport } from './routes/organization/settings/general/employees/list'
+import { Route as OrganizationSettingsGeneralDepartmentsListImport } from './routes/organization/settings/general/departments/list'
+import { Route as OrganizationSettingsGeneralCustomersListImport } from './routes/organization/settings/general/customers/list'
+import { Route as OrganizationProjectProjectIdSettingsImport } from './routes/organization/project/$projectId/settings'
+import { Route as OrganizationProjectProjectIdIssuesImport } from './routes/organization/project/$projectId/issues'
 import { Route as ModulesConstructionPagesProjectContractImport } from './modules/construction/pages/project/contract'
-import { Route as PrivateProjectProjectIdIssuesIndexImport } from './routes/private/project/$projectId/issues/index'
+import { Route as OrganizationProjectProjectIdIssuesIndexImport } from './routes/organization/project/$projectId/issues/index'
 import { Route as ModulesConstructionPagesProjectContractIndexImport } from './modules/construction/pages/project/contract/index'
-import { Route as PrivateSettingsOperationProcessNewImport } from './routes/private/settings/operation/process/new'
-import { Route as PrivateSettingsOperationObjectsNewImport } from './routes/private/settings/operation/objects/new'
+import { Route as OrganizationSettingsOperationProcessNewImport } from './routes/organization/settings/operation/process/new'
+import { Route as OrganizationSettingsOperationObjectsNewImport } from './routes/organization/settings/operation/objects/new'
 import { Route as ModulesConstructionPagesSettingsSuppliersNewImport } from './modules/construction/pages/settings/suppliers/new'
 import { Route as ModulesConstructionPagesSettingsMaterialsNewImport } from './modules/construction/pages/settings/materials/new'
-import { Route as PrivateSettingsGeneralEmployeesNewImport } from './routes/private/settings/general/employees/new'
-import { Route as PrivateSettingsGeneralDepartmentsNewImport } from './routes/private/settings/general/departments/new'
-import { Route as PrivateSettingsGeneralCustomersNewImport } from './routes/private/settings/general/customers/new'
-import { Route as PrivateProjectProjectIdIssuesRequestImport } from './routes/private/project/$projectId/issues/request'
-import { Route as PrivateProjectProjectIdIssuesPriceImport } from './routes/private/project/$projectId/issues/price'
-import { Route as PrivateProjectProjectIdIssuesMeImport } from './routes/private/project/$projectId/issues/me'
+import { Route as OrganizationSettingsGeneralEmployeesNewImport } from './routes/organization/settings/general/employees/new'
+import { Route as OrganizationSettingsGeneralDepartmentsNewImport } from './routes/organization/settings/general/departments/new'
+import { Route as OrganizationSettingsGeneralCustomersNewImport } from './routes/organization/settings/general/customers/new'
+import { Route as OrganizationProjectProjectIdIssuesRequestImport } from './routes/organization/project/$projectId/issues/request'
+import { Route as OrganizationProjectProjectIdIssuesPriceImport } from './routes/organization/project/$projectId/issues/price'
+import { Route as OrganizationProjectProjectIdIssuesMeImport } from './routes/organization/project/$projectId/issues/me'
 import { Route as ModulesConstructionPagesProjectContractMonitoringImport } from './modules/construction/pages/project/contract/monitoring'
 import { Route as ModulesConstructionPagesProjectContractInputImport } from './modules/construction/pages/project/contract/input'
-import { Route as PrivateProjectProjectIdIssuesRequestIndexImport } from './routes/private/project/$projectId/issues/request/index'
-import { Route as PrivateProjectProjectIdIssuesPriceIndexImport } from './routes/private/project/$projectId/issues/price/index'
-import { Route as PrivateProjectProjectIdIssuesMeIndexImport } from './routes/private/project/$projectId/issues/me/index'
-import { Route as PrivateSettingsOperationProcessEditImport } from './routes/private/settings/operation/process/edit'
-import { Route as PrivateSettingsOperationObjectsEditImport } from './routes/private/settings/operation/objects/edit'
+import { Route as OrganizationProjectProjectIdIssuesRequestIndexImport } from './routes/organization/project/$projectId/issues/request/index'
+import { Route as OrganizationProjectProjectIdIssuesPriceIndexImport } from './routes/organization/project/$projectId/issues/price/index'
+import { Route as OrganizationProjectProjectIdIssuesMeIndexImport } from './routes/organization/project/$projectId/issues/me/index'
+import { Route as OrganizationSettingsOperationProcessEditImport } from './routes/organization/settings/operation/process/edit'
+import { Route as OrganizationSettingsOperationObjectsEditImport } from './routes/organization/settings/operation/objects/edit'
 import { Route as ModulesConstructionPagesSettingsSuppliersEditImport } from './modules/construction/pages/settings/suppliers/edit'
 import { Route as ModulesConstructionPagesSettingsMaterialsEditImport } from './modules/construction/pages/settings/materials/edit'
-import { Route as PrivateSettingsGeneralEmployeesEditImport } from './routes/private/settings/general/employees/edit'
-import { Route as PrivateSettingsGeneralDepartmentsEditImport } from './routes/private/settings/general/departments/edit'
-import { Route as PrivateSettingsGeneralCustomersEditImport } from './routes/private/settings/general/customers/edit'
-import { Route as PrivateProjectProjectIdIssuesRequestIssueIdImport } from './routes/private/project/$projectId/issues/request/$issueId'
-import { Route as PrivateProjectProjectIdIssuesPriceIssueIdImport } from './routes/private/project/$projectId/issues/price/$issueId'
-import { Route as PrivateProjectProjectIdIssuesMeIssueIdImport } from './routes/private/project/$projectId/issues/me/$issueId'
+import { Route as OrganizationSettingsGeneralEmployeesEditImport } from './routes/organization/settings/general/employees/edit'
+import { Route as OrganizationSettingsGeneralDepartmentsEditImport } from './routes/organization/settings/general/departments/edit'
+import { Route as OrganizationSettingsGeneralCustomersEditImport } from './routes/organization/settings/general/customers/edit'
+import { Route as OrganizationProjectProjectIdIssuesRequestIssueIdImport } from './routes/organization/project/$projectId/issues/request/$issueId'
+import { Route as OrganizationProjectProjectIdIssuesPriceIssueIdImport } from './routes/organization/project/$projectId/issues/price/$issueId'
+import { Route as OrganizationProjectProjectIdIssuesMeIssueIdImport } from './routes/organization/project/$projectId/issues/me/$issueId'
 
 // Create/Update Routes
 
@@ -120,168 +122,181 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PrivateTopRoute = PrivateTopImport.update({
+const TopRoute = TopImport.update({
+  id: '/_top',
+  getParentRoute: () => PrivateRoute,
+} as any)
+
+const OrganizationRoute = OrganizationImport.update({
+  id: '/_organization',
+  getParentRoute: () => PrivateRoute,
+} as any)
+
+const TopTopRoute = TopTopImport.update({
   id: '/top',
   path: '/top',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => TopRoute,
 } as any)
 
-const PrivateSettingsRoute = PrivateSettingsImport.update({
+const OrganizationSettingsRoute = OrganizationSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => OrganizationRoute,
 } as any)
 
-const PrivateProjectRoute = PrivateProjectImport.update({
+const OrganizationProjectRoute = OrganizationProjectImport.update({
   id: '/project',
   path: '/project',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => OrganizationRoute,
 } as any)
 
-const PrivateProfileRoute = PrivateProfileImport.update({
+const OrganizationProfileRoute = OrganizationProfileImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => OrganizationRoute,
 } as any)
 
-const PrivateMessengerRoute = PrivateMessengerImport.update({
+const OrganizationMessengerRoute = OrganizationMessengerImport.update({
   id: '/messenger',
   path: '/messenger',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => OrganizationRoute,
 } as any)
 
-const PrivateHomeRoute = PrivateHomeImport.update({
+const OrganizationHomeRoute = OrganizationHomeImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => OrganizationRoute,
 } as any)
 
-const PrivateSettingsIndexRoute = PrivateSettingsIndexImport.update({
+const OrganizationSettingsIndexRoute = OrganizationSettingsIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PrivateSettingsRoute,
+  getParentRoute: () => OrganizationSettingsRoute,
 } as any)
 
-const PrivateProjectIndexRoute = PrivateProjectIndexImport.update({
+const OrganizationProjectIndexRoute = OrganizationProjectIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PrivateProjectRoute,
+  getParentRoute: () => OrganizationProjectRoute,
 } as any)
 
-const PrivateSettingsOperationRoute = PrivateSettingsOperationImport.update({
-  id: '/operation',
-  path: '/operation',
-  getParentRoute: () => PrivateSettingsRoute,
-} as any)
-
-const PrivateSettingsGeneralRoute = PrivateSettingsGeneralImport.update({
-  id: '/general',
-  path: '/general',
-  getParentRoute: () => PrivateSettingsRoute,
-} as any)
-
-const PrivateProjectProjectIdRoute = PrivateProjectProjectIdImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => PrivateProjectRoute,
-} as any)
-
-const PrivateSettingsOperationIndexRoute =
-  PrivateSettingsOperationIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => PrivateSettingsOperationRoute,
+const OrganizationSettingsOperationRoute =
+  OrganizationSettingsOperationImport.update({
+    id: '/operation',
+    path: '/operation',
+    getParentRoute: () => OrganizationSettingsRoute,
   } as any)
 
-const PrivateSettingsGeneralIndexRoute =
-  PrivateSettingsGeneralIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+const OrganizationSettingsGeneralRoute =
+  OrganizationSettingsGeneralImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => OrganizationSettingsRoute,
   } as any)
 
-const PrivateProjectProjectIdIndexRoute =
-  PrivateProjectProjectIdIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => PrivateProjectProjectIdRoute,
+const OrganizationProjectProjectIdRoute =
+  OrganizationProjectProjectIdImport.update({
+    id: '/$projectId',
+    path: '/$projectId',
+    getParentRoute: () => OrganizationProjectRoute,
   } as any)
 
-const PrivateSettingsOperationProcessListRoute =
-  PrivateSettingsOperationProcessListImport.update({
+const OrganizationSettingsOperationIndexRoute =
+  OrganizationSettingsOperationIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => OrganizationSettingsOperationRoute,
+  } as any)
+
+const OrganizationSettingsGeneralIndexRoute =
+  OrganizationSettingsGeneralIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
+  } as any)
+
+const OrganizationProjectProjectIdIndexRoute =
+  OrganizationProjectProjectIdIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => OrganizationProjectProjectIdRoute,
+  } as any)
+
+const OrganizationSettingsOperationProcessListRoute =
+  OrganizationSettingsOperationProcessListImport.update({
     id: '/process',
     path: '/process',
-    getParentRoute: () => PrivateSettingsOperationRoute,
+    getParentRoute: () => OrganizationSettingsOperationRoute,
   } as any)
 
-const PrivateSettingsOperationObjectsListRoute =
-  PrivateSettingsOperationObjectsListImport.update({
+const OrganizationSettingsOperationObjectsListRoute =
+  OrganizationSettingsOperationObjectsListImport.update({
     id: '/objects',
     path: '/objects',
-    getParentRoute: () => PrivateSettingsOperationRoute,
+    getParentRoute: () => OrganizationSettingsOperationRoute,
   } as any)
 
 const ModulesConstructionPagesSettingsSuppliersListRoute =
   ModulesConstructionPagesSettingsSuppliersListImport.update({
     id: '/suppliers',
     path: '/suppliers',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
   } as any)
 
 const ModulesConstructionPagesSettingsMaterialsListRoute =
   ModulesConstructionPagesSettingsMaterialsListImport.update({
     id: '/materials',
     path: '/materials',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralEmployeesListRoute =
-  PrivateSettingsGeneralEmployeesListImport.update({
+const OrganizationSettingsGeneralEmployeesListRoute =
+  OrganizationSettingsGeneralEmployeesListImport.update({
     id: '/employees',
     path: '/employees',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralDepartmentsListRoute =
-  PrivateSettingsGeneralDepartmentsListImport.update({
+const OrganizationSettingsGeneralDepartmentsListRoute =
+  OrganizationSettingsGeneralDepartmentsListImport.update({
     id: '/departments',
     path: '/departments',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
   } as any)
 
-const PrivateSettingsGeneralCustomersListRoute =
-  PrivateSettingsGeneralCustomersListImport.update({
+const OrganizationSettingsGeneralCustomersListRoute =
+  OrganizationSettingsGeneralCustomersListImport.update({
     id: '/customers',
     path: '/customers',
-    getParentRoute: () => PrivateSettingsGeneralRoute,
+    getParentRoute: () => OrganizationSettingsGeneralRoute,
   } as any)
 
-const PrivateProjectProjectIdSettingsRoute =
-  PrivateProjectProjectIdSettingsImport.update({
+const OrganizationProjectProjectIdSettingsRoute =
+  OrganizationProjectProjectIdSettingsImport.update({
     id: '/settings',
     path: '/settings',
-    getParentRoute: () => PrivateProjectProjectIdRoute,
+    getParentRoute: () => OrganizationProjectProjectIdRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesRoute =
-  PrivateProjectProjectIdIssuesImport.update({
+const OrganizationProjectProjectIdIssuesRoute =
+  OrganizationProjectProjectIdIssuesImport.update({
     id: '/issues',
     path: '/issues',
-    getParentRoute: () => PrivateProjectProjectIdRoute,
+    getParentRoute: () => OrganizationProjectProjectIdRoute,
   } as any)
 
 const ModulesConstructionPagesProjectContractRoute =
   ModulesConstructionPagesProjectContractImport.update({
     id: '/contract',
     path: '/contract',
-    getParentRoute: () => PrivateProjectProjectIdRoute,
+    getParentRoute: () => OrganizationProjectProjectIdRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesIndexRoute =
-  PrivateProjectProjectIdIssuesIndexImport.update({
+const OrganizationProjectProjectIdIssuesIndexRoute =
+  OrganizationProjectProjectIdIssuesIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRoute,
   } as any)
 
 const ModulesConstructionPagesProjectContractIndexRoute =
@@ -291,18 +306,18 @@ const ModulesConstructionPagesProjectContractIndexRoute =
     getParentRoute: () => ModulesConstructionPagesProjectContractRoute,
   } as any)
 
-const PrivateSettingsOperationProcessNewRoute =
-  PrivateSettingsOperationProcessNewImport.update({
+const OrganizationSettingsOperationProcessNewRoute =
+  OrganizationSettingsOperationProcessNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsOperationProcessListRoute,
+    getParentRoute: () => OrganizationSettingsOperationProcessListRoute,
   } as any)
 
-const PrivateSettingsOperationObjectsNewRoute =
-  PrivateSettingsOperationObjectsNewImport.update({
+const OrganizationSettingsOperationObjectsNewRoute =
+  OrganizationSettingsOperationObjectsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsOperationObjectsListRoute,
+    getParentRoute: () => OrganizationSettingsOperationObjectsListRoute,
   } as any)
 
 const ModulesConstructionPagesSettingsSuppliersNewRoute =
@@ -319,46 +334,46 @@ const ModulesConstructionPagesSettingsMaterialsNewRoute =
     getParentRoute: () => ModulesConstructionPagesSettingsMaterialsListRoute,
   } as any)
 
-const PrivateSettingsGeneralEmployeesNewRoute =
-  PrivateSettingsGeneralEmployeesNewImport.update({
+const OrganizationSettingsGeneralEmployeesNewRoute =
+  OrganizationSettingsGeneralEmployeesNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralEmployeesListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralEmployeesListRoute,
   } as any)
 
-const PrivateSettingsGeneralDepartmentsNewRoute =
-  PrivateSettingsGeneralDepartmentsNewImport.update({
+const OrganizationSettingsGeneralDepartmentsNewRoute =
+  OrganizationSettingsGeneralDepartmentsNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralDepartmentsListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralDepartmentsListRoute,
   } as any)
 
-const PrivateSettingsGeneralCustomersNewRoute =
-  PrivateSettingsGeneralCustomersNewImport.update({
+const OrganizationSettingsGeneralCustomersNewRoute =
+  OrganizationSettingsGeneralCustomersNewImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => PrivateSettingsGeneralCustomersListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralCustomersListRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesRequestRoute =
-  PrivateProjectProjectIdIssuesRequestImport.update({
+const OrganizationProjectProjectIdIssuesRequestRoute =
+  OrganizationProjectProjectIdIssuesRequestImport.update({
     id: '/request',
     path: '/request',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesPriceRoute =
-  PrivateProjectProjectIdIssuesPriceImport.update({
+const OrganizationProjectProjectIdIssuesPriceRoute =
+  OrganizationProjectProjectIdIssuesPriceImport.update({
     id: '/price',
     path: '/price',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesMeRoute =
-  PrivateProjectProjectIdIssuesMeImport.update({
+const OrganizationProjectProjectIdIssuesMeRoute =
+  OrganizationProjectProjectIdIssuesMeImport.update({
     id: '/me',
     path: '/me',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRoute,
   } as any)
 
 const ModulesConstructionPagesProjectContractMonitoringRoute =
@@ -375,39 +390,39 @@ const ModulesConstructionPagesProjectContractInputRoute =
     getParentRoute: () => ModulesConstructionPagesProjectContractRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesRequestIndexRoute =
-  PrivateProjectProjectIdIssuesRequestIndexImport.update({
+const OrganizationProjectProjectIdIssuesRequestIndexRoute =
+  OrganizationProjectProjectIdIssuesRequestIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRequestRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRequestRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesPriceIndexRoute =
-  PrivateProjectProjectIdIssuesPriceIndexImport.update({
+const OrganizationProjectProjectIdIssuesPriceIndexRoute =
+  OrganizationProjectProjectIdIssuesPriceIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => PrivateProjectProjectIdIssuesPriceRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesPriceRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesMeIndexRoute =
-  PrivateProjectProjectIdIssuesMeIndexImport.update({
+const OrganizationProjectProjectIdIssuesMeIndexRoute =
+  OrganizationProjectProjectIdIssuesMeIndexImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => PrivateProjectProjectIdIssuesMeRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesMeRoute,
   } as any)
 
-const PrivateSettingsOperationProcessEditRoute =
-  PrivateSettingsOperationProcessEditImport.update({
+const OrganizationSettingsOperationProcessEditRoute =
+  OrganizationSettingsOperationProcessEditImport.update({
     id: '/$processId/edit',
     path: '/$processId/edit',
-    getParentRoute: () => PrivateSettingsOperationProcessListRoute,
+    getParentRoute: () => OrganizationSettingsOperationProcessListRoute,
   } as any)
 
-const PrivateSettingsOperationObjectsEditRoute =
-  PrivateSettingsOperationObjectsEditImport.update({
+const OrganizationSettingsOperationObjectsEditRoute =
+  OrganizationSettingsOperationObjectsEditImport.update({
     id: '/$objectId/edit',
     path: '/$objectId/edit',
-    getParentRoute: () => PrivateSettingsOperationObjectsListRoute,
+    getParentRoute: () => OrganizationSettingsOperationObjectsListRoute,
   } as any)
 
 const ModulesConstructionPagesSettingsSuppliersEditRoute =
@@ -424,46 +439,46 @@ const ModulesConstructionPagesSettingsMaterialsEditRoute =
     getParentRoute: () => ModulesConstructionPagesSettingsMaterialsListRoute,
   } as any)
 
-const PrivateSettingsGeneralEmployeesEditRoute =
-  PrivateSettingsGeneralEmployeesEditImport.update({
+const OrganizationSettingsGeneralEmployeesEditRoute =
+  OrganizationSettingsGeneralEmployeesEditImport.update({
     id: '/$employeeId/edit',
     path: '/$employeeId/edit',
-    getParentRoute: () => PrivateSettingsGeneralEmployeesListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralEmployeesListRoute,
   } as any)
 
-const PrivateSettingsGeneralDepartmentsEditRoute =
-  PrivateSettingsGeneralDepartmentsEditImport.update({
+const OrganizationSettingsGeneralDepartmentsEditRoute =
+  OrganizationSettingsGeneralDepartmentsEditImport.update({
     id: '/$departmentId/edit',
     path: '/$departmentId/edit',
-    getParentRoute: () => PrivateSettingsGeneralDepartmentsListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralDepartmentsListRoute,
   } as any)
 
-const PrivateSettingsGeneralCustomersEditRoute =
-  PrivateSettingsGeneralCustomersEditImport.update({
+const OrganizationSettingsGeneralCustomersEditRoute =
+  OrganizationSettingsGeneralCustomersEditImport.update({
     id: '/$customerId/edit',
     path: '/$customerId/edit',
-    getParentRoute: () => PrivateSettingsGeneralCustomersListRoute,
+    getParentRoute: () => OrganizationSettingsGeneralCustomersListRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesRequestIssueIdRoute =
-  PrivateProjectProjectIdIssuesRequestIssueIdImport.update({
+const OrganizationProjectProjectIdIssuesRequestIssueIdRoute =
+  OrganizationProjectProjectIdIssuesRequestIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => PrivateProjectProjectIdIssuesRequestRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesRequestRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesPriceIssueIdRoute =
-  PrivateProjectProjectIdIssuesPriceIssueIdImport.update({
+const OrganizationProjectProjectIdIssuesPriceIssueIdRoute =
+  OrganizationProjectProjectIdIssuesPriceIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => PrivateProjectProjectIdIssuesPriceRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesPriceRoute,
   } as any)
 
-const PrivateProjectProjectIdIssuesMeIssueIdRoute =
-  PrivateProjectProjectIdIssuesMeIssueIdImport.update({
+const OrganizationProjectProjectIdIssuesMeIssueIdRoute =
+  OrganizationProjectProjectIdIssuesMeIssueIdImport.update({
     id: '/$issueId',
     path: '/$issueId',
-    getParentRoute: () => PrivateProjectProjectIdIssuesMeRoute,
+    getParentRoute: () => OrganizationProjectProjectIdIssuesMeRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -526,362 +541,376 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthUserInformationImport
       parentRoute: typeof rootRoute
     }
-    '/_private/home': {
-      id: '/_private/home'
+    '/_private/_organization': {
+      id: '/_private/_organization'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof OrganizationImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/_top': {
+      id: '/_private/_top'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof TopImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/_organization/home': {
+      id: '/_private/_organization/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof PrivateHomeImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof OrganizationHomeImport
+      parentRoute: typeof OrganizationImport
     }
-    '/_private/messenger': {
-      id: '/_private/messenger'
+    '/_private/_organization/messenger': {
+      id: '/_private/_organization/messenger'
       path: '/messenger'
       fullPath: '/messenger'
-      preLoaderRoute: typeof PrivateMessengerImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof OrganizationMessengerImport
+      parentRoute: typeof OrganizationImport
     }
-    '/_private/profile': {
-      id: '/_private/profile'
+    '/_private/_organization/profile': {
+      id: '/_private/_organization/profile'
       path: '/profile'
       fullPath: '/profile'
-      preLoaderRoute: typeof PrivateProfileImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof OrganizationProfileImport
+      parentRoute: typeof OrganizationImport
     }
-    '/_private/project': {
-      id: '/_private/project'
+    '/_private/_organization/project': {
+      id: '/_private/_organization/project'
       path: '/project'
       fullPath: '/project'
-      preLoaderRoute: typeof PrivateProjectImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof OrganizationProjectImport
+      parentRoute: typeof OrganizationImport
     }
-    '/_private/settings': {
-      id: '/_private/settings'
+    '/_private/_organization/settings': {
+      id: '/_private/_organization/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof PrivateSettingsImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof OrganizationSettingsImport
+      parentRoute: typeof OrganizationImport
     }
-    '/_private/top': {
-      id: '/_private/top'
+    '/_private/_top/top': {
+      id: '/_private/_top/top'
       path: '/top'
       fullPath: '/top'
-      preLoaderRoute: typeof PrivateTopImport
-      parentRoute: typeof PrivateImport
+      preLoaderRoute: typeof TopTopImport
+      parentRoute: typeof TopImport
     }
-    '/_private/project/$projectId': {
-      id: '/_private/project/$projectId'
+    '/_private/_organization/project/$projectId': {
+      id: '/_private/_organization/project/$projectId'
       path: '/$projectId'
       fullPath: '/project/$projectId'
-      preLoaderRoute: typeof PrivateProjectProjectIdImport
-      parentRoute: typeof PrivateProjectImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdImport
+      parentRoute: typeof OrganizationProjectImport
     }
-    '/_private/settings/general': {
-      id: '/_private/settings/general'
+    '/_private/_organization/settings/general': {
+      id: '/_private/_organization/settings/general'
       path: '/general'
       fullPath: '/settings/general'
-      preLoaderRoute: typeof PrivateSettingsGeneralImport
-      parentRoute: typeof PrivateSettingsImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralImport
+      parentRoute: typeof OrganizationSettingsImport
     }
-    '/_private/settings/operation': {
-      id: '/_private/settings/operation'
+    '/_private/_organization/settings/operation': {
+      id: '/_private/_organization/settings/operation'
       path: '/operation'
       fullPath: '/settings/operation'
-      preLoaderRoute: typeof PrivateSettingsOperationImport
-      parentRoute: typeof PrivateSettingsImport
+      preLoaderRoute: typeof OrganizationSettingsOperationImport
+      parentRoute: typeof OrganizationSettingsImport
     }
-    '/_private/project/': {
-      id: '/_private/project/'
+    '/_private/_organization/project/': {
+      id: '/_private/_organization/project/'
       path: '/'
       fullPath: '/project/'
-      preLoaderRoute: typeof PrivateProjectIndexImport
-      parentRoute: typeof PrivateProjectImport
+      preLoaderRoute: typeof OrganizationProjectIndexImport
+      parentRoute: typeof OrganizationProjectImport
     }
-    '/_private/settings/': {
-      id: '/_private/settings/'
+    '/_private/_organization/settings/': {
+      id: '/_private/_organization/settings/'
       path: '/'
       fullPath: '/settings/'
-      preLoaderRoute: typeof PrivateSettingsIndexImport
-      parentRoute: typeof PrivateSettingsImport
+      preLoaderRoute: typeof OrganizationSettingsIndexImport
+      parentRoute: typeof OrganizationSettingsImport
     }
-    '/_private/project/$projectId/contract': {
-      id: '/_private/project/$projectId/contract'
+    '/_private/_organization/project/$projectId/contract': {
+      id: '/_private/_organization/project/$projectId/contract'
       path: '/contract'
       fullPath: '/project/$projectId/contract'
       preLoaderRoute: typeof ModulesConstructionPagesProjectContractImport
-      parentRoute: typeof PrivateProjectProjectIdImport
+      parentRoute: typeof OrganizationProjectProjectIdImport
     }
-    '/_private/project/$projectId/issues': {
-      id: '/_private/project/$projectId/issues'
+    '/_private/_organization/project/$projectId/issues': {
+      id: '/_private/_organization/project/$projectId/issues'
       path: '/issues'
       fullPath: '/project/$projectId/issues'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesImport
-      parentRoute: typeof PrivateProjectProjectIdImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesImport
+      parentRoute: typeof OrganizationProjectProjectIdImport
     }
-    '/_private/project/$projectId/settings': {
-      id: '/_private/project/$projectId/settings'
+    '/_private/_organization/project/$projectId/settings': {
+      id: '/_private/_organization/project/$projectId/settings'
       path: '/settings'
       fullPath: '/project/$projectId/settings'
-      preLoaderRoute: typeof PrivateProjectProjectIdSettingsImport
-      parentRoute: typeof PrivateProjectProjectIdImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdSettingsImport
+      parentRoute: typeof OrganizationProjectProjectIdImport
     }
-    '/_private/settings/general/customers': {
-      id: '/_private/settings/general/customers'
+    '/_private/_organization/settings/general/customers': {
+      id: '/_private/_organization/settings/general/customers'
       path: '/customers'
       fullPath: '/settings/general/customers'
-      preLoaderRoute: typeof PrivateSettingsGeneralCustomersListImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralCustomersListImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/general/departments': {
-      id: '/_private/settings/general/departments'
+    '/_private/_organization/settings/general/departments': {
+      id: '/_private/_organization/settings/general/departments'
       path: '/departments'
       fullPath: '/settings/general/departments'
-      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsListImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralDepartmentsListImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/general/employees': {
-      id: '/_private/settings/general/employees'
+    '/_private/_organization/settings/general/employees': {
+      id: '/_private/_organization/settings/general/employees'
       path: '/employees'
       fullPath: '/settings/general/employees'
-      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesListImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralEmployeesListImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/general/materials': {
-      id: '/_private/settings/general/materials'
+    '/_private/_organization/settings/general/materials': {
+      id: '/_private/_organization/settings/general/materials'
       path: '/materials'
       fullPath: '/settings/general/materials'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsMaterialsListImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/general/suppliers': {
-      id: '/_private/settings/general/suppliers'
+    '/_private/_organization/settings/general/suppliers': {
+      id: '/_private/_organization/settings/general/suppliers'
       path: '/suppliers'
       fullPath: '/settings/general/suppliers'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsSuppliersListImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/operation/objects': {
-      id: '/_private/settings/operation/objects'
+    '/_private/_organization/settings/operation/objects': {
+      id: '/_private/_organization/settings/operation/objects'
       path: '/objects'
       fullPath: '/settings/operation/objects'
-      preLoaderRoute: typeof PrivateSettingsOperationObjectsListImport
-      parentRoute: typeof PrivateSettingsOperationImport
+      preLoaderRoute: typeof OrganizationSettingsOperationObjectsListImport
+      parentRoute: typeof OrganizationSettingsOperationImport
     }
-    '/_private/settings/operation/process': {
-      id: '/_private/settings/operation/process'
+    '/_private/_organization/settings/operation/process': {
+      id: '/_private/_organization/settings/operation/process'
       path: '/process'
       fullPath: '/settings/operation/process'
-      preLoaderRoute: typeof PrivateSettingsOperationProcessListImport
-      parentRoute: typeof PrivateSettingsOperationImport
+      preLoaderRoute: typeof OrganizationSettingsOperationProcessListImport
+      parentRoute: typeof OrganizationSettingsOperationImport
     }
-    '/_private/project/$projectId/': {
-      id: '/_private/project/$projectId/'
+    '/_private/_organization/project/$projectId/': {
+      id: '/_private/_organization/project/$projectId/'
       path: '/'
       fullPath: '/project/$projectId/'
-      preLoaderRoute: typeof PrivateProjectProjectIdIndexImport
-      parentRoute: typeof PrivateProjectProjectIdImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIndexImport
+      parentRoute: typeof OrganizationProjectProjectIdImport
     }
-    '/_private/settings/general/': {
-      id: '/_private/settings/general/'
+    '/_private/_organization/settings/general/': {
+      id: '/_private/_organization/settings/general/'
       path: '/'
       fullPath: '/settings/general/'
-      preLoaderRoute: typeof PrivateSettingsGeneralIndexImport
-      parentRoute: typeof PrivateSettingsGeneralImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralIndexImport
+      parentRoute: typeof OrganizationSettingsGeneralImport
     }
-    '/_private/settings/operation/': {
-      id: '/_private/settings/operation/'
+    '/_private/_organization/settings/operation/': {
+      id: '/_private/_organization/settings/operation/'
       path: '/'
       fullPath: '/settings/operation/'
-      preLoaderRoute: typeof PrivateSettingsOperationIndexImport
-      parentRoute: typeof PrivateSettingsOperationImport
+      preLoaderRoute: typeof OrganizationSettingsOperationIndexImport
+      parentRoute: typeof OrganizationSettingsOperationImport
     }
-    '/_private/project/$projectId/contract/input': {
-      id: '/_private/project/$projectId/contract/input'
+    '/_private/_organization/project/$projectId/contract/input': {
+      id: '/_private/_organization/project/$projectId/contract/input'
       path: '/input'
       fullPath: '/project/$projectId/contract/input'
       preLoaderRoute: typeof ModulesConstructionPagesProjectContractInputImport
       parentRoute: typeof ModulesConstructionPagesProjectContractImport
     }
-    '/_private/project/$projectId/contract/monitoring': {
-      id: '/_private/project/$projectId/contract/monitoring'
+    '/_private/_organization/project/$projectId/contract/monitoring': {
+      id: '/_private/_organization/project/$projectId/contract/monitoring'
       path: '/monitoring'
       fullPath: '/project/$projectId/contract/monitoring'
       preLoaderRoute: typeof ModulesConstructionPagesProjectContractMonitoringImport
       parentRoute: typeof ModulesConstructionPagesProjectContractImport
     }
-    '/_private/project/$projectId/issues/me': {
-      id: '/_private/project/$projectId/issues/me'
+    '/_private/_organization/project/$projectId/issues/me': {
+      id: '/_private/_organization/project/$projectId/issues/me'
       path: '/me'
       fullPath: '/project/$projectId/issues/me'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesMeImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesImport
     }
-    '/_private/project/$projectId/issues/price': {
-      id: '/_private/project/$projectId/issues/price'
+    '/_private/_organization/project/$projectId/issues/price': {
+      id: '/_private/_organization/project/$projectId/issues/price'
       path: '/price'
       fullPath: '/project/$projectId/issues/price'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesPriceImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesImport
     }
-    '/_private/project/$projectId/issues/request': {
-      id: '/_private/project/$projectId/issues/request'
+    '/_private/_organization/project/$projectId/issues/request': {
+      id: '/_private/_organization/project/$projectId/issues/request'
       path: '/request'
       fullPath: '/project/$projectId/issues/request'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesRequestImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesImport
     }
-    '/_private/settings/general/customers/new': {
-      id: '/_private/settings/general/customers/new'
+    '/_private/_organization/settings/general/customers/new': {
+      id: '/_private/_organization/settings/general/customers/new'
       path: '/new'
       fullPath: '/settings/general/customers/new'
-      preLoaderRoute: typeof PrivateSettingsGeneralCustomersNewImport
-      parentRoute: typeof PrivateSettingsGeneralCustomersListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralCustomersNewImport
+      parentRoute: typeof OrganizationSettingsGeneralCustomersListImport
     }
-    '/_private/settings/general/departments/new': {
-      id: '/_private/settings/general/departments/new'
+    '/_private/_organization/settings/general/departments/new': {
+      id: '/_private/_organization/settings/general/departments/new'
       path: '/new'
       fullPath: '/settings/general/departments/new'
-      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsNewImport
-      parentRoute: typeof PrivateSettingsGeneralDepartmentsListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralDepartmentsNewImport
+      parentRoute: typeof OrganizationSettingsGeneralDepartmentsListImport
     }
-    '/_private/settings/general/employees/new': {
-      id: '/_private/settings/general/employees/new'
+    '/_private/_organization/settings/general/employees/new': {
+      id: '/_private/_organization/settings/general/employees/new'
       path: '/new'
       fullPath: '/settings/general/employees/new'
-      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesNewImport
-      parentRoute: typeof PrivateSettingsGeneralEmployeesListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralEmployeesNewImport
+      parentRoute: typeof OrganizationSettingsGeneralEmployeesListImport
     }
-    '/_private/settings/general/materials/new': {
-      id: '/_private/settings/general/materials/new'
+    '/_private/_organization/settings/general/materials/new': {
+      id: '/_private/_organization/settings/general/materials/new'
       path: '/new'
       fullPath: '/settings/general/materials/new'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsMaterialsNewImport
       parentRoute: typeof ModulesConstructionPagesSettingsMaterialsListImport
     }
-    '/_private/settings/general/suppliers/new': {
-      id: '/_private/settings/general/suppliers/new'
+    '/_private/_organization/settings/general/suppliers/new': {
+      id: '/_private/_organization/settings/general/suppliers/new'
       path: '/new'
       fullPath: '/settings/general/suppliers/new'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsSuppliersNewImport
       parentRoute: typeof ModulesConstructionPagesSettingsSuppliersListImport
     }
-    '/_private/settings/operation/objects/new': {
-      id: '/_private/settings/operation/objects/new'
+    '/_private/_organization/settings/operation/objects/new': {
+      id: '/_private/_organization/settings/operation/objects/new'
       path: '/new'
       fullPath: '/settings/operation/objects/new'
-      preLoaderRoute: typeof PrivateSettingsOperationObjectsNewImport
-      parentRoute: typeof PrivateSettingsOperationObjectsListImport
+      preLoaderRoute: typeof OrganizationSettingsOperationObjectsNewImport
+      parentRoute: typeof OrganizationSettingsOperationObjectsListImport
     }
-    '/_private/settings/operation/process/new': {
-      id: '/_private/settings/operation/process/new'
+    '/_private/_organization/settings/operation/process/new': {
+      id: '/_private/_organization/settings/operation/process/new'
       path: '/new'
       fullPath: '/settings/operation/process/new'
-      preLoaderRoute: typeof PrivateSettingsOperationProcessNewImport
-      parentRoute: typeof PrivateSettingsOperationProcessListImport
+      preLoaderRoute: typeof OrganizationSettingsOperationProcessNewImport
+      parentRoute: typeof OrganizationSettingsOperationProcessListImport
     }
-    '/_private/project/$projectId/contract/': {
-      id: '/_private/project/$projectId/contract/'
+    '/_private/_organization/project/$projectId/contract/': {
+      id: '/_private/_organization/project/$projectId/contract/'
       path: '/'
       fullPath: '/project/$projectId/contract/'
       preLoaderRoute: typeof ModulesConstructionPagesProjectContractIndexImport
       parentRoute: typeof ModulesConstructionPagesProjectContractImport
     }
-    '/_private/project/$projectId/issues/': {
-      id: '/_private/project/$projectId/issues/'
+    '/_private/_organization/project/$projectId/issues/': {
+      id: '/_private/_organization/project/$projectId/issues/'
       path: '/'
       fullPath: '/project/$projectId/issues/'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesIndexImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesIndexImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesImport
     }
-    '/_private/project/$projectId/issues/me/$issueId': {
-      id: '/_private/project/$projectId/issues/me/$issueId'
+    '/_private/_organization/project/$projectId/issues/me/$issueId': {
+      id: '/_private/_organization/project/$projectId/issues/me/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/me/$issueId'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeIssueIdImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesMeImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesMeIssueIdImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesMeImport
     }
-    '/_private/project/$projectId/issues/price/$issueId': {
-      id: '/_private/project/$projectId/issues/price/$issueId'
+    '/_private/_organization/project/$projectId/issues/price/$issueId': {
+      id: '/_private/_organization/project/$projectId/issues/price/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/price/$issueId'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceIssueIdImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesPriceImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesPriceIssueIdImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesPriceImport
     }
-    '/_private/project/$projectId/issues/request/$issueId': {
-      id: '/_private/project/$projectId/issues/request/$issueId'
+    '/_private/_organization/project/$projectId/issues/request/$issueId': {
+      id: '/_private/_organization/project/$projectId/issues/request/$issueId'
       path: '/$issueId'
       fullPath: '/project/$projectId/issues/request/$issueId'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestIssueIdImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesRequestImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesRequestIssueIdImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesRequestImport
     }
-    '/_private/settings/general/customers/$customerId/edit': {
-      id: '/_private/settings/general/customers/$customerId/edit'
+    '/_private/_organization/settings/general/customers/$customerId/edit': {
+      id: '/_private/_organization/settings/general/customers/$customerId/edit'
       path: '/$customerId/edit'
       fullPath: '/settings/general/customers/$customerId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralCustomersEditImport
-      parentRoute: typeof PrivateSettingsGeneralCustomersListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralCustomersEditImport
+      parentRoute: typeof OrganizationSettingsGeneralCustomersListImport
     }
-    '/_private/settings/general/departments/$departmentId/edit': {
-      id: '/_private/settings/general/departments/$departmentId/edit'
+    '/_private/_organization/settings/general/departments/$departmentId/edit': {
+      id: '/_private/_organization/settings/general/departments/$departmentId/edit'
       path: '/$departmentId/edit'
       fullPath: '/settings/general/departments/$departmentId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralDepartmentsEditImport
-      parentRoute: typeof PrivateSettingsGeneralDepartmentsListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralDepartmentsEditImport
+      parentRoute: typeof OrganizationSettingsGeneralDepartmentsListImport
     }
-    '/_private/settings/general/employees/$employeeId/edit': {
-      id: '/_private/settings/general/employees/$employeeId/edit'
+    '/_private/_organization/settings/general/employees/$employeeId/edit': {
+      id: '/_private/_organization/settings/general/employees/$employeeId/edit'
       path: '/$employeeId/edit'
       fullPath: '/settings/general/employees/$employeeId/edit'
-      preLoaderRoute: typeof PrivateSettingsGeneralEmployeesEditImport
-      parentRoute: typeof PrivateSettingsGeneralEmployeesListImport
+      preLoaderRoute: typeof OrganizationSettingsGeneralEmployeesEditImport
+      parentRoute: typeof OrganizationSettingsGeneralEmployeesListImport
     }
-    '/_private/settings/general/materials/$materialId/edit': {
-      id: '/_private/settings/general/materials/$materialId/edit'
+    '/_private/_organization/settings/general/materials/$materialId/edit': {
+      id: '/_private/_organization/settings/general/materials/$materialId/edit'
       path: '/$materialId/edit'
       fullPath: '/settings/general/materials/$materialId/edit'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsMaterialsEditImport
       parentRoute: typeof ModulesConstructionPagesSettingsMaterialsListImport
     }
-    '/_private/settings/general/suppliers/$supplierId/edit': {
-      id: '/_private/settings/general/suppliers/$supplierId/edit'
+    '/_private/_organization/settings/general/suppliers/$supplierId/edit': {
+      id: '/_private/_organization/settings/general/suppliers/$supplierId/edit'
       path: '/$supplierId/edit'
       fullPath: '/settings/general/suppliers/$supplierId/edit'
       preLoaderRoute: typeof ModulesConstructionPagesSettingsSuppliersEditImport
       parentRoute: typeof ModulesConstructionPagesSettingsSuppliersListImport
     }
-    '/_private/settings/operation/objects/$objectId/edit': {
-      id: '/_private/settings/operation/objects/$objectId/edit'
+    '/_private/_organization/settings/operation/objects/$objectId/edit': {
+      id: '/_private/_organization/settings/operation/objects/$objectId/edit'
       path: '/$objectId/edit'
       fullPath: '/settings/operation/objects/$objectId/edit'
-      preLoaderRoute: typeof PrivateSettingsOperationObjectsEditImport
-      parentRoute: typeof PrivateSettingsOperationObjectsListImport
+      preLoaderRoute: typeof OrganizationSettingsOperationObjectsEditImport
+      parentRoute: typeof OrganizationSettingsOperationObjectsListImport
     }
-    '/_private/settings/operation/process/$processId/edit': {
-      id: '/_private/settings/operation/process/$processId/edit'
+    '/_private/_organization/settings/operation/process/$processId/edit': {
+      id: '/_private/_organization/settings/operation/process/$processId/edit'
       path: '/$processId/edit'
       fullPath: '/settings/operation/process/$processId/edit'
-      preLoaderRoute: typeof PrivateSettingsOperationProcessEditImport
-      parentRoute: typeof PrivateSettingsOperationProcessListImport
+      preLoaderRoute: typeof OrganizationSettingsOperationProcessEditImport
+      parentRoute: typeof OrganizationSettingsOperationProcessListImport
     }
-    '/_private/project/$projectId/issues/me/': {
-      id: '/_private/project/$projectId/issues/me/'
+    '/_private/_organization/project/$projectId/issues/me/': {
+      id: '/_private/_organization/project/$projectId/issues/me/'
       path: '/'
       fullPath: '/project/$projectId/issues/me/'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesMeIndexImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesMeImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesMeIndexImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesMeImport
     }
-    '/_private/project/$projectId/issues/price/': {
-      id: '/_private/project/$projectId/issues/price/'
+    '/_private/_organization/project/$projectId/issues/price/': {
+      id: '/_private/_organization/project/$projectId/issues/price/'
       path: '/'
       fullPath: '/project/$projectId/issues/price/'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesPriceIndexImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesPriceImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesPriceIndexImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesPriceImport
     }
-    '/_private/project/$projectId/issues/request/': {
-      id: '/_private/project/$projectId/issues/request/'
+    '/_private/_organization/project/$projectId/issues/request/': {
+      id: '/_private/_organization/project/$projectId/issues/request/'
       path: '/'
       fullPath: '/project/$projectId/issues/request/'
-      preLoaderRoute: typeof PrivateProjectProjectIdIssuesRequestIndexImport
-      parentRoute: typeof PrivateProjectProjectIdIssuesRequestImport
+      preLoaderRoute: typeof OrganizationProjectProjectIdIssuesRequestIndexImport
+      parentRoute: typeof OrganizationProjectProjectIdIssuesRequestImport
     }
   }
 }
@@ -909,172 +938,174 @@ const ModulesConstructionPagesProjectContractRouteWithChildren =
     ModulesConstructionPagesProjectContractRouteChildren,
   )
 
-interface PrivateProjectProjectIdIssuesMeRouteChildren {
-  PrivateProjectProjectIdIssuesMeIssueIdRoute: typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
-  PrivateProjectProjectIdIssuesMeIndexRoute: typeof PrivateProjectProjectIdIssuesMeIndexRoute
+interface OrganizationProjectProjectIdIssuesMeRouteChildren {
+  OrganizationProjectProjectIdIssuesMeIssueIdRoute: typeof OrganizationProjectProjectIdIssuesMeIssueIdRoute
+  OrganizationProjectProjectIdIssuesMeIndexRoute: typeof OrganizationProjectProjectIdIssuesMeIndexRoute
 }
 
-const PrivateProjectProjectIdIssuesMeRouteChildren: PrivateProjectProjectIdIssuesMeRouteChildren =
+const OrganizationProjectProjectIdIssuesMeRouteChildren: OrganizationProjectProjectIdIssuesMeRouteChildren =
   {
-    PrivateProjectProjectIdIssuesMeIssueIdRoute:
-      PrivateProjectProjectIdIssuesMeIssueIdRoute,
-    PrivateProjectProjectIdIssuesMeIndexRoute:
-      PrivateProjectProjectIdIssuesMeIndexRoute,
+    OrganizationProjectProjectIdIssuesMeIssueIdRoute:
+      OrganizationProjectProjectIdIssuesMeIssueIdRoute,
+    OrganizationProjectProjectIdIssuesMeIndexRoute:
+      OrganizationProjectProjectIdIssuesMeIndexRoute,
   }
 
-const PrivateProjectProjectIdIssuesMeRouteWithChildren =
-  PrivateProjectProjectIdIssuesMeRoute._addFileChildren(
-    PrivateProjectProjectIdIssuesMeRouteChildren,
+const OrganizationProjectProjectIdIssuesMeRouteWithChildren =
+  OrganizationProjectProjectIdIssuesMeRoute._addFileChildren(
+    OrganizationProjectProjectIdIssuesMeRouteChildren,
   )
 
-interface PrivateProjectProjectIdIssuesPriceRouteChildren {
-  PrivateProjectProjectIdIssuesPriceIssueIdRoute: typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
-  PrivateProjectProjectIdIssuesPriceIndexRoute: typeof PrivateProjectProjectIdIssuesPriceIndexRoute
+interface OrganizationProjectProjectIdIssuesPriceRouteChildren {
+  OrganizationProjectProjectIdIssuesPriceIssueIdRoute: typeof OrganizationProjectProjectIdIssuesPriceIssueIdRoute
+  OrganizationProjectProjectIdIssuesPriceIndexRoute: typeof OrganizationProjectProjectIdIssuesPriceIndexRoute
 }
 
-const PrivateProjectProjectIdIssuesPriceRouteChildren: PrivateProjectProjectIdIssuesPriceRouteChildren =
+const OrganizationProjectProjectIdIssuesPriceRouteChildren: OrganizationProjectProjectIdIssuesPriceRouteChildren =
   {
-    PrivateProjectProjectIdIssuesPriceIssueIdRoute:
-      PrivateProjectProjectIdIssuesPriceIssueIdRoute,
-    PrivateProjectProjectIdIssuesPriceIndexRoute:
-      PrivateProjectProjectIdIssuesPriceIndexRoute,
+    OrganizationProjectProjectIdIssuesPriceIssueIdRoute:
+      OrganizationProjectProjectIdIssuesPriceIssueIdRoute,
+    OrganizationProjectProjectIdIssuesPriceIndexRoute:
+      OrganizationProjectProjectIdIssuesPriceIndexRoute,
   }
 
-const PrivateProjectProjectIdIssuesPriceRouteWithChildren =
-  PrivateProjectProjectIdIssuesPriceRoute._addFileChildren(
-    PrivateProjectProjectIdIssuesPriceRouteChildren,
+const OrganizationProjectProjectIdIssuesPriceRouteWithChildren =
+  OrganizationProjectProjectIdIssuesPriceRoute._addFileChildren(
+    OrganizationProjectProjectIdIssuesPriceRouteChildren,
   )
 
-interface PrivateProjectProjectIdIssuesRequestRouteChildren {
-  PrivateProjectProjectIdIssuesRequestIssueIdRoute: typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  PrivateProjectProjectIdIssuesRequestIndexRoute: typeof PrivateProjectProjectIdIssuesRequestIndexRoute
+interface OrganizationProjectProjectIdIssuesRequestRouteChildren {
+  OrganizationProjectProjectIdIssuesRequestIssueIdRoute: typeof OrganizationProjectProjectIdIssuesRequestIssueIdRoute
+  OrganizationProjectProjectIdIssuesRequestIndexRoute: typeof OrganizationProjectProjectIdIssuesRequestIndexRoute
 }
 
-const PrivateProjectProjectIdIssuesRequestRouteChildren: PrivateProjectProjectIdIssuesRequestRouteChildren =
+const OrganizationProjectProjectIdIssuesRequestRouteChildren: OrganizationProjectProjectIdIssuesRequestRouteChildren =
   {
-    PrivateProjectProjectIdIssuesRequestIssueIdRoute:
-      PrivateProjectProjectIdIssuesRequestIssueIdRoute,
-    PrivateProjectProjectIdIssuesRequestIndexRoute:
-      PrivateProjectProjectIdIssuesRequestIndexRoute,
+    OrganizationProjectProjectIdIssuesRequestIssueIdRoute:
+      OrganizationProjectProjectIdIssuesRequestIssueIdRoute,
+    OrganizationProjectProjectIdIssuesRequestIndexRoute:
+      OrganizationProjectProjectIdIssuesRequestIndexRoute,
   }
 
-const PrivateProjectProjectIdIssuesRequestRouteWithChildren =
-  PrivateProjectProjectIdIssuesRequestRoute._addFileChildren(
-    PrivateProjectProjectIdIssuesRequestRouteChildren,
+const OrganizationProjectProjectIdIssuesRequestRouteWithChildren =
+  OrganizationProjectProjectIdIssuesRequestRoute._addFileChildren(
+    OrganizationProjectProjectIdIssuesRequestRouteChildren,
   )
 
-interface PrivateProjectProjectIdIssuesRouteChildren {
-  PrivateProjectProjectIdIssuesMeRoute: typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
-  PrivateProjectProjectIdIssuesPriceRoute: typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
-  PrivateProjectProjectIdIssuesRequestRoute: typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
-  PrivateProjectProjectIdIssuesIndexRoute: typeof PrivateProjectProjectIdIssuesIndexRoute
+interface OrganizationProjectProjectIdIssuesRouteChildren {
+  OrganizationProjectProjectIdIssuesMeRoute: typeof OrganizationProjectProjectIdIssuesMeRouteWithChildren
+  OrganizationProjectProjectIdIssuesPriceRoute: typeof OrganizationProjectProjectIdIssuesPriceRouteWithChildren
+  OrganizationProjectProjectIdIssuesRequestRoute: typeof OrganizationProjectProjectIdIssuesRequestRouteWithChildren
+  OrganizationProjectProjectIdIssuesIndexRoute: typeof OrganizationProjectProjectIdIssuesIndexRoute
 }
 
-const PrivateProjectProjectIdIssuesRouteChildren: PrivateProjectProjectIdIssuesRouteChildren =
+const OrganizationProjectProjectIdIssuesRouteChildren: OrganizationProjectProjectIdIssuesRouteChildren =
   {
-    PrivateProjectProjectIdIssuesMeRoute:
-      PrivateProjectProjectIdIssuesMeRouteWithChildren,
-    PrivateProjectProjectIdIssuesPriceRoute:
-      PrivateProjectProjectIdIssuesPriceRouteWithChildren,
-    PrivateProjectProjectIdIssuesRequestRoute:
-      PrivateProjectProjectIdIssuesRequestRouteWithChildren,
-    PrivateProjectProjectIdIssuesIndexRoute:
-      PrivateProjectProjectIdIssuesIndexRoute,
+    OrganizationProjectProjectIdIssuesMeRoute:
+      OrganizationProjectProjectIdIssuesMeRouteWithChildren,
+    OrganizationProjectProjectIdIssuesPriceRoute:
+      OrganizationProjectProjectIdIssuesPriceRouteWithChildren,
+    OrganizationProjectProjectIdIssuesRequestRoute:
+      OrganizationProjectProjectIdIssuesRequestRouteWithChildren,
+    OrganizationProjectProjectIdIssuesIndexRoute:
+      OrganizationProjectProjectIdIssuesIndexRoute,
   }
 
-const PrivateProjectProjectIdIssuesRouteWithChildren =
-  PrivateProjectProjectIdIssuesRoute._addFileChildren(
-    PrivateProjectProjectIdIssuesRouteChildren,
+const OrganizationProjectProjectIdIssuesRouteWithChildren =
+  OrganizationProjectProjectIdIssuesRoute._addFileChildren(
+    OrganizationProjectProjectIdIssuesRouteChildren,
   )
 
-interface PrivateProjectProjectIdRouteChildren {
+interface OrganizationProjectProjectIdRouteChildren {
   ModulesConstructionPagesProjectContractRoute: typeof ModulesConstructionPagesProjectContractRouteWithChildren
-  PrivateProjectProjectIdIssuesRoute: typeof PrivateProjectProjectIdIssuesRouteWithChildren
-  PrivateProjectProjectIdSettingsRoute: typeof PrivateProjectProjectIdSettingsRoute
-  PrivateProjectProjectIdIndexRoute: typeof PrivateProjectProjectIdIndexRoute
+  OrganizationProjectProjectIdIssuesRoute: typeof OrganizationProjectProjectIdIssuesRouteWithChildren
+  OrganizationProjectProjectIdSettingsRoute: typeof OrganizationProjectProjectIdSettingsRoute
+  OrganizationProjectProjectIdIndexRoute: typeof OrganizationProjectProjectIdIndexRoute
 }
 
-const PrivateProjectProjectIdRouteChildren: PrivateProjectProjectIdRouteChildren =
+const OrganizationProjectProjectIdRouteChildren: OrganizationProjectProjectIdRouteChildren =
   {
     ModulesConstructionPagesProjectContractRoute:
       ModulesConstructionPagesProjectContractRouteWithChildren,
-    PrivateProjectProjectIdIssuesRoute:
-      PrivateProjectProjectIdIssuesRouteWithChildren,
-    PrivateProjectProjectIdSettingsRoute: PrivateProjectProjectIdSettingsRoute,
-    PrivateProjectProjectIdIndexRoute: PrivateProjectProjectIdIndexRoute,
+    OrganizationProjectProjectIdIssuesRoute:
+      OrganizationProjectProjectIdIssuesRouteWithChildren,
+    OrganizationProjectProjectIdSettingsRoute:
+      OrganizationProjectProjectIdSettingsRoute,
+    OrganizationProjectProjectIdIndexRoute:
+      OrganizationProjectProjectIdIndexRoute,
   }
 
-const PrivateProjectProjectIdRouteWithChildren =
-  PrivateProjectProjectIdRoute._addFileChildren(
-    PrivateProjectProjectIdRouteChildren,
+const OrganizationProjectProjectIdRouteWithChildren =
+  OrganizationProjectProjectIdRoute._addFileChildren(
+    OrganizationProjectProjectIdRouteChildren,
   )
 
-interface PrivateProjectRouteChildren {
-  PrivateProjectProjectIdRoute: typeof PrivateProjectProjectIdRouteWithChildren
-  PrivateProjectIndexRoute: typeof PrivateProjectIndexRoute
+interface OrganizationProjectRouteChildren {
+  OrganizationProjectProjectIdRoute: typeof OrganizationProjectProjectIdRouteWithChildren
+  OrganizationProjectIndexRoute: typeof OrganizationProjectIndexRoute
 }
 
-const PrivateProjectRouteChildren: PrivateProjectRouteChildren = {
-  PrivateProjectProjectIdRoute: PrivateProjectProjectIdRouteWithChildren,
-  PrivateProjectIndexRoute: PrivateProjectIndexRoute,
+const OrganizationProjectRouteChildren: OrganizationProjectRouteChildren = {
+  OrganizationProjectProjectIdRoute:
+    OrganizationProjectProjectIdRouteWithChildren,
+  OrganizationProjectIndexRoute: OrganizationProjectIndexRoute,
 }
 
-const PrivateProjectRouteWithChildren = PrivateProjectRoute._addFileChildren(
-  PrivateProjectRouteChildren,
-)
+const OrganizationProjectRouteWithChildren =
+  OrganizationProjectRoute._addFileChildren(OrganizationProjectRouteChildren)
 
-interface PrivateSettingsGeneralCustomersListRouteChildren {
-  PrivateSettingsGeneralCustomersNewRoute: typeof PrivateSettingsGeneralCustomersNewRoute
-  PrivateSettingsGeneralCustomersEditRoute: typeof PrivateSettingsGeneralCustomersEditRoute
+interface OrganizationSettingsGeneralCustomersListRouteChildren {
+  OrganizationSettingsGeneralCustomersNewRoute: typeof OrganizationSettingsGeneralCustomersNewRoute
+  OrganizationSettingsGeneralCustomersEditRoute: typeof OrganizationSettingsGeneralCustomersEditRoute
 }
 
-const PrivateSettingsGeneralCustomersListRouteChildren: PrivateSettingsGeneralCustomersListRouteChildren =
+const OrganizationSettingsGeneralCustomersListRouteChildren: OrganizationSettingsGeneralCustomersListRouteChildren =
   {
-    PrivateSettingsGeneralCustomersNewRoute:
-      PrivateSettingsGeneralCustomersNewRoute,
-    PrivateSettingsGeneralCustomersEditRoute:
-      PrivateSettingsGeneralCustomersEditRoute,
+    OrganizationSettingsGeneralCustomersNewRoute:
+      OrganizationSettingsGeneralCustomersNewRoute,
+    OrganizationSettingsGeneralCustomersEditRoute:
+      OrganizationSettingsGeneralCustomersEditRoute,
   }
 
-const PrivateSettingsGeneralCustomersListRouteWithChildren =
-  PrivateSettingsGeneralCustomersListRoute._addFileChildren(
-    PrivateSettingsGeneralCustomersListRouteChildren,
+const OrganizationSettingsGeneralCustomersListRouteWithChildren =
+  OrganizationSettingsGeneralCustomersListRoute._addFileChildren(
+    OrganizationSettingsGeneralCustomersListRouteChildren,
   )
 
-interface PrivateSettingsGeneralDepartmentsListRouteChildren {
-  PrivateSettingsGeneralDepartmentsNewRoute: typeof PrivateSettingsGeneralDepartmentsNewRoute
-  PrivateSettingsGeneralDepartmentsEditRoute: typeof PrivateSettingsGeneralDepartmentsEditRoute
+interface OrganizationSettingsGeneralDepartmentsListRouteChildren {
+  OrganizationSettingsGeneralDepartmentsNewRoute: typeof OrganizationSettingsGeneralDepartmentsNewRoute
+  OrganizationSettingsGeneralDepartmentsEditRoute: typeof OrganizationSettingsGeneralDepartmentsEditRoute
 }
 
-const PrivateSettingsGeneralDepartmentsListRouteChildren: PrivateSettingsGeneralDepartmentsListRouteChildren =
+const OrganizationSettingsGeneralDepartmentsListRouteChildren: OrganizationSettingsGeneralDepartmentsListRouteChildren =
   {
-    PrivateSettingsGeneralDepartmentsNewRoute:
-      PrivateSettingsGeneralDepartmentsNewRoute,
-    PrivateSettingsGeneralDepartmentsEditRoute:
-      PrivateSettingsGeneralDepartmentsEditRoute,
+    OrganizationSettingsGeneralDepartmentsNewRoute:
+      OrganizationSettingsGeneralDepartmentsNewRoute,
+    OrganizationSettingsGeneralDepartmentsEditRoute:
+      OrganizationSettingsGeneralDepartmentsEditRoute,
   }
 
-const PrivateSettingsGeneralDepartmentsListRouteWithChildren =
-  PrivateSettingsGeneralDepartmentsListRoute._addFileChildren(
-    PrivateSettingsGeneralDepartmentsListRouteChildren,
+const OrganizationSettingsGeneralDepartmentsListRouteWithChildren =
+  OrganizationSettingsGeneralDepartmentsListRoute._addFileChildren(
+    OrganizationSettingsGeneralDepartmentsListRouteChildren,
   )
 
-interface PrivateSettingsGeneralEmployeesListRouteChildren {
-  PrivateSettingsGeneralEmployeesNewRoute: typeof PrivateSettingsGeneralEmployeesNewRoute
-  PrivateSettingsGeneralEmployeesEditRoute: typeof PrivateSettingsGeneralEmployeesEditRoute
+interface OrganizationSettingsGeneralEmployeesListRouteChildren {
+  OrganizationSettingsGeneralEmployeesNewRoute: typeof OrganizationSettingsGeneralEmployeesNewRoute
+  OrganizationSettingsGeneralEmployeesEditRoute: typeof OrganizationSettingsGeneralEmployeesEditRoute
 }
 
-const PrivateSettingsGeneralEmployeesListRouteChildren: PrivateSettingsGeneralEmployeesListRouteChildren =
+const OrganizationSettingsGeneralEmployeesListRouteChildren: OrganizationSettingsGeneralEmployeesListRouteChildren =
   {
-    PrivateSettingsGeneralEmployeesNewRoute:
-      PrivateSettingsGeneralEmployeesNewRoute,
-    PrivateSettingsGeneralEmployeesEditRoute:
-      PrivateSettingsGeneralEmployeesEditRoute,
+    OrganizationSettingsGeneralEmployeesNewRoute:
+      OrganizationSettingsGeneralEmployeesNewRoute,
+    OrganizationSettingsGeneralEmployeesEditRoute:
+      OrganizationSettingsGeneralEmployeesEditRoute,
   }
 
-const PrivateSettingsGeneralEmployeesListRouteWithChildren =
-  PrivateSettingsGeneralEmployeesListRoute._addFileChildren(
-    PrivateSettingsGeneralEmployeesListRouteChildren,
+const OrganizationSettingsGeneralEmployeesListRouteWithChildren =
+  OrganizationSettingsGeneralEmployeesListRoute._addFileChildren(
+    OrganizationSettingsGeneralEmployeesListRouteChildren,
   )
 
 interface ModulesConstructionPagesSettingsMaterialsListRouteChildren {
@@ -1113,123 +1144,148 @@ const ModulesConstructionPagesSettingsSuppliersListRouteWithChildren =
     ModulesConstructionPagesSettingsSuppliersListRouteChildren,
   )
 
-interface PrivateSettingsGeneralRouteChildren {
-  PrivateSettingsGeneralCustomersListRoute: typeof PrivateSettingsGeneralCustomersListRouteWithChildren
-  PrivateSettingsGeneralDepartmentsListRoute: typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
-  PrivateSettingsGeneralEmployeesListRoute: typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+interface OrganizationSettingsGeneralRouteChildren {
+  OrganizationSettingsGeneralCustomersListRoute: typeof OrganizationSettingsGeneralCustomersListRouteWithChildren
+  OrganizationSettingsGeneralDepartmentsListRoute: typeof OrganizationSettingsGeneralDepartmentsListRouteWithChildren
+  OrganizationSettingsGeneralEmployeesListRoute: typeof OrganizationSettingsGeneralEmployeesListRouteWithChildren
   ModulesConstructionPagesSettingsMaterialsListRoute: typeof ModulesConstructionPagesSettingsMaterialsListRouteWithChildren
   ModulesConstructionPagesSettingsSuppliersListRoute: typeof ModulesConstructionPagesSettingsSuppliersListRouteWithChildren
-  PrivateSettingsGeneralIndexRoute: typeof PrivateSettingsGeneralIndexRoute
+  OrganizationSettingsGeneralIndexRoute: typeof OrganizationSettingsGeneralIndexRoute
 }
 
-const PrivateSettingsGeneralRouteChildren: PrivateSettingsGeneralRouteChildren =
+const OrganizationSettingsGeneralRouteChildren: OrganizationSettingsGeneralRouteChildren =
   {
-    PrivateSettingsGeneralCustomersListRoute:
-      PrivateSettingsGeneralCustomersListRouteWithChildren,
-    PrivateSettingsGeneralDepartmentsListRoute:
-      PrivateSettingsGeneralDepartmentsListRouteWithChildren,
-    PrivateSettingsGeneralEmployeesListRoute:
-      PrivateSettingsGeneralEmployeesListRouteWithChildren,
+    OrganizationSettingsGeneralCustomersListRoute:
+      OrganizationSettingsGeneralCustomersListRouteWithChildren,
+    OrganizationSettingsGeneralDepartmentsListRoute:
+      OrganizationSettingsGeneralDepartmentsListRouteWithChildren,
+    OrganizationSettingsGeneralEmployeesListRoute:
+      OrganizationSettingsGeneralEmployeesListRouteWithChildren,
     ModulesConstructionPagesSettingsMaterialsListRoute:
       ModulesConstructionPagesSettingsMaterialsListRouteWithChildren,
     ModulesConstructionPagesSettingsSuppliersListRoute:
       ModulesConstructionPagesSettingsSuppliersListRouteWithChildren,
-    PrivateSettingsGeneralIndexRoute: PrivateSettingsGeneralIndexRoute,
+    OrganizationSettingsGeneralIndexRoute:
+      OrganizationSettingsGeneralIndexRoute,
   }
 
-const PrivateSettingsGeneralRouteWithChildren =
-  PrivateSettingsGeneralRoute._addFileChildren(
-    PrivateSettingsGeneralRouteChildren,
+const OrganizationSettingsGeneralRouteWithChildren =
+  OrganizationSettingsGeneralRoute._addFileChildren(
+    OrganizationSettingsGeneralRouteChildren,
   )
 
-interface PrivateSettingsOperationObjectsListRouteChildren {
-  PrivateSettingsOperationObjectsNewRoute: typeof PrivateSettingsOperationObjectsNewRoute
-  PrivateSettingsOperationObjectsEditRoute: typeof PrivateSettingsOperationObjectsEditRoute
+interface OrganizationSettingsOperationObjectsListRouteChildren {
+  OrganizationSettingsOperationObjectsNewRoute: typeof OrganizationSettingsOperationObjectsNewRoute
+  OrganizationSettingsOperationObjectsEditRoute: typeof OrganizationSettingsOperationObjectsEditRoute
 }
 
-const PrivateSettingsOperationObjectsListRouteChildren: PrivateSettingsOperationObjectsListRouteChildren =
+const OrganizationSettingsOperationObjectsListRouteChildren: OrganizationSettingsOperationObjectsListRouteChildren =
   {
-    PrivateSettingsOperationObjectsNewRoute:
-      PrivateSettingsOperationObjectsNewRoute,
-    PrivateSettingsOperationObjectsEditRoute:
-      PrivateSettingsOperationObjectsEditRoute,
+    OrganizationSettingsOperationObjectsNewRoute:
+      OrganizationSettingsOperationObjectsNewRoute,
+    OrganizationSettingsOperationObjectsEditRoute:
+      OrganizationSettingsOperationObjectsEditRoute,
   }
 
-const PrivateSettingsOperationObjectsListRouteWithChildren =
-  PrivateSettingsOperationObjectsListRoute._addFileChildren(
-    PrivateSettingsOperationObjectsListRouteChildren,
+const OrganizationSettingsOperationObjectsListRouteWithChildren =
+  OrganizationSettingsOperationObjectsListRoute._addFileChildren(
+    OrganizationSettingsOperationObjectsListRouteChildren,
   )
 
-interface PrivateSettingsOperationProcessListRouteChildren {
-  PrivateSettingsOperationProcessNewRoute: typeof PrivateSettingsOperationProcessNewRoute
-  PrivateSettingsOperationProcessEditRoute: typeof PrivateSettingsOperationProcessEditRoute
+interface OrganizationSettingsOperationProcessListRouteChildren {
+  OrganizationSettingsOperationProcessNewRoute: typeof OrganizationSettingsOperationProcessNewRoute
+  OrganizationSettingsOperationProcessEditRoute: typeof OrganizationSettingsOperationProcessEditRoute
 }
 
-const PrivateSettingsOperationProcessListRouteChildren: PrivateSettingsOperationProcessListRouteChildren =
+const OrganizationSettingsOperationProcessListRouteChildren: OrganizationSettingsOperationProcessListRouteChildren =
   {
-    PrivateSettingsOperationProcessNewRoute:
-      PrivateSettingsOperationProcessNewRoute,
-    PrivateSettingsOperationProcessEditRoute:
-      PrivateSettingsOperationProcessEditRoute,
+    OrganizationSettingsOperationProcessNewRoute:
+      OrganizationSettingsOperationProcessNewRoute,
+    OrganizationSettingsOperationProcessEditRoute:
+      OrganizationSettingsOperationProcessEditRoute,
   }
 
-const PrivateSettingsOperationProcessListRouteWithChildren =
-  PrivateSettingsOperationProcessListRoute._addFileChildren(
-    PrivateSettingsOperationProcessListRouteChildren,
+const OrganizationSettingsOperationProcessListRouteWithChildren =
+  OrganizationSettingsOperationProcessListRoute._addFileChildren(
+    OrganizationSettingsOperationProcessListRouteChildren,
   )
 
-interface PrivateSettingsOperationRouteChildren {
-  PrivateSettingsOperationObjectsListRoute: typeof PrivateSettingsOperationObjectsListRouteWithChildren
-  PrivateSettingsOperationProcessListRoute: typeof PrivateSettingsOperationProcessListRouteWithChildren
-  PrivateSettingsOperationIndexRoute: typeof PrivateSettingsOperationIndexRoute
+interface OrganizationSettingsOperationRouteChildren {
+  OrganizationSettingsOperationObjectsListRoute: typeof OrganizationSettingsOperationObjectsListRouteWithChildren
+  OrganizationSettingsOperationProcessListRoute: typeof OrganizationSettingsOperationProcessListRouteWithChildren
+  OrganizationSettingsOperationIndexRoute: typeof OrganizationSettingsOperationIndexRoute
 }
 
-const PrivateSettingsOperationRouteChildren: PrivateSettingsOperationRouteChildren =
+const OrganizationSettingsOperationRouteChildren: OrganizationSettingsOperationRouteChildren =
   {
-    PrivateSettingsOperationObjectsListRoute:
-      PrivateSettingsOperationObjectsListRouteWithChildren,
-    PrivateSettingsOperationProcessListRoute:
-      PrivateSettingsOperationProcessListRouteWithChildren,
-    PrivateSettingsOperationIndexRoute: PrivateSettingsOperationIndexRoute,
+    OrganizationSettingsOperationObjectsListRoute:
+      OrganizationSettingsOperationObjectsListRouteWithChildren,
+    OrganizationSettingsOperationProcessListRoute:
+      OrganizationSettingsOperationProcessListRouteWithChildren,
+    OrganizationSettingsOperationIndexRoute:
+      OrganizationSettingsOperationIndexRoute,
   }
 
-const PrivateSettingsOperationRouteWithChildren =
-  PrivateSettingsOperationRoute._addFileChildren(
-    PrivateSettingsOperationRouteChildren,
+const OrganizationSettingsOperationRouteWithChildren =
+  OrganizationSettingsOperationRoute._addFileChildren(
+    OrganizationSettingsOperationRouteChildren,
   )
 
-interface PrivateSettingsRouteChildren {
-  PrivateSettingsGeneralRoute: typeof PrivateSettingsGeneralRouteWithChildren
-  PrivateSettingsOperationRoute: typeof PrivateSettingsOperationRouteWithChildren
-  PrivateSettingsIndexRoute: typeof PrivateSettingsIndexRoute
+interface OrganizationSettingsRouteChildren {
+  OrganizationSettingsGeneralRoute: typeof OrganizationSettingsGeneralRouteWithChildren
+  OrganizationSettingsOperationRoute: typeof OrganizationSettingsOperationRouteWithChildren
+  OrganizationSettingsIndexRoute: typeof OrganizationSettingsIndexRoute
 }
 
-const PrivateSettingsRouteChildren: PrivateSettingsRouteChildren = {
-  PrivateSettingsGeneralRoute: PrivateSettingsGeneralRouteWithChildren,
-  PrivateSettingsOperationRoute: PrivateSettingsOperationRouteWithChildren,
-  PrivateSettingsIndexRoute: PrivateSettingsIndexRoute,
+const OrganizationSettingsRouteChildren: OrganizationSettingsRouteChildren = {
+  OrganizationSettingsGeneralRoute:
+    OrganizationSettingsGeneralRouteWithChildren,
+  OrganizationSettingsOperationRoute:
+    OrganizationSettingsOperationRouteWithChildren,
+  OrganizationSettingsIndexRoute: OrganizationSettingsIndexRoute,
 }
 
-const PrivateSettingsRouteWithChildren = PrivateSettingsRoute._addFileChildren(
-  PrivateSettingsRouteChildren,
+const OrganizationSettingsRouteWithChildren =
+  OrganizationSettingsRoute._addFileChildren(OrganizationSettingsRouteChildren)
+
+interface OrganizationRouteChildren {
+  OrganizationHomeRoute: typeof OrganizationHomeRoute
+  OrganizationMessengerRoute: typeof OrganizationMessengerRoute
+  OrganizationProfileRoute: typeof OrganizationProfileRoute
+  OrganizationProjectRoute: typeof OrganizationProjectRouteWithChildren
+  OrganizationSettingsRoute: typeof OrganizationSettingsRouteWithChildren
+}
+
+const OrganizationRouteChildren: OrganizationRouteChildren = {
+  OrganizationHomeRoute: OrganizationHomeRoute,
+  OrganizationMessengerRoute: OrganizationMessengerRoute,
+  OrganizationProfileRoute: OrganizationProfileRoute,
+  OrganizationProjectRoute: OrganizationProjectRouteWithChildren,
+  OrganizationSettingsRoute: OrganizationSettingsRouteWithChildren,
+}
+
+const OrganizationRouteWithChildren = OrganizationRoute._addFileChildren(
+  OrganizationRouteChildren,
 )
 
+interface TopRouteChildren {
+  TopTopRoute: typeof TopTopRoute
+}
+
+const TopRouteChildren: TopRouteChildren = {
+  TopTopRoute: TopTopRoute,
+}
+
+const TopRouteWithChildren = TopRoute._addFileChildren(TopRouteChildren)
+
 interface PrivateRouteChildren {
-  PrivateHomeRoute: typeof PrivateHomeRoute
-  PrivateMessengerRoute: typeof PrivateMessengerRoute
-  PrivateProfileRoute: typeof PrivateProfileRoute
-  PrivateProjectRoute: typeof PrivateProjectRouteWithChildren
-  PrivateSettingsRoute: typeof PrivateSettingsRouteWithChildren
-  PrivateTopRoute: typeof PrivateTopRoute
+  OrganizationRoute: typeof OrganizationRouteWithChildren
+  TopRoute: typeof TopRouteWithChildren
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
-  PrivateHomeRoute: PrivateHomeRoute,
-  PrivateMessengerRoute: PrivateMessengerRoute,
-  PrivateProfileRoute: PrivateProfileRoute,
-  PrivateProjectRoute: PrivateProjectRouteWithChildren,
-  PrivateSettingsRoute: PrivateSettingsRouteWithChildren,
-  PrivateTopRoute: PrivateTopRoute,
+  OrganizationRoute: OrganizationRouteWithChildren,
+  TopRoute: TopRouteWithChildren,
 }
 
 const PrivateRouteWithChildren =
@@ -1237,116 +1293,116 @@ const PrivateRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof PrivateRouteWithChildren
+  '': typeof TopRouteWithChildren
   '/email-input': typeof AuthEmailInputRoute
   '/email-login': typeof AuthEmailLoginRoute
   '/email-verify': typeof AuthEmailVerifyRoute
   '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
   '/user-information': typeof AuthUserInformationRoute
-  '/home': typeof PrivateHomeRoute
-  '/messenger': typeof PrivateMessengerRoute
-  '/profile': typeof PrivateProfileRoute
-  '/project': typeof PrivateProjectRouteWithChildren
-  '/settings': typeof PrivateSettingsRouteWithChildren
-  '/top': typeof PrivateTopRoute
-  '/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
-  '/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
-  '/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
-  '/project/': typeof PrivateProjectIndexRoute
-  '/settings/': typeof PrivateSettingsIndexRoute
+  '/home': typeof OrganizationHomeRoute
+  '/messenger': typeof OrganizationMessengerRoute
+  '/profile': typeof OrganizationProfileRoute
+  '/project': typeof OrganizationProjectRouteWithChildren
+  '/settings': typeof OrganizationSettingsRouteWithChildren
+  '/top': typeof TopTopRoute
+  '/project/$projectId': typeof OrganizationProjectProjectIdRouteWithChildren
+  '/settings/general': typeof OrganizationSettingsGeneralRouteWithChildren
+  '/settings/operation': typeof OrganizationSettingsOperationRouteWithChildren
+  '/project/': typeof OrganizationProjectIndexRoute
+  '/settings/': typeof OrganizationSettingsIndexRoute
   '/project/$projectId/contract': typeof ModulesConstructionPagesProjectContractRouteWithChildren
-  '/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
-  '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
-  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
-  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  '/project/$projectId/issues': typeof OrganizationProjectProjectIdIssuesRouteWithChildren
+  '/project/$projectId/settings': typeof OrganizationProjectProjectIdSettingsRoute
+  '/settings/general/customers': typeof OrganizationSettingsGeneralCustomersListRouteWithChildren
+  '/settings/general/departments': typeof OrganizationSettingsGeneralDepartmentsListRouteWithChildren
+  '/settings/general/employees': typeof OrganizationSettingsGeneralEmployeesListRouteWithChildren
   '/settings/general/materials': typeof ModulesConstructionPagesSettingsMaterialsListRouteWithChildren
   '/settings/general/suppliers': typeof ModulesConstructionPagesSettingsSuppliersListRouteWithChildren
-  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
-  '/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
-  '/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
-  '/settings/general/': typeof PrivateSettingsGeneralIndexRoute
-  '/settings/operation/': typeof PrivateSettingsOperationIndexRoute
+  '/settings/operation/objects': typeof OrganizationSettingsOperationObjectsListRouteWithChildren
+  '/settings/operation/process': typeof OrganizationSettingsOperationProcessListRouteWithChildren
+  '/project/$projectId/': typeof OrganizationProjectProjectIdIndexRoute
+  '/settings/general/': typeof OrganizationSettingsGeneralIndexRoute
+  '/settings/operation/': typeof OrganizationSettingsOperationIndexRoute
   '/project/$projectId/contract/input': typeof ModulesConstructionPagesProjectContractInputRoute
   '/project/$projectId/contract/monitoring': typeof ModulesConstructionPagesProjectContractMonitoringRoute
-  '/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
-  '/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
-  '/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
-  '/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
-  '/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
-  '/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
+  '/project/$projectId/issues/me': typeof OrganizationProjectProjectIdIssuesMeRouteWithChildren
+  '/project/$projectId/issues/price': typeof OrganizationProjectProjectIdIssuesPriceRouteWithChildren
+  '/project/$projectId/issues/request': typeof OrganizationProjectProjectIdIssuesRequestRouteWithChildren
+  '/settings/general/customers/new': typeof OrganizationSettingsGeneralCustomersNewRoute
+  '/settings/general/departments/new': typeof OrganizationSettingsGeneralDepartmentsNewRoute
+  '/settings/general/employees/new': typeof OrganizationSettingsGeneralEmployeesNewRoute
   '/settings/general/materials/new': typeof ModulesConstructionPagesSettingsMaterialsNewRoute
   '/settings/general/suppliers/new': typeof ModulesConstructionPagesSettingsSuppliersNewRoute
-  '/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
-  '/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
+  '/settings/operation/objects/new': typeof OrganizationSettingsOperationObjectsNewRoute
+  '/settings/operation/process/new': typeof OrganizationSettingsOperationProcessNewRoute
   '/project/$projectId/contract/': typeof ModulesConstructionPagesProjectContractIndexRoute
-  '/project/$projectId/issues/': typeof PrivateProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
-  '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
+  '/project/$projectId/issues/': typeof OrganizationProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/me/$issueId': typeof OrganizationProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/price/$issueId': typeof OrganizationProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof OrganizationProjectProjectIdIssuesRequestIssueIdRoute
+  '/settings/general/customers/$customerId/edit': typeof OrganizationSettingsGeneralCustomersEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof OrganizationSettingsGeneralDepartmentsEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof OrganizationSettingsGeneralEmployeesEditRoute
   '/settings/general/materials/$materialId/edit': typeof ModulesConstructionPagesSettingsMaterialsEditRoute
   '/settings/general/suppliers/$supplierId/edit': typeof ModulesConstructionPagesSettingsSuppliersEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
-  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
-  '/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
-  '/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
-  '/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
+  '/settings/operation/objects/$objectId/edit': typeof OrganizationSettingsOperationObjectsEditRoute
+  '/settings/operation/process/$processId/edit': typeof OrganizationSettingsOperationProcessEditRoute
+  '/project/$projectId/issues/me/': typeof OrganizationProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price/': typeof OrganizationProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request/': typeof OrganizationProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof PrivateRouteWithChildren
+  '': typeof TopRouteWithChildren
   '/email-input': typeof AuthEmailInputRoute
   '/email-login': typeof AuthEmailLoginRoute
   '/email-verify': typeof AuthEmailVerifyRoute
   '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
   '/user-information': typeof AuthUserInformationRoute
-  '/home': typeof PrivateHomeRoute
-  '/messenger': typeof PrivateMessengerRoute
-  '/profile': typeof PrivateProfileRoute
-  '/top': typeof PrivateTopRoute
-  '/project': typeof PrivateProjectIndexRoute
-  '/settings': typeof PrivateSettingsIndexRoute
-  '/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
-  '/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
-  '/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
+  '/home': typeof OrganizationHomeRoute
+  '/messenger': typeof OrganizationMessengerRoute
+  '/profile': typeof OrganizationProfileRoute
+  '/top': typeof TopTopRoute
+  '/project': typeof OrganizationProjectIndexRoute
+  '/settings': typeof OrganizationSettingsIndexRoute
+  '/project/$projectId/settings': typeof OrganizationProjectProjectIdSettingsRoute
+  '/settings/general/customers': typeof OrganizationSettingsGeneralCustomersListRouteWithChildren
+  '/settings/general/departments': typeof OrganizationSettingsGeneralDepartmentsListRouteWithChildren
+  '/settings/general/employees': typeof OrganizationSettingsGeneralEmployeesListRouteWithChildren
   '/settings/general/materials': typeof ModulesConstructionPagesSettingsMaterialsListRouteWithChildren
   '/settings/general/suppliers': typeof ModulesConstructionPagesSettingsSuppliersListRouteWithChildren
-  '/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
-  '/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
-  '/project/$projectId': typeof PrivateProjectProjectIdIndexRoute
-  '/settings/general': typeof PrivateSettingsGeneralIndexRoute
-  '/settings/operation': typeof PrivateSettingsOperationIndexRoute
+  '/settings/operation/objects': typeof OrganizationSettingsOperationObjectsListRouteWithChildren
+  '/settings/operation/process': typeof OrganizationSettingsOperationProcessListRouteWithChildren
+  '/project/$projectId': typeof OrganizationProjectProjectIdIndexRoute
+  '/settings/general': typeof OrganizationSettingsGeneralIndexRoute
+  '/settings/operation': typeof OrganizationSettingsOperationIndexRoute
   '/project/$projectId/contract/input': typeof ModulesConstructionPagesProjectContractInputRoute
   '/project/$projectId/contract/monitoring': typeof ModulesConstructionPagesProjectContractMonitoringRoute
-  '/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
-  '/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
-  '/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
+  '/settings/general/customers/new': typeof OrganizationSettingsGeneralCustomersNewRoute
+  '/settings/general/departments/new': typeof OrganizationSettingsGeneralDepartmentsNewRoute
+  '/settings/general/employees/new': typeof OrganizationSettingsGeneralEmployeesNewRoute
   '/settings/general/materials/new': typeof ModulesConstructionPagesSettingsMaterialsNewRoute
   '/settings/general/suppliers/new': typeof ModulesConstructionPagesSettingsSuppliersNewRoute
-  '/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
-  '/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
+  '/settings/operation/objects/new': typeof OrganizationSettingsOperationObjectsNewRoute
+  '/settings/operation/process/new': typeof OrganizationSettingsOperationProcessNewRoute
   '/project/$projectId/contract': typeof ModulesConstructionPagesProjectContractIndexRoute
-  '/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesIndexRoute
-  '/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
-  '/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
-  '/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
-  '/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
-  '/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
+  '/project/$projectId/issues': typeof OrganizationProjectProjectIdIssuesIndexRoute
+  '/project/$projectId/issues/me/$issueId': typeof OrganizationProjectProjectIdIssuesMeIssueIdRoute
+  '/project/$projectId/issues/price/$issueId': typeof OrganizationProjectProjectIdIssuesPriceIssueIdRoute
+  '/project/$projectId/issues/request/$issueId': typeof OrganizationProjectProjectIdIssuesRequestIssueIdRoute
+  '/settings/general/customers/$customerId/edit': typeof OrganizationSettingsGeneralCustomersEditRoute
+  '/settings/general/departments/$departmentId/edit': typeof OrganizationSettingsGeneralDepartmentsEditRoute
+  '/settings/general/employees/$employeeId/edit': typeof OrganizationSettingsGeneralEmployeesEditRoute
   '/settings/general/materials/$materialId/edit': typeof ModulesConstructionPagesSettingsMaterialsEditRoute
   '/settings/general/suppliers/$supplierId/edit': typeof ModulesConstructionPagesSettingsSuppliersEditRoute
-  '/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
-  '/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
-  '/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeIndexRoute
-  '/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
-  '/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
+  '/settings/operation/objects/$objectId/edit': typeof OrganizationSettingsOperationObjectsEditRoute
+  '/settings/operation/process/$processId/edit': typeof OrganizationSettingsOperationProcessEditRoute
+  '/project/$projectId/issues/me': typeof OrganizationProjectProjectIdIssuesMeIndexRoute
+  '/project/$projectId/issues/price': typeof OrganizationProjectProjectIdIssuesPriceIndexRoute
+  '/project/$projectId/issues/request': typeof OrganizationProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRoutesById {
@@ -1359,57 +1415,59 @@ export interface FileRoutesById {
   '/password-input': typeof AuthPasswordInputRoute
   '/signin': typeof AuthSigninRoute
   '/user-information': typeof AuthUserInformationRoute
-  '/_private/home': typeof PrivateHomeRoute
-  '/_private/messenger': typeof PrivateMessengerRoute
-  '/_private/profile': typeof PrivateProfileRoute
-  '/_private/project': typeof PrivateProjectRouteWithChildren
-  '/_private/settings': typeof PrivateSettingsRouteWithChildren
-  '/_private/top': typeof PrivateTopRoute
-  '/_private/project/$projectId': typeof PrivateProjectProjectIdRouteWithChildren
-  '/_private/settings/general': typeof PrivateSettingsGeneralRouteWithChildren
-  '/_private/settings/operation': typeof PrivateSettingsOperationRouteWithChildren
-  '/_private/project/': typeof PrivateProjectIndexRoute
-  '/_private/settings/': typeof PrivateSettingsIndexRoute
-  '/_private/project/$projectId/contract': typeof ModulesConstructionPagesProjectContractRouteWithChildren
-  '/_private/project/$projectId/issues': typeof PrivateProjectProjectIdIssuesRouteWithChildren
-  '/_private/project/$projectId/settings': typeof PrivateProjectProjectIdSettingsRoute
-  '/_private/settings/general/customers': typeof PrivateSettingsGeneralCustomersListRouteWithChildren
-  '/_private/settings/general/departments': typeof PrivateSettingsGeneralDepartmentsListRouteWithChildren
-  '/_private/settings/general/employees': typeof PrivateSettingsGeneralEmployeesListRouteWithChildren
-  '/_private/settings/general/materials': typeof ModulesConstructionPagesSettingsMaterialsListRouteWithChildren
-  '/_private/settings/general/suppliers': typeof ModulesConstructionPagesSettingsSuppliersListRouteWithChildren
-  '/_private/settings/operation/objects': typeof PrivateSettingsOperationObjectsListRouteWithChildren
-  '/_private/settings/operation/process': typeof PrivateSettingsOperationProcessListRouteWithChildren
-  '/_private/project/$projectId/': typeof PrivateProjectProjectIdIndexRoute
-  '/_private/settings/general/': typeof PrivateSettingsGeneralIndexRoute
-  '/_private/settings/operation/': typeof PrivateSettingsOperationIndexRoute
-  '/_private/project/$projectId/contract/input': typeof ModulesConstructionPagesProjectContractInputRoute
-  '/_private/project/$projectId/contract/monitoring': typeof ModulesConstructionPagesProjectContractMonitoringRoute
-  '/_private/project/$projectId/issues/me': typeof PrivateProjectProjectIdIssuesMeRouteWithChildren
-  '/_private/project/$projectId/issues/price': typeof PrivateProjectProjectIdIssuesPriceRouteWithChildren
-  '/_private/project/$projectId/issues/request': typeof PrivateProjectProjectIdIssuesRequestRouteWithChildren
-  '/_private/settings/general/customers/new': typeof PrivateSettingsGeneralCustomersNewRoute
-  '/_private/settings/general/departments/new': typeof PrivateSettingsGeneralDepartmentsNewRoute
-  '/_private/settings/general/employees/new': typeof PrivateSettingsGeneralEmployeesNewRoute
-  '/_private/settings/general/materials/new': typeof ModulesConstructionPagesSettingsMaterialsNewRoute
-  '/_private/settings/general/suppliers/new': typeof ModulesConstructionPagesSettingsSuppliersNewRoute
-  '/_private/settings/operation/objects/new': typeof PrivateSettingsOperationObjectsNewRoute
-  '/_private/settings/operation/process/new': typeof PrivateSettingsOperationProcessNewRoute
-  '/_private/project/$projectId/contract/': typeof ModulesConstructionPagesProjectContractIndexRoute
-  '/_private/project/$projectId/issues/': typeof PrivateProjectProjectIdIssuesIndexRoute
-  '/_private/project/$projectId/issues/me/$issueId': typeof PrivateProjectProjectIdIssuesMeIssueIdRoute
-  '/_private/project/$projectId/issues/price/$issueId': typeof PrivateProjectProjectIdIssuesPriceIssueIdRoute
-  '/_private/project/$projectId/issues/request/$issueId': typeof PrivateProjectProjectIdIssuesRequestIssueIdRoute
-  '/_private/settings/general/customers/$customerId/edit': typeof PrivateSettingsGeneralCustomersEditRoute
-  '/_private/settings/general/departments/$departmentId/edit': typeof PrivateSettingsGeneralDepartmentsEditRoute
-  '/_private/settings/general/employees/$employeeId/edit': typeof PrivateSettingsGeneralEmployeesEditRoute
-  '/_private/settings/general/materials/$materialId/edit': typeof ModulesConstructionPagesSettingsMaterialsEditRoute
-  '/_private/settings/general/suppliers/$supplierId/edit': typeof ModulesConstructionPagesSettingsSuppliersEditRoute
-  '/_private/settings/operation/objects/$objectId/edit': typeof PrivateSettingsOperationObjectsEditRoute
-  '/_private/settings/operation/process/$processId/edit': typeof PrivateSettingsOperationProcessEditRoute
-  '/_private/project/$projectId/issues/me/': typeof PrivateProjectProjectIdIssuesMeIndexRoute
-  '/_private/project/$projectId/issues/price/': typeof PrivateProjectProjectIdIssuesPriceIndexRoute
-  '/_private/project/$projectId/issues/request/': typeof PrivateProjectProjectIdIssuesRequestIndexRoute
+  '/_private/_organization': typeof OrganizationRouteWithChildren
+  '/_private/_top': typeof TopRouteWithChildren
+  '/_private/_organization/home': typeof OrganizationHomeRoute
+  '/_private/_organization/messenger': typeof OrganizationMessengerRoute
+  '/_private/_organization/profile': typeof OrganizationProfileRoute
+  '/_private/_organization/project': typeof OrganizationProjectRouteWithChildren
+  '/_private/_organization/settings': typeof OrganizationSettingsRouteWithChildren
+  '/_private/_top/top': typeof TopTopRoute
+  '/_private/_organization/project/$projectId': typeof OrganizationProjectProjectIdRouteWithChildren
+  '/_private/_organization/settings/general': typeof OrganizationSettingsGeneralRouteWithChildren
+  '/_private/_organization/settings/operation': typeof OrganizationSettingsOperationRouteWithChildren
+  '/_private/_organization/project/': typeof OrganizationProjectIndexRoute
+  '/_private/_organization/settings/': typeof OrganizationSettingsIndexRoute
+  '/_private/_organization/project/$projectId/contract': typeof ModulesConstructionPagesProjectContractRouteWithChildren
+  '/_private/_organization/project/$projectId/issues': typeof OrganizationProjectProjectIdIssuesRouteWithChildren
+  '/_private/_organization/project/$projectId/settings': typeof OrganizationProjectProjectIdSettingsRoute
+  '/_private/_organization/settings/general/customers': typeof OrganizationSettingsGeneralCustomersListRouteWithChildren
+  '/_private/_organization/settings/general/departments': typeof OrganizationSettingsGeneralDepartmentsListRouteWithChildren
+  '/_private/_organization/settings/general/employees': typeof OrganizationSettingsGeneralEmployeesListRouteWithChildren
+  '/_private/_organization/settings/general/materials': typeof ModulesConstructionPagesSettingsMaterialsListRouteWithChildren
+  '/_private/_organization/settings/general/suppliers': typeof ModulesConstructionPagesSettingsSuppliersListRouteWithChildren
+  '/_private/_organization/settings/operation/objects': typeof OrganizationSettingsOperationObjectsListRouteWithChildren
+  '/_private/_organization/settings/operation/process': typeof OrganizationSettingsOperationProcessListRouteWithChildren
+  '/_private/_organization/project/$projectId/': typeof OrganizationProjectProjectIdIndexRoute
+  '/_private/_organization/settings/general/': typeof OrganizationSettingsGeneralIndexRoute
+  '/_private/_organization/settings/operation/': typeof OrganizationSettingsOperationIndexRoute
+  '/_private/_organization/project/$projectId/contract/input': typeof ModulesConstructionPagesProjectContractInputRoute
+  '/_private/_organization/project/$projectId/contract/monitoring': typeof ModulesConstructionPagesProjectContractMonitoringRoute
+  '/_private/_organization/project/$projectId/issues/me': typeof OrganizationProjectProjectIdIssuesMeRouteWithChildren
+  '/_private/_organization/project/$projectId/issues/price': typeof OrganizationProjectProjectIdIssuesPriceRouteWithChildren
+  '/_private/_organization/project/$projectId/issues/request': typeof OrganizationProjectProjectIdIssuesRequestRouteWithChildren
+  '/_private/_organization/settings/general/customers/new': typeof OrganizationSettingsGeneralCustomersNewRoute
+  '/_private/_organization/settings/general/departments/new': typeof OrganizationSettingsGeneralDepartmentsNewRoute
+  '/_private/_organization/settings/general/employees/new': typeof OrganizationSettingsGeneralEmployeesNewRoute
+  '/_private/_organization/settings/general/materials/new': typeof ModulesConstructionPagesSettingsMaterialsNewRoute
+  '/_private/_organization/settings/general/suppliers/new': typeof ModulesConstructionPagesSettingsSuppliersNewRoute
+  '/_private/_organization/settings/operation/objects/new': typeof OrganizationSettingsOperationObjectsNewRoute
+  '/_private/_organization/settings/operation/process/new': typeof OrganizationSettingsOperationProcessNewRoute
+  '/_private/_organization/project/$projectId/contract/': typeof ModulesConstructionPagesProjectContractIndexRoute
+  '/_private/_organization/project/$projectId/issues/': typeof OrganizationProjectProjectIdIssuesIndexRoute
+  '/_private/_organization/project/$projectId/issues/me/$issueId': typeof OrganizationProjectProjectIdIssuesMeIssueIdRoute
+  '/_private/_organization/project/$projectId/issues/price/$issueId': typeof OrganizationProjectProjectIdIssuesPriceIssueIdRoute
+  '/_private/_organization/project/$projectId/issues/request/$issueId': typeof OrganizationProjectProjectIdIssuesRequestIssueIdRoute
+  '/_private/_organization/settings/general/customers/$customerId/edit': typeof OrganizationSettingsGeneralCustomersEditRoute
+  '/_private/_organization/settings/general/departments/$departmentId/edit': typeof OrganizationSettingsGeneralDepartmentsEditRoute
+  '/_private/_organization/settings/general/employees/$employeeId/edit': typeof OrganizationSettingsGeneralEmployeesEditRoute
+  '/_private/_organization/settings/general/materials/$materialId/edit': typeof ModulesConstructionPagesSettingsMaterialsEditRoute
+  '/_private/_organization/settings/general/suppliers/$supplierId/edit': typeof ModulesConstructionPagesSettingsSuppliersEditRoute
+  '/_private/_organization/settings/operation/objects/$objectId/edit': typeof OrganizationSettingsOperationObjectsEditRoute
+  '/_private/_organization/settings/operation/process/$processId/edit': typeof OrganizationSettingsOperationProcessEditRoute
+  '/_private/_organization/project/$projectId/issues/me/': typeof OrganizationProjectProjectIdIssuesMeIndexRoute
+  '/_private/_organization/project/$projectId/issues/price/': typeof OrganizationProjectProjectIdIssuesPriceIndexRoute
+  '/_private/_organization/project/$projectId/issues/request/': typeof OrganizationProjectProjectIdIssuesRequestIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1535,57 +1593,59 @@ export interface FileRouteTypes {
     | '/password-input'
     | '/signin'
     | '/user-information'
-    | '/_private/home'
-    | '/_private/messenger'
-    | '/_private/profile'
-    | '/_private/project'
-    | '/_private/settings'
-    | '/_private/top'
-    | '/_private/project/$projectId'
-    | '/_private/settings/general'
-    | '/_private/settings/operation'
-    | '/_private/project/'
-    | '/_private/settings/'
-    | '/_private/project/$projectId/contract'
-    | '/_private/project/$projectId/issues'
-    | '/_private/project/$projectId/settings'
-    | '/_private/settings/general/customers'
-    | '/_private/settings/general/departments'
-    | '/_private/settings/general/employees'
-    | '/_private/settings/general/materials'
-    | '/_private/settings/general/suppliers'
-    | '/_private/settings/operation/objects'
-    | '/_private/settings/operation/process'
-    | '/_private/project/$projectId/'
-    | '/_private/settings/general/'
-    | '/_private/settings/operation/'
-    | '/_private/project/$projectId/contract/input'
-    | '/_private/project/$projectId/contract/monitoring'
-    | '/_private/project/$projectId/issues/me'
-    | '/_private/project/$projectId/issues/price'
-    | '/_private/project/$projectId/issues/request'
-    | '/_private/settings/general/customers/new'
-    | '/_private/settings/general/departments/new'
-    | '/_private/settings/general/employees/new'
-    | '/_private/settings/general/materials/new'
-    | '/_private/settings/general/suppliers/new'
-    | '/_private/settings/operation/objects/new'
-    | '/_private/settings/operation/process/new'
-    | '/_private/project/$projectId/contract/'
-    | '/_private/project/$projectId/issues/'
-    | '/_private/project/$projectId/issues/me/$issueId'
-    | '/_private/project/$projectId/issues/price/$issueId'
-    | '/_private/project/$projectId/issues/request/$issueId'
-    | '/_private/settings/general/customers/$customerId/edit'
-    | '/_private/settings/general/departments/$departmentId/edit'
-    | '/_private/settings/general/employees/$employeeId/edit'
-    | '/_private/settings/general/materials/$materialId/edit'
-    | '/_private/settings/general/suppliers/$supplierId/edit'
-    | '/_private/settings/operation/objects/$objectId/edit'
-    | '/_private/settings/operation/process/$processId/edit'
-    | '/_private/project/$projectId/issues/me/'
-    | '/_private/project/$projectId/issues/price/'
-    | '/_private/project/$projectId/issues/request/'
+    | '/_private/_organization'
+    | '/_private/_top'
+    | '/_private/_organization/home'
+    | '/_private/_organization/messenger'
+    | '/_private/_organization/profile'
+    | '/_private/_organization/project'
+    | '/_private/_organization/settings'
+    | '/_private/_top/top'
+    | '/_private/_organization/project/$projectId'
+    | '/_private/_organization/settings/general'
+    | '/_private/_organization/settings/operation'
+    | '/_private/_organization/project/'
+    | '/_private/_organization/settings/'
+    | '/_private/_organization/project/$projectId/contract'
+    | '/_private/_organization/project/$projectId/issues'
+    | '/_private/_organization/project/$projectId/settings'
+    | '/_private/_organization/settings/general/customers'
+    | '/_private/_organization/settings/general/departments'
+    | '/_private/_organization/settings/general/employees'
+    | '/_private/_organization/settings/general/materials'
+    | '/_private/_organization/settings/general/suppliers'
+    | '/_private/_organization/settings/operation/objects'
+    | '/_private/_organization/settings/operation/process'
+    | '/_private/_organization/project/$projectId/'
+    | '/_private/_organization/settings/general/'
+    | '/_private/_organization/settings/operation/'
+    | '/_private/_organization/project/$projectId/contract/input'
+    | '/_private/_organization/project/$projectId/contract/monitoring'
+    | '/_private/_organization/project/$projectId/issues/me'
+    | '/_private/_organization/project/$projectId/issues/price'
+    | '/_private/_organization/project/$projectId/issues/request'
+    | '/_private/_organization/settings/general/customers/new'
+    | '/_private/_organization/settings/general/departments/new'
+    | '/_private/_organization/settings/general/employees/new'
+    | '/_private/_organization/settings/general/materials/new'
+    | '/_private/_organization/settings/general/suppliers/new'
+    | '/_private/_organization/settings/operation/objects/new'
+    | '/_private/_organization/settings/operation/process/new'
+    | '/_private/_organization/project/$projectId/contract/'
+    | '/_private/_organization/project/$projectId/issues/'
+    | '/_private/_organization/project/$projectId/issues/me/$issueId'
+    | '/_private/_organization/project/$projectId/issues/price/$issueId'
+    | '/_private/_organization/project/$projectId/issues/request/$issueId'
+    | '/_private/_organization/settings/general/customers/$customerId/edit'
+    | '/_private/_organization/settings/general/departments/$departmentId/edit'
+    | '/_private/_organization/settings/general/employees/$employeeId/edit'
+    | '/_private/_organization/settings/general/materials/$materialId/edit'
+    | '/_private/_organization/settings/general/suppliers/$supplierId/edit'
+    | '/_private/_organization/settings/operation/objects/$objectId/edit'
+    | '/_private/_organization/settings/operation/process/$processId/edit'
+    | '/_private/_organization/project/$projectId/issues/me/'
+    | '/_private/_organization/project/$projectId/issues/price/'
+    | '/_private/_organization/project/$projectId/issues/request/'
   fileRoutesById: FileRoutesById
 }
 
@@ -1637,12 +1697,8 @@ export const routeTree = rootRoute
     "/_private": {
       "filePath": "./private.tsx",
       "children": [
-        "/_private/home",
-        "/_private/messenger",
-        "/_private/profile",
-        "/_private/project",
-        "/_private/settings",
-        "/_private/top"
+        "/_private/_organization",
+        "/_private/_top"
       ]
     },
     "/email-input": {
@@ -1663,288 +1719,306 @@ export const routeTree = rootRoute
     "/user-information": {
       "filePath": "./auth/user-information.tsx"
     },
-    "/_private/home": {
-      "filePath": "./private/home.tsx",
-      "parent": "/_private"
-    },
-    "/_private/messenger": {
-      "filePath": "./private/messenger.tsx",
-      "parent": "/_private"
-    },
-    "/_private/profile": {
-      "filePath": "./private/profile.tsx",
-      "parent": "/_private"
-    },
-    "/_private/project": {
-      "filePath": "./private/project.tsx",
+    "/_private/_organization": {
+      "filePath": "./organization.tsx",
       "parent": "/_private",
       "children": [
-        "/_private/project/$projectId",
-        "/_private/project/"
+        "/_private/_organization/home",
+        "/_private/_organization/messenger",
+        "/_private/_organization/profile",
+        "/_private/_organization/project",
+        "/_private/_organization/settings"
       ]
     },
-    "/_private/settings": {
-      "filePath": "./private/settings.tsx",
+    "/_private/_top": {
+      "filePath": "./top.tsx",
       "parent": "/_private",
       "children": [
-        "/_private/settings/general",
-        "/_private/settings/operation",
-        "/_private/settings/"
+        "/_private/_top/top"
       ]
     },
-    "/_private/top": {
-      "filePath": "./private/top.tsx",
-      "parent": "/_private"
+    "/_private/_organization/home": {
+      "filePath": "./organization/home.tsx",
+      "parent": "/_private/_organization"
     },
-    "/_private/project/$projectId": {
-      "filePath": "./private/project/$projectId.tsx",
-      "parent": "/_private/project",
+    "/_private/_organization/messenger": {
+      "filePath": "./organization/messenger.tsx",
+      "parent": "/_private/_organization"
+    },
+    "/_private/_organization/profile": {
+      "filePath": "./organization/profile.tsx",
+      "parent": "/_private/_organization"
+    },
+    "/_private/_organization/project": {
+      "filePath": "./organization/project.tsx",
+      "parent": "/_private/_organization",
       "children": [
-        "/_private/project/$projectId/contract",
-        "/_private/project/$projectId/issues",
-        "/_private/project/$projectId/settings",
-        "/_private/project/$projectId/"
+        "/_private/_organization/project/$projectId",
+        "/_private/_organization/project/"
       ]
     },
-    "/_private/settings/general": {
-      "filePath": "./private/settings/general.tsx",
-      "parent": "/_private/settings",
+    "/_private/_organization/settings": {
+      "filePath": "./organization/settings.tsx",
+      "parent": "/_private/_organization",
       "children": [
-        "/_private/settings/general/customers",
-        "/_private/settings/general/departments",
-        "/_private/settings/general/employees",
-        "/_private/settings/general/materials",
-        "/_private/settings/general/suppliers",
-        "/_private/settings/general/"
+        "/_private/_organization/settings/general",
+        "/_private/_organization/settings/operation",
+        "/_private/_organization/settings/"
       ]
     },
-    "/_private/settings/operation": {
-      "filePath": "./private/settings/operation.tsx",
-      "parent": "/_private/settings",
+    "/_private/_top/top": {
+      "filePath": "./top/top.tsx",
+      "parent": "/_private/_top"
+    },
+    "/_private/_organization/project/$projectId": {
+      "filePath": "./organization/project/$projectId.tsx",
+      "parent": "/_private/_organization/project",
       "children": [
-        "/_private/settings/operation/objects",
-        "/_private/settings/operation/process",
-        "/_private/settings/operation/"
+        "/_private/_organization/project/$projectId/contract",
+        "/_private/_organization/project/$projectId/issues",
+        "/_private/_organization/project/$projectId/settings",
+        "/_private/_organization/project/$projectId/"
       ]
     },
-    "/_private/project/": {
-      "filePath": "./private/project/index.tsx",
-      "parent": "/_private/project"
+    "/_private/_organization/settings/general": {
+      "filePath": "./organization/settings/general.tsx",
+      "parent": "/_private/_organization/settings",
+      "children": [
+        "/_private/_organization/settings/general/customers",
+        "/_private/_organization/settings/general/departments",
+        "/_private/_organization/settings/general/employees",
+        "/_private/_organization/settings/general/materials",
+        "/_private/_organization/settings/general/suppliers",
+        "/_private/_organization/settings/general/"
+      ]
     },
-    "/_private/settings/": {
-      "filePath": "./private/settings/index.tsx",
-      "parent": "/_private/settings"
+    "/_private/_organization/settings/operation": {
+      "filePath": "./organization/settings/operation.tsx",
+      "parent": "/_private/_organization/settings",
+      "children": [
+        "/_private/_organization/settings/operation/objects",
+        "/_private/_organization/settings/operation/process",
+        "/_private/_organization/settings/operation/"
+      ]
     },
-    "/_private/project/$projectId/contract": {
+    "/_private/_organization/project/": {
+      "filePath": "./organization/project/index.tsx",
+      "parent": "/_private/_organization/project"
+    },
+    "/_private/_organization/settings/": {
+      "filePath": "./organization/settings/index.tsx",
+      "parent": "/_private/_organization/settings"
+    },
+    "/_private/_organization/project/$projectId/contract": {
       "filePath": "../modules/construction/pages/project/contract.tsx",
-      "parent": "/_private/project/$projectId",
+      "parent": "/_private/_organization/project/$projectId",
       "children": [
-        "/_private/project/$projectId/contract/input",
-        "/_private/project/$projectId/contract/monitoring",
-        "/_private/project/$projectId/contract/"
+        "/_private/_organization/project/$projectId/contract/input",
+        "/_private/_organization/project/$projectId/contract/monitoring",
+        "/_private/_organization/project/$projectId/contract/"
       ]
     },
-    "/_private/project/$projectId/issues": {
-      "filePath": "./private/project/$projectId/issues.tsx",
-      "parent": "/_private/project/$projectId",
+    "/_private/_organization/project/$projectId/issues": {
+      "filePath": "./organization/project/$projectId/issues.tsx",
+      "parent": "/_private/_organization/project/$projectId",
       "children": [
-        "/_private/project/$projectId/issues/me",
-        "/_private/project/$projectId/issues/price",
-        "/_private/project/$projectId/issues/request",
-        "/_private/project/$projectId/issues/"
+        "/_private/_organization/project/$projectId/issues/me",
+        "/_private/_organization/project/$projectId/issues/price",
+        "/_private/_organization/project/$projectId/issues/request",
+        "/_private/_organization/project/$projectId/issues/"
       ]
     },
-    "/_private/project/$projectId/settings": {
-      "filePath": "./private/project/$projectId/settings.tsx",
-      "parent": "/_private/project/$projectId"
+    "/_private/_organization/project/$projectId/settings": {
+      "filePath": "./organization/project/$projectId/settings.tsx",
+      "parent": "/_private/_organization/project/$projectId"
     },
-    "/_private/settings/general/customers": {
-      "filePath": "./private/settings/general/customers/list.tsx",
-      "parent": "/_private/settings/general",
+    "/_private/_organization/settings/general/customers": {
+      "filePath": "./organization/settings/general/customers/list.tsx",
+      "parent": "/_private/_organization/settings/general",
       "children": [
-        "/_private/settings/general/customers/new",
-        "/_private/settings/general/customers/$customerId/edit"
+        "/_private/_organization/settings/general/customers/new",
+        "/_private/_organization/settings/general/customers/$customerId/edit"
       ]
     },
-    "/_private/settings/general/departments": {
-      "filePath": "./private/settings/general/departments/list.tsx",
-      "parent": "/_private/settings/general",
+    "/_private/_organization/settings/general/departments": {
+      "filePath": "./organization/settings/general/departments/list.tsx",
+      "parent": "/_private/_organization/settings/general",
       "children": [
-        "/_private/settings/general/departments/new",
-        "/_private/settings/general/departments/$departmentId/edit"
+        "/_private/_organization/settings/general/departments/new",
+        "/_private/_organization/settings/general/departments/$departmentId/edit"
       ]
     },
-    "/_private/settings/general/employees": {
-      "filePath": "./private/settings/general/employees/list.tsx",
-      "parent": "/_private/settings/general",
+    "/_private/_organization/settings/general/employees": {
+      "filePath": "./organization/settings/general/employees/list.tsx",
+      "parent": "/_private/_organization/settings/general",
       "children": [
-        "/_private/settings/general/employees/new",
-        "/_private/settings/general/employees/$employeeId/edit"
+        "/_private/_organization/settings/general/employees/new",
+        "/_private/_organization/settings/general/employees/$employeeId/edit"
       ]
     },
-    "/_private/settings/general/materials": {
+    "/_private/_organization/settings/general/materials": {
       "filePath": "../modules/construction/pages/settings/materials/list.tsx",
-      "parent": "/_private/settings/general",
+      "parent": "/_private/_organization/settings/general",
       "children": [
-        "/_private/settings/general/materials/new",
-        "/_private/settings/general/materials/$materialId/edit"
+        "/_private/_organization/settings/general/materials/new",
+        "/_private/_organization/settings/general/materials/$materialId/edit"
       ]
     },
-    "/_private/settings/general/suppliers": {
+    "/_private/_organization/settings/general/suppliers": {
       "filePath": "../modules/construction/pages/settings/suppliers/list.tsx",
-      "parent": "/_private/settings/general",
+      "parent": "/_private/_organization/settings/general",
       "children": [
-        "/_private/settings/general/suppliers/new",
-        "/_private/settings/general/suppliers/$supplierId/edit"
+        "/_private/_organization/settings/general/suppliers/new",
+        "/_private/_organization/settings/general/suppliers/$supplierId/edit"
       ]
     },
-    "/_private/settings/operation/objects": {
-      "filePath": "./private/settings/operation/objects/list.tsx",
-      "parent": "/_private/settings/operation",
+    "/_private/_organization/settings/operation/objects": {
+      "filePath": "./organization/settings/operation/objects/list.tsx",
+      "parent": "/_private/_organization/settings/operation",
       "children": [
-        "/_private/settings/operation/objects/new",
-        "/_private/settings/operation/objects/$objectId/edit"
+        "/_private/_organization/settings/operation/objects/new",
+        "/_private/_organization/settings/operation/objects/$objectId/edit"
       ]
     },
-    "/_private/settings/operation/process": {
-      "filePath": "./private/settings/operation/process/list.tsx",
-      "parent": "/_private/settings/operation",
+    "/_private/_organization/settings/operation/process": {
+      "filePath": "./organization/settings/operation/process/list.tsx",
+      "parent": "/_private/_organization/settings/operation",
       "children": [
-        "/_private/settings/operation/process/new",
-        "/_private/settings/operation/process/$processId/edit"
+        "/_private/_organization/settings/operation/process/new",
+        "/_private/_organization/settings/operation/process/$processId/edit"
       ]
     },
-    "/_private/project/$projectId/": {
-      "filePath": "./private/project/$projectId/index.tsx",
-      "parent": "/_private/project/$projectId"
+    "/_private/_organization/project/$projectId/": {
+      "filePath": "./organization/project/$projectId/index.tsx",
+      "parent": "/_private/_organization/project/$projectId"
     },
-    "/_private/settings/general/": {
-      "filePath": "./private/settings/general/index.tsx",
-      "parent": "/_private/settings/general"
+    "/_private/_organization/settings/general/": {
+      "filePath": "./organization/settings/general/index.tsx",
+      "parent": "/_private/_organization/settings/general"
     },
-    "/_private/settings/operation/": {
-      "filePath": "./private/settings/operation/index.tsx",
-      "parent": "/_private/settings/operation"
+    "/_private/_organization/settings/operation/": {
+      "filePath": "./organization/settings/operation/index.tsx",
+      "parent": "/_private/_organization/settings/operation"
     },
-    "/_private/project/$projectId/contract/input": {
+    "/_private/_organization/project/$projectId/contract/input": {
       "filePath": "../modules/construction/pages/project/contract/input.tsx",
-      "parent": "/_private/project/$projectId/contract"
+      "parent": "/_private/_organization/project/$projectId/contract"
     },
-    "/_private/project/$projectId/contract/monitoring": {
+    "/_private/_organization/project/$projectId/contract/monitoring": {
       "filePath": "../modules/construction/pages/project/contract/monitoring.tsx",
-      "parent": "/_private/project/$projectId/contract"
+      "parent": "/_private/_organization/project/$projectId/contract"
     },
-    "/_private/project/$projectId/issues/me": {
-      "filePath": "./private/project/$projectId/issues/me.tsx",
-      "parent": "/_private/project/$projectId/issues",
+    "/_private/_organization/project/$projectId/issues/me": {
+      "filePath": "./organization/project/$projectId/issues/me.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues",
       "children": [
-        "/_private/project/$projectId/issues/me/$issueId",
-        "/_private/project/$projectId/issues/me/"
+        "/_private/_organization/project/$projectId/issues/me/$issueId",
+        "/_private/_organization/project/$projectId/issues/me/"
       ]
     },
-    "/_private/project/$projectId/issues/price": {
-      "filePath": "./private/project/$projectId/issues/price.tsx",
-      "parent": "/_private/project/$projectId/issues",
+    "/_private/_organization/project/$projectId/issues/price": {
+      "filePath": "./organization/project/$projectId/issues/price.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues",
       "children": [
-        "/_private/project/$projectId/issues/price/$issueId",
-        "/_private/project/$projectId/issues/price/"
+        "/_private/_organization/project/$projectId/issues/price/$issueId",
+        "/_private/_organization/project/$projectId/issues/price/"
       ]
     },
-    "/_private/project/$projectId/issues/request": {
-      "filePath": "./private/project/$projectId/issues/request.tsx",
-      "parent": "/_private/project/$projectId/issues",
+    "/_private/_organization/project/$projectId/issues/request": {
+      "filePath": "./organization/project/$projectId/issues/request.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues",
       "children": [
-        "/_private/project/$projectId/issues/request/$issueId",
-        "/_private/project/$projectId/issues/request/"
+        "/_private/_organization/project/$projectId/issues/request/$issueId",
+        "/_private/_organization/project/$projectId/issues/request/"
       ]
     },
-    "/_private/settings/general/customers/new": {
-      "filePath": "./private/settings/general/customers/new.tsx",
-      "parent": "/_private/settings/general/customers"
+    "/_private/_organization/settings/general/customers/new": {
+      "filePath": "./organization/settings/general/customers/new.tsx",
+      "parent": "/_private/_organization/settings/general/customers"
     },
-    "/_private/settings/general/departments/new": {
-      "filePath": "./private/settings/general/departments/new.tsx",
-      "parent": "/_private/settings/general/departments"
+    "/_private/_organization/settings/general/departments/new": {
+      "filePath": "./organization/settings/general/departments/new.tsx",
+      "parent": "/_private/_organization/settings/general/departments"
     },
-    "/_private/settings/general/employees/new": {
-      "filePath": "./private/settings/general/employees/new.tsx",
-      "parent": "/_private/settings/general/employees"
+    "/_private/_organization/settings/general/employees/new": {
+      "filePath": "./organization/settings/general/employees/new.tsx",
+      "parent": "/_private/_organization/settings/general/employees"
     },
-    "/_private/settings/general/materials/new": {
+    "/_private/_organization/settings/general/materials/new": {
       "filePath": "../modules/construction/pages/settings/materials/new.tsx",
-      "parent": "/_private/settings/general/materials"
+      "parent": "/_private/_organization/settings/general/materials"
     },
-    "/_private/settings/general/suppliers/new": {
+    "/_private/_organization/settings/general/suppliers/new": {
       "filePath": "../modules/construction/pages/settings/suppliers/new.tsx",
-      "parent": "/_private/settings/general/suppliers"
+      "parent": "/_private/_organization/settings/general/suppliers"
     },
-    "/_private/settings/operation/objects/new": {
-      "filePath": "./private/settings/operation/objects/new.tsx",
-      "parent": "/_private/settings/operation/objects"
+    "/_private/_organization/settings/operation/objects/new": {
+      "filePath": "./organization/settings/operation/objects/new.tsx",
+      "parent": "/_private/_organization/settings/operation/objects"
     },
-    "/_private/settings/operation/process/new": {
-      "filePath": "./private/settings/operation/process/new.tsx",
-      "parent": "/_private/settings/operation/process"
+    "/_private/_organization/settings/operation/process/new": {
+      "filePath": "./organization/settings/operation/process/new.tsx",
+      "parent": "/_private/_organization/settings/operation/process"
     },
-    "/_private/project/$projectId/contract/": {
+    "/_private/_organization/project/$projectId/contract/": {
       "filePath": "../modules/construction/pages/project/contract/index.tsx",
-      "parent": "/_private/project/$projectId/contract"
+      "parent": "/_private/_organization/project/$projectId/contract"
     },
-    "/_private/project/$projectId/issues/": {
-      "filePath": "./private/project/$projectId/issues/index.tsx",
-      "parent": "/_private/project/$projectId/issues"
+    "/_private/_organization/project/$projectId/issues/": {
+      "filePath": "./organization/project/$projectId/issues/index.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues"
     },
-    "/_private/project/$projectId/issues/me/$issueId": {
-      "filePath": "./private/project/$projectId/issues/me/$issueId.tsx",
-      "parent": "/_private/project/$projectId/issues/me"
+    "/_private/_organization/project/$projectId/issues/me/$issueId": {
+      "filePath": "./organization/project/$projectId/issues/me/$issueId.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/me"
     },
-    "/_private/project/$projectId/issues/price/$issueId": {
-      "filePath": "./private/project/$projectId/issues/price/$issueId.tsx",
-      "parent": "/_private/project/$projectId/issues/price"
+    "/_private/_organization/project/$projectId/issues/price/$issueId": {
+      "filePath": "./organization/project/$projectId/issues/price/$issueId.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/price"
     },
-    "/_private/project/$projectId/issues/request/$issueId": {
-      "filePath": "./private/project/$projectId/issues/request/$issueId.tsx",
-      "parent": "/_private/project/$projectId/issues/request"
+    "/_private/_organization/project/$projectId/issues/request/$issueId": {
+      "filePath": "./organization/project/$projectId/issues/request/$issueId.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/request"
     },
-    "/_private/settings/general/customers/$customerId/edit": {
-      "filePath": "./private/settings/general/customers/edit.tsx",
-      "parent": "/_private/settings/general/customers"
+    "/_private/_organization/settings/general/customers/$customerId/edit": {
+      "filePath": "./organization/settings/general/customers/edit.tsx",
+      "parent": "/_private/_organization/settings/general/customers"
     },
-    "/_private/settings/general/departments/$departmentId/edit": {
-      "filePath": "./private/settings/general/departments/edit.tsx",
-      "parent": "/_private/settings/general/departments"
+    "/_private/_organization/settings/general/departments/$departmentId/edit": {
+      "filePath": "./organization/settings/general/departments/edit.tsx",
+      "parent": "/_private/_organization/settings/general/departments"
     },
-    "/_private/settings/general/employees/$employeeId/edit": {
-      "filePath": "./private/settings/general/employees/edit.tsx",
-      "parent": "/_private/settings/general/employees"
+    "/_private/_organization/settings/general/employees/$employeeId/edit": {
+      "filePath": "./organization/settings/general/employees/edit.tsx",
+      "parent": "/_private/_organization/settings/general/employees"
     },
-    "/_private/settings/general/materials/$materialId/edit": {
+    "/_private/_organization/settings/general/materials/$materialId/edit": {
       "filePath": "../modules/construction/pages/settings/materials/edit.tsx",
-      "parent": "/_private/settings/general/materials"
+      "parent": "/_private/_organization/settings/general/materials"
     },
-    "/_private/settings/general/suppliers/$supplierId/edit": {
+    "/_private/_organization/settings/general/suppliers/$supplierId/edit": {
       "filePath": "../modules/construction/pages/settings/suppliers/edit.tsx",
-      "parent": "/_private/settings/general/suppliers"
+      "parent": "/_private/_organization/settings/general/suppliers"
     },
-    "/_private/settings/operation/objects/$objectId/edit": {
-      "filePath": "./private/settings/operation/objects/edit.tsx",
-      "parent": "/_private/settings/operation/objects"
+    "/_private/_organization/settings/operation/objects/$objectId/edit": {
+      "filePath": "./organization/settings/operation/objects/edit.tsx",
+      "parent": "/_private/_organization/settings/operation/objects"
     },
-    "/_private/settings/operation/process/$processId/edit": {
-      "filePath": "./private/settings/operation/process/edit.tsx",
-      "parent": "/_private/settings/operation/process"
+    "/_private/_organization/settings/operation/process/$processId/edit": {
+      "filePath": "./organization/settings/operation/process/edit.tsx",
+      "parent": "/_private/_organization/settings/operation/process"
     },
-    "/_private/project/$projectId/issues/me/": {
-      "filePath": "./private/project/$projectId/issues/me/index.tsx",
-      "parent": "/_private/project/$projectId/issues/me"
+    "/_private/_organization/project/$projectId/issues/me/": {
+      "filePath": "./organization/project/$projectId/issues/me/index.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/me"
     },
-    "/_private/project/$projectId/issues/price/": {
-      "filePath": "./private/project/$projectId/issues/price/index.tsx",
-      "parent": "/_private/project/$projectId/issues/price"
+    "/_private/_organization/project/$projectId/issues/price/": {
+      "filePath": "./organization/project/$projectId/issues/price/index.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/price"
     },
-    "/_private/project/$projectId/issues/request/": {
-      "filePath": "./private/project/$projectId/issues/request/index.tsx",
-      "parent": "/_private/project/$projectId/issues/request"
+    "/_private/_organization/project/$projectId/issues/request/": {
+      "filePath": "./organization/project/$projectId/issues/request/index.tsx",
+      "parent": "/_private/_organization/project/$projectId/issues/request"
     }
   }
 }

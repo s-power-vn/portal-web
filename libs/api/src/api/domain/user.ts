@@ -51,8 +51,8 @@ export const userApi = router('user', {
       return client2.api.registerUserInformation(params);
     }
   }),
-  getRestToken: router.mutation({
-    mutationFn: (params: { email: string }) => {
+  getRestToken: router.query({
+    fetcher: (params: { email: string; organizationId?: string }) => {
       return client2.api.getRestToken(params);
     }
   }),

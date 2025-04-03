@@ -8,8 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
-import type { MaterialResponse } from 'portal-core';
+import { DepartmentData, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -29,7 +28,7 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/general/materials')({
+export const Route = createFileRoute('/_private/_organization/settings/general/departments')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -37,16 +36,16 @@ export const Route = createFileRoute('/_private/_organization/settings/general/m
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.material.list.getOptions({
+      api.department.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (code ~ "${deps.search.filter}")`
+          ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
           : ''
       })
     ),
   beforeLoad: () => {
     return {
-      title: 'Quản lý danh mục vật tư'
+      title: 'Quản lý phòng ban'
     };
   }
 });
@@ -59,13 +58,13 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({
+      queryKey: api.department.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.material.list.fetcher({
+        api.department.list.fetcher({
           filter: search.filter
-            ? `(name ~ "${search.filter}") || (code ~ "${search.filter}")`
+            ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
             : '',
           pageIndex: pageParam,
           pageSize: 20
@@ -75,21 +74,23 @@ function Component() {
       initialPageParam: 1
     });
 
-  const materials = useMemo(
+  const departments = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteMaterial = api.material.delete.useMutation({
+  const deleteDepartment = api.department.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa vật tư thành công');
-      invalidates([api.material.list.getKey({ filter: search.filter ?? '' })]);
+      success('Xóa phòng ban thành công');
+      invalidates([
+        api.department.list.getKey({ filter: search.filter ?? '' })
+      ]);
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<MaterialResponse>();
+  const columnHelper = createColumnHelper<DepartmentData>();
 
   const columns = useMemo(
     () => [
@@ -103,30 +104,42 @@ function Component() {
         header: () => (
           <div className={'flex items-center justify-center'}>#</div>
         ),
-        size: 30
+        size: 60
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: () => 'Tên vật tư',
+        header: () => 'Tên phòng ban',
         footer: info => info.column.id,
         size: 300
       }),
-      columnHelper.accessor('code', {
+      columnHelper.accessor('description', {
         cell: info => info.getValue(),
-        header: () => 'Mã vật tư',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('unit', {
-        cell: info => info.getValue(),
-        header: () => 'Đơn vị',
-        footer: info => info.column.id,
-        size: 100
-      }),
-      columnHelper.accessor('note', {
-        cell: info => info.getValue(),
-        header: () => 'Ghi chú',
+        header: () => 'Mô tả',
         footer: info => info.column.id
+      }),
+      columnHelper.accessor('roles', {
+        cell: info => {
+          const roles = info.getValue();
+          return (
+            <div className="flex flex-wrap gap-1">
+              {roles && roles.length > 0 ? (
+                roles.map(role => (
+                  <span
+                    key={role.id}
+                    className="bg-appBlueLight text-appWhite rounded-full px-2 py-0.5 text-xs"
+                  >
+                    {role.name}
+                  </span>
+                ))
+              ) : (
+                <span className="text-xs text-gray-400">Không có</span>
+              )}
+            </div>
+          );
+        },
+        header: () => 'Chức danh',
+        footer: info => info.column.id,
+        size: 300
       }),
       columnHelper.display({
         id: 'actions',
@@ -135,12 +148,11 @@ function Component() {
             <div className={'flex gap-1'}>
               <Button
                 className={'h-6 px-3'}
-                onClick={e => {
-                  e.stopPropagation();
+                onClick={() => {
                   navigate({
-                    to: './$materialId/edit',
+                    to: './$departmentId/edit',
                     params: {
-                      materialId: row.original.id
+                      departmentId: row.original.id
                     },
                     search
                   });
@@ -151,11 +163,9 @@ function Component() {
               <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
-                    deleteMaterial.mutate(row.original.id);
+                onClick={() => {
+                  confirm('Bạn chắc chắn muốn xóa phòng ban này?', () => {
+                    deleteDepartment.mutate(row.original.id);
                   });
                 }}
               >
@@ -168,13 +178,13 @@ function Component() {
         size: 120
       })
     ],
-    [columnHelper, navigate, confirm, deleteMaterial, search]
+    [columnHelper, navigate, confirm, deleteDepartment, search]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: materials
+    data: departments
   });
 
   const { rows } = table.getRowModel();
@@ -201,11 +211,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (materialId: string) => {
+    (departmentId: string) => {
       navigate({
-        to: './$materialId/edit',
+        to: './$departmentId/edit',
         params: {
-          materialId
+          departmentId
         },
         search
       });
@@ -213,7 +223,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddMaterial = useCallback(() => {
+  const handleAddDepartment = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -233,12 +243,12 @@ function Component() {
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý danh mục vật tư'} />
+      <PageHeader title={'Quản lý phòng ban'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddMaterial}>
+          <Button className={'flex gap-1'} onClick={handleAddDepartment}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm vật tư
+            Thêm phòng ban
           </Button>
           <DebouncedInput
             value={search.filter}
@@ -264,7 +274,7 @@ function Component() {
             ) : (
               <Table
                 style={{
-                  width: '100%',
+                  width: table.getTotalSize(),
                   tableLayout: 'fixed'
                 }}
               >
@@ -287,6 +297,7 @@ function Component() {
                           className={'text-appWhite whitespace-nowrap'}
                           style={{
                             width: header.getSize(),
+                            minWidth: header.getSize(),
                             maxWidth: header.getSize()
                           }}
                         >
@@ -329,6 +340,7 @@ function Component() {
                               className={'truncate text-left'}
                               style={{
                                 width: cell.column.getSize(),
+                                minWidth: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()
                               }}
                             >

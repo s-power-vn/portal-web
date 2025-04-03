@@ -1,8 +1,8 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute(
-  '/_private/_organization/project/$projectId/contract'
+  '/_private/_organization/project/$projectId/issues'
 )({
   component: () => <Outlet />,
-  beforeLoad: () => ({ title: 'Dữ liệu hợp đồng' })
+  beforeLoad: () => ({ title: 'Quản lý công việc' })
 });

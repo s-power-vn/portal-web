@@ -5,18 +5,24 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
+import { NewEmployeeForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
-import { NewSupplierForm } from '../../../components/supplier';
 
-const Component = () => {
+export const Route = createFileRoute(
+  '/_private/_organization/settings/general/employees/new'
+)({
+  component: Component
+});
+
+function Component() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
 
-  const onSuccessHandler = useCallback(() => {
+  const onSuccessHandler = useCallback(async () => {
     setOpen(false);
     history.back();
-    invalidates([api.supplier.list.getKey()]);
+    invalidates([api.employee.list.getKey()]);
   }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
@@ -26,25 +32,19 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
+      title={'Thêm nhân viên'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'new-employee-modal'}
     >
-      <NewSupplierForm
+      <NewEmployeeForm
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
     </Modal>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/_organization/settings/general/suppliers/new'
-)({
-  component: Component
-});
+}

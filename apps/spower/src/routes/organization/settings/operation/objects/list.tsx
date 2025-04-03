@@ -1,18 +1,26 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
+  RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
-import type { MaterialResponse } from 'portal-core';
+import {
+  CheckIcon,
+  CopyIcon,
+  EditIcon,
+  Loader,
+  PlusIcon,
+  XIcon
+} from 'lucide-react';
+import { ListSchema, ObjectData, api } from 'portal-api';
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { cn } from '@minhdtb/storeo-core';
 import {
   Button,
   DebouncedInput,
@@ -22,14 +30,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  error,
   success,
   useConfirm
 } from '@minhdtb/storeo-theme';
 
 import { PageHeader } from '../../../../../components';
+import { IndeterminateCheckbox } from '../../../../../components/checkbox';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/general/materials')({
+export const Route = createFileRoute('/_private/_organization/settings/operation/objects')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -37,16 +47,16 @@ export const Route = createFileRoute('/_private/_organization/settings/general/m
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.material.list.getOptions({
+      api.object.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (code ~ "${deps.search.filter}")`
+          ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
           : ''
       })
     ),
   beforeLoad: () => {
     return {
-      title: 'Quản lý danh mục vật tư'
+      title: 'Quản lý đối tượng'
     };
   }
 });
@@ -56,16 +66,17 @@ function Component() {
   const search = Route.useSearch();
   const invalidates = useInvalidateQueries();
   const parentRef = useRef<HTMLDivElement>(null);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({
+      queryKey: api.object.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.material.list.fetcher({
+        api.object.list.fetcher({
           filter: search.filter
-            ? `(name ~ "${search.filter}") || (code ~ "${search.filter}")`
+            ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
             : '',
           pageIndex: pageParam,
           pageSize: 20
@@ -75,24 +86,73 @@ function Component() {
       initialPageParam: 1
     });
 
-  const materials = useMemo(
+  const objects = useMemo(
     () => data?.pages.flatMap(page => page.items) || [],
     [data]
   );
 
-  const deleteMaterial = api.material.delete.useMutation({
+  const columnHelper = createColumnHelper<ObjectData>();
+
+  const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
-      success('Xóa vật tư thành công');
-      invalidates([api.material.list.getKey({ filter: search.filter ?? '' })]);
+      success('Xóa đối tượng thành công');
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+    },
+    onError: () => {
+      error('Xóa đối tượng thất bại');
+    }
+  });
+
+  const duplicateObject = api.object.duplicate.useMutation({
+    onSuccess: async () => {
+      success('Nhân bản đối tượng thành công');
+      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+    },
+    onError: () => {
+      error('Nhân bản đối tượng thất bại');
     }
   });
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<MaterialResponse>();
+  const handleDuplicateObject = useCallback(
+    (objectId: string) => {
+      confirm('Bạn có chắc chắn muốn nhân bản đối tượng này?', () => {
+        duplicateObject.mutate(objectId);
+      });
+    },
+    [confirm, duplicateObject]
+  );
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: 'select',
+        cell: ({ row }) => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler()
+              }}
+            />
+          </div>
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler()
+              }}
+            />
+          </div>
+        ),
+        size: 40
+      }),
       columnHelper.display({
         id: 'index',
         cell: info => (
@@ -105,29 +165,6 @@ function Component() {
         ),
         size: 30
       }),
-      columnHelper.accessor('name', {
-        cell: info => info.getValue(),
-        header: () => 'Tên vật tư',
-        footer: info => info.column.id,
-        size: 300
-      }),
-      columnHelper.accessor('code', {
-        cell: info => info.getValue(),
-        header: () => 'Mã vật tư',
-        footer: info => info.column.id,
-        size: 150
-      }),
-      columnHelper.accessor('unit', {
-        cell: info => info.getValue(),
-        header: () => 'Đơn vị',
-        footer: info => info.column.id,
-        size: 100
-      }),
-      columnHelper.accessor('note', {
-        cell: info => info.getValue(),
-        header: () => 'Ghi chú',
-        footer: info => info.column.id
-      }),
       columnHelper.display({
         id: 'actions',
         cell: ({ row }) => {
@@ -138,9 +175,9 @@ function Component() {
                 onClick={e => {
                   e.stopPropagation();
                   navigate({
-                    to: './$materialId/edit',
+                    to: './$objectId/edit',
                     params: {
-                      materialId: row.original.id
+                      objectId: row.original.id
                     },
                     search
                   });
@@ -149,13 +186,22 @@ function Component() {
                 <EditIcon className={'h-3 w-3'} />
               </Button>
               <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDuplicateObject(row.original.id);
+                }}
+              >
+                <CopyIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
                 variant={'destructive'}
                 className={'h-6 px-3'}
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
-                  confirm('Bạn chắc chắn muốn xóa vật tư này?', () => {
-                    deleteMaterial.mutate(row.original.id);
+                  confirm('Bạn chắc chắn muốn xóa đối tượng này?', () => {
+                    deleteObject.mutate(row.original.id);
                   });
                 }}
               >
@@ -164,17 +210,90 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác',
-        size: 120
+        header: () => 'Thao tác'
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên đối tượng',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('active', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <CheckIcon className="h-4 w-4 text-green-500" />
+            ) : (
+              ''
+            )}
+          </div>
+        ),
+        header: () => 'Kích hoạt',
+        footer: info => info.column.id,
+        size: 100
+      }),
+
+      columnHelper.accessor(row => row.expand?.type, {
+        id: 'type',
+        cell: info => {
+          const objectType = info.getValue();
+          if (!objectType) return null;
+
+          const badgeStyle =
+            'rounded-full px-2 py-1 text-xs font-medium text-white whitespace-nowrap';
+
+          return (
+            <span
+              className={cn(badgeStyle)}
+              style={{ backgroundColor: objectType.color || '#888888' }}
+            >
+              {objectType.display || 'Không xác định'}
+            </span>
+          );
+        },
+        header: () => 'Loại',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor(row => row.expand?.process?.name, {
+        id: 'processName',
+        cell: info => info.getValue() || '',
+        header: () => 'Quy trình',
+        footer: info => info.column.id,
+        size: 150
+      }),
+
+      columnHelper.accessor('base', {
+        cell: info => (
+          <div className="flex justify-center">
+            {info.getValue() ? (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                Cơ bản
+              </span>
+            ) : null}
+          </div>
+        ),
+        header: () => 'Cơ bản',
+        footer: info => info.column.id,
+        size: 100
+      }),
+      columnHelper.accessor('description', {
+        cell: info => info.getValue() || '',
+        header: () => 'Mô tả',
+        footer: info => info.column.id
       })
     ],
-    [columnHelper, navigate, confirm, deleteMaterial, search]
+    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm]
   );
 
   const table = useReactTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
-    data: materials
+    data: objects,
+    state: {
+      rowSelection
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection
   });
 
   const { rows } = table.getRowModel();
@@ -201,11 +320,11 @@ function Component() {
   );
 
   const handleNavigateToEdit = useCallback(
-    (materialId: string) => {
+    (objectId: string) => {
       navigate({
-        to: './$materialId/edit',
+        to: './$objectId/edit',
         params: {
-          materialId
+          objectId
         },
         search
       });
@@ -213,7 +332,7 @@ function Component() {
     [navigate, search]
   );
 
-  const handleAddMaterial = useCallback(() => {
+  const handleAddObject = useCallback(() => {
     navigate({
       to: './new',
       search
@@ -233,12 +352,12 @@ function Component() {
   return (
     <div className={'flex h-full flex-col'}>
       <Outlet />
-      <PageHeader title={'Quản lý danh mục vật tư'} />
+      <PageHeader title={'Quản lý đối tượng'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
-          <Button className={'flex gap-1'} onClick={handleAddMaterial}>
+          <Button className={'flex gap-1'} onClick={handleAddObject}>
             <PlusIcon className={'h-5 w-5'} />
-            Thêm vật tư
+            Thêm đối tượng
           </Button>
           <DebouncedInput
             value={search.filter}
@@ -267,6 +386,7 @@ function Component() {
                   width: '100%',
                   tableLayout: 'fixed'
                 }}
+                className="relative"
               >
                 <TableHeader
                   className={'bg-appBlueLight'}
@@ -284,7 +404,7 @@ function Component() {
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className={'text-appWhite whitespace-nowrap'}
+                          className={`text-appWhite whitespace-nowrap`}
                           style={{
                             width: header.getSize(),
                             maxWidth: header.getSize()
@@ -315,7 +435,10 @@ function Component() {
                       return (
                         <TableRow
                           key={virtualRow.key}
-                          className={'absolute w-full cursor-pointer'}
+                          className={cn(
+                            'absolute w-full cursor-pointer last:border-b-0',
+                            row.getIsSelected() && 'bg-blue-50'
+                          )}
                           data-index={virtualRow.index}
                           ref={virtualizer.measureElement}
                           style={{
@@ -326,10 +449,13 @@ function Component() {
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={'truncate text-left'}
+                              className={`truncate text-left`}
                               style={{
                                 width: cell.column.getSize(),
-                                maxWidth: cell.column.getSize()
+                                maxWidth: cell.column.getSize(),
+                                backgroundColor: row.getIsSelected()
+                                  ? '#EBF5FF'
+                                  : ''
                               }}
                             >
                               {flexRender(

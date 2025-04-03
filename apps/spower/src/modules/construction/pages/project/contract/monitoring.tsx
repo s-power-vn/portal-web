@@ -44,7 +44,7 @@ const Component = () => {
   );
 };
 export const Route = createFileRoute(
-  '/_private/project/$projectId/contract/monitoring'
+  '/_private/_organization/project/$projectId/contract/monitoring'
 )({
   component: Component,
   beforeLoad: () => ({ title: 'Theo dõi hợp đồng' })

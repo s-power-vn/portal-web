@@ -1,2 +1,3 @@
 export * from './common-layout';
-export * from './dashboard-layout';
+export * from './organization-layout';
+export * from './top-layout';

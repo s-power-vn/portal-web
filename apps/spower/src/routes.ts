@@ -11,90 +11,123 @@ export const routes = rootRoute('./root.tsx', [
   route('user-information', './auth/user-information.tsx'),
   route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
-    route('top', './private/top.tsx'),
-    route('home', './private/home.tsx'),
-    route('messenger', './private/messenger.tsx'),
-    route('project', './private/project.tsx', [
-      index('./private/project/index.tsx'),
-      route('$projectId', './private/project/$projectId.tsx', [
-        index('./private/project/$projectId/index.tsx'),
-        route('issues', './private/project/$projectId/issues.tsx', [
-          index('./private/project/$projectId/issues/index.tsx'),
-          route('/me', './private/project/$projectId/issues/me.tsx', [
-            index('./private/project/$projectId/issues/me/index.tsx'),
+    layout('./top.tsx', [route('top', './top/top.tsx')]),
+    layout('./organization.tsx', [
+      route('home', './organization/home.tsx'),
+      route('messenger', './organization/messenger.tsx'),
+      route('project', './organization/project.tsx', [
+        index('./organization/project/index.tsx'),
+        route('$projectId', './organization/project/$projectId.tsx', [
+          index('./organization/project/$projectId/index.tsx'),
+          route('issues', './organization/project/$projectId/issues.tsx', [
+            index('./organization/project/$projectId/issues/index.tsx'),
+            route('/me', './organization/project/$projectId/issues/me.tsx', [
+              index('./organization/project/$projectId/issues/me/index.tsx'),
+              route(
+                '/$issueId',
+                './organization/project/$projectId/issues/me/$issueId.tsx'
+              )
+            ]),
             route(
-              '/$issueId',
-              './private/project/$projectId/issues/me/$issueId.tsx'
+              '/price',
+              './organization/project/$projectId/issues/price.tsx',
+              [
+                index(
+                  './organization/project/$projectId/issues/price/index.tsx'
+                ),
+                route(
+                  '/$issueId',
+                  './organization/project/$projectId/issues/price/$issueId.tsx'
+                )
+              ]
+            ),
+            route(
+              '/request',
+              './organization/project/$projectId/issues/request.tsx',
+              [
+                index(
+                  './organization/project/$projectId/issues/request/index.tsx'
+                ),
+                route(
+                  '/$issueId',
+                  './organization/project/$projectId/issues/request/$issueId.tsx'
+                )
+              ]
             )
           ]),
-          route('/price', './private/project/$projectId/issues/price.tsx', [
-            index('./private/project/$projectId/issues/price/index.tsx'),
-            route(
-              '/$issueId',
-              './private/project/$projectId/issues/price/$issueId.tsx'
-            )
-          ]),
-          route('/request', './private/project/$projectId/issues/request.tsx', [
-            index('./private/project/$projectId/issues/request/index.tsx'),
-            route(
-              '/$issueId',
-              './private/project/$projectId/issues/request/$issueId.tsx'
-            )
-          ])
-        ]),
-        ...getProjectRoutes(),
-        route('settings', './private/project/$projectId/settings.tsx')
-      ])
-    ]),
-    route('settings', './private/settings.tsx', [
-      index('./private/settings/index.tsx'),
-      route('general', './private/settings/general.tsx', [
-        index('./private/settings/general/index.tsx'),
-        route('customers', './private/settings/general/customers/list.tsx', [
-          route('new', './private/settings/general/customers/new.tsx'),
-          route(
-            '$customerId/edit',
-            './private/settings/general/customers/edit.tsx'
-          )
-        ]),
-        route(
-          'departments',
-          './private/settings/general/departments/list.tsx',
-          [
-            route('new', './private/settings/general/departments/new.tsx'),
-            route(
-              '$departmentId/edit',
-              './private/settings/general/departments/edit.tsx'
-            )
-          ]
-        ),
-        route('employees', './private/settings/general/employees/list.tsx', [
-          route('new', './private/settings/general/employees/new.tsx'),
-          route(
-            '$employeeId/edit',
-            './private/settings/general/employees/edit.tsx'
-          )
-        ]),
-        ...getSettingsRoutes()
+          ...getProjectRoutes(),
+          route('settings', './organization/project/$projectId/settings.tsx')
+        ])
       ]),
-      route('operation', './private/settings/operation.tsx', [
-        index('./private/settings/operation/index.tsx'),
-        route('objects', './private/settings/operation/objects/list.tsx', [
-          route('new', './private/settings/operation/objects/new.tsx'),
+      route('settings', './organization/settings.tsx', [
+        index('./organization/settings/index.tsx'),
+        route('general', './organization/settings/general.tsx', [
+          index('./organization/settings/general/index.tsx'),
           route(
-            '$objectId/edit',
-            './private/settings/operation/objects/edit.tsx'
-          )
+            'customers',
+            './organization/settings/general/customers/list.tsx',
+            [
+              route('new', './organization/settings/general/customers/new.tsx'),
+              route(
+                '$customerId/edit',
+                './organization/settings/general/customers/edit.tsx'
+              )
+            ]
+          ),
+          route(
+            'departments',
+            './organization/settings/general/departments/list.tsx',
+            [
+              route(
+                'new',
+                './organization/settings/general/departments/new.tsx'
+              ),
+              route(
+                '$departmentId/edit',
+                './organization/settings/general/departments/edit.tsx'
+              )
+            ]
+          ),
+          route(
+            'employees',
+            './organization/settings/general/employees/list.tsx',
+            [
+              route('new', './organization/settings/general/employees/new.tsx'),
+              route(
+                '$employeeId/edit',
+                './organization/settings/general/employees/edit.tsx'
+              )
+            ]
+          ),
+          ...getSettingsRoutes()
         ]),
-        route('process', './private/settings/operation/process/list.tsx', [
-          route('new', './private/settings/operation/process/new.tsx'),
+        route('operation', './organization/settings/operation.tsx', [
+          index('./organization/settings/operation/index.tsx'),
           route(
-            '$processId/edit',
-            './private/settings/operation/process/edit.tsx'
+            'objects',
+            './organization/settings/operation/objects/list.tsx',
+            [
+              route('new', './organization/settings/operation/objects/new.tsx'),
+              route(
+                '$objectId/edit',
+                './organization/settings/operation/objects/edit.tsx'
+              )
+            ]
+          ),
+          route(
+            'process',
+            './organization/settings/operation/process/list.tsx',
+            [
+              route('new', './organization/settings/operation/process/new.tsx'),
+              route(
+                '$processId/edit',
+                './organization/settings/operation/process/edit.tsx'
+              )
+            ]
           )
         ])
-      ])
-    ]),
-    route('profile', './private/profile.tsx')
+      ]),
+      route('profile', './organization/profile.tsx')
+    ])
   ])
 ]);

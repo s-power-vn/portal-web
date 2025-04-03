@@ -5,46 +5,41 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
+import { NewProcessForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
-import { NewSupplierForm } from '../../../components/supplier';
 
-const Component = () => {
+export const Route = createFileRoute(
+  '/_private/_organization/settings/operation/process/new'
+)({
+  component: RouteComponent
+});
+
+function RouteComponent() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
 
-  const onSuccessHandler = useCallback(() => {
-    setOpen(false);
+  const handleSuccess = useCallback(() => {
     history.back();
-    invalidates([api.supplier.list.getKey()]);
+    invalidates([api.process.list.getKey()]);
   }, [history, invalidates]);
 
-  const onCancelHandler = useCallback(() => {
-    setOpen(false);
+  const handleCancel = useCallback(() => {
     history.back();
   }, [history]);
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
-      preventOutsideClick={true}
+      id={'process-new'}
+      title={'Thêm quy trình'}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      preventOutsideClick={true}
     >
-      <NewSupplierForm
-        onSuccess={onSuccessHandler}
-        onCancel={onCancelHandler}
-      />
+      <NewProcessForm onSuccess={handleSuccess} onCancel={handleCancel} />
     </Modal>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/_organization/settings/general/suppliers/new'
-)({
-  component: Component
-});
+}

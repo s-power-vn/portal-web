@@ -5,8 +5,8 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
+import { NewCustomerForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
-import { NewSupplierForm } from '../../../components/supplier';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
@@ -16,7 +16,7 @@ const Component = () => {
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.supplier.list.getKey()]);
+    invalidates([api.customer.list.getKey()]);
   }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
@@ -26,16 +26,16 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
+      title={'Thêm chủ đầu tư'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'new-customer-modal'}
     >
-      <NewSupplierForm
+      <NewCustomerForm
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -44,7 +44,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/suppliers/new'
+  '/_private/_organization/settings/general/customers/new'
 )({
   component: Component
 });

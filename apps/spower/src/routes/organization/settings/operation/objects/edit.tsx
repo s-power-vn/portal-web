@@ -5,19 +5,20 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
+import { EditObjectForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
-import { NewSupplierForm } from '../../../components/supplier';
 
 const Component = () => {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
+  const { objectId } = Route.useParams();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.supplier.list.getKey()]);
-  }, [history, invalidates]);
+    invalidates([api.object.list.getKey(), api.object.byId.getKey(objectId)]);
+  }, [history, invalidates, objectId]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -26,16 +27,17 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
+      title={'Chỉnh sửa đối tượng'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'edit-object-modal'}
     >
-      <NewSupplierForm
+      <EditObjectForm
+        objectId={objectId}
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
@@ -44,7 +46,9 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/suppliers/new'
+  '/_private/_organization/settings/operation/objects/$objectId/edit'
 )({
-  component: Component
+  component: Component,
+  loader: ({ context: { queryClient }, params: { objectId } }) =>
+    queryClient?.ensureQueryData(api.object.byId.getOptions(objectId))
 });

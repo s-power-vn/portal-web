@@ -7,7 +7,14 @@ import {
 import { api } from 'portal-api';
 import { client2 } from 'portal-core';
 
-import { DashboardLayout } from '../layouts';
+export const Route = createFileRoute('/_private')({
+  component: RouteComponent,
+  beforeLoad: protectRoute
+});
+
+function RouteComponent() {
+  return <Outlet />;
+}
 
 async function protectRoute({ location }: { location: ParsedLocation }) {
   await client2.auth.authStateReady();
@@ -21,12 +28,17 @@ async function protectRoute({ location }: { location: ParsedLocation }) {
   }
 
   try {
-    await client2.api.getRestToken({
-      email: client2.auth.currentUser?.email ?? '',
-      organizationId: '1'
-    });
-
     await api.user.checkUser.fetcher();
+
+    const savedOrganizationId = localStorage.getItem('organizationId');
+    if (!savedOrganizationId) {
+      redirect({
+        to: '/top',
+        search: {
+          redirect: location.href
+        }
+      });
+    }
   } catch (error) {
     throw redirect({
       to: '/user-information',
@@ -36,14 +48,3 @@ async function protectRoute({ location }: { location: ParsedLocation }) {
     });
   }
 }
-
-export const Route = createFileRoute('/_private')({
-  component: () => {
-    return (
-      <DashboardLayout>
-        <Outlet />
-      </DashboardLayout>
-    );
-  },
-  beforeLoad: protectRoute
-});

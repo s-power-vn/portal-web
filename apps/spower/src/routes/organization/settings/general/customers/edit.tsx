@@ -5,19 +5,31 @@ import { useCallback, useState } from 'react';
 
 import { Modal } from '@minhdtb/storeo-theme';
 
+import { EditCustomerForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
-import { NewSupplierForm } from '../../../components/supplier';
 
-const Component = () => {
+export const Route = createFileRoute(
+  '/_private/_organization/settings/general/customers/$customerId/edit'
+)({
+  component: Component,
+  loader: ({ context: { queryClient }, params: { customerId } }) =>
+    queryClient?.ensureQueryData(api.customer.byId.getOptions(customerId))
+});
+
+function Component() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
+  const { customerId } = Route.useParams();
   const invalidates = useInvalidateQueries();
 
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.supplier.list.getKey()]);
-  }, [history, invalidates]);
+    invalidates([
+      api.customer.byId.getKey(customerId),
+      api.customer.list.getKey()
+    ]);
+  }, [customerId, history, invalidates]);
 
   const onCancelHandler = useCallback(() => {
     setOpen(false);
@@ -26,25 +38,20 @@ const Component = () => {
 
   return (
     <Modal
-      title={'Thêm nhà cung cấp'}
+      title={'Chỉnh sửa chủ đầu tư'}
       preventOutsideClick={true}
       open={open}
       setOpen={open => {
         setOpen(open);
         history.back();
       }}
-      id={'new-supplier-modal'}
+      id={'edit-customer-modal'}
     >
-      <NewSupplierForm
+      <EditCustomerForm
+        customerId={customerId}
         onSuccess={onSuccessHandler}
         onCancel={onCancelHandler}
       />
     </Modal>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/_organization/settings/general/suppliers/new'
-)({
-  component: Component
-});
+}

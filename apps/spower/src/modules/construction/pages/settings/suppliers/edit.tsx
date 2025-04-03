@@ -49,7 +49,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/settings/general/suppliers/$supplierId/edit'
+  '/_private/_organization/settings/general/suppliers/$supplierId/edit'
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { supplierId } }) =>
