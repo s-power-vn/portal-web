@@ -681,7 +681,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/_organization/project/$projectId/contract/input'
+  '/_private/$organizationId/project/$projectId/contract/input'
 )({
   component: Component,
   beforeLoad: () => ({ title: 'Hợp đồng đầu vào' })

@@ -9,7 +9,7 @@ import { EditProcessForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/operation/process/$processId/edit'
+  '/_private/$organizationId/settings/operation/process/$processId/edit'
 )({
   component: RouteComponent
 });

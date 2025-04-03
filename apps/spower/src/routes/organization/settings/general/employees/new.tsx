@@ -9,7 +9,7 @@ import { NewEmployeeForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/employees/new'
+  '/_private/$organizationId/settings/general/employees/new'
 )({
   component: Component
 });

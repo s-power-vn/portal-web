@@ -1,9 +1,12 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/_private/_organization/settings/')({
-  beforeLoad: () => {
+export const Route = createFileRoute('/_private/$organizationId/settings/')({
+  beforeLoad: ({ params }) => {
     throw redirect({
-      to: '/settings/general'
+      to: '/$organizationId/settings/general',
+      params: {
+        organizationId: params.organizationId
+      }
     });
   }
 });

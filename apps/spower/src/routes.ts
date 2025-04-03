@@ -12,7 +12,7 @@ export const routes = rootRoute('./root.tsx', [
   route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
     layout('./top.tsx', [route('top', './top/top.tsx')]),
-    layout('./organization.tsx', [
+    route('$organizationId', './organization.tsx', [
       route('home', './organization/home.tsx'),
       route('messenger', './organization/messenger.tsx'),
       route('project', './organization/project.tsx', [

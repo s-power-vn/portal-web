@@ -44,7 +44,7 @@ const Component = () => {
 }
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/departments/new',
+  '/_private/$organizationId/settings/general/departments/new',
 )({
   component: Component,
 })

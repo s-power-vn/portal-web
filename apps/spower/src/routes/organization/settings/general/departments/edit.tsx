@@ -9,7 +9,7 @@ import { EditDepartmentForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/departments/$departmentId/edit'
+  '/_private/$organizationId/settings/general/departments/$departmentId/edit'
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { departmentId } }) =>

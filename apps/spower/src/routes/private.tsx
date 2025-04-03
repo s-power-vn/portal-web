@@ -40,9 +40,9 @@ async function protectRoute({ location }: { location: ParsedLocation }) {
       });
     } else {
       redirect({
-        to: '/home',
-        search: {
-          redirect: location.href
+        to: '/$organizationId/home',
+        params: {
+          organizationId: savedOrganizationId
         }
       });
     }

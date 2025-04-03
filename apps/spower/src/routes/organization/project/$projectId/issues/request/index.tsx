@@ -34,7 +34,7 @@ import {
 } from '../../../../../../components';
 
 export const Route = createFileRoute(
-  '/_private/_organization/project/$projectId/issues/request/'
+  '/_private/$organizationId/project/$projectId/issues/request/'
 )({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>

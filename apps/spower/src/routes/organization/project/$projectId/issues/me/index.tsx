@@ -32,7 +32,7 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
-export const Route = createFileRoute('/_private/_organization/project/$projectId/issues/me/')(
+export const Route = createFileRoute('/_private/$organizationId/project/$projectId/issues/me/')(
   {
     component: Component,
     validateSearch: input => ListSchema.validateSync(input),

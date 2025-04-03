@@ -16,7 +16,7 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/_organization/home')({
+export const Route = createFileRoute('/_private/$organizationId/home')({
   component: Component,
   beforeLoad: () => {
     return {

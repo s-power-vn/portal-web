@@ -9,7 +9,7 @@ import { EditEmployeeForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/general/employees/$employeeId/edit'
+  '/_private/$organizationId/settings/general/employees/$employeeId/edit'
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { employeeId } }) =>

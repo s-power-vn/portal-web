@@ -89,17 +89,11 @@ class ApiClient {
     return response.json();
   }
 
-  public async getRestToken({
-    email,
-    organizationId
-  }: {
-    email: string;
-    organizationId?: string;
-  }) {
+  public async getRestToken({ organization_id }: { organization_id?: string }) {
     const token = await this.auth.currentUser?.getIdToken();
     const response = await fetch(`${BASE_URL}/api/user/rest-token`, {
       method: 'POST',
-      body: JSON.stringify({ email, organizationId }),
+      body: JSON.stringify({ organization_id }),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`

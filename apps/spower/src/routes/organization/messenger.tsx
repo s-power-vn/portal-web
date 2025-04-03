@@ -13,7 +13,7 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/_organization/messenger')({
+export const Route = createFileRoute('/_private/$organizationId/messenger')({
   component: Component,
   beforeLoad: () => ({ title: 'Tin nhắn' })
 });

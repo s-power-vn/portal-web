@@ -124,6 +124,6 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/_organization/project/$projectId/settings')({
+export const Route = createFileRoute('/_private/$organizationId/project/$projectId/settings')({
   component: Component
 });

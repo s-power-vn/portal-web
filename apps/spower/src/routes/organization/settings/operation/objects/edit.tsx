@@ -46,7 +46,7 @@ const Component = () => {
 };
 
 export const Route = createFileRoute(
-  '/_private/_organization/settings/operation/objects/$objectId/edit'
+  '/_private/$organizationId/settings/operation/objects/$objectId/edit'
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { objectId } }) =>

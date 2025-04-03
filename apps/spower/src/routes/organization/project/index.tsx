@@ -137,7 +137,7 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/_organization/project/')({
+export const Route = createFileRoute('/_private/$organizationId/project/')({
   component: Component,
   validateSearch: (input: unknown & SearchSchemaInput) =>
     ListSchema.validateSync(input),

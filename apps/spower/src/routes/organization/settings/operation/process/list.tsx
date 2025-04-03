@@ -37,7 +37,7 @@ import {
   useInvalidateQueries
 } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/operation/process')({
+export const Route = createFileRoute('/_private/$organizationId/settings/operation/process')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {

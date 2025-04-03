@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { api } from 'portal-api';
 
 import { useCallback } from 'react';
@@ -43,6 +43,8 @@ function RouteComponent() {
 
   const invalidates = useInvalidateQueries();
 
+  const navigate = useNavigate();
+
   const handleCreateOrganization = useCallback(() => {
     showModal({
       title: 'Tạo tổ chức',
@@ -55,6 +57,15 @@ function RouteComponent() {
             }}
           />
         );
+      }
+    });
+  }, []);
+
+  const handleOrganizationClick = useCallback((id: string) => {
+    navigate({
+      to: '/$organizationId/home',
+      params: {
+        organizationId: id
       }
     });
   }, []);
@@ -75,6 +86,7 @@ function RouteComponent() {
             <div
               key={org.id}
               className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+              onClick={() => handleOrganizationClick(org.id)}
             >
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">
@@ -107,7 +119,6 @@ function RouteComponent() {
 
                 <div className="flex -space-x-2 overflow-hidden">
                   {org.members.slice(0, 5).map(member => {
-                    const memberRoleColor = getRoleColor(member.role);
                     return (
                       <img
                         key={member.user.id}

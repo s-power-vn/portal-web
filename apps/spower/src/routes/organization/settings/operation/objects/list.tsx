@@ -39,7 +39,7 @@ import { PageHeader } from '../../../../../components';
 import { IndeterminateCheckbox } from '../../../../../components/checkbox';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/operation/objects')({
+export const Route = createFileRoute('/_private/$organizationId/settings/operation/objects')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {

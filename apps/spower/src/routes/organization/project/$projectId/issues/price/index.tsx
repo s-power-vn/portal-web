@@ -33,7 +33,7 @@ import {
 } from '../../../../../../components';
 
 export const Route = createFileRoute(
-  '/_private/_organization/project/$projectId/issues/price/'
+  '/_private/$organizationId/project/$projectId/issues/price/'
 )({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),

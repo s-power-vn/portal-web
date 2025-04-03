@@ -21,16 +21,20 @@ import { Button } from '@minhdtb/storeo-theme';
 import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
-const ThisRoute = createFileRoute('/_private/_organization/project/$projectId')();
+const ThisRoute = createFileRoute(
+  '/_private/$organizationId/project/$projectId'
+)();
 
 const Component = () => {
   const matchRoute = useMatchRoute();
-  const params = matchRoute({ to: '/project/$projectId/settings' });
-  const { projectId } = ThisRoute.useParams();
+  const params = matchRoute({
+    to: '/$organizationId/project/$projectId/settings'
+  });
+  const { projectId, organizationId } = ThisRoute.useParams();
   const project = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
-  const navigate = useNavigate({ from: '/project/$projectId' });
+  const navigate = useNavigate({ from: '/$organizationId/project/$projectId' });
 
   const { data: requestType } = api.objectType.byType.useSuspenseQuery({
     variables: 'Request'
@@ -85,8 +89,9 @@ const Component = () => {
             className={'flex h-8 w-8 items-center justify-center p-0'}
             onClick={() =>
               navigate({
-                to: '/project/$projectId/settings',
+                to: '/$organizationId/project/$projectId/settings',
                 params: {
+                  organizationId,
                   projectId
                 }
               })
@@ -104,38 +109,40 @@ const Component = () => {
               <Sidebar uid={'project'} expanded={true}>
                 {(hasRequest || hasPrice) && (
                   <SidebarGroup
-                    to={'/project/$projectId/contract'}
+                    to={'/$organizationId/project/$projectId/contract'}
                     icon={<NotebookPenIcon width={22} height={22} />}
                   >
                     <SidebarItem
-                      to={'/project/$projectId/contract/input'}
+                      to={'/$organizationId/project/$projectId/contract/input'}
                       icon={<NotebookTextIcon width={22} height={22} />}
                     ></SidebarItem>
                     <SidebarItem
-                      to={'/project/$projectId/contract/monitoring'}
+                      to={
+                        '/$organizationId/project/$projectId/contract/monitoring'
+                      }
                       icon={<BarChart3Icon width={22} height={22} />}
                     ></SidebarItem>
                   </SidebarGroup>
                 )}
                 <SidebarGroup
-                  to={'/project/$projectId/issues'}
+                  to={'/$organizationId/project/$projectId/issues'}
                   icon={<BriefcaseBusinessIcon width={22} height={22} />}
                 >
                   <SidebarItem
-                    to={'/project/$projectId/issues/me'}
+                    to={'/$organizationId/project/$projectId/issues/me'}
                     icon={<ListChecksIcon width={22} height={22} />}
                     badge={<IssueBadge projectId={projectId} />}
                   ></SidebarItem>
                   {hasRequest && (
                     <SidebarItem
-                      to={'/project/$projectId/issues/request'}
+                      to={'/$organizationId/project/$projectId/issues/request'}
                       isChild
                       icon={<LayoutListIcon width={22} height={22} />}
                     ></SidebarItem>
                   )}
                   {hasPrice && (
                     <SidebarItem
-                      to={'/project/$projectId/issues/price'}
+                      to={'/$organizationId/project/$projectId/issues/price'}
                       icon={<LayoutListIcon width={22} height={22} />}
                     ></SidebarItem>
                   )}
@@ -154,7 +161,9 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/_organization/project/$projectId')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/project/$projectId'
+)({
   component: Component,
   loader: ({ context: { queryClient }, params: { projectId } }) =>
     queryClient?.ensureQueryData(api.project.byId.getOptions(projectId)),

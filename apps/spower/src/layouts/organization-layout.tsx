@@ -81,21 +81,21 @@ export const OrganizationLayout: FC<OrganizationLayoutProps> = ({
         <Sidebar uid={'project'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem
-            to={'/home'}
+            to={'/$organizationId/home'}
             icon={<AreaChartIcon width={22} height={22} />}
           ></SidebarItem>
           <SidebarItem
-            to={'/messenger'}
+            to={'/$organizationId/messenger'}
             icon={<MessageSquareTextIcon width={22} height={22} />}
             badge={<MessengerBadge />}
           ></SidebarItem>
           <SidebarItem
-            to={'/project'}
+            to={'/$organizationId/project'}
             icon={<SquareKanbanIcon width={22} height={22} />}
             badge={<IssueBadge isAll={true} />}
           ></SidebarItem>
           <SidebarItem
-            to={'/settings'}
+            to={'/$organizationId/settings'}
             icon={<SettingsIcon width={22} height={22} />}
           ></SidebarItem>
         </Sidebar>

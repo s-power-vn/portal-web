@@ -18,7 +18,7 @@ import {
   SidebarItem
 } from '../../components';
 
-export const Route = createFileRoute('/_private/_organization/settings')({
+export const Route = createFileRoute('/_private/$organizationId/settings')({
   component: Settings,
   beforeLoad: () => ({ title: 'Cài đặt' })
 });
@@ -30,40 +30,40 @@ function Settings() {
       <div className={'flex h-full w-full'}>
         <Sidebar uid={'settings'} expanded={true}>
           <SidebarGroup
-            to={'/settings/general'}
+            to={'/$organizationId/settings/general'}
             icon={<ComponentIcon width={22} height={22} />}
           >
             <SidebarItem
-              to={'/settings/general/departments'}
+              to={'/$organizationId/settings/general/departments'}
               icon={<NetworkIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/settings/general/employees'}
+              to={'/$organizationId/settings/general/employees'}
               icon={<Users2Icon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/settings/general/customers'}
+              to={'/$organizationId/settings/general/customers'}
               icon={<HandshakeIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/settings/general/suppliers'}
+              to={'/$organizationId/settings/general/suppliers'}
               icon={<FactoryIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/settings/general/materials'}
+              to={'/$organizationId/settings/general/materials'}
               icon={<AnvilIcon width={22} height={22} />}
             ></SidebarItem>
           </SidebarGroup>
           <SidebarGroup
-            to={'/settings/operation'}
+            to={'/$organizationId/settings/operation'}
             icon={<BriefcaseBusinessIcon width={22} height={22} />}
           >
             <SidebarItem
-              to={'/settings/operation/objects'}
+              to={'/$organizationId/settings/operation/objects'}
               icon={<PackageIcon width={22} height={22} />}
             ></SidebarItem>
             <SidebarItem
-              to={'/settings/operation/process'}
+              to={'/$organizationId/settings/operation/process'}
               icon={<GitBranchIcon width={22} height={22} />}
             ></SidebarItem>
           </SidebarGroup>

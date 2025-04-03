@@ -29,7 +29,7 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/_organization/settings/general/customers')({
+export const Route = createFileRoute('/_private/$organizationId/settings/general/customers')({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
