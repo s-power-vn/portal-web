@@ -1,78 +1,217 @@
-import type {
-  ColumnResponse,
-  CustomerResponse,
-  ProjectResponse,
-  UserResponse
+import {
+  type Customer,
+  type PaginatedResponse,
+  type Project,
+  type User,
+  client2
 } from 'portal-core';
-import { Collections, client, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { ListParams } from '../types';
+/**
+ * Type for project with related data
+ */
+export type ProjectDetail = Project & {
+  customer?: Customer;
+  created_by?: User;
+};
 
-export type ProjectData = ProjectResponse<{
-  customer: CustomerResponse;
-  createdBy: UserResponse;
-  column_via_project: ColumnResponse[];
-}>;
+/**
+ * Type for project list response
+ */
+export type ProjectListResponse = PaginatedResponse<ProjectDetail>;
+
+/**
+ * Input types for project operations
+ */
+export type ProjectListInput = {
+  pageIndex?: number;
+  pageSize?: number;
+  filter?: string;
+};
+
+/**
+ * Type for creating a project
+ */
+export type CreateProjectInput = {
+  name: string;
+  bidding?: string;
+  customer?: string;
+  organization_id?: string;
+};
+
+export type UpdateProjectInput = {
+  id: string;
+  name?: string;
+  bidding?: string;
+  customer?: string;
+  organization_id?: string;
+};
 
 export const projectApi = router('project', {
   list: router.query({
-    fetcher: async (params?: ListParams) => {
-      const pageIndex = params?.pageIndex ?? 1;
-      const pageSize = params?.pageSize ?? 10;
-      const from = (pageIndex - 1) * pageSize;
-      const to = from + pageSize;
-      const { data, error } = await client2.rest
-        .from('projects')
-        .select('*')
-        .range(from, to)
-        .order('created', { ascending: false })
-        .or(`name.like.%${params?.filter}%, bidding.like.%${params?.filter}%`);
+    fetcher: async (
+      params?: ProjectListInput
+    ): Promise<ProjectListResponse> => {
+      try {
+        const pageIndex = params?.pageIndex ?? 1;
+        const pageSize = params?.pageSize ?? 10;
+        const from = (pageIndex - 1) * pageSize;
+        const to = from + pageSize;
 
-      return client
-        .collection<ProjectData>(Collections.Project)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: `(name ~ "${params?.filter ?? ''}" || bidding ~ "${params?.filter ?? ''}")`,
-          expand: 'customer, createdBy',
-          sort: '-created'
-        });
+        const { data, count, error } = await client2.rest
+          .from('projects')
+          .select(
+            `
+            *,
+            customer:customers(*),
+            created_by:users(*)
+          `,
+            { count: 'exact' }
+          )
+          .range(from, to)
+          .order('created', { ascending: false })
+          .or(
+            `name.ilike.%${params?.filter ?? ''}%,bidding.ilike.%${params?.filter ?? ''}%`
+          );
+
+        if (error) {
+          throw error;
+        }
+
+        return {
+          items: (data as ProjectDetail[]) || [],
+          page: pageIndex,
+          perPage: pageSize,
+          totalItems: count || 0,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        };
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy danh sách dự án: ${(error as Error).message}`
+        );
+      }
     }
   }),
+
   byId: router.query({
-    fetcher: (id: string) =>
-      client.collection<ProjectData>(Collections.Project).getOne(id, {
-        expand: 'customer, createdBy, column_via_project'
-      })
+    fetcher: async (id: string): Promise<ProjectDetail> => {
+      try {
+        const { data, error } = await client2.rest
+          .from('projects')
+          .select(
+            `
+            *,
+            customer:customers(*),
+            created_by:users(*)
+          `
+          )
+          .eq('id', id)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data) {
+          throw new Error(`Không tìm thấy dự án với id: ${id}`);
+        }
+
+        return data as ProjectDetail;
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy thông tin dự án: ${(error as Error).message}`
+        );
+      }
+    }
   }),
+
   create: router.mutation({
-    mutationFn: (params: Partial<ProjectResponse>) =>
-      client.collection(Collections.Project).create({
-        ...params,
-        createdBy: client.authStore.record?.id
-      })
+    mutationFn: async (params: CreateProjectInput): Promise<ProjectDetail> => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const { data, error } = await client2.rest
+          .from('projects')
+          .insert({
+            ...params,
+            created_by: userId,
+            created: new Date().toISOString()
+          })
+          .select(
+            `
+            *,
+            customer:customers(*),
+            created_by:users(*)
+          `
+          )
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data) {
+          throw new Error('Không có dữ liệu trả về');
+        }
+
+        return data as ProjectDetail;
+      } catch (error) {
+        throw new Error(`Không thể tạo dự án: ${(error as Error).message}`);
+      }
+    }
   }),
-  delete: router.mutation({
-    mutationFn: (id: string) =>
-      client.collection(Collections.Project).delete(id)
-  }),
+
   update: router.mutation({
-    mutationFn: (params: Partial<ColumnResponse> & { id: string }) =>
-      client.collection(Collections.Project).update(params.id, params)
+    mutationFn: async (params: UpdateProjectInput): Promise<ProjectDetail> => {
+      try {
+        const { id, ...updateParams } = params;
+        const { data, error } = await client2.rest
+          .from('projects')
+          .update({
+            ...updateParams,
+            updated: new Date().toISOString()
+          })
+          .eq('id', id)
+          .select(
+            `
+            *,
+            customer:customers(*),
+            created_by:users(*)
+          `
+          )
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data) {
+          throw new Error(`Không tìm thấy dự án với id: ${id}`);
+        }
+
+        return data as ProjectDetail;
+      } catch (error) {
+        throw new Error(
+          `Không thể cập nhật dự án: ${(error as Error).message}`
+        );
+      }
+    }
   }),
-  addColumn: router.mutation({
-    mutationFn: (params: Partial<ColumnResponse>) =>
-      client.collection(Collections.Column).create({
-        ...params
-      })
-  }),
-  listColumn: router.query({
-    fetcher: (projectId: string) =>
-      client.collection<ColumnResponse>(Collections.Column).getFullList({
-        filter: `project = "${projectId}"`
-      })
-  }),
-  deleteColumn: router.mutation({
-    mutationFn: (id: string) => client.collection(Collections.Column).delete(id)
+
+  delete: router.mutation({
+    mutationFn: async (id: string): Promise<void> => {
+      try {
+        const { error } = await client2.rest
+          .from('projects')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          throw error;
+        }
+      } catch (error) {
+        throw new Error(`Không thể xóa dự án: ${(error as Error).message}`);
+      }
+    }
   })
 });

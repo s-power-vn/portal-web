@@ -10,6 +10,8 @@
 - Role system is implemented with proper color coding
 - Member display is working with avatar support
 - All text is localized to Vietnamese
+- Error handling implemented with Vietnamese messages
+- Fixed duplicate error message issue
 
 ## Completed Items
 
@@ -22,6 +24,11 @@
   - Role-based access control
   - Organization-based isolation
   - JWT authentication
+- API Error Handling
+  - Consistent error structure
+  - Vietnamese translations
+  - Fixed duplicate messages
+  - Clear error categories
 
 ## Pending Items
 
@@ -99,6 +106,11 @@
   - Created role hierarchy
   - Set up JWT authentication
   - Added organization isolation
+- Enhanced error handling
+  - Translated all messages to Vietnamese
+  - Fixed duplicate error messages
+  - Standardized error format
+  - Clear error categories
 - Fixed operator parsing bug in expression editor
 - Enhanced form validation UX
   - Validation only shows after first submit

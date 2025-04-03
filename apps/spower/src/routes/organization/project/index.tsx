@@ -1,7 +1,7 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import type { ProjectData } from 'portal-api';
+import { ProjectDetail } from 'libs/api/src/api/domain/project';
 import { ListSchema, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
@@ -17,7 +17,7 @@ const Component = () => {
     variables: search
   });
 
-  const columnHelper = createColumnHelper<ProjectData>();
+  const columnHelper = createColumnHelper<ProjectDetail>();
 
   const columns = [
     columnHelper.display({
@@ -48,28 +48,28 @@ const Component = () => {
     }),
     columnHelper.accessor('customer', {
       cell: ({ row }) => (
-        <div className={'truncate'}>{row.original.expand?.customer.name}</div>
+        <div className={'truncate'}>{row.original.customer?.name}</div>
       ),
       header: () => 'Chủ đầu tư',
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('createdBy', {
+    columnHelper.accessor('created_by', {
       cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.createdBy} />
+        <EmployeeDisplay employeeId={row.original.created_by} />
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id,
       size: 200
     }),
     columnHelper.accessor('created', {
-      cell: ({ row }) => formatDateTime(row.original.created),
+      cell: ({ row }) => formatDateTime(row.original.created ?? ''),
       header: () => 'Ngày tạo',
       footer: info => info.column.id,
       size: 170
     }),
     columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDateTime(row.original.updated),
+      cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
       header: () => 'Ngày cập nhật',
       footer: info => info.column.id,
       size: 170

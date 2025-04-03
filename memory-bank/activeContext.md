@@ -101,6 +101,53 @@
 3. Documentation updates
 4. User role management implementation
 
+### API Error Handling & Localization
+
+#### Recent Changes & Improvements
+
+1. Error Message Structure
+
+   - Implemented consistent error handling across API endpoints
+   - Translated all error messages to Vietnamese
+   - Fixed duplicate error message issue
+   - Standardized error message format
+
+2. Error Categories
+
+   - List operations: "Không thể lấy danh sách..."
+   - Detail operations: "Không thể lấy thông tin..."
+   - Create operations: "Không thể tạo..."
+   - Update operations: "Không thể cập nhật..."
+   - Delete operations: "Không thể xóa..."
+   - Not found errors: "Không tìm thấy... với id:"
+
+3. Implementation Pattern
+   - Direct error throwing in if(error) blocks
+   - Single error wrapping in catch blocks
+   - Simplified "Không có dữ liệu trả về" for null data cases
+
+#### Current Focus
+
+1. Error Handling
+
+   - Consistent error message structure
+   - Vietnamese localization
+   - Proper error propagation
+   - Clear error messages for users
+
+2. Code Organization
+   - Clean error handling pattern
+   - Consistent error message format
+   - Proper type definitions
+   - API method structure
+
+#### Next Steps
+
+1. Review error handling in other API endpoints
+2. Consider adding error codes
+3. Add error logging
+4. Create error handling documentation
+
 ## Current Focus
 
 ### Expression Editor Improvements

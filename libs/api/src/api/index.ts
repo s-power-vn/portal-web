@@ -4,7 +4,6 @@ import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
 import { IssueData, issueApi } from './domain/issue';
 import { organizationApi } from './domain/organization';
 import { priceApi } from './domain/price';
-import type { ProjectData } from './domain/project';
 import { projectApi } from './domain/project';
 import type { RequestData, RequestDetailData } from './domain/request';
 import { requestApi } from './domain/request';
@@ -19,7 +18,7 @@ import {
   chatApi
 } from './messenger/chat';
 import { customerApi } from './setting/general/customer';
-import { DepartmentData, departmentApi } from './setting/general/department';
+import { departmentApi } from './setting/general/department';
 import type { UserData } from './setting/general/employee';
 import { employeeApi } from './setting/general/employee';
 import { materialApi } from './setting/general/material';
@@ -53,7 +52,6 @@ export const api = {
 };
 
 export type {
-  DepartmentData,
   IssueData,
   MsgChannel,
   MsgChat,
@@ -64,7 +62,6 @@ export type {
   ObjectData,
   ObjectTypeData,
   ProcessDbData,
-  ProjectData,
   RequestData,
   RequestDetailData,
   UserData

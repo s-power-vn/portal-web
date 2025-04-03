@@ -9,7 +9,7 @@ import {
 
 import { Database } from './generate/type';
 
-export const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDgneYV3mdC6i0CMuOMTFoAaZ7-O7vDWg8',
@@ -176,7 +176,7 @@ export class StoreoClient {
   constructor() {
     const firebaseApp = initializeApp(firebaseConfig);
     this.auth = getAuth(firebaseApp);
-    this.rest = new PostgrestClient<Database>(`http://localhost:3000`, {
+    this.rest = new PostgrestClient<Database>(`${BASE_URL}/rest`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('restToken')}`
       }

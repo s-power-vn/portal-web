@@ -222,3 +222,79 @@ graph TD
    - Claims include email, org_id, and role
    - Claims used for dynamic policy enforcement
    - Automatic context switching between organizations
+
+## Error Handling Pattern
+
+### API Error Structure
+
+```typescript
+try {
+  // API call
+  const { data, error } = await client2.rest...
+
+  if (error) {
+    throw error; // Direct throw without wrapping
+  }
+
+  if (!data) {
+    throw new Error('Không có dữ liệu trả về');
+  }
+
+  return data;
+} catch (error) {
+  // Single error wrapping with Vietnamese message
+  throw new Error(`Không thể ${action}: ${(error as Error).message}`);
+}
+```
+
+### Error Message Categories
+
+1. List Operations
+
+   ```typescript
+   `Không thể lấy danh sách ${entity}: ${error.message}`;
+   ```
+
+2. Detail Operations
+
+   ```typescript
+   `Không thể lấy thông tin ${entity}: ${error.message}`;
+   ```
+
+3. Create Operations
+
+   ```typescript
+   `Không thể tạo ${entity}: ${error.message}`;
+   ```
+
+4. Update Operations
+
+   ```typescript
+   `Không thể cập nhật ${entity}: ${error.message}`;
+   ```
+
+5. Delete Operations
+
+   ```typescript
+   `Không thể xóa ${entity}: ${error.message}`;
+   ```
+
+6. Not Found Errors
+   ```typescript
+   `Không tìm thấy ${entity} với id: ${id}`;
+   ```
+
+### Implementation Guidelines
+
+1. Error Propagation
+
+   - Throw raw errors from if(error) blocks
+   - Wrap errors only once in catch blocks
+   - Use clear Vietnamese messages
+   - Include original error message
+
+2. Error Categories
+   - Use consistent message format
+   - Follow Vietnamese translation pattern
+   - Keep messages clear and concise
+   - Include relevant context

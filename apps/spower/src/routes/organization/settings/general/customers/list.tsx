@@ -9,7 +9,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { CustomerResponse } from 'portal-core';
+import type { Customer } from 'portal-core';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -29,7 +29,9 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/general/customers')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/general/customers'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -39,9 +41,7 @@ export const Route = createFileRoute('/_private/$organizationId/settings/general
     queryClient?.ensureQueryData(
       api.customer.list.getOptions({
         ...deps.search,
-        filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
-          : ''
+        filter: deps.search.filter ?? ''
       })
     ),
   beforeLoad: () => {
@@ -64,9 +64,7 @@ function Component() {
       }),
       queryFn: ({ pageParam = 1 }) =>
         api.customer.list.fetcher({
-          filter: search.filter
-            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
-            : '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -89,7 +87,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<CustomerResponse>();
+  const columnHelper = createColumnHelper<Customer>();
 
   const columns = useMemo(
     () => [

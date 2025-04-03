@@ -25,7 +25,7 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
       const result = await api.customer.list.fetcher({
-        filter: search ?? '',
+        filter: search,
         pageIndex: page ?? 1,
         pageSize: 10
       });
@@ -49,6 +49,7 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
       queryKey={['customers']}
       queryFn={queryFn}
       lookupFn={lookupFn}
+      showGroups={false}
     />
   );
 };

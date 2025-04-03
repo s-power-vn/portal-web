@@ -28,7 +28,9 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/general/departments')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/general/departments'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -38,9 +40,7 @@ export const Route = createFileRoute('/_private/$organizationId/settings/general
     queryClient?.ensureQueryData(
       api.department.list.getOptions({
         ...deps.search,
-        filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
-          : ''
+        filter: deps.search.filter ?? ''
       })
     ),
   beforeLoad: () => {
@@ -63,9 +63,7 @@ function Component() {
       }),
       queryFn: ({ pageParam = 1 }) =>
         api.department.list.fetcher({
-          filter: search.filter
-            ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
-            : '',
+          filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
         }),
@@ -123,7 +121,7 @@ function Component() {
           return (
             <div className="flex flex-wrap gap-1">
               {roles && roles.length > 0 ? (
-                roles.map(role => (
+                roles.map((role: { id: string; name: string }) => (
                   <span
                     key={role.id}
                     className="bg-appBlueLight text-appWhite rounded-full px-2 py-0.5 text-xs"
