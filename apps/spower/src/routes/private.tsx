@@ -1,57 +1,32 @@
-import {
-  Outlet,
-  ParsedLocation,
-  createFileRoute,
-  redirect
-} from '@tanstack/react-router';
-import { api } from 'portal-api';
-import { client2 } from 'portal-core';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_private')({
   component: RouteComponent,
-  beforeLoad: protectRoute
+  beforeLoad: async ({ context }) => {
+    if (context.auth.isLoading) {
+      return;
+    }
+
+    if (context.auth.status === 'not-registered') {
+      throw redirect({
+        to: '/user-information',
+        search: {
+          email: context.auth.user_email
+        }
+      });
+    }
+
+    if (context.auth.status === 'unauthorized') {
+      throw redirect({
+        to: '/signin',
+        search: {
+          email: context.auth.user_email
+        }
+      });
+    }
+  }
 });
 
 function RouteComponent() {
   return <Outlet />;
-}
-
-async function protectRoute({ location }: { location: ParsedLocation }) {
-  await client2.auth.authStateReady();
-  if (!client2.auth.currentUser) {
-    throw redirect({
-      to: '/signin',
-      search: {
-        redirect: location.href
-      }
-    });
-  }
-
-  try {
-    await api.user.checkUser.fetcher();
-
-    const savedOrganizationId = localStorage.getItem('organizationId');
-    if (!savedOrganizationId) {
-      redirect({
-        to: '/top',
-        search: {
-          redirect: location.href
-        }
-      });
-    } else {
-      redirect({
-        to: '/$organizationId/home',
-        params: {
-          organizationId: savedOrganizationId
-        }
-      });
-    }
-  } catch (error) {
-    throw redirect({
-      to: '/user-information',
-      search: {
-        email: client2.auth.currentUser?.email ?? ''
-      }
-    });
-  }
 }

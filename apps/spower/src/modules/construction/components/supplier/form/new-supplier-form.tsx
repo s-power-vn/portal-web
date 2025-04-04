@@ -8,10 +8,11 @@ import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên nhà cung cấp'),
-  email: string().email('Sai định dạng email'),
-  phone: string(),
-  address: string(),
-  note: string()
+  code: string().nullable(),
+  email: string().email('Sai định dạng email').nullable(),
+  phone: string().nullable(),
+  address: string().nullable(),
+  note: string().nullable()
 });
 
 export type NewSupplierFormProps = BusinessFormProps;
@@ -31,6 +32,7 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
       onCancel={props.onCancel}
       defaultValues={{
         name: '',
+        code: '',
         email: '',
         phone: '',
         address: '',
@@ -39,6 +41,12 @@ export const NewSupplierForm: FC<NewSupplierFormProps> = props => {
       loading={createSupplier.isPending}
       className={'flex flex-col gap-3'}
     >
+      <TextField
+        schema={schema}
+        name={'code'}
+        title={'Mã nhà cung cấp'}
+        options={{}}
+      />
       <TextField
         schema={schema}
         name={'name'}

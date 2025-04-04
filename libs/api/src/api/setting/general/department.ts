@@ -2,15 +2,11 @@ import { type Department, type PaginatedResponse, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
+import { ListParams } from '../../types';
+
 /**
  * Input types for department operations
  */
-export type DepartmentListInput = {
-  pageIndex?: number;
-  pageSize?: number;
-  filter?: string;
-};
-
 export type CreateDepartmentInput = {
   name: string;
   description?: string;
@@ -36,9 +32,7 @@ export type DepartmentListResponse = PaginatedResponse<Department>;
 
 export const departmentApi = router('department', {
   list: router.query({
-    fetcher: async (
-      params?: DepartmentListInput
-    ): Promise<DepartmentListResponse> => {
+    fetcher: async (params?: ListParams): Promise<DepartmentListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;

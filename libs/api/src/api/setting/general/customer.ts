@@ -2,15 +2,11 @@ import { type Customer, type PaginatedResponse, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
+import { ListParams } from '../../types';
+
 /**
  * Input types for customer operations
  */
-export type CustomerListInput = {
-  pageIndex?: number;
-  pageSize?: number;
-  filter?: string;
-};
-
 export type CreateCustomerInput = {
   name: string;
   code?: string;
@@ -36,9 +32,7 @@ export type CustomerListResponse = PaginatedResponse<Customer>;
 
 export const customerApi = router('customer', {
   list: router.query({
-    fetcher: async (
-      params?: CustomerListInput
-    ): Promise<CustomerListResponse> => {
+    fetcher: async (params?: ListParams): Promise<CustomerListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;

@@ -89,11 +89,11 @@ class ApiClient {
     return response.json();
   }
 
-  public async getRestToken({ organization_id }: { organization_id?: string }) {
+  public async getRestToken(organizationId?: string) {
     const token = await this.auth.currentUser?.getIdToken();
     const response = await fetch(`${BASE_URL}/api/user/rest-token`, {
       method: 'POST',
-      body: JSON.stringify({ organization_id }),
+      body: JSON.stringify({ organization_id: organizationId }),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
@@ -104,10 +104,7 @@ class ApiClient {
       throw new Error('Không thể lấy token');
     }
 
-    const data = await response.json();
-
-    localStorage.setItem('restToken', data.token);
-    localStorage.setItem('userId', data.user_id);
+    const data: { token: string; user_id: string } = await response.json();
 
     return data;
   }
@@ -161,10 +158,10 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error('Không thể kiểm tra người dùng');
+      return false;
     }
 
-    return response.json();
+    return true;
   }
 }
 
@@ -176,9 +173,10 @@ export class StoreoClient {
   constructor() {
     const firebaseApp = initializeApp(firebaseConfig);
     this.auth = getAuth(firebaseApp);
+    const restToken = localStorage.getItem('restToken');
     this.rest = new PostgrestClient<Database>(`${BASE_URL}/rest`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('restToken')}`
+        Authorization: `Bearer ${restToken}`
       }
     });
     this.api = new ApiClient(this.auth);

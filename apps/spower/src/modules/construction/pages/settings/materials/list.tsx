@@ -9,7 +9,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { MaterialResponse } from 'portal-core';
+import type { Material } from 'portal-core';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -29,7 +29,9 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/general/materials')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/general/materials'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -40,7 +42,7 @@ export const Route = createFileRoute('/_private/$organizationId/settings/general
       api.material.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (code ~ "${deps.search.filter}")`
+          ? `name.ilike.%${deps.search.filter}%,code.ilike.%${deps.search.filter}%`
           : ''
       })
     ),
@@ -65,7 +67,7 @@ function Component() {
       queryFn: ({ pageParam = 1 }) =>
         api.material.list.fetcher({
           filter: search.filter
-            ? `(name ~ "${search.filter}") || (code ~ "${search.filter}")`
+            ? `name.ilike.%${search.filter}%,code.ilike.%${search.filter}%`
             : '',
           pageIndex: pageParam,
           pageSize: 20
@@ -89,7 +91,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<MaterialResponse>();
+  const columnHelper = createColumnHelper<Material>();
 
   const columns = useMemo(
     () => [
@@ -164,8 +166,7 @@ function Component() {
             </div>
           );
         },
-        header: () => 'Thao tác',
-        size: 120
+        header: () => 'Thao tác'
       })
     ],
     [columnHelper, navigate, confirm, deleteMaterial, search]

@@ -9,7 +9,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
 import { ListSchema, api } from 'portal-api';
-import type { SupplierResponse } from 'portal-core';
+import type { Supplier } from 'portal-core';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -29,7 +29,9 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/general/suppliers')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/general/suppliers'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -40,7 +42,7 @@ export const Route = createFileRoute('/_private/$organizationId/settings/general
       api.supplier.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
+          ? `name.ilike.%${deps.search.filter}%,email.ilike.%${deps.search.filter}%`
           : ''
       })
     ),
@@ -65,7 +67,7 @@ function Component() {
       queryFn: ({ pageParam = 1 }) =>
         api.supplier.list.fetcher({
           filter: search.filter
-            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
+            ? `name.ilike.%${search.filter}%,email.ilike.%${search.filter}%`
             : '',
           pageIndex: pageParam,
           pageSize: 20
@@ -89,7 +91,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<SupplierResponse>();
+  const columnHelper = createColumnHelper<Supplier>();
 
   const columns = useMemo(
     () => [

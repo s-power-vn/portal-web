@@ -45,7 +45,7 @@ export type Customer = BaseEntity & {
 export type Department = BaseEntity & {
   name: string;
   description?: string;
-  roles?: Record<string, unknown>;
+  roles?: Record<string, string>[];
   organization_id?: string;
 };
 
@@ -98,6 +98,7 @@ export type Material = BaseEntity & {
   name: string;
   code?: string;
   unit?: string;
+  note?: string;
   organization_id?: string;
 };
 

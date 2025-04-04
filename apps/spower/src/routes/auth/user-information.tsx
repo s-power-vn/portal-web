@@ -1,4 +1,9 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter
+} from '@tanstack/react-router';
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
@@ -32,10 +37,15 @@ export const Route = createFileRoute('/user-information')({
 function RouteComponent() {
   const { email } = Route.useSearch();
   const navigate = useNavigate();
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const registerUserInformation = api.user.registerUserInformation.useMutation({
     onSuccess: () => {
       success('Đăng ký thông tin thành công');
+      queryClient.invalidateQueries({ queryKey: ['auth'] });
+      router.invalidate();
       navigate({ to: '/' });
     },
     onError: () => {

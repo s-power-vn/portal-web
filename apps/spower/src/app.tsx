@@ -9,10 +9,13 @@ import {
 import { Loader } from 'lucide-react';
 import { parse, stringify } from 'zipson';
 
+import { createContext } from 'react';
+
 import { ModalProvider, error } from '@minhdtb/storeo-theme';
 
 import { Error } from './components/error';
 import { ErrorBoundary } from './components/error-boundary';
+import { useAuth } from './hooks/useAuth';
 import { routeTree } from './routes.gen';
 
 function decodeFromBinary(str: string): string {
@@ -43,10 +46,33 @@ const queryClient = new QueryClient({
   }
 });
 
+const AuthContext = createContext<{
+  status: 'authorized' | 'unauthorized' | 'not-registered';
+  user_id: string;
+  token: string;
+}>({
+  status: 'unauthorized',
+  user_id: '',
+  token: ''
+});
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { data } = useAuth();
+
+  return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
+};
+
 const router = createRouter({
   routeTree,
   context: {
-    queryClient
+    queryClient,
+    auth: {
+      status: 'unauthorized',
+      user_id: '',
+      user_email: '',
+      token: '',
+      isLoading: false
+    }
   },
   defaultPendingComponent: () => (
     <div className={`p-2`}>
@@ -84,12 +110,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+const MyApp = () => {
+  const { data } = useAuth();
+
+  return <RouterProvider router={router} context={{ auth: data }} />;
+};
+
 export const App = () => {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ModalProvider>
-          <RouterProvider router={router} />
+          <MyApp />
         </ModalProvider>
       </QueryClientProvider>
     </ErrorBoundary>

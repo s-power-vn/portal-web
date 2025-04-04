@@ -52,10 +52,8 @@ export const userApi = router('user', {
     }
   }),
   getRestToken: router.query({
-    fetcher: (params?: { organizationId?: string }) => {
-      return client2.api.getRestToken({
-        organization_id: params?.organizationId
-      });
+    fetcher: (params?: string) => {
+      return client2.api.getRestToken(params);
     }
   }),
   emailLogin: router.mutation({

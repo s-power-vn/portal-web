@@ -8,7 +8,8 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { DepartmentData, ListSchema, api } from 'portal-api';
+import { ListSchema, api } from 'portal-api';
+import { Department } from 'portal-core';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -88,7 +89,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<DepartmentData>();
+  const columnHelper = createColumnHelper<Department>();
 
   const columns = useMemo(
     () => [
@@ -121,7 +122,7 @@ function Component() {
           return (
             <div className="flex flex-wrap gap-1">
               {roles && roles.length > 0 ? (
-                roles.map((role: { id: string; name: string }) => (
+                roles.map((role: Record<string, string>) => (
                   <span
                     key={role.id}
                     className="bg-appBlueLight text-appWhite rounded-full px-2 py-0.5 text-xs"

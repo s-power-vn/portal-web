@@ -12,7 +12,7 @@ const schema = object().shape({
     .max(10, 'Mã vật tư không vượt quá 10 ký tự'),
   name: string().required('Hãy nhập tên vật tư'),
   unit: string().required('Hãy nhập đơn vị'),
-  note: string()
+  note: string().nullable()
 });
 
 export type NewMaterialFormProps = BusinessFormProps;

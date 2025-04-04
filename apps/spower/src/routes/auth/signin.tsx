@@ -5,12 +5,11 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
-import { api } from 'portal-api';
-import { client2 } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
+import { RouteContext } from '../root';
 
 export const Route = createFileRoute('/signin')({
   component: RouteComponent,
@@ -83,20 +82,27 @@ function RouteComponent() {
   );
 }
 
-export async function goRootRoute({ location }: { location: ParsedLocation }) {
-  await client2.auth.authStateReady();
-  if (client2.auth.currentUser) {
-    try {
-      await api.user.checkUser.fetcher();
-    } catch (error) {
-      throw redirect({
-        to: '/user-information',
-        search: {
-          email: client2.auth.currentUser?.email ?? ''
-        }
-      });
-    }
+export async function goRootRoute({
+  context,
+  location
+}: {
+  context: RouteContext;
+  location: ParsedLocation;
+}) {
+  if (context.auth.isLoading) {
+    return;
+  }
 
+  if (context.auth.status === 'not-registered') {
+    throw redirect({
+      to: '/user-information',
+      search: {
+        email: context.auth.user_email
+      }
+    });
+  }
+
+  if (context.auth.status === 'authorized') {
     throw redirect({
       to: '/',
       search: {

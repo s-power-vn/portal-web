@@ -25,7 +25,7 @@ export const SupplierDropdown: FC<SupplierDropdownProps> = props => {
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
       const result = await api.supplier.list.fetcher({
-        filter: search ?? '',
+        filter: search ? `name.ilike.%${search}%` : '',
         pageIndex: page ?? 1,
         pageSize: 10
       });
@@ -40,6 +40,7 @@ export const SupplierDropdown: FC<SupplierDropdownProps> = props => {
     },
     []
   );
+
   return (
     <Combobox
       {...props}
