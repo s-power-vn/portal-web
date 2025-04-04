@@ -128,7 +128,7 @@ export const Roles: FC<RolesProps> = ({ value = [], onChange }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {roles.map((role, index) => (
+              {roles.map(role => (
                 <TableRow key={role.id} className="hover:bg-slate-50">
                   <TableCell>
                     {editingRoleId === role.id ? (

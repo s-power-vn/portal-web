@@ -14,7 +14,10 @@ export type DepartmentListInput = {
 export type CreateDepartmentInput = {
   name: string;
   description?: string;
-  roles?: string[];
+  roles?: {
+    id: string;
+    name: string;
+  }[];
   organization_id?: string;
 };
 
@@ -22,7 +25,10 @@ export type UpdateDepartmentInput = {
   id: string;
   name?: string;
   description?: string;
-  roles?: string[];
+  roles?: {
+    id: string;
+    name: string;
+  }[];
   organization_id?: string;
 };
 
@@ -169,6 +175,7 @@ export const departmentApi = router('department', {
   update: router.mutation({
     mutationFn: async (params: UpdateDepartmentInput): Promise<Department> => {
       try {
+        console.log('params', params);
         const { id, ...updateParams } = params;
         const { data, error } = await client2.rest
           .from('departments')

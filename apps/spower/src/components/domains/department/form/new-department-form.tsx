@@ -3,12 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { array, object, string } from 'yup';
 
 import type { FC } from 'react';
-import { useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
 
-import { type Role } from '../field/roles';
 import { RolesField } from '../field/roles-field';
 
 const schema = object().shape({
@@ -25,8 +23,6 @@ const schema = object().shape({
 export type NewDepartmentFormProps = BusinessFormProps;
 
 export const NewDepartmentForm: FC<NewDepartmentFormProps> = props => {
-  const [roles, setRoles] = useState<Role[]>([]);
-
   const createDepartment = api.department.create.useMutation({
     onSuccess: async () => {
       success('Thêm phòng ban thành công');
@@ -38,10 +34,7 @@ export const NewDepartmentForm: FC<NewDepartmentFormProps> = props => {
     <Form
       schema={schema}
       onSuccess={values => {
-        createDepartment.mutate({
-          ...values,
-          roles: roles
-        });
+        createDepartment.mutate(values);
       }}
       onCancel={props.onCancel}
       defaultValues={{
@@ -77,14 +70,7 @@ export const NewDepartmentForm: FC<NewDepartmentFormProps> = props => {
         title={'Mô tả'}
         options={{}}
       />
-      <RolesField
-        schema={schema}
-        name={'roles'}
-        options={{
-          value: roles,
-          onChange: setRoles
-        }}
-      />
+      <RolesField schema={schema} name={'roles'} options={{}} />
     </Form>
   );
 };

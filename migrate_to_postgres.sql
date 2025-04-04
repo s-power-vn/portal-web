@@ -44,8 +44,28 @@ BEGIN
     END LOOP;
 END $$;
 
+-- Create NanoID generation function
+CREATE OR REPLACE FUNCTION generate_nanoid(size INT DEFAULT 21)
+RETURNS TEXT AS $$
+DECLARE
+  id TEXT := '';
+  i INT;
+  bytes BYTEA;
+  alphabet TEXT := '_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  alphabet_length INT := length(alphabet);
+BEGIN
+  bytes := gen_random_bytes(size);
+  FOR i IN 0..size-1 LOOP
+    id := id || substr(alphabet, 
+                      (get_byte(bytes, i) & 63) + 1,
+                      1);
+  END LOOP;
+  RETURN id;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     phone TEXT DEFAULT '',
@@ -56,29 +76,29 @@ CREATE TABLE users (
 );
 
 CREATE TABLE organizations (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     settings JSONB DEFAULT '{}',
-    created_by UUID REFERENCES users(id)
+    created_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE departments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     description TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     roles JSONB,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE organization_members (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID REFERENCES organizations(id),
-    user_id UUID REFERENCES users(id),
-    department UUID REFERENCES departments(id),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
+    organization_id TEXT REFERENCES organizations(id),
+    user_id TEXT REFERENCES users(id),
+    department TEXT REFERENCES departments(id),
     role TEXT NOT NULL CHECK (role IN ('org_admin', 'org_operator', 'org_member')),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -86,7 +106,7 @@ CREATE TABLE organization_members (
 );
 
 CREATE TABLE customers (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     address TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     email TEXT DEFAULT '',
@@ -95,11 +115,11 @@ CREATE TABLE customers (
     phone TEXT DEFAULT '',
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     code TEXT DEFAULT '',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE suppliers (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     address TEXT DEFAULT '',
     code TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -108,22 +128,22 @@ CREATE TABLE suppliers (
     note TEXT DEFAULT '',
     phone TEXT DEFAULT '',
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE projects (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     bidding TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by UUID REFERENCES users(id),
-    customer UUID REFERENCES customers(id),
+    created_by TEXT REFERENCES users(id),
+    customer TEXT REFERENCES customers(id),
     name TEXT NOT NULL,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE object_types (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     description TEXT DEFAULT '',
     display TEXT DEFAULT '',
@@ -131,25 +151,25 @@ CREATE TABLE object_types (
     icon TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE objects (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    type UUID REFERENCES object_types(id),
-    organization_id UUID REFERENCES organizations(id)
+    type TEXT REFERENCES object_types(id),
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE issues (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by UUID REFERENCES users(id),
+    created_by TEXT REFERENCES users(id),
     title TEXT NOT NULL,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    project UUID REFERENCES projects(id),
+    project TEXT REFERENCES projects(id),
     deleted BOOLEAN DEFAULT FALSE,
     deadline_status TEXT DEFAULT '',
     start_date TIMESTAMP WITH TIME ZONE,
@@ -159,18 +179,18 @@ CREATE TABLE issues (
     status TEXT DEFAULT '',
     code TEXT DEFAULT '',
     approver JSONB,
-    object UUID REFERENCES objects(id),
+    object TEXT REFERENCES objects(id),
     assignees JSONB DEFAULT '[]',
     assigned_date TIMESTAMP WITH TIME ZONE,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE details (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    project UUID REFERENCES projects(id),
+    project TEXT REFERENCES projects(id),
     note TEXT DEFAULT '',
-    parent UUID REFERENCES details(id),
+    parent TEXT REFERENCES details(id),
     title TEXT NOT NULL,
     unit TEXT DEFAULT '',
     unit_price NUMERIC DEFAULT 0,
@@ -178,23 +198,23 @@ CREATE TABLE details (
     volume NUMERIC DEFAULT 0,
     level TEXT DEFAULT '',
     extend JSONB,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE requests (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    project UUID REFERENCES projects(id),
-    issue UUID REFERENCES issues(id),
-    organization_id UUID REFERENCES organizations(id)
+    project TEXT REFERENCES projects(id),
+    issue TEXT REFERENCES issues(id),
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE request_details (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    detail UUID REFERENCES details(id),
-    request UUID REFERENCES requests(id),
+    detail TEXT REFERENCES details(id),
+    request TEXT REFERENCES requests(id),
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     request_volume NUMERIC DEFAULT 0,
     custom_level TEXT DEFAULT '',
@@ -203,73 +223,73 @@ CREATE TABLE request_details (
     index TEXT DEFAULT '',
     note TEXT DEFAULT '',
     delivery_date TIMESTAMP WITH TIME ZONE,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE contracts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    request UUID REFERENCES requests(id),
-    supplier UUID REFERENCES suppliers(id),
+    request TEXT REFERENCES requests(id),
+    supplier TEXT REFERENCES suppliers(id),
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     count NUMERIC DEFAULT 0,
     note TEXT DEFAULT '',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE comments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     content TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by UUID REFERENCES users(id),
-    issue UUID REFERENCES issues(id),
+    created_by TEXT REFERENCES users(id),
+    issue TEXT REFERENCES issues(id),
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status TEXT DEFAULT '',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE detail_imports (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     error TEXT DEFAULT '',
     file TEXT NOT NULL,
     percent NUMERIC DEFAULT 0,
-    project UUID REFERENCES projects(id),
+    project TEXT REFERENCES projects(id),
     status TEXT DEFAULT '',
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE templates (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     detail TEXT NOT NULL,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE materials (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     code TEXT DEFAULT '',
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     note TEXT DEFAULT '',
     unit TEXT DEFAULT '',
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE prices (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    issue UUID REFERENCES issues(id),
-    project UUID REFERENCES projects(id),
+    issue TEXT REFERENCES issues(id),
+    project TEXT REFERENCES projects(id),
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE price_details (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     estimate_price NUMERIC DEFAULT 0,
@@ -279,96 +299,96 @@ CREATE TABLE price_details (
     unit TEXT DEFAULT '',
     volume NUMERIC DEFAULT 0,
     prices JSONB,
-    price UUID REFERENCES prices(id),
+    price TEXT REFERENCES prices(id),
     estimate_amount NUMERIC DEFAULT 0,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE issue_files (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     size NUMERIC DEFAULT 0,
     type TEXT DEFAULT '',
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     upload TEXT NOT NULL,
-    issue UUID REFERENCES issues(id),
-    organization_id UUID REFERENCES organizations(id)
+    issue TEXT REFERENCES issues(id),
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE processes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     finish_node TEXT DEFAULT '',
     process JSONB,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
-    created_by UUID REFERENCES users(id),
+    created_by TEXT REFERENCES users(id),
     description TEXT DEFAULT '',
-    object_type UUID REFERENCES object_types(id),
+    object_type TEXT REFERENCES object_types(id),
     start_node TEXT DEFAULT '',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_teams (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    owner UUID REFERENCES users(id),
+    owner TEXT REFERENCES users(id),
     members JSONB DEFAULT '[]',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_channels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
-    team UUID REFERENCES msg_teams(id),
+    team TEXT REFERENCES msg_teams(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     description TEXT DEFAULT '',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_chats (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     type TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     participants JSONB DEFAULT '[]',
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    chat UUID REFERENCES msg_chats(id),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
+    chat TEXT REFERENCES msg_chats(id),
     content TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    sender UUID REFERENCES users(id),
+    sender TEXT REFERENCES users(id),
     type TEXT DEFAULT 'text',
-    reply_to UUID REFERENCES msg_messages(id),
-    organization_id UUID REFERENCES organizations(id)
+    reply_to TEXT REFERENCES msg_messages(id),
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_reactions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    message UUID REFERENCES msg_messages(id),
-    "user" UUID REFERENCES users(id),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
+    message TEXT REFERENCES msg_messages(id),
+    "user" TEXT REFERENCES users(id),
     reaction TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 CREATE TABLE msg_settings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    chat UUID REFERENCES msg_chats(id),
-    "user" UUID REFERENCES users(id),
+    id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
+    chat TEXT REFERENCES msg_chats(id),
+    "user" TEXT REFERENCES users(id),
     last_read TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id UUID REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id)
 );
 
 -- Create views
@@ -401,6 +421,7 @@ WHERE i.deleted = false
         SELECT finish_node 
         FROM processes 
         WHERE finish_node <> ''
+        AND processes.organization_id = i.organization_id
     );
 
 CREATE OR REPLACE VIEW detail_info AS
@@ -458,7 +479,7 @@ CROSS JOIN
 JOIN 
     organization_members om ON om.user_id = u.id AND om.organization_id = c.organization_id
 WHERE 
-    (c.participants::jsonb @> to_jsonb(u.id::text)
+    (c.participants::jsonb @> to_jsonb(u.id)
     OR c.type = 'Channel');
 
 CREATE OR REPLACE VIEW issue_user_info AS
@@ -502,7 +523,7 @@ SELECT
 FROM 
     issue_assignments ia
 JOIN 
-    users u ON u.id::text = ia.assignee_id
+    users u ON u.id = ia.assignee_id
 JOIN 
     organization_members om ON om.user_id = u.id AND om.organization_id = ia.organization_id
 GROUP BY 
@@ -625,32 +646,4 @@ CREATE INDEX idx_msg_teams_members ON msg_teams USING GIN (members);
 CREATE INDEX idx_msg_chats_participants ON msg_chats USING GIN (participants);
 CREATE INDEX idx_organizations_settings ON organizations USING GIN (settings);
 
--- Add Row-Level Security 
-ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE objects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE object_types ENABLE ROW LEVEL SECURITY;
-ALTER TABLE issues ENABLE ROW LEVEL SECURITY;
-ALTER TABLE details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE requests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE request_details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE detail_imports ENABLE ROW LEVEL SECURITY;
-ALTER TABLE templates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE materials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE prices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE price_details ENABLE ROW LEVEL SECURITY;
-ALTER TABLE issue_files ENABLE ROW LEVEL SECURITY;
-ALTER TABLE processes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_teams ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_channels ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_chats ENABLE ROW LEVEL SECURITY;
-ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE organization_members ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_reactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE msg_settings ENABLE ROW LEVEL SECURITY;
 

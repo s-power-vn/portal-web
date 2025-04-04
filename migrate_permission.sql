@@ -5,12 +5,14 @@ DECLARE
 BEGIN
     -- First drop trigger to avoid dependency issues
     DROP TRIGGER IF EXISTS trigger_set_organization_creator ON organizations;
+    DROP TRIGGER IF EXISTS trigger_set_organization_created_by ON organizations;
 
     -- Then drop helper functions
     DROP FUNCTION IF EXISTS current_user_id() CASCADE;
     DROP FUNCTION IF EXISTS current_organization_id() CASCADE;
     DROP FUNCTION IF EXISTS current_jwt_role() CASCADE;
     DROP FUNCTION IF EXISTS set_organization_creator() CASCADE;
+    DROP FUNCTION IF EXISTS set_organization_created_by() CASCADE;
     
     -- Handle existing permissions
     BEGIN
@@ -68,6 +70,7 @@ BEGIN
     
     -- Permissions for authenticated
     GRANT USAGE ON SCHEMA public TO authenticated;
+    GRANT SELECT ON users TO authenticated;
     GRANT SELECT, INSERT ON TABLE organizations TO authenticated;
     GRANT SELECT, INSERT ON TABLE organization_members TO authenticated;
     GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
@@ -119,18 +122,18 @@ BEGIN
 END $$;
 
 -- Helper functions for JWT claims
-CREATE OR REPLACE FUNCTION current_user_id() RETURNS uuid AS $$
+CREATE OR REPLACE FUNCTION current_user_id() RETURNS text AS $$
 BEGIN
-  RETURN (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
+  RETURN (current_setting('request.jwt.claims', true)::json->>'user_id')::text;
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION current_organization_id() RETURNS uuid AS $$
+CREATE OR REPLACE FUNCTION current_organization_id() RETURNS text AS $$
 BEGIN
-  RETURN (current_setting('request.jwt.claims', true)::json->>'org_id')::uuid;
+  RETURN (current_setting('request.jwt.claims', true)::json->>'org_id')::text;
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
@@ -146,8 +149,8 @@ EXCEPTION
 END;
 $$ LANGUAGE plpgsql;
 
--- Function for setting organization creator
-CREATE OR REPLACE FUNCTION set_organization_creator() 
+-- Function for setting created_by field
+CREATE OR REPLACE FUNCTION set_organization_created_by() 
 RETURNS TRIGGER AS $$
 BEGIN
   -- Set created_by if not set
@@ -155,6 +158,14 @@ BEGIN
     NEW.created_by := current_user_id();
   END IF;
   
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function for creating organization member
+CREATE OR REPLACE FUNCTION set_organization_creator() 
+RETURNS TRIGGER AS $$
+BEGIN  
   -- Insert into organization_members
   INSERT INTO organization_members (
     id,
@@ -163,7 +174,7 @@ BEGIN
     role,
     created
   ) VALUES (
-    gen_random_uuid(),
+    generate_nanoid(),
     NEW.id,
     current_user_id(),
     'org_admin',
@@ -174,7 +185,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger for setting organization creator
+-- Trigger for setting created_by field
+CREATE TRIGGER trigger_set_organization_created_by
+  BEFORE INSERT ON organizations
+  FOR EACH ROW
+  WHEN (current_jwt_role() = 'authenticated')
+  EXECUTE FUNCTION set_organization_created_by();
+
+-- Trigger for creating organization member
 CREATE TRIGGER trigger_set_organization_creator
   AFTER INSERT ON organizations
   FOR EACH ROW
@@ -185,10 +203,10 @@ CREATE TRIGGER trigger_set_organization_creator
 GRANT EXECUTE ON FUNCTION 
     current_user_id, 
     current_organization_id, 
-    current_jwt_role
+    current_jwt_role,
+    set_organization_created_by,
+    set_organization_creator
 TO anon, authenticated, org_member, org_operator, org_admin;
-
-GRANT EXECUTE ON FUNCTION set_organization_creator() TO authenticated, org_admin;
 
 -- Enable RLS
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
@@ -211,7 +229,7 @@ CREATE POLICY authenticated_insert_organizations ON organizations
 FOR INSERT TO authenticated
 WITH CHECK (true);
 
-CREATE OR REPLACE FUNCTION check_user_organization_access(organization_id uuid, user_id uuid)
+CREATE OR REPLACE FUNCTION check_user_organization_access(organization_id text, user_id text)
 RETURNS boolean
 LANGUAGE sql
 SECURITY DEFINER

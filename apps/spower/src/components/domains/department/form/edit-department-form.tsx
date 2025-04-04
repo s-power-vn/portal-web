@@ -2,7 +2,6 @@ import { api } from 'portal-api';
 import { array, object, string } from 'yup';
 
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
@@ -26,17 +25,9 @@ export type EditDepartmentFormProps = BusinessFormProps & {
 };
 
 export const EditDepartmentForm: FC<EditDepartmentFormProps> = props => {
-  const [roles, setRoles] = useState<Role[]>([]);
-
   const department = api.department.byId.useSuspenseQuery({
     variables: props.departmentId
   });
-
-  useEffect(() => {
-    if (department.data?.roles) {
-      setRoles(department.data.roles as Role[]);
-    }
-  }, [department.data]);
 
   const updateDepartment = api.department.update.useMutation({
     onSuccess: async () => {
@@ -51,15 +42,14 @@ export const EditDepartmentForm: FC<EditDepartmentFormProps> = props => {
       onSuccess={values => {
         updateDepartment.mutate({
           ...values,
-          id: props.departmentId,
-          roles: roles
+          id: props.departmentId
         });
       }}
       onCancel={props.onCancel}
       defaultValues={{
         name: department.data?.name || '',
         description: department.data?.description || '',
-        roles: (department.data?.roles as Role[]) || []
+        roles: (department.data?.roles as unknown as Role[]) || []
       }}
       loading={updateDepartment.isPending}
       className={'flex flex-col gap-3'}
@@ -76,14 +66,7 @@ export const EditDepartmentForm: FC<EditDepartmentFormProps> = props => {
         title={'Mô tả'}
         options={{}}
       />
-      <RolesField
-        schema={schema}
-        name={'roles'}
-        options={{
-          value: roles,
-          onChange: setRoles
-        }}
-      />
+      <RolesField schema={schema} name={'roles'} options={{}} />
     </Form>
   );
 };
