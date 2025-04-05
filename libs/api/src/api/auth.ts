@@ -18,6 +18,9 @@ export const authApi = router(`auth`, {
   }),
   logout: router.mutation({
     mutationFn: async () => {
+      localStorage.removeItem('restToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('organizationId');
       return client2.auth.signOut();
     }
   })

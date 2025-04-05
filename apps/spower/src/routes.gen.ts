@@ -22,9 +22,9 @@ import { Route as IndexImport } from './routes/index'
 import { Route as TopImport } from './routes/top'
 import { Route as OrganizationImport } from './routes/organization'
 import { Route as TopTopImport } from './routes/top/top'
+import { Route as TopProfileImport } from './routes/top/profile'
 import { Route as OrganizationSettingsImport } from './routes/organization/settings'
 import { Route as OrganizationProjectImport } from './routes/organization/project'
-import { Route as OrganizationProfileImport } from './routes/organization/profile'
 import { Route as OrganizationMessengerImport } from './routes/organization/messenger'
 import { Route as OrganizationHomeImport } from './routes/organization/home'
 import { Route as OrganizationSettingsIndexImport } from './routes/organization/settings/index'
@@ -139,6 +139,12 @@ const TopTopRoute = TopTopImport.update({
   getParentRoute: () => TopRoute,
 } as any)
 
+const TopProfileRoute = TopProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => TopRoute,
+} as any)
+
 const OrganizationSettingsRoute = OrganizationSettingsImport.update({
   id: '/settings',
   path: '/settings',
@@ -148,12 +154,6 @@ const OrganizationSettingsRoute = OrganizationSettingsImport.update({
 const OrganizationProjectRoute = OrganizationProjectImport.update({
   id: '/project',
   path: '/project',
-  getParentRoute: () => OrganizationRoute,
-} as any)
-
-const OrganizationProfileRoute = OrganizationProfileImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => OrganizationRoute,
 } as any)
 
@@ -570,13 +570,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrganizationMessengerImport
       parentRoute: typeof OrganizationImport
     }
-    '/_private/$organizationId/profile': {
-      id: '/_private/$organizationId/profile'
-      path: '/profile'
-      fullPath: '/$organizationId/profile'
-      preLoaderRoute: typeof OrganizationProfileImport
-      parentRoute: typeof OrganizationImport
-    }
     '/_private/$organizationId/project': {
       id: '/_private/$organizationId/project'
       path: '/project'
@@ -590,6 +583,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$organizationId/settings'
       preLoaderRoute: typeof OrganizationSettingsImport
       parentRoute: typeof OrganizationImport
+    }
+    '/_private/_top/profile': {
+      id: '/_private/_top/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof TopProfileImport
+      parentRoute: typeof TopImport
     }
     '/_private/_top/top': {
       id: '/_private/_top/top'
@@ -1252,7 +1252,6 @@ const OrganizationSettingsRouteWithChildren =
 interface OrganizationRouteChildren {
   OrganizationHomeRoute: typeof OrganizationHomeRoute
   OrganizationMessengerRoute: typeof OrganizationMessengerRoute
-  OrganizationProfileRoute: typeof OrganizationProfileRoute
   OrganizationProjectRoute: typeof OrganizationProjectRouteWithChildren
   OrganizationSettingsRoute: typeof OrganizationSettingsRouteWithChildren
 }
@@ -1260,7 +1259,6 @@ interface OrganizationRouteChildren {
 const OrganizationRouteChildren: OrganizationRouteChildren = {
   OrganizationHomeRoute: OrganizationHomeRoute,
   OrganizationMessengerRoute: OrganizationMessengerRoute,
-  OrganizationProfileRoute: OrganizationProfileRoute,
   OrganizationProjectRoute: OrganizationProjectRouteWithChildren,
   OrganizationSettingsRoute: OrganizationSettingsRouteWithChildren,
 }
@@ -1270,10 +1268,12 @@ const OrganizationRouteWithChildren = OrganizationRoute._addFileChildren(
 )
 
 interface TopRouteChildren {
+  TopProfileRoute: typeof TopProfileRoute
   TopTopRoute: typeof TopTopRoute
 }
 
 const TopRouteChildren: TopRouteChildren = {
+  TopProfileRoute: TopProfileRoute,
   TopTopRoute: TopTopRoute,
 }
 
@@ -1304,9 +1304,9 @@ export interface FileRoutesByFullPath {
   '/$organizationId': typeof OrganizationRouteWithChildren
   '/$organizationId/home': typeof OrganizationHomeRoute
   '/$organizationId/messenger': typeof OrganizationMessengerRoute
-  '/$organizationId/profile': typeof OrganizationProfileRoute
   '/$organizationId/project': typeof OrganizationProjectRouteWithChildren
   '/$organizationId/settings': typeof OrganizationSettingsRouteWithChildren
+  '/profile': typeof TopProfileRoute
   '/top': typeof TopTopRoute
   '/$organizationId/project/$projectId': typeof OrganizationProjectProjectIdRouteWithChildren
   '/$organizationId/settings/general': typeof OrganizationSettingsGeneralRouteWithChildren
@@ -1367,7 +1367,7 @@ export interface FileRoutesByTo {
   '/$organizationId': typeof OrganizationRouteWithChildren
   '/$organizationId/home': typeof OrganizationHomeRoute
   '/$organizationId/messenger': typeof OrganizationMessengerRoute
-  '/$organizationId/profile': typeof OrganizationProfileRoute
+  '/profile': typeof TopProfileRoute
   '/top': typeof TopTopRoute
   '/$organizationId/project': typeof OrganizationProjectIndexRoute
   '/$organizationId/settings': typeof OrganizationSettingsIndexRoute
@@ -1422,9 +1422,9 @@ export interface FileRoutesById {
   '/_private/_top': typeof TopRouteWithChildren
   '/_private/$organizationId/home': typeof OrganizationHomeRoute
   '/_private/$organizationId/messenger': typeof OrganizationMessengerRoute
-  '/_private/$organizationId/profile': typeof OrganizationProfileRoute
   '/_private/$organizationId/project': typeof OrganizationProjectRouteWithChildren
   '/_private/$organizationId/settings': typeof OrganizationSettingsRouteWithChildren
+  '/_private/_top/profile': typeof TopProfileRoute
   '/_private/_top/top': typeof TopTopRoute
   '/_private/$organizationId/project/$projectId': typeof OrganizationProjectProjectIdRouteWithChildren
   '/_private/$organizationId/settings/general': typeof OrganizationSettingsGeneralRouteWithChildren
@@ -1487,9 +1487,9 @@ export interface FileRouteTypes {
     | '/$organizationId'
     | '/$organizationId/home'
     | '/$organizationId/messenger'
-    | '/$organizationId/profile'
     | '/$organizationId/project'
     | '/$organizationId/settings'
+    | '/profile'
     | '/top'
     | '/$organizationId/project/$projectId'
     | '/$organizationId/settings/general'
@@ -1549,7 +1549,7 @@ export interface FileRouteTypes {
     | '/$organizationId'
     | '/$organizationId/home'
     | '/$organizationId/messenger'
-    | '/$organizationId/profile'
+    | '/profile'
     | '/top'
     | '/$organizationId/project'
     | '/$organizationId/settings'
@@ -1602,9 +1602,9 @@ export interface FileRouteTypes {
     | '/_private/_top'
     | '/_private/$organizationId/home'
     | '/_private/$organizationId/messenger'
-    | '/_private/$organizationId/profile'
     | '/_private/$organizationId/project'
     | '/_private/$organizationId/settings'
+    | '/_private/_top/profile'
     | '/_private/_top/top'
     | '/_private/$organizationId/project/$projectId'
     | '/_private/$organizationId/settings/general'
@@ -1730,7 +1730,6 @@ export const routeTree = rootRoute
       "children": [
         "/_private/$organizationId/home",
         "/_private/$organizationId/messenger",
-        "/_private/$organizationId/profile",
         "/_private/$organizationId/project",
         "/_private/$organizationId/settings"
       ]
@@ -1739,6 +1738,7 @@ export const routeTree = rootRoute
       "filePath": "./top.tsx",
       "parent": "/_private",
       "children": [
+        "/_private/_top/profile",
         "/_private/_top/top"
       ]
     },
@@ -1748,10 +1748,6 @@ export const routeTree = rootRoute
     },
     "/_private/$organizationId/messenger": {
       "filePath": "./organization/messenger.tsx",
-      "parent": "/_private/$organizationId"
-    },
-    "/_private/$organizationId/profile": {
-      "filePath": "./organization/profile.tsx",
       "parent": "/_private/$organizationId"
     },
     "/_private/$organizationId/project": {
@@ -1770,6 +1766,10 @@ export const routeTree = rootRoute
         "/_private/$organizationId/settings/operation",
         "/_private/$organizationId/settings/"
       ]
+    },
+    "/_private/_top/profile": {
+      "filePath": "./top/profile.tsx",
+      "parent": "/_private/_top"
     },
     "/_private/_top/top": {
       "filePath": "./top/top.tsx",

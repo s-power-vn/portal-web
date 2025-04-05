@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { client2 } from 'portal-core';
-
-export type AuthData = {
-  status: 'authorized' | 'unauthorized' | 'not-registered';
-  user_id: string;
-  user_email: string;
-  token: string;
-  isLoading: boolean;
-};
+import {
+  authStatus,
+  client2,
+  isAuthenticating,
+  organizationId,
+  restToken,
+  userEmail,
+  userId
+} from 'portal-core';
 
 export function useAuth() {
   const {
@@ -17,57 +17,38 @@ export function useAuth() {
   } = useQuery({
     queryKey: ['auth'],
     queryFn: async () => {
-      console.log('queryFn auth');
+      isAuthenticating.value = true;
+
       try {
         await client2.auth.authStateReady();
         if (!client2.auth.currentUser) {
-          return {
-            status: 'unauthorized' as const,
-            user_id: '',
-            user_email: '',
-            token: ''
-          };
+          authStatus.value = 'unauthorized';
+          return false;
         }
+
+        userEmail.value = client2.auth.currentUser.email ?? '';
 
         const isHasUser = await client2.api.checkUser();
         if (!isHasUser) {
-          return {
-            status: 'not-registered' as const,
-            user_id: '',
-            user_email: client2.auth.currentUser.email ?? '',
-            token: ''
-          };
+          authStatus.value = 'not-registered';
+          return false;
         }
 
-        const organizationId =
-          localStorage.getItem('organizationId') ?? undefined;
-        const restToken = await client2.api.getRestToken(organizationId);
+        const token = await client2.api.getRestToken(organizationId.value);
+        restToken.value = token.token;
+        userId.value = token.user_id;
+        authStatus.value = 'authorized';
 
-        localStorage.setItem('restToken', restToken.token);
-        localStorage.setItem('userId', restToken.user_id);
-
-        return {
-          status: 'authorized' as const,
-          user_id: restToken.user_id,
-          user_email: client2.auth.currentUser.email ?? '',
-          token: restToken.token
-        };
-      } catch (error) {
-        throw error;
+        return true;
       } finally {
+        isAuthenticating.value = false;
       }
     }
   });
 
-  const data: AuthData = {
-    ...(result || {
-      status: 'unauthorized' as const,
-      user_id: '',
-      user_email: '',
-      token: ''
-    }),
-    isLoading
+  return {
+    data: result,
+    isLoading,
+    error
   };
-
-  return { data, error };
 }

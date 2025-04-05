@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { BlocksIcon } from 'lucide-react';
+import { client2, restToken } from 'portal-core';
 
 const Component = () => {
   return (
@@ -18,7 +19,10 @@ const Component = () => {
 
 export const Route = createFileRoute('/_private/$organizationId/home')({
   component: Component,
-  beforeLoad: () => {
+  beforeLoad: async ({ params }) => {
+    const token = await client2.api.getRestToken(params.organizationId);
+    restToken.value = token.token;
+
     return {
       title: 'Trang chủ'
     };

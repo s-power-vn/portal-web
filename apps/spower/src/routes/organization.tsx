@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
+import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
 
 import { OrganizationLayout } from '../layouts';
 
@@ -11,20 +12,18 @@ export const Route = createFileRoute('/_private/$organizationId')({
     );
   },
   beforeLoad: async ({ context, location }) => {
-    if (context.auth.isLoading) {
-      return;
-    }
+    await waitAuthenticated();
 
-    if (context.auth.status === 'not-registered') {
+    if (authStatus.value === 'not-registered') {
       throw redirect({
         to: '/user-information',
         search: {
-          email: context.auth.user_email
+          email: userEmail.value ?? ''
         }
       });
     }
 
-    if (context.auth.status === 'unauthorized') {
+    if (authStatus.value === 'unauthorized') {
       throw redirect({
         to: '/signin',
         search: {

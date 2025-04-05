@@ -5,6 +5,7 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
+import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
@@ -30,7 +31,11 @@ function RouteComponent() {
           <div className="flex flex-col gap-3">
             {/* Email/Password Button */}
             <Button
-              onClick={() => navigate({ to: '/email-login' })}
+              onClick={() =>
+                navigate({
+                  to: '/email-login'
+                })
+              }
               className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
             >
               <Mail className="text-appBlue h-5 w-5" />
@@ -83,26 +88,23 @@ function RouteComponent() {
 }
 
 export async function goRootRoute({
-  context,
   location
 }: {
   context: RouteContext;
   location: ParsedLocation;
 }) {
-  if (context.auth.isLoading) {
-    return;
-  }
+  await waitAuthenticated();
 
-  if (context.auth.status === 'not-registered') {
+  if (authStatus.value === 'not-registered') {
     throw redirect({
       to: '/user-information',
       search: {
-        email: context.auth.user_email
+        email: userEmail.value ?? ''
       }
     });
   }
 
-  if (context.auth.status === 'authorized') {
+  if (authStatus.value === 'authorized') {
     throw redirect({
       to: '/',
       search: {

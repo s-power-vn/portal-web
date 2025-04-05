@@ -1,3 +1,4 @@
+import { signal } from '@preact/signals-react';
 import { PostgrestClient } from '@supabase/postgrest-js';
 import { initializeApp } from 'firebase/app';
 import {
@@ -20,6 +21,26 @@ const firebaseConfig = {
   appId: '1:264240945494:web:62a9191c33acdbd47d5ef7',
   measurementId: 'G-7VT22QZQJP'
 };
+
+export const isAuthenticating = signal(false);
+export const restToken = signal<string | undefined>(undefined);
+export const userId = signal<string | undefined>(undefined);
+export const userEmail = signal<string | undefined>(undefined);
+export const organizationId = signal<string | undefined>(undefined);
+export const authStatus = signal<
+  'unauthorized' | 'not-registered' | 'authorized'
+>('unauthorized');
+
+export async function waitAuthenticated() {
+  return new Promise<void>(resolve => {
+    const interval = setInterval(() => {
+      if (!isAuthenticating.value) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 10);
+  });
+}
 
 class ApiClient {
   private readonly auth: Auth;
@@ -173,10 +194,21 @@ export class StoreoClient {
   constructor() {
     const firebaseApp = initializeApp(firebaseConfig);
     this.auth = getAuth(firebaseApp);
-    const restToken = localStorage.getItem('restToken');
     this.rest = new PostgrestClient<Database>(`${BASE_URL}/rest`, {
-      headers: {
-        Authorization: `Bearer ${restToken}`
+      fetch: async (input, init) => {
+        if (!restToken.value) {
+          throw new Error('Không có token');
+        }
+
+        const response = await fetch(input, {
+          ...init,
+          headers: {
+            ...init?.headers,
+            Authorization: `Bearer ${restToken.value}`
+          }
+        });
+
+        return response;
       }
     });
     this.api = new ApiClient(this.auth);

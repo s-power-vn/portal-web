@@ -8,7 +8,7 @@ import {
 
 import { lazy, useEffect } from 'react';
 
-import { AuthData, useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === 'prod'
@@ -21,7 +21,6 @@ const TanStackRouterDevtools =
 
 export type RouteContext = {
   queryClient?: QueryClient;
-  auth: AuthData;
 };
 
 export const Route = createRootRouteWithContext<RouteContext>()({
@@ -29,12 +28,12 @@ export const Route = createRootRouteWithContext<RouteContext>()({
 });
 
 function Root() {
+  const { data } = useAuth();
   const router = useRouter();
-  const auth = useAuth();
 
   useEffect(() => {
     router.invalidate();
-  }, [auth]);
+  }, [data]);
 
   return (
     <>

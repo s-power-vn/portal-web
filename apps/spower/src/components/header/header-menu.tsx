@@ -17,12 +17,18 @@ import {
   DropdownMenuTrigger
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateAuth } from '../../hooks/useInvalidateAuth';
+
 export const HeaderMenu = () => {
   const navigate = useNavigate();
   const user = getUser();
+  const invalidateAuth = useInvalidateAuth();
 
   const logout = api.auth.logout.useMutation({
-    onSuccess: () => navigate({ to: '/signin' })
+    onSuccess: async () => {
+      await invalidateAuth();
+      navigate({ to: '/signin' });
+    }
   });
 
   const handleProfile = useCallback(

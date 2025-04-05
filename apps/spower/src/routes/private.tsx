@@ -1,26 +1,25 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
+import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
 
 export const Route = createFileRoute('/_private')({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    if (context.auth.isLoading) {
-      return;
-    }
+  beforeLoad: async ({ location }) => {
+    await waitAuthenticated();
 
-    if (context.auth.status === 'not-registered') {
+    if (authStatus.value === 'not-registered') {
       throw redirect({
         to: '/user-information',
         search: {
-          email: context.auth.user_email
+          email: userEmail.value ?? ''
         }
       });
     }
 
-    if (context.auth.status === 'unauthorized') {
+    if (authStatus.value === 'unauthorized') {
       throw redirect({
         to: '/signin',
         search: {
-          email: context.auth.user_email
+          redirect: location.href
         }
       });
     }

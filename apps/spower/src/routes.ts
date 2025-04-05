@@ -11,7 +11,10 @@ export const routes = rootRoute('./root.tsx', [
   route('user-information', './auth/user-information.tsx'),
   route('signin', './auth/signin.tsx'),
   layout('./private.tsx', [
-    layout('./top.tsx', [route('top', './top/top.tsx')]),
+    layout('./top.tsx', [
+      route('profile', './top/profile.tsx'),
+      route('top', './top/top.tsx')
+    ]),
     route('$organizationId', './organization.tsx', [
       route('home', './organization/home.tsx'),
       route('messenger', './organization/messenger.tsx'),
@@ -126,8 +129,7 @@ export const routes = rootRoute('./root.tsx', [
             ]
           )
         ])
-      ]),
-      route('profile', './organization/profile.tsx')
+      ])
     ])
   ])
 ]);
