@@ -5,12 +5,13 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
-import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
+import { userEmail } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
 import { RouteContext } from '../root';
+import { enhancedWaitAuthenticated } from './auth-cache';
 
 export const Route = createFileRoute('/signin')({
   component: RouteComponent,
@@ -93,9 +94,9 @@ export async function goRootRoute({
   context: RouteContext;
   location: ParsedLocation;
 }) {
-  await waitAuthenticated();
+  const authResult = await enhancedWaitAuthenticated();
 
-  if (authStatus.value === 'not-registered') {
+  if (authResult.status === 'not-registered') {
     throw redirect({
       to: '/user-information',
       search: {
@@ -104,7 +105,7 @@ export async function goRootRoute({
     });
   }
 
-  if (authStatus.value === 'authorized') {
+  if (authResult.status === 'authorized') {
     throw redirect({
       to: '/',
       search: {

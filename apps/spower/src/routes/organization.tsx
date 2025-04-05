@@ -1,5 +1,5 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { client2, restToken } from 'portal-core';
 
 import { OrganizationLayout } from '../layouts';
 
@@ -11,25 +11,8 @@ export const Route = createFileRoute('/_private/$organizationId')({
       </OrganizationLayout>
     );
   },
-  beforeLoad: async ({ context, location }) => {
-    await waitAuthenticated();
-
-    if (authStatus.value === 'not-registered') {
-      throw redirect({
-        to: '/user-information',
-        search: {
-          email: userEmail.value ?? ''
-        }
-      });
-    }
-
-    if (authStatus.value === 'unauthorized') {
-      throw redirect({
-        to: '/signin',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
+  beforeLoad: async ({ params }) => {
+    const token = await client2.api.getRestToken(params.organizationId);
+    restToken.value = token.token;
   }
 });

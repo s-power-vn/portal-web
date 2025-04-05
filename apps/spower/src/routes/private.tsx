@@ -1,12 +1,14 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
+import { userEmail } from 'portal-core';
+
+import { enhancedWaitAuthenticated } from './auth/auth-cache';
 
 export const Route = createFileRoute('/_private')({
   component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    await waitAuthenticated();
+  beforeLoad: async () => {
+    const authResult = await enhancedWaitAuthenticated();
 
-    if (authStatus.value === 'not-registered') {
+    if (authResult.status === 'not-registered') {
       throw redirect({
         to: '/user-information',
         search: {
@@ -15,11 +17,11 @@ export const Route = createFileRoute('/_private')({
       });
     }
 
-    if (authStatus.value === 'unauthorized') {
+    if (authResult.status === 'unauthorized') {
       throw redirect({
         to: '/signin',
         search: {
-          redirect: location.href
+          redirect: window.location.href
         }
       });
     }

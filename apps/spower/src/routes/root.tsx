@@ -1,14 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouter
-} from '@tanstack/react-router';
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 
-import { lazy, useEffect } from 'react';
-
-import { useAuth } from '../hooks/useAuth';
+import { lazy } from 'react';
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === 'prod'
@@ -28,13 +22,6 @@ export const Route = createRootRouteWithContext<RouteContext>()({
 });
 
 function Root() {
-  const { data } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    router.invalidate();
-  }, [data]);
-
   return (
     <>
       <Outlet />

@@ -1,37 +1,13 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { authStatus, userEmail, waitAuthenticated } from 'portal-core';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
 
 import { TopLayout } from '../layouts';
 
 export const Route = createFileRoute('/_private/_top')({
-  component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    await waitAuthenticated();
-
-    if (authStatus.value === 'not-registered') {
-      throw redirect({
-        to: '/user-information',
-        search: {
-          email: userEmail.value ?? ''
-        }
-      });
-    }
-
-    if (authStatus.value === 'unauthorized') {
-      throw redirect({
-        to: '/signin',
-        search: {
-          redirect: location.href
-        }
-      });
-    }
+  component: () => {
+    return (
+      <TopLayout>
+        <Outlet />
+      </TopLayout>
+    );
   }
 });
-
-function RouteComponent() {
-  return (
-    <TopLayout>
-      <Outlet />
-    </TopLayout>
-  );
-}

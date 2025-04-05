@@ -22,25 +22,9 @@ const firebaseConfig = {
   measurementId: 'G-7VT22QZQJP'
 };
 
-export const isAuthenticating = signal(false);
 export const restToken = signal<string | undefined>(undefined);
 export const userId = signal<string | undefined>(undefined);
 export const userEmail = signal<string | undefined>(undefined);
-export const organizationId = signal<string | undefined>(undefined);
-export const authStatus = signal<
-  'unauthorized' | 'not-registered' | 'authorized'
->('unauthorized');
-
-export async function waitAuthenticated() {
-  return new Promise<void>(resolve => {
-    const interval = setInterval(() => {
-      if (!isAuthenticating.value) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, 10);
-  });
-}
 
 class ApiClient {
   private readonly auth: Auth;
