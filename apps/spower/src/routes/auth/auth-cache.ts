@@ -9,7 +9,7 @@ export type AuthResult = {
   organizationId?: string;
 };
 
-let authCache: {
+export let authCache: {
   result: AuthResult | null;
   timestamp: number;
 } = {
