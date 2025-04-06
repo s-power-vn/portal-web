@@ -12,7 +12,11 @@ export const Route = createFileRoute('/_private/$organizationId')({
     );
   },
   beforeLoad: async ({ params }) => {
-    const token = await client2.api.getRestToken(params.organizationId);
-    restToken.value = token.token;
+    const savedOrganizationId = localStorage.getItem('organizationId');
+    if (savedOrganizationId !== params.organizationId) {
+      localStorage.setItem('organizationId', params.organizationId);
+      const token = await client2.api.getRestToken(params.organizationId);
+      restToken.value = token.token;
+    }
   }
 });

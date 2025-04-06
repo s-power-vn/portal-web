@@ -1,11 +1,10 @@
-import { client2 } from 'portal-core';
+import { client2, userId } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
 export const organizationApi = router('organization', {
   list: router.query({
     fetcher: async () => {
-      const userId = localStorage.getItem('userId');
       const { data, error } = await client2.rest
         .from('organizations')
         .select(
@@ -26,7 +25,7 @@ export const organizationApi = router('organization', {
             )
           `
         )
-        .eq('organization_members.user_id', userId ?? '');
+        .eq('organization_members.user_id', userId.value ?? '');
 
       if (error) {
         throw new Error(error.message);

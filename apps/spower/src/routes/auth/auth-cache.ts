@@ -6,6 +6,7 @@ export type AuthResult = {
   status: 'unauthorized' | 'not-registered' | 'authorized';
   email?: string;
   userId?: string;
+  organizationId?: string;
 };
 
 let authCache: {
@@ -73,7 +74,8 @@ export async function performAuthentication(): Promise<AuthResult> {
     return result;
   }
 
-  const token = await client2.api.getRestToken();
+  const organizationId = localStorage.getItem('organizationId');
+  const token = await client2.api.getRestToken(organizationId ?? undefined);
 
   restToken.value = token.token;
   userId.value = token.user_id;
@@ -82,7 +84,8 @@ export async function performAuthentication(): Promise<AuthResult> {
   const result: AuthResult = {
     status: 'authorized',
     email,
-    userId: token.user_id
+    userId: token.user_id,
+    organizationId: organizationId ?? undefined
   };
 
   authCache = {
