@@ -3,9 +3,11 @@ import { PostgrestClient } from '@supabase/postgrest-js';
 import { initializeApp } from 'firebase/app';
 import {
   Auth,
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signInWithPopup
 } from 'firebase/auth';
 
 import { Database } from './generate/type';
@@ -146,6 +148,16 @@ class ApiClient {
       email,
       password
     );
+
+    if (!response.user) {
+      throw new Error('Không thể đăng nhập');
+    }
+
+    return response.user;
+  }
+
+  public async googleLogin() {
+    const response = await signInWithPopup(this.auth, new GoogleAuthProvider());
 
     if (!response.user) {
       throw new Error('Không thể đăng nhập');

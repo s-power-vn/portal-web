@@ -61,6 +61,11 @@ export const userApi = router('user', {
       return client2.api.emailLogin(params);
     }
   }),
+  googleLogin: router.mutation({
+    mutationFn: () => {
+      return client2.api.googleLogin();
+    }
+  }),
   emailRegister: router.mutation({
     mutationFn: (params: { email: string; password: string }) => {
       return client2.api.emailRegister(params);

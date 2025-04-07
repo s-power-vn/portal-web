@@ -81,65 +81,75 @@ CREATE TABLE organizations (
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     settings JSONB DEFAULT '{}',
-    created_by TEXT REFERENCES users(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE departments (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     description TEXT DEFAULT '',
+    roles JSONB,
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    roles JSONB,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE organization_members (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    organization_id TEXT REFERENCES organizations(id),
     user_id TEXT REFERENCES users(id),
     department TEXT REFERENCES departments(id),
     role TEXT NOT NULL CHECK (role IN ('org_admin', 'org_operator', 'org_member')),
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id),
     UNIQUE(organization_id, user_id)
 );
 
 CREATE TABLE customers (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     address TEXT DEFAULT '',
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     email TEXT DEFAULT '',
     name TEXT NOT NULL,
     note TEXT DEFAULT '',
     phone TEXT DEFAULT '',
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     code TEXT DEFAULT '',
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE suppliers (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     address TEXT DEFAULT '',
     code TEXT DEFAULT '',
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     email TEXT DEFAULT '',
     name TEXT NOT NULL,
     note TEXT DEFAULT '',
     phone TEXT DEFAULT '',
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE projects (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     bidding TEXT DEFAULT '',
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by TEXT REFERENCES users(id),
     customer TEXT REFERENCES customers(id),
     name TEXT NOT NULL,
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE object_types (
@@ -149,26 +159,27 @@ CREATE TABLE object_types (
     display TEXT DEFAULT '',
     color TEXT DEFAULT '',
     icon TEXT DEFAULT '',
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE objects (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
+    type TEXT REFERENCES object_types(id),
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    type TEXT REFERENCES object_types(id),
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE issues (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by TEXT REFERENCES users(id),
     title TEXT NOT NULL,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     project TEXT REFERENCES projects(id),
     deleted BOOLEAN DEFAULT FALSE,
     deadline_status TEXT DEFAULT '',
@@ -182,40 +193,46 @@ CREATE TABLE issues (
     object TEXT REFERENCES objects(id),
     assignees JSONB DEFAULT '[]',
     assigned_date TIMESTAMP WITH TIME ZONE,
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE details (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     project TEXT REFERENCES projects(id),
     note TEXT DEFAULT '',
     parent TEXT REFERENCES details(id),
     title TEXT NOT NULL,
     unit TEXT DEFAULT '',
     unit_price NUMERIC DEFAULT 0,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     volume NUMERIC DEFAULT 0,
     level TEXT DEFAULT '',
     extend JSONB,
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE requests (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     project TEXT REFERENCES projects(id),
     issue TEXT REFERENCES issues(id),
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE request_details (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     detail TEXT REFERENCES details(id),
     request TEXT REFERENCES requests(id),
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     request_volume NUMERIC DEFAULT 0,
     custom_level TEXT DEFAULT '',
     custom_title TEXT DEFAULT '',
@@ -223,75 +240,88 @@ CREATE TABLE request_details (
     index TEXT DEFAULT '',
     note TEXT DEFAULT '',
     delivery_date TIMESTAMP WITH TIME ZONE,
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE contracts (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     request TEXT REFERENCES requests(id),
     supplier TEXT REFERENCES suppliers(id),
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     count NUMERIC DEFAULT 0,
     note TEXT DEFAULT '',
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE comments (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     content TEXT NOT NULL,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    created_by TEXT REFERENCES users(id),
     issue TEXT REFERENCES issues(id),
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status TEXT DEFAULT '',
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE detail_imports (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     error TEXT DEFAULT '',
     file TEXT NOT NULL,
     percent NUMERIC DEFAULT 0,
     project TEXT REFERENCES projects(id),
     status TEXT DEFAULT '',
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE templates (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     detail TEXT NOT NULL,
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE materials (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     code TEXT DEFAULT '',
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     note TEXT DEFAULT '',
     unit TEXT DEFAULT '',
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE prices (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     issue TEXT REFERENCES issues(id),
     project TEXT REFERENCES projects(id),
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE price_details (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     estimate_price NUMERIC DEFAULT 0,
     index TEXT DEFAULT '',
     level TEXT DEFAULT '',
@@ -301,74 +331,89 @@ CREATE TABLE price_details (
     prices JSONB,
     price TEXT REFERENCES prices(id),
     estimate_amount NUMERIC DEFAULT 0,
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE issue_files (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     size NUMERIC DEFAULT 0,
     type TEXT DEFAULT '',
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     upload TEXT NOT NULL,
     issue TEXT REFERENCES issues(id),
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE processes (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     finish_node TEXT DEFAULT '',
     process JSONB,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
-    created_by TEXT REFERENCES users(id),
     description TEXT DEFAULT '',
     object_type TEXT REFERENCES object_types(id),
     start_node TEXT DEFAULT '',
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_teams (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     owner TEXT REFERENCES users(id),
     members JSONB DEFAULT '[]',
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_channels (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     name TEXT NOT NULL,
     team TEXT REFERENCES msg_teams(id),
+    description TEXT DEFAULT '',
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    description TEXT DEFAULT '',
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_chats (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     type TEXT NOT NULL,
+    participants JSONB DEFAULT '[]',
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    participants JSONB DEFAULT '[]',
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_messages (
     id TEXT PRIMARY KEY DEFAULT generate_nanoid(),
     chat TEXT REFERENCES msg_chats(id),
     content TEXT NOT NULL,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     sender TEXT REFERENCES users(id),
     type TEXT DEFAULT 'text',
     reply_to TEXT REFERENCES msg_messages(id),
-    organization_id TEXT REFERENCES organizations(id)
+    organization_id TEXT REFERENCES organizations(id),
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_reactions (
@@ -376,9 +421,11 @@ CREATE TABLE msg_reactions (
     message TEXT REFERENCES msg_messages(id),
     "user" TEXT REFERENCES users(id),
     reaction TEXT NOT NULL,
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 CREATE TABLE msg_settings (
@@ -386,9 +433,11 @@ CREATE TABLE msg_settings (
     chat TEXT REFERENCES msg_chats(id),
     "user" TEXT REFERENCES users(id),
     last_read TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    organization_id TEXT REFERENCES organizations(id),
     created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    organization_id TEXT REFERENCES organizations(id)
+    created_by TEXT REFERENCES users(id),
+    updated_by TEXT REFERENCES users(id)
 );
 
 -- Create views
@@ -645,5 +694,3 @@ CREATE INDEX idx_processes_process ON processes USING GIN (process);
 CREATE INDEX idx_msg_teams_members ON msg_teams USING GIN (members);
 CREATE INDEX idx_msg_chats_participants ON msg_chats USING GIN (participants);
 CREATE INDEX idx_organizations_settings ON organizations USING GIN (settings);
-
-

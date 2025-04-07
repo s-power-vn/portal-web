@@ -34,7 +34,9 @@ export const NewDepartmentForm: FC<NewDepartmentFormProps> = props => {
     <Form
       schema={schema}
       onSuccess={values => {
-        createDepartment.mutate(values);
+        createDepartment.mutate({
+          ...values
+        });
       }}
       onCancel={props.onCancel}
       defaultValues={{

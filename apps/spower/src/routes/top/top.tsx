@@ -131,14 +131,14 @@ function RouteComponent() {
                     {org.members.slice(0, 5).map(member => {
                       return (
                         <img
-                          key={member.user?.id}
+                          key={member.created_by?.id}
                           className={`inline-block h-8 w-8 rounded-full ring-2 ring-white`}
                           src={
-                            member.user?.avatar ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name ?? '')}`
+                            member.created_by?.avatar ||
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(member.created_by?.name ?? '')}`
                           }
-                          alt={member.user?.name ?? ''}
-                          title={`${member.user?.name} (${getRoleLabel(member.role)})`}
+                          alt={member.created_by?.name ?? ''}
+                          title={`${member.created_by?.name} (${getRoleLabel(member.role)})`}
                         />
                       );
                     })}

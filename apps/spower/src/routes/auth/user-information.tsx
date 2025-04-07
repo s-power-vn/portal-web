@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import {
   createFileRoute,
   useNavigate,
@@ -18,6 +17,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { CommonLayout } from '../../layouts';
+import { forceRefreshAuth } from './auth-cache';
 
 const searchSchema = object().shape({
   email: string().email('Email không hợp lệ').required('Hãy nhập email')
@@ -39,12 +39,10 @@ function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-
   const registerUserInformation = api.user.registerUserInformation.useMutation({
     onSuccess: () => {
       success('Đăng ký thông tin thành công');
-      queryClient.invalidateQueries({ queryKey: ['auth'] });
+      forceRefreshAuth();
       router.invalidate();
       navigate({ to: '/' });
     },

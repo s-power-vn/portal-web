@@ -5,6 +5,7 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
+import { api } from 'portal-api';
 import { userEmail } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
@@ -20,6 +21,14 @@ export const Route = createFileRoute('/signin')({
 
 function RouteComponent() {
   const navigate = useNavigate();
+
+  const googleLogin = api.user.googleLogin.useMutation({
+    onSuccess: () => {
+      navigate({
+        to: '/'
+      });
+    }
+  });
 
   return (
     <CommonLayout>
@@ -44,7 +53,10 @@ function RouteComponent() {
             </Button>
 
             {/* Google Button */}
-            <Button className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md">
+            <Button
+              onClick={() => googleLogin.mutate()}
+              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
+            >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
