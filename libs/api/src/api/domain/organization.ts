@@ -16,7 +16,7 @@ export const organizationApi = router('organization', {
             ),
             members:organization_members!organization_id (
               role,
-              created_by:users (
+              created_by:users!organization_members_created_by_fkey (
                 id,
                 name,
                 email,

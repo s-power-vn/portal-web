@@ -53,7 +53,7 @@ export const departmentApi = router('department', {
         }
 
         return {
-          items: (data as Department[]) || [],
+          items: (data as unknown as Department[]) || [],
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,
@@ -79,7 +79,7 @@ export const departmentApi = router('department', {
           throw error;
         }
 
-        return (data as Department[]) || [];
+        return (data as unknown as Department[]) || [];
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách phòng ban: ${(error as Error).message}`
@@ -105,7 +105,7 @@ export const departmentApi = router('department', {
           throw new Error(`Không tìm thấy phòng ban với id: ${id}`);
         }
 
-        return data as Department;
+        return data as unknown as Department;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin phòng ban: ${(error as Error).message}`
@@ -130,7 +130,7 @@ export const departmentApi = router('department', {
           throw error;
         }
 
-        return (data as Department[]) || [];
+        return (data as unknown as Department[]) || [];
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách phòng ban: ${(error as Error).message}`
@@ -159,7 +159,7 @@ export const departmentApi = router('department', {
           throw new Error('Không có dữ liệu trả về');
         }
 
-        return data as Department;
+        return data as unknown as Department;
       } catch (error) {
         throw new Error(`Không thể tạo phòng ban: ${(error as Error).message}`);
       }
@@ -189,7 +189,7 @@ export const departmentApi = router('department', {
           throw new Error(`Không tìm thấy phòng ban với id: ${id}`);
         }
 
-        return data as Department;
+        return data as unknown as Department;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật phòng ban: ${(error as Error).message}`

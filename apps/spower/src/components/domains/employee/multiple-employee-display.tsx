@@ -1,6 +1,6 @@
 import { Loader, UserIcon, UsersIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, getImageUrl, getUser } from 'portal-core';
+import { getUser } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, useMemo } from 'react';
@@ -16,25 +16,21 @@ import {
 } from '@minhdtb/storeo-theme';
 
 const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
-  const employee = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = api.employee.byId.useSuspenseQuery({
     variables: employeeId
   });
 
   return (
     <div className={'flex items-center justify-end gap-2 whitespace-nowrap'}>
       <Avatar className={'h-6 w-6'}>
-        <AvatarImage
-          src={getImageUrl(
-            Collections.User,
-            employee.data.id,
-            employee.data.avatar
-          )}
-        />
+        <AvatarImage src={employee.user?.avatar || ''} />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span className={'truncate'}>{employee.data.name}</span>
+      <span className={'truncate'}>
+        {employee.name ? employee.name : employee.user?.name}
+      </span>
     </div>
   );
 };
@@ -126,25 +122,21 @@ const Component = ({
 };
 
 const FirstEmployee = ({ employeeId }: { employeeId: string }) => {
-  const employee = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = api.employee.byId.useSuspenseQuery({
     variables: employeeId
   });
 
   return employee ? (
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-5 w-5'}>
-        <AvatarImage
-          src={getImageUrl(
-            Collections.User,
-            employee.data.id,
-            employee.data.avatar
-          )}
-        />
+        <AvatarImage src={employee.user?.avatar || ''} />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span className={'truncate'}>{employee.data.name}</span>
+      <span className={'truncate'}>
+        {employee.name ? employee.name : employee.user?.name}
+      </span>
     </div>
   ) : null;
 };

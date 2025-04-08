@@ -18,12 +18,12 @@ export const SelectEmployeeByCondition: FC<
 
     return Array.isArray(result)
       ? result.map(it => ({
-          label: it.name,
-          value: it.id
+          label: it.name ? it.name : it.user?.name || '',
+          value: it.user?.id || ''
         }))
       : {
-          label: result.name,
-          value: result.id
+          label: result.name ? result.name : result.user?.name || '',
+          value: result.user?.id || ''
         };
   }, []);
 
@@ -41,10 +41,10 @@ export const SelectEmployeeByCondition: FC<
 
       return {
         items: result.items.map(it => ({
-          label: it.name,
-          value: it.id,
-          group: it.expand?.department.name,
-          subLabel: it.email
+          label: it.name ? it.name : it.user?.name || '',
+          value: it.user?.id || '',
+          group: it.department?.name,
+          subLabel: it.user?.email
         })),
         hasMore: result.page < result.totalPages
       };

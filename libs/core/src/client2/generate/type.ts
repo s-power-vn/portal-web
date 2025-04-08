@@ -19,6 +19,7 @@ export type Database = {
           organization_id: string | null
           status: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           content: string
@@ -29,6 +30,7 @@ export type Database = {
           organization_id?: string | null
           status?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           content?: string
@@ -39,6 +41,7 @@ export type Database = {
           organization_id?: string | null
           status?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -90,40 +93,88 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "comments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "comments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "comments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       contracts: {
         Row: {
           count: number | null
           created: string | null
+          created_by: string | null
           id: string
           note: string | null
           organization_id: string | null
           request: string | null
           supplier: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           count?: number | null
           created?: string | null
+          created_by?: string | null
           id?: string
           note?: string | null
           organization_id?: string | null
           request?: string | null
           supplier?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           count?: number | null
           created?: string | null
+          created_by?: string | null
           id?: string
           note?: string | null
           organization_id?: string | null
           request?: string | null
           supplier?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contracts_organization_id_fkey"
             columns: ["organization_id"]
@@ -152,6 +203,27 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contracts_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contracts_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contracts_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       customers: {
@@ -159,6 +231,7 @@ export type Database = {
           address: string | null
           code: string | null
           created: string | null
+          created_by: string | null
           email: string | null
           id: string
           name: string
@@ -166,11 +239,13 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           address?: string | null
           code?: string | null
           created?: string | null
+          created_by?: string | null
           email?: string | null
           id?: string
           name: string
@@ -178,11 +253,13 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           address?: string | null
           code?: string | null
           created?: string | null
+          created_by?: string | null
           email?: string | null
           id?: string
           name?: string
@@ -190,8 +267,30 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "customers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "customers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "customers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customers_organization_id_fkey"
             columns: ["organization_id"]
@@ -199,37 +298,85 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "customers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "customers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "customers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       departments: {
         Row: {
           created: string | null
+          created_by: string | null
           description: string | null
           id: string
           name: string
           organization_id: string | null
           roles: Json | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           name: string
           organization_id?: string | null
           roles?: Json | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           name?: string
           organization_id?: string | null
           roles?: Json | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "departments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "departments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "departments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "departments_organization_id_fkey"
             columns: ["organization_id"]
@@ -237,11 +384,33 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "departments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "departments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "departments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       detail_imports: {
         Row: {
           created: string | null
+          created_by: string | null
           error: string | null
           file: string
           id: string
@@ -250,9 +419,11 @@ export type Database = {
           project: string | null
           status: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           error?: string | null
           file: string
           id?: string
@@ -261,9 +432,11 @@ export type Database = {
           project?: string | null
           status?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           error?: string | null
           file?: string
           id?: string
@@ -272,8 +445,30 @@ export type Database = {
           project?: string | null
           status?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "detail_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "detail_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "detail_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "detail_imports_organization_id_fkey"
             columns: ["organization_id"]
@@ -288,11 +483,33 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "detail_imports_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "detail_imports_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "detail_imports_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       details: {
         Row: {
           created: string | null
+          created_by: string | null
           extend: Json | null
           id: string
           level: string | null
@@ -304,10 +521,12 @@ export type Database = {
           unit: string | null
           unit_price: number | null
           updated: string | null
+          updated_by: string | null
           volume: number | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           extend?: Json | null
           id?: string
           level?: string | null
@@ -319,10 +538,12 @@ export type Database = {
           unit?: string | null
           unit_price?: number | null
           updated?: string | null
+          updated_by?: string | null
           volume?: number | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           extend?: Json | null
           id?: string
           level?: string | null
@@ -334,9 +555,31 @@ export type Database = {
           unit?: string | null
           unit_price?: number | null
           updated?: string | null
+          updated_by?: string | null
           volume?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "details_organization_id_fkey"
             columns: ["organization_id"]
@@ -365,11 +608,33 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       issue_files: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           issue: string | null
           name: string
@@ -377,10 +642,12 @@ export type Database = {
           size: number | null
           type: string | null
           updated: string | null
+          updated_by: string | null
           upload: string
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           name: string
@@ -388,10 +655,12 @@ export type Database = {
           size?: number | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
           upload: string
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           name?: string
@@ -399,9 +668,31 @@ export type Database = {
           size?: number | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
           upload?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "issue_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issue_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issue_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "issue_files_issue_fkey"
             columns: ["issue"]
@@ -430,6 +721,27 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "issue_files_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issue_files_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issue_files_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       issues: {
@@ -453,6 +765,7 @@ export type Database = {
           status: string | null
           title: string
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           approver?: Json | null
@@ -474,6 +787,7 @@ export type Database = {
           status?: string | null
           title: string
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           approver?: Json | null
@@ -495,6 +809,7 @@ export type Database = {
           status?: string | null
           title?: string
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -539,40 +854,88 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "issues_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issues_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "issues_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       materials: {
         Row: {
           code: string | null
           created: string | null
+          created_by: string | null
           id: string
           name: string
           note: string | null
           organization_id: string | null
           unit: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           code?: string | null
           created?: string | null
+          created_by?: string | null
           id?: string
           name: string
           note?: string | null
           organization_id?: string | null
           unit?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           code?: string | null
           created?: string | null
+          created_by?: string | null
           id?: string
           name?: string
           note?: string | null
           organization_id?: string | null
           unit?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "materials_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "materials_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "materials_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "materials_organization_id_fkey"
             columns: ["organization_id"]
@@ -580,37 +943,85 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "materials_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "materials_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "materials_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       msg_channels: {
         Row: {
           created: string | null
+          created_by: string | null
           description: string | null
           id: string
           name: string
           organization_id: string | null
           team: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           name: string
           organization_id?: string | null
           team?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           description?: string | null
           id?: string
           name?: string
           organization_id?: string | null
           team?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "msg_channels_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_channels_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_channels_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "msg_channels_organization_id_fkey"
             columns: ["organization_id"]
@@ -625,39 +1036,108 @@ export type Database = {
             referencedRelation: "msg_teams"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "msg_channels_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_channels_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_channels_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       msg_chats: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           organization_id: string | null
           participants: Json | null
           type: string
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           organization_id?: string | null
           participants?: Json | null
           type: string
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           organization_id?: string | null
           participants?: Json | null
           type?: string
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "msg_chats_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_chats_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_chats_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "msg_chats_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "msg_chats_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_chats_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_chats_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -667,34 +1147,40 @@ export type Database = {
           chat: string | null
           content: string
           created: string | null
+          created_by: string | null
           id: string
           organization_id: string | null
           reply_to: string | null
           sender: string | null
           type: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           chat?: string | null
           content: string
           created?: string | null
+          created_by?: string | null
           id?: string
           organization_id?: string | null
           reply_to?: string | null
           sender?: string | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           chat?: string | null
           content?: string
           created?: string | null
+          created_by?: string | null
           id?: string
           organization_id?: string | null
           reply_to?: string | null
           sender?: string | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -710,6 +1196,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "msg_unread"
             referencedColumns: ["chat_id"]
+          },
+          {
+            foreignKeyName: "msg_messages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_messages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_messages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_messages_organization_id_fkey"
@@ -746,37 +1253,85 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "msg_messages_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_messages_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_messages_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       msg_reactions: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           message: string | null
           organization_id: string | null
           reaction: string
           updated: string | null
+          updated_by: string | null
           user: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           message?: string | null
           organization_id?: string | null
           reaction: string
           updated?: string | null
+          updated_by?: string | null
           user?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           message?: string | null
           organization_id?: string | null
           reaction?: string
           updated?: string | null
+          updated_by?: string | null
           user?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "msg_reactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_reactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_reactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "msg_reactions_message_fkey"
             columns: ["message"]
@@ -789,6 +1344,27 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "msg_reactions_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_reactions_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_reactions_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -818,28 +1394,34 @@ export type Database = {
         Row: {
           chat: string | null
           created: string | null
+          created_by: string | null
           id: string
           last_read: string | null
           organization_id: string | null
           updated: string | null
+          updated_by: string | null
           user: string | null
         }
         Insert: {
           chat?: string | null
           created?: string | null
+          created_by?: string | null
           id?: string
           last_read?: string | null
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
           user?: string | null
         }
         Update: {
           chat?: string | null
           created?: string | null
+          created_by?: string | null
           id?: string
           last_read?: string | null
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
           user?: string | null
         }
         Relationships: [
@@ -858,10 +1440,52 @@ export type Database = {
             referencedColumns: ["chat_id"]
           },
           {
+            foreignKeyName: "msg_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "msg_settings_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "msg_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -890,32 +1514,59 @@ export type Database = {
       msg_teams: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           members: Json | null
           name: string
           organization_id: string | null
           owner: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           members?: Json | null
           name: string
           organization_id?: string | null
           owner?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           members?: Json | null
           name?: string
           organization_id?: string | null
           owner?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "msg_teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "msg_teams_organization_id_fkey"
             columns: ["organization_id"]
@@ -944,12 +1595,34 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "msg_teams_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_teams_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "msg_teams_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       object_types: {
         Row: {
           color: string | null
           created: string | null
+          created_by: string | null
           description: string | null
           display: string | null
           icon: string | null
@@ -957,10 +1630,12 @@ export type Database = {
           name: string
           organization_id: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           color?: string | null
           created?: string | null
+          created_by?: string | null
           description?: string | null
           display?: string | null
           icon?: string | null
@@ -968,10 +1643,12 @@ export type Database = {
           name: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           color?: string | null
           created?: string | null
+          created_by?: string | null
           description?: string | null
           display?: string | null
           icon?: string | null
@@ -979,8 +1656,30 @@ export type Database = {
           name?: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "object_types_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "object_types_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "object_types_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "object_types_organization_id_fkey"
             columns: ["organization_id"]
@@ -988,34 +1687,82 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "object_types_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "object_types_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "object_types_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       objects: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           name: string
           organization_id: string | null
           type: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           name: string
           organization_id?: string | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           name?: string
           organization_id?: string | null
           type?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "objects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "objects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "objects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "objects_organization_id_fkey"
             columns: ["organization_id"]
@@ -1030,40 +1777,97 @@ export type Database = {
             referencedRelation: "object_types"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "objects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "objects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "objects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       organization_members: {
         Row: {
           created: string | null
-          department: string | null
+          created_by: string | null
+          department_id: string | null
+          department_role: string | null
+          department_title: string | null
           id: string
+          name: string | null
           organization_id: string | null
           role: string
           updated: string | null
+          updated_by: string | null
           user_id: string | null
         }
         Insert: {
           created?: string | null
-          department?: string | null
+          created_by?: string | null
+          department_id?: string | null
+          department_role?: string | null
+          department_title?: string | null
           id?: string
+          name?: string | null
           organization_id?: string | null
           role: string
           updated?: string | null
+          updated_by?: string | null
           user_id?: string | null
         }
         Update: {
           created?: string | null
-          department?: string | null
+          created_by?: string | null
+          department_id?: string | null
+          department_role?: string | null
+          department_title?: string | null
           id?: string
+          name?: string | null
           organization_id?: string | null
           role?: string
           updated?: string | null
+          updated_by?: string | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "organization_members_department_fkey"
-            columns: ["department"]
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_department_id_fkey"
+            columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
             referencedColumns: ["id"]
@@ -1073,6 +1877,27 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -1106,6 +1931,7 @@ export type Database = {
           name: string
           settings: Json | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
@@ -1114,6 +1940,7 @@ export type Database = {
           name: string
           settings?: Json | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
@@ -1122,6 +1949,7 @@ export type Database = {
           name?: string
           settings?: Json | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -1145,11 +1973,33 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       price_details: {
         Row: {
           created: string | null
+          created_by: string | null
           estimate_amount: number | null
           estimate_price: number | null
           id: string
@@ -1161,10 +2011,12 @@ export type Database = {
           title: string
           unit: string | null
           updated: string | null
+          updated_by: string | null
           volume: number | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           estimate_amount?: number | null
           estimate_price?: number | null
           id?: string
@@ -1176,10 +2028,12 @@ export type Database = {
           title: string
           unit?: string | null
           updated?: string | null
+          updated_by?: string | null
           volume?: number | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           estimate_amount?: number | null
           estimate_price?: number | null
           id?: string
@@ -1191,9 +2045,31 @@ export type Database = {
           title?: string
           unit?: string | null
           updated?: string | null
+          updated_by?: string | null
           volume?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "price_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "price_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "price_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "price_details_organization_id_fkey"
             columns: ["organization_id"]
@@ -1208,34 +2084,82 @@ export type Database = {
             referencedRelation: "prices"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "price_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "price_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "price_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       prices: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           issue: string | null
           organization_id: string | null
           project: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           organization_id?: string | null
           project?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           organization_id?: string | null
           project?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "prices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "prices_issue_fkey"
             columns: ["issue"]
@@ -1271,6 +2195,27 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "prices_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prices_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prices_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       processes: {
@@ -1286,6 +2231,7 @@ export type Database = {
           process: Json | null
           start_node: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
@@ -1299,6 +2245,7 @@ export type Database = {
           process?: Json | null
           start_node?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
@@ -1312,6 +2259,7 @@ export type Database = {
           process?: Json | null
           start_node?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -1349,6 +2297,27 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "processes_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "processes_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "processes_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       projects: {
@@ -1361,6 +2330,7 @@ export type Database = {
           name: string
           organization_id: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           bidding?: string | null
@@ -1371,6 +2341,7 @@ export type Database = {
           name: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           bidding?: string | null
@@ -1381,6 +2352,7 @@ export type Database = {
           name?: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -1418,11 +2390,33 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "projects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "projects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "projects_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       request_details: {
         Row: {
           created: string | null
+          created_by: string | null
           custom_level: string | null
           custom_title: string | null
           custom_unit: string | null
@@ -1435,9 +2429,11 @@ export type Database = {
           request: string | null
           request_volume: number | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           custom_level?: string | null
           custom_title?: string | null
           custom_unit?: string | null
@@ -1450,9 +2446,11 @@ export type Database = {
           request?: string | null
           request_volume?: number | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           custom_level?: string | null
           custom_title?: string | null
           custom_unit?: string | null
@@ -1465,8 +2463,30 @@ export type Database = {
           request?: string | null
           request_volume?: number | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "request_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "request_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "request_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "request_details_detail_fkey"
             columns: ["detail"]
@@ -1502,34 +2522,82 @@ export type Database = {
             referencedRelation: "requests"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "request_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "request_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "request_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       requests: {
         Row: {
           created: string | null
+          created_by: string | null
           id: string
           issue: string | null
           organization_id: string | null
           project: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           organization_id?: string | null
           project?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           id?: string
           issue?: string | null
           organization_id?: string | null
           project?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "requests_issue_fkey"
             columns: ["issue"]
@@ -1565,6 +2633,27 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       suppliers: {
@@ -1572,6 +2661,7 @@ export type Database = {
           address: string | null
           code: string | null
           created: string | null
+          created_by: string | null
           email: string | null
           id: string
           name: string
@@ -1579,11 +2669,13 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           address?: string | null
           code?: string | null
           created?: string | null
+          created_by?: string | null
           email?: string | null
           id?: string
           name: string
@@ -1591,11 +2683,13 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           address?: string | null
           code?: string | null
           created?: string | null
+          created_by?: string | null
           email?: string | null
           id?: string
           name?: string
@@ -1603,8 +2697,30 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "suppliers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "suppliers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "suppliers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "suppliers_organization_id_fkey"
             columns: ["organization_id"]
@@ -1612,36 +2728,105 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "suppliers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "suppliers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "suppliers_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       templates: {
         Row: {
           created: string | null
+          created_by: string | null
           detail: string
           id: string
           organization_id: string | null
           updated: string | null
+          updated_by: string | null
         }
         Insert: {
           created?: string | null
+          created_by?: string | null
           detail: string
           id?: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Update: {
           created?: string | null
+          created_by?: string | null
           detail?: string
           id?: string
           organization_id?: string | null
           updated?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -1870,47 +3055,12 @@ export type Database = {
         }
         Returns: string
       }
-      create_delete_policy_for_admin: {
+      check_user_organization_access: {
         Args: {
-          table_name: string
+          p_organization_id: string
+          p_user_id: string
         }
-        Returns: undefined
-      }
-      create_delete_policy_for_operator: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
-      }
-      create_insert_policy_for_member: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
-      }
-      create_insert_policy_for_operator: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
-      }
-      create_select_policy: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
-      }
-      create_update_policy_for_member: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
-      }
-      create_update_policy_for_operator: {
-        Args: {
-          table_name: string
-        }
-        Returns: undefined
+        Returns: boolean
       }
       current_jwt_role: {
         Args: Record<PropertyKey, never>
@@ -1943,6 +3093,12 @@ export type Database = {
       gen_salt: {
         Args: {
           "": string
+        }
+        Returns: string
+      }
+      generate_nanoid: {
+        Args: {
+          size?: number
         }
         Returns: string
       }

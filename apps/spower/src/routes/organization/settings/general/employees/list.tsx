@@ -7,8 +7,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { Employee } from 'libs/api/src/api/setting/general/employee';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import type { UserData } from 'portal-api';
 import { ListSchema, api } from 'portal-api';
 
 import { FC, Suspense, useCallback, useMemo, useRef } from 'react';
@@ -29,7 +29,9 @@ import {
 import { PageHeader } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/general/employees')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/general/employees'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -114,7 +116,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<UserData>();
+  const columnHelper = createColumnHelper<Employee>();
 
   const columns = useMemo(
     () => [
@@ -131,19 +133,25 @@ function Component() {
         size: 30
       }),
       columnHelper.accessor('name', {
-        cell: info => info.getValue(),
+        cell: info => {
+          if (info.row.original.name) {
+            return info.row.original.name;
+          }
+
+          return info.row.original.user?.name;
+        },
         header: () => 'Họ tên',
         footer: info => info.column.id,
         size: 300,
         id: 'name'
       }),
-      columnHelper.accessor('phone', {
+      columnHelper.accessor('user.phone', {
         cell: info => info.getValue(),
         header: () => 'Số điện thoại',
         footer: info => info.column.id,
         size: 150
       }),
-      columnHelper.accessor('email', {
+      columnHelper.accessor('user.email', {
         cell: info => info.getValue(),
         header: () => 'Email',
         footer: info => info.column.id,
@@ -151,19 +159,23 @@ function Component() {
       }),
       columnHelper.accessor('department', {
         cell: ({ row }) => {
-          return row.original.expand?.department.name;
+          return row.original.department?.name;
         },
         header: () => 'Phòng ban',
         footer: info => info.column.id
       }),
       columnHelper.accessor('role', {
         cell: ({ row }) => {
-          const departmentId = row.original.expand?.department.id;
-          const roleId = row.original.role;
+          const departmentId = row.original.department?.id;
+          const roleId = row.original.department?.role;
 
           return (
             <Suspense
-              fallback={<span className="text-gray-400">Loading...</span>}
+              fallback={
+                <span className="flex items-center justify-center">
+                  <Loader className="h-4 w-4 animate-spin" />
+                </span>
+              }
             >
               <RoleNameDisplay departmentId={departmentId} roleId={roleId} />
             </Suspense>
@@ -184,7 +196,7 @@ function Component() {
                   navigate({
                     to: './$employeeId/edit',
                     params: {
-                      employeeId: row.original.id
+                      employeeId: row.original.id ?? ''
                     },
                     search
                   });
@@ -199,7 +211,7 @@ function Component() {
                   e.preventDefault();
                   e.stopPropagation();
                   confirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
-                    deleteEmployee.mutate(row.original.id);
+                    deleteEmployee.mutate(row.original.id ?? '');
                   });
                 }}
               >
@@ -328,13 +340,7 @@ function Component() {
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className={`text-appWhite whitespace-nowrap ${
-                            header.column.id === 'index'
-                              ? 'bg-appBlueLight sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                              : header.column.id === 'name'
-                                ? 'bg-appBlueLight sticky left-[30px] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                : ''
-                          }`}
+                          className={`text-appWhite whitespace-nowrap`}
                           style={{
                             width: header.getSize(),
                             maxWidth: header.getSize()
@@ -371,18 +377,14 @@ function Component() {
                           style={{
                             transform: `translateY(${virtualRow.start}px)`
                           }}
-                          onClick={() => handleNavigateToEdit(row.original.id)}
+                          onClick={() =>
+                            handleNavigateToEdit(row.original.id ?? '')
+                          }
                         >
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={`truncate text-left ${
-                                cell.column.id === 'index'
-                                  ? 'sticky left-0 z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                  : cell.column.id === 'name'
-                                    ? 'sticky left-[30px] z-10 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
-                                    : ''
-                              }`}
+                              className={`truncate text-left`}
                               style={{
                                 width: cell.column.getSize(),
                                 maxWidth: cell.column.getSize()

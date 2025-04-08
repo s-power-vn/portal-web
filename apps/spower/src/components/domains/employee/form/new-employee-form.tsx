@@ -1,26 +1,19 @@
 import { api } from 'portal-api';
-import { object, ref, string } from 'yup';
+import { object, string } from 'yup';
 
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
-import { Form, PasswordField, TextField, success } from '@minhdtb/storeo-theme';
+import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
 import { DepartmentDropdownField } from '../../department';
 import { RoleDropdownField } from '../../role';
 
 const schema = object().shape({
+  user: string().required('Hãy chọn người dùng'),
   name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
-  password: string()
-    .required('Hãy nhập mật khẩu')
-    .min(8, 'Mật khẩu dài ít nhất 8 ký tự'),
-  passwordConfirmation: string()
-    .oneOf([ref('password'), undefined], 'Mật khẩu không trùng nhau')
-    .required('Hãy xác nhận mật khẩu'),
-  phone: string(),
   role: string().required('Hãy chọn chức danh')
 });
 
@@ -62,23 +55,23 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
         );
 
         createEmployee.mutate({
-          ...values,
-          role: values.role
+          user_id: values.user,
+          name: values.name,
+          department_id: values.department,
+          department_role: selectedRole?.id,
+          department_title: selectedRole?.name
         });
       }}
       onCancel={props.onCancel}
       defaultValues={{
         name: '',
-        email: '',
         department: '',
-        phone: ''
+        role: ''
       }}
       loading={createEmployee.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
-      <TextField schema={schema} name={'email'} title={'Email'} />
-      <TextField schema={schema} name={'phone'} title={'Số điện thoại'} />
       <DepartmentDropdownField
         schema={schema}
         name={'department'}
@@ -98,12 +91,6 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
           placeholder: 'Chọn chức danh',
           items: roleItems
         }}
-      />
-      <PasswordField schema={schema} name={'password'} title={'Mật khẩu'} />
-      <PasswordField
-        schema={schema}
-        name={'passwordConfirmation'}
-        title={'Xác nhận mật khẩu'}
       />
     </Form>
   );

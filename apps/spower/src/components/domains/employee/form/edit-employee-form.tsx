@@ -11,10 +11,9 @@ import { DepartmentDropdownField } from '../../department';
 import { RoleDropdownField } from '../../role';
 
 const schema = object().shape({
+  user: string().required('Hãy chọn người dùng'),
   name: string().required('Hãy nhập họ tên'),
-  email: string().email('Sai định dạng email').required('Hãy nhập email'),
   department: string().required('Hãy chọn phòng ban'),
-  phone: string(),
   role: string().required('Hãy chọn chức danh')
 });
 
@@ -23,7 +22,7 @@ export type EditEmployeeFormProps = BusinessFormProps & {
 };
 
 export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
-  const employee = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = api.employee.byId.useSuspenseQuery({
     variables: props.employeeId
   });
 
@@ -39,8 +38,8 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
   >();
 
   useEffect(() => {
-    setSelectedDepartment(employee.data?.expand?.department.id);
-  }, [employee.data?.expand?.department.id]);
+    setSelectedDepartment(employee.department?.id || undefined);
+  }, [employee.department?.id]);
 
   const department = api.department.byId.useQuery({
     variables: selectedDepartment,
@@ -61,39 +60,27 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
     <Form
       schema={schema}
       onSuccess={values => {
-        const selectedRole = department.data?.roles?.find(
-          role => role.id === values.role
-        );
-
         updateEmployee.mutate({
-          ...values,
           id: props.employeeId,
-          role: values.role
+          user_id: values.user,
+          name: values.name,
+          department_id: values.department,
+          department_role: values.role,
+          department_title:
+            roleItems.find(item => item.value === values.role)?.label || ''
         });
       }}
       onCancel={props.onCancel}
       defaultValues={{
-        ...employee.data,
-        role: employee.data?.role
+        user: employee.user?.id,
+        name: employee.name ? employee.name : employee.user?.name,
+        department: employee.department?.id || '',
+        role: employee.department?.role || ''
       }}
       loading={updateEmployee.isPending}
       className={'flex flex-col gap-3'}
     >
       <TextField schema={schema} name={'name'} title={'Họ tên'} options={{}} />
-      <TextField
-        schema={schema}
-        name={'email'}
-        title={'Email'}
-        options={{
-          disabled: true
-        }}
-      />
-      <TextField
-        schema={schema}
-        name={'phone'}
-        title={'Số điện thoại'}
-        options={{}}
-      />
       <DepartmentDropdownField
         schema={schema}
         name={'department'}
