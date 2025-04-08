@@ -9,6 +9,7 @@ export const Route = createFileRoute('/_private')({
     const authResult = await enhancedWaitAuthenticated();
 
     if (authResult.status === 'not-registered') {
+      localStorage.removeItem('organizationId');
       throw redirect({
         to: '/user-information',
         search: {

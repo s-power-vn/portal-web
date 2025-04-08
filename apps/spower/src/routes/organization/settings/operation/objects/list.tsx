@@ -39,7 +39,9 @@ import { PageHeader } from '../../../../../components';
 import { IndeterminateCheckbox } from '../../../../../components/checkbox';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/operation/objects')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/operation/objects'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -233,7 +235,7 @@ function Component() {
         size: 100
       }),
 
-      columnHelper.accessor(row => row.expand?.type, {
+      columnHelper.accessor(row => row.type, {
         id: 'type',
         cell: info => {
           const objectType = info.getValue();
@@ -254,27 +256,12 @@ function Component() {
         header: () => 'Loại',
         footer: info => info.column.id
       }),
-      columnHelper.accessor(row => row.expand?.process?.name, {
+      columnHelper.accessor(row => row.process?.name, {
         id: 'processName',
         cell: info => info.getValue() || '',
         header: () => 'Quy trình',
         footer: info => info.column.id,
         size: 150
-      }),
-
-      columnHelper.accessor('base', {
-        cell: info => (
-          <div className="flex justify-center">
-            {info.getValue() ? (
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                Cơ bản
-              </span>
-            ) : null}
-          </div>
-        ),
-        header: () => 'Cơ bản',
-        footer: info => info.column.id,
-        size: 100
       }),
       columnHelper.accessor('description', {
         cell: info => info.getValue() || '',

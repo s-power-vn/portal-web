@@ -87,15 +87,17 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
 
         updateProcess.mutate({
           id: processId,
-          ...values,
-          startNode: startNode?.id || undefined,
-          finishNode: finishNode?.id || undefined
+          name: values.name,
+          description: values.description,
+          object_type_id: values.objectType,
+          start_node: startNode?.id || undefined,
+          finish_node: finishNode?.id || undefined
         });
       }}
       defaultValues={{
         name: process.data?.name,
         description: process.data?.description,
-        objectType: process.data?.objectType,
+        objectType: process.data?.object_type_id,
         process: process.data?.process as ProcessData | undefined
       }}
     >
@@ -129,7 +131,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
         title="Quy trình"
         className="flex-1"
         options={{
-          objectType: process.data?.expand?.objectType.name
+          objectType: process.data?.object_type_id
         }}
       />
     </Form>

@@ -1,7 +1,7 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProjectDetail } from 'libs/api/src/api/domain/project';
+import { ProjectData } from 'libs/api/src/api/domain/project';
 import { ListSchema, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
@@ -17,7 +17,7 @@ const Component = () => {
     variables: search
   });
 
-  const columnHelper = createColumnHelper<ProjectDetail>();
+  const columnHelper = createColumnHelper<ProjectData>();
 
   const columns = [
     columnHelper.display({

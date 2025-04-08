@@ -4,7 +4,7 @@ import { router } from 'react-query-kit';
 
 import type { ListParams } from '../../types';
 
-export type Employee = {
+export type EmployeeData = {
   id?: string;
   name?: string;
   user?: {
@@ -44,7 +44,7 @@ export type UpdateEmployeeInput = {
   department_title?: string;
 };
 
-export type EmployeeListResponse = PaginatedResponse<Employee>;
+export type EmployeeListResponse = PaginatedResponse<EmployeeData>;
 
 type RawEmployee = {
   id: string;
@@ -70,7 +70,7 @@ type RawEmployee = {
   } | null;
 };
 
-const transformEmployee = (data: RawEmployee): Employee => ({
+const transformEmployee = (data: RawEmployee): EmployeeData => ({
   id: data.id,
   name: data.name || '',
   user: {
@@ -144,8 +144,6 @@ export const employeeApi = router('employee', {
 
         const items = (data as unknown as RawEmployee[]).map(transformEmployee);
 
-        console.log(items);
-
         return {
           items,
           page: pageIndex,
@@ -161,7 +159,7 @@ export const employeeApi = router('employee', {
     }
   }),
   listFull: router.query({
-    fetcher: async (params?: ListParams): Promise<Employee[]> => {
+    fetcher: async (params?: ListParams): Promise<EmployeeData[]> => {
       try {
         const filter = params?.filter
           ? `or.(users.name.ilike.%${params.filter}%,users.email.ilike.%${params.filter}%)`
@@ -209,7 +207,7 @@ export const employeeApi = router('employee', {
     }
   }),
   byId: router.query({
-    fetcher: async (id: string): Promise<Employee> => {
+    fetcher: async (id: string): Promise<EmployeeData> => {
       try {
         const { data, error } = await client2.rest
           .from('organization_members')
@@ -255,7 +253,7 @@ export const employeeApi = router('employee', {
     }
   }),
   byIds: router.query({
-    fetcher: async (ids: string[]): Promise<Employee[]> => {
+    fetcher: async (ids: string[]): Promise<EmployeeData[]> => {
       try {
         if (ids.length === 0) {
           return [];
@@ -305,7 +303,7 @@ export const employeeApi = router('employee', {
     }
   }),
   update: router.mutation({
-    mutationFn: async (params: UpdateEmployeeInput): Promise<Employee> => {
+    mutationFn: async (params: UpdateEmployeeInput): Promise<EmployeeData> => {
       try {
         const { id, ...updateParams } = params;
         const { data, error } = await client2.rest

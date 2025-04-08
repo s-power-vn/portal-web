@@ -5,6 +5,8 @@ export type BaseEntity = {
   id: string;
   created?: string;
   updated?: string;
+  created_by?: string;
+  updated_by?: string;
 };
 
 /**
@@ -12,17 +14,19 @@ export type BaseEntity = {
  */
 export type Comment = BaseEntity & {
   content: string;
-  created_by?: string;
-  issue?: string;
+  issue_id?: string;
+  status?: string;
+  organization_id?: string;
 };
 
 /**
  * Contract entity
  */
 export type Contract = BaseEntity & {
-  name: string;
-  project?: string;
-  content?: string;
+  request_id?: string;
+  supplier_id?: string;
+  count?: number;
+  note?: string;
   organization_id?: string;
 };
 
@@ -31,11 +35,11 @@ export type Contract = BaseEntity & {
  */
 export type Customer = BaseEntity & {
   name: string;
-  code: string;
-  email: string;
-  phone: string;
-  address: string;
-  note: string;
+  code?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  note?: string;
   organization_id?: string;
 };
 
@@ -59,7 +63,36 @@ export type Detail = BaseEntity & {
   title: string;
   unit?: string;
   level?: string;
-  parent?: string;
+  parent_id?: string;
+  project_id?: string;
+  note?: string;
+  unit_price?: number;
+  volume?: number;
+  extend?: Record<string, unknown>;
+  organization_id?: string;
+};
+
+/**
+ * DetailInfo entity
+ */
+export type DetailInfo = {
+  group_id?: string;
+  project_id?: string;
+  created?: string;
+  updated?: string;
+  title?: string;
+  volume?: number;
+  level?: string;
+  unit?: string;
+  unit_price?: number;
+  parent_id?: string;
+  note?: string;
+  extend?: Record<string, unknown>;
+  request_id?: string;
+  request_volume?: number;
+  issue_title?: string;
+  issue_id?: string;
+  issue_code?: string;
   organization_id?: string;
 };
 
@@ -69,6 +102,9 @@ export type Detail = BaseEntity & {
 export type DetailImport = BaseEntity & {
   file: string;
   status?: string;
+  error?: string;
+  percent?: number;
+  project_id?: string;
   organization_id?: string;
 };
 
@@ -79,9 +115,18 @@ export type Issue = BaseEntity & {
   title: string;
   code?: string;
   content?: string;
-  project?: string;
-  object?: string;
-  created_by?: string;
+  project_id?: string;
+  object_id?: string;
+  status?: string;
+  deadline_status?: string;
+  start_date?: string;
+  end_date?: string;
+  changed?: string;
+  last_assignee?: Record<string, unknown>;
+  approver?: Record<string, unknown>;
+  assignees?: Record<string, unknown>;
+  assigned_date?: string;
+  deleted?: boolean;
   organization_id?: string;
 };
 
@@ -90,8 +135,21 @@ export type Issue = BaseEntity & {
  */
 export type IssueFile = BaseEntity & {
   name: string;
-  file: string;
-  issue?: string;
+  upload: string;
+  size?: number;
+  type?: string;
+  issue_id?: string;
+  organization_id?: string;
+};
+
+/**
+ * IssueUserInfo entity
+ */
+export type IssueUserInfo = {
+  user_id?: string;
+  project_id?: string;
+  organization_id?: string;
+  count?: number;
 };
 
 /**
@@ -111,6 +169,9 @@ export type Material = BaseEntity & {
 export type ObjectType = BaseEntity & {
   name: string;
   display?: string;
+  description?: string;
+  color?: string;
+  icon?: string;
   organization_id?: string;
 };
 
@@ -119,8 +180,10 @@ export type ObjectType = BaseEntity & {
  */
 export type Object = BaseEntity & {
   name: string;
-  type?: string;
-  process?: string;
+  object_type_id?: string;
+  process_id?: string;
+  description?: string;
+  active?: boolean;
   organization_id?: string;
 };
 
@@ -130,7 +193,6 @@ export type Object = BaseEntity & {
 export type Organization = BaseEntity & {
   name: string;
   settings?: Record<string, unknown>;
-  created_by?: string;
 };
 
 /**
@@ -139,7 +201,10 @@ export type Organization = BaseEntity & {
 export type OrganizationMember = BaseEntity & {
   organization_id?: string;
   user_id?: string;
-  department?: string;
+  name?: string;
+  department_id?: string;
+  department_role?: string;
+  department_title?: string;
   role: string;
 };
 
@@ -147,8 +212,8 @@ export type OrganizationMember = BaseEntity & {
  * Price entity
  */
 export type Price = BaseEntity & {
-  issue?: string;
-  project?: string;
+  issue_id?: string;
+  project_id?: string;
   organization_id?: string;
 };
 
@@ -156,10 +221,16 @@ export type Price = BaseEntity & {
  * PriceDetail entity
  */
 export type PriceDetail = BaseEntity & {
-  price?: string;
-  detail?: string;
-  quantity?: number;
-  unit_price?: number;
+  price_id?: string;
+  title: string;
+  estimate_price?: number;
+  index?: string;
+  level?: string;
+  unit?: string;
+  volume?: number;
+  prices?: Record<string, unknown>;
+  estimate_amount?: number;
+  organization_id?: string;
 };
 
 /**
@@ -168,6 +239,10 @@ export type PriceDetail = BaseEntity & {
 export type Process = BaseEntity & {
   name: string;
   process?: Record<string, unknown>;
+  finish_node?: string;
+  description?: string;
+  object_type_id?: string;
+  start_node?: string;
   organization_id?: string;
 };
 
@@ -177,8 +252,7 @@ export type Process = BaseEntity & {
 export type Project = BaseEntity & {
   name: string;
   bidding?: string;
-  created_by?: string;
-  customer?: string;
+  customer_id?: string;
   organization_id?: string;
 };
 
@@ -186,8 +260,8 @@ export type Project = BaseEntity & {
  * Request entity
  */
 export type Request = BaseEntity & {
-  issue?: string;
-  project?: string;
+  issue_id?: string;
+  project_id?: string;
   organization_id?: string;
 };
 
@@ -195,9 +269,40 @@ export type Request = BaseEntity & {
  * RequestDetail entity
  */
 export type RequestDetail = BaseEntity & {
-  request?: string;
-  detail?: string;
-  quantity?: number;
+  request_id?: string;
+  detail_id?: string;
+  request_volume?: number;
+  custom_level?: string;
+  custom_title?: string;
+  custom_unit?: string;
+  index?: string;
+  note?: string;
+  delivery_date?: string;
+  organization_id?: string;
+};
+
+/**
+ * RequestDetailInfo entity
+ */
+export type RequestDetailInfo = {
+  id?: string;
+  detail_id?: string;
+  request_volume?: number;
+  request_id?: string;
+  deleted?: boolean;
+  organization_id?: string;
+};
+
+/**
+ * RequestFinished entity
+ */
+export type RequestFinished = {
+  issue_id?: string;
+  request_id?: string;
+  project_id?: string;
+  title?: string;
+  changed?: string;
+  organization_id?: string;
 };
 
 /**
@@ -217,8 +322,7 @@ export type Supplier = BaseEntity & {
  * Template entity
  */
 export type Template = BaseEntity & {
-  name: string;
-  content?: string;
+  detail_id?: string;
   organization_id?: string;
 };
 
@@ -238,36 +342,54 @@ export type User = BaseEntity & {
  */
 export type MsgChannel = BaseEntity & {
   name: string;
-  type?: string;
-  team?: string;
+  team_id?: string;
+  description?: string;
+  organization_id?: string;
 };
 
 export type MsgChat = BaseEntity & {
-  type?: string;
-  channel?: string;
-  team?: string;
+  type: string;
+  participants?: Record<string, unknown>;
+  organization_id?: string;
 };
 
 export type MsgMessage = BaseEntity & {
   content: string;
-  chat?: string;
-  sender?: string;
+  chat_id?: string;
+  sender_id?: string;
+  type?: string;
+  reply_to_id?: string;
+  organization_id?: string;
 };
 
 export type MsgReaction = BaseEntity & {
-  emoji: string;
-  message?: string;
-  user?: string;
+  reaction: string;
+  message_id?: string;
+  user_id?: string;
+  organization_id?: string;
 };
 
 export type MsgSetting = BaseEntity & {
-  user?: string;
-  chat?: string;
-  muted?: boolean;
+  user_id?: string;
+  chat_id?: string;
+  last_read?: string;
+  organization_id?: string;
 };
 
 export type MsgTeam = BaseEntity & {
   name: string;
   owner?: string;
+  members?: Record<string, unknown>;
   organization_id?: string;
+};
+
+/**
+ * MsgUnread entity
+ */
+export type MsgUnread = {
+  chat_id?: string;
+  chat_type?: string;
+  user_id?: string;
+  organization_id?: string;
+  unread_count?: number;
 };

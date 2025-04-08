@@ -8,7 +8,7 @@
     "build": "nx build spower",
     "preview": "vite preview --host=0.0.0.0 --port=4000",
     "serve": "serve dist/apps/spower -l 4000 --config ./serve.json",
-    "type": "npx -y supabase@latest gen types typescript --db-url postgresql://postgres:1d42-2136-49a3-893@localhost:5432/storeo --schema public > libs/core/src/client2/generate/type.ts",
+    "type": "npx -y supabase gen types typescript --db-url postgresql://postgres:1d42-2136-49a3-893@localhost:5432/storeo --schema public > libs/core/src/client2/generate/type.ts",
     "pb": "pocketbase-typegen --url http://localhost:8090 --email minhdtb.83@gmail.com --password Aa123456@@ --out libs/core/src/client/generate/pb.ts"
   },
   "private": true,

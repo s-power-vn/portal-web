@@ -48,8 +48,8 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
         const formData = {
           ...values,
           id: objectId,
-          process: values.process || '',
-          type: values.type
+          process_id: values.process || '',
+          object_type_id: values.type
         };
 
         updateObject.mutate(formData);
@@ -58,8 +58,8 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
       defaultValues={{
         name: objectData?.name || '',
         description: objectData?.description || '',
-        type: objectData?.type || '',
-        process: objectData?.process,
+        type: objectData?.object_type_id || '',
+        process: objectData?.process_id || '',
         active: objectData?.active ?? true
       }}
       loading={updateObject.isPending}

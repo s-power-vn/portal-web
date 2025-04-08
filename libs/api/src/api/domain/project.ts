@@ -8,31 +8,15 @@ import {
 
 import { router } from 'react-query-kit';
 
-/**
- * Type for project with related data
- */
-export type ProjectDetail = Project & {
+import { ListParams } from '../types';
+
+export type ProjectData = Project & {
   customer?: Customer;
   created_by?: User;
 };
 
-/**
- * Type for project list response
- */
-export type ProjectListResponse = PaginatedResponse<ProjectDetail>;
+export type ProjectListResponse = PaginatedResponse<ProjectData>;
 
-/**
- * Input types for project operations
- */
-export type ProjectListInput = {
-  pageIndex?: number;
-  pageSize?: number;
-  filter?: string;
-};
-
-/**
- * Type for creating a project
- */
 export type CreateProjectInput = {
   name: string;
   bidding?: string;
@@ -50,9 +34,7 @@ export type UpdateProjectInput = {
 
 export const projectApi = router('project', {
   list: router.query({
-    fetcher: async (
-      params?: ProjectListInput
-    ): Promise<ProjectListResponse> => {
+    fetcher: async (params?: ListParams): Promise<ProjectListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;
@@ -80,7 +62,7 @@ export const projectApi = router('project', {
         }
 
         return {
-          items: (data as ProjectDetail[]) || [],
+          items: data as unknown as ProjectData[],
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,
@@ -95,7 +77,7 @@ export const projectApi = router('project', {
   }),
 
   byId: router.query({
-    fetcher: async (id: string): Promise<ProjectDetail> => {
+    fetcher: async (id: string): Promise<ProjectData> => {
       try {
         const { data, error } = await client2.rest
           .from('projects')
@@ -117,7 +99,7 @@ export const projectApi = router('project', {
           throw new Error(`Không tìm thấy dự án với id: ${id}`);
         }
 
-        return data as ProjectDetail;
+        return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin dự án: ${(error as Error).message}`
@@ -127,7 +109,7 @@ export const projectApi = router('project', {
   }),
 
   create: router.mutation({
-    mutationFn: async (params: CreateProjectInput): Promise<ProjectDetail> => {
+    mutationFn: async (params: CreateProjectInput): Promise<ProjectData> => {
       try {
         const userId = localStorage.getItem('userId');
         const { data, error } = await client2.rest
@@ -154,7 +136,7 @@ export const projectApi = router('project', {
           throw new Error('Không có dữ liệu trả về');
         }
 
-        return data as ProjectDetail;
+        return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(`Không thể tạo dự án: ${(error as Error).message}`);
       }
@@ -162,7 +144,7 @@ export const projectApi = router('project', {
   }),
 
   update: router.mutation({
-    mutationFn: async (params: UpdateProjectInput): Promise<ProjectDetail> => {
+    mutationFn: async (params: UpdateProjectInput): Promise<ProjectData> => {
       try {
         const { id, ...updateParams } = params;
         const { data, error } = await client2.rest
@@ -189,7 +171,7 @@ export const projectApi = router('project', {
           throw new Error(`Không tìm thấy dự án với id: ${id}`);
         }
 
-        return data as ProjectDetail;
+        return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật dự án: ${(error as Error).message}`

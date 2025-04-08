@@ -6,11 +6,11 @@ import { useEffect, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
-    CheckField,
-    Form,
-    TextField,
-    TextareaField,
-    success
+  CheckField,
+  Form,
+  TextField,
+  TextareaField,
+  success
 } from '@minhdtb/storeo-theme';
 
 import { ProcessDropdownField } from '../../process';
@@ -51,7 +51,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         const formData = {
           ...values,
           process: values.process || '',
-          type: values.type
+          object_type_id: values.type
         };
         createObject.mutate(formData);
       }}

@@ -37,7 +37,8 @@ export const NewProcessForm: FC<NewProcessFormProps> = props => {
       {...props}
       onSuccess={values => {
         createProcess.mutate({
-          ...values
+          name: values.name,
+          object_type_id: values.objectType
         });
       }}
       defaultValues={{

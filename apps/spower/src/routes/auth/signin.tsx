@@ -109,6 +109,7 @@ export async function goRootRoute({
   const authResult = await enhancedWaitAuthenticated();
 
   if (authResult.status === 'not-registered') {
+    localStorage.removeItem('organizationId');
     throw redirect({
       to: '/user-information',
       search: {

@@ -19,13 +19,12 @@ import {
 } from './messenger/chat';
 import { customerApi } from './setting/general/customer';
 import { departmentApi } from './setting/general/department';
-import type { UserData } from './setting/general/employee';
 import { employeeApi } from './setting/general/employee';
 import { materialApi } from './setting/general/material';
 import { supplierApi } from './setting/general/supplier';
 import { ObjectData, objectApi } from './setting/operation/object';
-import { ObjectTypeData, objectTypeApi } from './setting/operation/objectType';
-import { ProcessDbData, processApi } from './setting/operation/process';
+import { objectTypeApi } from './setting/operation/objectType';
+import { ProcessData, processApi } from './setting/operation/process';
 import { ListSchema } from './types';
 
 export const api = {
@@ -60,11 +59,9 @@ export type {
   MsgSetting,
   MsgTeam,
   ObjectData,
-  ObjectTypeData,
-  ProcessDbData,
+  ProcessData,
   RequestData,
-  RequestDetailData,
-  UserData
+  RequestDetailData
 };
 
 export { ListSchema };
