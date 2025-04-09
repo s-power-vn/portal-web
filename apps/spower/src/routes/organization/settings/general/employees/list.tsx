@@ -40,10 +40,7 @@ export const Route = createFileRoute(
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
       api.employee.list.getOptions({
-        ...deps.search,
-        filter: deps.search.filter
-          ? `(name ~ "${deps.search.filter}") || (email ~ "${deps.search.filter}")`
-          : ''
+        ...deps.search
       })
     ),
   beforeLoad: () => {
@@ -91,9 +88,7 @@ function Component() {
       }),
       queryFn: ({ pageParam = 1 }) =>
         api.employee.list.fetcher({
-          filter: search.filter
-            ? `(name ~ "${search.filter}") || (email ~ "${search.filter}")`
-            : '',
+          filter: search.filter,
           pageIndex: pageParam,
           pageSize: 20
         }),

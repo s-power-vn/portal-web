@@ -3004,6 +3004,106 @@ export type Database = {
           },
         ]
       }
+      organization_members_with_users: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          department_id: string | null
+          department_role: string | null
+          department_title: string | null
+          id: string | null
+          name: string | null
+          organization_id: string | null
+          role: string | null
+          updated: string | null
+          updated_by: string | null
+          user_address: string | null
+          user_avatar: string | null
+          user_email: string | null
+          user_id: string | null
+          user_name: string | null
+          user_phone: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "issue_user_info"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       request_detail_info: {
         Row: {
           deleted: boolean | null

@@ -59,7 +59,7 @@ type RawEmployee = {
   updated: string | null;
   created_by: string | null;
   updated_by: string | null;
-  users: {
+  user: {
     name: string;
     email: string;
     phone: string | null;
@@ -70,15 +70,34 @@ type RawEmployee = {
   } | null;
 };
 
+type RawEmployeeView = {
+  id: string;
+  name: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  user_phone: string;
+  user_avatar: string;
+  department_id: string;
+  department_name: string;
+  department_role: string;
+  department_title: string;
+  role: string;
+  created: string;
+  updated: string;
+  created_by: string;
+  updated_by: string;
+};
+
 const transformEmployee = (data: RawEmployee): EmployeeData => ({
   id: data.id,
   name: data.name || '',
   user: {
     id: data.user_id || '',
-    name: data.users?.name || '',
-    email: data.users?.email || '',
-    phone: data.users?.phone || '',
-    avatar: data.users?.avatar || ''
+    name: data.user?.name || '',
+    email: data.user?.email || '',
+    phone: data.user?.phone || '',
+    avatar: data.user?.avatar || ''
   },
   department: {
     id: data.department_id || '',
@@ -102,47 +121,63 @@ export const employeeApi = router('employee', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        const filter = params?.filter
-          ? `or.(users.name.ilike.%${params.filter}%,users.email.ilike.%${params.filter}%)`
-          : undefined;
-
-        const { data, count, error } = await client2.rest
-          .from('organization_members')
+        const query = client2.rest
+          .from('organization_members_with_users')
           .select(
             `
             id,
             name,
-            user_id,
+            user_name,
+            user_email,
+            user_phone,
+            user_avatar,
             department_id,
+            department_name,
             department_role,
             department_title,
             role,
             created,
             updated,
             created_by,
-            updated_by,
-            users!user_id(
-              name,
-              email,
-              phone,
-              avatar
-            ),
-            departments!department_id(name)
+            updated_by
           `,
             { count: 'exact' }
           )
           .range(from, to)
           .order('created', { ascending: false });
 
-        if (filter) {
-          (client2.rest as any).url.searchParams.append('and', filter);
+        if (params?.filter) {
+          query.or(
+            `user_name.ilike.*${params.filter}*,user_email.ilike.*${params.filter}*,user_phone.ilike.*${params.filter}*`
+          );
         }
+
+        const { data, count, error } = await query;
 
         if (error) {
           throw error;
         }
 
-        const items = (data as unknown as RawEmployee[]).map(transformEmployee);
+        const items = (data as unknown as RawEmployeeView[]).map(it => {
+          return {
+            id: it.id,
+            name: it.name || '',
+            user: {
+              id: it.user_id || '',
+              name: it.user_name || '',
+              email: it.user_email || '',
+              phone: it.user_phone || '',
+              avatar: it.user_avatar || ''
+            },
+            department: {
+              id: it.department_id || '',
+              name: it.department_name || '',
+              role: it.department_role || '',
+              title: it.department_title || ''
+            },
+            role: it.role || ''
+          };
+        });
 
         return {
           items,
@@ -161,44 +196,61 @@ export const employeeApi = router('employee', {
   listFull: router.query({
     fetcher: async (params?: ListParams): Promise<EmployeeData[]> => {
       try {
-        const filter = params?.filter
-          ? `or.(users.name.ilike.%${params.filter}%,users.email.ilike.%${params.filter}%)`
-          : undefined;
-
-        const { data, error } = await client2.rest
-          .from('organization_members')
+        const query = client2.rest
+          .from('organization_members_with_users')
           .select(
             `
             id,
             name,
             user_id,
+            user_name,
+            user_email,
+            user_phone,
+            user_avatar,
             department_id,
+            department_name,
             department_role,
             department_title,
             role,
             created,
             updated,
             created_by,
-            updated_by,
-            users!user_id(
-              name,
-              email,
-              phone,
-              avatar
-            ),
-            departments!department_id(name)
+            updated_by
           `
           );
 
-        if (filter) {
-          (client2.rest as any).url.searchParams.append('and', filter);
+        if (params?.filter) {
+          query.or(
+            `user_name.ilike.*${params.filter}*,user_email.ilike.*${params.filter}*,user_phone.ilike.*${params.filter}*`
+          );
         }
+
+        const { data, error } = await query;
 
         if (error) {
           throw error;
         }
 
-        return (data as unknown as RawEmployee[]).map(transformEmployee);
+        return (data as unknown as RawEmployeeView[]).map(it => {
+          return {
+            id: it.id,
+            name: it.name || '',
+            user: {
+              id: it.user_id || '',
+              name: it.user_name || '',
+              email: it.user_email || '',
+              phone: it.user_phone || '',
+              avatar: it.user_avatar || ''
+            },
+            department: {
+              id: it.department_id || '',
+              name: it.department_name || '',
+              role: it.department_role || '',
+              title: it.department_title || ''
+            },
+            role: it.role || ''
+          };
+        });
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách nhân viên: ${(error as Error).message}`

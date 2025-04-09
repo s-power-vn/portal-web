@@ -9,7 +9,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup
 } from 'firebase/auth';
-import { Database } from 'test';
+
+import { Database } from './generate/type';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -216,6 +217,7 @@ export class StoreoClient<T> {
         const urlObj = new URL(url);
         if (urlObj.search) {
           const query = urlObj.search.substring(1);
+          console.log(query);
           const encodedQuery = xorEncodeQuery(query, secretKey);
           urlObj.search = `?${encodedQuery}`;
 
