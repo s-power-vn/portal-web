@@ -20,7 +20,7 @@ export type ProjectListResponse = PaginatedResponse<ProjectData>;
 export type CreateProjectInput = {
   name: string;
   bidding?: string;
-  customer?: string;
+  customer_id?: string;
   organization_id?: string;
 };
 
@@ -28,7 +28,7 @@ export type UpdateProjectInput = {
   id: string;
   name?: string;
   bidding?: string;
-  customer?: string;
+  customer_id?: string;
   organization_id?: string;
 };
 
@@ -47,7 +47,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users(*)
+            created_by:users!created_by(*)
           `,
             { count: 'exact' }
           )
@@ -85,7 +85,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users(*)
+            created_by:users!created_by(*)
           `
           )
           .eq('id', id)
@@ -123,7 +123,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users(*)
+            created_by:users!created_by(*)
           `
           )
           .single();

@@ -27,7 +27,13 @@ export const NewProjectForm: FC<NewProjectFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values => createProject.mutate(values)}
+      onSuccess={values =>
+        createProject.mutate({
+          name: values.name,
+          bidding: values.bidding,
+          customer_id: values.customer
+        })
+      }
       defaultValues={{
         name: '',
         bidding: '',

@@ -59,7 +59,7 @@ type RawEmployee = {
   updated: string | null;
   created_by: string | null;
   updated_by: string | null;
-  user: {
+  users: {
     name: string;
     email: string;
     phone: string | null;
@@ -94,10 +94,10 @@ const transformEmployee = (data: RawEmployee): EmployeeData => ({
   name: data.name || '',
   user: {
     id: data.user_id || '',
-    name: data.user?.name || '',
-    email: data.user?.email || '',
-    phone: data.user?.phone || '',
-    avatar: data.user?.avatar || ''
+    name: data.users?.name || '',
+    email: data.users?.email || '',
+    phone: data.users?.phone || '',
+    avatar: data.users?.avatar || ''
   },
   department: {
     id: data.department_id || '',
@@ -123,26 +123,7 @@ export const employeeApi = router('employee', {
 
         const query = client2.rest
           .from('organization_members_with_users')
-          .select(
-            `
-            id,
-            name,
-            user_name,
-            user_email,
-            user_phone,
-            user_avatar,
-            department_id,
-            department_name,
-            department_role,
-            department_title,
-            role,
-            created,
-            updated,
-            created_by,
-            updated_by
-          `,
-            { count: 'exact' }
-          )
+          .select('*', { count: 'exact' })
           .range(from, to)
           .order('created', { ascending: false });
 
@@ -198,26 +179,7 @@ export const employeeApi = router('employee', {
       try {
         const query = client2.rest
           .from('organization_members_with_users')
-          .select(
-            `
-            id,
-            name,
-            user_id,
-            user_name,
-            user_email,
-            user_phone,
-            user_avatar,
-            department_id,
-            department_name,
-            department_role,
-            department_title,
-            role,
-            created,
-            updated,
-            created_by,
-            updated_by
-          `
-          );
+          .select('*', { count: 'exact' });
 
         if (params?.filter) {
           query.or(
@@ -265,17 +227,7 @@ export const employeeApi = router('employee', {
           .from('organization_members')
           .select(
             `
-            id,
-            name,
-            user_id,
-            department_id,
-            department_role,
-            department_title,
-            role,
-            created,
-            updated,
-            created_by,
-            updated_by,
+            *,
             users!user_id(
               name,
               email,
@@ -315,17 +267,7 @@ export const employeeApi = router('employee', {
           .from('organization_members')
           .select(
             `
-            id,
-            name,
-            user_id,
-            department_id,
-            department_role,
-            department_title,
-            role,
-            created,
-            updated,
-            created_by,
-            updated_by,
+            *,
             users!user_id(
               name,
               email,
@@ -366,17 +308,7 @@ export const employeeApi = router('employee', {
           .eq('id', id)
           .select(
             `
-            id,
-            name,
-            user_id,
-            department_id,
-            department_role,
-            department_title,
-            role,
-            created,
-            updated,
-            created_by,
-            updated_by,
+            *,
             users!user_id(
               name,
               email,
