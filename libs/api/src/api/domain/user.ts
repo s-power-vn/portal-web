@@ -5,6 +5,8 @@ import { router } from 'react-query-kit';
 export const userApi = router('user', {
   byId: router.query({
     fetcher: async (id: string) => {
+      console.log('byId', id);
+
       const { data, error } = await client2.rest
         .from('users')
         .select('*')

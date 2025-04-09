@@ -12,7 +12,7 @@ import { ListParams } from '../types';
 
 export type ProjectData = Project & {
   customer?: Customer;
-  created_by?: User;
+  createdBy?: User;
 };
 
 export type ProjectListResponse = PaginatedResponse<ProjectData>;
@@ -47,7 +47,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users!created_by(*)
+            createdBy:users!created_by(*)
           `,
             { count: 'exact' }
           )
@@ -85,7 +85,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users!created_by(*)
+            createdBy:users!created_by(*)
           `
           )
           .eq('id', id)
@@ -123,7 +123,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users!created_by(*)
+            createdBy:users!created_by(*)
           `
           )
           .single();
@@ -158,7 +158,7 @@ export const projectApi = router('project', {
             `
             *,
             customer:customers(*),
-            created_by:users(*)
+            createdBy:users(*)
           `
           )
           .single();

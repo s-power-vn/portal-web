@@ -45,27 +45,19 @@ const Component = () => {
   });
 
   const { data: requestObjects } = requestType
-    ? api.object.listActive.useSuspenseQuery({
-        variables: {
-          filter: `type = "${requestType.id}"`,
-          pageIndex: 1,
-          pageSize: 1
-        }
+    ? api.object.listActiveByType.useSuspenseQuery({
+        variables: requestType.id
       })
     : { data: null };
 
   const { data: priceObjects } = priceType
-    ? api.object.listActive.useSuspenseQuery({
-        variables: {
-          filter: `type = "${priceType.id}"`,
-          pageIndex: 1,
-          pageSize: 1
-        }
+    ? api.object.listActiveByType.useSuspenseQuery({
+        variables: priceType.id
       })
     : { data: null };
 
-  const hasRequest = (requestObjects?.totalItems ?? 0) > 0;
-  const hasPrice = (priceObjects?.totalItems ?? 0) > 0;
+  const hasRequest = (requestObjects?.length ?? 0) > 0;
+  const hasPrice = (priceObjects?.length ?? 0) > 0;
 
   return (
     <div className={'flex h-full flex-col'}>

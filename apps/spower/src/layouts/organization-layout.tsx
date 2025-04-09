@@ -78,7 +78,7 @@ export const OrganizationLayout: FC<OrganizationLayoutProps> = ({
     <>
       <Header />
       <div className={'flex flex-1 overflow-hidden'}>
-        <Sidebar uid={'project'} expanded={true} collapsed={true}>
+        <Sidebar uid={'organization'} expanded={true} collapsed={true}>
           <SidebarHeader />
           <SidebarItem
             to={'/$organizationId/home'}

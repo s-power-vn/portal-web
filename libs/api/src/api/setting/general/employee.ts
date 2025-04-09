@@ -237,7 +237,7 @@ export const employeeApi = router('employee', {
             departments!department_id(name)
           `
           )
-          .eq('id', id)
+          .eq('user_id', id)
           .single();
 
         if (error) {
@@ -277,7 +277,7 @@ export const employeeApi = router('employee', {
             departments!department_id(name)
           `
           )
-          .in('id', ids);
+          .in('user_id', ids);
 
         if (error) {
           throw error;

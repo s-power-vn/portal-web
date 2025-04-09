@@ -115,6 +115,29 @@ export const objectApi = router('object', {
       }
     }
   }),
+  listActiveByType: router.query({
+    fetcher: async (type: string) => {
+      try {
+        const { data, error } = await client2.rest
+          .from('objects')
+          .select('*', { count: 'exact' })
+          .eq('object_type_id', type)
+          .eq('active', true)
+          .range(0, 1000)
+          .order('created', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        return data as unknown as ObjectData[];
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy danh sách đối tượng hoạt động theo loại: ${(error as Error).message}`
+        );
+      }
+    }
+  }),
   byId: router.query({
     fetcher: async (id: string) => {
       try {
