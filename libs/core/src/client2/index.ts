@@ -9,10 +9,11 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup
 } from 'firebase/auth';
-
-import { Database } from './generate/type';
+import { Database } from 'test';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+const secretKey = 'xK9p2Lm7Qr3sT8vZ1wY6aB4cD0eF5gH';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDgneYV3mdC6i0CMuOMTFoAaZ7-O7vDWg8',
@@ -27,6 +28,16 @@ const firebaseConfig = {
 export const restToken = signal<string | undefined>(undefined);
 export const userId = signal<string | undefined>(undefined);
 export const userEmail = signal<string | undefined>(undefined);
+
+const xorEncodeQuery = (query: string, key: string): string => {
+  let result = '';
+  for (let i = 0; i < query.length; i++) {
+    const charCode = query.charCodeAt(i);
+    const keyChar = key.charCodeAt(i % key.length);
+    result += String.fromCharCode(charCode ^ keyChar);
+  }
+  return Buffer.from(result).toString('base64');
+};
 
 class ApiClient {
   private readonly auth: Auth;
@@ -182,16 +193,41 @@ class ApiClient {
   }
 }
 
-export class StoreoClient {
+export class StoreoClient<T> {
   public readonly auth: Auth;
-  public readonly rest: PostgrestClient<Database>;
+  public readonly rest: PostgrestClient<T>;
   public readonly api: ApiClient;
 
   constructor() {
     const firebaseApp = initializeApp(firebaseConfig);
     this.auth = getAuth(firebaseApp);
-    this.rest = new PostgrestClient<Database>(`${BASE_URL}/rest`, {
+    this.rest = new PostgrestClient<T>(`${BASE_URL}/rest`, {
       fetch: async (input, init) => {
+        let url: string;
+
+        if (typeof input === 'string') {
+          url = input;
+        } else if (input instanceof Request) {
+          url = input.url;
+        } else {
+          url = input.toString();
+        }
+
+        const urlObj = new URL(url);
+        if (urlObj.search) {
+          const query = urlObj.search.substring(1);
+          const encodedQuery = xorEncodeQuery(query, secretKey);
+          urlObj.search = `?${encodedQuery}`;
+
+          if (typeof input === 'string') {
+            input = urlObj.toString();
+          } else if (input instanceof Request) {
+            input = new Request(urlObj.toString(), input);
+          } else {
+            input = urlObj.toString() as any;
+          }
+        }
+
         if (!restToken.value) {
           throw new Error('Không có token');
         }
@@ -211,4 +247,4 @@ export class StoreoClient {
   }
 }
 
-export const client2 = new StoreoClient();
+export const client2 = new StoreoClient<Database>();

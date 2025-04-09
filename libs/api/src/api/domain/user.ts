@@ -1,34 +1,39 @@
-import { client, client2 } from 'portal-core';
+import { User, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
 export const userApi = router('user', {
+  byId: router.query({
+    fetcher: async (id: string) => {
+      const { data, error } = await client2.rest
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data as User;
+    }
+  }),
   update: router.mutation({
-    mutationFn: (params: {
+    mutationFn: async (params: {
       id: string;
       name?: string;
       avatar?: string | File;
     }) => {
-      const formData = new FormData();
-      if (params.avatar && typeof params.avatar !== 'string') {
-        formData.append('avatar', params.avatar);
-      }
-      if (params.name) {
-        formData.append('name', params.name);
-      }
-      return client.collection('user').update(params.id, formData);
+      return;
     }
   }),
   changePassword: router.mutation({
-    mutationFn: (params: {
+    mutationFn: async (params: {
       id: string;
       oldPassword: string;
       newPassword: string;
     }) => {
-      return client.send('/user/change-password', {
-        method: 'PUT',
-        body: params
-      });
+      return;
     }
   }),
   sendEmailOtp: router.mutation({

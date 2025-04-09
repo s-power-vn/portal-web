@@ -46,8 +46,10 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
       schema={schema}
       onSuccess={values => {
         const formData = {
-          ...values,
           id: objectId,
+          name: values.name,
+          description: values.description,
+          active: values.active,
           process_id: values.process || '',
           object_type_id: values.type
         };

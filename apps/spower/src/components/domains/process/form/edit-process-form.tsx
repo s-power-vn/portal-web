@@ -77,6 +77,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
       className="flex h-full w-full flex-col gap-3"
       onSuccess={values => {
         const processData = values.process as ProcessData;
+
         const startNode = processData?.nodes?.find(
           node => node.type === 'start'
         );
@@ -90,6 +91,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
           name: values.name,
           description: values.description,
           object_type_id: values.objectType,
+          process: processData,
           start_node: startNode?.id || undefined,
           finish_node: finishNode?.id || undefined
         });

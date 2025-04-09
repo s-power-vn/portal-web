@@ -18,7 +18,6 @@ import {
   error
 } from '@minhdtb/storeo-theme';
 
-import { useInvalidateAuth } from '../../hooks/useInvalidateAuth';
 import { CommonLayout } from '../../layouts';
 import { goRootRoute } from './signin';
 
@@ -41,11 +40,10 @@ function EmailLogin() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
   const router = useRouter();
-  const invalidateAuth = useInvalidateAuth();
 
   const login = api.user.emailLogin.useMutation({
     onSuccess: async () => {
-      await invalidateAuth();
+      await router.invalidate();
       router.history.push(redirect ?? '/');
     },
     onError: () => error('Tên đăng nhập hoặc mật khẩu không đúng')

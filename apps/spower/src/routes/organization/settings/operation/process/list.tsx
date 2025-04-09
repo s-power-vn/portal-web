@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { CopyIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, ProcessDbData, api } from 'portal-api';
+import { ListSchema, ProcessData, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -37,7 +37,9 @@ import {
   useInvalidateQueries
 } from '../../../../../hooks';
 
-export const Route = createFileRoute('/_private/$organizationId/settings/operation/process')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/operation/process'
+)({
   component: Component,
   validateSearch: input => ListSchema.validateSync(input),
   loaderDeps: ({ search }) => {
@@ -114,7 +116,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<ProcessDbData>();
+  const columnHelper = createColumnHelper<ProcessData>();
 
   const handleApplyProcess = useCallback(
     (processId: string) => {
@@ -225,9 +227,9 @@ function Component() {
       footer: info => info.column.id,
       size: 300
     }),
-    columnHelper.accessor('objectType', {
+    columnHelper.accessor('object_type', {
       cell: info => {
-        const objectType = info.row.original.expand?.objectType;
+        const objectType = info.row.original.object_type;
         if (!objectType) {
           return null;
         }
@@ -247,7 +249,7 @@ function Component() {
     columnHelper.display({
       id: 'objects',
       cell: info => {
-        const objects = info.row.original.expand?.object_via_process;
+        const objects = info.row.original.objects;
         if (!objects || objects.length === 0) {
           return (
             <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
@@ -266,7 +268,9 @@ function Component() {
               <Badge
                 key={object.id}
                 className=" text-appWhite text-xs"
-                style={{ backgroundColor: object.expand?.type.color }}
+                style={{
+                  backgroundColor: info.row.original.object_type?.color
+                }}
               >
                 {object.name}
               </Badge>
@@ -301,19 +305,19 @@ function Component() {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('createdBy', {
+    columnHelper.accessor('created_by', {
       cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
       header: () => 'Người tạo',
       footer: info => info.column.id,
       size: 200
     }),
     columnHelper.accessor('created', {
-      cell: info => formatDateTime(info.getValue()),
+      cell: info => formatDateTime(info.getValue() || ''),
       header: () => 'Ngày tạo',
       footer: info => info.column.id
     }),
     columnHelper.accessor('updated', {
-      cell: info => formatDateTime(info.getValue()),
+      cell: info => formatDateTime(info.getValue() || ''),
       header: () => 'Ngày cập nhật',
       footer: info => info.column.id
     })

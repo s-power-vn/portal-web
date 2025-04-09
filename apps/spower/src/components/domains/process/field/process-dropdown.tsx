@@ -49,6 +49,7 @@ export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
       queryKey={['processes']}
       queryFn={queryFn}
       lookupFn={lookupFn}
+      showGroups={false}
     />
   );
 };

@@ -1,6 +1,5 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { Loader, UserIcon } from 'lucide-react';
-import { Collections, client, getImageUrl } from 'portal-core';
+import { api } from 'portal-api';
 
 import type { FC } from 'react';
 import { Suspense } from 'react';
@@ -8,22 +7,19 @@ import { Suspense } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
 const Component = ({ employeeId }: { employeeId: string }) => {
-  const query = useSuspenseQuery({
-    queryKey: ['getEmployee', employeeId],
-    queryFn: () => client.collection('user').getOne(employeeId)
+  const { data: user } = api.user.byId.useSuspenseQuery({
+    variables: employeeId
   });
 
-  return query.data ? (
+  return user ? (
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-5 w-5'}>
-        <AvatarImage
-          src={getImageUrl(Collections.User, query.data.id, query.data.avatar)}
-        />
+        <AvatarImage src={user.avatar} />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span className={'truncate'}>{query.data.name}</span>
+      <span className={'truncate'}>{user.name}</span>
     </div>
   ) : null;
 };

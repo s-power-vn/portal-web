@@ -1,6 +1,6 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
-import { Collections, getImageUrl, getUser } from 'portal-core';
+import { userId } from 'portal-core';
 
 import { useCallback } from 'react';
 
@@ -17,16 +17,16 @@ import {
   DropdownMenuTrigger
 } from '@minhdtb/storeo-theme';
 
-import { useInvalidateAuth } from '../../hooks/useInvalidateAuth';
-
 export const HeaderMenu = () => {
   const navigate = useNavigate();
-  const user = getUser();
-  const invalidateAuth = useInvalidateAuth();
+  const router = useRouter();
+  const { data: user } = api.user.byId.useSuspenseQuery({
+    variables: userId.value
+  });
 
   const logout = api.auth.logout.useMutation({
     onSuccess: async () => {
-      await invalidateAuth();
+      await router.invalidate();
       navigate({ to: '/signin' });
     }
   });
@@ -43,9 +43,7 @@ export const HeaderMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="h-8 w-8">
-          <AvatarImage
-            src={getImageUrl(Collections.User, user?.id, user?.avatar)}
-          />
+          <AvatarImage src={user?.avatar} />
           <AvatarFallback className={'text-sm'}>
             {user?.name.split(' ')[0][0]}
           </AvatarFallback>

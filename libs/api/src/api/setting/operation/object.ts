@@ -58,8 +58,6 @@ export const objectApi = router('object', {
 
         const items = data as unknown as ObjectData[];
 
-        console.log(items);
-
         return {
           items,
           page: pageIndex,
@@ -250,27 +248,6 @@ export const objectApi = router('object', {
       } catch (error) {
         throw new Error(
           `Không thể nhân bản đối tượng: ${(error as Error).message}`
-        );
-      }
-    }
-  }),
-  actives: router.mutation({
-    mutationFn: async (ids: string[]) => {
-      try {
-        const { data, error } = await client2.rest
-          .from('objects')
-          .update({ active: true })
-          .in('id', ids)
-          .select('*, type:object_types(*), process:processes(*)');
-
-        if (error) {
-          throw error;
-        }
-
-        return data as unknown as ObjectData[];
-      } catch (error) {
-        throw new Error(
-          `Không thể kích hoạt đối tượng: ${(error as Error).message}`
         );
       }
     }
