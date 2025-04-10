@@ -1,22 +1,37 @@
-import { client2, userId } from 'portal-core';
+import { Organization, User, client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
+
+export type OrganizationData = Organization & {
+  owner: {
+    role: string;
+    user: User;
+  };
+  members: {
+    role: string;
+    user: User;
+  }[];
+};
 
 export const organizationApi = router('organization', {
   list: router.query({
     fetcher: async () => {
-      const { data, error } = await client2.rest
-        .from('organizations')
-        .select(
-          `
+      const { data, error } = await client2.rest.from('organizations').select(
+        `
             id,
             name,
-            role:organization_members!organization_id (
-              role
+            roles:organization_members!organization_id (
+              role,
+              user:users!organization_members_user_id_fkey (
+                id,
+                name,
+                email,
+                avatar
+              )
             ),
             members:organization_members!organization_id (
               role,
-              created_by:users!organization_members_created_by_fkey (
+              user:users!organization_members_user_id_fkey (
                 id,
                 name,
                 email,
@@ -24,14 +39,23 @@ export const organizationApi = router('organization', {
               )
             )
           `
-        )
-        .eq('organization_members.user_id', userId.value ?? '');
+      );
 
       if (error) {
         throw new Error(error.message);
       }
 
-      return data;
+      return data.map(org => ({
+        ...org,
+        owner: {
+          role: org.roles[0].role,
+          user: org.roles[0].user
+        },
+        members: org.members.map(member => ({
+          role: member.role,
+          user: member.user
+        }))
+      }));
     }
   }),
   create: router.mutation({

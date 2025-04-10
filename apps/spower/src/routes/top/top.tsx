@@ -89,7 +89,7 @@ function RouteComponent() {
           </div>
         ) : (
           listOrganization.data?.map(org => {
-            const userRole = org.role[0]?.role || '';
+            const userRole = org.owner.role || '';
             const roleColor = getRoleColor(userRole);
 
             return (
@@ -131,14 +131,14 @@ function RouteComponent() {
                     {org.members.slice(0, 5).map(member => {
                       return (
                         <img
-                          key={member.created_by?.id}
+                          key={member.user?.id}
                           className={`inline-block h-8 w-8 rounded-full ring-2 ring-white`}
                           src={
-                            member.created_by?.avatar ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(member.created_by?.name ?? '')}`
+                            member.user?.avatar ||
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name ?? '')}`
                           }
-                          alt={member.created_by?.name ?? ''}
-                          title={`${member.created_by?.name} (${getRoleLabel(member.role)})`}
+                          alt={member.user?.name ?? ''}
+                          title={`${member.user?.name} (${getRoleLabel(member.role)})`}
                         />
                       );
                     })}

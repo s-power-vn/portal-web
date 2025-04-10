@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger
 } from '@minhdtb/storeo-theme';
 
+import { forceRefreshAuth } from '../../routes/auth/auth-cache';
+
 export const HeaderMenu = () => {
   const navigate = useNavigate();
   const router = useRouter();
@@ -39,6 +41,14 @@ export const HeaderMenu = () => {
     [navigate]
   );
 
+  const handleSwitchOrganization = useCallback(() => {
+    localStorage.removeItem('organizationId');
+    forceRefreshAuth();
+    navigate({
+      to: '/'
+    });
+  }, [navigate]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -59,6 +69,9 @@ export const HeaderMenu = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSwitchOrganization}>
+          Chuyển đổi tổ chức
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleProfile}>Cài đặt</DropdownMenuItem>
         <DropdownMenuItem onClick={() => logout.mutate()}>
           Đăng xuất
