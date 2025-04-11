@@ -32,23 +32,23 @@ import {
   NewIssueButton
 } from '../../../../../../components';
 
-export const Route = createFileRoute('/_private/$organizationId/project/$projectId/issues/me/')(
-  {
-    component: Component,
-    validateSearch: input => ListSchema.validateSync(input),
-    loaderDeps: ({ search }) => {
-      return { search };
-    },
-    loader: ({ deps, params, context: { queryClient } }) =>
-      queryClient?.ensureQueryData(
-        api.issue.listMine.getOptions({
-          ...deps.search,
-          filter: deps.search.filter ?? '',
-          projectId: params.projectId
-        })
-      )
-  }
-);
+export const Route = createFileRoute(
+  '/_private/$organizationId/project/$projectId/issues/me/'
+)({
+  component: Component,
+  validateSearch: input => ListSchema.validateSync(input),
+  loaderDeps: ({ search }) => {
+    return { search };
+  },
+  loader: ({ deps, params, context: { queryClient } }) =>
+    queryClient?.ensureQueryData(
+      api.issue.listMine.getOptions({
+        ...deps.search,
+        filter: deps.search.filter ?? '',
+        projectId: params.projectId
+      })
+    )
+});
 
 function Component() {
   const { projectId } = Route.useParams();
@@ -87,7 +87,7 @@ function Component() {
     }),
     columnHelper.accessor('title', {
       cell: info => {
-        const typeObject = info.row.original.expand?.object.expand?.type;
+        const typeObject = info.row.original.object.type;
 
         return (
           <div className={'flex w-full min-w-0 items-center gap-2'}>
@@ -106,7 +106,7 @@ function Component() {
       footer: info => info.column.id,
       maxSize: 300
     }),
-    columnHelper.accessor('deadlineStatus', {
+    columnHelper.accessor('deadline_status', {
       cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
       header: () => 'Tiến độ',
       footer: info => info.column.id
@@ -119,9 +119,9 @@ function Component() {
       footer: info => info.column.id
     }),
     columnHelper.display({
-      id: 'expand.issueFile_via_issue',
+      id: 'files',
       cell: info => {
-        const files = info.row.original.expand?.issueFile_via_issue;
+        const files = info.row.original.files;
         return files && files.length > 0 ? (
           <FilesIcon className="h-4 w-4 text-gray-500" />
         ) : null;
@@ -135,9 +135,9 @@ function Component() {
       header: () => 'Trạng thái',
       footer: info => info.column.id
     }),
-    columnHelper.accessor('createdBy', {
+    columnHelper.accessor('created_by', {
       cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.createdBy} />
+        <EmployeeDisplay employeeId={row.original.created_by} />
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id
@@ -149,12 +149,12 @@ function Component() {
       footer: info => info.column.id
     }),
     columnHelper.accessor('created', {
-      cell: ({ row }) => formatDateTime(row.original.created),
+      cell: ({ row }) => formatDateTime(row.original.created ?? ''),
       header: () => 'Ngày tạo',
       footer: info => info.column.id
     }),
     columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDateTime(row.original.updated),
+      cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
       header: () => 'Ngày cập nhật',
       footer: info => info.column.id
     })

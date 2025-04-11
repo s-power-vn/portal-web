@@ -8,8 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
-import type { Supplier } from 'portal-core';
+import { ListSchema, SupplierListItem, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -91,7 +90,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<Supplier>();
+  const columnHelper = createColumnHelper<SupplierListItem>();
 
   const columns = useMemo(
     () => [

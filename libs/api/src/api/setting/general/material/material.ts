@@ -1,29 +1,15 @@
-import { type Material, type PaginatedResponse, client2 } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { ListParams } from '../../types';
-
-export type MaterialListResponse = PaginatedResponse<Material>;
-
-type MaterialInsert = {
-  name: string;
-  code?: string | null;
-  unit?: string | null;
-  note?: string | null;
-  organization_id?: string | null;
-  created?: string | null;
-  updated?: string | null;
-};
-
-type MaterialUpdate = {
-  name?: string;
-  code?: string | null;
-  unit?: string | null;
-  note?: string | null;
-  organization_id?: string | null;
-  updated?: string | null;
-};
+import type { ListParams } from '../../../types';
+import {
+  CreateMaterialInput,
+  MaterialItem,
+  MaterialListItem,
+  MaterialListResponse,
+  UpdateMaterialInput
+} from './material.type';
 
 export const materialApi = router('material', {
   list: router.query({
@@ -47,8 +33,30 @@ export const materialApi = router('material', {
           throw error;
         }
 
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(it => {
+          return {
+            id: it.id,
+            name: it.name,
+            code: it.code,
+            unit: it.unit,
+            note: it.note,
+            created: it.created,
+            updated: it.updated
+          } as MaterialListItem;
+        });
+
         return {
-          items: (data as Material[]) || [],
+          items,
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,
@@ -61,13 +69,18 @@ export const materialApi = router('material', {
       }
     }
   }),
-
   byId: router.query({
-    fetcher: async (id: string): Promise<Material> => {
+    fetcher: async (id: string): Promise<MaterialItem> => {
       try {
         const { data, error } = await client2.rest
           .from('materials')
-          .select('*')
+          .select(
+            `
+            *,
+            createdBy:users!created_by(id, name, email, phone, address, avatar),
+            updatedBy:users!updated_by(id, name, email, phone, address, avatar)
+          `
+          )
           .eq('id', id)
           .single();
 
@@ -79,7 +92,17 @@ export const materialApi = router('material', {
           throw new Error(`Không tìm thấy vật tư với id: ${id}`);
         }
 
-        return data as Material;
+        return {
+          id: data.id,
+          name: data.name,
+          code: data.code,
+          unit: data.unit,
+          note: data.note,
+          created: data.created,
+          updated: data.updated,
+          createdBy: data.createdBy,
+          updatedBy: data.updatedBy
+        } as MaterialItem;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin vật tư: ${(error as Error).message}`
@@ -87,59 +110,35 @@ export const materialApi = router('material', {
       }
     }
   }),
-
   create: router.mutation({
-    mutationFn: async (params: MaterialInsert): Promise<Material> => {
+    mutationFn: async (params: CreateMaterialInput): Promise<void> => {
       try {
-        const { data, error } = await client2.rest
-          .from('materials')
-          .insert({
-            ...params,
-            created: new Date().toISOString()
-          } as MaterialInsert)
-          .select()
-          .single();
+        const { error } = await client2.rest.from('materials').insert({
+          ...params
+        });
 
         if (error) {
           throw error;
         }
-
-        if (!data) {
-          throw new Error('Không có dữ liệu trả về');
-        }
-
-        return data as Material;
       } catch (error) {
         throw new Error(`Không thể tạo vật tư: ${(error as Error).message}`);
       }
     }
   }),
-
   update: router.mutation({
-    mutationFn: async (
-      params: MaterialUpdate & { id: string }
-    ): Promise<Material> => {
+    mutationFn: async (params: UpdateMaterialInput): Promise<void> => {
       try {
         const { id, ...updateParams } = params;
-        const { data, error } = await client2.rest
+        const { error } = await client2.rest
           .from('materials')
           .update({
-            ...updateParams,
-            updated: new Date().toISOString()
-          } as MaterialUpdate)
-          .eq('id', id)
-          .select()
-          .single();
+            ...updateParams
+          })
+          .eq('id', id);
 
         if (error) {
           throw error;
         }
-
-        if (!data) {
-          throw new Error(`Không tìm thấy vật tư với id: ${id}`);
-        }
-
-        return data as Material;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật vật tư: ${(error as Error).message}`
@@ -147,7 +146,6 @@ export const materialApi = router('material', {
       }
     }
   }),
-
   delete: router.mutation({
     mutationFn: async (id: string): Promise<void> => {
       try {

@@ -51,11 +51,11 @@ export const projectApi = router('project', {
           `,
             { count: 'exact' }
           )
-          .range(from, to)
           .order('created', { ascending: false })
           .or(
             `name.ilike.%${params?.filter ?? ''}%,bidding.ilike.%${params?.filter ?? ''}%`
-          );
+          )
+          .range(from, to);
 
         if (error) {
           throw error;
@@ -95,10 +95,6 @@ export const projectApi = router('project', {
           throw error;
         }
 
-        if (!data) {
-          throw new Error(`Không tìm thấy dự án với id: ${id}`);
-        }
-
         return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(
@@ -112,28 +108,14 @@ export const projectApi = router('project', {
     mutationFn: async (params: CreateProjectInput): Promise<ProjectData> => {
       try {
         const userId = localStorage.getItem('userId');
-        const { data, error } = await client2.rest
-          .from('projects')
-          .insert({
-            ...params,
-            created_by: userId,
-            created: new Date().toISOString()
-          })
-          .select(
-            `
-            *,
-            customer:customers(*),
-            createdBy:users!created_by(*)
-          `
-          )
-          .single();
+        const { data, error } = await client2.rest.from('projects').insert({
+          ...params,
+          created_by: userId,
+          created: new Date().toISOString()
+        });
 
         if (error) {
           throw error;
-        }
-
-        if (!data) {
-          throw new Error('Không có dữ liệu trả về');
         }
 
         return data as unknown as ProjectData;
@@ -153,22 +135,10 @@ export const projectApi = router('project', {
             ...updateParams,
             updated: new Date().toISOString()
           })
-          .eq('id', id)
-          .select(
-            `
-            *,
-            customer:customers(*),
-            createdBy:users(*)
-          `
-          )
-          .single();
+          .eq('id', id);
 
         if (error) {
           throw error;
-        }
-
-        if (!data) {
-          throw new Error(`Không tìm thấy dự án với id: ${id}`);
         }
 
         return data as unknown as ProjectData;

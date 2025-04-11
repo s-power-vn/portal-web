@@ -1,6 +1,5 @@
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
-import { Collections, client } from 'portal-core';
 
 import { FC, Suspense, useEffect } from 'react';
 
@@ -15,7 +14,7 @@ export type IssueBadgeProps = {
 };
 
 const BadgeComponent: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
-  const issueUserInfo = api.issue.userInfo.useSuspenseQuery({
+  const { data: count } = api.issue.userInfo.useSuspenseQuery({
     variables: {
       projectId,
       isAll: isAll ?? false
@@ -25,28 +24,26 @@ const BadgeComponent: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
   const invalidates = useInvalidateQueries();
 
   useEffect(() => {
-    let unsubscribe: () => void;
-
-    client
-      .collection(Collections.Issue)
-      .subscribe('*', () => {
-        invalidates([api.issue.userInfo.getKey()]);
-      })
-      .then(unsub => {
-        unsubscribe = unsub;
-      });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
+    // let unsubscribe: () => void;
+    // client
+    //   .collection(Collections.Issue)
+    //   .subscribe('*', () => {
+    //     invalidates([api.issue.userInfo.getKey()]);
+    //   })
+    //   .then(unsub => {
+    //     unsubscribe = unsub;
+    //   });
+    // return () => {
+    //   if (unsubscribe) {
+    //     unsubscribe();
+    //   }
+    // };
   }, [projectId, invalidates]);
 
   return (
-    <Show fallback="" when={issueUserInfo.data && issueUserInfo.data > 0}>
+    <Show fallback="" when={count && count > 0}>
       <Badge className={'bg-appErrorLight pointer-events-none mr-1'}>
-        {issueUserInfo.data}
+        {count}
       </Badge>
     </Show>
   );

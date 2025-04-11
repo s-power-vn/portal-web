@@ -23,20 +23,21 @@ const Component = () => {
   const { projectId } = Route.useParams();
   const [deleteConfirm, setDeleteConfirm] = useState('');
 
-  const project = api.project.byId.useSuspenseQuery({
+  const { data: project } = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
 
-  const updateProject = api.project.update.useMutation({
-    onSuccess: async () => {
-      success('Cập nhật dự án thành công');
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: api.project.byId.getKey(projectId)
-        })
-      ]);
-    }
-  });
+  const { mutate: updateProject, isPending: isUpdating } =
+    api.project.update.useMutation({
+      onSuccess: async () => {
+        success('Cập nhật dự án thành công');
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: api.project.byId.getKey(projectId)
+          })
+        ]);
+      }
+    });
 
   const deleteProject = api.project.delete.useMutation({
     onSuccess: () => {
@@ -51,14 +52,20 @@ const Component = () => {
         <Form
           schema={schema}
           onSuccess={values =>
-            updateProject.mutate({
-              ...values,
-              id: projectId
+            updateProject({
+              id: projectId,
+              name: values.name,
+              bidding: values.bidding,
+              customer_id: values.customer
             })
           }
           onCancel={() => router.history.back()}
-          defaultValues={project.data}
-          loading={updateProject.isPending || project.isLoading}
+          defaultValues={{
+            name: project.name,
+            bidding: project.bidding,
+            customer: project.customer_id
+          }}
+          loading={isUpdating}
           className={'flex flex-col gap-3'}
         >
           <TextareaField
@@ -86,7 +93,7 @@ const Component = () => {
             }}
           />
         </Form>
-        <Show when={client.authStore?.record?.id === project.data?.createdBy}>
+        <Show when={client.authStore?.record?.id === project.createdBy?.id}>
           <div className="mt-8 rounded-md border border-red-200 bg-red-50 p-4">
             <h3 className="text-lg font-medium text-red-800">Vùng nguy hiểm</h3>
             <p className="mt-2 text-sm text-red-700">
@@ -95,7 +102,7 @@ const Component = () => {
             </p>
             <div className="mt-4">
               <label className="block text-sm font-medium text-red-700">
-                Để xác nhận, hãy nhập tên công trình: {project.data?.name}
+                Để xác nhận, hãy nhập tên công trình: {project.name}
               </label>
               <input
                 type="text"
@@ -107,9 +114,9 @@ const Component = () => {
               <Button
                 variant="destructive"
                 className="mt-4"
-                disabled={deleteConfirm.trim() !== project.data?.name.trim()}
+                disabled={deleteConfirm.trim() !== project.name.trim()}
                 onClick={() => {
-                  if (deleteConfirm.trim() === project.data?.name.trim()) {
+                  if (deleteConfirm.trim() === project.name.trim()) {
                     deleteProject.mutate(projectId);
                   }
                 }}
@@ -124,6 +131,8 @@ const Component = () => {
   );
 };
 
-export const Route = createFileRoute('/_private/$organizationId/project/$projectId/settings')({
+export const Route = createFileRoute(
+  '/_private/$organizationId/project/$projectId/settings'
+)({
   component: Component
 });

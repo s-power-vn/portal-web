@@ -214,6 +214,8 @@ export class StoreoClient<T> {
           url = input.toString();
         }
 
+        console.log('url', url);
+
         const urlObj = new URL(url);
         if (urlObj.search) {
           const query = urlObj.search.substring(1);

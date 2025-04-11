@@ -1,34 +1,16 @@
-import { type Department, type PaginatedResponse, client2 } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ListParams } from '../../types';
-
-/**
- * Input types for department operations
- */
-export type CreateDepartmentInput = {
-  name: string;
-  description?: string;
-  roles?: {
-    id: string;
-    name: string;
-  }[];
-  organization_id?: string;
-};
-
-export type UpdateDepartmentInput = {
-  id: string;
-  name?: string;
-  description?: string;
-  roles?: {
-    id: string;
-    name: string;
-  }[];
-  organization_id?: string;
-};
-
-export type DepartmentListResponse = PaginatedResponse<Department>;
+import { ListParams } from '../../../types';
+import {
+  CreateDepartmentInput,
+  DepartmentItem,
+  DepartmentListFullResponse,
+  DepartmentListItem,
+  DepartmentListResponse,
+  UpdateDepartmentInput
+} from './department.type';
 
 export const departmentApi = router('department', {
   list: router.query({
@@ -52,8 +34,29 @@ export const departmentApi = router('department', {
           throw error;
         }
 
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            roles: item.roles,
+            created: item.created,
+            updated: item.updated
+          } as DepartmentListItem;
+        });
+
         return {
-          items: (data as unknown as Department[]) || [],
+          items,
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,
@@ -66,9 +69,8 @@ export const departmentApi = router('department', {
       }
     }
   }),
-
   listFull: router.query({
-    fetcher: async (): Promise<Department[]> => {
+    fetcher: async (): Promise<DepartmentListFullResponse> => {
       try {
         const { data, error } = await client2.rest
           .from('departments')
@@ -79,7 +81,22 @@ export const departmentApi = router('department', {
           throw error;
         }
 
-        return (data as unknown as Department[]) || [];
+        if (!data) {
+          return [];
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            roles: item.roles,
+            created: item.created,
+            updated: item.updated
+          } as DepartmentListItem;
+        });
+
+        return items;
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách phòng ban: ${(error as Error).message}`
@@ -87,13 +104,16 @@ export const departmentApi = router('department', {
       }
     }
   }),
-
   byId: router.query({
-    fetcher: async (id: string): Promise<Department> => {
+    fetcher: async (id: string): Promise<DepartmentItem> => {
       try {
         const { data, error } = await client2.rest
           .from('departments')
-          .select('*')
+          .select(
+            `*, 
+            createdBy:users!created_by(id, name, email, phone, address, avatar),
+            updatedBy:users!updated_by(id, name, email, phone, address, avatar)`
+          )
           .eq('id', id)
           .single();
 
@@ -105,7 +125,16 @@ export const departmentApi = router('department', {
           throw new Error(`Không tìm thấy phòng ban với id: ${id}`);
         }
 
-        return data as unknown as Department;
+        return {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          roles: data.roles,
+          created: data.created,
+          updated: data.updated,
+          createdBy: data.createdBy,
+          updatedBy: data.updatedBy
+        } as DepartmentItem;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin phòng ban: ${(error as Error).message}`
@@ -113,9 +142,8 @@ export const departmentApi = router('department', {
       }
     }
   }),
-
   byIds: router.query({
-    fetcher: async (ids: string[]): Promise<Department[]> => {
+    fetcher: async (ids: string[]): Promise<DepartmentListItem[]> => {
       try {
         if (ids.length === 0) {
           return [];
@@ -130,7 +158,22 @@ export const departmentApi = router('department', {
           throw error;
         }
 
-        return (data as unknown as Department[]) || [];
+        if (!data) {
+          return [];
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            roles: item.roles,
+            created: item.created,
+            updated: item.updated
+          } as DepartmentListItem;
+        });
+
+        return items;
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách phòng ban: ${(error as Error).message}`
@@ -138,58 +181,35 @@ export const departmentApi = router('department', {
       }
     }
   }),
-
   create: router.mutation({
-    mutationFn: async (params: CreateDepartmentInput): Promise<Department> => {
+    mutationFn: async (params: CreateDepartmentInput): Promise<void> => {
       try {
-        const { data, error } = await client2.rest
-          .from('departments')
-          .insert({
-            ...params,
-            created: new Date().toISOString()
-          })
-          .select()
-          .single();
+        const { error } = await client2.rest.from('departments').insert({
+          ...params
+        });
 
         if (error) {
           throw error;
         }
-
-        if (!data) {
-          throw new Error('Không có dữ liệu trả về');
-        }
-
-        return data as unknown as Department;
       } catch (error) {
         throw new Error(`Không thể tạo phòng ban: ${(error as Error).message}`);
       }
     }
   }),
-
   update: router.mutation({
-    mutationFn: async (params: UpdateDepartmentInput): Promise<Department> => {
+    mutationFn: async (params: UpdateDepartmentInput): Promise<void> => {
       try {
-        console.log('params', params);
         const { id, ...updateParams } = params;
-        const { data, error } = await client2.rest
+        const { error } = await client2.rest
           .from('departments')
           .update({
-            ...updateParams,
-            updated: new Date().toISOString()
+            ...updateParams
           })
-          .eq('id', id)
-          .select()
-          .single();
+          .eq('id', id);
 
         if (error) {
           throw error;
         }
-
-        if (!data) {
-          throw new Error(`Không tìm thấy phòng ban với id: ${id}`);
-        }
-
-        return data as unknown as Department;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật phòng ban: ${(error as Error).message}`
@@ -197,7 +217,6 @@ export const departmentApi = router('department', {
       }
     }
   }),
-
   delete: router.mutation({
     mutationFn: async (id: string): Promise<void> => {
       try {

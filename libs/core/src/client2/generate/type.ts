@@ -3009,6 +3009,7 @@ export type Database = {
           created: string | null
           created_by: string | null
           department_id: string | null
+          department_name: string | null
           department_role: string | null
           department_title: string | null
           id: string | null

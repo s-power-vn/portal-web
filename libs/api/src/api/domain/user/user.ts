@@ -1,6 +1,8 @@
-import { User, client2 } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
+
+import { UserItem } from './user.type';
 
 export const userApi = router('user', {
   byId: router.query({
@@ -15,7 +17,7 @@ export const userApi = router('user', {
         throw error;
       }
 
-      return data as User;
+      return data as UserItem;
     }
   }),
   update: router.mutation({
@@ -23,18 +25,14 @@ export const userApi = router('user', {
       id: string;
       name?: string;
       avatar?: string | File;
-    }) => {
-      return;
-    }
+    }) => {}
   }),
   changePassword: router.mutation({
     mutationFn: async (params: {
       id: string;
       oldPassword: string;
       newPassword: string;
-    }) => {
-      return;
-    }
+    }) => {}
   }),
   sendEmailOtp: router.mutation({
     mutationFn: (params: { email: string }) => {

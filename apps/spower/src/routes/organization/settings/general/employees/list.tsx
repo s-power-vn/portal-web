@@ -7,9 +7,8 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { EmployeeData } from 'libs/api/src/api/setting/general/employee';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
+import { EmployeeListItem, ListSchema, api } from 'portal-api';
 
 import { FC, Suspense, useCallback, useMemo, useRef } from 'react';
 
@@ -111,7 +110,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<EmployeeData>();
+  const columnHelper = createColumnHelper<EmployeeListItem>();
 
   const columns = useMemo(
     () => [

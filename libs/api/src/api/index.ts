@@ -7,7 +7,7 @@ import { priceApi } from './domain/price';
 import { projectApi } from './domain/project';
 import type { RequestData, RequestDetailData } from './domain/request';
 import { requestApi } from './domain/request';
-import { userApi } from './domain/user';
+import { userApi } from './domain/user/user';
 import {
   MsgChannel,
   MsgChat,
@@ -17,11 +17,11 @@ import {
   MsgTeam,
   chatApi
 } from './messenger/chat';
-import { customerApi } from './setting/general/customer';
-import { departmentApi } from './setting/general/department';
-import { employeeApi } from './setting/general/employee';
-import { materialApi } from './setting/general/material';
-import { supplierApi } from './setting/general/supplier';
+import { customerApi } from './setting/general/customer/customer';
+import { departmentApi } from './setting/general/department/department';
+import { employeeApi } from './setting/general/employee/employee';
+import { materialApi } from './setting/general/material/material';
+import { supplierApi } from './setting/general/supplier/supplier';
 import { ObjectData, objectApi } from './setting/operation/object';
 import { objectTypeApi } from './setting/operation/objectType';
 import { ProcessData, processApi } from './setting/operation/process';
@@ -67,3 +67,4 @@ export type {
 export { ListSchema };
 
 export * from './messenger/chat';
+export * from './setting/general';

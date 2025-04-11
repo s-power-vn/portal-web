@@ -1,157 +1,169 @@
+import console from 'console';
 import type {
-  IssueFileResponse,
+  Issue,
+  IssueFile,
   IssueRecord,
-  IssueResponse
+  PaginatedResponse,
+  User
 } from 'portal-core';
-import { Collections, client } from 'portal-core';
+import { client2, userId } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { UserData } from '../setting/general/employee';
 import { ObjectData } from '../setting/operation/object';
 import { ListParams } from '../types';
 
-export type IssueData = IssueResponse<
-  Record<string, string>[],
-  any[],
-  {
-    createdBy: UserData;
-    assignee: UserData;
-    issueFile_via_issue: IssueFileResponse[];
-    object: ObjectData;
-  }
->;
+export type IssueData = Issue & {
+  createdBy: User;
+  object: ObjectData;
+  files: IssueFile[];
+};
+
+export type IssueListResponse = PaginatedResponse<IssueData>;
 
 export const issueApi = router('issue', {
   list: router.query({
-    fetcher: (params?: ListParams & { projectId: string }) => {
-      return client
-        .collection<IssueData>(Collections.Issue)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: `project = "${params?.projectId}"
-          && title ~ "${params?.filter ?? ''}"
-          && deleted = false`,
-          expand: `object, object.type, object.process, issueFile_via_issue`,
-          sort: '-changed'
-        });
-    }
+    fetcher: async (params?: ListParams & { projectId: string }) => {}
   }),
   listMine: router.query({
-    fetcher: (params?: ListParams & { projectId: string }) => {
-      return client
-        .collection<IssueData>(Collections.Issue)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: `project = "${params?.projectId}"
-        && assignees ?~ '${client.authStore.record?.id}'
-        && title ~ "${params?.filter ?? ''}"
-        && deleted = false`,
-          expand: `object, object.type, object.process, issueFile_via_issue`,
-          sort: '-changed'
-        });
+    fetcher: async (
+      params?: ListParams & { projectId: string }
+    ): Promise<IssueListResponse> => {
+      try {
+        const pageIndex = params?.pageIndex ?? 1;
+        const pageSize = params?.pageSize ?? 10;
+        const from = (pageIndex - 1) * pageSize;
+        const to = from + pageSize;
+
+        if (!userId.value) {
+          throw new Error('Không tìm thấy người dùng');
+        }
+
+        if (!params?.projectId) {
+          throw new Error('Không tìm thấy dự án');
+        }
+
+        const { data, count, error } = await client2.rest
+          .from('issues')
+          .select(
+            `
+            *,
+            object:object_id(
+              id,
+              name,
+              type:object_type_id(
+                id,
+                name,
+                icon,
+                color
+              )
+            )
+            `,
+            { count: 'exact' }
+          )
+          .contains('assignees', `["${userId.value}"]`)
+          .eq('project_id', params.projectId)
+          .range(from, to);
+
+        if (error) {
+          throw error;
+        }
+
+        return {
+          items: data.map(it => {
+            console.log(it);
+            return {
+              ...it,
+              object: it.object as ObjectData
+            };
+          }) as IssueData[],
+          page: pageIndex,
+          perPage: pageSize,
+          totalItems: count || 0,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        };
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy danh sách công việc của bạn: ${(error as Error).message}`
+        );
+      }
     }
   }),
   listByObjectType: router.query({
-    fetcher: (
+    fetcher: async (
       params?: ListParams & { projectId: string; objectTypeId?: string }
-    ) => {
-      return client
-        .collection<IssueData>(Collections.Issue)
-        .getList(params?.pageIndex ?? 1, params?.pageSize ?? 10, {
-          filter: `project = "${params?.projectId}"
-        && title ~ "${params?.filter ?? ''}"
-        && object.type = "${params?.objectTypeId ?? ''}"
-        && deleted = false`,
-          expand: `object, object.type, object.process, issueFile_via_issue`,
-          sort: '-changed'
-        });
-    }
+    ) => {}
   }),
   byId: router.query({
-    fetcher: (id: string) =>
-      client.collection<IssueData>(Collections.Issue).getOne(id, {
-        expand: `createdBy, object, object.type, object.process, issueFile_via_issue`
-      })
+    fetcher: async (id: string) => {
+      try {
+        const { data, error } = await client2.rest.from('issues').select(
+          `
+            *,
+            object:object_id(
+              id,
+              name,
+              type:object_type_id(id, name, icon, color))
+          `
+        );
+        if (error) {
+          throw error;
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy chi tiết công việc: ${(error as Error).message}`
+        );
+      }
+    }
   }),
   update: router.mutation({
-    mutationFn: (
+    mutationFn: async (
       params: Partial<IssueRecord> & {
         issueId: string;
       }
-    ) => {
-      const { issueId, ...data } = params;
-      return client.collection(Collections.Issue).update(issueId, data);
-    }
+    ) => {}
   }),
   delete: router.mutation({
-    mutationFn: (issueId: string) =>
-      client.collection(Collections.Issue).delete(issueId)
+    mutationFn: async (issueId: string) => {}
   }),
   forward: router.mutation({
-    mutationFn: (params: {
+    mutationFn: async (params: {
       id: string;
       assignees: string[];
       status: string;
       note?: string;
-    }) => {
-      return client.send('/issue/forward', {
-        method: 'POST',
-        body: params
-      });
-    }
+    }) => {}
   }),
   return: router.mutation({
     mutationFn: async (params: {
       id: string;
       status: string;
       note?: string;
-    }) => {
-      return client.send('/issue/return', {
-        method: 'POST',
-        body: params
-      });
-    }
+    }) => {}
   }),
   finish: router.mutation({
     mutationFn: async (params: {
       id: string;
       status: string;
       note?: string;
-    }) => {
-      return client.send('/issue/finish', {
-        method: 'POST',
-        body: params
-      });
-    }
+    }) => {}
   }),
   reset: router.mutation({
-    mutationFn: (params: { id: string }) => {
-      return client.send('/issue/reset', {
-        method: 'POST',
-        body: params
-      });
-    }
+    mutationFn: async (params: { id: string }) => {}
   }),
   approve: router.mutation({
-    mutationFn: (params: {
+    mutationFn: async (params: {
       id: string;
       nodeName: string;
       nodeId: string;
       userName: string;
       userId: string;
-    }) => {
-      return client.send('/issue/approve', {
-        method: 'POST',
-        body: params
-      });
-    }
+    }) => {}
   }),
-  unApprove: router.mutation({
-    mutationFn: (params: { id: string; nodeId: string }) => {
-      return client.send('/issue/unapprove', {
-        method: 'POST',
-        body: params
-      });
-    }
+  reject: router.mutation({
+    mutationFn: async (params: { id: string; nodeId: string }) => {}
   }),
   userInfo: router.query({
     fetcher: async ({
@@ -162,29 +174,48 @@ export const issueApi = router('issue', {
       isAll?: boolean;
     }) => {
       try {
+        if (!userId.value) {
+          return 0;
+        }
+
         if (isAll) {
-          const infos = await client
-            .collection(Collections.IssueUserInfo)
-            .getFullList({
-              filter: `user = "${client.authStore.record?.id}"`,
-              requestKey: null
-            });
+          const { data, error } = await client2.rest
+            .from('issue_user_info')
+            .select('count')
+            .eq('user_id', userId.value);
 
-          return infos.reduce((acc, item) => acc + item.count, 0);
+          if (error) {
+            return 0;
+          }
+
+          if (!data || data.length === 0) {
+            return 0;
+          }
+
+          return data.reduce(
+            (acc: number, item: { count: number | null }) =>
+              acc + (item.count || 0),
+            0
+          );
         } else {
-          const info = await client
-            .collection(Collections.IssueUserInfo)
-            .getFirstListItem(
-              `project = "${projectId}" && user = "${client.authStore.record?.id}"`,
-              {
-                requestKey: null
-              }
-            );
+          const { data, error } = await client2.rest
+            .from('issue_user_info')
+            .select('count')
+            .eq('project_id', projectId)
+            .eq('user_id', userId.value);
 
-          return info?.count;
+          if (error) {
+            return 0;
+          }
+
+          if (!data || data.length === 0) {
+            return 0;
+          }
+
+          return data[0]?.count || 0;
         }
       } catch (e) {
-        return null;
+        return 0;
       }
     }
   })

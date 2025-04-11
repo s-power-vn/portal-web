@@ -71,7 +71,7 @@ const router = createRouter({
       />
     </div>
   ),
-  defaultPreload: 'render',
+  defaultPreload: false,
   parseSearch: parseSearchWith(value => parse(decodeFromBinary(value))),
   stringifySearch: stringifySearchWith(value =>
     encodeToBinary(stringify(value))
