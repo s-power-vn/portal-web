@@ -1,17 +1,19 @@
-import { Object, ObjectType, Process, client2 } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ListParams } from '../../types';
-
-export type ProcessData = Process & {
-  object_type?: ObjectType;
-  objects?: Object[];
-};
+import { ListParams } from '../../../types';
+import {
+  CreateProcessInput,
+  ProcessItem,
+  ProcessListItem,
+  ProcessListResponse,
+  UpdateProcessInput
+} from './process.type';
 
 export const processApi = router('process', {
   list: router.query({
-    fetcher: async (params?: ListParams) => {
+    fetcher: async (params?: ListParams): Promise<ProcessListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;
@@ -25,7 +27,12 @@ export const processApi = router('process', {
         let query = client2.rest
           .from('processes')
           .select(
-            '*, object_type:object_types(*), objects!objects_process_id_fkey(*)',
+            `*, 
+            objectType:object_types(*), 
+            objects!objects_process_id_fkey(*),
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)
+            `,
             { count: 'exact' }
           )
           .range(from, to)
@@ -41,7 +48,32 @@ export const processApi = router('process', {
           throw error;
         }
 
-        const items = data as unknown as ProcessData[];
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            process: item.process,
+            objectType: item.objectType,
+            objects: item.objects,
+            startNode: item.start_node,
+            finishNode: item.finish_node,
+            created: item.created,
+            updated: item.updated,
+            createdBy: item.createdBy,
+            updatedBy: item.updatedBy
+          } as ProcessListItem;
+        });
 
         return {
           items,
@@ -63,7 +95,12 @@ export const processApi = router('process', {
         const { data, error } = await client2.rest
           .from('processes')
           .select(
-            '*, object_type:object_types(*), objects!objects_process_id_fkey(*)'
+            `*, 
+            objectType:object_types(*), 
+            objects:objects!objects_process_id_fkey(*),
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)
+            `
           )
           .eq('id', id)
           .single();
@@ -76,7 +113,20 @@ export const processApi = router('process', {
           throw new Error(`Không tìm thấy quy trình với id: ${id}`);
         }
 
-        return data as unknown as ProcessData;
+        return {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          process: data.process,
+          objectType: data.objectType,
+          objects: data.objects,
+          startNode: data.start_node,
+          finishNode: data.finish_node,
+          created: data.created,
+          updated: data.updated,
+          createdBy: data.createdBy,
+          updatedBy: data.updatedBy
+        } as ProcessItem;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin quy trình: ${(error as Error).message}`
@@ -94,7 +144,10 @@ export const processApi = router('process', {
         const { data, error } = await client2.rest
           .from('processes')
           .select(
-            '*, object_type:object_types(*), objects!objects_process_id_fkey(*)'
+            `*,
+            objectType:object_types(*),
+            objects:objects!objects_process_id_fkey(*)`,
+            { count: 'exact' }
           )
           .in('id', ids);
 
@@ -102,7 +155,24 @@ export const processApi = router('process', {
           throw error;
         }
 
-        return data as unknown as ProcessData[];
+        if (!data) {
+          return [];
+        }
+
+        return data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            process: item.process,
+            objectType: item.objectType,
+            objects: item.objects,
+            startNode: item.start_node,
+            finishNode: item.finish_node,
+            created: item.created,
+            updated: item.updated
+          } as ProcessListItem;
+        });
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách quy trình: ${(error as Error).message}`
@@ -111,53 +181,35 @@ export const processApi = router('process', {
     }
   }),
   create: router.mutation({
-    mutationFn: async (params: Partial<Process>) => {
+    mutationFn: async (params: CreateProcessInput): Promise<void> => {
       try {
-        if (!params.name) {
-          throw new Error('Thiếu tên quy trình');
-        }
-
-        // We'll skip setting the user ID and let the backend handle it
-
-        // Cast to any to bypass type checking for now
-        const { data, error } = await client2.rest
-          .from('processes')
-          .insert(params as any)
-          .select()
-          .single();
+        const { error } = await client2.rest.from('processes').insert({
+          ...params
+        });
 
         if (error) {
           throw error;
         }
-
-        return data as Process;
       } catch (error) {
         throw new Error(`Không thể tạo quy trình: ${(error as Error).message}`);
       }
     }
   }),
   update: router.mutation({
-    mutationFn: async (params: Partial<Process>) => {
+    mutationFn: async (params: UpdateProcessInput): Promise<void> => {
       try {
-        if (!params.id) {
-          throw new Error('Thiếu id quy trình');
-        }
-
         const { id, ...updateData } = params;
 
-        // Cast to any to bypass type checking for now
-        const { data, error } = await client2.rest
+        const { error } = await client2.rest
           .from('processes')
-          .update(updateData as any)
-          .eq('id', id)
-          .select()
-          .single();
+          .update({
+            ...updateData
+          })
+          .eq('id', id);
 
         if (error) {
           throw error;
         }
-
-        return data as Process;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật quy trình: ${(error as Error).message}`
@@ -184,62 +236,13 @@ export const processApi = router('process', {
     }
   }),
   apply: router.mutation({
-    mutationFn: async (params: { processId: string; objectIds: string[] }) => {
-      try {
-        const response = await fetch(
-          `${client2.rest.url}/rest/v1/rpc/apply_process`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${client2.rest.headers.Authorization}`
-            },
-            body: JSON.stringify({
-              process_id: params.processId,
-              object_ids: params.objectIds
-            })
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        throw new Error(
-          `Không thể áp dụng quy trình: ${(error as Error).message}`
-        );
-      }
+    mutationFn: (params: { processId: string; objectIds: string[] }) => {
+      throw new Error('Not implemented');
     }
   }),
   duplicate: router.mutation({
-    mutationFn: async (id: string) => {
-      try {
-        const response = await fetch(
-          `${client2.rest.url}/rest/v1/rpc/duplicate_process`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${client2.rest.headers.Authorization}`
-            },
-            body: JSON.stringify({ process_id: id })
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        throw new Error(
-          `Không thể nhân bản quy trình: ${(error as Error).message}`
-        );
-      }
+    mutationFn: (id: string) => {
+      throw new Error('Not implemented');
     }
   })
 });

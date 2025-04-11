@@ -16,7 +16,7 @@ import {
   PlusIcon,
   XIcon
 } from 'lucide-react';
-import { ListSchema, ObjectData, api } from 'portal-api';
+import { ListSchema, ObjectListItem, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -93,7 +93,7 @@ function Component() {
     [data]
   );
 
-  const columnHelper = createColumnHelper<ObjectData>();
+  const columnHelper = createColumnHelper<ObjectListItem>();
 
   const deleteObject = api.object.delete.useMutation({
     onSuccess: async () => {
@@ -235,7 +235,7 @@ function Component() {
         size: 100
       }),
 
-      columnHelper.accessor(row => row.type, {
+      columnHelper.accessor(row => row.objectType, {
         id: 'type',
         cell: info => {
           const objectType = info.getValue();

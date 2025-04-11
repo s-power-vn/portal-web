@@ -99,7 +99,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
       defaultValues={{
         name: process.data?.name,
         description: process.data?.description,
-        objectType: process.data?.object_type_id,
+        objectType: process.data?.objectType?.id,
         process: process.data?.process as ProcessData | undefined
       }}
     >
@@ -133,7 +133,7 @@ export const EditProcessForm: FC<EditProcessFormProps> = ({
         title="Quy trình"
         className="flex-1"
         options={{
-          objectType: process.data?.object_type_id
+          objectType: process.data?.objectType?.id
         }}
       />
     </Form>

@@ -40,9 +40,7 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
       schema={schema}
       className={'flex flex-col gap-3'}
       defaultValues={{
-        objects:
-          process.data.expand?.object_via_process?.map(object => object.id) ??
-          []
+        objects: process.data.objects?.map(object => object.id) ?? []
       }}
       onSuccess={values => {
         const objectIds = values.objects || [];
@@ -73,7 +71,7 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
         className={'w-full'}
         options={{
           multiple: true,
-          objectType: process.data.objectType
+          objectType: process.data.objectType?.id
         }}
       />
     </Form>

@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { CopyIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, ProcessData, api } from 'portal-api';
+import { ListSchema, ProcessListItem, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -116,7 +116,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<ProcessData>();
+  const columnHelper = createColumnHelper<ProcessListItem>();
 
   const handleApplyProcess = useCallback(
     (processId: string) => {
@@ -227,9 +227,9 @@ function Component() {
       footer: info => info.column.id,
       size: 300
     }),
-    columnHelper.accessor('object_type', {
+    columnHelper.accessor('objectType', {
       cell: info => {
-        const objectType = info.row.original.object_type;
+        const objectType = info.row.original.objectType;
         if (!objectType) {
           return null;
         }
@@ -269,7 +269,7 @@ function Component() {
                 key={object.id}
                 className=" text-appWhite text-xs"
                 style={{
-                  backgroundColor: info.row.original.object_type?.color
+                  backgroundColor: info.row.original.objectType?.color
                 }}
               >
                 {object.name}
@@ -305,8 +305,8 @@ function Component() {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('created_by', {
-      cell: info => <EmployeeDisplay employeeId={info.getValue()} />,
+    columnHelper.accessor('createdBy', {
+      cell: info => <EmployeeDisplay employeeId={info.getValue()?.id} />,
       header: () => 'Người tạo',
       footer: info => info.column.id,
       size: 200

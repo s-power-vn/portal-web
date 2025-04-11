@@ -6,4 +6,3 @@ export * from './commons';
 export * from './utils';
 
 export * from './types/common';
-export * from './types/entities';

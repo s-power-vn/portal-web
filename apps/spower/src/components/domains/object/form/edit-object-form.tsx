@@ -60,8 +60,8 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
       defaultValues={{
         name: objectData?.name || '',
         description: objectData?.description || '',
-        type: objectData?.object_type_id || '',
-        process: objectData?.process_id || '',
+        type: objectData?.objectType?.id || '',
+        process: objectData?.process?.id || '',
         active: objectData?.active ?? true
       }}
       loading={updateObject.isPending}

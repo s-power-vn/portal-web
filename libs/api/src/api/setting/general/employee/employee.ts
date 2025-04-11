@@ -148,15 +148,10 @@ export const employeeApi = router('employee', {
           .select(
             `
             *,
-            user:users!user_id(
-              name,
-              email,
-              phone,
-              avatar
-            ),
+            user:users!user_id(*),
             department:departments!department_id(name),
-            createdBy:users!created_by(id, name, email, phone, address, avatar),
-            updatedBy:users!updated_by(id, name, email, phone, address, avatar)
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)
           `
           )
           .eq('id', id)
@@ -211,13 +206,8 @@ export const employeeApi = router('employee', {
           .select(
             `
             *,
-            user:users!user_id(
-              name,
-              email,
-              phone,
-              avatar
-            ),
-            department:departments!department_id(name)
+            user:users!user_id(*),
+            department:departments!department_id(*)
           `
           )
           .in('id', ids);

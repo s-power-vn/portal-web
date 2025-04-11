@@ -22,9 +22,9 @@ import { departmentApi } from './setting/general/department/department';
 import { employeeApi } from './setting/general/employee/employee';
 import { materialApi } from './setting/general/material/material';
 import { supplierApi } from './setting/general/supplier/supplier';
-import { ObjectData, objectApi } from './setting/operation/object';
-import { objectTypeApi } from './setting/operation/objectType';
-import { ProcessData, processApi } from './setting/operation/process';
+import { objectTypeApi } from './setting/operation/object-type/object-type';
+import { objectApi } from './setting/operation/object/object';
+import { processApi } from './setting/operation/process/process';
 import { ListSchema } from './types';
 
 export const api = {
@@ -58,13 +58,13 @@ export type {
   MsgReaction,
   MsgSetting,
   MsgTeam,
-  ObjectData,
-  ProcessData,
   RequestData,
   RequestDetailData
 };
 
 export { ListSchema };
 
+export * from './domain';
 export * from './messenger/chat';
 export * from './setting/general';
+export * from './setting/operation';

@@ -79,8 +79,8 @@ export const supplierApi = router('supplier', {
           .select(
             `
             *,
-            createdBy:users!created_by(id, name, email, phone, address, avatar),
-            updatedBy:users!updated_by(id, name, email, phone, address, avatar)
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)
           `
           )
           .eq('id', id)

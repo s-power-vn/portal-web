@@ -43,7 +43,7 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
           label: object.name,
           value: object.id,
           subLabel: object.process?.name !== '' ? 'Đã áp dụng' : '',
-          group: object.type?.display || ''
+          group: object.objectType?.display || ''
         })),
         hasMore: result.page < result.totalPages
       };

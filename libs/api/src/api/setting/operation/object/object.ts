@@ -1,33 +1,20 @@
-import { Object, ObjectType, Process, client2 } from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ListParams } from '../../types';
-
-export type ObjectData = Object & {
-  type: ObjectType;
-  process?: Process;
-};
-
-export type CreateObjectInput = {
-  name: string;
-  object_type_id: string;
-  process_id?: string;
-  description?: string;
-  active?: boolean;
-};
-
-export type UpdateObjectInput = {
-  id: string;
-  name?: string;
-  object_type_id?: string;
-  process_id?: string;
-  description?: string;
-};
+import { ListParams } from '../../../types';
+import {
+  CreateObjectInput,
+  ObjectItem,
+  ObjectListFullResponse,
+  ObjectListItem,
+  ObjectListResponse,
+  UpdateObjectInput
+} from './object.type';
 
 export const objectApi = router('object', {
   list: router.query({
-    fetcher: async (params?: ListParams) => {
+    fetcher: async (params?: ListParams): Promise<ObjectListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;
@@ -40,9 +27,14 @@ export const objectApi = router('object', {
 
         let query = client2.rest
           .from('objects')
-          .select('*, type:object_types(*), process:processes(*)', {
-            count: 'exact'
-          })
+          .select(
+            `*, 
+            objectType:object_types(*), 
+            process:processes(*)`,
+            {
+              count: 'exact'
+            }
+          )
           .range(from, to)
           .order('created', { ascending: false });
 
@@ -56,7 +48,28 @@ export const objectApi = router('object', {
           throw error;
         }
 
-        const items = data as unknown as ObjectData[];
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            objectType: item.objectType,
+            process: item.process,
+            description: item.description,
+            active: item.active,
+            created: item.created,
+            updated: item.updated
+          } as ObjectListItem;
+        });
 
         return {
           items,
@@ -73,7 +86,7 @@ export const objectApi = router('object', {
     }
   }),
   listActive: router.query({
-    fetcher: async (params?: ListParams) => {
+    fetcher: async (params?: ListParams): Promise<ObjectListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
         const pageSize = params?.pageSize ?? 10;
@@ -82,9 +95,14 @@ export const objectApi = router('object', {
 
         let query = client2.rest
           .from('objects')
-          .select('*, type:object_types(*), process:processes(*)', {
-            count: 'exact'
-          })
+          .select(
+            `*, 
+            objectType:object_types(*), 
+            process:processes(*)`,
+            {
+              count: 'exact'
+            }
+          )
           .eq('active', true)
           .range(from, to)
           .order('created', { ascending: false });
@@ -99,7 +117,28 @@ export const objectApi = router('object', {
           throw error;
         }
 
-        const items = data as unknown as ObjectData[];
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            objectType: item.objectType,
+            process: item.process,
+            description: item.description,
+            active: item.active,
+            created: item.created,
+            updated: item.updated
+          } as ObjectListItem;
+        });
 
         return {
           items,
@@ -116,21 +155,42 @@ export const objectApi = router('object', {
     }
   }),
   listActiveByType: router.query({
-    fetcher: async (type: string) => {
+    fetcher: async (type: string): Promise<ObjectListFullResponse> => {
       try {
         const { data, error } = await client2.rest
           .from('objects')
-          .select('*', { count: 'exact' })
+          .select(
+            `*,
+            objectType:object_types(*),
+            process:processes(*)`,
+            { count: 'exact' }
+          )
           .eq('object_type_id', type)
           .eq('active', true)
-          .range(0, 1000)
           .order('created', { ascending: false });
 
         if (error) {
           throw error;
         }
 
-        return data as unknown as ObjectData[];
+        if (!data) {
+          return [];
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            objectType: item.objectType,
+            process: item.process,
+            description: item.description,
+            active: item.active,
+            created: item.created,
+            updated: item.updated
+          } as ObjectListItem;
+        });
+
+        return items;
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách đối tượng hoạt động theo loại: ${(error as Error).message}`
@@ -139,11 +199,18 @@ export const objectApi = router('object', {
     }
   }),
   byId: router.query({
-    fetcher: async (id: string) => {
+    fetcher: async (id: string): Promise<ObjectItem> => {
       try {
         const { data, error } = await client2.rest
           .from('objects')
-          .select('*, type:object_types(*), process:processes(*)')
+          .select(
+            `*,
+            objectType:object_types(*),
+            process:processes(*),
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)`,
+            { count: 'exact' }
+          )
           .eq('id', id)
           .single();
 
@@ -155,7 +222,18 @@ export const objectApi = router('object', {
           throw new Error(`Không tìm thấy đối tượng với id: ${id}`);
         }
 
-        return data as unknown as ObjectData;
+        return {
+          id: data.id,
+          name: data.name,
+          objectType: data.objectType,
+          process: data.process,
+          description: data.description,
+          active: data.active,
+          created: data.created,
+          updated: data.updated,
+          createdBy: data.createdBy,
+          updatedBy: data.updatedBy
+        } as ObjectItem;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin đối tượng: ${(error as Error).message}`
@@ -164,7 +242,7 @@ export const objectApi = router('object', {
     }
   }),
   byIds: router.query({
-    fetcher: async (ids: string[]) => {
+    fetcher: async (ids: string[]): Promise<ObjectListItem[]> => {
       try {
         if (ids.length === 0) {
           return [];
@@ -172,14 +250,36 @@ export const objectApi = router('object', {
 
         const { data, error } = await client2.rest
           .from('objects')
-          .select('*, type:object_types(*), process:processes(*)')
+          .select(
+            `*,
+            objectType:object_types(*),
+            process:processes(*)`,
+            { count: 'exact' }
+          )
           .in('id', ids);
 
         if (error) {
           throw error;
         }
 
-        return data as unknown as ObjectData[];
+        if (!data) {
+          return [];
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            objectType: item.objectType,
+            process: item.process,
+            description: item.description,
+            active: item.active,
+            created: item.created,
+            updated: item.updated
+          } as ObjectListItem;
+        });
+
+        return items;
       } catch (error) {
         throw new Error(
           `Không thể lấy danh sách đối tượng: ${(error as Error).message}`
@@ -188,39 +288,29 @@ export const objectApi = router('object', {
     }
   }),
   create: router.mutation({
-    mutationFn: async (params: CreateObjectInput) => {
+    mutationFn: async (params: CreateObjectInput): Promise<void> => {
       try {
-        const { data, error } = await client2.rest
-          .from('objects')
-          .insert(params)
-          .select('*, type:object_types(*), process:processes(*)')
-          .single();
+        const { error } = await client2.rest.from('objects').insert(params);
 
         if (error) {
           throw error;
         }
-
-        return data as unknown as ObjectData;
       } catch (error) {
         throw new Error(`Không thể tạo đối tượng: ${(error as Error).message}`);
       }
     }
   }),
   update: router.mutation({
-    mutationFn: async (params: UpdateObjectInput) => {
+    mutationFn: async (params: UpdateObjectInput): Promise<void> => {
       try {
-        const { data, error } = await client2.rest
+        const { error } = await client2.rest
           .from('objects')
           .update(params)
-          .eq('id', params.id)
-          .select('*, type:object_types(*), process:processes(*)')
-          .single();
+          .eq('id', params.id);
 
         if (error) {
           throw error;
         }
-
-        return data as unknown as ObjectData;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật đối tượng: ${(error as Error).message}`

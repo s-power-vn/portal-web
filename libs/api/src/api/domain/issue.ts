@@ -10,7 +10,7 @@ import { client2, userId } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ObjectData } from '../setting/operation/object';
+import { ObjectData } from '../setting/operation/object/object';
 import { ListParams } from '../types';
 
 export type IssueData = Issue & {
