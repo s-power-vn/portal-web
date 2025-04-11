@@ -48,6 +48,8 @@ export const objectApi = router('object', {
           throw error;
         }
 
+        console.log(params?.filter);
+
         if (!data) {
           return {
             items: [],
@@ -85,7 +87,86 @@ export const objectApi = router('object', {
       }
     }
   }),
-  listActive: router.query({
+  listByType: router.query({
+    fetcher: async (
+      params?: ListParams & {
+        objectType: string;
+      }
+    ): Promise<ObjectListResponse> => {
+      try {
+        const pageIndex = params?.pageIndex ?? 1;
+        const pageSize = params?.pageSize ?? 10;
+        const from = (pageIndex - 1) * pageSize;
+        const to = from + pageSize - 1;
+
+        const filter = params?.filter
+          ? `name.ilike.%${params.filter}%`
+          : undefined;
+
+        let query = client2.rest
+          .from('objects')
+          .select(
+            `*, 
+            objectType:object_types(*), 
+            process:processes(*)`,
+            {
+              count: 'exact'
+            }
+          )
+          .range(from, to)
+          .eq('object_type_id', params?.objectType ?? '')
+          .order('created', { ascending: false });
+
+        if (filter) {
+          query = query.or(filter);
+        }
+
+        const { data, count, error } = await query;
+
+        if (error) {
+          throw error;
+        }
+
+        console.log(params?.filter);
+
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            objectType: item.objectType,
+            process: item.process,
+            description: item.description,
+            active: item.active,
+            created: item.created,
+            updated: item.updated
+          } as ObjectListItem;
+        });
+
+        return {
+          items,
+          page: pageIndex,
+          perPage: pageSize,
+          totalItems: count || 0,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        };
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy danh sách đối tượng: ${(error as Error).message}`
+        );
+      }
+    }
+  }),
+  listByActive: router.query({
     fetcher: async (params?: ListParams): Promise<ObjectListResponse> => {
       try {
         const pageIndex = params?.pageIndex ?? 1;
@@ -154,8 +235,8 @@ export const objectApi = router('object', {
       }
     }
   }),
-  listActiveByType: router.query({
-    fetcher: async (type: string): Promise<ObjectListFullResponse> => {
+  listFullActiveByType: router.query({
+    fetcher: async (objectType: string): Promise<ObjectListFullResponse> => {
       try {
         const { data, error } = await client2.rest
           .from('objects')
@@ -165,7 +246,7 @@ export const objectApi = router('object', {
             process:processes(*)`,
             { count: 'exact' }
           )
-          .eq('object_type_id', type)
+          .eq('object_type_id', objectType)
           .eq('active', true)
           .order('created', { ascending: false });
 

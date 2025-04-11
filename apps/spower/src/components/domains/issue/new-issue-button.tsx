@@ -80,11 +80,11 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     isRefetching,
     refetch
   } = useInfiniteQuery({
-    queryKey: api.object.listActive.getKey({
+    queryKey: api.object.listByActive.getKey({
       filter: `name ~ "${search}"`
     }),
     queryFn: ({ pageParam = 1 }) =>
-      api.object.listActive.fetcher({
+      api.object.listByActive.fetcher({
         filter: `name ~ "${search}"`,
         pageIndex: pageParam,
         pageSize: 10

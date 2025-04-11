@@ -26,17 +26,22 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const filter = props.objectType
-        ? `type = '${props.objectType}' ${search ? `&& (name ~ "${search}")` : ''}`
-        : search
-          ? `(name ~ "${search}")`
-          : '';
+      let result;
 
-      const result = await api.object.list.fetcher({
-        filter,
-        pageIndex: page ?? 1,
-        pageSize: 10
-      });
+      if (props.objectType) {
+        result = await api.object.listByType.fetcher({
+          objectType: props.objectType,
+          filter: search,
+          pageIndex: page ?? 1,
+          pageSize: 10
+        });
+      } else {
+        result = await api.object.list.fetcher({
+          filter: search,
+          pageIndex: page ?? 1,
+          pageSize: 10
+        });
+      }
 
       return {
         items: result.items.map(object => ({

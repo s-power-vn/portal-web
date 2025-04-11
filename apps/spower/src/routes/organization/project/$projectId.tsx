@@ -45,13 +45,13 @@ const Component = () => {
   });
 
   const { data: requestObjects } = requestType
-    ? api.object.listActiveByType.useSuspenseQuery({
+    ? api.object.listFullActiveByType.useSuspenseQuery({
         variables: requestType.id
       })
     : { data: null };
 
   const { data: priceObjects } = priceType
-    ? api.object.listActiveByType.useSuspenseQuery({
+    ? api.object.listFullActiveByType.useSuspenseQuery({
         variables: priceType.id
       })
     : { data: null };
