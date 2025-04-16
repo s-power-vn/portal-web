@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { DepartmentItem, EmployeeListItem, api } from 'portal-api';
 
 import { FC, Suspense, useMemo } from 'react';
 
@@ -29,7 +29,7 @@ const EmptyCondition: FC = () => (
 );
 
 type DepartmentConditionProps = {
-  department: any;
+  department?: DepartmentItem;
   roleId?: string;
   separator: React.ReactNode;
   index: number;
@@ -63,7 +63,7 @@ const DepartmentCondition: FC<DepartmentConditionProps> = ({
 
 type EmployeeConditionProps = {
   employeeIds: string[];
-  employees: any;
+  employees: EmployeeListItem[];
   separator: React.ReactNode;
   index: number;
 };
@@ -78,10 +78,8 @@ const EmployeeCondition: FC<EmployeeConditionProps> = ({
     <div key={`emp-${index}`} className="inline-flex items-center">
       <div className="flex flex-wrap gap-1">
         {employeeIds.map((employeeId, empIndex) => {
-          const employee = _.find(employees.items, e => e.id === employeeId);
-
+          const employee = _.find(employees, e => e.id === employeeId);
           if (!employee) return null;
-
           return (
             <span
               key={`emp-${index}-${empIndex}`}

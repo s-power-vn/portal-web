@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import _ from 'lodash';
 import { NetworkIcon, Plus, Trash2, UsersIcon } from 'lucide-react';
-import { DepartmentData, api } from 'portal-api';
+import { DepartmentItem, api } from 'portal-api';
 import * as yup from 'yup';
 
 import {
@@ -129,15 +128,16 @@ const ConditionBlock = memo(
       }
     }, [condition]);
 
-    let currentDepartment: DepartmentData | undefined;
+    let currentDepartment: DepartmentItem | undefined;
     try {
       const queryId =
         isDepartmentCondition(condition) && localDeptId
           ? localDeptId
           : undefined;
 
-      const { data } = api.department.byId.useSuspenseQuery({
-        variables: queryId
+      const { data } = api.department.byId.useQuery({
+        variables: queryId,
+        enabled: !!queryId
       });
 
       if (isDepartmentCondition(condition) && localDeptId) {
@@ -305,47 +305,13 @@ const ConditionBlock = memo(
     );
   },
   (prevProps, nextProps) => {
-    if (
-      prevProps.formSubmitted !== nextProps.formSubmitted ||
-      prevProps.showEmployeeError !== nextProps.showEmployeeError ||
-      prevProps.showDepartmentError !== nextProps.showDepartmentError
-    ) {
-      return false;
-    }
-
-    const prevCondition = prevProps.condition;
-    const nextCondition = nextProps.condition;
-
-    if (
-      prevProps.index !== nextProps.index ||
-      prevCondition.id !== nextCondition.id ||
-      prevCondition.type !== nextCondition.type
-    ) {
-      return false;
-    }
-
-    if (
-      isDepartmentCondition(prevCondition) &&
-      isDepartmentCondition(nextCondition)
-    ) {
-      if (
-        prevCondition.departmentId !== nextCondition.departmentId ||
-        prevCondition.role !== nextCondition.role
-      ) {
-        return false;
-      }
-    } else if (
-      isEmployeeCondition(prevCondition) &&
-      isEmployeeCondition(nextCondition)
-    ) {
-      if (!_.isEqual(prevCondition.employeeIds, nextCondition.employeeIds)) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-
-    return true;
+    return (
+      prevProps.condition === nextProps.condition &&
+      prevProps.formErrors === nextProps.formErrors &&
+      prevProps.formSubmitted === nextProps.formSubmitted &&
+      prevProps.showEmployeeError === nextProps.showEmployeeError &&
+      prevProps.showDepartmentError === nextProps.showDepartmentError
+    );
   }
 );
 

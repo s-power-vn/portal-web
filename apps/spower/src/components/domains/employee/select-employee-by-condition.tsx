@@ -19,22 +19,18 @@ export const SelectEmployeeByCondition: FC<
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name ? it.name : it.user?.name || '',
-          value: it.user?.id || ''
+          value: it.id || ''
         }))
       : {
           label: result.name ? result.name : result.user?.name || '',
-          value: result.user?.id || ''
+          value: result.id || ''
         };
   }, []);
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const filter = props.condition
-        ? `(${props.condition}) && (name ~ "${search ?? ''}" || email ~ "${search ?? ''}")`
-        : `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`;
-
       const result = await api.employee.list.fetcher({
-        filter,
+        filter: search,
         pageIndex: page ?? 1,
         pageSize: 10
       });
@@ -42,7 +38,7 @@ export const SelectEmployeeByCondition: FC<
       return {
         items: result.items.map(it => ({
           label: it.name ? it.name : it.user?.name || '',
-          value: it.user?.id || '',
+          value: it.id || '',
           group: it.department?.name,
           subLabel: it.user?.email
         })),

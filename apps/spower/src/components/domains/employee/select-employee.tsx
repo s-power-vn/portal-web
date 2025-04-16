@@ -14,18 +14,18 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name ? it.name : it.user?.name || '',
-          value: it.user?.id || ''
+          value: it.id || ''
         }))
       : {
           label: result.name ? result.name : result.user?.name || '',
-          value: result.user?.id || ''
+          value: result.id || ''
         };
   }, []);
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
       const result = await api.employee.list.fetcher({
-        filter: `name ~ "${search ?? ''}" || email ~ "${search ?? ''}"`,
+        filter: search,
         pageIndex: page ?? 1,
         pageSize: 10
       });
@@ -33,7 +33,7 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
       return {
         items: result.items.map(it => ({
           label: it.name ? it.name : it.user?.name || '',
-          value: it.user?.id || '',
+          value: it.id || '',
           group: it.department?.name,
           subLabel: it.user?.email
         })),
