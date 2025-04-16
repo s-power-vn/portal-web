@@ -1,25 +1,12 @@
-import console from 'console';
-import type {
-  Issue,
-  IssueFile,
-  IssueRecord,
-  PaginatedResponse,
-  User
-} from 'portal-core';
+import type { IssueRecord } from 'portal-core';
 import { client2, userId } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ObjectData } from '../setting/operation/object/object';
-import { ListParams } from '../types';
-
-export type IssueData = Issue & {
-  createdBy: User;
-  object: ObjectData;
-  files: IssueFile[];
-};
-
-export type IssueListResponse = PaginatedResponse<IssueData>;
+import { ListParams } from '../../types';
+import { ProjectItem } from '../project/project.type';
+import { UserItem } from '../user/user.type';
+import { IssueListItem, IssueListResponse } from './issue.type';
 
 export const issueApi = router('issue', {
   list: router.query({
@@ -48,6 +35,11 @@ export const issueApi = router('issue', {
           .select(
             `
             *,
+            project:project_id(
+              id,
+              name,
+              bidding
+            ),
             object:object_id(
               id,
               name,
@@ -57,6 +49,13 @@ export const issueApi = router('issue', {
                 icon,
                 color
               )
+            ),
+            files:issue_files(
+              id,
+              name,
+              type,
+              size,
+              url
             )
             `,
             { count: 'exact' }
@@ -69,14 +68,25 @@ export const issueApi = router('issue', {
           throw error;
         }
 
+        const items = data.map(it => {
+          return {
+            id: it.id,
+            title: it.title,
+            status: it.status,
+            deadlineStatus: it.deadline_status,
+            code: it.code,
+            startDate: it.start_date,
+            endDate: it.end_date,
+            object: it.object,
+            project: it.project as ProjectItem,
+            assignees: (it.assignees as UserItem[]) || [],
+            assigned: it.assigned,
+            files: it.files
+          } as IssueListItem;
+        });
+
         return {
-          items: data.map(it => {
-            console.log(it);
-            return {
-              ...it,
-              object: it.object as ObjectData
-            };
-          }) as IssueData[],
+          items,
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,

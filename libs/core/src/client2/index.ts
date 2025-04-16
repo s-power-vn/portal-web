@@ -251,3 +251,5 @@ export class StoreoClient<T> {
 }
 
 export const client2 = new StoreoClient<Database>();
+
+export * from './generate/type';

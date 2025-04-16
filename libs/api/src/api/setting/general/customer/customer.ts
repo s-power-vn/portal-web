@@ -20,14 +20,21 @@ export const customerApi = router('customer', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize;
 
-        const { data, count, error } = await client2.rest
+        const query = client2.rest
           .from('customers')
           .select('*', { count: 'exact' })
           .range(from, to)
-          .order('created', { ascending: false })
-          .or(
-            `name.ilike.%${params?.filter ?? ''}%,email.ilike.%${params?.filter ?? ''}%`
-          );
+          .order('created', { ascending: false });
+
+        const filter = params?.filter
+          ? `name.ilike.%${params?.filter ?? ''}%,email.ilike.%${params?.filter ?? ''}%`
+          : undefined;
+
+        if (filter) {
+          query.or(filter);
+        }
+
+        const { data, count, error } = await query;
 
         if (error) {
           throw error;

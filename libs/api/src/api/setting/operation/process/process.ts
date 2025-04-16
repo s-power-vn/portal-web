@@ -20,10 +20,6 @@ export const processApi = router('process', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        const filter = params?.filter
-          ? `name.ilike.%${params.filter}%`
-          : undefined;
-
         let query = client2.rest
           .from('processes')
           .select(
@@ -37,6 +33,10 @@ export const processApi = router('process', {
           )
           .range(from, to)
           .order('created', { ascending: false });
+
+        const filter = params?.filter
+          ? `name.ilike.%${params.filter}%`
+          : undefined;
 
         if (filter) {
           query = query.or(filter);

@@ -18,19 +18,21 @@ export const objectTypeApi = router('objectType', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        const filter = params?.filter
-          ? `name.ilike.%${params.filter}%`
-          : undefined;
-
-        const { data, count, error } = await client2.rest
+        const query = client2.rest
           .from('object_types')
           .select('*', { count: 'exact' })
           .range(from, to)
           .order('created', { ascending: false });
 
+        const filter = params?.filter
+          ? `name.ilike.%${params.filter}%`
+          : undefined;
+
         if (filter) {
-          (client2.rest as any).url.searchParams.append('and', filter);
+          query.or(filter);
         }
+
+        const { data, count, error } = await query;
 
         if (error) {
           throw error;

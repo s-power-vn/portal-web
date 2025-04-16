@@ -1,8 +1,7 @@
 import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProjectData } from 'libs/api/src/api/domain/project';
-import { ListSchema, api } from 'portal-api';
+import { ListSchema, ProjectListItem, api } from 'portal-api';
 
 import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
@@ -17,7 +16,7 @@ const Component = () => {
     variables: search
   });
 
-  const columnHelper = createColumnHelper<ProjectData>();
+  const columnHelper = createColumnHelper<ProjectListItem>();
 
   const columns = [
     columnHelper.display({
@@ -54,9 +53,9 @@ const Component = () => {
       footer: info => info.column.id,
       size: 200
     }),
-    columnHelper.accessor('created_by', {
+    columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.created_by} />
+        <EmployeeDisplay employeeId={row.original.createdBy?.id} />
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id,

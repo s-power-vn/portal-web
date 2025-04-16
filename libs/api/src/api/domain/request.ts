@@ -11,7 +11,7 @@ import { Collections, client } from 'portal-core';
 import { router } from 'react-query-kit';
 
 import { ListParams } from '../types';
-import { IssueData } from './issue';
+import { IssueData } from './issue/issue';
 
 export type RequestDetailData = RequestDetailResponse<{
   request: RequestResponse;

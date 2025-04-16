@@ -21,10 +21,6 @@ export const objectApi = router('object', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        const filter = params?.filter
-          ? `name.ilike.%${params.filter}%`
-          : undefined;
-
         let query = client2.rest
           .from('objects')
           .select(
@@ -38,6 +34,10 @@ export const objectApi = router('object', {
           .range(from, to)
           .order('created', { ascending: false });
 
+        const filter = params?.filter
+          ? `name.ilike.%${params.filter}%`
+          : undefined;
+
         if (filter) {
           query = query.or(filter);
         }
@@ -47,8 +47,6 @@ export const objectApi = router('object', {
         if (error) {
           throw error;
         }
-
-        console.log(params?.filter);
 
         if (!data) {
           return {

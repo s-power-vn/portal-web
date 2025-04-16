@@ -643,7 +643,7 @@ export type Database = {
           type: string | null
           updated: string | null
           updated_by: string | null
-          upload: string
+          url: string
         }
         Insert: {
           created?: string | null
@@ -656,7 +656,7 @@ export type Database = {
           type?: string | null
           updated?: string | null
           updated_by?: string | null
-          upload: string
+          url: string
         }
         Update: {
           created?: string | null
@@ -669,7 +669,7 @@ export type Database = {
           type?: string | null
           updated?: string | null
           updated_by?: string | null
-          upload?: string
+          url?: string
         }
         Relationships: [
           {
@@ -747,9 +747,8 @@ export type Database = {
       issues: {
         Row: {
           approver: Json | null
-          assigned_date: string | null
+          assigned: string | null
           assignees: Json | null
-          changed: string | null
           code: string | null
           created: string | null
           created_by: string | null
@@ -769,9 +768,8 @@ export type Database = {
         }
         Insert: {
           approver?: Json | null
-          assigned_date?: string | null
+          assigned?: string | null
           assignees?: Json | null
-          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
@@ -791,9 +789,8 @@ export type Database = {
         }
         Update: {
           approver?: Json | null
-          assigned_date?: string | null
+          assigned?: string | null
           assignees?: Json | null
-          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
@@ -3154,7 +3151,6 @@ export type Database = {
       }
       request_finished: {
         Row: {
-          changed: string | null
           issue_id: string | null
           organization_id: string | null
           project_id: string | null

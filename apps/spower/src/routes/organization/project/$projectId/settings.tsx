@@ -63,7 +63,7 @@ const Component = () => {
           defaultValues={{
             name: project.name,
             bidding: project.bidding,
-            customer: project.customer_id
+            customer: project.customer.id
           }}
           loading={isUpdating}
           className={'flex flex-col gap-3'}

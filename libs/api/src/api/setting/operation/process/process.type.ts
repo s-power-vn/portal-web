@@ -1,5 +1,4 @@
-import { Json } from 'libs/core/src/client2/generate/type';
-import { PaginatedResponse } from 'portal-core';
+import { Json, PaginatedResponse } from 'portal-core';
 
 import { UserItem } from '../../../domain';
 import { ObjectTypeItem } from '../object-type/object-type.type';
@@ -9,7 +8,7 @@ export type ProcessItem = {
   id: string;
   name: string;
   description?: string;
-  process?: Record<string, unknown>;
+  process?: Json;
   objectType?: ObjectTypeItem;
   objects?: ObjectItem[];
   startNode?: string;

@@ -39,7 +39,7 @@ export const Route = createFileRoute('/_private/_top/top')({
 });
 
 function RouteComponent() {
-  const listOrganization = api.organization.list.useSuspenseQuery();
+  const { data: listOrganization } = api.organization.list.useSuspenseQuery();
 
   const invalidates = useInvalidateQueries();
 
@@ -78,7 +78,7 @@ function RouteComponent() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {listOrganization.data?.length === 0 ? (
+        {listOrganization.length === 0 ? (
           <div className="col-span-full">
             <p className="text-lg font-medium text-gray-900">
               Chưa có tổ chức nào
@@ -88,8 +88,8 @@ function RouteComponent() {
             </p>
           </div>
         ) : (
-          listOrganization.data?.map(org => {
-            const userRole = org.owner.role || '';
+          listOrganization.map(org => {
+            const userRole = org.role || '';
             const roleColor = getRoleColor(userRole);
 
             return (

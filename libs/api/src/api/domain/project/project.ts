@@ -1,36 +1,15 @@
-import {
-  type Customer,
-  type PaginatedResponse,
-  type Project,
-  type User,
-  client2
-} from 'portal-core';
+import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import { ListParams } from '../types';
-
-export type ProjectData = Project & {
-  customer?: Customer;
-  createdBy?: User;
-};
-
-export type ProjectListResponse = PaginatedResponse<ProjectData>;
-
-export type CreateProjectInput = {
-  name: string;
-  bidding?: string;
-  customer_id?: string;
-  organization_id?: string;
-};
-
-export type UpdateProjectInput = {
-  id: string;
-  name?: string;
-  bidding?: string;
-  customer_id?: string;
-  organization_id?: string;
-};
+import { ListParams } from '../../types';
+import {
+  CreateProjectInput,
+  ProjectItem,
+  ProjectListItem,
+  ProjectListResponse,
+  UpdateProjectInput
+} from './project.type';
 
 export const projectApi = router('project', {
   list: router.query({
@@ -41,28 +20,57 @@ export const projectApi = router('project', {
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize;
 
-        const { data, count, error } = await client2.rest
+        const query = client2.rest
           .from('projects')
           .select(
-            `
-            *,
+            `*,
             customer:customers(*),
-            createdBy:users!created_by(*)
-          `,
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)`,
             { count: 'exact' }
           )
-          .order('created', { ascending: false })
-          .or(
-            `name.ilike.%${params?.filter ?? ''}%,bidding.ilike.%${params?.filter ?? ''}%`
-          )
-          .range(from, to);
+          .range(from, to)
+          .order('created', { ascending: false });
+
+        const filter = params?.filter
+          ? `name.ilike.%${params?.filter}%,bidding.ilike.%${params?.filter}%`
+          : undefined;
+
+        if (filter) {
+          query.or(filter);
+        }
+
+        const { data, count, error } = await query;
 
         if (error) {
           throw error;
         }
 
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            bidding: item.bidding,
+            customer: item.customer,
+            created: item.created,
+            updated: item.updated,
+            createdBy: item.createdBy,
+            updatedBy: item.updatedBy
+          } as ProjectListItem;
+        });
+
         return {
-          items: data as unknown as ProjectData[],
+          items,
           page: pageIndex,
           perPage: pageSize,
           totalItems: count || 0,
@@ -75,18 +83,16 @@ export const projectApi = router('project', {
       }
     }
   }),
-
   byId: router.query({
-    fetcher: async (id: string): Promise<ProjectData> => {
+    fetcher: async (id: string): Promise<ProjectItem> => {
       try {
         const { data, error } = await client2.rest
           .from('projects')
           .select(
-            `
-            *,
+            `*,
             customer:customers(*),
-            createdBy:users!created_by(*)
-          `
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)`
           )
           .eq('id', id)
           .single();
@@ -95,7 +101,20 @@ export const projectApi = router('project', {
           throw error;
         }
 
-        return data as unknown as ProjectData;
+        if (!data) {
+          throw new Error(`Không tìm thấy dự án với id: ${id}`);
+        }
+
+        return {
+          id: data.id,
+          name: data.name,
+          bidding: data.bidding,
+          customer: data.customer,
+          created: data.created,
+          updated: data.updated,
+          createdBy: data.createdBy,
+          updatedBy: data.updatedBy
+        } as ProjectItem;
       } catch (error) {
         throw new Error(
           `Không thể lấy thông tin dự án: ${(error as Error).message}`
@@ -103,45 +122,35 @@ export const projectApi = router('project', {
       }
     }
   }),
-
   create: router.mutation({
-    mutationFn: async (params: CreateProjectInput): Promise<ProjectData> => {
+    mutationFn: async (params: CreateProjectInput): Promise<void> => {
       try {
-        const userId = localStorage.getItem('userId');
-        const { data, error } = await client2.rest.from('projects').insert({
-          ...params,
-          created_by: userId,
-          created: new Date().toISOString()
+        const { error } = await client2.rest.from('projects').insert({
+          ...params
         });
 
         if (error) {
           throw error;
         }
-
-        return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(`Không thể tạo dự án: ${(error as Error).message}`);
       }
     }
   }),
-
   update: router.mutation({
-    mutationFn: async (params: UpdateProjectInput): Promise<ProjectData> => {
+    mutationFn: async (params: UpdateProjectInput): Promise<void> => {
       try {
         const { id, ...updateParams } = params;
         const { data, error } = await client2.rest
           .from('projects')
           .update({
-            ...updateParams,
-            updated: new Date().toISOString()
+            ...updateParams
           })
           .eq('id', id);
 
         if (error) {
           throw error;
         }
-
-        return data as unknown as ProjectData;
       } catch (error) {
         throw new Error(
           `Không thể cập nhật dự án: ${(error as Error).message}`
@@ -149,7 +158,6 @@ export const projectApi = router('project', {
       }
     }
   }),
-
   delete: router.mutation({
     mutationFn: async (id: string): Promise<void> => {
       try {

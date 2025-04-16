@@ -1,10 +1,10 @@
 import { authApi } from './auth';
 import { commentApi } from './domain/comment';
 import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
-import { IssueData, issueApi } from './domain/issue';
-import { organizationApi } from './domain/organization';
+import { IssueData, issueApi } from './domain/issue/issue';
+import { organizationApi } from './domain/organization/organization';
 import { priceApi } from './domain/price';
-import { projectApi } from './domain/project';
+import { projectApi } from './domain/project/project';
 import type { RequestData, RequestDetailData } from './domain/request';
 import { requestApi } from './domain/request';
 import { userApi } from './domain/user/user';
