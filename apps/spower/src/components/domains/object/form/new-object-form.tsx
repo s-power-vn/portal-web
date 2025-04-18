@@ -1,8 +1,7 @@
 import { api } from 'portal-api';
 import { boolean, object, string } from 'yup';
 
-import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { type FC, useState } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -13,6 +12,7 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
+import { useInvalidateQueries } from '../../../../hooks';
 import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
@@ -20,22 +20,18 @@ const schema = object().shape({
   name: string().required('Hãy nhập tên đối tượng'),
   description: string(),
   type: string().required('Hãy chọn loại đối tượng'),
-  process: string().nullable(),
+  process: string(),
   active: boolean()
 });
 
 export type NewObjectFormProps = BusinessFormProps;
 
 export const NewObjectForm: FC<NewObjectFormProps> = props => {
-  const [defaultType, setDefaultType] = useState<string>('');
-  const { data: objectTypesResult } = api.objectType.list.useSuspenseQuery();
-  const objectTypes = objectTypesResult?.items || [];
+  const [selectedObjectType, setSelectedObjectType] = useState<
+    string | undefined
+  >();
 
-  useEffect(() => {
-    if (objectTypes && objectTypes.length > 0) {
-      setDefaultType(objectTypes[0].id);
-    }
-  }, [objectTypes]);
+  const invalidates = useInvalidateQueries();
 
   const createObject = api.object.create.useMutation({
     onSuccess: async () => {
@@ -49,8 +45,10 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       schema={schema}
       onSuccess={values => {
         const formData = {
-          ...values,
-          process: values.process || '',
+          name: values.name,
+          description: values.description,
+          active: values.active,
+          process_id: values.process,
           object_type_id: values.type
         };
         createObject.mutate(formData);
@@ -59,7 +57,6 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
       defaultValues={{
         name: '',
         description: '',
-        type: defaultType,
         active: false
       }}
       loading={createObject.isPending}
@@ -81,13 +78,19 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
         schema={schema}
         name={'type'}
         title={'Loại đối tượng'}
-        options={{}}
+        options={{
+          onChange: value => {
+            setSelectedObjectType(value as string);
+          }
+        }}
       />
       <ProcessDropdownField
         schema={schema}
         name={'process'}
         title={'Quy trình'}
-        options={{}}
+        options={{
+          objectType: selectedObjectType
+        }}
       />
       <CheckField
         schema={schema}

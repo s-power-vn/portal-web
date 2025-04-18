@@ -10,7 +10,7 @@ import {
   Undo2Icon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { client } from 'portal-core';
+import { userId } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, lazy, useCallback, useMemo } from 'react';
@@ -68,7 +68,6 @@ export type IssueSummaryProps = {
   issueId: string;
 };
 
-// Helper component to render the appropriate icon
 const ObjectTypeIcon = ({ objectType }: { objectType?: any }) => {
   if (!objectType) return null;
 
@@ -87,15 +86,19 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const invalidates = useInvalidateQueries();
   const { confirm } = useConfirm();
 
-  const issue = api.issue.byId.useSuspenseQuery({
+  const { data: user } = api.user.byId.useSuspenseQuery({
+    variables: userId.value
+  });
+
+  const { data: issue } = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
 
-  const issueObject = issue.data.expand?.object;
+  const issueObject = issue?.object;
 
-  const process = issueObject?.expand?.process;
+  const process = issueObject?.process;
 
-  const statusInfo = extractStatus(issue.data.status);
+  const statusInfo = extractStatus(issue?.status);
 
   const toNode = useMemo(() => {
     return getNode(process?.process as ProcessData, statusInfo?.to);
@@ -133,7 +136,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
       children: ({ close }) => {
         return (
           <DynamicObjectEditForm
-            objectType={issue.data.expand?.object.expand?.type?.name ?? ''}
+            objectType={issueObject?.objectType?.name ?? ''}
             issueId={issueId}
             onSuccess={() => {
               invalidates([
@@ -162,10 +165,10 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   }, [confirm, deleteIssue, issueId]);
 
   const handleCopyTitle = useCallback(() => {
-    navigator.clipboard.writeText(issue.data.title).then(() => {
+    navigator.clipboard.writeText(issue?.title || '').then(() => {
       success('Đã sao chép tiêu đề');
     });
-  }, [issue.data.title]);
+  }, [issue?.title]);
 
   const handleCopyUrl = useCallback(() => {
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -184,8 +187,8 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           <Undo2Icon className={'h-4 w-4'} />
         </Button>
         <span className={'flex flex-1 items-center gap-1 text-base font-bold'}>
-          <ObjectTypeIcon objectType={issue.data.expand?.object.expand?.type} />
-          {issue.data.title}
+          <ObjectTypeIcon objectType={issueObject?.objectType} />
+          {issue?.title}
         </span>
         <ThemeButton
           variant={'outline'}
@@ -206,11 +209,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           <LinkIcon className={'h-4 w-4'} />
         </ThemeButton>
         <Show
-          when={
-            client.authStore.record?.id &&
-            issue.data.assignees?.includes(client.authStore.record.id) &&
-            !isInDoneState
-          }
+          when={issue?.assignees?.some(a => a === user?.id) && !isInDoneState}
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -247,7 +246,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Ngày tạo
             </span>
             <span className={'truncate'}>
-              {formatDateTime(issue.data.created)}
+              {issue?.created ? formatDateTime(issue.created) : ''}
             </span>
           </div>
           <div className={'flex h-6 w-full items-center justify-between gap-2'}>
@@ -255,14 +254,14 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Ngày tạo
             </span>
             <span className={'truncate'}>
-              {formatDateTime(issue.data.created)}
+              {issue?.created ? formatDateTime(issue.created) : ''}
             </span>
           </div>
           <div className={'flex h-6 w-full items-center justify-between gap-2'}>
             <span className={'text-appBlue whitespace-nowrap text-xs'}>
               Số phiếu
             </span>
-            <span className={'truncate'}>{issue.data?.code}</span>
+            <span className={'truncate'}>{issue?.code}</span>
           </div>
         </div>
         <div className={'flex flex-1 flex-col items-center gap-2 text-sm'}>
@@ -271,7 +270,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Người tạo
             </span>
             <span className={'truncate'}>
-              <EmployeeDisplay employeeId={issue.data.expand?.createdBy.id} />
+              <EmployeeDisplay employeeId={issue?.createdBy?.id} />
             </span>
           </div>
           <div className={'flex h-6 w-full items-center justify-between gap-2'}>
@@ -289,7 +288,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Ngày bắt đầu
             </span>
             <span className={'truncate'}>
-              {formatDateTime(issue.data.startDate)}
+              {issue?.startDate ? formatDateTime(issue.startDate) : ''}
             </span>
           </div>
           <div className={'flex h-6 w-full items-center justify-between gap-2'}>
@@ -297,7 +296,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
               Ngày kết thúc
             </span>
             <span className={'truncate'}>
-              {formatDateTime(issue.data.endDate)}
+              {issue?.endDate ? formatDateTime(issue.endDate) : ''}
             </span>
           </div>
         </div>

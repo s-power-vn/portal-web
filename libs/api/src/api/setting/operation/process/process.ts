@@ -1,3 +1,4 @@
+import { log } from 'console';
 import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
@@ -48,6 +49,86 @@ export const processApi = router('process', {
           throw error;
         }
 
+        if (!data) {
+          return {
+            items: [],
+            page: pageIndex,
+            perPage: pageSize,
+            totalItems: 0,
+            totalPages: 0
+          };
+        }
+
+        const items = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            process: item.process,
+            objectType: item.objectType,
+            objects: item.objects,
+            startNode: item.start_node,
+            finishNode: item.finish_node,
+            created: item.created,
+            updated: item.updated,
+            createdBy: item.createdBy,
+            updatedBy: item.updatedBy
+          } as ProcessListItem;
+        });
+
+        return {
+          items,
+          page: pageIndex,
+          perPage: pageSize,
+          totalItems: count || 0,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        };
+      } catch (error) {
+        throw new Error(
+          `Không thể lấy danh sách quy trình: ${(error as Error).message}`
+        );
+      }
+    }
+  }),
+  listByType: router.query({
+    fetcher: async (
+      params?: ListParams & { objectType?: string }
+    ): Promise<ProcessListResponse> => {
+      try {
+        const pageIndex = params?.pageIndex ?? 1;
+        const pageSize = params?.pageSize ?? 10;
+        const from = (pageIndex - 1) * pageSize;
+        const to = from + pageSize - 1;
+
+        log('list by type', params?.objectType);
+
+        const filter = params?.filter
+          ? `name.ilike.%${params.filter}%`
+          : undefined;
+
+        let query = client2.rest
+          .from('processes')
+          .select(
+            `*, 
+            objectType:object_types(*), 
+            objects!objects_process_id_fkey(*),
+            createdBy:users!created_by(*),
+            updatedBy:users!updated_by(*)
+            `,
+            { count: 'exact' }
+          )
+          .range(from, to)
+          .eq('object_type_id', params?.objectType ?? '')
+          .order('created', { ascending: false });
+        if (filter) {
+          query = query.or(filter);
+        }
+
+        const { data, count, error } = await query;
+
+        if (error) {
+          throw error;
+        }
         if (!data) {
           return {
             items: [],

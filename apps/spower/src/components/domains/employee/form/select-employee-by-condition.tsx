@@ -2,7 +2,7 @@ import { api } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
-import { Combobox, ComboboxProps } from '../../combobox';
+import { Combobox, ComboboxProps } from '../../../combobox';
 
 export type SelectEmployeeByConditionProps = Partial<ComboboxProps> & {
   condition?: string;
@@ -53,7 +53,7 @@ export const SelectEmployeeByCondition: FC<
       {...props}
       placeholder={props.placeholder ?? 'Chọn nhân viên'}
       emptyText={props.emptyText ?? 'Không tìm thấy nhân viên'}
-      queryKey={['employees']}
+      queryKey={api.employee.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

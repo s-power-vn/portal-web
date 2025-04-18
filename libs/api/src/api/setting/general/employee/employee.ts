@@ -22,7 +22,7 @@ export const employeeApi = router('employee', {
         const to = from + pageSize - 1;
 
         const query = client2.rest
-          .from('organization_members_with_users')
+          .from('employees')
           .select('*', { count: 'exact' })
           .range(from, to)
           .order('created', { ascending: false });
@@ -90,7 +90,7 @@ export const employeeApi = router('employee', {
     fetcher: async (params?: ListParams): Promise<EmployeeListFullResponse> => {
       try {
         const query = client2.rest
-          .from('organization_members_with_users')
+          .from('employees')
           .select('*', { count: 'exact' });
 
         if (params?.filter) {

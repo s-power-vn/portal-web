@@ -91,7 +91,9 @@ export const EditObjectForm: FC<EditObjectFormProps> = props => {
         schema={schema}
         name={'process'}
         title={'Quy trình'}
-        options={{}}
+        options={{
+          objectType: objectData?.objectType?.id
+        }}
       />
       <CheckField
         schema={schema}

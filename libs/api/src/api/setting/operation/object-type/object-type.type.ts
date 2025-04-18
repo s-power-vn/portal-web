@@ -1,7 +1,5 @@
 import { PaginatedResponse } from 'portal-core';
 
-import { UserItem } from '../../../domain';
-
 export type ObjectTypeItem = {
   id: string;
   name: string;
@@ -11,8 +9,6 @@ export type ObjectTypeItem = {
   icon?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
 };
 
 export type ObjectTypeListItem = {

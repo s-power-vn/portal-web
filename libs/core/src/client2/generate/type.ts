@@ -17,7 +17,6 @@ export type Database = {
           id: string
           issue_id: string | null
           organization_id: string | null
-          status: string | null
           updated: string | null
           updated_by: string | null
         }
@@ -28,7 +27,6 @@ export type Database = {
           id?: string
           issue_id?: string | null
           organization_id?: string | null
-          status?: string | null
           updated?: string | null
           updated_by?: string | null
         }
@@ -39,7 +37,6 @@ export type Database = {
           id?: string
           issue_id?: string | null
           organization_id?: string | null
-          status?: string | null
           updated?: string | null
           updated_by?: string | null
         }
@@ -747,8 +744,9 @@ export type Database = {
       issues: {
         Row: {
           approver: Json | null
-          assigned: string | null
+          assigned_date: string | null
           assignees: Json | null
+          changed: string | null
           code: string | null
           created: string | null
           created_by: string | null
@@ -768,8 +766,9 @@ export type Database = {
         }
         Insert: {
           approver?: Json | null
-          assigned?: string | null
+          assigned_date?: string | null
           assignees?: Json | null
+          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
@@ -789,8 +788,9 @@ export type Database = {
         }
         Update: {
           approver?: Json | null
-          assigned?: string | null
+          assigned_date?: string | null
           assignees?: Json | null
+          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
@@ -1619,93 +1619,34 @@ export type Database = {
         Row: {
           color: string | null
           created: string | null
-          created_by: string | null
           description: string | null
           display: string | null
           icon: string | null
           id: string
           name: string
-          organization_id: string | null
           updated: string | null
-          updated_by: string | null
         }
         Insert: {
           color?: string | null
           created?: string | null
-          created_by?: string | null
           description?: string | null
           display?: string | null
           icon?: string | null
           id?: string
           name: string
-          organization_id?: string | null
           updated?: string | null
-          updated_by?: string | null
         }
         Update: {
           color?: string | null
           created?: string | null
-          created_by?: string | null
           description?: string | null
           display?: string | null
           icon?: string | null
           id?: string
           name?: string
-          organization_id?: string | null
           updated?: string | null
-          updated_by?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "object_types_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "object_types_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "object_types_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "object_types_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "object_types_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "object_types_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "object_types_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       objects: {
         Row: {
@@ -1858,6 +1799,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_organization_members_department_id"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
@@ -1876,13 +1824,6 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_members_department_id_fkey"
-            columns: ["department_id"]
-            isOneToOne: false
-            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
@@ -2669,6 +2610,21 @@ export type Database = {
           },
         ]
       }
+      schema_migrations: {
+        Row: {
+          dirty: boolean
+          version: number
+        }
+        Insert: {
+          dirty: boolean
+          version: number
+        }
+        Update: {
+          dirty?: boolean
+          version?: number
+        }
+        Relationships: []
+      }
       suppliers: {
         Row: {
           address: string | null
@@ -2959,49 +2915,7 @@ export type Database = {
           },
         ]
       }
-      issue_user_info: {
-        Row: {
-          count: number | null
-          organization_id: string | null
-          project_id: string | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "issues_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      msg_unread: {
-        Row: {
-          chat_id: string | null
-          chat_type: string | null
-          organization_id: string | null
-          unread_count: number | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "msg_chats_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organization_members_with_users: {
+      employees: {
         Row: {
           created: string | null
           created_by: string | null
@@ -3024,6 +2938,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_organization_members_department_id"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
@@ -3042,13 +2963,6 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_members_department_id_fkey"
-            columns: ["department_id"]
-            isOneToOne: false
-            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
@@ -3102,6 +3016,48 @@ export type Database = {
           },
         ]
       }
+      issue_user_info: {
+        Row: {
+          count: number | null
+          organization_id: string | null
+          project_id: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      msg_unread: {
+        Row: {
+          chat_id: string | null
+          chat_type: string | null
+          organization_id: string | null
+          unread_count: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "msg_chats_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       request_detail_info: {
         Row: {
           deleted: boolean | null
@@ -3151,6 +3107,7 @@ export type Database = {
       }
       request_finished: {
         Row: {
+          changed: string | null
           issue_id: string | null
           organization_id: string | null
           project_id: string | null
@@ -3181,7 +3138,7 @@ export type Database = {
         Returns: string
       }
       check_user_organization_access: {
-        Args: { p_organization_id: string; p_user_id: string }
+        Args: { org_id: string; user_id: string }
         Returns: boolean
       }
       current_jwt_role: {

@@ -2,7 +2,7 @@ import { api } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
-import { Combobox, ComboboxProps } from '../..';
+import { Combobox, ComboboxProps } from '../../..';
 
 export type CustomerDropdownProps = Partial<ComboboxProps>;
 
