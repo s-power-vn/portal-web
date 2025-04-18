@@ -30,18 +30,15 @@ export default [
       reportUnusedDisableDirectives: true
     }
   },
-  
+
   // Cấu hình cơ bản
   js.configs.recommended,
-  
+
   // Sử dụng cấu hình cũ thông qua FlatCompat
   ...compat.config({
-    extends: [
-      'plugin:@nx/javascript',
-      'plugin:@nx/typescript'
-    ]
+    extends: ['plugin:@nx/javascript', 'plugin:@nx/typescript']
   }),
-  
+
   // Cấu hình cho React Hooks
   {
     files: ['**/*.{jsx,tsx}'],
@@ -54,7 +51,7 @@ export default [
       'react-hooks/exhaustive-deps': 'warn'
     }
   },
-  
+
   // Cấu hình cho NX
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
@@ -77,7 +74,7 @@ export default [
       ]
     }
   },
-  
+
   // Thêm cấu hình Prettier ở cuối để tránh xung đột
   prettierConfig
 ];
