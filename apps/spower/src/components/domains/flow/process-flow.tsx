@@ -119,8 +119,7 @@ function getNodes(
         active: extract?.to ? id === extract.to : id === extract?.from,
         selected: id === selectedNode,
         clicked: id === clickedNode,
-        sourcePoint,
-        onPointClick: () => {} // This will be replaced in the component
+        sourcePoint
       },
       position: { x, y }
     };

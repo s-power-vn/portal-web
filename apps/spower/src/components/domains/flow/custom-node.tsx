@@ -53,7 +53,7 @@ export const CustomNode: FC<CustomNodeProps> = ({ data }) => {
         data.points.filter(point => point.type === 'bottom')
       )
     };
-  }, [data.points]);
+  }, [data]);
 
   const handlePointClick = (pointId: string) => {
     const point = data.points.find(p => p.id === pointId);

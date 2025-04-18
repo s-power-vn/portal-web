@@ -12,7 +12,12 @@ import {
   useRef,
   useState
 } from 'react';
-import { UseFormSetValue, useFieldArray, useForm } from 'react-hook-form';
+import {
+  Resolver,
+  UseFormSetValue,
+  useFieldArray,
+  useForm
+} from 'react-hook-form';
 
 import { Button } from '@minhdtb/storeo-theme';
 
@@ -91,6 +96,10 @@ const schema = yup.object().shape({
     .required()
 });
 
+const formResolver = yupResolver(
+  schema
+) as unknown as Resolver<ConditionFormValues>;
+
 type ConditionBlockProps = {
   condition: SubCondition;
   index: number;
@@ -143,7 +152,7 @@ const ConditionBlock = memo(
       if (isDepartmentCondition(condition) && localDeptId) {
         currentDepartment = data;
       }
-    } catch (error) {
+    } catch {
       currentDepartment = undefined;
     }
 
@@ -341,7 +350,7 @@ export const ConditionGenerator: FC<ConditionGeneratorProps> = ({
     reset,
     formState: { errors }
   } = useForm<ConditionFormValues>({
-    resolver: yupResolver(schema) as any,
+    resolver: formResolver,
     defaultValues: {
       conditions: []
     }

@@ -41,14 +41,16 @@ const DepartmentCondition: FC<DepartmentConditionProps> = ({
   separator,
   index
 }) => {
-  if (!department) return null;
-
   const roleText = useMemo(() => {
+    if (!department) return '';
+
     if (!roleId || !department.roles) return '';
 
     const role = _.find(department.roles, (r: any) => r.id === roleId);
     return role ? ` (${role.name})` : '';
-  }, [department.roles, roleId]);
+  }, [department, roleId]);
+
+  if (!department) return null;
 
   return (
     <div key={`dept-${index}`} className="inline-flex items-center">

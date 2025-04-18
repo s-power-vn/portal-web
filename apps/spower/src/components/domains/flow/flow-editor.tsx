@@ -74,7 +74,6 @@ function getNodes(
         active: false,
         selected: selectedNode?.id === id,
         clicked: sourcePoint?.nodeId === id,
-        onPointClick: () => {},
         sourcePoint
       },
       position: { x, y },
@@ -124,7 +123,6 @@ export const FlowEditor: FC<FlowEditorProps> = ({
 }) => {
   const reactFlowInstance = useReactFlow();
   const { fitView } = reactFlowInstance;
-  const isReady = useRef(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<Flow | null>(null);
   const [flowData, setFlowData] = useState<ProcessData>(
@@ -180,7 +178,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         setShowSidebar(true);
       }
     },
-    [nodesById, handleFitView]
+    [nodesById]
   );
 
   const handleEdgeClick = useCallback(
@@ -362,11 +360,11 @@ export const FlowEditor: FC<FlowEditorProps> = ({
     flowData,
     selectedFlow,
     selectedNode,
-    setEdges,
-    setNodes,
     sourcePoint,
+    nodes,
     updateFlowData,
-    handleFitView
+    setEdges,
+    setNodes
   ]);
 
   const handleFlowUpdate = useCallback(
@@ -391,7 +389,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
 
   const handleNodeUpdate = useCallback(
     (nodeId: string, updates: Partial<Node>) => {
-      let updatedNodes = flowData.nodes.map(node => {
+      const updatedNodes = flowData.nodes.map(node => {
         if (node.id === nodeId) {
           // For start and finished nodes, limit to maximum 2 points
           if (
@@ -842,7 +840,7 @@ export const FlowEditor: FC<FlowEditorProps> = ({
         setNodes(_.cloneDeep(nodes));
       }, 100);
     }
-  }, [edges]);
+  }, [edges, nodes, setNodes]);
 
   return (
     <div className="flex h-full overflow-hidden rounded-lg border">

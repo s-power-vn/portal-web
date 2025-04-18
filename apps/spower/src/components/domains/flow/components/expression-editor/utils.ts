@@ -17,39 +17,6 @@ export const createEmptyRow = (): ExpressionRowData => ({
   toDate: null
 });
 
-const detectPropertyType = (value: string): PropertyType => {
-  // Remove quotes if present
-  const cleanValue =
-    value.startsWith('"') && value.endsWith('"')
-      ? value.substring(1, value.length - 1)
-      : value;
-
-  // Check for ISO date format
-  if (cleanValue.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/)) {
-    try {
-      const date = new Date(cleanValue);
-      if (!isNaN(date.getTime())) {
-        return 'datetime';
-      }
-    } catch (e) {
-      // Not a valid date, continue to other checks
-    }
-  }
-
-  // Check for boolean
-  if (cleanValue === 'true' || cleanValue === 'false') {
-    return 'boolean';
-  }
-
-  // Check for number
-  if (!isNaN(Number(cleanValue))) {
-    return 'number';
-  }
-
-  // Default to string
-  return 'string';
-};
-
 export const formatExpressionValue = (
   value: any,
   type: PropertyType,
