@@ -3,6 +3,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ListSchema, ProjectListItem, api } from 'portal-api';
 
+import { useMemo } from 'react';
+
 import { formatDateTime } from '@minhdtb/storeo-core';
 import { CommonTable, DebouncedInput } from '@minhdtb/storeo-theme';
 
@@ -18,62 +20,65 @@ const Component = () => {
 
   const columnHelper = createColumnHelper<ProjectListItem>();
 
-  const columns = [
-    columnHelper.display({
-      id: 'index',
-      cell: info => (
-        <div className={'w-full text-center'}>{info.row.index + 1}</div>
-      ),
-      header: () => <div className={'w-full text-center'}>#</div>,
-      size: 30
-    }),
-    columnHelper.accessor('name', {
-      cell: info => <div className={'truncate'}>{info.getValue()}</div>,
-      header: () => 'Tên công trình',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.display({
-      id: 'badge',
-      cell: info => <IssueBadge projectId={info.row.original.id} />,
-      header: () => '',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('bidding', {
-      cell: info => <div className={'truncate'}>{info.getValue()}</div>,
-      header: () => 'Tên gói thầu',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('customer', {
-      cell: ({ row }) => (
-        <div className={'truncate'}>{row.original.customer?.name}</div>
-      ),
-      header: () => 'Chủ đầu tư',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.accessor('createdBy', {
-      cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.createdBy?.id} />
-      ),
-      header: () => 'Người tạo',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.accessor('created', {
-      cell: ({ row }) => formatDateTime(row.original.created ?? ''),
-      header: () => 'Ngày tạo',
-      footer: info => info.column.id,
-      size: 170
-    }),
-    columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
-      header: () => 'Ngày cập nhật',
-      footer: info => info.column.id,
-      size: 170
-    })
-  ];
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'index',
+        cell: info => (
+          <div className={'w-full text-center'}>{info.row.index + 1}</div>
+        ),
+        header: () => <div className={'w-full text-center'}>#</div>,
+        size: 30
+      }),
+      columnHelper.accessor('name', {
+        cell: info => <div className={'truncate'}>{info.getValue()}</div>,
+        header: () => 'Tên công trình',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.display({
+        id: 'badge',
+        cell: info => <IssueBadge projectId={info.row.original.id} />,
+        header: () => '',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('bidding', {
+        cell: info => <div className={'truncate'}>{info.getValue()}</div>,
+        header: () => 'Tên gói thầu',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('customer', {
+        cell: ({ row }) => (
+          <div className={'truncate'}>{row.original.customer?.name}</div>
+        ),
+        header: () => 'Chủ đầu tư',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('createdBy', {
+        cell: ({ row }) => (
+          <EmployeeDisplay employeeId={row.original.createdBy?.id} />
+        ),
+        header: () => 'Người tạo',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('created', {
+        cell: ({ row }) => formatDateTime(row.original.created ?? ''),
+        header: () => 'Ngày tạo',
+        footer: info => info.column.id,
+        size: 170
+      }),
+      columnHelper.accessor('updated', {
+        cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
+        header: () => 'Ngày cập nhật',
+        footer: info => info.column.id,
+        size: 170
+      })
+    ],
+    [columnHelper]
+  );
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>

@@ -155,7 +155,7 @@ function Component() {
         deleteProcess.mutate(id);
       });
     },
-    [deleteProcess]
+    [confirm, deleteProcess]
   );
 
   const handleEditProcess = useCallback(
@@ -168,160 +168,170 @@ function Component() {
         search
       });
     },
-    [navigate]
+    [navigate, search]
   );
 
-  const columns = [
-    columnHelper.display({
-      id: 'index',
-      cell: info => (
-        <div className={'flex items-center justify-center'}>
-          {info.row.index + 1}
-        </div>
-      ),
-      header: () => <div className={'flex items-center justify-center'}>#</div>,
-      size: 30
-    }),
-    columnHelper.display({
-      size: 180,
-      id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <div className={'flex gap-1'}>
-            <Button
-              className={'flex h-6 gap-1 px-3 text-xs'}
-              onClick={e => {
-                e.stopPropagation();
-                handleApplyProcess(row.original.id);
-              }}
-            >
-              Áp dụng
-            </Button>
-            <Button
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                handleDuplicateProcess(row.original.id);
-              }}
-            >
-              <CopyIcon className={'h-3 w-3'} />
-            </Button>
-            <Button
-              variant={'destructive'}
-              className={'h-6 px-3'}
-              onClick={e => {
-                e.stopPropagation();
-                handleDeleteProcess(row.original.id);
-              }}
-            >
-              <XIcon className={'h-3 w-3'} />
-            </Button>
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'index',
+        cell: info => (
+          <div className={'flex items-center justify-center'}>
+            {info.row.index + 1}
           </div>
-        );
-      },
-      header: () => 'Thao tác'
-    }),
-    columnHelper.accessor('name', {
-      cell: info => info.getValue(),
-      header: () => 'Tên quy trình',
-      footer: info => info.column.id,
-      size: 300
-    }),
-    columnHelper.accessor('objectType', {
-      cell: info => {
-        const objectType = info.row.original.objectType;
-        if (!objectType) {
-          return null;
-        }
-        return (
-          <Badge
-            className="text-appWhite text-xs"
-            style={{ backgroundColor: objectType.color }}
-          >
-            {objectType.display}
-          </Badge>
-        );
-      },
-      header: () => 'Loại đối tượng',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.display({
-      id: 'objects',
-      cell: info => {
-        const objects = info.row.original.objects;
-        if (!objects || objects.length === 0) {
+        ),
+        header: () => (
+          <div className={'flex items-center justify-center'}>#</div>
+        ),
+        size: 30
+      }),
+      columnHelper.display({
+        size: 180,
+        id: 'actions',
+        cell: ({ row }) => {
           return (
-            <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
-          );
-        }
-
-        const displayLimit = 3;
-        const hasMore = objects.length > displayLimit;
-        const displayObjects = hasMore
-          ? objects.slice(0, displayLimit)
-          : objects;
-
-        return (
-          <div className="flex flex-wrap gap-1">
-            {displayObjects.map(object => (
-              <Badge
-                key={object.id}
-                className=" text-appWhite text-xs"
-                style={{
-                  backgroundColor: info.row.original.objectType?.color
+            <div className={'flex gap-1'}>
+              <Button
+                className={'flex h-6 gap-1 px-3 text-xs'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleApplyProcess(row.original.id);
                 }}
               >
-                {object.name}
-              </Badge>
-            ))}
-            {hasMore && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge className="cursor-pointer bg-gray-500 text-xs text-white">
-                      +{objects.length - displayLimit}
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <div className="p-1">
-                      {objects.slice(displayLimit).map(object => (
-                        <div
-                          key={object.id}
-                          className="whitespace-nowrap text-xs"
-                        >
-                          {object.name}
-                        </div>
-                      ))}
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
-        );
-      },
-      header: () => 'Đang áp dụng',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.accessor('createdBy', {
-      cell: info => <EmployeeDisplay employeeId={info.getValue()?.id} />,
-      header: () => 'Người tạo',
-      footer: info => info.column.id,
-      size: 200
-    }),
-    columnHelper.accessor('created', {
-      cell: info => formatDateTime(info.getValue() || ''),
-      header: () => 'Ngày tạo',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('updated', {
-      cell: info => formatDateTime(info.getValue() || ''),
-      header: () => 'Ngày cập nhật',
-      footer: info => info.column.id
-    })
-  ];
+                Áp dụng
+              </Button>
+              <Button
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDuplicateProcess(row.original.id);
+                }}
+              >
+                <CopyIcon className={'h-3 w-3'} />
+              </Button>
+              <Button
+                variant={'destructive'}
+                className={'h-6 px-3'}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteProcess(row.original.id);
+                }}
+              >
+                <XIcon className={'h-3 w-3'} />
+              </Button>
+            </div>
+          );
+        },
+        header: () => 'Thao tác'
+      }),
+      columnHelper.accessor('name', {
+        cell: info => info.getValue(),
+        header: () => 'Tên quy trình',
+        footer: info => info.column.id,
+        size: 300
+      }),
+      columnHelper.accessor('objectType', {
+        cell: info => {
+          const objectType = info.row.original.objectType;
+          if (!objectType) {
+            return null;
+          }
+          return (
+            <Badge
+              className="text-appWhite text-xs"
+              style={{ backgroundColor: objectType.color }}
+            >
+              {objectType.display}
+            </Badge>
+          );
+        },
+        header: () => 'Loại đối tượng',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.display({
+        id: 'objects',
+        cell: info => {
+          const objects = info.row.original.objects;
+          if (!objects || objects.length === 0) {
+            return (
+              <span className="text-xs italic text-gray-400">Chưa áp dụng</span>
+            );
+          }
+
+          const displayLimit = 3;
+          const hasMore = objects.length > displayLimit;
+          const displayObjects = hasMore
+            ? objects.slice(0, displayLimit)
+            : objects;
+
+          return (
+            <div className="flex flex-wrap gap-1">
+              {displayObjects.map(object => (
+                <Badge
+                  key={object.id}
+                  className=" text-appWhite text-xs"
+                  style={{
+                    backgroundColor: info.row.original.objectType?.color
+                  }}
+                >
+                  {object.name}
+                </Badge>
+              ))}
+              {hasMore && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className="cursor-pointer bg-gray-500 text-xs text-white">
+                        +{objects.length - displayLimit}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="p-1">
+                        {objects.slice(displayLimit).map(object => (
+                          <div
+                            key={object.id}
+                            className="whitespace-nowrap text-xs"
+                          >
+                            {object.name}
+                          </div>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          );
+        },
+        header: () => 'Đang áp dụng',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('createdBy', {
+        cell: info => <EmployeeDisplay employeeId={info.getValue()?.id} />,
+        header: () => 'Người tạo',
+        footer: info => info.column.id,
+        size: 200
+      }),
+      columnHelper.accessor('created', {
+        cell: info => formatDateTime(info.getValue() || ''),
+        header: () => 'Ngày tạo',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('updated', {
+        cell: info => formatDateTime(info.getValue() || ''),
+        header: () => 'Ngày cập nhật',
+        footer: info => info.column.id
+      })
+    ],
+    [
+      columnHelper,
+      handleApplyProcess,
+      handleDeleteProcess,
+      handleDuplicateProcess
+    ]
+  );
 
   const table = useReactTable({
     columns,

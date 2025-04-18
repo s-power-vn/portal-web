@@ -8,8 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, api } from 'portal-api';
-import type { Customer } from 'portal-core';
+import { CustomerItem, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -87,7 +86,7 @@ function Component() {
 
   const { confirm } = useConfirm();
 
-  const columnHelper = createColumnHelper<Customer>();
+  const columnHelper = createColumnHelper<CustomerItem>();
 
   const columns = useMemo(
     () => [
@@ -222,15 +221,18 @@ function Component() {
     });
   }, [navigate, search]);
 
-  const handleSearchChange = useCallback((value: string | undefined) => {
-    navigate({
-      to: '.',
-      search: {
-        ...search,
-        filter: value ?? ''
-      }
-    });
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string | undefined) => {
+      navigate({
+        to: '.',
+        search: {
+          ...search,
+          filter: value ?? ''
+        }
+      });
+    },
+    [navigate, search]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>

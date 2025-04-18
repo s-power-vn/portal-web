@@ -9,8 +9,6 @@ export type ProcessDropdownProps = Partial<ComboboxProps> & {
 };
 
 export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
-  console.log('render');
-
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
       ? await api.process.byIds.fetcher(ids)

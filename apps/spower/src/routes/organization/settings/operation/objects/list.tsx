@@ -126,6 +126,17 @@ function Component() {
     [confirm, duplicateObject]
   );
 
+  const table = useReactTable({
+    columns: [],
+    getCoreRowModel: getCoreRowModel(),
+    data: objects,
+    state: {
+      rowSelection
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -269,19 +280,21 @@ function Component() {
         footer: info => info.column.id
       })
     ],
-    [columnHelper, navigate, handleDuplicateObject, deleteObject, confirm]
+    [
+      columnHelper,
+      table,
+      navigate,
+      search,
+      handleDuplicateObject,
+      confirm,
+      deleteObject
+    ]
   );
 
-  const table = useReactTable({
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    data: objects,
-    state: {
-      rowSelection
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection
-  });
+  table.setOptions(prev => ({
+    ...prev,
+    columns
+  }));
 
   const { rows } = table.getRowModel();
 
@@ -326,15 +339,18 @@ function Component() {
     });
   }, [navigate, search]);
 
-  const handleSearchChange = useCallback((value: string | undefined) => {
-    navigate({
-      to: '.',
-      search: {
-        ...search,
-        filter: value ?? ''
-      }
-    });
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string | undefined) => {
+      navigate({
+        to: '.',
+        search: {
+          ...search,
+          filter: value ?? ''
+        }
+      });
+    },
+    [navigate, search]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>

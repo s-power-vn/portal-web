@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { FilesIcon, Loader } from 'lucide-react';
-import { IssueData, ListSchema, api } from 'portal-api';
+import { IssueItem, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo } from 'react';
 
@@ -77,88 +77,90 @@ function Component() {
     [data]
   );
 
-  const columnHelper = createColumnHelper<IssueData>();
+  const columnHelper = createColumnHelper<IssueItem>();
 
-  const columns = [
-    columnHelper.display({
-      id: 'index',
-      cell: info => info.row.index + 1,
-      header: () => '#'
-    }),
-    columnHelper.accessor('title', {
-      cell: info => {
-        const typeObject = info.row.original.object.type;
+  const columns = useMemo(() => {
+    return [
+      columnHelper.display({
+        id: 'index',
+        cell: ({ row }) => row.index + 1,
+        header: () => '#'
+      }),
+      columnHelper.accessor('title', {
+        cell: ({ row }) => {
+          const typeObject = row.original.object?.objectType;
 
-        return (
-          <div className={'flex w-full min-w-0 items-center gap-2'}>
-            {typeObject && (
-              <DynamicIcon
-                svgContent={typeObject.icon}
-                className={'h-4 w-4 flex-shrink-0'}
-                style={{ color: typeObject.color || '#6b7280' }}
-              />
-            )}
-            <span className={'truncate'}>{info.getValue()}</span>
-          </div>
-        );
-      },
-      header: () => 'Nội dung',
-      footer: info => info.column.id,
-      maxSize: 300
-    }),
-    columnHelper.accessor('deadline_status', {
-      cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
-      header: () => 'Tiến độ',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('assignees', {
-      cell: ({ row }) => (
-        <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
-      ),
-      header: () => 'Người thực hiện',
-      footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'files',
-      cell: info => {
-        const files = info.row.original.files;
-        return files && files.length > 0 ? (
-          <FilesIcon className="h-4 w-4 text-gray-500" />
-        ) : null;
-      },
-      header: () => '',
-      footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'state',
-      cell: ({ row }) => <IssueStatus issueId={row.original.id} />,
-      header: () => 'Trạng thái',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('created_by', {
-      cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.created_by} />
-      ),
-      header: () => 'Người tạo',
-      footer: info => info.column.id
-    }),
-    columnHelper.display({
-      id: 'object',
-      cell: ({ row }) => <IssueType issueId={row.original.id} />,
-      header: () => 'Loại',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('created', {
-      cell: ({ row }) => formatDateTime(row.original.created ?? ''),
-      header: () => 'Ngày tạo',
-      footer: info => info.column.id
-    }),
-    columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
-      header: () => 'Ngày cập nhật',
-      footer: info => info.column.id
-    })
-  ];
+          return (
+            <div className={'flex w-full min-w-0 items-center gap-2'}>
+              {typeObject && (
+                <DynamicIcon
+                  svgContent={typeObject.icon}
+                  className={'h-4 w-4 flex-shrink-0'}
+                  style={{ color: typeObject.color || '#6b7280' }}
+                />
+              )}
+              <span className={'truncate'}>{row.original.title}</span>
+            </div>
+          );
+        },
+        header: () => 'Nội dung',
+        footer: info => info.column.id,
+        maxSize: 300
+      }),
+      columnHelper.accessor('deadlineStatus', {
+        cell: ({ row }) => <IssueDeadlineStatus issueId={row.original.id} />,
+        header: () => 'Tiến độ',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('assignees', {
+        cell: ({ row }) => (
+          <IssueAssigneeDisplay issueId={row.original.id} maxVisible={1} />
+        ),
+        header: () => 'Người thực hiện',
+        footer: info => info.column.id
+      }),
+      columnHelper.display({
+        id: 'files',
+        cell: ({ row }) => {
+          const files = row.original.files;
+          return files && files.length > 0 ? (
+            <FilesIcon className="h-4 w-4 text-gray-500" />
+          ) : null;
+        },
+        header: () => '',
+        footer: info => info.column.id
+      }),
+      columnHelper.display({
+        id: 'state',
+        cell: ({ row }) => <IssueStatus issueId={row.original.id} />,
+        header: () => 'Trạng thái',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('createdBy', {
+        cell: ({ row }) => (
+          <EmployeeDisplay employeeId={row.original.createdBy?.id} />
+        ),
+        header: () => 'Người tạo',
+        footer: info => info.column.id
+      }),
+      columnHelper.display({
+        id: 'object',
+        cell: ({ row }) => <IssueType issueId={row.original.id} />,
+        header: () => 'Loại',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('created', {
+        cell: ({ row }) => formatDateTime(row.original.created ?? ''),
+        header: () => 'Ngày tạo',
+        footer: info => info.column.id
+      }),
+      columnHelper.accessor('updated', {
+        cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
+        header: () => 'Ngày cập nhật',
+        footer: info => info.column.id
+      })
+    ];
+  }, [columnHelper]);
 
   const table = useReactTable({
     columns,

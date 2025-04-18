@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
@@ -99,8 +98,6 @@ export const processApi = router('process', {
         const pageSize = params?.pageSize ?? 10;
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize - 1;
-
-        log('list by type', params?.objectType);
 
         const filter = params?.filter
           ? `name.ilike.%${params.filter}%`

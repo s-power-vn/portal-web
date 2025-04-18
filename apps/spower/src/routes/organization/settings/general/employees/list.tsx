@@ -58,18 +58,19 @@ export const RoleNameDisplay: FC<RoleNameDisplayProps> = ({
   departmentId,
   roleId
 }) => {
-  if (!departmentId || !roleId) return <span>-</span>;
-
-  const department = api.department.byId.useSuspenseQuery({
-    variables: departmentId
+  const { data: department } = api.department.byId.useQuery({
+    variables: departmentId,
+    enabled: !!departmentId
   });
 
   const role = useMemo(() => {
-    if (department.data?.roles && Array.isArray(department.data.roles)) {
-      return department.data.roles.find(r => r.id === roleId);
+    if (department?.roles && Array.isArray(department.roles)) {
+      return department.roles.find(r => r.id === roleId);
     }
     return undefined;
-  }, [department.data, roleId]);
+  }, [department, roleId]);
+
+  if (!departmentId || !roleId) return <span>-</span>;
 
   return <span>{role?.name || roleId}</span>;
 };
@@ -269,15 +270,18 @@ function Component() {
     });
   }, [navigate, search]);
 
-  const handleSearchChange = useCallback((value: string | undefined) => {
-    navigate({
-      to: '.',
-      search: {
-        ...search,
-        filter: value ?? ''
-      }
-    });
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string | undefined) => {
+      navigate({
+        to: '.',
+        search: {
+          ...search,
+          filter: value ?? ''
+        }
+      });
+    },
+    [navigate, search]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>
