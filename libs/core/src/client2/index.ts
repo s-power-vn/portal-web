@@ -27,8 +27,9 @@ const firebaseConfig = {
 };
 
 export const restToken = signal<string | undefined>(undefined);
-export const userId = signal<string | undefined>(undefined);
-export const userEmail = signal<string | undefined>(undefined);
+export const currentUserId = signal<string | undefined>(undefined);
+export const currentUserEmail = signal<string | undefined>(undefined);
+export const currentEmployeeId = signal<string | undefined>(undefined);
 
 const xorEncodeQuery = (query: string, key: string): string => {
   let result = '';

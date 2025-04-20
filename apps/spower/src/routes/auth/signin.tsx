@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
 import { api } from 'portal-api';
-import { userEmail } from 'portal-core';
+import { currentUserEmail } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
@@ -113,7 +113,7 @@ export async function goRootRoute({
     throw redirect({
       to: '/user-information',
       search: {
-        email: userEmail.value ?? ''
+        email: currentUserEmail.value ?? ''
       }
     });
   }

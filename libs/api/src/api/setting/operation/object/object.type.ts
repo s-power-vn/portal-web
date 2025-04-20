@@ -1,6 +1,6 @@
 import { PaginatedResponse } from 'portal-core';
 
-import { UserItem } from '../../../domain';
+import { EmployeeItem } from '../../general';
 import { ObjectTypeItem } from '../object-type/object-type.type';
 import { ProcessItem } from '../process/process.type';
 
@@ -13,8 +13,8 @@ export type ObjectItem = {
   active?: boolean;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type ObjectListItem = {

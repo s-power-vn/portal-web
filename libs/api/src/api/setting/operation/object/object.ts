@@ -286,8 +286,8 @@ export const objectApi = router('object', {
             `*,
             objectType:object_types(*),
             process:processes(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)`,
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)`,
             { count: 'exact' }
           )
           .eq('id', id)

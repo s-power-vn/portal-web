@@ -1,7 +1,6 @@
-import { ObjectData } from 'libs/api/src/api/setting/operation/object';
 import { Loader, PaperclipIcon } from 'lucide-react';
 import { api } from 'portal-api';
-import { IssueDeadlineStatusOptions, client } from 'portal-core';
+import { IssueDeadlineStatusOptions, currentEmployeeId } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, lazy } from 'react';
@@ -23,11 +22,6 @@ import { IssueSummary } from './issue-summary';
 export type IssueProps = {
   issueId: string;
 };
-
-interface ExpandType {
-  object?: ObjectData;
-  [key: string]: unknown;
-}
 
 type DynamicObjectDisplayProps = {
   objectType: string;
@@ -53,20 +47,18 @@ const DynamicObjectDisplay: FC<DynamicObjectDisplayProps> = ({
 };
 
 const IssueComponent: FC<IssueProps> = ({ issueId }) => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const { data: issue } = api.issue.byId.useSuspenseQuery({
     variables: issueId
   });
 
-  const expand = (issue.data.expand || {}) as ExpandType;
-  const objectData = expand.object;
-  const assignees = issue.data.assignees || [];
+  const assignees = issue.assignees || [];
 
-  const isUserAssigned = assignees.includes(client.authStore.record?.id || '');
+  const isUserAssigned = assignees.some(a => a.id === currentEmployeeId.value);
 
   const getContentComponent = () => {
-    if (!objectData?.expand?.type) return <div className={`p-2`}></div>;
+    if (!issue.object?.objectType?.id) return <div className={`p-2`}></div>;
 
-    const typeName = objectData.expand.type.name;
+    const typeName = issue.object.objectType.name;
     if (!typeName) return <div className={`p-2`}></div>;
 
     return <DynamicObjectDisplay objectType={typeName} issueId={issueId} />;
@@ -76,9 +68,9 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
     <div
       className={cn(
         'flex flex-col rounded-md border',
-        issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal
+        issue.deadlineStatus === IssueDeadlineStatusOptions.Normal
           ? 'border-t-appSuccess border-t-4'
-          : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning
+          : issue.deadlineStatus === IssueDeadlineStatusOptions.Warning
             ? 'border-t-appWarning border-t-4'
             : 'border-t-appError border-t-4'
       )}
@@ -89,7 +81,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
           <TabsTrigger value="detail" asChild>
             <div className={'cursor-pointer select-none'}>Nội dung</div>
           </TabsTrigger>
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+          {issue.files?.length && issue.files.length > 0 && (
             <TabsTrigger value="attachment" asChild>
               <div className={'flex cursor-pointer select-none gap-1'}>
                 <PaperclipIcon className={'h-5 w-4'}></PaperclipIcon>
@@ -102,7 +94,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
           {getContentComponent()}
         </TabsContent>
         <TabsContent value="attachment">
-          {(issue.data?.expand?.issueFile_via_issue ?? []).length > 0 && (
+          {issue.files?.length && issue.files.length > 0 && (
             <IssueAttachment issueId={issueId} />
           )}
         </TabsContent>
@@ -117,13 +109,7 @@ const IssueComponent: FC<IssueProps> = ({ issueId }) => {
 
 export const Issue: FC<IssueProps> = props => {
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center p-4">
-          <Loader className={'h-6 w-6 animate-spin'} />
-        </div>
-      }
-    >
+    <Suspense fallback={<Loader className={'h-6 w-6 animate-spin'} />}>
       <IssueComponent {...props} />
     </Suspense>
   );

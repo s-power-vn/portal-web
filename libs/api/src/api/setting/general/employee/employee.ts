@@ -150,8 +150,8 @@ export const employeeApi = router('employee', {
             *,
             user:users!user_id(*),
             department:departments!department_id(name),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)
           `
           )
           .eq('id', id)

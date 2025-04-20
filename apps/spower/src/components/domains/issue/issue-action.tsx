@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
 import { client } from 'portal-core';
@@ -40,7 +39,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
     }
   });
 
-  const unApprove = api.issue.unApprove.useMutation({
+  const reject = api.issue.reject.useMutation({
     onSuccess: () => {
       invalidates([
         api.issue.byId.getKey(props.issueId),
@@ -51,9 +50,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
 
   const { confirm } = useConfirm();
 
-  const issueObject = issue.data.expand?.object;
+  const issueObject = issue.data.object;
 
-  const process = issueObject?.expand?.process;
+  const process = issueObject?.process;
 
   const currentNode = useMemo(() => {
     const extracted = extractStatus(issue.data.status);
@@ -237,7 +236,7 @@ const ActionComponent: FC<IssueActionProps> = props => {
                   status={returnFlow?.status}
                   onCancel={close}
                   onSuccess={() => {
-                    unApprove.mutate({
+                    reject.mutate({
                       id: props.issueId,
                       nodeId: currentNode?.id ?? ''
                     });
@@ -257,12 +256,15 @@ const ActionComponent: FC<IssueActionProps> = props => {
       }
     },
     [
-      approve,
-      currentNode?.id,
-      currentNode?.name,
+      confirm,
+      forwardFlows,
       props.issueId,
-      unApprove,
-      confirm
+      approve,
+      currentNode?.name,
+      currentNode?.id,
+      invalidates,
+      returnFlow,
+      reject
     ]
   );
 

@@ -17,8 +17,8 @@ export type IssueAttachmentProps = {
   issueId: string;
 };
 
-const isImageFile = (type: string) => {
-  return type.startsWith('image/');
+const isImageFile = (type: string | undefined) => {
+  return type?.startsWith('image/') ?? false;
 };
 
 const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
@@ -31,7 +31,7 @@ const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
   useEffect(() => {
     const loadFileUrls = async () => {
       const urls: Record<string, string> = {};
-      for (const file of issue.data?.expand?.issueFile_via_issue || []) {
+      for (const file of issue.data?.files || []) {
         if (isImageFile(file.type)) {
           const fileData = await client
             .collection<IssueFileResponse>(Collections.IssueFile)
@@ -43,10 +43,10 @@ const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
     };
 
     loadFileUrls();
-  }, [issue.data?.expand?.issueFile_via_issue]);
+  }, [issue.data?.files]);
 
   const handleDownload = useCallback(
-    async (fileId: string, fileName: string) => {
+    async (fileId: string, fileName?: string) => {
       const file = await client
         .collection<IssueFileResponse>(Collections.IssueFile)
         .getOne(fileId);
@@ -63,7 +63,7 @@ const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = fileName;
+      a.download = fileName ?? file.name;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -74,13 +74,13 @@ const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
 
   return (
     <div className={'flex w-full flex-col gap-4 p-4'}>
-      {issue.data?.expand?.issueFile_via_issue?.length ? (
+      {issue.data?.files?.length ? (
         <div
           className={
             'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4'
           }
         >
-          {issue.data.expand.issueFile_via_issue.map(file => (
+          {issue.data.files.map(file => (
             <div
               key={file.id}
               className={'flex flex-col rounded-lg border p-3'}

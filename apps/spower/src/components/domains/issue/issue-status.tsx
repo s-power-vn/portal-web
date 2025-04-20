@@ -19,9 +19,9 @@ const Component: FC<IssueStatusProps> = ({ issueId, className }) => {
     variables: issueId
   });
 
-  const issueObject = issue.data.expand?.object;
+  const issueObject = issue.data.object;
 
-  const process = issueObject?.expand?.process;
+  const process = issueObject?.process;
 
   const handleClick = useCallback(() => {
     showModal({

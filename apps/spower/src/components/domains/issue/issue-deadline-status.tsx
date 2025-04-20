@@ -1,6 +1,5 @@
 import { Loader } from 'lucide-react';
 import { api } from 'portal-api';
-import { IssueDeadlineStatusOptions } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense } from 'react';
@@ -17,7 +16,7 @@ const DeadlineStatusComponent: FC<IssueDeadlineStatusProps> = props => {
     variables: props.issueId
   });
 
-  return issue.data.deadlineStatus === IssueDeadlineStatusOptions.Normal ? (
+  return issue.data.deadlineStatus === 'Normal' ? (
     <div
       className={cn(
         'bg-appSuccess flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs text-white',
@@ -26,7 +25,7 @@ const DeadlineStatusComponent: FC<IssueDeadlineStatusProps> = props => {
     >
       An toàn
     </div>
-  ) : issue.data.deadlineStatus === IssueDeadlineStatusOptions.Warning ? (
+  ) : issue.data.deadlineStatus === 'Warning' ? (
     <div
       className={cn(
         'bg-appWarning flex w-fit items-center justify-center rounded-full px-2 py-1 text-xs',

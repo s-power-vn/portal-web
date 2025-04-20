@@ -45,21 +45,14 @@ export type Database = {
             foreignKeyName: "comments_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "comments_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "comments_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -94,21 +87,14 @@ export type Database = {
             foreignKeyName: "comments_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "comments_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "comments_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -155,21 +141,14 @@ export type Database = {
             foreignKeyName: "contracts_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "contracts_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "contracts_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -204,21 +183,14 @@ export type Database = {
             foreignKeyName: "contracts_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "contracts_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "contracts_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -271,21 +243,14 @@ export type Database = {
             foreignKeyName: "customers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "customers_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -299,21 +264,14 @@ export type Database = {
             foreignKeyName: "customers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "customers_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -357,21 +315,14 @@ export type Database = {
             foreignKeyName: "departments_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "departments_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "departments_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -385,21 +336,14 @@ export type Database = {
             foreignKeyName: "departments_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "departments_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "departments_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -449,21 +393,14 @@ export type Database = {
             foreignKeyName: "detail_imports_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "detail_imports_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "detail_imports_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -484,21 +421,14 @@ export type Database = {
             foreignKeyName: "detail_imports_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "detail_imports_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "detail_imports_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -560,21 +490,14 @@ export type Database = {
             foreignKeyName: "details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -609,21 +532,14 @@ export type Database = {
             foreignKeyName: "details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -673,21 +589,14 @@ export type Database = {
             foreignKeyName: "issue_files_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "issue_files_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "issue_files_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -722,41 +631,34 @@ export type Database = {
             foreignKeyName: "issue_files_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "issue_files_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "issue_files_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
       }
       issues: {
         Row: {
-          approver: Json | null
-          assigned_date: string | null
+          approvers: Json | null
+          assigned: string | null
           assignees: Json | null
-          changed: string | null
           code: string | null
           created: string | null
           created_by: string | null
           deadline_status: string | null
-          deleted: boolean | null
           end_date: string | null
           id: string
-          last_assignee: Json | null
+          is_deleted: boolean | null
+          last_assignees: Json | null
           object_id: string | null
           organization_id: string | null
+          process_status: string | null
           project_id: string | null
           start_date: string | null
           status: string | null
@@ -765,20 +667,20 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          approver?: Json | null
-          assigned_date?: string | null
+          approvers?: Json | null
+          assigned?: string | null
           assignees?: Json | null
-          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
           deadline_status?: string | null
-          deleted?: boolean | null
           end_date?: string | null
           id?: string
-          last_assignee?: Json | null
+          is_deleted?: boolean | null
+          last_assignees?: Json | null
           object_id?: string | null
           organization_id?: string | null
+          process_status?: string | null
           project_id?: string | null
           start_date?: string | null
           status?: string | null
@@ -787,20 +689,20 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          approver?: Json | null
-          assigned_date?: string | null
+          approvers?: Json | null
+          assigned?: string | null
           assignees?: Json | null
-          changed?: string | null
           code?: string | null
           created?: string | null
           created_by?: string | null
           deadline_status?: string | null
-          deleted?: boolean | null
           end_date?: string | null
           id?: string
-          last_assignee?: Json | null
+          is_deleted?: boolean | null
+          last_assignees?: Json | null
           object_id?: string | null
           organization_id?: string | null
+          process_status?: string | null
           project_id?: string | null
           start_date?: string | null
           status?: string | null
@@ -813,21 +715,14 @@ export type Database = {
             foreignKeyName: "issues_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "issues_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "issues_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -855,21 +750,14 @@ export type Database = {
             foreignKeyName: "issues_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "issues_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "issues_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -916,21 +804,14 @@ export type Database = {
             foreignKeyName: "materials_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "materials_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "materials_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -944,21 +825,14 @@ export type Database = {
             foreignKeyName: "materials_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "materials_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "materials_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1002,21 +876,14 @@ export type Database = {
             foreignKeyName: "msg_channels_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_channels_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_channels_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1037,21 +904,14 @@ export type Database = {
             foreignKeyName: "msg_channels_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_channels_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_channels_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1092,21 +952,14 @@ export type Database = {
             foreignKeyName: "msg_chats_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_chats_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_chats_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1120,21 +973,14 @@ export type Database = {
             foreignKeyName: "msg_chats_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_chats_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_chats_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1198,21 +1044,14 @@ export type Database = {
             foreignKeyName: "msg_messages_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_messages_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_messages_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1233,42 +1072,28 @@ export type Database = {
             foreignKeyName: "msg_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_messages_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_messages_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_messages_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1312,21 +1137,14 @@ export type Database = {
             foreignKeyName: "msg_reactions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_reactions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_reactions_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1347,42 +1165,28 @@ export type Database = {
             foreignKeyName: "msg_reactions_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_reactions_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_reactions_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_reactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1440,21 +1244,14 @@ export type Database = {
             foreignKeyName: "msg_settings_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_settings_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_settings_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1468,42 +1265,28 @@ export type Database = {
             foreignKeyName: "msg_settings_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_settings_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_settings_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1547,21 +1330,14 @@ export type Database = {
             foreignKeyName: "msg_teams_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_teams_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_teams_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1575,42 +1351,28 @@ export type Database = {
             foreignKeyName: "msg_teams_owner_fkey"
             columns: ["owner"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_teams_owner_fkey"
             columns: ["owner"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_teams_owner_fkey"
-            columns: ["owner"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_teams_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "msg_teams_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "msg_teams_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1693,21 +1455,14 @@ export type Database = {
             foreignKeyName: "objects_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "objects_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "objects_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1735,21 +1490,14 @@ export type Database = {
             foreignKeyName: "objects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "objects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "objects_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1809,21 +1557,14 @@ export type Database = {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1837,21 +1578,14 @@ export type Database = {
             foreignKeyName: "organization_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -1881,6 +1615,7 @@ export type Database = {
         Row: {
           created: string | null
           created_by: string | null
+          description: string | null
           id: string
           name: string
           settings: Json | null
@@ -1890,6 +1625,7 @@ export type Database = {
         Insert: {
           created?: string | null
           created_by?: string | null
+          description?: string | null
           id?: string
           name: string
           settings?: Json | null
@@ -1899,6 +1635,7 @@ export type Database = {
         Update: {
           created?: string | null
           created_by?: string | null
+          description?: string | null
           id?: string
           name?: string
           settings?: Json | null
@@ -2007,21 +1744,14 @@ export type Database = {
             foreignKeyName: "price_details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "price_details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "price_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2042,21 +1772,14 @@ export type Database = {
             foreignKeyName: "price_details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "price_details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "price_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2097,21 +1820,14 @@ export type Database = {
             foreignKeyName: "prices_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "prices_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "prices_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2153,21 +1869,14 @@ export type Database = {
             foreignKeyName: "prices_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "prices_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "prices_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2220,21 +1929,14 @@ export type Database = {
             foreignKeyName: "processes_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "processes_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "processes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2255,31 +1957,24 @@ export type Database = {
             foreignKeyName: "processes_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "processes_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "processes_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
       }
       projects: {
         Row: {
-          bidding: string | null
+          attributes: Json | null
           created: string | null
           created_by: string | null
-          customer_id: string | null
+          description: string | null
           id: string
           name: string
           organization_id: string | null
@@ -2287,10 +1982,10 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          bidding?: string | null
+          attributes?: Json | null
           created?: string | null
           created_by?: string | null
-          customer_id?: string | null
+          description?: string | null
           id?: string
           name: string
           organization_id?: string | null
@@ -2298,10 +1993,10 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          bidding?: string | null
+          attributes?: Json | null
           created?: string | null
           created_by?: string | null
-          customer_id?: string | null
+          description?: string | null
           id?: string
           name?: string
           organization_id?: string | null
@@ -2313,28 +2008,14 @@ export type Database = {
             foreignKeyName: "projects_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "projects_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "projects_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "projects_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "projects_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "customers"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2348,21 +2029,14 @@ export type Database = {
             foreignKeyName: "projects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "projects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "projects_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2424,21 +2098,14 @@ export type Database = {
             foreignKeyName: "request_details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "request_details_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "request_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2480,21 +2147,14 @@ export type Database = {
             foreignKeyName: "request_details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "request_details_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "request_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2535,21 +2195,14 @@ export type Database = {
             foreignKeyName: "requests_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "requests_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "requests_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2591,21 +2244,14 @@ export type Database = {
             foreignKeyName: "requests_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "requests_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "requests_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2673,21 +2319,14 @@ export type Database = {
             foreignKeyName: "suppliers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "suppliers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "suppliers_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2701,21 +2340,14 @@ export type Database = {
             foreignKeyName: "suppliers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "suppliers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "suppliers_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2729,6 +2361,7 @@ export type Database = {
           organization_id: string | null
           updated: string | null
           updated_by: string | null
+          url: string
         }
         Insert: {
           created?: string | null
@@ -2738,6 +2371,7 @@ export type Database = {
           organization_id?: string | null
           updated?: string | null
           updated_by?: string | null
+          url: string
         }
         Update: {
           created?: string | null
@@ -2747,27 +2381,21 @@ export type Database = {
           organization_id?: string | null
           updated?: string | null
           updated_by?: string | null
+          url?: string
         }
         Relationships: [
           {
             foreignKeyName: "templates_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "templates_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "templates_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2795,21 +2423,14 @@ export type Database = {
             foreignKeyName: "templates_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "templates_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "templates_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2948,21 +2569,14 @@ export type Database = {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -2976,21 +2590,14 @@ export type Database = {
             foreignKeyName: "organization_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
           {
@@ -3060,9 +2667,9 @@ export type Database = {
       }
       request_detail_info: {
         Row: {
-          deleted: boolean | null
           detail_id: string | null
           id: string | null
+          is_deleted: boolean | null
           organization_id: string | null
           request_id: string | null
           request_volume: number | null
@@ -3107,12 +2714,13 @@ export type Database = {
       }
       request_finished: {
         Row: {
-          changed: string | null
+          created: string | null
           issue_id: string | null
           organization_id: string | null
           project_id: string | null
           request_id: string | null
           title: string | null
+          updated: string | null
         }
         Relationships: [
           {
@@ -3146,6 +2754,10 @@ export type Database = {
         Returns: string
       }
       current_organization_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      current_organization_member_id: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

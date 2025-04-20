@@ -24,9 +24,8 @@ export const projectApi = router('project', {
           .from('projects')
           .select(
             `*,
-            customer:customers(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)`,
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)`,
             { count: 'exact' }
           )
           .range(from, to)
@@ -60,8 +59,6 @@ export const projectApi = router('project', {
           return {
             id: item.id,
             name: item.name,
-            bidding: item.bidding,
-            customer: item.customer,
             created: item.created,
             updated: item.updated,
             createdBy: item.createdBy,
@@ -90,9 +87,8 @@ export const projectApi = router('project', {
           .from('projects')
           .select(
             `*,
-            customer:customers(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)`
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)`
           )
           .eq('id', id)
           .single();
@@ -108,8 +104,6 @@ export const projectApi = router('project', {
         return {
           id: data.id,
           name: data.name,
-          bidding: data.bidding,
-          customer: data.customer,
           created: data.created,
           updated: data.updated,
           createdBy: data.createdBy,
@@ -141,7 +135,7 @@ export const projectApi = router('project', {
     mutationFn: async (params: UpdateProjectInput): Promise<void> => {
       try {
         const { id, ...updateParams } = params;
-        const { data, error } = await client2.rest
+        const { error } = await client2.rest
           .from('projects')
           .update({
             ...updateParams

@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader, PlusIcon } from 'lucide-react';
-import { ObjectData, api } from 'portal-api';
+import { ObjectItem, api } from 'portal-api';
 
 import type { FC } from 'react';
 import {
@@ -131,7 +131,10 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   });
 
   const { data: objectTypesResult } = api.objectType.list.useQuery();
-  const objectTypes = objectTypesResult?.items || [];
+  const objectTypes = useMemo(
+    () => objectTypesResult?.items || [],
+    [objectTypesResult]
+  );
 
   const typeMap = useMemo(() => {
     if (!objectTypes.length) return new Map();
@@ -176,8 +179,8 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
   );
 
   const handleObjectClick = useCallback(
-    (object: ObjectData) => {
-      const type = typeMap.get(object.type)?.name;
+    (object: ObjectItem) => {
+      const type = typeMap.get(object.objectType?.id)?.name;
       if (!type) return;
       handleNewObjectClick(type, object.id);
       setOpen(false);
@@ -223,7 +226,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
               </div>
             ) : listObjects.length ? (
               listObjects.map(object => {
-                const type = typeMap.get(object.type);
+                const type = typeMap.get(object.objectType?.id);
 
                 return (
                   <div

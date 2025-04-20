@@ -10,7 +10,7 @@ import {
   Undo2Icon
 } from 'lucide-react';
 import { api } from 'portal-api';
-import { userId } from 'portal-core';
+import { currentEmployeeId } from 'portal-core';
 
 import type { FC } from 'react';
 import { Suspense, lazy, useCallback, useMemo } from 'react';
@@ -68,7 +68,14 @@ export type IssueSummaryProps = {
   issueId: string;
 };
 
-const ObjectTypeIcon = ({ objectType }: { objectType?: any }) => {
+const ObjectTypeIcon = ({
+  objectType
+}: {
+  objectType?: {
+    icon?: string;
+    color?: string;
+  };
+}) => {
   if (!objectType) return null;
 
   return (
@@ -86,8 +93,8 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const invalidates = useInvalidateQueries();
   const { confirm } = useConfirm();
 
-  const { data: user } = api.user.byId.useSuspenseQuery({
-    variables: userId.value
+  const { data: employee } = api.employee.byId.useSuspenseQuery({
+    variables: currentEmployeeId.value
   });
 
   const { data: issue } = api.issue.byId.useSuspenseQuery({
@@ -150,7 +157,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
         );
       }
     });
-  }, [invalidates, issueId]);
+  }, [invalidates, issueId, issueObject?.objectType?.name]);
 
   const handleResetIssue = useCallback(() => {
     confirm('Bạn chắc chắn muốn đặt trạng thái công việc này?', () => {
@@ -209,7 +216,9 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
           <LinkIcon className={'h-4 w-4'} />
         </ThemeButton>
         <Show
-          when={issue?.assignees?.some(a => a === user?.id) && !isInDoneState}
+          when={
+            issue?.assignees?.some(a => a.id === employee?.id) && !isInDoneState
+          }
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

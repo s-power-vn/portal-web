@@ -1,6 +1,6 @@
 import { PaginatedResponse } from 'portal-core';
 
-import { UserItem } from '../../../domain';
+import { EmployeeItem } from '../employee/employee.type';
 
 export type DepartmentItem = {
   id: string;
@@ -12,8 +12,8 @@ export type DepartmentItem = {
   }[];
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type DepartmentListItem = {

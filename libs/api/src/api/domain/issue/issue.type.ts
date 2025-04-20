@@ -1,8 +1,8 @@
 import { Json, PaginatedResponse } from 'portal-core';
 
+import { EmployeeItem } from '../../setting/general';
 import { ObjectItem } from '../../setting/operation';
 import { ProjectItem } from '../project/project.type';
-import { UserItem } from '../user/user.type';
 
 export type IssueFileItem = {
   id: string;
@@ -12,46 +12,47 @@ export type IssueFileItem = {
   url?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type IssueItem = {
   id: string;
   title: string;
-  status?: string;
-  deadlineStatus?: string;
   code?: string;
   startDate?: string;
   endDate?: string;
+  status?: string;
+  deadlineStatus?: string;
+  processStatus?: string;
   object?: ObjectItem;
   project?: ProjectItem;
-  assignees?: UserItem[];
-  assigned?: string;
-  lastAssignee?: UserItem;
   files?: IssueFileItem[];
-  approver?: Json;
+  assignees?: EmployeeItem[];
+  lastAssignee?: EmployeeItem;
+  approvers?: Json;
+  assigned?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type IssueListItem = {
   id: string;
   title: string;
-  status?: string;
-  deadlineStatus?: string;
   code?: string;
   startDate?: string;
   endDate?: string;
+  status?: string;
+  deadlineStatus?: string;
+  processStatus?: string;
   object?: ObjectItem;
   project?: ProjectItem;
-  assignees?: UserItem[];
-  assigned?: string;
-  lastAssignee?: UserItem;
+  assignees?: EmployeeItem[];
+  lastAssignees?: EmployeeItem[];
   files?: IssueFileItem[];
-  approver?: Json;
+  approvers?: Json;
   created?: string;
   updated?: string;
 };

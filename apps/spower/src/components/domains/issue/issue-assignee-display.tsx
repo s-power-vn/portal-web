@@ -21,7 +21,10 @@ const IssueAssigneeComponent: FC<IssueAssigneeDisplayProps> = ({
   const assignees = issue.data.assignees || [];
 
   return (
-    <MultipleEmployeeDisplay assigneeIds={assignees} maxVisible={maxVisible} />
+    <MultipleEmployeeDisplay
+      assigneeIds={assignees.map(a => a.id)}
+      maxVisible={maxVisible}
+    />
   );
 };
 

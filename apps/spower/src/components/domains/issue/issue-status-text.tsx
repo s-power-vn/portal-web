@@ -16,9 +16,9 @@ const StatusTextComponent: FC<IssueStatusTextProps> = props => {
     variables: props.issueId
   });
 
-  const issueObject = issue.data.expand?.object;
+  const issueObject = issue.data.object;
 
-  const process = issueObject?.expand?.process;
+  const process = issueObject?.process;
 
   const extracted = extractStatus(props.status);
   const from = getNode(process?.process as ProcessData, extracted?.from);

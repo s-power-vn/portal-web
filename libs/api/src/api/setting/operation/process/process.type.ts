@@ -1,6 +1,6 @@
 import { Json, PaginatedResponse } from 'portal-core';
 
-import { UserItem } from '../../../domain';
+import { EmployeeItem } from '../../general';
 import { ObjectTypeItem } from '../object-type/object-type.type';
 import { ObjectItem } from '../object/object.type';
 
@@ -15,8 +15,8 @@ export type ProcessItem = {
   finishNode?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type ProcessListItem = {
@@ -30,8 +30,8 @@ export type ProcessListItem = {
   finishNode?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type ProcessListResponse = PaginatedResponse<ProcessListItem>;

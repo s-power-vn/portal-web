@@ -15,8 +15,8 @@ export type EmployeeItem = {
   role?: string;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type EmployeeListItem = {

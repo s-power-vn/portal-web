@@ -1,28 +1,23 @@
 import { PaginatedResponse } from 'portal-core';
 
-import { CustomerItem } from '../../setting/general';
-import { UserItem } from '../user/user.type';
+import { EmployeeItem } from '../../setting/general';
 
 export type ProjectItem = {
   id: string;
   name: string;
-  bidding: string;
-  customer: CustomerItem;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type ProjectListItem = {
   id: string;
   name: string;
-  bidding: string;
-  customer: CustomerItem;
   created?: string;
   updated?: string;
-  createdBy?: UserItem;
-  updatedBy?: UserItem;
+  createdBy?: EmployeeItem;
+  updatedBy?: EmployeeItem;
 };
 
 export type ProjectListResponse = PaginatedResponse<ProjectListItem>;

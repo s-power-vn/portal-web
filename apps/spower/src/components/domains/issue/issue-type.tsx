@@ -17,7 +17,7 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
     variables: issueId
   });
 
-  const objectTypeId = issue.data.expand?.object.type;
+  const objectTypeId = issue.data.object?.objectType?.id;
 
   let objectType = null;
   try {
@@ -29,7 +29,7 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
     if (objectTypeId) {
       objectType = data;
     }
-  } catch (error) {
+  } catch {
     objectType = null;
   }
 
@@ -48,12 +48,12 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
             className="h-3 w-3"
             style={{ color: 'white' }}
           />
-          {issue.data.expand?.object.name}
+          {issue.data.object?.name}
         </span>
       ) : (
         <span className={cn(style, 'bg-gray-500', className)}>
           <DynamicIcon className="h-3 w-3" style={{ color: 'white' }} />
-          {issue.data.expand?.object.name || 'Không xác định'}
+          {issue.data.object?.name || 'Không xác định'}
         </span>
       )}
     </div>

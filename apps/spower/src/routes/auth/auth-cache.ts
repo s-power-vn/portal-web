@@ -1,4 +1,9 @@
-import { client2, restToken, userEmail, userId } from 'portal-core';
+import {
+  client2,
+  currentUserEmail,
+  currentUserId,
+  restToken
+} from 'portal-core';
 
 const AUTH_CACHE_DURATION = 5 * 60 * 1000;
 
@@ -62,7 +67,7 @@ export async function performAuthentication(): Promise<AuthResult> {
   }
 
   const email = client2.auth.currentUser.email ?? '';
-  userEmail.value = email;
+  currentUserEmail.value = email;
 
   const isHasUser = await client2.api.checkUser();
   if (!isHasUser) {
@@ -78,8 +83,8 @@ export async function performAuthentication(): Promise<AuthResult> {
   const token = await client2.api.getRestToken(organizationId ?? undefined);
 
   restToken.value = token.token;
-  userId.value = token.user_id;
-  userEmail.value = email;
+  currentUserId.value = token.user_id;
+  currentUserEmail.value = email;
 
   const result: AuthResult = {
     status: 'authorized',

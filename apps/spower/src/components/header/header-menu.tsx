@@ -1,6 +1,6 @@
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { api } from 'portal-api';
-import { userId } from 'portal-core';
+import { currentUserId } from 'portal-core';
 
 import { useCallback } from 'react';
 
@@ -23,7 +23,7 @@ export const HeaderMenu = () => {
   const navigate = useNavigate();
   const router = useRouter();
   const { data: user } = api.user.byId.useSuspenseQuery({
-    variables: userId.value
+    variables: currentUserId.value
   });
 
   const logout = api.auth.logout.useMutation({

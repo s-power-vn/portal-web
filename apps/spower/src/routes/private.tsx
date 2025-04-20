@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { userEmail } from 'portal-core';
+import { currentUserEmail } from 'portal-core';
 
 import { enhancedWaitAuthenticated } from './auth/auth-cache';
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_private')({
       throw redirect({
         to: '/user-information',
         search: {
-          email: userEmail.value ?? ''
+          email: currentUserEmail.value ?? ''
         }
       });
     }

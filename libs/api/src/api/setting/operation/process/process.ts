@@ -26,8 +26,8 @@ export const processApi = router('process', {
             `*, 
             objectType:object_types(*), 
             objects!objects_process_id_fkey(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)
             `,
             { count: 'exact' }
           )
@@ -109,8 +109,8 @@ export const processApi = router('process', {
             `*, 
             objectType:object_types(*), 
             objects!objects_process_id_fkey(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)
             `,
             { count: 'exact' }
           )
@@ -176,8 +176,8 @@ export const processApi = router('process', {
             `*, 
             objectType:object_types(*), 
             objects:objects!objects_process_id_fkey(*),
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)
+            createdBy:organization_members!created_by(*),
+            updatedBy:organization_members!updated_by(*)
             `
           )
           .eq('id', id)
