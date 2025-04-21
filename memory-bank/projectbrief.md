@@ -2,27 +2,31 @@
 
 ## Overview
 
-Spower is a task management system built with modern web technologies. The project aims to provide an efficient, user-friendly interface for managing tasks and workflows.
+Spower is a comprehensive project management system built with modern web technologies. The project aims to provide organizations with an efficient, user-friendly interface for managing construction projects, tasks, and workflows.
 
 ## Core Requirements
 
-- Task management functionality
-- Modern, responsive UI
-- Real-time updates
+- Project and task management functionality
+- Organization and member management
+- Modern, responsive UI with TailwindCSS
 - User authentication and authorization
-- Data persistence using PocketBase
+- Role-based access control
+- Data persistence using PostgreSQL and PocketBase
+- Secure database access with Row Level Security
 
 ## Project Scope
 
 - Web-based application
-- Frontend-focused implementation
-- Integration with PocketBase backend
+- Frontend implementation with React
+- Integration with PocketBase and PostgreSQL backends
 - Responsive design for all devices
+- Vietnamese localization
 
 ## Main Goals
 
-1. Create an intuitive task management interface
-2. Implement real-time updates for collaborative features
-3. Ensure high performance and reliability
-4. Maintain clean, maintainable code structure
+1. Create an intuitive project management interface
+2. Implement comprehensive organization management
+3. Ensure data security with role-based access control
+4. Maintain high performance and reliability
 5. Follow best practices for modern web development
+6. Provide a clean, maintainable code structure

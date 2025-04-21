@@ -2,287 +2,143 @@
 
 ## Current Focus Areas
 
-### Expression Editor Component
+### Project Management Features
 
-#### Recent Changes & Improvements
+The project is currently focused on implementing and refining the project management features, including:
 
-1. Layout Structure
-
-- Implemented flexible layout using CSS Grid and Flexbox
-- Grid structure: `grid-cols-[1fr_1fr_2fr_auto]` for main row layout
-- Consistent gap spacing using `gap-4` between fields and `gap-1` for field internals
-- Removed fixed heights to allow dynamic content sizing
-
-2. Validation Messages
-
-- Added inline validation messages with `text-xs` size
-- Messages positioned directly under respective fields
-- Conditional rendering of operator validation based on field visibility
-- Error messages styled with `text-red-500` for consistency
-
-3. Date Range Handling
-
-- Implemented special handling for datetime 'IN' operator
-- Two-column layout for date range inputs using flex
-- Separate validation for fromDate and toDate fields
-
-4. Component Structure
-
-- Property Field: Base field with property selection
-- Operator Field: Conditionally rendered based on property selection
-- Value Field: Dynamic rendering based on property type and operator
-- Remove Button: Consistently positioned with trash icon
-
-#### Current Focus
-
-1. Validation Logic
-
-- Property selection validation
-- Operator validation (only shown when operator field is visible)
-- Value validation based on property type
-- Date range validation for 'IN' operator
-
-2. UI/UX Improvements
-
-- Clear visual hierarchy
-- Consistent spacing and alignment
-- Responsive error message display
-- Smooth field transitions
-
-#### Next Steps
-
-1. Continue monitoring validation message positioning
-2. Consider adding tooltips for complex operators
-3. Evaluate need for additional validation rules
-4. Consider adding field-level help text
-
-### Database Security Implementation
-
-#### Recent Changes & Improvements
-
-1. Row Level Security
-
-   - Enabled RLS on all database tables
-   - Implemented organization-based data isolation
-   - Created role hierarchy (anon -> org_admin)
-   - Added JWT-based authentication
-
-2. Access Control
-
-   - Implemented role-based policies
-   - Created helper functions for JWT claims
-   - Set up organization context management
-   - Added special case handling for key tables
-
-3. Policy Implementation
-   - SELECT policies for data visibility
-   - INSERT/UPDATE policies with role checks
-   - DELETE policies with elevated privileges
-   - Special policies for organizations table
-
-#### Current Focus
-
-1. Security Testing
-
-   - Policy validation
-   - Role permission verification
-   - Cross-organization isolation testing
-   - JWT claim validation
-
-2. Performance Optimization
-   - Policy execution efficiency
-   - Query optimization with RLS
-   - JWT claim extraction caching
-
-#### Next Steps
-
-1. Comprehensive security testing
-2. Performance impact assessment
-3. Documentation updates
-4. User role management implementation
-
-### API Error Handling & Localization
-
-#### Recent Changes & Improvements
-
-1. Error Message Structure
-
-   - Implemented consistent error handling across API endpoints
-   - Translated all error messages to Vietnamese
-   - Fixed duplicate error message issue
-   - Standardized error message format
-
-2. Error Categories
-
-   - List operations: "Không thể lấy danh sách..."
-   - Detail operations: "Không thể lấy thông tin..."
-   - Create operations: "Không thể tạo..."
-   - Update operations: "Không thể cập nhật..."
-   - Delete operations: "Không thể xóa..."
-   - Not found errors: "Không tìm thấy... với id:"
-
-3. Implementation Pattern
-   - Direct error throwing in if(error) blocks
-   - Single error wrapping in catch blocks
-   - Simplified "Không có dữ liệu trả về" for null data cases
-
-#### Current Focus
-
-1. Error Handling
-
-   - Consistent error message structure
-   - Vietnamese localization
-   - Proper error propagation
-   - Clear error messages for users
-
-2. Code Organization
-   - Clean error handling pattern
-   - Consistent error message format
-   - Proper type definitions
-   - API method structure
-
-#### Next Steps
-
-1. Review error handling in other API endpoints
-2. Consider adding error codes
-3. Add error logging
-4. Create error handling documentation
-
-## Current Focus
-
-### Expression Editor Improvements
-
-- Fixed operator parsing and display for datetime fields
-- Enhanced form validation to only show after first submit
-- Improved UX with sequential field display:
-  - Property select is always visible
-  - Operator select shows only after property is selected
-  - Value input shows only after operator is selected
-- Added proper spacing between multiple expressions
-- Fixed date parsing and formatting in the expression editor
-
-### Database Security Implementation
-
-- Implemented comprehensive Row Level Security
-- Set up role-based access control
-- Created organization-based data isolation
-- Added JWT-based authentication
-
-## Recent Changes
-
-- Updated expression editor's validation behavior to be less intrusive
-- Improved the visual hierarchy of expression inputs
-- Fixed bug with datetime operator parsing
-- Implemented database security with Row Level Security
-- Created role hierarchy and access policies
-- Added JWT-based authentication
-- Set up organization-based data isolation
-
-## Next Steps
-
-- Consider adding field-level validation states
-- Consider adding animation for sequential field display
-- Add more comprehensive testing for expression parsing
-- Conduct comprehensive security testing
-- Assess performance impact of RLS
-- Implement user role management
-- Document security patterns and policies
-
-## Active Decisions
-
-- Form validation errors only show after first submit attempt
-- Fields appear sequentially to guide user input
-- Maintain fixed height with scrollable content for multiple expressions
-- Use Row Level Security for data isolation
-- Implement role-based access control
-- Use JWT claims for context
-- Enable organization-based isolation
-
-## Active Considerations
-
-1. Code Organization
-
-   - Maintain clean project structure
-   - Follow established patterns
-   - Ensure proper separation of concerns
-
-2. Development Practices
-
-   - Enforce TypeScript best practices
-   - Follow React Query Kit pattern
-   - Maintain consistent coding style
-
-3. Documentation
-
-   - Keep Memory Bank updated
-   - Document new features and changes
-   - Track progress and decisions
-
-4. Security
-   - Policy effectiveness
-   - Performance impact
-   - Role management
-   - Cross-organization isolation
+- Project listing with virtualized table
+- Project details and settings
+- Project-related issue tracking
+- Customer association
+- Construction-specific features
 
 ### Organization Management
 
-- Implemented organization list page with modern card-based UI
-- Each organization card displays:
-  - Organization name
-  - User's role in the organization (with color-coded badges)
-  - Member count
-  - Member avatars (up to 5 visible)
+Ongoing improvements to organization management, including:
 
-### Role System
+- Role-based access control implementation
+- Member management
+- Organization settings
+- Data isolation between organizations
 
-- Three role types implemented:
-  1. Quản trị viên (org_admin) - Purple badge
-  2. Điều hành (org_operator) - Blue badge
-  3. Thành viên (org_member) - Green badge
+### Database Security Implementation
+
+Recent focus on implementing comprehensive database security:
+
+- Row Level Security (RLS) on all tables
+- Role-based access policies
+- JWT-based authentication
+- Organization-based data isolation
+
+### API Error Handling & Localization
+
+Error handling improvements have been a focus area:
+
+- Consistent error structure in Vietnamese
+- Standardized error message format
+- Proper error propagation
+- Clear user feedback
+
+## Recent Changes
+
+### Project Management
+
+- Implemented virtualized project list table with infinite scrolling
+- Added project detail views and tabs
+- Created project settings page with edit capabilities
+- Added issue badge component to show issue count
+- Implemented customer association
+
+### Database Security
+
+- Implemented comprehensive Row Level Security (RLS)
+- Set up role hierarchy (anon → org_admin)
+- Created organization-based data isolation
+- Added JWT-based authentication
+- Implemented helper functions for JWT claims
+
+### UI Improvements
+
+- Enhanced table components with virtualization
+- Added proper loading indicators
+- Implemented responsive layouts for all views
+- Fixed styling issues in various components
+- Added Vietnamese localization for all text
+
+## Next Steps
+
+### Project Management
+
+- Complete remaining project view tabs
+- Enhance issue tracking functionality
+- Add filtering and sorting to project list
+- Improve project creation form
+- Add project statistics dashboard
+
+### Organization Management
+
+- Complete organization settings pages
+- Add member invitation workflow
+- Enhance role management interface
+- Add organization activity tracking
+- Implement organization-level dashboard
+
+### Performance Optimization
+
+- Evaluate RLS performance impact
+- Optimize API queries
+- Implement caching strategies
+- Review virtualization implementation
+- Optimize large list rendering
+
+## Active Decisions
+
+### Technical Decisions
+
+- Use Tanstack Virtual for handling large lists
+- Implement RLS for database security
+- Use React Query Kit pattern for API calls
+- Follow functional component pattern
+- Maintain Vietnamese localization for all user-facing text
 
 ### UI/UX Decisions
 
-- Grid layout: 1/2/3/4 columns responsive
-- Card design with hover effects
-- Role badges with semantic colors
-- Member avatars with overflow indicator
-- Vietnamese localization
+- Consistent table styling with sticky headers
+- Loading indicators for async operations
+- Infinite scrolling for large lists
+- Responsive layout with TailwindCSS
+- Vietnamese as the primary language
 
-### API Integration
+### Security Decisions
 
-- Using Supabase for data storage
-- Organization structure:
-  ```typescript
-  type Organization = {
-    id: string;
-    name: string;
-    role: Array<{
-      role: string;
-    }>;
-    members: Array<{
-      role: string;
-      user: {
-        id: string;
-        name: string;
-        email: string;
-        avatar: string | null;
-      };
-    }>;
-  };
-  ```
+- Row Level Security as primary security mechanism
+- Role-based access control (org_member, org_operator, org_admin)
+- Organization-based data isolation
+- JWT-based authentication
+- Secure API access patterns
 
-### Recent Changes
+## Active Considerations
 
-1. Implemented organization list page with card layout
-2. Added role-based color coding system
-3. Localized all text to Vietnamese
-4. Enhanced member display with avatars and overflow handling
-5. Improved type safety with proper TypeScript types
+### Performance
 
-### Next Steps
+- Impact of RLS on query performance
+- Virtualization for large data sets
+- Efficient API fetching strategies
+- Optimistic updates for better UX
+- Pagination and infinite scroll implementation
 
-1. Implement organization creation form
-2. Add organization settings/management
-3. Implement member management features
-4. Add search and filter capabilities
-5. Consider adding organization statistics/metrics
+### Security
+
+- Policy effectiveness across all entities
+- Role permission boundaries and escalation
+- Cross-organization data isolation verification
+- JWT claim extraction optimization
+- Comprehensive security testing
+
+### Developer Experience
+
+- Code organization and maintainability
+- Consistent patterns across the codebase
+- Documentation of key concepts
+- Type safety and error handling
+- Memory Bank maintenance

@@ -115,12 +115,7 @@ export const objectTypeApi = router('objectType', {
       try {
         const { data, error } = await client2.rest
           .from('object_types')
-          .select(
-            `*, 
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)
-          `
-          )
+          .select(`*`)
           .eq('name', typeName)
           .single();
 
@@ -140,9 +135,7 @@ export const objectTypeApi = router('objectType', {
           color: data.color,
           icon: data.icon,
           created: data.created,
-          updated: data.updated,
-          createdBy: data.createdBy,
-          updatedBy: data.updatedBy
+          updated: data.updated
         } as ObjectTypeItem;
       } catch (error) {
         throw new Error(

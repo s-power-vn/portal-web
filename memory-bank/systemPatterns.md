@@ -17,37 +17,48 @@ Spower follows a modern frontend architecture with:
 apps/
   spower/
     src/         # Main application source
+      components/  # Reusable UI components
+      routes/      # Application routes and pages
+      modules/     # Domain-specific modules
 libs/
   api/          # Shared API interfaces
     src/
+      api/        # API definitions and types
   core/         # Shared core functionality
     src/
+      client/     # API client configuration
 ```
 
 ## Key Technical Patterns
 
-1. Component Patterns
+### 1. Component Patterns
 
-   - Functional components with TypeScript
-   - Props interface defined with `type`
-   - React Query Kit for API calls
-   - Hooks for shared logic
+- Functional components with TypeScript
+- Props interface defined with `type`
+- React Query Kit for API calls
+- Hooks for shared logic
+- Shadcn/UI for consistent components
 
-2. State Management
+### 2. State Management
 
-   - Tanstack Query for server state
-   - React Query Kit for API interfaces
-   - Local state with React hooks
+- Tanstack Query for server state
+- React Query Kit for API interfaces
+- Local state with React hooks
+- Optimistic updates for better UX
 
-3. Routing
+### 3. Routing
 
-   - Tanstack Router for type-safe routing
-   - Nested routes for complex views
+- Tanstack Router for type-safe routing
+- Nested routes for complex views
+- Route-specific loaders for data fetching
+- Type-safe search params
 
-4. Data Display
-   - Tanstack Table for data grids
-   - Tanstack Virtual for large lists
-   - Shadcn components for UI elements
+### 4. Data Display
+
+- Tanstack Table for data grids
+- Tanstack Virtual for large lists
+- Virtualized rows for performance
+- Infinite scrolling for pagination
 
 ## Component Relationships
 
@@ -55,6 +66,7 @@ libs/
 - Shared core functionality in libs
 - Reusable components in core library
 - API interfaces in dedicated library
+- Domain-specific components organized by feature
 
 ## Form Validation Patterns
 
@@ -77,9 +89,8 @@ libs/
 ### DateTime Handling
 
 - ISO string format for API communication
-- Local date display in UI
+- Local date display in UI using formatDateTime
 - Consistent parsing and formatting across components
-
 - Special handling for date ranges in expressions
 
 ### Expression Editor Pattern
@@ -91,10 +102,10 @@ libs/
 
 ## UI/UX Patterns
 
-### Form Layout
+### Layout Patterns
 
-- Consistent spacing between form sections
-
+- Main content wrapped in responsive containers
+- Consistent spacing with TailwindCSS
 - Fixed container heights with scrollable content
 - Clear visual hierarchy for nested components
 - Responsive design for various screen sizes
@@ -104,124 +115,66 @@ libs/
 - Clear error messages below affected fields
 - Contextual validation based on field dependencies
 - Non-blocking validation for better UX
-- Proper error state management in forms
-
-## Expression Editor
-
-### Component Architecture
-
-1. Core Components
-
-- ExpressionRow: Main component for individual expression rows
-- ValueInput: Dynamic input component based on property type
-- SelectInput: Reusable select component for properties and operators
-- DatePicker: Used for datetime inputs
-
-2. Data Flow
-
-```mermaid
-graph TD
-
-    A[ExpressionRow] --> B[Property Select]
-    A --> C[Operator Select]
-    A --> D[Value Input]
-    D --> E[Regular Input]
-    D --> F[Date Range Input]
-```
-
-3. State Management
-
-- Row-level state managed through props
-- Property selection triggers operator options update
-- Operator selection determines value input type
-- Value validation based on property type and operator
-
-4. Validation Patterns
-
-- Field-level validation messages
-- Conditional validation based on field visibility
-- Type-specific validation rules
-
-- Date range specific validation for 'IN' operator
-
-### Layout Patterns
-
-1. Grid System
-
-- Main layout: 4-column grid
-- Proportional column widths
-- Consistent spacing using gap utilities
-
-2. Flexbox Usage
-
-- Vertical stacking of field groups
-- Alignment of validation messages
-- Date range input layout
-- Button alignment
-
-3. Error Handling
-
-- Inline error messages
-- Conditional rendering based on field visibility
-- Consistent styling with text-xs and text-red-500
-- Clear visual feedback
+- Vietnamese language error messages
 
 ## Data Access Patterns
 
 ### Database Security Model
 
-1. Role Hierarchy
+#### 1. Role Hierarchy
 
-   ```mermaid
-   graph TD
-       A[api] --> B[anon]
-       A --> C[authenticated]
-       A --> D[org_member]
-       A --> E[org_operator]
-       A --> F[org_admin]
-       E --> D
-   ```
+```mermaid
+graph TD
+    A[api] --> B[anon]
+    A --> C[authenticated]
+    A --> D[org_member]
+    A --> E[org_operator]
+    A --> F[org_admin]
+    E --> D
+```
 
-2. Row Level Security (RLS)
+#### 2. Row Level Security (RLS)
 
-   - All tables have RLS enabled
-   - Policies enforce organization-based isolation
-   - JWT claims used for user context
-   - Helper functions for claim extraction:
-     - current_user_id()
-     - current_organization_id()
-     - current_jwt_role()
+- All tables have RLS enabled
+- Policies enforce organization-based isolation
+- JWT claims used for user context
+- Helper functions for claim extraction:
+  - current_user_id()
+  - current_organization_id()
+  - current_jwt_role()
 
-3. Access Control Patterns
+#### 3. Access Control Patterns
 
-   - SELECT policies based on organization_id
-   - INSERT policies with role checks
-   - UPDATE policies with role and organization checks
-   - DELETE policies with elevated role requirements
+- SELECT policies based on organization_id
+- INSERT policies with role checks
+- UPDATE policies with role and organization checks
+- DELETE policies with elevated role requirements
 
-4. Special Cases
-   - Organizations table: visibility based on creation or membership
-   - Organization members: admin-only management
-   - Message-related tables: complex relationship-based access
+#### 4. Special Cases
+
+- Organizations table: visibility based on creation or membership
+- Organization members: admin-only management
+- Message-related tables: complex relationship-based access
 
 ### Data Isolation
 
-1. Organization Context
+#### 1. Organization Context
 
-   - Every table includes organization_id
-   - Automatic filtering via RLS policies
-   - Cross-organization data access prevented
+- Every table includes organization_id
+- Automatic filtering via RLS policies
+- Cross-organization data access prevented
 
-2. Role-Based Access
+#### 2. Role-Based Access
 
-   - org_member: Basic read/write access
-   - org_operator: Enhanced management capabilities
-   - org_admin: Full administrative control
+- org_member: Basic read/write access
+- org_operator: Enhanced management capabilities
+- org_admin: Full administrative control
 
-3. JWT Integration
-   - Claims include email, org_id, and role
-   - Claims used for dynamic policy enforcement
-   - Automatic context switching between organizations
+#### 3. JWT Integration
+
+- Claims include email, org_id, and role
+- Claims used for dynamic policy enforcement
+- Automatic context switching between organizations
 
 ## Error Handling Pattern
 
@@ -286,15 +239,7 @@ try {
 
 ### Implementation Guidelines
 
-1. Error Propagation
-
-   - Throw raw errors from if(error) blocks
-   - Wrap errors only once in catch blocks
-   - Use clear Vietnamese messages
-   - Include original error message
-
-2. Error Categories
-   - Use consistent message format
-   - Follow Vietnamese translation pattern
-   - Keep messages clear and concise
-   - Include relevant context
+- Throw raw errors from if(error) blocks
+- Wrap errors only once in catch blocks
+- Use clear Vietnamese messages
+- Include original error message

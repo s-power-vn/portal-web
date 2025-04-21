@@ -7,19 +7,19 @@ import { Suspense } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
 const Component = ({ employeeId }: { employeeId: string }) => {
-  const { data: user } = api.user.byId.useSuspenseQuery({
+  const { data: employee } = api.employee.byId.useSuspenseQuery({
     variables: employeeId
   });
 
-  return user ? (
+  return employee ? (
     <div className={'flex items-center gap-2 whitespace-nowrap'}>
       <Avatar className={'h-5 w-5'}>
-        <AvatarImage src={user.avatar} />
+        <AvatarImage src={employee.user?.avatar} />
         <AvatarFallback className={'text-sm'}>
           <UserIcon />
         </AvatarFallback>
       </Avatar>
-      <span className={'truncate'}>{user.name}</span>
+      <span className={'truncate'}>{employee.user?.name}</span>
     </div>
   ) : null;
 };

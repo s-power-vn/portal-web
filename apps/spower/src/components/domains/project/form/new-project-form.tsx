@@ -6,12 +6,8 @@ import type { FC } from 'react';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, success } from '@minhdtb/storeo-theme';
 
-import { CustomerDropdownField } from '../../customer';
-
 const schema = object().shape({
-  name: string().required('Hãy nhập tên công trình'),
-  bidding: string().required('Hãy nhập tên gói thầu'),
-  customer: string().required('Hãy chọn chủ đầu tư')
+  name: string().required('Hãy nhập tên công trình')
 });
 
 export type NewProjectFormProps = BusinessFormProps;
@@ -29,15 +25,11 @@ export const NewProjectForm: FC<NewProjectFormProps> = props => {
       schema={schema}
       onSuccess={values =>
         createProject.mutate({
-          name: values.name,
-          bidding: values.bidding,
-          customer_id: values.customer
+          name: values.name
         })
       }
       defaultValues={{
-        name: '',
-        bidding: '',
-        customer: ''
+        name: ''
       }}
       onCancel={props.onCancel}
       loading={createProject.isPending}
@@ -48,20 +40,6 @@ export const NewProjectForm: FC<NewProjectFormProps> = props => {
         name={'name'}
         title={'Tên công trình'}
         options={{}}
-      />
-      <TextField
-        schema={schema}
-        name={'bidding'}
-        title={'Tên gói thầu'}
-        options={{}}
-      />
-      <CustomerDropdownField
-        schema={schema}
-        name={'customer'}
-        title={'Chủ đầu tư'}
-        options={{
-          placeholder: 'Hãy chọn chủ đầu tư'
-        }}
       />
     </Form>
   );

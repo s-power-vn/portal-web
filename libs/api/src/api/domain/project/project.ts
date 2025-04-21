@@ -32,7 +32,7 @@ export const projectApi = router('project', {
           .order('created', { ascending: false });
 
         const filter = params?.filter
-          ? `name.ilike.%${params?.filter}%,bidding.ilike.%${params?.filter}%`
+          ? `name.ilike.%${params?.filter}%`
           : undefined;
 
         if (filter) {

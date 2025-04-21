@@ -24,13 +24,9 @@ export type ProjectListResponse = PaginatedResponse<ProjectListItem>;
 
 export type CreateProjectInput = {
   name: string;
-  bidding?: string;
-  customer_id: string;
 };
 
 export type UpdateProjectInput = {
   id: string;
   name?: string;
-  bidding?: string;
-  customer_id?: string;
 };

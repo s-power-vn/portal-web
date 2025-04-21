@@ -225,15 +225,18 @@ function Component() {
     });
   }, [navigate, search]);
 
-  const handleSearchChange = useCallback((value: string | undefined) => {
-    navigate({
-      to: '.',
-      search: {
-        ...search,
-        filter: value ?? ''
-      }
-    });
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string | undefined) => {
+      navigate({
+        to: '.',
+        search: {
+          ...search,
+          filter: value ?? ''
+        }
+      });
+    },
+    [navigate, search]
+  );
 
   return (
     <div className={'flex h-full flex-col'}>

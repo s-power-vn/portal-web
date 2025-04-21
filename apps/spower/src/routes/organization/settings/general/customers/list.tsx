@@ -268,7 +268,7 @@ function Component() {
             ) : (
               <Table
                 style={{
-                  width: '100%',
+                  width: table.getTotalSize(),
                   tableLayout: 'fixed'
                 }}
               >
