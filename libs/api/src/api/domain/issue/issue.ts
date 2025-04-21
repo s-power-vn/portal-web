@@ -240,7 +240,7 @@ export const issueApi = router('issue', {
             { count: 'exact' }
           )
           .eq('project_id', params.projectId)
-          .eq('object_type_id', params.objectTypeId)
+          .eq('object.type.id', params.objectTypeId)
           .range(from, to);
 
         if (error) {

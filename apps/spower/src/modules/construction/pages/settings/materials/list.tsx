@@ -12,6 +12,7 @@ import { ListSchema, MaterialListItem, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
+import { Show } from '@minhdtb/storeo-core';
 import {
   Button,
   DebouncedInput,
@@ -235,7 +236,6 @@ function Component() {
 
   return (
     <div className={'flex h-full flex-col'}>
-      <Outlet />
       <PageHeader title={'Quản lý danh mục vật tư'} />
       <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
         <div className={'flex gap-2'}>
@@ -249,69 +249,67 @@ function Component() {
             placeholder={'Tìm kiếm...'}
             onChange={handleSearchChange}
           />
+          <Outlet />
         </div>
-        <div
-          className={
-            'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
-          }
-        >
+        <div className={'relative min-h-0 flex-1 overflow-hidden rounded-md'}>
           <div
             className="absolute inset-0 overflow-auto"
             ref={parentRef}
             onScroll={handleScroll}
           >
-            {isLoading ? (
-              <div className="flex h-20 items-center justify-center">
-                <Loader className="h-6 w-6 animate-spin" />
-              </div>
-            ) : (
-              <Table
+            <Table
+              style={{
+                width: '100%',
+                tableLayout: 'fixed'
+              }}
+            >
+              <TableHeader
                 style={{
-                  width: '100%',
-                  tableLayout: 'fixed'
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 2
                 }}
               >
-                <TableHeader
-                  className={'bg-appBlueLight'}
-                  style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 2
-                  }}
-                >
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className={'hover:bg-appBlue'}
-                    >
-                      {headerGroup.headers.map(header => (
-                        <TableHead
-                          key={header.id}
-                          className={'text-appWhite whitespace-nowrap'}
-                          style={{
-                            width: header.getSize(),
-                            maxWidth: header.getSize()
-                          }}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <>
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </>
-                          )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody
-                  className={'relative'}
-                  style={{
-                    height: `${virtualizer.getTotalSize()}px`
-                  }}
-                >
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead
+                        key={header.id}
+                        className={'text-appBlue whitespace-nowrap'}
+                        style={{
+                          width: header.getSize(),
+                          maxWidth: header.getSize()
+                        }}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </>
+                        )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody
+                className={'relative'}
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`
+                }}
+              >
+                <Show when={isLoading}>
+                  <TableRow>
+                    <TableCell colSpan={columns.length}>
+                      <div className="flex items-center justify-center">
+                        <Loader className="h-6 w-6 animate-spin" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </Show>
+                <Show when={!isLoading}>
                   {rows.length ? (
                     virtualizer.getVirtualItems().map(virtualRow => {
                       const row = rows[virtualRow.index];
@@ -346,22 +344,23 @@ function Component() {
                     })
                   ) : (
                     <TableRow className={'border-b-0'}>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="h-16 text-center"
-                      >
-                        Không có dữ liệu.
+                      <TableCell colSpan={columns.length}>
+                        <div className="flex items-center justify-center">
+                          <span className="text-gray-500">
+                            Không có dữ liệu.
+                          </span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}
-                </TableBody>
-              </Table>
-            )}
-            {isFetchingNextPage && (
-              <div className="flex h-20 items-center justify-center">
+                </Show>
+              </TableBody>
+            </Table>
+            <Show when={isFetchingNextPage}>
+              <div className="flex items-center justify-center">
                 <Loader className="h-6 w-6 animate-spin" />
               </div>
-            )}
+            </Show>
           </div>
         </div>
       </div>

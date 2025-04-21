@@ -187,7 +187,12 @@ export const supplierApi = router('supplier', {
         const { error } = await client2.rest
           .from('suppliers')
           .update({
-            ...updateParams
+            code: updateParams.code,
+            name: updateParams.name,
+            email: updateParams.email,
+            phone: updateParams.phone,
+            address: updateParams.address,
+            note: updateParams.note
           })
           .eq('id', id);
 

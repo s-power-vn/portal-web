@@ -11,7 +11,7 @@ import { ListSchema, ProcessListItem, api } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
-import { formatDateTime } from '@minhdtb/storeo-core';
+import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
   Badge,
   Button,
@@ -341,7 +341,6 @@ function Component() {
 
   return (
     <>
-      <Outlet />
       <div className={'flex h-full flex-col'} ref={parentRef}>
         <PageHeader title={'Quản lý quy trình'} />
         <div className={'flex min-h-0 flex-1 flex-col gap-2 p-2'}>
@@ -350,60 +349,58 @@ function Component() {
               <PlusIcon className={'h-5 w-5'} />
               Thêm quy trình
             </Button>
+            <Outlet />
           </div>
-          <div
-            className={
-              'border-appBlue relative min-h-0 flex-1 overflow-hidden rounded-md border'
-            }
-          >
+          <div className={'relative min-h-0 flex-1 overflow-hidden rounded-md'}>
             <div className="absolute inset-0 overflow-auto">
-              {isLoading ? (
-                <div className="flex h-20 items-center justify-center">
-                  <Loader className="h-6 w-6 animate-spin" />
-                </div>
-              ) : (
-                <Table
+              <Table
+                style={{
+                  width: '100%',
+                  tableLayout: 'fixed'
+                }}
+              >
+                <TableHeader
                   style={{
-                    width: '100%',
-                    tableLayout: 'fixed'
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2
                   }}
                 >
-                  <TableHeader
-                    className={'bg-appBlueLight'}
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      zIndex: 2
-                    }}
-                  >
-                    {table.getHeaderGroups().map(headerGroup => (
-                      <TableRow
-                        key={headerGroup.id}
-                        className={'hover:bg-appBlue'}
-                      >
-                        {headerGroup.headers.map(header => (
-                          <TableHead
-                            key={header.id}
-                            className={'text-appWhite whitespace-nowrap'}
-                            style={{
-                              width: header.getSize(),
-                              maxWidth: header.getSize()
-                            }}
-                          >
-                            {header.isPlaceholder ? null : (
-                              <>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </>
-                            )}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                  <TableBody>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map(header => (
+                        <TableHead
+                          key={header.id}
+                          className={'text-appBlue whitespace-nowrap'}
+                          style={{
+                            width: header.getSize(),
+                            maxWidth: header.getSize()
+                          }}
+                        >
+                          {header.isPlaceholder ? null : (
+                            <>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </>
+                          )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  <Show when={isLoading}>
+                    <TableRow>
+                      <TableCell colSpan={columns.length}>
+                        <div className="flex items-center justify-center">
+                          <Loader className="h-6 w-6 animate-spin" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </Show>
+                  <Show when={!isLoading}>
                     {table.getRowModel().rows.length ? (
                       table.getRowModel().rows.map(row => (
                         <TableRow
@@ -432,17 +429,23 @@ function Component() {
                       ))
                     ) : (
                       <TableRow className={'border-b-0'}>
-                        <TableCell
-                          colSpan={columns.length}
-                          className="h-16 text-center"
-                        >
-                          Không có dữ liệu.
+                        <TableCell colSpan={columns.length}>
+                          <div className="flex items-center justify-center">
+                            <span className="text-gray-500">
+                              Không có dữ liệu.
+                            </span>
+                          </div>
                         </TableCell>
                       </TableRow>
                     )}
-                  </TableBody>
-                </Table>
-              )}
+                  </Show>
+                </TableBody>
+              </Table>
+              <Show when={isFetchingNextPage}>
+                <div className="flex items-center justify-center">
+                  <Loader className="h-6 w-6 animate-spin" />
+                </div>
+              </Show>
             </div>
           </div>
         </div>

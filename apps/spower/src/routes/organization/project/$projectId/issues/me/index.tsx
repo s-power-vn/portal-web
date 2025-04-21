@@ -11,7 +11,7 @@ import { IssueItem, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo } from 'react';
 
-import { formatDateTime } from '@minhdtb/storeo-core';
+import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
   DebouncedInput,
   Table,
@@ -204,50 +204,52 @@ function Component() {
         />
       </div>
       <div
-        className={
-          'border-appBlue relative min-h-0 flex-1 overflow-auto rounded-md border'
-        }
+        className={' relative min-h-0 flex-1 overflow-auto rounded-md'}
         onScroll={handleScroll}
       >
-        {isLoading ? (
-          <div className="flex h-20 items-center justify-center">
-            <Loader className="h-6 w-6 animate-spin" />
-          </div>
-        ) : (
-          <Table>
-            <TableHeader
-              className={'bg-appBlueLight'}
-              style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 2
-              }}
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={'text-appWhite whitespace-nowrap'}
-                      style={{
-                        width: 'auto',
-                        maxWidth: header.column.columnDef.maxSize
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
+        <Table>
+          <TableHeader
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
+            }}
+          >
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    className={'text-appBlue whitespace-nowrap'}
+                    style={{
+                      width: 'auto',
+                      maxWidth: header.column.columnDef.maxSize
+                    }}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </>
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            <Show when={isLoading}>
+              <TableRow className={'border-b-0'}>
+                <TableCell colSpan={columns.length}>
+                  <div className="flex items-center justify-center">
+                    <Loader className="h-6 w-6 animate-spin" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            </Show>
+            <Show when={!isLoading}>
               {rows.length ? (
                 rows.map(row => {
                   return (
@@ -284,22 +286,21 @@ function Component() {
                 })
               ) : (
                 <TableRow className={'border-b-0'}>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
+                  <TableCell colSpan={columns.length}>
+                    <div className="flex items-center justify-center">
+                      <span className="text-gray-500">Không có dữ liệu.</span>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-          </Table>
-        )}
-        {isFetchingNextPage && (
-          <div className="flex h-20 items-center justify-center">
+            </Show>
+          </TableBody>
+        </Table>
+        <Show when={isFetchingNextPage}>
+          <div className="flex items-center justify-center">
             <Loader className="h-6 w-6 animate-spin" />
           </div>
-        )}
+        </Show>
       </div>
     </div>
   );

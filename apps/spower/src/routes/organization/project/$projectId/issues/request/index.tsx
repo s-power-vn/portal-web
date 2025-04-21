@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { SearchSchemaInput } from '@tanstack/react-router';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
@@ -8,11 +7,11 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { FilesIcon, Loader } from 'lucide-react';
-import { IssueData, ListSchema, api } from 'portal-api';
+import { IssueItem, ListSchema, api } from 'portal-api';
 
 import { useCallback, useMemo } from 'react';
 
-import { formatDateTime } from '@minhdtb/storeo-core';
+import { Show, formatDateTime } from '@minhdtb/storeo-core';
 import {
   DebouncedInput,
   Table,
@@ -37,18 +36,29 @@ export const Route = createFileRoute(
   '/_private/$organizationId/project/$projectId/issues/request/'
 )({
   component: Component,
-  validateSearch: (input: unknown & SearchSchemaInput) =>
-    ListSchema.validateSync(input),
+  validateSearch: input => {
+    const validated = ListSchema.validateSync(input);
+    return {
+      ...validated,
+      objectTypeName: 'Request'
+    };
+  },
   loaderDeps: ({ search }) => {
     return { search };
   },
-  loader: ({ deps, params, context: { queryClient } }) =>
-    queryClient?.ensureQueryData(
+  loader: async ({ deps, params, context: { queryClient } }) => {
+    const requestType = await queryClient?.ensureQueryData(
+      api.objectType.byType.getOptions(deps.search.objectTypeName)
+    );
+
+    await queryClient?.ensureQueryData(
       api.issue.listByObjectType.getOptions({
         ...deps.search,
-        projectId: params.projectId
+        projectId: params.projectId,
+        objectTypeId: requestType?.id
       })
-    )
+    );
+  }
 });
 function Component() {
   const { projectId } = Route.useParams();
@@ -56,7 +66,7 @@ function Component() {
   const search = Route.useSearch();
 
   const { data: requestType } = api.objectType.byType.useSuspenseQuery({
-    variables: 'Request'
+    variables: search.objectTypeName
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -84,7 +94,7 @@ function Component() {
     [data]
   );
 
-  const columnHelper = createColumnHelper<IssueData>();
+  const columnHelper = createColumnHelper<IssueItem>();
 
   const columns = [
     columnHelper.display({
@@ -94,7 +104,7 @@ function Component() {
     }),
     columnHelper.accessor('title', {
       cell: info => {
-        const typeObject = info.row.original.expand?.object.expand?.type;
+        const typeObject = info.row.original.object?.objectType;
 
         return (
           <div className={'flex w-full min-w-0 items-center gap-2'}>
@@ -126,7 +136,7 @@ function Component() {
     columnHelper.display({
       id: 'expand.issueFile_via_issue',
       cell: info => {
-        const files = info.row.original.expand?.issueFile_via_issue;
+        const files = info.row.original.files;
         return files && files.length > 0 ? (
           <FilesIcon className="h-4 w-4 text-gray-500" />
         ) : null;
@@ -142,7 +152,7 @@ function Component() {
     }),
     columnHelper.accessor('createdBy', {
       cell: ({ row }) => (
-        <EmployeeDisplay employeeId={row.original.createdBy} />
+        <EmployeeDisplay employeeId={row.original.createdBy?.id} />
       ),
       header: () => 'Người tạo',
       footer: info => info.column.id
@@ -154,12 +164,12 @@ function Component() {
       footer: info => info.column.id
     }),
     columnHelper.accessor('created', {
-      cell: ({ row }) => formatDateTime(row.original.created),
+      cell: ({ row }) => formatDateTime(row.original.created ?? ''),
       header: () => 'Ngày tạo',
       footer: info => info.column.id
     }),
     columnHelper.accessor('updated', {
-      cell: ({ row }) => formatDateTime(row.original.updated),
+      cell: ({ row }) => formatDateTime(row.original.updated ?? ''),
       header: () => 'Ngày cập nhật',
       footer: info => info.column.id
     })
@@ -209,45 +219,50 @@ function Component() {
         }
         onScroll={handleScroll}
       >
-        {isLoading ? (
-          <div className="flex h-20 items-center justify-center">
-            <Loader className="h-6 w-6 animate-spin" />
-          </div>
-        ) : (
-          <Table>
-            <TableHeader
-              className={'bg-appBlueLight'}
-              style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 2
-              }}
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={'text-appWhite whitespace-nowrap'}
-                      style={{
-                        width: 'auto',
-                        maxWidth: header.column.columnDef.maxSize
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
+        <Table>
+          <TableHeader
+            className={'bg-appBlueLight'}
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 2
+            }}
+          >
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    className={'text-appWhite whitespace-nowrap'}
+                    style={{
+                      width: 'auto',
+                      maxWidth: header.column.columnDef.maxSize
+                    }}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </>
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            <Show when={isLoading}>
+              <TableRow className={'border-b-0'}>
+                <TableCell colSpan={columns.length}>
+                  <div className="flex items-center justify-center">
+                    <Loader className="h-6 w-6 animate-spin" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            </Show>
+            <Show when={!isLoading}>
               {rows.length ? (
                 rows.map(row => {
                   return (
@@ -284,22 +299,21 @@ function Component() {
                 })
               ) : (
                 <TableRow className={'border-b-0'}>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-16 text-center"
-                  >
-                    Không có dữ liệu.
+                  <TableCell colSpan={columns.length}>
+                    <div className="flex items-center justify-center">
+                      <span className="text-gray-500">Không có dữ liệu.</span>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-          </Table>
-        )}
-        {isFetchingNextPage && (
-          <div className="flex h-20 items-center justify-center">
+            </Show>
+          </TableBody>
+        </Table>
+        <Show when={isFetchingNextPage}>
+          <div className="flex items-center justify-center">
             <Loader className="h-6 w-6 animate-spin" />
           </div>
-        )}
+        </Show>
       </div>
     </div>
   );
