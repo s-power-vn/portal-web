@@ -214,14 +214,11 @@ function Component() {
         />
       </div>
       <div
-        className={
-          'border-appBlue relative min-h-0 flex-1 overflow-auto rounded-md border'
-        }
+        className={'relative min-h-0 flex-1 overflow-auto rounded-md'}
         onScroll={handleScroll}
       >
         <Table>
           <TableHeader
-            className={'bg-appBlueLight'}
             style={{
               position: 'sticky',
               top: 0,
@@ -229,11 +226,11 @@ function Component() {
             }}
           >
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className={'text-appWhite whitespace-nowrap'}
+                    className={'text-appBlue whitespace-nowrap'}
                     style={{
                       width: 'auto',
                       maxWidth: header.column.columnDef.maxSize
