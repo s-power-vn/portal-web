@@ -28,7 +28,6 @@ const firebaseConfig = {
 
 export const restToken = signal<string | undefined>(undefined);
 export const currentUserId = signal<string | undefined>(undefined);
-export const currentUserEmail = signal<string | undefined>(undefined);
 export const currentEmployeeId = signal<string | undefined>(undefined);
 
 const xorEncodeQuery = (query: string, key: string): string => {
@@ -109,7 +108,7 @@ class ApiClient {
     return response.json();
   }
 
-  public async getRestToken(organizationId?: string) {
+  public async refreshRestToken(organizationId?: string) {
     const token = await this.auth.currentUser?.getIdToken();
     const response = await fetch(`${BASE_URL}/api/user/rest-token`, {
       method: 'POST',
@@ -124,7 +123,15 @@ class ApiClient {
       throw new Error('Không thể lấy token');
     }
 
-    const data: { token: string; user_id: string } = await response.json();
+    const data: {
+      token: string;
+      user_id: string;
+      employee_id: string;
+    } = await response.json();
+
+    restToken.value = data.token;
+    currentUserId.value = data.user_id;
+    currentEmployeeId.value = data.employee_id;
 
     return data;
   }

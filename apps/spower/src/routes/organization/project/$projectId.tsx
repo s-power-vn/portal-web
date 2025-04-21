@@ -67,12 +67,9 @@ const Component = () => {
         }
       >
         <div className={'flex flex-1 flex-col truncate'}>
-          <span className={'text-appBlack truncate font-semibold'}>
-            {project.data?.bidding}
-          </span>
           <div className={'flex items-center'}>
             <span className={'text-muted-foreground truncate text-sm'}>
-              {project.data?.name} - {project.data?.customer?.name}
+              {project.data?.name}
             </span>
           </div>
         </div>

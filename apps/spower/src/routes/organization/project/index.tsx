@@ -249,7 +249,7 @@ const Component = () => {
                         {row.getVisibleCells().map(cell => (
                           <TableCell
                             key={cell.id}
-                            className={'truncate text-left'}
+                            className={'truncate text-left last:border-r'}
                             style={{
                               width: cell.column.getSize(),
                               minWidth: cell.column.getSize(),

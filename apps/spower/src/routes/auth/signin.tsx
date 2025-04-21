@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
 import { api } from 'portal-api';
-import { currentUserEmail } from 'portal-core';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
@@ -108,17 +107,17 @@ export async function goRootRoute({
 }) {
   const authResult = await enhancedWaitAuthenticated();
 
-  if (authResult.status === 'not-registered') {
+  if (authResult?.status === 'not-registered') {
     localStorage.removeItem('organizationId');
     throw redirect({
       to: '/user-information',
       search: {
-        email: currentUserEmail.value ?? ''
+        email: authResult.email ?? ''
       }
     });
   }
 
-  if (authResult.status === 'authorized') {
+  if (authResult?.status === 'authorized') {
     throw redirect({
       to: '/',
       search: {

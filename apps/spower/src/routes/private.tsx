@@ -1,5 +1,4 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { currentUserEmail } from 'portal-core';
 
 import { enhancedWaitAuthenticated } from './auth/auth-cache';
 
@@ -8,17 +7,17 @@ export const Route = createFileRoute('/_private')({
   beforeLoad: async () => {
     const authResult = await enhancedWaitAuthenticated();
 
-    if (authResult.status === 'not-registered') {
+    if (authResult?.status === 'not-registered') {
       localStorage.removeItem('organizationId');
       throw redirect({
         to: '/user-information',
         search: {
-          email: currentUserEmail.value ?? ''
+          email: authResult.email ?? ''
         }
       });
     }
 
-    if (authResult.status === 'unauthorized') {
+    if (authResult?.status === 'unauthorized') {
       throw redirect({
         to: '/signin',
         search: {

@@ -60,7 +60,7 @@ export const userApi = router('user', {
   }),
   getRestToken: router.query({
     fetcher: (params?: string) => {
-      return client2.api.getRestToken(params);
+      return client2.api.refreshRestToken(params);
     }
   }),
   emailLogin: router.mutation({

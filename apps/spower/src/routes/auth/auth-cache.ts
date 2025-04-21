@@ -1,9 +1,4 @@
-import {
-  client2,
-  currentUserEmail,
-  currentUserId,
-  restToken
-} from 'portal-core';
+import { client2 } from 'portal-core';
 
 const AUTH_CACHE_DURATION = 5 * 60 * 1000;
 
@@ -11,6 +6,7 @@ export type AuthResult = {
   status: 'unauthorized' | 'not-registered' | 'authorized';
   email?: string;
   userId?: string;
+  employeeId?: string;
   organizationId?: string;
 };
 
@@ -46,13 +42,13 @@ export function forceRefreshAuth(): void {
   };
 }
 
-export async function performAuthentication(): Promise<AuthResult> {
+export async function performAuthentication(): Promise<AuthResult | null> {
   if (
     !isPageReloading &&
     authCache.timestamp &&
     Date.now() - authCache.timestamp < AUTH_CACHE_DURATION
   ) {
-    return authCache.result!;
+    return authCache.result;
   }
 
   await client2.auth.authStateReady();
@@ -67,7 +63,6 @@ export async function performAuthentication(): Promise<AuthResult> {
   }
 
   const email = client2.auth.currentUser.email ?? '';
-  currentUserEmail.value = email;
 
   const isHasUser = await client2.api.checkUser();
   if (!isHasUser) {
@@ -80,16 +75,13 @@ export async function performAuthentication(): Promise<AuthResult> {
   }
 
   const organizationId = localStorage.getItem('organizationId');
-  const token = await client2.api.getRestToken(organizationId ?? undefined);
-
-  restToken.value = token.token;
-  currentUserId.value = token.user_id;
-  currentUserEmail.value = email;
+  const token = await client2.api.refreshRestToken(organizationId ?? undefined);
 
   const result: AuthResult = {
     status: 'authorized',
     email,
     userId: token.user_id,
+    employeeId: token.employee_id,
     organizationId: organizationId ?? undefined
   };
 
@@ -101,7 +93,7 @@ export async function performAuthentication(): Promise<AuthResult> {
   return result;
 }
 
-export async function enhancedWaitAuthenticated(): Promise<AuthResult> {
+export async function enhancedWaitAuthenticated(): Promise<AuthResult | null> {
   return performAuthentication();
 }
 
