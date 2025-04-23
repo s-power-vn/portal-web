@@ -1,7 +1,7 @@
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
@@ -12,7 +12,7 @@ const schema = object().shape({
     .max(10, 'Mã vật tư không vượt quá 10 ký tự'),
   name: string().required('Hãy nhập tên vật tư'),
   unit: string().required('Hãy nhập đơn vị'),
-  note: string().nullable()
+  note: string()
 });
 
 export type NewMaterialFormProps = BusinessFormProps;
@@ -25,10 +25,22 @@ export const NewMaterialForm: FC<NewMaterialFormProps> = props => {
     }
   });
 
+  const handleFormSuccess = useCallback(
+    (values: { code?: string; name: string; unit: string; note?: string }) => {
+      createMaterial.mutate({
+        code: values.code ?? '',
+        name: values.name,
+        unit: values.unit,
+        note: values.note ?? ''
+      });
+    },
+    [createMaterial]
+  );
+
   return (
     <Form
       schema={schema}
-      onSuccess={values => createMaterial.mutate(values)}
+      onSuccess={handleFormSuccess}
       onCancel={props.onCancel}
       defaultValues={{
         code: '',

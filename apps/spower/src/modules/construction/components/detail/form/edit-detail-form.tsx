@@ -1,7 +1,7 @@
 import { api } from 'portal-api';
 import { number, object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
@@ -46,16 +46,30 @@ export const EditDetailForm: FC<EditDetailFormProps> = props => {
     }
   });
 
+  const handleFormSuccess = useCallback(
+    (values: {
+      title?: string;
+      volume?: number;
+      unit?: string;
+      unitPrice?: number;
+      level?: string;
+    }) => {
+      updateDetail.mutate({
+        id: props.detailId,
+        title: values.title,
+        volume: values.volume,
+        unit: values.unit,
+        unit_price: values.unitPrice,
+        level: values.level
+      });
+    },
+    [props.detailId, updateDetail]
+  );
+
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
-        updateDetail.mutate({
-          ...values,
-          id: props.detailId,
-          project: detailById.data?.project
-        })
-      }
+      onSuccess={handleFormSuccess}
       onCancel={props.onCancel}
       defaultValues={detailById.data}
       loading={updateDetail.isPending}

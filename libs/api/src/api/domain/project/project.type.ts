@@ -1,10 +1,11 @@
-import { PaginatedResponse } from 'portal-core';
+import { Json, PaginatedResponse } from 'portal-core';
 
 import { EmployeeItem } from '../../setting/general';
 
 export type ProjectItem = {
   id: string;
   name: string;
+  attributes?: Json;
   created?: string;
   updated?: string;
   createdBy?: EmployeeItem;
@@ -14,6 +15,7 @@ export type ProjectItem = {
 export type ProjectListItem = {
   id: string;
   name: string;
+  attributes?: Json;
   created?: string;
   updated?: string;
   createdBy?: EmployeeItem;

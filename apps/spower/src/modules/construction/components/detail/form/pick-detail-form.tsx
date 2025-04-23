@@ -34,7 +34,7 @@ export const PickDetailForm: FC<PickDetailFormProps> = ({
     <Form
       schema={schema}
       defaultValues={initialValues}
-      onSubmit={onSuccess}
+      onSuccess={onSuccess}
       onCancel={onCancel}
       className={'flex flex-col gap-3'}
     >

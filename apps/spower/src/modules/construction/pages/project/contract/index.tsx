@@ -5,7 +5,7 @@ export const Route = createFileRoute(
 )({
   beforeLoad: ({ params }) => {
     throw redirect({
-      to: '/project/$projectId/contract/input',
+      to: '/$organizationId/project/$projectId/contract/input',
       params
     });
   }

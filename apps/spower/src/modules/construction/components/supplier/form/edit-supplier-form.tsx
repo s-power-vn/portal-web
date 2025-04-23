@@ -1,18 +1,18 @@
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
 
 const schema = object().shape({
   name: string().required('Hãy nhập tên nhà cung cấp'),
-  code: string().nullable(),
-  email: string().email('Sai định dạng email').nullable(),
-  phone: string().nullable(),
-  address: string().nullable(),
-  note: string().nullable()
+  code: string(),
+  email: string().email('Sai định dạng email'),
+  phone: string(),
+  address: string(),
+  note: string()
 });
 
 export type EditSupplierFormProps = BusinessFormProps & {
@@ -31,17 +31,40 @@ export const EditSupplierForm: FC<EditSupplierFormProps> = props => {
     }
   });
 
+  const handleFormSuccess = useCallback(
+    (values: {
+      code?: string;
+      name: string;
+      email?: string;
+      phone?: string;
+      address?: string;
+      note?: string;
+    }) => {
+      updateSupplier.mutate({
+        id: props.supplierId,
+        code: values.code ?? '',
+        name: values.name,
+        email: values.email ?? '',
+        phone: values.phone ?? '',
+        address: values.address ?? '',
+        note: values.note ?? ''
+      });
+    },
+    [props.supplierId, updateSupplier]
+  );
   return (
     <Form
       schema={schema}
-      onSuccess={values =>
-        updateSupplier.mutate({
-          id: props.supplierId,
-          ...values
-        })
-      }
+      onSuccess={handleFormSuccess}
       onCancel={props.onCancel}
-      defaultValues={supplierById.data}
+      defaultValues={{
+        code: supplierById.data?.code ?? '',
+        name: supplierById.data?.name ?? '',
+        email: supplierById.data?.email ?? '',
+        phone: supplierById.data?.phone ?? '',
+        address: supplierById.data?.address ?? '',
+        note: supplierById.data?.note ?? ''
+      }}
       loading={updateSupplier.isPending}
       className={'flex flex-col gap-3'}
     >

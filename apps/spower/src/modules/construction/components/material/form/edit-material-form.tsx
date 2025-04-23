@@ -1,7 +1,7 @@
 import { api } from 'portal-api';
 import { object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import { Form, TextField, TextareaField, success } from '@minhdtb/storeo-theme';
@@ -12,7 +12,7 @@ const schema = object().shape({
     .max(10, 'Mã vật tư không vượt quá 10 ký tự'),
   name: string().required('Hãy nhập tên vật tư'),
   unit: string().required('Hãy nhập đơn vị'),
-  note: string().nullable()
+  note: string()
 });
 
 export type EditMaterialFormProps = BusinessFormProps & {
@@ -20,7 +20,7 @@ export type EditMaterialFormProps = BusinessFormProps & {
 };
 
 export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
-  const materialById = api.material.byId.useSuspenseQuery({
+  const { data: material } = api.material.byId.useSuspenseQuery({
     variables: props.materialId
   });
 
@@ -31,17 +31,30 @@ export const EditMaterialForm: FC<EditMaterialFormProps> = props => {
     }
   });
 
+  const handleFormSuccess = useCallback(
+    (values: { code?: string; name: string; unit: string; note?: string }) => {
+      updateMaterial.mutate({
+        id: props.materialId,
+        code: values.code ?? '',
+        name: values.name,
+        unit: values.unit,
+        note: values.note ?? ''
+      });
+    },
+    [props.materialId, updateMaterial]
+  );
+
   return (
     <Form
       schema={schema}
-      onSuccess={values =>
-        updateMaterial.mutate({
-          id: props.materialId,
-          ...values
-        })
-      }
+      onSuccess={handleFormSuccess}
       onCancel={props.onCancel}
-      defaultValues={materialById.data}
+      defaultValues={{
+        code: material.code ?? '',
+        name: material.name ?? '',
+        unit: material.unit ?? '',
+        note: material.note ?? ''
+      }}
       loading={updateMaterial.isPending}
       className={'flex flex-col gap-3'}
     >

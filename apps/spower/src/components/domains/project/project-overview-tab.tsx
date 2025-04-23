@@ -40,8 +40,6 @@ import {
 
 import { Route } from '../../../routes/organization/project/$projectId';
 
-export const ADMIN_ID = '4jepkf28idxcfij'; /* TODO */
-
 export type ProjectOverviewTabProps = {
   projectId: string;
 };

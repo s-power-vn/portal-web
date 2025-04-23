@@ -14,8 +14,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import { api } from 'portal-api';
-import type { DetailResponse } from 'portal-core';
+import { DetailListItem, api } from 'portal-api';
 import { TreeData, arrayToTree, compareVersion } from 'portal-core';
 
 import type { FC } from 'react';
@@ -36,8 +35,8 @@ import { IndeterminateCheckbox } from '../../../../../components';
 
 export type PickDetailProps = {
   projectId?: string;
-  value?: DetailResponse[];
-  onChange?: (value: DetailResponse[]) => void;
+  value?: DetailListItem[];
+  onChange?: (value: DetailListItem[]) => void;
 };
 
 export const PickDetail: FC<PickDetailProps> = props => {
@@ -57,23 +56,17 @@ export const PickDetail: FC<PickDetailProps> = props => {
     );
   }, [props.value]);
 
-  const listDetails = api.detail.listFull.useSuspenseQuery({
+  const { data: listDetails } = api.detail.listFull.useSuspenseQuery({
     variables: props.projectId
   });
 
   const data = useMemo(() => {
-    const v = listDetails.data.map(it => {
-      return {
-        ...it,
-        group: it.id
-      };
-    });
-    return arrayToTree(v, `${props.projectId}-root`).sort((v1, v2) =>
+    return arrayToTree(listDetails).sort((v1, v2) =>
       compareVersion(v1.level, v2.level)
     );
-  }, [listDetails.data, props.projectId]);
+  }, [listDetails]);
 
-  const columnHelper = createColumnHelper<TreeData<DetailResponse>>();
+  const columnHelper = createColumnHelper<TreeData<DetailListItem>>();
 
   const columns = useMemo(
     () => [
@@ -242,7 +235,7 @@ export const PickDetail: FC<PickDetailProps> = props => {
     ) {
       props.onChange?.(selectedItems);
     }
-  }, [rowSelection, table, props.onChange, props.value]);
+  }, [rowSelection, table, props.onChange, props.value, props]);
 
   return (
     <div className="flex flex-col gap-2">

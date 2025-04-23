@@ -1,3 +1,7 @@
+export * from './detail-info/detail-info';
+export * from './detail-info/detail-info.type';
+export * from './detail/detail';
+export * from './detail/detail.type';
 export * from './issue/issue';
 export * from './issue/issue.type';
 export * from './organization/organization';
@@ -5,6 +9,6 @@ export * from './organization/organization.type';
 export * from './price';
 export * from './project/project';
 export * from './project/project.type';
-export * from './request';
+export * from './request/request';
 export * from './user/user';
 export * from './user/user.type';

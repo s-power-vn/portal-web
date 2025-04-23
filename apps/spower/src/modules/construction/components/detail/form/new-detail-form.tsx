@@ -1,10 +1,10 @@
-import { api } from 'portal-api';
-import type { DetailInfoResponse } from 'portal-core';
+import { DetailListItem, api } from 'portal-api';
 import { TreeData } from 'portal-core';
 import { number, object, string } from 'yup';
 
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
+import { Show } from '@minhdtb/storeo-core';
 import type { BusinessFormProps } from '@minhdtb/storeo-theme';
 import {
   Form,
@@ -38,7 +38,7 @@ const schema = object().shape({
 
 export type NewDetailFormProps = BusinessFormProps & {
   projectId: string;
-  parent?: TreeData<DetailInfoResponse>;
+  parent?: TreeData<DetailListItem>;
 };
 
 export const NewDetailForm: FC<NewDetailFormProps> = props => {
@@ -49,20 +49,36 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
     }
   });
 
+  const handleFormSuccess = useCallback(
+    (values: {
+      level?: string;
+      title?: string;
+      volume?: number;
+      unit?: string;
+      unitPrice?: number;
+    }) => {
+      createDetail.mutate({
+        project_id: props.projectId,
+        parent_id: props.parent?.id,
+        title: values.title ?? '',
+        level: values.level ?? '',
+        volume: values.volume ?? 0,
+        unit: values.unit ?? '',
+        unit_price: values.unitPrice ?? 0
+      });
+    },
+    [props.projectId, props.parent?.id, createDetail]
+  );
+
   return (
     <Form
       schema={schema}
-      onSuccess={values =>
-        createDetail.mutate({
-          ...values,
-          project: props.projectId,
-          parent: props.parent?.group
-        })
-      }
+      onSuccess={handleFormSuccess}
       defaultValues={{
         level: '',
         title: '',
-        unit: ''
+        unit: '',
+        unitPrice: 0
       }}
       onCancel={props.onCancel}
       loading={createDetail.isPending}
@@ -70,21 +86,19 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
     >
       <TextField schema={schema} name={'level'} title={'ID (Mã công việc)'} />
       <TextareaField schema={schema} name={'title'} title={'Mô tả công việc'} />
-      {props.parent ? (
-        <>
-          <NumericField
-            schema={schema}
-            name={'volume'}
-            title={'Khối lượng thầu'}
-          />
-          <TextField schema={schema} name={'unit'} title={'Đơn vị'} />
-          <NumericField
-            schema={schema}
-            name={'unitPrice'}
-            title={'Đơn giá thầu'}
-          />
-        </>
-      ) : null}
+      <Show when={props.parent}>
+        <NumericField
+          schema={schema}
+          name={'volume'}
+          title={'Khối lượng thầu'}
+        />
+        <TextField schema={schema} name={'unit'} title={'Đơn vị'} />
+        <NumericField
+          schema={schema}
+          name={'unitPrice'}
+          title={'Đơn giá thầu'}
+        />
+      </Show>
     </Form>
   );
 };

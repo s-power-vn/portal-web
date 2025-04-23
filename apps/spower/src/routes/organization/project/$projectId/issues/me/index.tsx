@@ -216,7 +216,7 @@ function Component() {
             }}
           >
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow className="hover:bg-appBlue" key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}

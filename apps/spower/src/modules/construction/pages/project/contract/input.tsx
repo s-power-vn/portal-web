@@ -14,7 +14,6 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import console from 'console';
 import _ from 'lodash';
 import {
   Columns3Icon,
@@ -28,11 +27,10 @@ import {
   SquarePlusIcon,
   XIcon
 } from 'lucide-react';
-import { api } from 'portal-api';
-import type { DetailInfoResponse, TreeData } from 'portal-core';
+import { DetailItem, DetailListItem, api } from 'portal-api';
+import type { TreeData } from 'portal-core';
 import {
   arrayToTree,
-  client,
   compareVersion,
   downloadTemplate,
   getCommonPinningStyles,
@@ -40,7 +38,7 @@ import {
 } from 'portal-core';
 
 import type { ChangeEvent } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Show, cn, formatCurrency, formatNumber } from '@minhdtb/storeo-core';
 import {
@@ -63,7 +61,6 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import {
-  ADMIN_ID,
   ColumnManager,
   IndeterminateCheckbox,
   NewColumnForm
@@ -72,16 +69,20 @@ import {
   useDetailImportStatus,
   useInvalidateQueries
 } from '../../../../../hooks';
-import {
-  EditDetailForm,
-  NewDetailForm
-} from '../../../components/detail';
+import { EditDetailForm, NewDetailForm } from '../../../components/detail';
 
-const Component = () => {
+export const Route = createFileRoute(
+  '/_private/$organizationId/project/$projectId/contract/input'
+)({
+  component: Component,
+  beforeLoad: () => ({ title: 'Hợp đồng đầu vào' })
+});
+
+function Component() {
   const { projectId } = Route.useParams();
 
   const [selectedRow, setSelectedRow] =
-    useState<Row<TreeData<DetailInfoResponse>>>();
+    useState<Row<TreeData<DetailListItem>>>();
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -140,29 +141,38 @@ const Component = () => {
     [projectId, showLoading, uploadFile]
   );
 
-  const handleNewDetailParent = useCallback(() => {
+  const handleNewDetailSuccess = useCallback(
+    (close: () => void) => {
+      return () => {
+        invalidates([
+          api.detail.listFull.getKey(projectId),
+          api.detailInfo.listFull.getKey(projectId)
+        ]);
+
+        if (selectedRow) {
+          invalidates([api.detail.byId.getKey(selectedRow.original.id)]);
+        }
+
+        close();
+      };
+    },
+    [invalidates, projectId, selectedRow]
+  );
+
+  const handleNewDetail = useCallback(() => {
     showModal({
       title: 'Thêm mục cha',
-      children: ({ close }) => (
-        <NewDetailForm
-          projectId={projectId}
-          onSuccess={() => {
-            invalidates([
-              api.detail.listFull.getKey(projectId),
-              api.detailInfo.listFull.getKey(projectId)
-            ]);
-
-            if (selectedRow) {
-              invalidates([api.detail.byId.getKey(selectedRow.original.group)]);
-            }
-
-            close();
-          }}
-          onCancel={close}
-        />
-      )
+      children: ({ close }) => {
+        return (
+          <NewDetailForm
+            projectId={projectId}
+            onSuccess={handleNewDetailSuccess(close)}
+            onCancel={close}
+          />
+        );
+      }
     });
-  }, [invalidates, projectId, selectedRow]);
+  }, [handleNewDetailSuccess, projectId]);
 
   const handleNewDetailChild = useCallback(() => {
     if (selectedRow) {
@@ -172,26 +182,29 @@ const Component = () => {
           <NewDetailForm
             projectId={projectId}
             parent={selectedRow.original}
-            onSuccess={() => {
-              invalidates([
-                api.detail.listFull.getKey(projectId),
-                api.detailInfo.listFull.getKey(projectId)
-              ]);
-
-              if (selectedRow) {
-                invalidates([
-                  api.detail.byId.getKey(selectedRow.original.group)
-                ]);
-              }
-
-              close();
-            }}
+            onSuccess={handleNewDetailSuccess(close)}
             onCancel={close}
           />
         )
       });
     }
-  }, [invalidates, projectId, selectedRow]);
+  }, [handleNewDetailSuccess, projectId, selectedRow]);
+
+  const handleEditDetailSuccess = useCallback(
+    (close: () => void) => {
+      return () => {
+        if (selectedRow) {
+          invalidates([
+            api.detail.listFull.getKey(projectId),
+            api.detailInfo.listFull.getKey(projectId),
+            api.detail.byId.getKey(selectedRow.original.id)
+          ]);
+        }
+        close();
+      };
+    },
+    [invalidates, projectId, selectedRow]
+  );
 
   const handleEditDetail = useCallback(() => {
     if (selectedRow) {
@@ -199,23 +212,18 @@ const Component = () => {
         title: 'Sửa công việc',
         children: ({ close }) => (
           <EditDetailForm
-            detailId={selectedRow.original.group}
-            onSuccess={() => {
-              if (selectedRow) {
-                invalidates([
-                  api.detail.listFull.getKey(projectId),
-                  api.detailInfo.listFull.getKey(projectId),
-                  api.detail.byId.getKey(selectedRow.original.group)
-                ]);
-              }
-              close();
-            }}
+            detailId={selectedRow.original.id}
+            onSuccess={handleEditDetailSuccess(close)}
             onCancel={close}
           />
         )
       });
     }
-  }, [invalidates, projectId, selectedRow]);
+  }, [handleEditDetailSuccess, selectedRow]);
+
+  const handleNewColumnSuccess = useCallback(() => {
+    invalidates([api.project.byId.getKey(projectId)]);
+  }, [invalidates, projectId]);
 
   const handleNewColumn = useCallback(() => {
     showModal({
@@ -224,14 +232,12 @@ const Component = () => {
       children: ({ close }) => (
         <NewColumnForm
           projectId={projectId}
-          onSuccess={() => {
-            invalidates([api.project.byId.getKey(projectId)]);
-          }}
+          onSuccess={handleNewColumnSuccess}
           onCancel={close}
         />
       )
     });
-  }, [invalidates, projectId]);
+  }, [handleNewColumnSuccess, projectId]);
 
   const handleManageColumn = useCallback(() => {
     showModal({
@@ -242,25 +248,54 @@ const Component = () => {
     });
   }, [projectId]);
 
-  const project = api.project.byId.useSuspenseQuery({
+  const { data: project } = api.project.byId.useSuspenseQuery({
     variables: projectId
   });
 
-  const columnHelper = createColumnHelper<TreeData<DetailInfoResponse>>();
+  const { data: listDetails } = api.detail.listFull.useSuspenseQuery({
+    variables: projectId
+  });
 
-  const resetDetails = useCallback(async () => {
-    const details = await api.detail.listFull.fetcher(projectId);
-    for (const detail of details) {
-      console.log(detail);
-      // await api.detail.delete.mutationFn([detail.id]);
-    }
+  const data = useMemo(() => {
+    return arrayToTree(listDetails).sort((v1, v2) =>
+      compareVersion(v1.level, v2.level)
+    );
+  }, [listDetails]);
+
+  const table = useReactTable({
+    data,
+    columns: [],
+    initialState: {
+      columnPinning: {
+        left: ['id', 'level', 'select', 'title']
+      }
+    },
+    state: {
+      expanded,
+      rowSelection,
+      columnVisibility: {}
+    },
+    enableRowSelection: true,
+    onExpandedChange: setExpanded,
+    onRowSelectionChange: setRowSelection,
+    getSubRows: row =>
+      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    manualPagination: true
+  });
+
+  const handleToggleExpanded = useCallback((row: Row<TreeData<DetailItem>>) => {
+    return (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      if (row.getCanExpand()) {
+        row.toggleExpanded();
+      }
+    };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      // resetDetails();
-    }, 5000);
-  }, [invalidates, projectId]);
+  const columnHelper = createColumnHelper<TreeData<DetailItem>>();
 
   const columns = useMemo(() => {
     const value = [
@@ -271,10 +306,7 @@ const Component = () => {
               {row.getCanExpand() ? (
                 <button
                   className={'cursor-pointer'}
-                  onClick={e => {
-                    e.stopPropagation();
-                    row.toggleExpanded();
-                  }}
+                  onClick={handleToggleExpanded(row)}
                 >
                   {row.getIsExpanded() ? (
                     <SquareMinusIcon width={18} height={18} />
@@ -348,7 +380,7 @@ const Component = () => {
       columnHelper.accessor('volume', {
         cell: ({ row }) => (
           <div className={'flex justify-end gap-1'}>
-            {maskVolumeString(formatNumber(row.original.volume))}
+            {maskVolumeString(formatNumber(row.original.volume ?? 0))}
           </div>
         ),
         header: () => 'Khối lượng mời thầu',
@@ -367,7 +399,7 @@ const Component = () => {
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              {formatCurrency(row.original.unitPrice)}
+              {formatCurrency(row.original.unitPrice ?? 0)}
               <span>₫</span>
             </div>
           </Show>
@@ -384,7 +416,9 @@ const Component = () => {
         cell: ({ row }) => (
           <Show when={row.original.unitPrice}>
             <div className={'flex justify-end'}>
-              {formatCurrency(row.original.unitPrice * row.original.volume)}
+              {formatCurrency(
+                (row.original.unitPrice ?? 0) * (row.original.volume ?? 0)
+              )}
               <span>₫</span>
             </div>
           </Show>
@@ -398,8 +432,12 @@ const Component = () => {
       })
     ];
 
-    if (project.data.expand?.column_via_project) {
-      for (const col of project.data.expand.column_via_project) {
+    if (!project.attributes) return value;
+
+    const columns = (project.attributes as any).columns;
+
+    if (columns) {
+      for (const col of columns) {
         value.push(
           columnHelper.display({
             id: col.id,
@@ -434,48 +472,12 @@ const Component = () => {
     }
 
     return value;
-  }, [columnHelper, project.data.expand?.column_via_project]);
+  }, [columnHelper, handleToggleExpanded, project.attributes, table]);
 
-  const listDetailInfos = api.detailInfo.listFull.useSuspenseQuery({
-    variables: projectId
-  });
-
-  const data = useMemo(
-    () =>
-      arrayToTree(listDetailInfos.data, `${projectId}-root`, [
-        'requestVolume',
-        'issueCode',
-        'issueTitle'
-      ]).sort((v1, v2) => compareVersion(v1.level, v2.level)),
-    [listDetailInfos.data, projectId]
-  );
-
-  const table = useReactTable({
-    data,
-    columns,
-    initialState: {
-      columnPinning: {
-        left: ['id', 'level', 'select', 'title']
-      }
-    },
-    state: {
-      expanded,
-      rowSelection,
-      columnVisibility: {
-        unitPrice: client.authStore.model?.id === ADMIN_ID,
-        biddingTotal: client.authStore.model?.id === ADMIN_ID
-      }
-    },
-    enableRowSelection: true,
-    onExpandedChange: setExpanded,
-    onRowSelectionChange: setRowSelection,
-    getSubRows: row =>
-      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true
-  });
+  table.setOptions(prev => ({
+    ...prev,
+    columns
+  }));
 
   const { rows } = table.getRowModel();
 
@@ -487,6 +489,39 @@ const Component = () => {
     estimateSize: () => 50,
     overscan: 20
   });
+
+  const handleImportClick = useCallback(() => {
+    inputFileRef.current?.click();
+  }, []);
+
+  const handleDeleteClick = useCallback(
+    () =>
+      confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
+        const selected = table.getSelectedRowModel();
+        showLoading();
+        deleteDetails
+          .mutateAsync(selected.flatRows.map(row => row.original.id))
+          .then(() => {
+            setRowSelection({});
+          })
+          .finally(() => hideLoading());
+      }),
+    [confirm, deleteDetails, hideLoading, showLoading, table]
+  );
+
+  const handleSelectRow = useCallback(
+    (row: Row<TreeData<DetailItem>>) => {
+      return (e: React.MouseEvent<HTMLTableRowElement>) => {
+        e.stopPropagation();
+        if (selectedRow?.id !== row.id) {
+          setSelectedRow(row);
+        } else {
+          setSelectedRow(undefined);
+        }
+      };
+    },
+    [selectedRow]
+  );
 
   return (
     <div className={'flex flex-col gap-2 p-2'}>
@@ -502,7 +537,7 @@ const Component = () => {
         <Button
           variant={'outline'}
           className={'flex gap-1'}
-          onClick={() => inputFileRef.current?.click()}
+          onClick={handleImportClick}
         >
           <SheetIcon className={'h-5 w-5'} />
           Nhập từ Excel
@@ -515,7 +550,7 @@ const Component = () => {
           <DownloadIcon className={'h-5 w-5'} />
           Tải file mẫu
         </Button>
-        <Button className={'flex gap-1'} onClick={handleNewDetailParent}>
+        <Button className={'flex gap-1'} onClick={handleNewDetail}>
           <PlusIcon />
           Thêm mục cha
         </Button>
@@ -535,18 +570,7 @@ const Component = () => {
           variant="outline"
           className={'text-appWhite bg-red-500'}
           size="icon"
-          onClick={() =>
-            confirm('Bạn chắc chắn muốn xóa những mục đã chọn?', () => {
-              const selected = table.getSelectedRowModel();
-              showLoading();
-              deleteDetails
-                .mutateAsync(selected.flatRows.map(row => row.original.group))
-                .then(() => {
-                  setRowSelection({});
-                })
-                .finally(() => hideLoading());
-            })
-          }
+          onClick={handleDeleteClick}
         >
           <XIcon className={'h-5 w-5'} />
         </Button>
@@ -626,13 +650,7 @@ const Component = () => {
                 return (
                   <TableRow
                     className={'group absolute w-full cursor-pointer'}
-                    onClick={() => {
-                      if (selectedRow?.id !== row.id) {
-                        setSelectedRow(row);
-                      } else {
-                        setSelectedRow(undefined);
-                      }
-                    }}
+                    onClick={handleSelectRow(row)}
                     key={virtualRow.key}
                     data-index={virtualRow.index}
                     ref={virtualizer.measureElement}
@@ -678,11 +696,4 @@ const Component = () => {
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/$organizationId/project/$projectId/contract/input'
-)({
-  component: Component,
-  beforeLoad: () => ({ title: 'Hợp đồng đầu vào' })
-});
+}

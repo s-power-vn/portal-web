@@ -1,12 +1,12 @@
 import { authApi } from './auth';
 import { commentApi } from './domain/comment';
-import { detailApi, detailImportApi, detailInfoApi } from './domain/detail';
+import { detailInfoApi } from './domain/detail-info/detail-info';
+import { detailApi, detailImportApi } from './domain/detail/detail';
 import { issueApi } from './domain/issue/issue';
 import { organizationApi } from './domain/organization/organization';
 import { priceApi } from './domain/price';
 import { projectApi } from './domain/project/project';
-import type { RequestData, RequestDetailData } from './domain/request';
-import { requestApi } from './domain/request';
+import { requestApi } from './domain/request/request';
 import { userApi } from './domain/user/user';
 import {
   MsgChannel,
@@ -56,9 +56,7 @@ export type {
   MsgMessage,
   MsgReaction,
   MsgSetting,
-  MsgTeam,
-  RequestData,
-  RequestDetailData
+  MsgTeam
 };
 
 export { ListSchema };

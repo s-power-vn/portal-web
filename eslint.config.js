@@ -3,6 +3,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import nxPlugin from '@nx/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
+import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -43,12 +44,20 @@ export default [
   {
     files: ['**/*.{jsx,tsx}'],
     plugins: {
-      'react-hooks': reactHooksPlugin
+      'react-hooks': reactHooksPlugin,
+      react: reactPlugin
     },
     rules: {
-      // Kiểm tra dependencies trong useCallback và useMemo
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'warn',
+      'react/jsx-no-bind': [
+        'warn',
+        {
+          allowArrowFunctions: false,
+          allowBind: false,
+          allowFunctions: false
+        }
+      ]
     }
   },
 
