@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { DepartmentItem, ListSchema, api } from 'portal-api';
+import { DepartmentItem, ListSchema, departmentApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.department.list.getOptions({
+      departmentApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter ?? ''
       })
@@ -59,11 +59,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.department.list.getKey({
+      queryKey: departmentApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.department.list.fetcher({
+        departmentApi.list.fetcher({
           filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
@@ -78,12 +78,10 @@ function Component() {
     [data]
   );
 
-  const deleteDepartment = api.department.delete.useMutation({
+  const deleteDepartment = departmentApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa phòng ban thành công');
-      invalidates([
-        api.department.list.getKey({ filter: search.filter ?? '' })
-      ]);
+      invalidates([departmentApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
@@ -336,9 +334,7 @@ function Component() {
                           {row.getVisibleCells().map(cell => (
                             <TableCell
                               key={cell.id}
-                              className={
-                                'box-boder truncate text-left last:border-r'
-                              }
+                              className={'truncate text-left'}
                               style={{
                                 width: cell.column.getSize(),
                                 minWidth: cell.column.getSize(),

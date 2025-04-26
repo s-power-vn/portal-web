@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import { Loader } from 'lucide-react';
-import { DepartmentItem, EmployeeListItem, api } from 'portal-api';
+import {
+  DepartmentItem,
+  EmployeeListItem,
+  departmentApi,
+  employeeApi
+} from 'portal-api';
 
 import { FC, Suspense, useMemo } from 'react';
 
@@ -158,11 +163,10 @@ const ConditionDisplayComponent: FC<ConditionDisplayProps> = ({
     [parsedConditions]
   );
 
-  const { data: departmentsResult } =
-    api.department.listFull.useSuspenseQuery();
+  const { data: departmentsResult } = departmentApi.listFull.useSuspenseQuery();
   const departments = departmentsResult || [];
 
-  const { data: employees } = api.employee.byIds.useSuspenseQuery({
+  const { data: employees } = employeeApi.byIds.useSuspenseQuery({
     variables: employeeIds
   });
 

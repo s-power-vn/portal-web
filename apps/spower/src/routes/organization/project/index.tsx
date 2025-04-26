@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Loader } from 'lucide-react';
-import { ListSchema, ProjectListItem, api } from 'portal-api';
+import { ListSchema, ProjectListItem, projectApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -33,12 +33,12 @@ const Component = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.project.list.getKey({
+      queryKey: projectApi.list.getKey({
         ...search,
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.project.list.fetcher({
+        projectApi.list.fetcher({
           ...search,
           filter: search.filter ?? '',
           pageIndex: pageParam,
@@ -171,11 +171,7 @@ const Component = () => {
         placeholder={'Tìm kiếm...'}
         onChange={handleSearchChange}
       />
-      <div
-        className={
-          'border-appGray relative min-h-0 flex-1 overflow-hidden rounded-md border'
-        }
-      >
+      <div className={'relative min-h-0 flex-1 overflow-hidden rounded-md'}>
         <div
           className="absolute inset-0 overflow-auto"
           ref={parentRef}
@@ -194,7 +190,6 @@ const Component = () => {
               className="relative"
             >
               <TableHeader
-                className={'bg-appBlueLight'}
                 style={{
                   position: 'sticky',
                   top: 0,
@@ -202,11 +197,11 @@ const Component = () => {
                 }}
               >
                 {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className={'hover:bg-appBlue'}>
+                  <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map(header => (
                       <TableHead
                         key={header.id}
-                        className={'text-appWhite whitespace-nowrap'}
+                        className={'text-appBlue whitespace-nowrap'}
                         style={{
                           width: header.getSize(),
                           minWidth: header.getSize(),
@@ -249,7 +244,7 @@ const Component = () => {
                         {row.getVisibleCells().map(cell => (
                           <TableCell
                             key={cell.id}
-                            className={'truncate text-left last:border-r'}
+                            className={'truncate text-left'}
                             style={{
                               width: cell.column.getSize(),
                               minWidth: cell.column.getSize(),
@@ -298,7 +293,7 @@ export const Route = createFileRoute('/_private/$organizationId/project/')({
   },
   loader: ({ deps, context: { queryClient } }) => {
     return queryClient?.ensureQueryData(
-      api.project.list.getOptions({
+      projectApi.list.getOptions({
         filter: deps.search.filter
       })
     );

@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { objectApi } from 'portal-api';
 import { boolean, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -30,11 +30,11 @@ export type EditObjectFormProps = BusinessFormProps & {
 export const EditObjectForm: FC<EditObjectFormProps> = props => {
   const { objectId } = props;
 
-  const { data: objectData } = api.object.byId.useSuspenseQuery({
+  const { data: objectData } = objectApi.byId.useSuspenseQuery({
     variables: objectId
   });
 
-  const updateObject = api.object.update.useMutation({
+  const updateObject = objectApi.update.useMutation({
     onSuccess: async () => {
       success('Cập nhật đối tượng thành công');
       props.onSuccess?.();

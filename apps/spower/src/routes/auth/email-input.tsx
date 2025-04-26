@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { api } from 'portal-api';
+import { userApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import {
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/email-input')({
 
 function EmailInput() {
   const navigate = useNavigate();
-  const sendEmailOtp = api.user.sendEmailOtp.useMutation({
+  const sendEmailOtp = userApi.sendEmailOtp.useMutation({
     onSuccess: (_, { email }) => {
       navigate({
         to: '/email-verify',

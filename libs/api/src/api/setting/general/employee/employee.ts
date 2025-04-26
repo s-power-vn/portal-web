@@ -144,14 +144,14 @@ export const employeeApi = router('employee', {
     fetcher: async (id: string): Promise<EmployeeItem> => {
       try {
         const { data, error } = await client2.rest
-          .from('organization_members')
+          .from('organizations_members')
           .select(
             `
             *,
             user:users!user_id(*),
             department:departments!department_id(name),
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)
           `
           )
           .eq('id', id)
@@ -202,7 +202,7 @@ export const employeeApi = router('employee', {
         }
 
         const { data, error } = await client2.rest
-          .from('organization_members')
+          .from('organizations_members')
           .select(
             `
             *,
@@ -260,7 +260,7 @@ export const employeeApi = router('employee', {
       try {
         const { id, ...updateParams } = params;
         const { error } = await client2.rest
-          .from('organization_members')
+          .from('organizations_members')
           .update({
             ...updateParams
           })
@@ -280,7 +280,7 @@ export const employeeApi = router('employee', {
     mutationFn: async (id: string): Promise<void> => {
       try {
         const { error } = await client2.rest
-          .from('organization_members')
+          .from('organizations_members')
           .delete()
           .eq('id', id);
 

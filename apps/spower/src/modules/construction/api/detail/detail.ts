@@ -14,7 +14,7 @@ export const detailApi = router('detail', {
   listFull: router.query({
     fetcher: async (projectId: string): Promise<DetailFullListResponse> => {
       const { data, error } = await client2.rest
-        .from('details')
+        .from('md_con_details')
         .select(
           `
             *,
@@ -67,7 +67,7 @@ export const detailApi = router('detail', {
   byId: router.query({
     fetcher: async (id: string): Promise<DetailItem> => {
       const { data, error } = await client2.rest
-        .from('details')
+        .from('md_con_details')
         .select(
           `
             *,
@@ -80,8 +80,8 @@ export const detailApi = router('detail', {
               id,
               name
             ),
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)
           `
         )
         .eq('id', id)
@@ -115,15 +115,14 @@ export const detailApi = router('detail', {
   create: router.mutation({
     mutationFn: async (params: CreateDetailInput): Promise<void> => {
       try {
-        const { error } = await client2.rest.from('details').insert({
+        const { error } = await client2.rest.from('md_con_details').insert({
           title: params.title,
           note: params.note,
           volume: params.volume,
           unit: params.unit,
           unit_price: params.unit_price,
           level: params.level,
-          parent_id: params.parent_id,
-          project_id: params.project_id
+          parent_id: params.parent_id
         });
 
         if (error) {
@@ -140,7 +139,7 @@ export const detailApi = router('detail', {
     mutationFn: async (params: UpdateDetailInput): Promise<void> => {
       try {
         const { error } = await client2.rest
-          .from('details')
+          .from('md_con_details')
           .update({
             title: params.title,
             note: params.note,
@@ -165,7 +164,7 @@ export const detailApi = router('detail', {
     mutationFn: async (detailIds: string[]): Promise<void> => {
       try {
         const { error } = await client2.rest
-          .from('details')
+          .from('md_con_details')
           .delete()
           .in('id', detailIds);
 

@@ -8,9 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import _ from 'lodash';
 import { PrinterIcon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import { api } from 'portal-api';
 import {
   BASE_URL,
   TreeData,
@@ -37,22 +35,9 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import { ADMIN_ID, ProcessData } from '../../../../components';
+import { ProcessData } from '../../../../components';
+import { RequestDetailItem, requestApi } from '../../api';
 import { RequestDocument } from './request-document';
-
-export type RequestDetailItem = {
-  id?: string;
-  title: string;
-  unit: string;
-  group: string;
-  level: string;
-  requestVolume?: number;
-  deliveryDate?: string;
-  note?: string;
-  parent?: string;
-  index?: string;
-  isNew?: boolean;
-};
 
 export type RequestDisplayProps = {
   issueId: string;
@@ -61,41 +46,13 @@ export type RequestDisplayProps = {
 export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-  const request = api.request.byIssueId.useSuspenseQuery({
+  const { data: request } = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
 
-  const issue = api.issue.byId.useSuspenseQuery({
-    variables: issueId
-  });
-
-  const v = useMemo<RequestDetailItem[]>(() => {
-    return _.chain(
-      request.data ? request.data?.expand?.requestDetail_via_request : []
-    )
-      .map(it => {
-        const { customLevel, customUnit, customTitle } = it;
-
-        return {
-          id: it.id,
-          title: it.expand?.detail.title ?? customTitle,
-          unit: it.expand?.detail.unit ?? customUnit,
-          group: it.expand?.detail.id ?? customLevel,
-          level: it.expand?.detail.level ?? customLevel,
-          requestVolume: it.requestVolume,
-          deliveryDate: it.deliveryDate,
-          note: it.note,
-          index: it.index,
-          parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
-        };
-      })
-      .orderBy('level')
-      .value();
-  }, [request.data]);
-
-  const requestDetails = useMemo(() => {
-    return arrayToTree(v, `${request.data?.project}-root`);
-  }, [request.data?.project, v]);
+  const data = useMemo(() => {
+    return arrayToTree(request?.details ?? []);
+  }, [request]);
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailItem>>();
 
@@ -224,7 +181,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
   );
 
   const table = useReactTable({
-    data: requestDetails,
+    data,
     columns,
     initialState: {
       columnPinning: {
@@ -232,10 +189,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
       }
     },
     state: {
-      expanded,
-      columnVisibility: {
-        unitPrice: client.authStore.record?.id === ADMIN_ID
-      }
+      expanded
     },
     onExpandedChange: setExpanded,
     getSubRows: row => row.children,
@@ -252,27 +206,27 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
     showLoading();
     const html = await compile(
       <RequestDocument
-        project={request.data?.expand?.project.name}
-        code={request.data?.expand?.issue.code}
-        bidding={request.data?.expand?.project.bidding}
-        requester={request.data?.expand?.issue.expand?.createdBy.name}
-        department={
-          request.data?.expand?.issue.expand?.createdBy.expand?.department.name
-        }
-        content={request.data?.expand?.issue.title}
-        data={v}
+        project={request?.project?.name}
+        code={request?.issue?.code}
+        bidding={''}
+        requester={request?.issue?.createdBy?.name}
+        department={request?.issue?.createdBy?.department?.name}
+        content={request?.issue?.title}
+        data={request?.details ?? []}
         processData={
-          (issue.data.expand?.object?.expand?.process?.process || {
+          (request?.issue?.object?.process?.process || {
             nodes: [],
             flows: []
           }) as ProcessData
         }
-        approvers={issue.data?.approver?.map(it => ({
-          userId: it.userId,
-          userName: it.userName,
-          nodeId: it.nodeId,
-          nodeName: it.nodeName
-        }))}
+        approvers={
+          (request?.issue?.approvers as {
+            userId: string;
+            userName: string;
+            nodeId: string;
+            nodeName: string;
+          }[]) ?? []
+        }
       />
     );
     fetch(`${BASE_URL}/pdf/create`, {
@@ -297,7 +251,7 @@ export const RequestDisplay: FC<RequestDisplayProps> = ({ issueId }) => {
         });
       })
       .finally(() => hideLoading());
-  }, [request.data, v, showLoading, hideLoading, issue.data]);
+  }, [showLoading, request, hideLoading]);
 
   return (
     <div className={'bg-appWhite flex flex-col gap-2 p-2'}>

@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { customerApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -17,7 +17,7 @@ const schema = object().shape({
 export type NewCustomerFormProps = BusinessFormProps;
 
 export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
-  const createCustomer = api.customer.create.useMutation({
+  const createCustomer = customerApi.create.useMutation({
     onSuccess: async () => {
       success('Thêm chủ đầu tư thành công');
       props.onSuccess?.();
@@ -27,7 +27,7 @@ export const NewCustomerForm: FC<NewCustomerFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values => createCustomer.mutate(values)}
+      onSuccess={values => createCustomer.mutate(values)}
       onCancel={props.onCancel}
       loading={createCustomer.isPending}
       className={'flex flex-col gap-3'}

@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { projectApi } from 'portal-api';
 import { currentEmployeeId } from 'portal-core';
 import { object, string } from 'yup';
 
@@ -19,23 +19,23 @@ const Component = () => {
   const { projectId } = Route.useParams();
   const [deleteConfirm, setDeleteConfirm] = useState('');
 
-  const { data: project } = api.project.byId.useSuspenseQuery({
+  const { data: project } = projectApi.byId.useSuspenseQuery({
     variables: projectId
   });
 
   const { mutate: updateProject, isPending: isUpdating } =
-    api.project.update.useMutation({
+    projectApi.update.useMutation({
       onSuccess: async () => {
         success('Cập nhật dự án thành công');
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: api.project.byId.getKey(projectId)
+            queryKey: projectApi.byId.getKey(projectId)
           })
         ]);
       }
     });
 
-  const deleteProject = api.project.delete.useMutation({
+  const deleteProject = projectApi.delete.useMutation({
     onSuccess: () => {
       success('Xóa dự án thành công');
       router.navigate({ to: '/' });

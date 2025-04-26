@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { customerApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -19,11 +19,11 @@ export type EditCustomerFormProps = BusinessFormProps & {
 };
 
 export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
-  const customerById = api.customer.byId.useSuspenseQuery({
+  const customerById = customerApi.byId.useSuspenseQuery({
     variables: props.customerId
   });
 
-  const updateCustomer = api.customer.update.useMutation({
+  const updateCustomer = customerApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa chủ đầu tư thành công');
       props.onSuccess?.();
@@ -33,7 +33,7 @@ export const EditCustomerForm: FC<EditCustomerFormProps> = props => {
   return (
     <Form
       schema={schema}
-      onSubmit={values =>
+      onSuccess={values =>
         updateCustomer.mutate({
           id: props.customerId,
           ...values

@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { materialApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
@@ -18,8 +18,8 @@ const Component = () => {
     setOpen(false);
     history.back();
     invalidates([
-      api.material.byId.getKey(materialId),
-      api.material.list.getKey()
+      materialApi.byId.getKey(materialId),
+      materialApi.list.getKey()
     ]);
   }, [history, invalidates, materialId]);
 
@@ -53,5 +53,5 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { materialId } }) =>
-    queryClient?.ensureQueryData(api.material.byId.getOptions(materialId))
+    queryClient?.ensureQueryData(materialApi.byId.getOptions(materialId))
 });

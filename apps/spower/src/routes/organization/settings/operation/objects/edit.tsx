@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { objectApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
@@ -8,7 +8,15 @@ import { Modal } from '@minhdtb/storeo-theme';
 import { EditObjectForm } from '../../../../../components';
 import { useInvalidateQueries } from '../../../../../hooks';
 
-const Component = () => {
+export const Route = createFileRoute(
+  '/_private/$organizationId/settings/operation/objects/$objectId/edit'
+)({
+  component: Component,
+  loader: ({ context: { queryClient }, params: { objectId } }) =>
+    queryClient?.ensureQueryData(objectApi.byId.getOptions(objectId))
+});
+
+function Component() {
   const [open, setOpen] = useState(true);
   const { history } = useRouter();
   const invalidates = useInvalidateQueries();
@@ -17,7 +25,7 @@ const Component = () => {
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.object.list.getKey(), api.object.byId.getKey(objectId)]);
+    invalidates([objectApi.list.getKey(), objectApi.byId.getKey(objectId)]);
   }, [history, invalidates, objectId]);
 
   const onCancelHandler = useCallback(() => {
@@ -43,12 +51,4 @@ const Component = () => {
       />
     </Modal>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/$organizationId/settings/operation/objects/$objectId/edit'
-)({
-  component: Component,
-  loader: ({ context: { queryClient }, params: { objectId } }) =>
-    queryClient?.ensureQueryData(api.object.byId.getOptions(objectId))
-});
+}

@@ -1,5 +1,5 @@
 import { Loader, PaperclipIcon } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 import { IssueDeadlineStatusOptions, currentEmployeeId } from 'portal-core';
 
 import type { FC } from 'react';
@@ -47,7 +47,7 @@ const DynamicObjectDisplay: FC<DynamicObjectDisplayProps> = ({
 };
 
 const IssueComponent: FC<IssueProps> = ({ issueId }) => {
-  const { data: issue } = api.issue.byId.useSuspenseQuery({
+  const { data: issue } = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 

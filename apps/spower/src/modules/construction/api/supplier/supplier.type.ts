@@ -1,6 +1,5 @@
+import { EmployeeItem } from 'portal-api';
 import { PaginatedResponse } from 'portal-core';
-
-import { EmployeeItem } from '../employee/employee.type';
 
 export type SupplierItem = {
   id: string;

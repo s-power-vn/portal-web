@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -17,7 +17,7 @@ export type FinishIssueFormProps = BusinessFormProps & {
 };
 
 export const FinishIssueForm: FC<FinishIssueFormProps> = props => {
-  const finishIssue = api.issue.finish.useMutation({
+  const finishIssue = issueApi.finish.useMutation({
     onSuccess: async () => {
       success('Cập nhật thành công');
       props.onSuccess?.();

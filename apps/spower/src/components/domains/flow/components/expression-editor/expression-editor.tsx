@@ -1,5 +1,5 @@
 import { PlusCircle } from 'lucide-react';
-import { api } from 'portal-api';
+import { objectApi } from 'portal-api';
 
 import { FC, useCallback } from 'react';
 
@@ -16,7 +16,7 @@ export const ExpressionEditor: FC<ExpressionEditorProps> = ({
   onSubmit,
   onClose
 }) => {
-  const listVariables = api.object.getVariables.useSuspenseQuery({
+  const listVariables = objectApi.getVariables.useSuspenseQuery({
     variables: objectType
   });
 

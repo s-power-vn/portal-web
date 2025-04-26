@@ -8,7 +8,12 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { EmployeeListItem, ListSchema, api } from 'portal-api';
+import {
+  EmployeeListItem,
+  ListSchema,
+  departmentApi,
+  employeeApi
+} from 'portal-api';
 
 import { FC, Suspense, useCallback, useMemo, useRef } from 'react';
 
@@ -39,7 +44,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.employee.list.getOptions({
+      employeeApi.list.getOptions({
         ...deps.search
       })
     ),
@@ -59,7 +64,7 @@ export const RoleNameDisplay: FC<RoleNameDisplayProps> = ({
   departmentId,
   roleId
 }) => {
-  const { data: department } = api.department.byId.useQuery({
+  const { data: department } = departmentApi.byId.useQuery({
     variables: departmentId,
     enabled: !!departmentId
   });
@@ -84,11 +89,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.employee.list.getKey({
+      queryKey: employeeApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.employee.list.fetcher({
+        employeeApi.list.fetcher({
           filter: search.filter,
           pageIndex: pageParam,
           pageSize: 20
@@ -103,10 +108,10 @@ function Component() {
     [data]
   );
 
-  const deleteEmployee = api.employee.delete.useMutation({
+  const deleteEmployee = employeeApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhân viên thành công');
-      invalidates([api.employee.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([employeeApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 

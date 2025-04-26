@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { departmentApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute(
 )({
   component: Component,
   loader: ({ context: { queryClient }, params: { departmentId } }) =>
-    queryClient?.ensureQueryData(api.department.byId.getOptions(departmentId))
+    queryClient?.ensureQueryData(departmentApi.byId.getOptions(departmentId))
 });
 
 function Component() {
@@ -26,8 +26,8 @@ function Component() {
     setOpen(false);
     history.back();
     invalidates([
-      api.department.byId.getKey(departmentId),
-      api.department.list.getKey()
+      departmentApi.byId.getKey(departmentId),
+      departmentApi.list.getKey()
     ]);
   }, [departmentId, history, invalidates]);
 

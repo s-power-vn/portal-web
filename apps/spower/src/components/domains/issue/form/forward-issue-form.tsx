@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react';
-import { api } from 'portal-api';
+import { employeeApi, issueApi } from 'portal-api';
 import { array, object, string } from 'yup';
 
 import { type FC, useMemo } from 'react';
@@ -28,7 +28,7 @@ export const SingleForwardIssueForm: FC<SingleForwardIssueFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const forwardIssue = api.issue.forward.useMutation({
+  const forwardIssue = issueApi.forward.useMutation({
     onSuccess: () => {
       success('Chuyển tiếp thành công');
       onSuccess?.();
@@ -82,7 +82,7 @@ export const MultipleForwardIssueForm: FC<MultipleForwardIssueFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const forwardIssue = api.issue.forward.useMutation({
+  const forwardIssue = issueApi.forward.useMutation({
     onSuccess: () => {
       success('Chuyển tiếp thành công');
       onSuccess?.();
@@ -142,13 +142,13 @@ export const ForwardIssueForm: FC<ForwardIssueFormProps> = ({
   const isApprovalNode = node?.type === 'approval';
 
   const { data: approvers, isLoading: isLoadingApprovers } =
-    api.employee.byIds.useQuery({
+    employeeApi.byIds.useQuery({
       variables: node?.approvers ?? [],
       enabled: isApprovalNode
     });
 
   const { data: employees, isLoading: isLoadingEmployees } =
-    api.employee.listFull.useQuery({
+    employeeApi.listFull.useQuery({
       variables: {
         filter: node?.condition
       }

@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { FilesIcon, Loader } from 'lucide-react';
-import { IssueItem, ListSchema, api } from 'portal-api';
+import { IssueItem, ListSchema, issueApi } from 'portal-api';
 
 import { useCallback, useMemo } from 'react';
 
@@ -42,7 +42,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, params, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.issue.listMine.getOptions({
+      issueApi.listMine.getOptions({
         ...deps.search,
         filter: deps.search.filter ?? '',
         projectId: params.projectId
@@ -57,11 +57,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.issue.listMine.getKey({
+      queryKey: issueApi.listMine.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.issue.listMine.fetcher({
+        issueApi.listMine.fetcher({
           filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20,

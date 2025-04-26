@@ -1,9 +1,12 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { client2 } from 'portal-core';
 
 export const Route = createFileRoute(
   '/_private/$organizationId/project/$projectId/'
 )({
-  beforeLoad: ({ params }) => {
+  beforeLoad: async ({ params }) => {
+    await client2.api.refreshRestToken(params.organizationId, params.projectId);
+
     throw redirect({
       to: '/$organizationId/project/$projectId/issues/me',
       params: {

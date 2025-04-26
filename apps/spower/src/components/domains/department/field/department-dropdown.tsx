@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { departmentApi } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
@@ -9,8 +9,8 @@ export type DepartmentDropdownProps = Partial<ComboboxProps>;
 export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.department.byIds.fetcher(ids)
-      : await api.department.byId.fetcher(ids);
+      ? await departmentApi.byIds.fetcher(ids)
+      : await departmentApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name,
@@ -24,7 +24,7 @@ export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const result = await api.department.list.fetcher({
+      const result = await departmentApi.list.fetcher({
         filter: search ?? '',
         pageIndex: page ?? 1,
         pageSize: 10
@@ -46,7 +46,7 @@ export const DepartmentDropdown: FC<DepartmentDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn phòng ban'}
       emptyText={props.emptyText ?? 'Không tìm thấy phòng ban'}
-      queryKey={api.department.list.getKey()}
+      queryKey={departmentApi.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
       showGroups={false}

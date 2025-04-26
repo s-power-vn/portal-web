@@ -7,7 +7,6 @@ import {
 import clsx from 'clsx';
 import _ from 'lodash';
 import { PlusIcon, TrashIcon } from 'lucide-react';
-import { api } from 'portal-api';
 import { cn, compareVersion } from 'portal-core';
 import { AnyObject, ObjectSchema } from 'yup';
 
@@ -26,6 +25,7 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
+import { supplierApi } from '../../../api';
 import { PickSuppliersForm } from '../../../components/supplier';
 import { PickFinishedRequestDetailForm } from '../../request';
 
@@ -199,7 +199,7 @@ export const PriceInput: FC<PriceInputProps> = ({
     setInternalData(calculateTotals(toInternalData(data), supplierIds));
   }, [data, supplierIds]);
 
-  const { data: suppliers = [] } = api.supplier.byIds.useSuspenseQuery({
+  const { data: suppliers = [] } = supplierApi.byIds.useSuspenseQuery({
     variables: supplierIds
   });
 

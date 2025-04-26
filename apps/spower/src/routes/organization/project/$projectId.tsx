@@ -13,7 +13,7 @@ import {
   NotebookTextIcon,
   SettingsIcon
 } from 'lucide-react';
-import { api } from 'portal-api';
+import { objectApi, objectTypeApi, projectApi } from 'portal-api';
 
 import { Show } from '@minhdtb/storeo-core';
 import { Button } from '@minhdtb/storeo-theme';
@@ -21,37 +21,42 @@ import { Button } from '@minhdtb/storeo-theme';
 import { Sidebar, SidebarGroup, SidebarItem } from '../../../components';
 import { IssueBadge } from '../../../components/domains/issue/issue-badge';
 
-const ThisRoute = createFileRoute(
+export const Route = createFileRoute(
   '/_private/$organizationId/project/$projectId'
-)();
+)({
+  component: Component,
+  loader: ({ context: { queryClient }, params: { projectId } }) =>
+    queryClient?.ensureQueryData(projectApi.byId.getOptions(projectId)),
+  beforeLoad: ({ params }) => ({ title: params.projectId })
+});
 
-const Component = () => {
+function Component() {
   const matchRoute = useMatchRoute();
   const params = matchRoute({
     to: '/$organizationId/project/$projectId/settings'
   });
-  const { projectId, organizationId } = ThisRoute.useParams();
-  const project = api.project.byId.useSuspenseQuery({
+  const { projectId, organizationId } = Route.useParams();
+  const project = projectApi.byId.useSuspenseQuery({
     variables: projectId
   });
   const navigate = useNavigate({ from: '/$organizationId/project/$projectId' });
 
-  const { data: requestType } = api.objectType.byType.useSuspenseQuery({
+  const { data: requestType } = objectTypeApi.byType.useSuspenseQuery({
     variables: 'Request'
   });
 
-  const { data: priceType } = api.objectType.byType.useSuspenseQuery({
+  const { data: priceType } = objectTypeApi.byType.useSuspenseQuery({
     variables: 'Price'
   });
 
   const { data: requestObjects } = requestType
-    ? api.object.listFullActiveByType.useSuspenseQuery({
+    ? objectApi.listFullActiveByType.useSuspenseQuery({
         variables: requestType.id
       })
     : { data: null };
 
   const { data: priceObjects } = priceType
-    ? api.object.listFullActiveByType.useSuspenseQuery({
+    ? objectApi.listFullActiveByType.useSuspenseQuery({
         variables: priceType.id
       })
     : { data: null };
@@ -148,13 +153,4 @@ const Component = () => {
       </div>
     </div>
   );
-};
-
-export const Route = createFileRoute(
-  '/_private/$organizationId/project/$projectId'
-)({
-  component: Component,
-  loader: ({ context: { queryClient }, params: { projectId } }) =>
-    queryClient?.ensureQueryData(api.project.byId.getOptions(projectId)),
-  beforeLoad: ({ params }) => ({ title: params.projectId })
-});
+}

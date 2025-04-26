@@ -16,7 +16,7 @@ import {
   PlusIcon,
   XIcon
 } from 'lucide-react';
-import { ListSchema, ObjectListItem, api } from 'portal-api';
+import { ListSchema, ObjectListItem, objectApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -49,7 +49,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.object.list.getOptions({
+      objectApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
           ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
@@ -72,11 +72,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.object.list.getKey({
+      queryKey: objectApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.object.list.fetcher({
+        objectApi.list.fetcher({
           filter: search.filter
             ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
             : '',
@@ -95,20 +95,20 @@ function Component() {
 
   const columnHelper = createColumnHelper<ObjectListItem>();
 
-  const deleteObject = api.object.delete.useMutation({
+  const deleteObject = objectApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa đối tượng thành công');
-      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([objectApi.list.getKey({ filter: search.filter ?? '' })]);
     },
     onError: () => {
       error('Xóa đối tượng thất bại');
     }
   });
 
-  const duplicateObject = api.object.duplicate.useMutation({
+  const duplicateObject = objectApi.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản đối tượng thành công');
-      invalidates([api.object.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([objectApi.list.getKey({ filter: search.filter ?? '' })]);
     },
     onError: () => {
       error('Nhân bản đối tượng thất bại');

@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 
 import { FC, Suspense, useEffect } from 'react';
 
@@ -14,7 +14,7 @@ export type IssueBadgeProps = {
 };
 
 const BadgeComponent: FC<IssueBadgeProps> = ({ projectId, isAll }) => {
-  const { data: count } = api.issue.userInfo.useSuspenseQuery({
+  const { data: count } = issueApi.userInfo.useSuspenseQuery({
     variables: {
       projectId,
       isAll: isAll ?? false

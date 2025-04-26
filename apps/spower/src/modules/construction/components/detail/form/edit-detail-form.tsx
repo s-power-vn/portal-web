@@ -1,4 +1,3 @@
-import { api } from 'portal-api';
 import { number, object, string } from 'yup';
 
 import { type FC, useCallback } from 'react';
@@ -11,6 +10,8 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
+
+import { detailApi } from '../../../api';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),
@@ -35,11 +36,11 @@ export type EditDetailFormProps = BusinessFormProps & {
 };
 
 export const EditDetailForm: FC<EditDetailFormProps> = props => {
-  const detailById = api.detail.byId.useSuspenseQuery({
+  const detailById = detailApi.byId.useSuspenseQuery({
     variables: props.detailId
   });
 
-  const updateDetail = api.detail.update.useMutation({
+  const updateDetail = detailApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa hạng mục công việc thành công');
       props.onSuccess?.();

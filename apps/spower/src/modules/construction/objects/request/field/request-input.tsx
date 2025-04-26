@@ -25,9 +25,9 @@ import {
   useStoreoForm
 } from '@minhdtb/storeo-theme';
 
+import { RequestDetailItem } from '../../../api';
 import { PickDetailForm } from '../../../components/detail';
 import { NewCustomRequestDetailForm } from '../form/new-custom-request-detail-form';
-import { RequestDetailItem } from '../request-display';
 
 export type RequestInputProps = {
   schema: ObjectSchema<AnyObject>;
@@ -95,7 +95,9 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
 
               const itemsToRemove = fields
                 .map((field, index) => ({
-                  item: field as unknown as TreeData<RequestDetailItem>,
+                  item: field as unknown as TreeData<RequestDetailItem> & {
+                    isNew: boolean;
+                  },
                   index
                 }))
                 .filter(
@@ -218,7 +220,7 @@ export const RequestInput: FC<RequestInputProps> = ({ schema, projectId }) => {
       if (level.startsWith('e.')) {
         const itemToRemove = fields[
           index
-        ] as unknown as TreeData<RequestDetailItem>;
+        ] as unknown as TreeData<RequestDetailItem> & { isNew: boolean };
 
         if (!itemToRemove.isNew && itemToRemove.id) {
           const currentDeletedIds = getValues('deletedIds') || [];

@@ -1,7 +1,5 @@
+import { EmployeeItem, ProjectItem } from 'portal-api';
 import { Json, PaginatedResponse } from 'portal-core';
-
-import { EmployeeItem } from '../../setting/general';
-import { ProjectItem } from '../project/project.type';
 
 export type DetailItem = {
   id: string;
@@ -43,7 +41,6 @@ export type CreateDetailInput = {
   title: string;
   note?: string;
   parent_id?: string;
-  project_id?: string;
   volume?: number;
   unit?: string;
   unit_price?: number;

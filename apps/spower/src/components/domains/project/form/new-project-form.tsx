@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { projectApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -13,7 +13,7 @@ const schema = object().shape({
 export type NewProjectFormProps = BusinessFormProps;
 
 export const NewProjectForm: FC<NewProjectFormProps> = props => {
-  const createProject = api.project.create.useMutation({
+  const createProject = projectApi.create.useMutation({
     onSuccess: async () => {
       success('Tạo dự án thành công');
       props.onSuccess?.();

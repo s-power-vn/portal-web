@@ -9,192 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      comments: {
-        Row: {
-          content: string
-          created: string | null
-          created_by: string | null
-          id: string
-          issue_id: string | null
-          organization_id: string | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          content: string
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          content?: string
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "comments_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "comments_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      contracts: {
-        Row: {
-          count: number | null
-          created: string | null
-          created_by: string | null
-          id: string
-          note: string | null
-          organization_id: string | null
-          request_id: string | null
-          supplier_id: string | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          count?: number | null
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          note?: string | null
-          organization_id?: string | null
-          request_id?: string | null
-          supplier_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          count?: number | null
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          note?: string | null
-          organization_id?: string | null
-          request_id?: string | null
-          supplier_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "contracts_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["request_id"]
-          },
-          {
-            foreignKeyName: "contracts_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "requests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_supplier_id_fkey"
-            columns: ["supplier_id"]
-            isOneToOne: false
-            referencedRelation: "suppliers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       customers: {
         Row: {
           address: string | null
@@ -250,7 +64,7 @@ export type Database = {
             foreignKeyName: "customers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -271,7 +85,7 @@ export type Database = {
             foreignKeyName: "customers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -322,7 +136,7 @@ export type Database = {
             foreignKeyName: "departments_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -343,302 +157,7 @@ export type Database = {
             foreignKeyName: "departments_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      detail_imports: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          error: string | null
-          file: string
-          id: string
-          organization_id: string | null
-          percent: number | null
-          project_id: string | null
-          status: string | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          error?: string | null
-          file: string
-          id?: string
-          organization_id?: string | null
-          percent?: number | null
-          project_id?: string | null
-          status?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          error?: string | null
-          file?: string
-          id?: string
-          organization_id?: string | null
-          percent?: number | null
-          project_id?: string | null
-          status?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "detail_imports_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "detail_imports_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "detail_imports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "detail_imports_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "detail_imports_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "detail_imports_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      details: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          extend: Json | null
-          id: string
-          level: string | null
-          note: string | null
-          organization_id: string | null
-          parent_id: string | null
-          project_id: string | null
-          title: string
-          unit: string | null
-          unit_price: number | null
-          updated: string | null
-          updated_by: string | null
-          volume: number | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          extend?: Json | null
-          id?: string
-          level?: string | null
-          note?: string | null
-          organization_id?: string | null
-          parent_id?: string | null
-          project_id?: string | null
-          title: string
-          unit?: string | null
-          unit_price?: number | null
-          updated?: string | null
-          updated_by?: string | null
-          volume?: number | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          extend?: Json | null
-          id?: string
-          level?: string | null
-          note?: string | null
-          organization_id?: string | null
-          parent_id?: string | null
-          project_id?: string | null
-          title?: string
-          unit?: string | null
-          unit_price?: number | null
-          updated?: string | null
-          updated_by?: string | null
-          volume?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["group_id"]
-          },
-          {
-            foreignKeyName: "details_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "details"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      issue_files: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          id: string
-          issue_id: string | null
-          name: string
-          organization_id: string | null
-          size: number | null
-          type: string | null
-          updated: string | null
-          updated_by: string | null
-          url: string
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          name: string
-          organization_id?: string | null
-          size?: number | null
-          type?: string | null
-          updated?: string | null
-          updated_by?: string | null
-          url: string
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          name?: string
-          organization_id?: string | null
-          size?: number | null
-          type?: string | null
-          updated?: string | null
-          updated_by?: string | null
-          url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "issue_files_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_files_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_files_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "issue_files_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_files_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "issue_files_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_files_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_files_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -722,7 +241,7 @@ export type Database = {
             foreignKeyName: "issues_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -757,7 +276,168 @@ export type Database = {
             foreignKeyName: "issues_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issues_comments: {
+        Row: {
+          content: string
+          created: string | null
+          created_by: string | null
+          id: string
+          issue_id: string
+          organization_id: string | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          content: string
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id: string
+          organization_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          content?: string
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id?: string
+          organization_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_comments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_comments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_comments_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_comments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_comments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_comments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issues_files: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          id: string
+          issue_id: string
+          name: string
+          organization_id: string | null
+          size: number | null
+          type: string | null
+          updated: string | null
+          updated_by: string | null
+          url: string
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id: string
+          name: string
+          organization_id?: string | null
+          size?: number | null
+          type?: string | null
+          updated?: string | null
+          updated_by?: string | null
+          url: string
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id?: string
+          name?: string
+          organization_id?: string | null
+          size?: number | null
+          type?: string | null
+          updated?: string | null
+          updated_by?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_files_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_files_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_files_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_files_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -811,7 +491,7 @@ export type Database = {
             foreignKeyName: "materials_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -832,7 +512,573 @@ export type Database = {
             foreignKeyName: "materials_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_details: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          extend: Json | null
+          id: string
+          level: string | null
+          note: string | null
+          organization_id: string | null
+          parent_id: string | null
+          project_id: string | null
+          title: string
+          unit: string | null
+          unit_price: number | null
+          updated: string | null
+          updated_by: string | null
+          volume: number | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          extend?: Json | null
+          id?: string
+          level?: string | null
+          note?: string | null
+          organization_id?: string | null
+          parent_id?: string | null
+          project_id?: string | null
+          title: string
+          unit?: string | null
+          unit_price?: number | null
+          updated?: string | null
+          updated_by?: string | null
+          volume?: number | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          extend?: Json | null
+          id?: string
+          level?: string | null
+          note?: string | null
+          organization_id?: string | null
+          parent_id?: string | null
+          project_id?: string | null
+          title?: string
+          unit?: string | null
+          unit_price?: number | null
+          updated?: string | null
+          updated_by?: string | null
+          volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "md_con_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_details_imports: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          error: string | null
+          file: string
+          id: string
+          organization_id: string | null
+          percent: number | null
+          project_id: string | null
+          status: string | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          error?: string | null
+          file: string
+          id?: string
+          organization_id?: string | null
+          percent?: number | null
+          project_id?: string | null
+          status?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          error?: string | null
+          file?: string
+          id?: string
+          organization_id?: string | null
+          percent?: number | null
+          project_id?: string | null
+          status?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_details_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_imports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_imports_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_details_imports_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_prices: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          id: string
+          issue_id: string
+          organization_id: string | null
+          project_id: string | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id: string
+          organization_id?: string | null
+          project_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id?: string
+          organization_id?: string | null
+          project_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_prices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_prices_details: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          estimate_amount: number | null
+          estimate_price: number | null
+          id: string
+          index: string | null
+          level: string | null
+          md_con_price_id: string
+          organization_id: string | null
+          prices: Json | null
+          title: string
+          unit: string | null
+          updated: string | null
+          updated_by: string | null
+          volume: number | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          estimate_amount?: number | null
+          estimate_price?: number | null
+          id?: string
+          index?: string | null
+          level?: string | null
+          md_con_price_id: string
+          organization_id?: string | null
+          prices?: Json | null
+          title: string
+          unit?: string | null
+          updated?: string | null
+          updated_by?: string | null
+          volume?: number | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          estimate_amount?: number | null
+          estimate_price?: number | null
+          id?: string
+          index?: string | null
+          level?: string | null
+          md_con_price_id?: string
+          organization_id?: string | null
+          prices?: Json | null
+          title?: string
+          unit?: string | null
+          updated?: string | null
+          updated_by?: string | null
+          volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_prices_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_details_md_con_price_id_fkey"
+            columns: ["md_con_price_id"]
+            isOneToOne: false
+            referencedRelation: "md_con_prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_details_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_prices_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_requests: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          id: string
+          issue_id: string
+          organization_id: string | null
+          project_id: string | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id: string
+          organization_id?: string | null
+          project_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          id?: string
+          issue_id?: string
+          organization_id?: string | null
+          project_id?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      md_con_requests_details: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          delivery_date: string | null
+          id: string
+          index: string | null
+          level: string | null
+          md_con_detail_id: string | null
+          md_con_request_id: string
+          note: string | null
+          organization_id: string | null
+          parent_id: string | null
+          request_volume: number | null
+          title: string | null
+          unit: string | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          delivery_date?: string | null
+          id?: string
+          index?: string | null
+          level?: string | null
+          md_con_detail_id?: string | null
+          md_con_request_id: string
+          note?: string | null
+          organization_id?: string | null
+          parent_id?: string | null
+          request_volume?: number | null
+          title?: string | null
+          unit?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          delivery_date?: string | null
+          id?: string
+          index?: string | null
+          level?: string | null
+          md_con_detail_id?: string | null
+          md_con_request_id?: string
+          note?: string | null
+          organization_id?: string | null
+          parent_id?: string | null
+          request_volume?: number | null
+          title?: string | null
+          unit?: string | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "md_con_requests_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_md_con_detail_id_fkey"
+            columns: ["md_con_detail_id"]
+            isOneToOne: false
+            referencedRelation: "md_con_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_md_con_request_id_fkey"
+            columns: ["md_con_request_id"]
+            isOneToOne: false
+            referencedRelation: "md_con_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "md_con_requests_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "md_con_requests_details_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -883,7 +1129,7 @@ export type Database = {
             foreignKeyName: "msg_channels_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -911,7 +1157,7 @@ export type Database = {
             foreignKeyName: "msg_channels_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -959,7 +1205,7 @@ export type Database = {
             foreignKeyName: "msg_chats_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -980,7 +1226,7 @@ export type Database = {
             foreignKeyName: "msg_chats_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1051,7 +1297,7 @@ export type Database = {
             foreignKeyName: "msg_messages_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1079,7 +1325,7 @@ export type Database = {
             foreignKeyName: "msg_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1093,7 +1339,7 @@ export type Database = {
             foreignKeyName: "msg_messages_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1144,7 +1390,7 @@ export type Database = {
             foreignKeyName: "msg_reactions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1172,7 +1418,7 @@ export type Database = {
             foreignKeyName: "msg_reactions_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1186,7 +1432,7 @@ export type Database = {
             foreignKeyName: "msg_reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1251,7 +1497,7 @@ export type Database = {
             foreignKeyName: "msg_settings_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1272,7 +1518,7 @@ export type Database = {
             foreignKeyName: "msg_settings_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1286,7 +1532,7 @@ export type Database = {
             foreignKeyName: "msg_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1337,7 +1583,7 @@ export type Database = {
             foreignKeyName: "msg_teams_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1358,7 +1604,7 @@ export type Database = {
             foreignKeyName: "msg_teams_owner_fkey"
             columns: ["owner"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -1372,43 +1618,10 @@ export type Database = {
             foreignKeyName: "msg_teams_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
-      }
-      object_types: {
-        Row: {
-          color: string | null
-          created: string | null
-          description: string | null
-          display: string | null
-          icon: string | null
-          id: string
-          name: string
-          updated: string | null
-        }
-        Insert: {
-          color?: string | null
-          created?: string | null
-          description?: string | null
-          display?: string | null
-          icon?: string | null
-          id?: string
-          name: string
-          updated?: string | null
-        }
-        Update: {
-          color?: string | null
-          created?: string | null
-          description?: string | null
-          display?: string | null
-          icon?: string | null
-          id?: string
-          name?: string
-          updated?: string | null
-        }
-        Relationships: []
       }
       objects: {
         Row: {
@@ -1462,14 +1675,14 @@ export type Database = {
             foreignKeyName: "objects_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "objects_object_type_id_fkey"
             columns: ["object_type_id"]
             isOneToOne: false
-            referencedRelation: "object_types"
+            referencedRelation: "objects_types"
             referencedColumns: ["id"]
           },
           {
@@ -1497,12 +1710,107 @@ export type Database = {
             foreignKeyName: "objects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
       }
-      organization_members: {
+      objects_types: {
+        Row: {
+          color: string | null
+          created: string | null
+          description: string | null
+          display: string | null
+          icon: string | null
+          id: string
+          name: string
+          updated: string | null
+        }
+        Insert: {
+          color?: string | null
+          created?: string | null
+          description?: string | null
+          display?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          updated?: string | null
+        }
+        Update: {
+          color?: string | null
+          created?: string | null
+          description?: string | null
+          display?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          updated?: string | null
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          settings: Json | null
+          updated: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          settings?: Json | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          settings?: Json | null
+          updated?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations_members: {
         Row: {
           created: string | null
           created_by: string | null
@@ -1547,336 +1855,59 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_organization_members_department_id"
+            foreignKeyName: "fk_organizations_members_department_id"
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_created_by_fkey"
+            foreignKeyName: "organizations_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_created_by_fkey"
+            foreignKeyName: "organizations_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_organization_id_fkey"
+            foreignKeyName: "organizations_members_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_updated_by_fkey"
+            foreignKeyName: "organizations_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_updated_by_fkey"
+            foreignKeyName: "organizations_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_user_id_fkey"
+            foreignKeyName: "organizations_members_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "msg_unread"
             referencedColumns: ["user_id"]
           },
           {
-            foreignKeyName: "organization_members_user_id_fkey"
+            foreignKeyName: "organizations_members_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organizations: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          description: string | null
-          id: string
-          name: string
-          settings: Json | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          settings?: Json | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          settings?: Json | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "organizations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organizations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organizations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organizations_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organizations_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "msg_unread"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organizations_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      price_details: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          estimate_amount: number | null
-          estimate_price: number | null
-          id: string
-          index: string | null
-          level: string | null
-          organization_id: string | null
-          price_id: string | null
-          prices: Json | null
-          title: string
-          unit: string | null
-          updated: string | null
-          updated_by: string | null
-          volume: number | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          estimate_amount?: number | null
-          estimate_price?: number | null
-          id?: string
-          index?: string | null
-          level?: string | null
-          organization_id?: string | null
-          price_id?: string | null
-          prices?: Json | null
-          title: string
-          unit?: string | null
-          updated?: string | null
-          updated_by?: string | null
-          volume?: number | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          estimate_amount?: number | null
-          estimate_price?: number | null
-          id?: string
-          index?: string | null
-          level?: string | null
-          organization_id?: string | null
-          price_id?: string | null
-          prices?: Json | null
-          title?: string
-          unit?: string | null
-          updated?: string | null
-          updated_by?: string | null
-          volume?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "price_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "price_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "price_details_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "price_details_price_id_fkey"
-            columns: ["price_id"]
-            isOneToOne: false
-            referencedRelation: "prices"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "price_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "price_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      prices: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          id: string
-          issue_id: string | null
-          organization_id: string | null
-          project_id: string | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          project_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          project_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "prices_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "prices_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "prices_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prices_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1936,14 +1967,14 @@ export type Database = {
             foreignKeyName: "processes_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "processes_object_type_id_fkey"
             columns: ["object_type_id"]
             isOneToOne: false
-            referencedRelation: "object_types"
+            referencedRelation: "objects_types"
             referencedColumns: ["id"]
           },
           {
@@ -1964,7 +1995,7 @@ export type Database = {
             foreignKeyName: "processes_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2015,7 +2046,7 @@ export type Database = {
             foreignKeyName: "projects_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -2036,222 +2067,7 @@ export type Database = {
             foreignKeyName: "projects_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      request_details: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          custom_level: string | null
-          custom_title: string | null
-          custom_unit: string | null
-          delivery_date: string | null
-          detail_id: string | null
-          id: string
-          index: string | null
-          note: string | null
-          organization_id: string | null
-          request_id: string | null
-          request_volume: number | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          custom_level?: string | null
-          custom_title?: string | null
-          custom_unit?: string | null
-          delivery_date?: string | null
-          detail_id?: string | null
-          id?: string
-          index?: string | null
-          note?: string | null
-          organization_id?: string | null
-          request_id?: string | null
-          request_volume?: number | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          custom_level?: string | null
-          custom_title?: string | null
-          custom_unit?: string | null
-          delivery_date?: string | null
-          detail_id?: string | null
-          id?: string
-          index?: string | null
-          note?: string | null
-          organization_id?: string | null
-          request_id?: string | null
-          request_volume?: number | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "request_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["group_id"]
-          },
-          {
-            foreignKeyName: "request_details_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "details"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["request_id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "requests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      requests: {
-        Row: {
-          created: string | null
-          created_by: string | null
-          id: string
-          issue_id: string | null
-          organization_id: string | null
-          project_id: string | null
-          updated: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          project_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          created?: string | null
-          created_by?: string | null
-          id?: string
-          issue_id?: string | null
-          organization_id?: string | null
-          project_id?: string | null
-          updated?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "requests_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "requests_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["issue_id"]
-          },
-          {
-            foreignKeyName: "requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "requests_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2326,7 +2142,7 @@ export type Database = {
             foreignKeyName: "suppliers_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -2347,16 +2163,16 @@ export type Database = {
             foreignKeyName: "suppliers_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
       }
       templates: {
         Row: {
+          code: string
           created: string | null
           created_by: string | null
-          detail_id: string | null
           id: string
           organization_id: string | null
           updated: string | null
@@ -2364,9 +2180,9 @@ export type Database = {
           url: string
         }
         Insert: {
+          code: string
           created?: string | null
           created_by?: string | null
-          detail_id?: string | null
           id?: string
           organization_id?: string | null
           updated?: string | null
@@ -2374,9 +2190,9 @@ export type Database = {
           url: string
         }
         Update: {
+          code?: string
           created?: string | null
           created_by?: string | null
-          detail_id?: string | null
           id?: string
           organization_id?: string | null
           updated?: string | null
@@ -2395,21 +2211,7 @@ export type Database = {
             foreignKeyName: "templates_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "templates_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["group_id"]
-          },
-          {
-            foreignKeyName: "templates_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "details"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
@@ -2430,7 +2232,7 @@ export type Database = {
             foreignKeyName: "templates_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
         ]
@@ -2470,72 +2272,6 @@ export type Database = {
       }
     }
     Views: {
-      detail_info: {
-        Row: {
-          created: string | null
-          extend: Json | null
-          group_id: string | null
-          issue_code: string | null
-          issue_id: string | null
-          issue_title: string | null
-          level: string | null
-          note: string | null
-          organization_id: string | null
-          parent_id: string | null
-          project_id: string | null
-          request_id: string | null
-          request_volume: number | null
-          title: string | null
-          unit: string | null
-          unit_price: number | null
-          updated: string | null
-          volume: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "details_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["group_id"]
-          },
-          {
-            foreignKeyName: "details_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "details"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "details_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["request_id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "requests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       employees: {
         Row: {
           created: string | null
@@ -2559,63 +2295,56 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_organization_members_department_id"
+            foreignKeyName: "fk_organizations_members_department_id"
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_created_by_fkey"
+            foreignKeyName: "organizations_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_created_by_fkey"
+            foreignKeyName: "organizations_members_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_organization_id_fkey"
+            foreignKeyName: "organizations_members_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_updated_by_fkey"
+            foreignKeyName: "organizations_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_updated_by_fkey"
+            foreignKeyName: "organizations_members_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "organization_members"
+            referencedRelation: "organizations_members"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "organization_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "issue_user_info"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "organization_members_user_id_fkey"
+            foreignKeyName: "organizations_members_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "msg_unread"
             referencedColumns: ["user_id"]
           },
           {
-            foreignKeyName: "organization_members_user_id_fkey"
+            foreignKeyName: "organizations_members_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -2623,7 +2352,7 @@ export type Database = {
           },
         ]
       }
-      issue_user_info: {
+      issues_info: {
         Row: {
           count: number | null
           organization_id: string | null
@@ -2645,6 +2374,20 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "organizations_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "msg_unread"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organizations_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       msg_unread: {
@@ -2661,80 +2404,6 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      request_detail_info: {
-        Row: {
-          detail_id: string | null
-          id: string | null
-          is_deleted: boolean | null
-          organization_id: string | null
-          request_id: string | null
-          request_volume: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "request_details_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "detail_info"
-            referencedColumns: ["group_id"]
-          },
-          {
-            foreignKeyName: "request_details_detail_id_fkey"
-            columns: ["detail_id"]
-            isOneToOne: false
-            referencedRelation: "details"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "request_finished"
-            referencedColumns: ["request_id"]
-          },
-          {
-            foreignKeyName: "request_details_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "requests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      request_finished: {
-        Row: {
-          created: string | null
-          issue_id: string | null
-          organization_id: string | null
-          project_id: string | null
-          request_id: string | null
-          title: string | null
-          updated: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "issues_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -2758,6 +2427,10 @@ export type Database = {
         Returns: string
       }
       current_organization_member_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      current_project_id: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

@@ -8,9 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import _ from 'lodash';
 import { Loader2Icon, SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import { api } from 'portal-api';
 import { TreeData, arrayToTree } from 'portal-core';
 
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -26,7 +24,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { IndeterminateCheckbox } from '../../../../../components';
-import { RequestDetailItem } from '../request-display';
+import { RequestDetailItem, requestApi } from '../../../api';
 
 export type PickRequestDetailProps = {
   requestId?: string;
@@ -41,37 +39,30 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const request = api.request.byId.useQuery({
+  const { data: request, isLoading } = requestApi.byId.useQuery({
     variables: requestId
   });
 
-  const v = useMemo<RequestDetailItem[]>(() => {
-    return _.chain(
-      request.data ? request.data?.expand?.requestDetail_via_request : []
-    )
-      .map(it => {
-        const { customLevel, customUnit, customTitle } = it;
+  const data = useMemo(() => {
+    return arrayToTree(request?.details ?? []);
+  }, [request]);
 
-        return {
-          id: it.id,
-          title: it.expand?.detail.title ?? customTitle,
-          unit: it.expand?.detail.unit ?? customUnit,
-          group: it.expand?.detail.id ?? customLevel,
-          level: it.expand?.detail.level ?? customLevel,
-          requestVolume: it.requestVolume,
-          deliveryDate: it.deliveryDate,
-          note: it.note,
-          index: it.index,
-          parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
-        };
-      })
-      .orderBy('level')
-      .value();
-  }, [request.data]);
-
-  const requestDetails = useMemo(() => {
-    return arrayToTree(v, `${request.data?.project}-root`);
-  }, [request.data?.project, v]);
+  const table = useReactTable({
+    data,
+    columns: [],
+    state: {
+      expanded,
+      rowSelection
+    },
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    onExpandedChange: setExpanded,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    manualPagination: true
+  });
 
   const columnHelper = createColumnHelper<TreeData<RequestDetailItem>>();
 
@@ -199,26 +190,14 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
         size: 150
       })
     ],
-    [columnHelper, rowSelection, onChange, v]
+    [columnHelper, table]
   );
 
-  const table = useReactTable({
-    data: requestDetails,
+  table.setOptions(prev => ({
+    ...prev,
     columns,
-    state: {
-      expanded,
-      rowSelection
-    },
-    enableRowSelection: true,
-    enableMultiRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onExpandedChange: setExpanded,
-    getSubRows: row => row.children,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true
-  });
+    getSubRows: row => row.children
+  }));
 
   useEffect(() => {
     const selectedItems = table
@@ -227,7 +206,7 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
       .map(row => row.original);
 
     onChange?.(selectedItems);
-  }, [rowSelection, table]);
+  }, [onChange, rowSelection, table]);
 
   return (
     <div
@@ -235,7 +214,7 @@ export const PickRequestDetail: FC<PickRequestDetailProps> = ({
         'border-appBlue relative h-[300px] overflow-auto rounded-md border pb-2'
       }
     >
-      {request.isLoading && (
+      {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20">
           <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg">
             <Loader2Icon className="text-appBlue h-5 w-5 animate-spin" />

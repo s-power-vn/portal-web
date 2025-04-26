@@ -15,13 +15,13 @@ export const organizationApi = router('organization', {
     fetcher: async (): Promise<OrganizationFullListResponse> => {
       const query = client2.rest.from('organizations').select(
         `*,
-        roles:organization_members!organization_id (
+        roles:organizations_members!organization_id (
           role,
-          user:users!organization_members_user_id_fkey(*)
+          user:users!organizations_members_user_id_fkey(*)
         ),
-        members:organization_members!organization_id(
+        members:organizations_members!organization_id(
           role,
-          user:users!organization_members_user_id_fkey(*)
+          user:users!organizations_members_user_id_fkey(*)
         ),
         createdBy:users!created_by(*),
         updatedBy:users!updated_by(*)`
@@ -60,13 +60,13 @@ export const organizationApi = router('organization', {
         .from('organizations')
         .select(
           `*,
-          roles:organization_members!organization_id (
+          roles:organizations_members!organization_id (
             role,
-            user:users!organization_members_user_id_fkey(*)
+            user:users!organizations_members_user_id_fkey(*)
           ),
-          members:organization_members!organization_id(
+          members:organizations_members!organization_id(
             role,
-            user:users!organization_members_user_id_fkey(*)
+            user:users!organizations_members_user_id_fkey(*)
           ),
           createdBy:users!created_by(*),
           updatedBy:users!updated_by(*)`

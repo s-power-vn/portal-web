@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { processApi } from 'portal-api';
 
 import { FC, useCallback } from 'react';
 
@@ -11,8 +11,8 @@ export type ProcessDropdownProps = Partial<ComboboxProps> & {
 export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.process.byIds.fetcher(ids)
-      : await api.process.byId.fetcher(ids);
+      ? await processApi.byIds.fetcher(ids)
+      : await processApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name || '',
@@ -27,7 +27,7 @@ export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
       console.log(props.objectType);
-      const result = await api.process.listByType.fetcher({
+      const result = await processApi.listByType.fetcher({
         filter: search ?? '',
         pageIndex: page ?? 1,
         pageSize: 10,
@@ -50,7 +50,7 @@ export const ProcessDropdown: FC<ProcessDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn quy trình'}
       emptyText={props.emptyText ?? 'Không tìm thấy quy trình'}
-      queryKey={api.process.listByType.getKey({ objectType: props.objectType })}
+      queryKey={processApi.listByType.getKey({ objectType: props.objectType })}
       queryFn={queryFn}
       lookupFn={lookupFn}
       showGroups={false}

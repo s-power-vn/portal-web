@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { CustomerItem, ListSchema, api } from 'portal-api';
+import { CustomerItem, ListSchema, customerApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.customer.list.getOptions({
+      customerApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter ?? ''
       })
@@ -59,11 +59,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.customer.list.getKey({
+      queryKey: customerApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.customer.list.fetcher({
+        customerApi.list.fetcher({
           filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20
@@ -78,10 +78,10 @@ function Component() {
     [data]
   );
 
-  const deleteCustomer = api.customer.delete.useMutation({
+  const deleteCustomer = customerApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa chủ đầu tư thành công');
-      invalidates([api.customer.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([customerApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 

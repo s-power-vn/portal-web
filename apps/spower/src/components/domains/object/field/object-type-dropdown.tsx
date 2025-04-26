@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { objectTypeApi } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
@@ -9,8 +9,8 @@ export type ObjectTypeDropdownProps = Partial<ComboboxProps>;
 export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.objectType.byIds.fetcher(ids)
-      : await api.objectType.byId.fetcher(ids);
+      ? await objectTypeApi.byIds.fetcher(ids)
+      : await objectTypeApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.display || '',
@@ -24,7 +24,7 @@ export const ObjectTypeDropdown: FC<ObjectTypeDropdownProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const result = await api.objectType.list.fetcher({
+      const result = await objectTypeApi.list.fetcher({
         filter: search ?? '',
         pageIndex: page ?? 1,
         pageSize: 10

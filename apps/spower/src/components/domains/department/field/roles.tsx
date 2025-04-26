@@ -2,7 +2,7 @@ import { EditIcon, PlusIcon, XIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { FC } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -31,58 +31,7 @@ export const Roles: FC<RolesProps> = ({ value = [], onChange }) => {
   const [editedName, setEditedName] = useState<string>('');
   const editInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        editingRoleId &&
-        editInputRef.current &&
-        !editInputRef.current.contains(event.target as Node)
-      ) {
-        saveRole();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [editingRoleId, editedName]);
-
-  const handleAddRole = () => {
-    const newRoleId = uuidv4();
-    const updatedRoles = [...roles, { id: newRoleId, name: '' }];
-    setRoles(updatedRoles);
-    setEditingRoleId(newRoleId);
-    setEditedName('');
-
-    setTimeout(() => {
-      if (editInputRef.current) {
-        editInputRef.current.focus();
-      }
-    }, 0);
-  };
-
-  const handleRemoveRole = (id: string) => {
-    const updatedRoles = roles.filter(role => role.id !== id);
-    setRoles(updatedRoles);
-    onChange?.(updatedRoles);
-    if (editingRoleId === id) {
-      setEditingRoleId(null);
-    }
-  };
-
-  const handleEditRole = (role: Role) => {
-    setEditingRoleId(role.id);
-    setEditedName(role.name);
-
-    setTimeout(() => {
-      if (editInputRef.current) {
-        editInputRef.current.focus();
-      }
-    }, 0);
-  };
-
-  const saveRole = () => {
+  const saveRole = useCallback(() => {
     if (editingRoleId) {
       const editedNameTrimmed = editedName.trim();
       if (editedNameTrimmed === '') {
@@ -100,7 +49,61 @@ export const Roles: FC<RolesProps> = ({ value = [], onChange }) => {
       }
       setEditingRoleId(null);
     }
-  };
+  }, [editedName, editingRoleId, onChange, roles]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        editingRoleId &&
+        editInputRef.current &&
+        !editInputRef.current.contains(event.target as Node)
+      ) {
+        saveRole();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [editingRoleId, editedName, saveRole]);
+
+  const handleAddRole = useCallback(() => {
+    const newRoleId = uuidv4();
+    const updatedRoles = [...roles, { id: newRoleId, name: '' }];
+    setRoles(updatedRoles);
+    setEditingRoleId(newRoleId);
+    setEditedName('');
+
+    setTimeout(() => {
+      if (editInputRef.current) {
+        editInputRef.current.focus();
+      }
+    }, 0);
+  }, [roles, editInputRef]);
+
+  const handleRemoveRole = useCallback(
+    (id: string) => {
+      const updatedRoles = roles.filter(role => role.id !== id);
+      setRoles(updatedRoles);
+      onChange?.(updatedRoles);
+      if (editingRoleId === id) {
+        setEditingRoleId(null);
+      }
+    },
+    [editingRoleId, onChange, roles]
+  );
+
+  const handleEditRole = useCallback((role: Role) => {
+    setEditingRoleId(role.id);
+    setEditedName(role.name);
+
+    setTimeout(() => {
+      if (editInputRef.current) {
+        editInputRef.current.focus();
+      }
+    }, 0);
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">

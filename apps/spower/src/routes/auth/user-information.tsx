@@ -3,7 +3,7 @@ import {
   useNavigate,
   useRouter
 } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { userApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import {
@@ -39,7 +39,7 @@ function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
 
-  const registerUserInformation = api.user.registerUserInformation.useMutation({
+  const registerUserInformation = userApi.registerUserInformation.useMutation({
     onSuccess: () => {
       success('Đăng ký thông tin thành công');
       forceRefreshAuth();

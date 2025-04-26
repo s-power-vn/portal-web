@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { departmentApi } from 'portal-api';
 import { v4 as uuidv4 } from 'uuid';
 import { array, object, string } from 'yup';
 
@@ -23,7 +23,7 @@ const schema = object().shape({
 export type NewDepartmentFormProps = BusinessFormProps;
 
 export const NewDepartmentForm: FC<NewDepartmentFormProps> = props => {
-  const createDepartment = api.department.create.useMutation({
+  const createDepartment = departmentApi.create.useMutation({
     onSuccess: async () => {
       success('Thêm phòng ban thành công');
       props.onSuccess?.();

@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { departmentApi, employeeApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -20,7 +20,7 @@ const schema = object().shape({
 export type NewEmployeeFormProps = BusinessFormProps;
 
 export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
-  const createEmployee = api.employee.create.useMutation({
+  const createEmployee = employeeApi.create.useMutation({
     onSuccess: async () => {
       success('Thêm nhân viên thành công');
       props.onSuccess?.();
@@ -31,7 +31,7 @@ export const NewEmployeeForm: FC<NewEmployeeFormProps> = props => {
     string | undefined
   >();
 
-  const department = api.department.byId.useQuery({
+  const department = departmentApi.byId.useQuery({
     variables: selectedDepartment,
     enabled: selectedDepartment !== undefined
   });

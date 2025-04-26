@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { departmentApi } from 'portal-api';
 import { array, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -25,11 +25,11 @@ export type EditDepartmentFormProps = BusinessFormProps & {
 };
 
 export const EditDepartmentForm: FC<EditDepartmentFormProps> = props => {
-  const department = api.department.byId.useSuspenseQuery({
+  const department = departmentApi.byId.useSuspenseQuery({
     variables: props.departmentId
   });
 
-  const updateDepartment = api.department.update.useMutation({
+  const updateDepartment = departmentApi.update.useMutation({
     onSuccess: async () => {
       success('Cập nhật phòng ban thành công');
       props.onSuccess?.();

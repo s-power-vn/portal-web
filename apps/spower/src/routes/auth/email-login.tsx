@@ -5,7 +5,7 @@ import {
   useRouter
 } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { api } from 'portal-api';
+import { userApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import {
@@ -41,7 +41,7 @@ function EmailLogin() {
   const navigate = useNavigate();
   const router = useRouter();
 
-  const login = api.user.emailLogin.useMutation({
+  const login = userApi.emailLogin.useMutation({
     onSuccess: async () => {
       await router.invalidate();
       router.history.push(redirect ?? '/');

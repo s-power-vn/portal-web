@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader, PlusIcon } from 'lucide-react';
-import { ObjectItem, api } from 'portal-api';
+import { ObjectItem, issueApi, objectApi, objectTypeApi } from 'portal-api';
 
 import type { FC } from 'react';
 import {
@@ -80,11 +80,11 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     isRefetching,
     refetch
   } = useInfiniteQuery({
-    queryKey: api.object.listByActive.getKey({
+    queryKey: objectApi.listByActive.getKey({
       filter: `name ~ "${search}"`
     }),
     queryFn: ({ pageParam = 1 }) =>
-      api.object.listByActive.fetcher({
+      objectApi.listByActive.fetcher({
         filter: `name ~ "${search}"`,
         pageIndex: pageParam,
         pageSize: 10
@@ -130,7 +130,7 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
     enabled: !!hasNextPage && !isFetchingNextPage && open
   });
 
-  const { data: objectTypesResult } = api.objectType.list.useQuery();
+  const { data: objectTypesResult } = objectTypeApi.list.useQuery();
   const objectTypes = useMemo(
     () => objectTypesResult?.items || [],
     [objectTypesResult]
@@ -157,13 +157,13 @@ export const NewIssueButton: FC<NewIssueButtonProps> = ({ projectId }) => {
               objectId={objectId}
               onSuccess={() => {
                 invalidates([
-                  api.issue.list.getKey({
+                  issueApi.list.getKey({
                     projectId
                   }),
-                  api.issue.listMine.getKey({
+                  issueApi.listMine.getKey({
                     projectId
                   }),
-                  api.issue.listByObjectType.getKey({
+                  issueApi.listByObjectType.getKey({
                     projectId
                   })
                 ]);

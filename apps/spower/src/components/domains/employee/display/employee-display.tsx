@@ -1,5 +1,5 @@
 import { Loader, UserIcon } from 'lucide-react';
-import { api } from 'portal-api';
+import { employeeApi } from 'portal-api';
 
 import type { FC } from 'react';
 import { Suspense } from 'react';
@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
 const Component = ({ employeeId }: { employeeId: string }) => {
-  const { data: employee } = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = employeeApi.byId.useSuspenseQuery({
     variables: employeeId
   });
 

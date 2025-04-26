@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi, objectTypeApi } from 'portal-api';
 
 import { FC, Suspense } from 'react';
 
@@ -13,7 +13,7 @@ export type IssueTypeProps = {
 };
 
 const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 
@@ -22,7 +22,7 @@ const Component: FC<IssueTypeProps> = ({ issueId, className }) => {
   let objectType = null;
   try {
     const queryId = objectTypeId;
-    const { data } = api.objectType.byId.useSuspenseQuery({
+    const { data } = objectTypeApi.byId.useSuspenseQuery({
       variables: queryId
     });
 

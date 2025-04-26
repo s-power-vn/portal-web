@@ -1,8 +1,8 @@
+import { ListParams } from 'portal-api';
 import { client2 } from 'portal-core';
 
 import { router } from 'react-query-kit';
 
-import type { ListParams } from '../../../types';
 import {
   CreateSupplierInput,
   SupplierItem,
@@ -13,10 +13,10 @@ import {
 
 export const supplierApi = router('supplier', {
   list: router.query({
-    fetcher: async (params?: ListParams): Promise<SupplierListResponse> => {
+    fetcher: async (params: ListParams): Promise<SupplierListResponse> => {
       try {
-        const pageIndex = params?.pageIndex ?? 1;
-        const pageSize = params?.pageSize ?? 10;
+        const pageIndex = params.pageIndex ?? 1;
+        const pageSize = params.pageSize ?? 10;
         const from = (pageIndex - 1) * pageSize;
         const to = from + pageSize;
 
@@ -26,8 +26,8 @@ export const supplierApi = router('supplier', {
           .range(from, to)
           .order('created', { ascending: false });
 
-        const filter = params?.filter
-          ? `name.ilike.%${params?.filter}%`
+        const filter = params.filter
+          ? `name.ilike.%${params.filter}%`
           : undefined;
 
         if (filter) {
@@ -86,8 +86,8 @@ export const supplierApi = router('supplier', {
           .select(
             `
             *,
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)
           `
           )
           .eq('id', id)

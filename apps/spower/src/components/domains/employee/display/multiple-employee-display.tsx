@@ -1,5 +1,5 @@
 import { Loader, UserIcon, UsersIcon } from 'lucide-react';
-import { api } from 'portal-api';
+import { employeeApi } from 'portal-api';
 import { getUser } from 'portal-core';
 
 import type { FC } from 'react';
@@ -16,7 +16,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 const EmployeeItem = ({ employeeId }: { employeeId: string }) => {
-  const { data: employee } = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = employeeApi.byId.useSuspenseQuery({
     variables: employeeId
   });
 
@@ -122,7 +122,7 @@ const Component = ({
 };
 
 const FirstEmployee = ({ employeeId }: { employeeId: string }) => {
-  const { data: employee } = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = employeeApi.byId.useSuspenseQuery({
     variables: employeeId
   });
 

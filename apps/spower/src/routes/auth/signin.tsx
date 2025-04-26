@@ -5,7 +5,7 @@ import {
   useNavigate
 } from '@tanstack/react-router';
 import { Mail } from 'lucide-react';
-import { api } from 'portal-api';
+import { userApi } from 'portal-api';
 
 import { Button, Card, CardContent } from '@minhdtb/storeo-theme';
 
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/signin')({
 function RouteComponent() {
   const navigate = useNavigate();
 
-  const googleLogin = api.user.googleLogin.useMutation({
+  const googleLogin = userApi.googleLogin.useMutation({
     onSuccess: () => {
       navigate({
         to: '/'

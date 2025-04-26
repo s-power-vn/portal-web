@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { organizationApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import { FC } from 'react';
@@ -17,7 +17,7 @@ const schema = object().shape({
 export type NewOrganizationFormProps = BusinessFormProps;
 
 export const NewOrganizationForm: FC<NewOrganizationFormProps> = props => {
-  const createOrganization = api.organization.create.useMutation({
+  const createOrganization = organizationApi.create.useMutation({
     onSuccess: () => {
       success('Tạo tổ chức thành công');
       props.onSuccess?.();

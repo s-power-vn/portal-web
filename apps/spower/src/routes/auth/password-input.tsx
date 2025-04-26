@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { api } from 'portal-api';
+import { userApi } from 'portal-api';
 import { object, ref, string } from 'yup';
 
 import { useState } from 'react';
@@ -44,7 +44,7 @@ function RouteComponent() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
 
-  const emailLogin = api.user.emailLogin.useMutation({
+  const emailLogin = userApi.emailLogin.useMutation({
     onSuccess: () => {
       navigate({
         to: '/user-information',
@@ -56,7 +56,7 @@ function RouteComponent() {
     }
   });
 
-  const register = api.user.emailRegister.useMutation({
+  const register = userApi.emailRegister.useMutation({
     onSuccess: () => {
       success('Tạo tài khoản thành công');
       emailLogin.mutate({ email, password });

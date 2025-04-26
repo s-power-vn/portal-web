@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { customerApi } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
@@ -9,8 +9,8 @@ export type CustomerDropdownProps = Partial<ComboboxProps>;
 export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.customer.byIds.fetcher(ids)
-      : await api.customer.byId.fetcher(ids);
+      ? await customerApi.byIds.fetcher(ids)
+      : await customerApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name,
@@ -24,7 +24,7 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const result = await api.customer.list.fetcher({
+      const result = await customerApi.list.fetcher({
         filter: search,
         pageIndex: page ?? 1,
         pageSize: 10
@@ -46,7 +46,7 @@ export const CustomerDropdown: FC<CustomerDropdownProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn chủ đầu tư'}
       emptyText={props.emptyText ?? 'Không tìm thấy chủ đầu tư'}
-      queryKey={api.customer.list.getKey()}
+      queryKey={customerApi.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
       showGroups={false}

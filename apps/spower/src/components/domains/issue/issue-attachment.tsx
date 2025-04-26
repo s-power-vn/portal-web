@@ -1,5 +1,5 @@
 import { DownloadIcon, Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 import {
   Collections,
   IssueFileResponse,
@@ -22,7 +22,7 @@ const isImageFile = (type: string | undefined) => {
 };
 
 const AttachmentComponent: FC<IssueAttachmentProps> = ({ issueId }) => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 

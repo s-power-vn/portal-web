@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { objectApi } from 'portal-api';
 
 import { FC, useCallback } from 'react';
 
@@ -11,8 +11,8 @@ export type ObjectMultiselectProps = Partial<ComboboxProps> & {
 export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.object.byIds.fetcher(ids)
-      : await api.object.byId.fetcher(ids);
+      ? await objectApi.byIds.fetcher(ids)
+      : await objectApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name,
@@ -29,14 +29,14 @@ export const ObjectMultiselect: FC<ObjectMultiselectProps> = props => {
       let result;
 
       if (props.objectType) {
-        result = await api.object.listByType.fetcher({
+        result = await objectApi.listByType.fetcher({
           objectType: props.objectType,
           filter: search,
           pageIndex: page ?? 1,
           pageSize: 10
         });
       } else {
-        result = await api.object.list.fetcher({
+        result = await objectApi.list.fetcher({
           filter: search,
           pageIndex: page ?? 1,
           pageSize: 10

@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 import { arrayToTree, compareVersion } from 'portal-core';
 import { array, boolean, date, number, object, string } from 'yup';
 
@@ -15,8 +14,8 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { MultipleFileSelectField } from '../../../../../components';
+import { requestApi } from '../../../api';
 import { RequestInputField } from '../field/request-input-field';
-import { RequestDetailItem } from '../request-display';
 
 const schema = object({
   title: string().required('Hãy nhập nội dung'),
@@ -80,47 +79,24 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
   onCancel,
   onSuccess
 }) => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 
-  const request = api.request.byIssueId.useSuspenseQuery({
+  const request = requestApi.byIssueId.useSuspenseQuery({
     variables: issueId
   });
 
-  const update = api.request.update.useMutation({
+  const update = requestApi.update.useMutation({
     onSuccess: () => {
       success('Cập nhật yêu cầu thành công');
       onSuccess?.();
     }
   });
 
-  const v = useMemo<RequestDetailItem[]>(() => {
-    return _.chain(
-      request.data ? request.data?.expand?.requestDetail_via_request ?? [] : []
-    )
-      .map(it => {
-        const { customLevel, customUnit, customTitle, ...rest } = it;
-
-        return {
-          id: it.id,
-          title: it.expand?.detail.title ?? customTitle,
-          unit: it.expand?.detail.unit ?? customUnit,
-          group: it.expand?.detail.id ?? customLevel,
-          level: it.expand?.detail.level ?? customLevel,
-          requestVolume: it.requestVolume,
-          deliveryDate: it.deliveryDate,
-          note: it.note,
-          index: it.index,
-          parent: it.expand?.detail.parent ?? `${request.data?.project}-root`
-        };
-      })
-      .value();
-  }, [request.data]);
-
   const requestDetails = useMemo(() => {
-    return arrayToTree(v, `${request.data?.project}-root`);
-  }, [request.data?.project, v]);
+    return arrayToTree(request.data?.details ?? []);
+  }, [request.data?.details]);
 
   const listDetails = useMemo(() => {
     const list = [];
@@ -141,8 +117,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
       onSuccess={values => {
         update.mutate({
           ...values,
-          id: issueId,
-          project: issue.data?.project
+          id: issueId
         });
       }}
       defaultValues={{
@@ -156,7 +131,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
             ? new Date(Date.parse(it.deliveryDate ?? ''))
             : undefined
         })),
-        attachments: issue.data?.expand?.issueFile_via_issue?.map(it => ({
+        attachments: issue.data?.files?.map(it => ({
           ...it
         }))
       }}
@@ -198,7 +173,7 @@ export const EditRequestForm: FC<EditRequestFormProps> = ({
       <RequestInputField
         schema={schema}
         name={'details'}
-        options={{ projectId: issue.data?.project }}
+        options={{ projectId: issue.data?.project?.id }}
       />
       <MultipleFileSelectField
         schema={schema}

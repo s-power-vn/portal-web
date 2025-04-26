@@ -9,7 +9,7 @@ import {
   Trash2,
   Undo2Icon
 } from 'lucide-react';
-import { api } from 'portal-api';
+import { employeeApi, issueApi } from 'portal-api';
 import { currentEmployeeId } from 'portal-core';
 
 import type { FC } from 'react';
@@ -93,11 +93,11 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
   const invalidates = useInvalidateQueries();
   const { confirm } = useConfirm();
 
-  const { data: employee } = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = employeeApi.byId.useSuspenseQuery({
     variables: currentEmployeeId.value
   });
 
-  const { data: issue } = api.issue.byId.useSuspenseQuery({
+  const { data: issue } = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 
@@ -113,22 +113,22 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
 
   const isInDoneState = toNode?.type === 'finish';
 
-  const deleteIssue = api.issue.delete.useMutation({
+  const deleteIssue = issueApi.delete.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.listByObjectType.getKey(),
-        api.issue.listMine.getKey()
+        issueApi.listByObjectType.getKey(),
+        issueApi.listMine.getKey()
       ]);
 
       router.history.back();
     }
   });
 
-  const resetIssue = api.issue.reset.useMutation({
+  const resetIssue = issueApi.reset.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.listByObjectType.getKey(),
-        api.issue.listMine.getKey()
+        issueApi.listByObjectType.getKey(),
+        issueApi.listMine.getKey()
       ]);
 
       router.history.back();
@@ -146,10 +146,7 @@ const SummaryComponent: FC<IssueSummaryProps> = props => {
             objectType={issueObject?.objectType?.name ?? ''}
             issueId={issueId}
             onSuccess={() => {
-              invalidates([
-                api.issue.byId.getKey(issueId),
-                api.price.byIssueId.getKey(issueId)
-              ]);
+              invalidates([issueApi.byId.getKey(issueId)]);
               close();
             }}
             onCancel={close}

@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { supplierApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
@@ -16,7 +16,7 @@ const Component = () => {
   const onSuccessHandler = useCallback(() => {
     setOpen(false);
     history.back();
-    invalidates([api.supplier.list.getKey()]);
+    invalidates([supplierApi.list.getKey()]);
   }, [history, invalidates]);
 
   const onCancelHandler = useCallback(() => {

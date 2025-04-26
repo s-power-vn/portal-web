@@ -1,5 +1,5 @@
 import { CalendarIcon, Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueCommentApi } from 'portal-api';
 import { Collections, getImageUrl } from 'portal-core';
 
 import type { FC } from 'react';
@@ -8,14 +8,12 @@ import { Suspense } from 'react';
 import { timeSince } from '@minhdtb/storeo-core';
 import { Avatar, AvatarFallback, AvatarImage } from '@minhdtb/storeo-theme';
 
-import { IssueStatusText } from './issue-status-text';
-
 export type IssueCommentProps = {
   issueId: string;
 };
 
 const CommentComponent: FC<IssueCommentProps> = props => {
-  const comments = api.comment.list.useSuspenseQuery({
+  const comments = issueCommentApi.list.useSuspenseQuery({
     variables: props.issueId
   });
 
@@ -29,19 +27,19 @@ const CommentComponent: FC<IssueCommentProps> = props => {
                 <AvatarImage
                   src={getImageUrl(
                     Collections.User,
-                    it.expand?.createdBy.id,
-                    it.expand?.createdBy.avatar
+                    it.createdBy.id,
+                    it.createdBy.user?.avatar
                   )}
                 />
                 <AvatarFallback className={'text-sm'}>
-                  {it.expand?.createdBy.name.split(' ')[0][0]}
+                  {it.createdBy.name.split(' ')[0][0]}
                 </AvatarFallback>
               </Avatar>
             </div>
             <div className={'flex flex-col gap-1'}>
               <div className={'flex items-center gap-2'}>
                 <div className={'text-sm font-bold'}>
-                  {it.expand?.createdBy.name}
+                  {it.createdBy.user?.name}
                 </div>
                 <div
                   className={'flex items-center gap-1 text-xs text-gray-500'}
@@ -49,7 +47,6 @@ const CommentComponent: FC<IssueCommentProps> = props => {
                   <CalendarIcon className={'h-3 w-3'} />
                   {timeSince(new Date(Date.parse(it.created)))}
                 </div>
-                <IssueStatusText issueId={props.issueId} status={it.status} />
               </div>
               <div className={'text-sm'}>{it.content}</div>
             </div>

@@ -27,7 +27,7 @@ import {
   SquarePlusIcon,
   XIcon
 } from 'lucide-react';
-import { DetailItem, DetailListItem, api } from 'portal-api';
+import { projectApi } from 'portal-api';
 import type { TreeData } from 'portal-core';
 import {
   arrayToTree,
@@ -60,15 +60,17 @@ import {
   useLoading
 } from '@minhdtb/storeo-theme';
 
-import {
-  ColumnManager,
-  IndeterminateCheckbox,
-  NewColumnForm
-} from '../../../../../components';
+import { IndeterminateCheckbox } from '../../../../../components';
 import {
   useDetailImportStatus,
   useInvalidateQueries
 } from '../../../../../hooks';
+import {
+  DetailItem,
+  DetailListItem,
+  detailApi,
+  detailImportApi
+} from '../../../api';
 import { EditDetailForm, NewDetailForm } from '../../../components/detail';
 
 export const Route = createFileRoute(
@@ -94,26 +96,23 @@ function Component() {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const deleteDetails = api.detail.delete.useMutation({
+  const deleteDetails = detailApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa hạng mục công việc thành công');
-      await invalidates([
-        api.detail.listFull.getKey(projectId),
-        api.detailInfo.listFull.getKey(projectId)
-      ]);
+      await invalidates([detailApi.listFull.getKey(projectId)]);
     }
   });
 
   useDetailImportStatus(async (_, status) => {
     if (status === 'Done') {
       hideLoading();
-      await invalidates([api.detailInfo.listFull.getKey(projectId)]);
+      await invalidates([detailApi.listFull.getKey(projectId)]);
     } else if (status === 'Error') {
       hideLoading();
     }
   });
 
-  const uploadFile = api.detailImport.upload.useMutation({
+  const uploadFile = detailImportApi.upload.useMutation({
     onError: () => {
       hideLoading();
     },
@@ -144,13 +143,10 @@ function Component() {
   const handleNewDetailSuccess = useCallback(
     (close: () => void) => {
       return () => {
-        invalidates([
-          api.detail.listFull.getKey(projectId),
-          api.detailInfo.listFull.getKey(projectId)
-        ]);
+        invalidates([detailApi.listFull.getKey(projectId)]);
 
         if (selectedRow) {
-          invalidates([api.detail.byId.getKey(selectedRow.original.id)]);
+          invalidates([detailApi.byId.getKey(selectedRow.original.id)]);
         }
 
         close();
@@ -195,9 +191,8 @@ function Component() {
       return () => {
         if (selectedRow) {
           invalidates([
-            api.detail.listFull.getKey(projectId),
-            api.detailInfo.listFull.getKey(projectId),
-            api.detail.byId.getKey(selectedRow.original.id)
+            detailApi.listFull.getKey(projectId),
+            detailApi.byId.getKey(selectedRow.original.id)
           ]);
         }
         close();
@@ -221,38 +216,11 @@ function Component() {
     }
   }, [handleEditDetailSuccess, selectedRow]);
 
-  const handleNewColumnSuccess = useCallback(() => {
-    invalidates([api.project.byId.getKey(projectId)]);
-  }, [invalidates, projectId]);
-
-  const handleNewColumn = useCallback(() => {
-    showModal({
-      title: 'Thêm cột',
-      className: 'w-[25rem]',
-      children: ({ close }) => (
-        <NewColumnForm
-          projectId={projectId}
-          onSuccess={handleNewColumnSuccess}
-          onCancel={close}
-        />
-      )
-    });
-  }, [handleNewColumnSuccess, projectId]);
-
-  const handleManageColumn = useCallback(() => {
-    showModal({
-      title: 'Quản lý cột',
-      children: ({ close }) => (
-        <ColumnManager projectId={projectId} onClose={close} />
-      )
-    });
-  }, [projectId]);
-
-  const { data: project } = api.project.byId.useSuspenseQuery({
+  const { data: project } = projectApi.byId.useSuspenseQuery({
     variables: projectId
   });
 
-  const { data: listDetails } = api.detail.listFull.useSuspenseQuery({
+  const { data: listDetails } = detailApi.listFull.useSuspenseQuery({
     variables: projectId
   });
 
@@ -295,7 +263,7 @@ function Component() {
     };
   }, []);
 
-  const columnHelper = createColumnHelper<TreeData<DetailItem>>();
+  const columnHelper = createColumnHelper<TreeData<DetailListItem>>();
 
   const columns = useMemo(() => {
     const value = [
@@ -586,11 +554,11 @@ function Component() {
             align="end"
             sideOffset={2}
           >
-            <DropdownMenuItem onClick={handleNewColumn}>
+            <DropdownMenuItem>
               <Columns3Icon className="mr-2 h-4 w-4 text-red-500" />
               Thêm cột
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleManageColumn}>
+            <DropdownMenuItem>
               <ColumnsIcon className="mr-2 h-4 w-4 text-blue-500" />
               Quản lý cột
             </DropdownMenuItem>
@@ -598,9 +566,7 @@ function Component() {
         </DropdownMenu>
       </div>
       <div
-        className={
-          'border-appBlue h-[calc(100vh-160px)] overflow-auto rounded-md border'
-        }
+        className={'h-[calc(100vh-160px)] overflow-auto rounded-md'}
         ref={parentRef}
       >
         <Table
@@ -620,9 +586,7 @@ function Component() {
                         ...getCommonPinningStyles(header.column),
                         width: header.getSize()
                       }}
-                      className={`bg-appBlueLight text-appWhite relative whitespace-nowrap p-1 text-center after:pointer-events-none
-                          after:absolute after:right-0 after:top-0 after:h-full after:w-full after:border-b
-                          after:border-r after:content-[''] last:after:border-r-0`}
+                      className={`text-appBlue relative whitespace-nowrap p-1 text-center`}
                     >
                       {header.isPlaceholder ? null : (
                         <>
@@ -667,8 +631,7 @@ function Component() {
                             width: cell.column.getSize()
                           }}
                           className={cn(
-                            ` bg-appWhite hover:bg-appGrayLight group-hover:bg-appGrayLight relative p-1 text-xs
-                              after:absolute after:right-0 after:top-0 after:h-full after:border-r after:content-[''] last:after:border-r-0`,
+                            ` relative p-1 text-xs`,
                             selectedRow?.id === row.id
                               ? 'bg-appBlueLight text-appWhite hover:bg-appBlueLight group-hover:bg-appBlue'
                               : null

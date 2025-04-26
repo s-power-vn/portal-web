@@ -1,5 +1,5 @@
 import { ArrowRight, Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 
 import type { FC } from 'react';
 import { Suspense } from 'react';
@@ -12,7 +12,7 @@ export type IssueStatusTextProps = {
 };
 
 const StatusTextComponent: FC<IssueStatusTextProps> = props => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: props.issueId
   });
 

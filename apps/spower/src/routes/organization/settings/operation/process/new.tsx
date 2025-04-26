@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { processApi } from 'portal-api';
 
 import { useCallback, useState } from 'react';
 
@@ -21,7 +21,7 @@ function RouteComponent() {
 
   const handleSuccess = useCallback(() => {
     history.back();
-    invalidates([api.process.list.getKey()]);
+    invalidates([processApi.list.getKey()]);
   }, [history, invalidates]);
 
   const handleCancel = useCallback(() => {

@@ -86,8 +86,8 @@ export const customerApi = router('customer', {
           .from('customers')
           .select(
             `*, 
-            createdBy:users!created_by(*),
-            updatedBy:users!updated_by(*)`
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)`
           )
           .eq('id', id)
           .single();

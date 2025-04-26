@@ -37,9 +37,9 @@ export type EmployeeListItem = {
 export type CreateEmployeeInput = {
   name: string;
   user_id: string;
-  department_id: string;
-  department_role: string;
-  department_title: string;
+  department_id?: string;
+  department_role?: string;
+  department_title?: string;
 };
 
 export type UpdateEmployeeInput = {

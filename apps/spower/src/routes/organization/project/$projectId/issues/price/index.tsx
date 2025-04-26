@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { FilesIcon, Loader } from 'lucide-react';
-import { IssueItem, ListSchema, api } from 'portal-api';
+import { IssueItem, ListSchema, issueApi, objectTypeApi } from 'portal-api';
 
 import { useCallback, useMemo } from 'react';
 
@@ -48,11 +48,11 @@ export const Route = createFileRoute(
   },
   loader: async ({ deps, params, context: { queryClient } }) => {
     const priceType = await queryClient?.ensureQueryData(
-      api.objectType.byType.getOptions(deps.search.objectTypeName)
+      objectTypeApi.byType.getOptions(deps.search.objectTypeName)
     );
 
     await queryClient?.ensureQueryData(
-      api.issue.listByObjectType.getOptions({
+      issueApi.listByObjectType.getOptions({
         ...deps.search,
         projectId: params.projectId,
         objectTypeId: priceType?.id
@@ -66,19 +66,19 @@ function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
 
-  const { data: priceType } = api.objectType.byType.useSuspenseQuery({
+  const { data: priceType } = objectTypeApi.byType.useSuspenseQuery({
     variables: search.objectTypeName
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.issue.listByObjectType.getKey({
+      queryKey: issueApi.listByObjectType.getKey({
         filter: search.filter ?? '',
         projectId,
         objectTypeId: priceType?.id
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.issue.listByObjectType.fetcher({
+        issueApi.listByObjectType.fetcher({
           filter: search.filter ?? '',
           pageIndex: pageParam,
           pageSize: 20,

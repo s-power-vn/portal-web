@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi, issueCommentApi } from 'portal-api';
 import { client } from 'portal-core';
 
 import type { FC } from 'react';
@@ -26,24 +26,24 @@ export type IssueActionProps = {
 const ActionComponent: FC<IssueActionProps> = props => {
   const invalidates = useInvalidateQueries();
 
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: props.issueId
   });
 
-  const approve = api.issue.approve.useMutation({
+  const approve = issueApi.approve.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.byId.getKey(props.issueId),
-        api.comment.list.getKey(props.issueId)
+        issueApi.byId.getKey(props.issueId),
+        issueCommentApi.list.getKey(props.issueId)
       ]);
     }
   });
 
-  const reject = api.issue.reject.useMutation({
+  const reject = issueApi.reject.useMutation({
     onSuccess: () => {
       invalidates([
-        api.issue.byId.getKey(props.issueId),
-        api.comment.list.getKey(props.issueId)
+        issueApi.byId.getKey(props.issueId),
+        issueCommentApi.list.getKey(props.issueId)
       ]);
     }
   });
@@ -105,9 +105,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
             onCancel={close}
             onSuccess={() => {
               invalidates([
-                api.issue.byId.getKey(props.issueId),
+                issueApi.byId.getKey(props.issueId),
                 ['finished-requests'],
-                api.comment.list.getKey(props.issueId)
+                issueCommentApi.list.getKey(props.issueId)
               ]);
               close();
             }}
@@ -144,9 +144,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onCancel={close}
                 onSuccess={() => {
                   invalidates([
-                    api.issue.byId.getKey(props.issueId),
+                    issueApi.byId.getKey(props.issueId),
                     ['finished-requests'],
-                    api.comment.list.getKey(props.issueId)
+                    issueCommentApi.list.getKey(props.issueId)
                   ]);
                   close();
                 }}
@@ -166,9 +166,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
                 onCancel={close}
                 onSuccess={() => {
                   invalidates([
-                    api.issue.byId.getKey(props.issueId),
+                    issueApi.byId.getKey(props.issueId),
                     ['finished-requests'],
-                    api.comment.list.getKey(props.issueId)
+                    issueCommentApi.list.getKey(props.issueId)
                   ]);
                   close();
                 }}
@@ -210,9 +210,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
                     });
 
                     invalidates([
-                      api.issue.byId.getKey(props.issueId),
+                      issueApi.byId.getKey(props.issueId),
                       ['finished-requests'],
-                      api.comment.list.getKey(props.issueId)
+                      issueCommentApi.list.getKey(props.issueId)
                     ]);
                     close();
                   }}
@@ -242,9 +242,9 @@ const ActionComponent: FC<IssueActionProps> = props => {
                     });
 
                     invalidates([
-                      api.issue.byId.getKey(props.issueId),
+                      issueApi.byId.getKey(props.issueId),
                       ['finished-requests'],
-                      api.comment.list.getKey(props.issueId)
+                      issueCommentApi.list.getKey(props.issueId)
                     ]);
                     close();
                   }}

@@ -14,7 +14,6 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import _ from 'lodash';
 import { SquareMinusIcon, SquarePlusIcon } from 'lucide-react';
-import { DetailListItem, api } from 'portal-api';
 import { TreeData, arrayToTree, compareVersion } from 'portal-core';
 
 import type { FC } from 'react';
@@ -32,6 +31,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { IndeterminateCheckbox } from '../../../../../components';
+import { DetailListItem, detailApi } from '../../../api';
 
 export type PickDetailProps = {
   projectId?: string;
@@ -56,7 +56,7 @@ export const PickDetail: FC<PickDetailProps> = props => {
     );
   }, [props.value]);
 
-  const { data: listDetails } = api.detail.listFull.useSuspenseQuery({
+  const { data: listDetails } = detailApi.listFull.useSuspenseQuery({
     variables: props.projectId
   });
 
@@ -67,6 +67,35 @@ export const PickDetail: FC<PickDetailProps> = props => {
   }, [listDetails]);
 
   const columnHelper = createColumnHelper<TreeData<DetailListItem>>();
+
+  const table = useReactTable({
+    data,
+    columns: [],
+    state: {
+      expanded,
+      rowSelection,
+      globalFilter
+    },
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    enableFilters: true,
+    enableGlobalFilter: true,
+    filterFromLeafRows: true,
+    onGlobalFilterChange: setGlobalFilter,
+    onExpandedChange: setExpanded,
+    onRowSelectionChange: setRowSelection,
+    getSubRows: row =>
+      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    manualPagination: true,
+    getRowId: row => row.id
+  });
 
   const columns = useMemo(
     () => [
@@ -156,37 +185,13 @@ export const PickDetail: FC<PickDetailProps> = props => {
         size: 620
       })
     ],
-    [columnHelper]
+    [columnHelper, table]
   );
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      expanded,
-      rowSelection,
-      globalFilter
-    },
-    enableRowSelection: true,
-    enableMultiRowSelection: true,
-    enableFilters: true,
-    enableGlobalFilter: true,
-    filterFromLeafRows: true,
-    onGlobalFilterChange: setGlobalFilter,
-    onExpandedChange: setExpanded,
-    onRowSelectionChange: setRowSelection,
-    getSubRows: row =>
-      row.children?.sort((v1, v2) => compareVersion(v1.level, v2.level)),
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    manualPagination: true,
-    getRowId: row => row.id
-  });
+  table.setOptions(prev => ({
+    ...prev,
+    columns
+  }));
 
   const { rows } = table.getRowModel();
 

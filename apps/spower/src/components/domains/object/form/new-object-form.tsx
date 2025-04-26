@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { objectApi } from 'portal-api';
 import { boolean, object, string } from 'yup';
 
 import { type FC, useState } from 'react';
@@ -12,7 +12,6 @@ import {
   success
 } from '@minhdtb/storeo-theme';
 
-import { useInvalidateQueries } from '../../../../hooks';
 import { ProcessDropdownField } from '../../process';
 import { ObjectTypeDropdownField } from '../field';
 
@@ -31,9 +30,7 @@ export const NewObjectForm: FC<NewObjectFormProps> = props => {
     string | undefined
   >();
 
-  const invalidates = useInvalidateQueries();
-
-  const createObject = api.object.create.useMutation({
+  const createObject = objectApi.create.useMutation({
     onSuccess: async () => {
       success('Thêm đối tượng thành công');
       props.onSuccess?.();

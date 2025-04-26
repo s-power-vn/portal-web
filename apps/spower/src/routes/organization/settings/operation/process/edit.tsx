@@ -1,5 +1,5 @@
 import { createFileRoute, useParams, useRouter } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { processApi } from 'portal-api';
 
 import { useState } from 'react';
 
@@ -37,8 +37,8 @@ function RouteComponent() {
         processId={processId}
         onSuccess={() => {
           invalidates([
-            api.process.list.getKey(),
-            api.process.byId.getKey(processId)
+            processApi.list.getKey(),
+            processApi.byId.getKey(processId)
           ]);
           history.back();
         }}

@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { departmentApi, employeeApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -22,11 +22,11 @@ export type EditEmployeeFormProps = BusinessFormProps & {
 };
 
 export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
-  const { data: employee } = api.employee.byId.useSuspenseQuery({
+  const { data: employee } = employeeApi.byId.useSuspenseQuery({
     variables: props.employeeId
   });
 
-  const updateEmployee = api.employee.update.useMutation({
+  const updateEmployee = employeeApi.update.useMutation({
     onSuccess: async () => {
       success('Chỉnh sửa nhân viên thành công');
       props.onSuccess?.();
@@ -41,7 +41,7 @@ export const EditEmployeeForm: FC<EditEmployeeFormProps> = props => {
     setSelectedDepartment(employee.department?.id || undefined);
   }, [employee.department?.id]);
 
-  const department = api.department.byId.useQuery({
+  const department = departmentApi.byId.useQuery({
     variables: selectedDepartment,
     enabled: selectedDepartment !== undefined
   });

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { api } from 'portal-api';
+import { organizationApi } from 'portal-api';
 
 import { useCallback } from 'react';
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute('/_private/_top/top')({
 });
 
 function RouteComponent() {
-  const { data: listOrganization } = api.organization.list.useSuspenseQuery();
+  const { data: organizations } = organizationApi.list.useSuspenseQuery();
 
   const invalidates = useInvalidateQueries();
 
@@ -52,23 +52,26 @@ function RouteComponent() {
         return (
           <NewOrganizationForm
             onSuccess={() => {
-              invalidates([api.organization.list.getKey()]);
+              invalidates([organizationApi.list.getKey()]);
               close();
             }}
           />
         );
       }
     });
-  }, []);
+  }, [invalidates]);
 
-  const handleOrganizationClick = useCallback((id: string) => {
-    navigate({
-      to: '/$organizationId/home',
-      params: {
-        organizationId: id
-      }
-    });
-  }, []);
+  const handleOrganizationClick = useCallback(
+    (id: string) => {
+      navigate({
+        to: '/$organizationId/home',
+        params: {
+          organizationId: id
+        }
+      });
+    },
+    [navigate]
+  );
 
   return (
     <div className="p-4">
@@ -78,7 +81,7 @@ function RouteComponent() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {listOrganization.length === 0 ? (
+        {organizations.length === 0 ? (
           <div className="col-span-full">
             <p className="text-lg font-medium text-gray-900">
               Chưa có tổ chức nào
@@ -88,7 +91,7 @@ function RouteComponent() {
             </p>
           </div>
         ) : (
-          listOrganization.map(org => {
+          organizations.map(org => {
             const userRole = org.role || '';
             const roleColor = getRoleColor(userRole);
 

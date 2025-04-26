@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, MaterialListItem, api } from 'portal-api';
+import { ListSchema, MaterialListItem, materialApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.material.list.getOptions({
+      materialApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
           ? `name.ilike.%${deps.search.filter}%,code.ilike.%${deps.search.filter}%`
@@ -61,11 +61,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.material.list.getKey({
+      queryKey: materialApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.material.list.fetcher({
+        materialApi.list.fetcher({
           filter: search.filter
             ? `name.ilike.%${search.filter}%,code.ilike.%${search.filter}%`
             : '',
@@ -82,10 +82,10 @@ function Component() {
     [data]
   );
 
-  const deleteMaterial = api.material.delete.useMutation({
+  const deleteMaterial = materialApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa vật tư thành công');
-      invalidates([api.material.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([materialApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 

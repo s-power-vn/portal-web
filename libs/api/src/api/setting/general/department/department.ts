@@ -118,8 +118,8 @@ export const departmentApi = router('department', {
           .from('departments')
           .select(
             `*, 
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)`
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)`
           )
           .eq('id', id)
           .single();

@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { employeeApi } from 'portal-api';
 
 import { type FC, useCallback } from 'react';
 
@@ -9,8 +9,8 @@ export type SelectEmployeeProps = Partial<ComboboxProps>;
 export const SelectEmployee: FC<SelectEmployeeProps> = props => {
   const lookupFn = useCallback(async (ids: string | string[]) => {
     const result = Array.isArray(ids)
-      ? await api.employee.byIds.fetcher(ids)
-      : await api.employee.byId.fetcher(ids);
+      ? await employeeApi.byIds.fetcher(ids)
+      : await employeeApi.byId.fetcher(ids);
     return Array.isArray(result)
       ? result.map(it => ({
           label: it.name ? it.name : it.user?.name || '',
@@ -24,7 +24,7 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
 
   const queryFn = useCallback(
     async ({ search, page }: { search?: string; page?: number }) => {
-      const result = await api.employee.list.fetcher({
+      const result = await employeeApi.list.fetcher({
         filter: search,
         pageIndex: page ?? 1,
         pageSize: 10
@@ -48,7 +48,7 @@ export const SelectEmployee: FC<SelectEmployeeProps> = props => {
       {...props}
       placeholder={props.placeholder ?? 'Chọn nhân viên'}
       emptyText={props.emptyText ?? 'Không tìm thấy nhân viên'}
-      queryKey={api.employee.list.getKey()}
+      queryKey={employeeApi.list.getKey()}
       queryFn={queryFn}
       lookupFn={lookupFn}
     />

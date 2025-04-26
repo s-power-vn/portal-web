@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NetworkIcon, Plus, Trash2, UsersIcon } from 'lucide-react';
-import { DepartmentItem, api } from 'portal-api';
+import { DepartmentItem, departmentApi } from 'portal-api';
 import * as yup from 'yup';
 
 import {
@@ -144,7 +144,7 @@ const ConditionBlock = memo(
           ? localDeptId
           : undefined;
 
-      const { data } = api.department.byId.useQuery({
+      const { data } = departmentApi.byId.useQuery({
         variables: queryId,
         enabled: !!queryId
       });

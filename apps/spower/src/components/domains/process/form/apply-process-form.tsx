@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { processApi } from 'portal-api';
 import { array, object, string } from 'yup';
 
 import { FC } from 'react';
@@ -20,11 +20,11 @@ export const ApplyProcessForm: FC<ApplyProcessFormProps> = ({
   processId,
   ...props
 }) => {
-  const process = api.process.byId.useSuspenseQuery({
+  const process = processApi.byId.useSuspenseQuery({
     variables: processId
   });
 
-  const applyProcess = api.process.apply.useMutation({
+  const applyProcess = processApi.apply.useMutation({
     onSuccess: () => {
       success('Áp dụng quy trình thành công');
       props.onSuccess?.();

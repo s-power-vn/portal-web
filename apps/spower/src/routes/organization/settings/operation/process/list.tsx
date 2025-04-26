@@ -7,7 +7,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { CopyIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, ProcessListItem, api } from 'portal-api';
+import { ListSchema, ProcessListItem, processApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -47,7 +47,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.process.list.getOptions({
+      processApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
           ? `(name ~ "${deps.search.filter}") || (description ~ "${deps.search.filter}")`
@@ -66,11 +66,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.process.list.getKey({
+      queryKey: processApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.process.list.fetcher({
+        processApi.list.fetcher({
           filter: search.filter
             ? `(name ~ "${search.filter}") || (description ~ "${search.filter}")`
             : '',
@@ -100,17 +100,17 @@ function Component() {
     });
   }, [navigate, search]);
 
-  const deleteProcess = api.process.delete.useMutation({
+  const deleteProcess = processApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa quy trình thành công');
-      invalidates([api.process.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([processApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
-  const duplicateProcess = api.process.duplicate.useMutation({
+  const duplicateProcess = processApi.duplicate.useMutation({
     onSuccess: async () => {
       success('Nhân bản quy trình thành công');
-      invalidates([api.process.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([processApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 
@@ -128,8 +128,8 @@ function Component() {
             onSuccess={() => {
               close();
               invalidates([
-                api.process.list.getKey({ filter: search.filter ?? '' }),
-                api.process.byId.getKey()
+                processApi.list.getKey({ filter: search.filter ?? '' }),
+                processApi.byId.getKey()
               ]);
             }}
             onCancel={close}

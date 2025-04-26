@@ -50,7 +50,7 @@ export const issueApi = router('issue', {
                   color
                 )
               ),
-              files:issue_files(
+              files:issues_files(
                 id,
                 name,
                 type,
@@ -137,7 +137,7 @@ export const issueApi = router('issue', {
                   color
                 )
               ),
-              files:issue_files(
+              files:issues_files(
                 id,
                 name,
                 type,
@@ -229,7 +229,7 @@ export const issueApi = router('issue', {
                   color
                 )
               ),
-              files:issue_files(
+              files:issues_files(
                 id,
                 name,
                 type,
@@ -302,15 +302,15 @@ export const issueApi = router('issue', {
                 color
               )
             ),
-            files:issue_files(
+            files:issues_files(
               id,
               name,
               type,
               size,
               url
             ),
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)
           `
           )
           .eq('id', id)
@@ -430,7 +430,7 @@ export const issueApi = router('issue', {
 
         if (isAll) {
           const { data, error } = await client2.rest
-            .from('issue_user_info')
+            .from('issues_info')
             .select('count')
             .eq('user_id', currentUserId.value);
 
@@ -449,7 +449,7 @@ export const issueApi = router('issue', {
           );
         } else {
           const { data, error } = await client2.rest
-            .from('issue_user_info')
+            .from('issues_info')
             .select('count')
             .eq('project_id', projectId)
             .eq('user_id', currentUserId.value);

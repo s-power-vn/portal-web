@@ -1,4 +1,3 @@
-import { DetailListItem, api } from 'portal-api';
 import { TreeData } from 'portal-core';
 import { number, object, string } from 'yup';
 
@@ -13,6 +12,8 @@ import {
   TextareaField,
   success
 } from '@minhdtb/storeo-theme';
+
+import { DetailListItem, detailApi } from '../../../api';
 
 const schema = object().shape({
   level: string().required('Hãy nhập ID'),
@@ -42,7 +43,7 @@ export type NewDetailFormProps = BusinessFormProps & {
 };
 
 export const NewDetailForm: FC<NewDetailFormProps> = props => {
-  const createDetail = api.detail.create.useMutation({
+  const createDetail = detailApi.create.useMutation({
     onSuccess: async () => {
       success('Tạo hạng mục công việc thành công');
       props.onSuccess?.();
@@ -58,7 +59,6 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
       unitPrice?: number;
     }) => {
       createDetail.mutate({
-        project_id: props.projectId,
         parent_id: props.parent?.id,
         title: values.title ?? '',
         level: values.level ?? '',
@@ -67,7 +67,7 @@ export const NewDetailForm: FC<NewDetailFormProps> = props => {
         unit_price: values.unitPrice ?? 0
       });
     },
-    [props.projectId, props.parent?.id, createDetail]
+    [props.parent?.id, createDetail]
   );
 
   return (

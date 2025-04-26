@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { EditIcon, Loader, PlusIcon, XIcon } from 'lucide-react';
-import { ListSchema, SupplierListItem, api } from 'portal-api';
+import { ListSchema, SupplierListItem, supplierApi } from 'portal-api';
 
 import { useCallback, useMemo, useRef } from 'react';
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute(
   },
   loader: ({ deps, context: { queryClient } }) =>
     queryClient?.ensureQueryData(
-      api.supplier.list.getOptions({
+      supplierApi.list.getOptions({
         ...deps.search,
         filter: deps.search.filter
           ? `name.ilike.%${deps.search.filter}%,email.ilike.%${deps.search.filter}%`
@@ -61,11 +61,11 @@ function Component() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: api.supplier.list.getKey({
+      queryKey: supplierApi.list.getKey({
         filter: search.filter ?? ''
       }),
       queryFn: ({ pageParam = 1 }) =>
-        api.supplier.list.fetcher({
+        supplierApi.list.fetcher({
           filter: search.filter
             ? `name.ilike.%${search.filter}%,email.ilike.%${search.filter}%`
             : '',
@@ -82,10 +82,10 @@ function Component() {
     [data]
   );
 
-  const deleteSupplier = api.supplier.delete.useMutation({
+  const deleteSupplier = supplierApi.delete.useMutation({
     onSuccess: async () => {
       success('Xóa nhà cung cấp thành công');
-      invalidates([api.supplier.list.getKey({ filter: search.filter ?? '' })]);
+      invalidates([supplierApi.list.getKey({ filter: search.filter ?? '' })]);
     }
   });
 

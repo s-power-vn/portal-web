@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { api } from 'portal-api';
+import { issueApi } from 'portal-api';
 
 import { FC, Suspense } from 'react';
 
@@ -14,7 +14,7 @@ const IssueAssigneeComponent: FC<IssueAssigneeDisplayProps> = ({
   issueId,
   maxVisible = 1
 }) => {
-  const issue = api.issue.byId.useSuspenseQuery({
+  const issue = issueApi.byId.useSuspenseQuery({
     variables: issueId
   });
 

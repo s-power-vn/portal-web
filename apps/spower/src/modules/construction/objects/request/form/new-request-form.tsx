@@ -1,4 +1,3 @@
-import { api } from 'portal-api';
 import { array, boolean, date, number, object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -13,6 +12,7 @@ import {
 } from '@minhdtb/storeo-theme';
 
 import { MultipleFileSelectField } from '../../../../../components';
+import { requestApi } from '../../../api';
 import { RequestInputField } from '../field/request-input-field';
 
 const schema = object().shape({
@@ -73,7 +73,7 @@ export type NewRequestFormProps = BusinessFormProps & {
 };
 
 export const NewRequestForm: FC<NewRequestFormProps> = props => {
-  const createRequest = api.request.create.useMutation({
+  const createRequest = requestApi.create.useMutation({
     onSuccess: async () => {
       success('Tạo yêu cầu mua hàng thành công');
       props.onSuccess?.();
@@ -96,7 +96,6 @@ export const NewRequestForm: FC<NewRequestFormProps> = props => {
       onSuccess={values => {
         return createRequest.mutate({
           ...values,
-          project: props.projectId,
           object: props.objectId
         });
       }}

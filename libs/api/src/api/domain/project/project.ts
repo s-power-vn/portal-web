@@ -24,8 +24,8 @@ export const projectApi = router('project', {
           .from('projects')
           .select(
             `*,
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)`,
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)`,
             { count: 'exact' }
           )
           .range(from, to)
@@ -87,8 +87,8 @@ export const projectApi = router('project', {
           .from('projects')
           .select(
             `*,
-            createdBy:organization_members!created_by(*),
-            updatedBy:organization_members!updated_by(*)`
+            createdBy:organizations_members!created_by(*),
+            updatedBy:organizations_members!updated_by(*)`
           )
           .eq('id', id)
           .single();

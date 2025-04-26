@@ -1,4 +1,4 @@
-import { api } from 'portal-api';
+import { processApi } from 'portal-api';
 import { object, string } from 'yup';
 
 import type { FC } from 'react';
@@ -21,7 +21,7 @@ const schema = object().shape({
 export type NewProcessFormProps = BusinessFormProps;
 
 export const NewProcessForm: FC<NewProcessFormProps> = props => {
-  const createProcess = api.process.create.useMutation({
+  const createProcess = processApi.create.useMutation({
     onSuccess: () => {
       success('Quy trình đã được tạo thành công');
       props.onSuccess?.();
